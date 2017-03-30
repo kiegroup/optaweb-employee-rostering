@@ -1,0 +1,10 @@
+= optaplanner-openshift-worker-rostering
+
+A sample app to be deployed on openshift environments
+
+To build this repository with maven you must specify `-Popenshift`:
+
+```
+mvn clean package -Popenshift
+```
+
