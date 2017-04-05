@@ -3,15 +3,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.kie</groupId>
-    <artifactId>kie-parent</artifactId>
-    <version>7.0.0.Beta7</version>
-  </parent>
 
   <groupId>org.optaplanner</groupId>
   <artifactId>optaplanner-openshift-worker-rostering</artifactId>
   <packaging>war</packaging>
+  <version>0.1.0-SNAPSHOT</version>
 
   <name>OptaPlanner OpenShift Worker rostering</name>
 
@@ -19,6 +15,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+
+    <version.javax.javaee-api>7.0</version.javax.javaee-api>
+    <version.org.optaplanner>7.0.0.Beta7</version.org.optaplanner>
   </properties>
 
   <dependencies>
@@ -27,13 +26,24 @@
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-core</artifactId>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>javax</groupId>
         <artifactId>javaee-api</artifactId>
-        <version>7.0</version>
+        <version>${version.javax.javaee-api}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner</groupId>
+        <artifactId>optaplanner-bom</artifactId>
+        <type>pom</type>
+        <version>${version.org.optaplanner}</version>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -51,7 +61,6 @@
             <artifactId>maven-war-plugin</artifactId>
             <version>2.3</version>
             <configuration>
-              <failOnMissingWebXml>false</failOnMissingWebXml>
               <outputDirectory>target</outputDirectory>
               <warName>ROOT</warName>
             </configuration>
