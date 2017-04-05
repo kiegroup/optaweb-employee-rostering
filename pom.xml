@@ -20,6 +20,10 @@
     <version.org.optaplanner>7.0.0.Beta7</version.org.optaplanner>
   </properties>
 
+  <modules>
+    <module>optaplanner-openshift-worker-rostering-webapp</module>
+  </modules>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -37,7 +41,16 @@
     </dependencies>
   </dependencyManagement>
 
-  <modules>
-    <module>optaplanner-openshift-worker-rostering-webapp</module>
-  </modules>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
 </project>
