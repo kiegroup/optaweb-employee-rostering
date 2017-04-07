@@ -9,27 +9,46 @@
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>optaplanner-openshift-worker-rostering-webapp</artifactId>
-  <packaging>war</packaging>
+  <artifactId>optaplanner-openshift-worker-rostering-gwtui</artifactId>
+  <packaging>gwt-app</packaging>
 
-  <name>OptaPlanner OpenShift Worker Rostering Webapp</name>
+  <name>OptaPlanner OpenShift Worker Rostering GWT UI</name>
 
   <dependencies>
+    <!-- GWT -->
     <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-      <scope>provided</scope>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
     </dependency>
     <!--<dependency>-->
-      <!--<groupId>org.optaplanner</groupId>-->
-      <!--<artifactId>optaplanner-core</artifactId>-->
+      <!--<groupId>org.gwtbootstrap3</groupId>-->
+      <!--<artifactId>gwtbootstrap3</artifactId>-->
+      <!--<scope>provided</scope>-->
     <!--</dependency>-->
-    <dependency>
-      <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>optaplanner-openshift-worker-rostering-gwtui</artifactId>
-      <type>war</type>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.gwtbootstrap3</groupId>-->
+      <!--<artifactId>gwtbootstrap3-extras</artifactId>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>net.ltgt.gwt.maven</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <version>1.0-rc-6</version>
+        <extensions>true</extensions>
+        <configuration>
+          <moduleName>org.optaplanner.openshift.workerrostering.gwtui.WorkerRosteringWebapp</moduleName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
   <profiles>
     <profile>

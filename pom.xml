@@ -23,17 +23,27 @@
   </properties>
 
   <modules>
+    <module>optaplanner-openshift-worker-rostering-gwtui</module>
     <module>optaplanner-openshift-worker-rostering-webapp</module>
   </modules>
 
   <dependencyManagement>
     <dependencies>
-      <!-- Server side -->
+      <!-- Internal -->
+      <dependency>
+        <groupId>org.optaplanner.openshift</groupId>
+        <artifactId>optaplanner-openshift-worker-rostering-gwtui</artifactId>
+        <type>war</type>
+        <version>${project.version}</version>
+      </dependency>
+
+      <!-- JEE -->
       <dependency>
         <groupId>javax</groupId>
         <artifactId>javaee-api</artifactId>
         <version>${version.javax.javaee-api}</version>
       </dependency>
+      <!-- KIE -->
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-bom</artifactId>
@@ -79,13 +89,10 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
+          <groupId>net.ltgt.gwt.maven</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
-          <version>${version.com.google.gwt}</version>
-          <configuration>
-            <strict>true</strict>
-            <printJavaCommandOnError>false</printJavaCommandOnError>
-          </configuration>
+          <version>1.0-rc-6</version>
+          <extensions>true</extensions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

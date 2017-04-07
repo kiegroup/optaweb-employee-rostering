@@ -10,8 +10,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 public class Hello implements EntryPoint {
 
     public void onModuleLoad() {
-        Button b = new Button("Click me",
-                (ClickHandler) event -> Window.alert("Hello, AJAX"));
+        Button b = new Button("Click me 2",
+                (ClickHandler) event -> Window.alert("Hello, the new GWT stuff"));
 
         RootPanel.get().add(b);
     }
