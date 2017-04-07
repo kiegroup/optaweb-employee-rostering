@@ -15,16 +15,69 @@
   <name>OptaPlanner OpenShift Worker Rostering Webapp</name>
 
   <dependencies>
+    <!-- Server side -->
     <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.optaplanner</groupId>-->
+      <!--<artifactId>optaplanner-core</artifactId>-->
+    <!--</dependency>-->
+
+    <!-- GWT -->
     <dependency>
-      <groupId>org.optaplanner</groupId>
-      <artifactId>optaplanner-core</artifactId>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-servlet</artifactId>
+      <scope>runtime</scope>
     </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.gwtbootstrap3</groupId>-->
+      <!--<artifactId>gwtbootstrap3</artifactId>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+      <!--<groupId>org.gwtbootstrap3</groupId>-->
+      <!--<artifactId>gwtbootstrap3-extras</artifactId>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
   </dependencies>
+
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <configuration>
+          <runTarget>gwtui.html</runTarget>
+          <modules>
+            <module>org.optaplanner.openshift.workerrostering.gwtui.WorkerRosteringWebapp</module>
+          </modules>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>test</goal>
+              <goal>generateAsync</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <profiles>
     <profile>
