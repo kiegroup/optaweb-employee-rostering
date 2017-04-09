@@ -45,8 +45,10 @@
         <extensions>true</extensions>
         <configuration>
           <moduleName>org.optaplanner.openshift.workerrostering.gwtui.WorkerRosteringWebapp</moduleName>
-          <!-- Fix error on OpenShift -->
+          <!-- Remove warnings that only appear on OpenShift -->
           <compilerArgs>-XdisableUpdateCheck</compilerArgs>
+          <!-- Avoid crash on OpenShift -->
+          <jvmArgs>-Xmx1G</jvmArgs>
         </configuration>
       </plugin>
     </plugins>
