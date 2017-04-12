@@ -47,8 +47,8 @@
           <moduleName>org.optaplanner.openshift.workerrostering.gwtui.WorkerRosteringWebapp</moduleName>
           <!-- Remove warnings that only appear on OpenShift -->
           <compilerArgs>-XdisableUpdateCheck</compilerArgs>
-          <!-- Avoid crash on OpenShift? -->
-          <jvmArgs>-Xms1G -Xmx1G</jvmArgs>
+          <!-- Avoid crash "error code 137" on OpenShift? -->
+          <jvmArgs>-Xmx300m</jvmArgs>
         </configuration>
       </plugin>
     </plugins>
