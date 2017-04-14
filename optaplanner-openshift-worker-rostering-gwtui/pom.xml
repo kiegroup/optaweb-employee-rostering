@@ -51,25 +51,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <!-- Use this profile for any OpenShift specific customization your app will need. -->
-      <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
-      <id>openshift</id>
-      <build>
-        <finalName>optaplanner-openshift-worker-rostering</finalName>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <configuration>
-              <outputDirectory>target</outputDirectory>
-              <warName>ROOT</warName>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 </project>
