@@ -11,5 +11,5 @@
   <!--<set-property name="user.agent" value="gecko1_8,safari"/>-->
   <!--<set-property name="locale" value="default"/>-->
 
-  <entry-point class="org.optaplanner.openshift.workerrostering.gwtui.client.Hello"/>
+  <entry-point class="org.optaplanner.openshift.workerrostering.gwtui.client.OptaShiftRosteringEntryPoint"/>
 </module>
