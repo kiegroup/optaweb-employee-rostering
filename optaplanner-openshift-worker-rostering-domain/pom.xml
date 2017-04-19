@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.optaplanner.openshift</groupId>
+    <artifactId>optaplanner-openshift-worker-rostering</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+  <packaging>gwt-lib</packaging>
+
+  <name>OptaPlanner OpenShift Worker Rostering Domain</name>
+
+  <dependencies>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>net.ltgt.gwt.maven</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+        <configuration>
+          <moduleName>org.optaplanner.openshift.workerrostering.domain.WorkerRosteringDomain</moduleName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

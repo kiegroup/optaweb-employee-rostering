@@ -23,6 +23,7 @@
   </properties>
 
   <modules>
+    <module>optaplanner-openshift-worker-rostering-domain</module>
     <module>optaplanner-openshift-worker-rostering-gwtui</module>
     <module>optaplanner-openshift-worker-rostering-webapp</module>
   </modules>
@@ -30,6 +31,23 @@
   <dependencyManagement>
     <dependencies>
       <!-- Internal -->
+      <dependency>
+        <groupId>org.optaplanner.openshift</groupId>
+        <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner.openshift</groupId>
+        <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner.openshift</groupId>
+        <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+        <version>${project.version}</version>
+        <type>gwt-lib</type>
+      </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
         <artifactId>optaplanner-openshift-worker-rostering-gwtui</artifactId>
@@ -86,6 +104,30 @@
   </dependencyManagement>
 
   <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>attach-test-sources</id>
+            <goals>
+              <goal>test-jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>net.ltgt.gwt.maven</groupId>
+        <artifactId>gwt-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -93,6 +135,10 @@
           <artifactId>gwt-maven-plugin</artifactId>
           <version>1.0-rc-6</version>
           <extensions>true</extensions>
+          <configuration>
+            <!-- Remove warnings that only appear on OpenShift -->
+            <!--<compilerArgs>-XdisableUpdateCheck</compilerArgs>-->
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

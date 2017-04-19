@@ -15,6 +15,11 @@
   <name>OptaPlanner OpenShift Worker Rostering GWT UI</name>
 
   <dependencies>
+    <dependency>
+      <groupId>org.optaplanner.openshift</groupId>
+      <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+      <type>gwt-lib</type>
+    </dependency>
     <!-- GWT -->
     <dependency>
       <groupId>com.google.gwt</groupId>
@@ -41,12 +46,8 @@
       <plugin>
         <groupId>net.ltgt.gwt.maven</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
-        <version>1.0-rc-6</version>
-        <extensions>true</extensions>
         <configuration>
           <moduleName>org.optaplanner.openshift.workerrostering.gwtui.WorkerRosteringWebapp</moduleName>
-          <!-- Remove warnings that only appear on OpenShift -->
-          <compilerArgs>-XdisableUpdateCheck</compilerArgs>
         </configuration>
       </plugin>
     </plugins>

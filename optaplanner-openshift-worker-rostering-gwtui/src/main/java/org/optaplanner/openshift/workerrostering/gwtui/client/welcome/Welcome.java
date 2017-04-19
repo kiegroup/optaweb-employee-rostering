@@ -6,6 +6,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
+import org.optaplanner.openshift.workerrostering.domain.Employee;
 
 public class Welcome extends Composite {
 
@@ -15,11 +16,11 @@ public class Welcome extends Composite {
     @UiField
     ListBox listBox;
 
-    public Welcome(String... names) {
+    public Welcome(Employee... employees) {
         // sets listBox
         initWidget(uiBinder.createAndBindUi(this));
-        for (String name : names) {
-            listBox.addItem(name);
+        for (Employee employee : employees) {
+            listBox.addItem(employee.getName());
         }
     }
 

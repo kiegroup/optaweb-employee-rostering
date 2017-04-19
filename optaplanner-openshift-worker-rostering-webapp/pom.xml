@@ -16,19 +16,24 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.optaplanner.openshift</groupId>
+      <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.optaplanner.openshift</groupId>
+      <artifactId>optaplanner-openshift-worker-rostering-gwtui</artifactId>
+      <type>war</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <!--<dependency>-->
-      <!--<groupId>org.optaplanner</groupId>-->
-      <!--<artifactId>optaplanner-core</artifactId>-->
+    <!--<groupId>org.optaplanner</groupId>-->
+    <!--<artifactId>optaplanner-core</artifactId>-->
     <!--</dependency>-->
-    <dependency>
-      <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>optaplanner-openshift-worker-rostering-gwtui</artifactId>
-      <type>war</type>
-    </dependency>
   </dependencies>
 
   <profiles>
