@@ -1,10 +1,26 @@
-= employee-rostering-oaas
+= Employee Rostering Optimization as a Service
 
-A sample app to be deployed on openshift environments
+An example https://www.optaplanner.org/[OptaPlanner] app to be deployed on https://www.openshift.com/[OpenShift 3].
 
-To build this repository with maven you must specify `-Popenshift`:
+== Building from source
 
+=== Normal
+
+```
+mvn clean install
+```
+
+=== Like OpenShift
 ```
 mvn clean package -Popenshift
 ```
 
+== Run configurations
+
+=== IntelliJ IDEA
+
+. https://youtrack.jetbrains.com/issue/IDEA-171158[IntelliJ does not support the new GWT plugin yet]
+. Create a new JBoss run configuration to a local WildFly instance:
+.. In the _Before launch_ list, remove `Make project`
+.. In the _Before launch_ list, add `Run Maven goal` on the root pom with arguments `clean install -Dgwt.draftCompile`
+.. In the _Deployment_ tab, in _Deploy at startup_, add `employee-rostering-oaas-webapp:war exploded`.

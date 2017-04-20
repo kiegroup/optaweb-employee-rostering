@@ -20,7 +20,9 @@ public class OptaShiftRosteringEntryPoint implements EntryPoint {
         Welcome welcome = new Welcome(
                 new Employee("Ann"),
                 new Employee("Beth"),
-                new Employee("Carl"));
+                new Employee("Carl"),
+                new Employee("Dan"),
+                new Employee("Ed"));
         Document.get().getBody().appendChild(welcome.getElement());
     }
 
