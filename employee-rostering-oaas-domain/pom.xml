@@ -10,22 +10,11 @@
   </parent>
 
   <artifactId>employee-rostering-oaas-domain</artifactId>
-  <packaging>gwt-lib</packaging>
+  <packaging>jar</packaging>
 
   <name>Employee Rostering as a Service Domain</name>
 
   <dependencies>
   </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>net.ltgt.gwt.maven</groupId>
-        <artifactId>gwt-maven-plugin</artifactId>
-        <configuration>
-          <moduleName>org.optaplanner.openshift.workerrostering.domain.WorkerRosteringDomain</moduleName>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

@@ -24,6 +24,7 @@
 
   <modules>
     <module>employee-rostering-oaas-domain</module>
+    <module>employee-rostering-oaas-domain-gwt</module>
     <module>employee-rostering-oaas-gwtui</module>
     <module>employee-rostering-oaas-webapp</module>
   </modules>
@@ -44,9 +45,9 @@
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>employee-rostering-oaas-domain</artifactId>
-        <version>${project.version}</version>
+        <artifactId>employee-rostering-oaas-domain-gwt</artifactId>
         <type>gwt-lib</type>
+        <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
@@ -108,20 +109,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>attach-test-sources</id>
-            <goals>
-              <goal>test-jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>net.ltgt.gwt.maven</groupId>
@@ -143,7 +130,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
-          <version>2.3</version>
+          <version>2.6</version>
         </plugin>
       </plugins>
     </pluginManagement>

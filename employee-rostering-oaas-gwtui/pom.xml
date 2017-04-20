@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>employee-rostering-oaas-domain</artifactId>
+      <artifactId>employee-rostering-oaas-domain-gwt</artifactId>
       <type>gwt-lib</type>
     </dependency>
     <!-- GWT -->
