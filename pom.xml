@@ -26,6 +26,7 @@
     <module>employee-rostering-oaas-domain</module>
     <module>employee-rostering-oaas-domain-gwt</module>
     <module>employee-rostering-oaas-gwtui</module>
+    <module>employee-rostering-oaas-service</module>
     <module>employee-rostering-oaas-webapp</module>
   </modules>
 
@@ -54,6 +55,17 @@
         <artifactId>employee-rostering-oaas-gwtui</artifactId>
         <type>war</type>
         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner.openshift</groupId>
+        <artifactId>employee-rostering-oaas-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner.openshift</groupId>
+        <artifactId>employee-rostering-oaas-service</artifactId>
+        <version>${project.version}</version>
+        <classifier>sources</classifier>
       </dependency>
 
       <!-- JEE -->

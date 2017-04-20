@@ -26,6 +26,10 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.optaplanner.openshift</groupId>
+      <artifactId>employee-rostering-oaas-service</artifactId>
+    </dependency>
+    <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>

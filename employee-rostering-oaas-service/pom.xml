@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.optaplanner.openshift</groupId>
+    <artifactId>employee-rostering-oaas</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>employee-rostering-oaas-service</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Employee Rostering as a Service Service</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.optaplanner.openshift</groupId>
+      <artifactId>employee-rostering-oaas-domain</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax</groupId>
+      <artifactId>javaee-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+</project>
