@@ -1,4 +1,4 @@
-= optaplanner-openshift-worker-rostering
+= employee-rostering-oaas
 
 A sample app to be deployed on openshift environments
 

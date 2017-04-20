@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.optaplanner.openshift</groupId>
-  <artifactId>optaplanner-openshift-worker-rostering</artifactId>
+  <artifactId>employee-rostering-oaas</artifactId>
   <packaging>pom</packaging>
   <version>0.1.0-SNAPSHOT</version>
 
-  <name>OptaPlanner OpenShift Worker Rostering Parent</name>
+  <name>Employee Rostering as a Service Parent</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -23,9 +23,9 @@
   </properties>
 
   <modules>
-    <module>optaplanner-openshift-worker-rostering-domain</module>
-    <module>optaplanner-openshift-worker-rostering-gwtui</module>
-    <module>optaplanner-openshift-worker-rostering-webapp</module>
+    <module>employee-rostering-oaas-domain</module>
+    <module>employee-rostering-oaas-gwtui</module>
+    <module>employee-rostering-oaas-webapp</module>
   </modules>
 
   <dependencyManagement>
@@ -33,24 +33,24 @@
       <!-- Internal -->
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+        <artifactId>employee-rostering-oaas-domain</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+        <artifactId>employee-rostering-oaas-domain</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+        <artifactId>employee-rostering-oaas-domain</artifactId>
         <version>${project.version}</version>
         <type>gwt-lib</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optaplanner-openshift-worker-rostering-gwtui</artifactId>
+        <artifactId>employee-rostering-oaas-gwtui</artifactId>
         <type>war</type>
         <version>${project.version}</version>
       </dependency>

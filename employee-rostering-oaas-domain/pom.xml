@@ -5,14 +5,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.optaplanner.openshift</groupId>
-    <artifactId>optaplanner-openshift-worker-rostering</artifactId>
+    <artifactId>employee-rostering-oaas</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>optaplanner-openshift-worker-rostering-domain</artifactId>
+  <artifactId>employee-rostering-oaas-domain</artifactId>
   <packaging>gwt-lib</packaging>
 
-  <name>OptaPlanner OpenShift Worker Rostering Domain</name>
+  <name>Employee Rostering as a Service Domain</name>
 
   <dependencies>
   </dependencies>
