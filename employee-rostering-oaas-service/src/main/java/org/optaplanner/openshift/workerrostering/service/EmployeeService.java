@@ -16,6 +16,12 @@ import org.optaplanner.openshift.workerrostering.domain.Employee;
 public class EmployeeService {
 
     @GET
+    @Path("/one")
+    public Employee getEmployeeOne() {
+        return new Employee("Ann");
+    }
+
+    @GET
     @Path("/")
     public List<Employee> getEmployeeList() {
         return Arrays.asList(
