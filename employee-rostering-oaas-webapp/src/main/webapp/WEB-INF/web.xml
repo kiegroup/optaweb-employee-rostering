@@ -5,6 +5,7 @@
          version="3.1">
   <servlet-mapping>
     <servlet-name>javax.ws.rs.core.Application</servlet-name>
+    <!-- Keep in sync with *EntryPoint -->
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
 </web-app>

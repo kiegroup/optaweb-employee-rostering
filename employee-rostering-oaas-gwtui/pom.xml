@@ -29,6 +29,11 @@
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.github.nmorel.gwtjackson</groupId>
+      <artifactId>gwt-jackson-rest-processor</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <!--<dependency>-->
       <!--<groupId>org.gwtbootstrap3</groupId>-->
       <!--<artifactId>gwtbootstrap3</artifactId>-->

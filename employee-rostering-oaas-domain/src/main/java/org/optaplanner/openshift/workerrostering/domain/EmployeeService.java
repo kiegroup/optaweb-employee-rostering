@@ -7,9 +7,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+
 @Path("/employee")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@GenRestBuilder
 public interface EmployeeService {
 
     @GET

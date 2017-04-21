@@ -3,4 +3,6 @@
     "http://www.gwtproject.org/doctype/2.8.0/gwt-module.dtd">
 <module>
   <source path="" />
+
+  <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
 </module>

@@ -20,6 +20,11 @@
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>com.github.nmorel.gwtjackson</groupId>
+      <artifactId>gwt-jackson-rest-processor</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
 </project>

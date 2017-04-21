@@ -3,6 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
+  <!-- Use JBoss parent so all plugins have a decent base version-->
 
   <groupId>org.optaplanner.openshift</groupId>
   <artifactId>employee-rostering-oaas</artifactId>
@@ -19,6 +20,8 @@
     <version.org.optaplanner>7.0.0.Beta7</version.org.optaplanner>
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.com.google.gwt>2.8.0</version.com.google.gwt>
+    <version.com.github.nmorel.gwtjackson>0.14.2</version.com.github.nmorel.gwtjackson>
+    <version.com.github.nmorel.gwtjackson.restprocessor>0.4.1</version.com.github.nmorel.gwtjackson.restprocessor>
     <version.org.gwtbootstrap3>0.9.3</version.org.gwtbootstrap3>
   </properties>
 
@@ -92,6 +95,16 @@
         <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>com.github.nmorel.gwtjackson</groupId>
+        <artifactId>gwt-jackson</artifactId>
+        <version>${version.com.github.nmorel.gwtjackson}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.nmorel.gwtjackson</groupId>
+        <artifactId>gwt-jackson-rest-processor</artifactId>
+        <version>${version.com.github.nmorel.gwtjackson.restprocessor}</version>
+      </dependency>
+      <dependency>
         <groupId>org.gwtbootstrap3</groupId>
         <artifactId>gwtbootstrap3</artifactId>
         <version>${version.org.gwtbootstrap3}</version>
@@ -121,6 +134,15 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>3.0.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>net.ltgt.gwt.maven</groupId>
@@ -138,6 +160,11 @@
             <!-- Remove warnings that only appear on OpenShift -->
             <!--<compilerArgs>-XdisableUpdateCheck</compilerArgs>-->
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.6.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
