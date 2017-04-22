@@ -15,6 +15,11 @@
   <name>Employee Rostering as a Service GWT UI</name>
 
   <dependencies>
+    <!-- gwt-dev must be first so the correct JDT ECJ version is on GWT's compiler's classpath -->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.optaplanner.openshift</groupId>
       <artifactId>employee-rostering-oaas-domain-gwt</artifactId>
@@ -24,10 +29,6 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-dev</artifactId>
     </dependency>
     <dependency>
       <groupId>com.github.nmorel.gwtjackson</groupId>

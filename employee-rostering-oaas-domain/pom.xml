@@ -25,6 +25,10 @@
       <artifactId>gwt-jackson-rest-processor</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-core</artifactId>
+    </dependency>
   </dependencies>
 
 </project>
