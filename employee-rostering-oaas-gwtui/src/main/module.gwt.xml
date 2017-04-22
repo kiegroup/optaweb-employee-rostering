@@ -4,12 +4,11 @@
 <module rename-to="gwtui">
 
   <inherits name="com.google.gwt.user.User" />
-
-  <!--<inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>-->
+  <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
 
   <!--&lt;!&ndash; We only use this gwt.xml during development (in production, everything is tied together) &ndash;&gt;-->
   <!--<set-property name="user.agent" value="gecko1_8,safari"/>-->
   <!--<set-property name="locale" value="default"/>-->
 
-  <entry-point class="org.optaplanner.openshift.workerrostering.gwtui.client.OptaShiftRosteringEntryPoint"/>
+  <entry-point class="org.optaplanner.openshift.employeerostering.gwtui.client.OptaShiftRosteringEntryPoint"/>
 </module>

@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.workerrostering.gwtui.client;
+package org.optaplanner.openshift.employeerostering.gwtui.client;
 
 import java.util.List;
 
@@ -6,14 +6,9 @@ import com.github.nmorel.gwtjackson.rest.api.RestCallback;
 import com.github.nmorel.gwtjackson.rest.api.RestRequestBuilder;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.RootPanel;
-import org.optaplanner.openshift.workerrostering.domain.Employee;
-import org.optaplanner.openshift.workerrostering.domain.EmployeeServiceBuilder;
-import org.optaplanner.openshift.workerrostering.gwtui.client.welcome.Welcome;
+import org.optaplanner.openshift.employeerostering.domain.Employee;
+import org.optaplanner.openshift.employeerostering.domain.EmployeeServiceBuilder;
+import org.optaplanner.openshift.employeerostering.gwtui.client.welcome.Welcome;
 
 public class OptaShiftRosteringEntryPoint implements EntryPoint {
 

@@ -32,7 +32,7 @@
         <groupId>net.ltgt.gwt.maven</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
-          <moduleName>org.optaplanner.openshift.workerrostering.domain.WorkerRosteringDomain</moduleName>
+          <moduleName>org.optaplanner.openshift.employeerostering.domain.WorkerRosteringDomain</moduleName>
         </configuration>
       </plugin>
     </plugins>

@@ -32,18 +32,11 @@
     <dependency>
       <groupId>com.github.nmorel.gwtjackson</groupId>
       <artifactId>gwt-jackson-rest-processor</artifactId>
-      <scope>provided</scope>
     </dependency>
-    <!--<dependency>-->
-      <!--<groupId>org.gwtbootstrap3</groupId>-->
-      <!--<artifactId>gwtbootstrap3</artifactId>-->
-      <!--<scope>provided</scope>-->
-    <!--</dependency>-->
-    <!--<dependency>-->
-      <!--<groupId>org.gwtbootstrap3</groupId>-->
-      <!--<artifactId>gwtbootstrap3-extras</artifactId>-->
-      <!--<scope>provided</scope>-->
-    <!--</dependency>-->
+    <dependency>
+      <groupId>org.gwtbootstrap3</groupId>
+      <artifactId>gwtbootstrap3</artifactId>
+    </dependency>
   </dependencies>
 
   <build>
@@ -52,7 +45,7 @@
         <groupId>net.ltgt.gwt.maven</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
-          <moduleName>org.optaplanner.openshift.workerrostering.gwtui.WorkerRosteringWebapp</moduleName>
+          <moduleName>org.optaplanner.openshift.employeerostering.gwtui.WorkerRosteringWebapp</moduleName>
         </configuration>
       </plugin>
     </plugins>

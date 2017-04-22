@@ -1,10 +1,10 @@
-package org.optaplanner.openshift.workerrostering.service;
+package org.optaplanner.openshift.employeerostering.service;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.optaplanner.openshift.workerrostering.domain.Employee;
-import org.optaplanner.openshift.workerrostering.domain.EmployeeService;
+import org.optaplanner.openshift.employeerostering.domain.Employee;
+import org.optaplanner.openshift.employeerostering.domain.EmployeeService;
 
 public class EmployeeServiceImpl implements EmployeeService {
 

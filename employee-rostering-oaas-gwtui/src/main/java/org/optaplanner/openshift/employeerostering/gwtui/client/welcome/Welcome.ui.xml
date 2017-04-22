@@ -1,0 +1,17 @@
+<ui:UiBinder xmlns:ui='urn:ui:com.google.gwt.uibinder'
+             xmlns:g='urn:import:com.google.gwt.user.client.ui'
+             xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+  <g:HTMLPanel>
+    Hello there, <b:ListBox ui:field='listBox' visibleItemCount='1'/>.
+
+    <b:Button text="Click me"/>
+  </g:HTMLPanel>
+  <!--<b:Container fluid="true">-->
+    <!--<b:Row>-->
+      <!--<b:Column size="MD_4">First Name</b:Column>-->
+      <!--<b:Column size="MD_8">Last Name</b:Column>-->
+    <!--</b:Row>-->
+  <!--</b:Container>-->
+
+</ui:UiBinder>
