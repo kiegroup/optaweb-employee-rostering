@@ -9,18 +9,18 @@ import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
 
-@Path("/employee")
+@Path("/person")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @GenRestBuilder
-public interface EmployeeService {
+public interface PersonService {
 
     @GET
     @Path("/one")
-    Employee getEmployeeOne();
+    Person getPersonOne();
 
     @GET
     @Path("/")
-    List<Employee> getEmployeeList();
+    List<Person> getPersonList();
 
 }

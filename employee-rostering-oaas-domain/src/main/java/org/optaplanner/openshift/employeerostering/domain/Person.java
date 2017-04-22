@@ -2,14 +2,14 @@ package org.optaplanner.openshift.employeerostering.domain;
 
 import java.io.Serializable;
 
-public class Employee implements Serializable {
+public class Person implements Serializable {
 
     private String name;
 
-    private Employee() {
+    private Person() {
     }
 
-    public Employee(String name) {
+    public Person(String name) {
         this.name = name;
     }
 
