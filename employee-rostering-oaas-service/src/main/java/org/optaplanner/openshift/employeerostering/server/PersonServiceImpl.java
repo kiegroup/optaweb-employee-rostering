@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.service;
+package org.optaplanner.openshift.employeerostering.server;
 
 import java.util.Arrays;
 import java.util.List;
