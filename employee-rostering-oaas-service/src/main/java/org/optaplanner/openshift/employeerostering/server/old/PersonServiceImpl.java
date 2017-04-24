@@ -1,10 +1,10 @@
-package org.optaplanner.openshift.employeerostering.server;
+package org.optaplanner.openshift.employeerostering.server.old;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.optaplanner.openshift.employeerostering.domain.Person;
-import org.optaplanner.openshift.employeerostering.domain.PersonService;
+import org.optaplanner.openshift.employeerostering.shared.old.Person;
+import org.optaplanner.openshift.employeerostering.shared.old.PersonService;
 
 public class PersonServiceImpl implements PersonService {
 

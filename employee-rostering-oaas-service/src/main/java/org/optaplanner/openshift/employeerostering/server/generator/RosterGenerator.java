@@ -16,7 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.server.generator;
 
-import java.io.File;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 
 import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
 import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
-import org.optaplanner.openshift.employeerostering.shared.domain.RosterParametrization;
 import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
 import org.optaplanner.openshift.employeerostering.shared.domain.Skill;
 import org.optaplanner.openshift.employeerostering.shared.domain.Spot;
@@ -66,14 +64,12 @@ public class RosterGenerator {
     public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
-        RosterParametrization rosterParametrization = new RosterParametrization();
         List<Skill> skillList = createSkillList(skillListSize);
         List<Spot> spotList = createSpotList(spotListSize, skillList);
         List<TimeSlot> timeSlotList = createTimeSlotList(timeSlotListSize, continuousPlanning);
         List<Employee> employeeList = createEmployeeList(employeeListSize, skillList, timeSlotList);
         List<ShiftAssignment> shiftAssignmentList = createShiftAssignmentList(spotList, timeSlotList, employeeList, continuousPlanning);
-        return new Roster(rosterParametrization,
-                skillList, spotList, timeSlotList, employeeList,
+        return new Roster(skillList, spotList, timeSlotList, employeeList,
                 shiftAssignmentList);
     }
 

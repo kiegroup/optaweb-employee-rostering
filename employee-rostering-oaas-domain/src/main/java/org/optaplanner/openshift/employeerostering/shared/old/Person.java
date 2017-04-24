@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.domain;
+package org.optaplanner.openshift.employeerostering.shared.old;
 
 import java.io.Serializable;
 

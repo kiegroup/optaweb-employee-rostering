@@ -9,7 +9,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
-import org.optaplanner.openshift.employeerostering.domain.Person;
 import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
 
 @Path("/roster")

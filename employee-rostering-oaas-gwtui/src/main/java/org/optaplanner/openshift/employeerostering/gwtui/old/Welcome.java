@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.welcome;
+package org.optaplanner.openshift.employeerostering.gwtui.old;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -6,7 +6,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
-import org.optaplanner.openshift.employeerostering.domain.Person;
+import org.optaplanner.openshift.employeerostering.shared.old.Person;
 
 public class Welcome extends Composite {
 

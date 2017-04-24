@@ -20,10 +20,14 @@ import java.util.Set;
 
 public class Employee {
 
-    private final String name;
-    private final Set<Skill> skillSet;
+    private String name;
+    private Set<Skill> skillSet;
 
     private Set<TimeSlot> unavailableTimeSlotSet;
+
+    @SuppressWarnings("unused")
+    public Employee() {
+    }
 
     public Employee(String name, Set<Skill> skillSet) {
         this.name = name;
@@ -34,8 +38,16 @@ public class Employee {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Set<Skill> getSkillSet() {
         return skillSet;
+    }
+
+    public void setSkillSet(Set<Skill> skillSet) {
+        this.skillSet = skillSet;
     }
 
     public Set<TimeSlot> getUnavailableTimeSlotSet() {

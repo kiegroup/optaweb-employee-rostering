@@ -30,9 +30,6 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 @PlanningSolution
 public class Roster {
 
-    @ProblemFactProperty
-    private RosterParametrization rosterParametrization;
-
     @ProblemFactCollectionProperty
     private List<Skill> skillList;
     @ProblemFactCollectionProperty
@@ -46,16 +43,16 @@ public class Roster {
     @PlanningEntityCollectionProperty
     private List<ShiftAssignment> shiftAssignmentList;
 
-    @PlanningScore
-    private HardSoftScore score = null;
+    // TODO use optaplanner-persistence-jackson
+//    @PlanningScore
+//    private HardSoftScore score = null;
 
-    private Roster() {
+    @SuppressWarnings("unused")
+    public Roster() {
     }
 
-    public Roster(RosterParametrization rosterParametrization,
-            List<Skill> skillList, List<Spot> spotList, List<TimeSlot> timeSlotList, List<Employee> employeeList,
+    public Roster(List<Skill> skillList, List<Spot> spotList, List<TimeSlot> timeSlotList, List<Employee> employeeList,
             List<ShiftAssignment> shiftAssignmentList) {
-        this.rosterParametrization = rosterParametrization;
         this.skillList = skillList;
         this.spotList = spotList;
         this.timeSlotList = timeSlotList;
@@ -63,32 +60,48 @@ public class Roster {
         this.shiftAssignmentList = shiftAssignmentList;
     }
 
-    public RosterParametrization getRosterParametrization() {
-        return rosterParametrization;
-    }
-
     public List<Skill> getSkillList() {
         return skillList;
+    }
+
+    public void setSkillList(List<Skill> skillList) {
+        this.skillList = skillList;
     }
 
     public List<Spot> getSpotList() {
         return spotList;
     }
 
+    public void setSpotList(List<Spot> spotList) {
+        this.spotList = spotList;
+    }
+
     public List<TimeSlot> getTimeSlotList() {
         return timeSlotList;
+    }
+
+    public void setTimeSlotList(List<TimeSlot> timeSlotList) {
+        this.timeSlotList = timeSlotList;
     }
 
     public List<Employee> getEmployeeList() {
         return employeeList;
     }
 
+    public void setEmployeeList(List<Employee> employeeList) {
+        this.employeeList = employeeList;
+    }
+
     public List<ShiftAssignment> getShiftAssignmentList() {
         return shiftAssignmentList;
     }
 
-    public HardSoftScore getScore() {
-        return score;
+    public void setShiftAssignmentList(List<ShiftAssignment> shiftAssignmentList) {
+        this.shiftAssignmentList = shiftAssignmentList;
     }
+
+//    public HardSoftScore getScore() {
+//        return score;
+//    }
 
 }

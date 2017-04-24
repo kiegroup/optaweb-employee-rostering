@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.optaplanner.openshift.employeerostering.domain.Person;
 import org.optaplanner.openshift.employeerostering.server.generator.RosterGenerator;
 import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
 import org.optaplanner.openshift.employeerostering.shared.rest.RosterService;

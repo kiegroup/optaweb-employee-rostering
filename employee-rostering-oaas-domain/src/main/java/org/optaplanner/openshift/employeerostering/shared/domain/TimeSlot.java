@@ -18,25 +18,39 @@ package org.optaplanner.openshift.employeerostering.shared.domain;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class TimeSlot {
 
-    private final LocalDateTime startDateTime;
-    private final LocalDateTime endDateTime;
+//    private LocalDateTime startDateTime;
+//    private LocalDateTime endDateTime;
 
     private TimeSlotState timeSlotState;
 
-    public TimeSlot(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
+    @SuppressWarnings("unused")
+    public TimeSlot() {
     }
 
-    public LocalDateTime getStartDateTime() {
-        return startDateTime;
-    }
-
-    public LocalDateTime getEndDateTime() {
-        return endDateTime;
-    }
+//    public TimeSlot(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+//        this.startDateTime = startDateTime;
+//        this.endDateTime = endDateTime;
+//    }
+//
+//    public LocalDateTime getStartDateTime() {
+//        return startDateTime;
+//    }
+//
+//    public void setStartDateTime(LocalDateTime startDateTime) {
+//        this.startDateTime = startDateTime;
+//    }
+//
+//    public LocalDateTime getEndDateTime() {
+//        return endDateTime;
+//    }
+//
+//    public void setEndDateTime(LocalDateTime endDateTime) {
+//        this.endDateTime = endDateTime;
+//    }
 
     public TimeSlotState getTimeSlotState() {
         return timeSlotState;
@@ -46,9 +60,9 @@ public class TimeSlot {
         this.timeSlotState = timeSlotState;
     }
 
-    @Override
-    public String toString() {
-        return startDateTime + "-" + endDateTime.toLocalTime();
-    }
+//    @Override
+//    public String toString() {
+//        return startDateTime + "-" + endDateTime.toLocalTime();
+//    }
 
 }

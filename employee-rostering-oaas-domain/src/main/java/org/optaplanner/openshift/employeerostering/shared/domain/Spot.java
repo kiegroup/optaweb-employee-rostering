@@ -16,10 +16,16 @@
 
 package org.optaplanner.openshift.employeerostering.shared.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Spot {
 
-    private final String name;
-    private final Skill requiredSkill;
+    private String name;
+    private Skill requiredSkill;
+
+    @SuppressWarnings("unused")
+    public Spot() {
+    }
 
     public Spot(String name, Skill requiredSkill) {
         this.name = name;
@@ -30,8 +36,16 @@ public class Spot {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public Skill getRequiredSkill() {
         return requiredSkill;
+    }
+
+    public void setRequiredSkill(Skill requiredSkill) {
+        this.requiredSkill = requiredSkill;
     }
 
     @Override

@@ -16,9 +16,16 @@
 
 package org.optaplanner.openshift.employeerostering.shared.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Skill {
 
-    private final String name;
+    private String name;
+
+    @SuppressWarnings("unused")
+    public Skill() {
+    }
 
     public Skill(String name) {
         this.name = name;
@@ -26,6 +33,10 @@ public class Skill {
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

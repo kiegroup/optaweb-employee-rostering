@@ -23,17 +23,16 @@ import org.optaplanner.openshift.employeerostering.shared.domain.solver.MovableS
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftAssignmentFilter.class)
 public class ShiftAssignment {
 
-    private final Spot spot;
-    private final TimeSlot timeSlot;
+    private Spot spot;
+    private TimeSlot timeSlot;
 
     private boolean lockedByUser = false;
 
     @PlanningVariable(valueRangeProviderRefs = "employeeRange")
     private Employee employee = null;
 
-    private ShiftAssignment() {
-        spot = null;
-        timeSlot = null;
+    @SuppressWarnings("unused")
+    public ShiftAssignment() {
     }
 
     public ShiftAssignment(Spot spot, TimeSlot timeSlot) {
@@ -45,8 +44,16 @@ public class ShiftAssignment {
         return spot;
     }
 
+    public void setSpot(Spot spot) {
+        this.spot = spot;
+    }
+
     public TimeSlot getTimeSlot() {
         return timeSlot;
+    }
+
+    public void setTimeSlot(TimeSlot timeSlot) {
+        this.timeSlot = timeSlot;
     }
 
     public boolean isLockedByUser() {
