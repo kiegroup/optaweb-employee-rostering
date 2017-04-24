@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.welcome;
+package org.optaplanner.openshift.employeerostering.gwtui.welcome;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

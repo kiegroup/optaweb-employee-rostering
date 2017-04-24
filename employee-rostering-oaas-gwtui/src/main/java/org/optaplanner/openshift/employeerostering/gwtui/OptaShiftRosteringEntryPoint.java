@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client;
+package org.optaplanner.openshift.employeerostering.gwtui;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
 import org.optaplanner.openshift.employeerostering.domain.Person;
 import org.optaplanner.openshift.employeerostering.domain.PersonServiceBuilder;
-import org.optaplanner.openshift.employeerostering.gwtui.client.welcome.Welcome;
+import org.optaplanner.openshift.employeerostering.gwtui.welcome.Welcome;
 
 public class OptaShiftRosteringEntryPoint implements EntryPoint {
 
