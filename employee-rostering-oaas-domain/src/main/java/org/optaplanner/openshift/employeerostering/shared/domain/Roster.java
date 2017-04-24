@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.shared.domain;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
@@ -31,6 +32,7 @@ public class Roster {
 
     @ProblemFactProperty
     private RosterParametrization rosterParametrization;
+
     @ProblemFactCollectionProperty
     private List<Skill> skillList;
     @ProblemFactCollectionProperty

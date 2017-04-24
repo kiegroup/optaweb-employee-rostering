@@ -24,13 +24,13 @@ public class RosterServiceImpl implements RosterService {
     public List<Roster> getRosterList() {
         return Arrays.asList(
                 rosterGenerator.generateRoster(10, 7, false),
-                rosterGenerator.generateRoster(10, 28, false),
-                rosterGenerator.generateRoster(20, 28, false),
-                rosterGenerator.generateRoster(40, 28 * 2, false),
-                rosterGenerator.generateRoster(80, 28 * 4, false),
-                rosterGenerator.generateRoster(10, 28, true),
-                rosterGenerator.generateRoster(20, 28, true),
-                rosterGenerator.generateRoster(40, 28 * 2, true),
+//                rosterGenerator.generateRoster(10, 28, false),
+//                rosterGenerator.generateRoster(20, 28, false),
+//                rosterGenerator.generateRoster(40, 28 * 2, false),
+//                rosterGenerator.generateRoster(80, 28 * 4, false),
+//                rosterGenerator.generateRoster(10, 28, true),
+//                rosterGenerator.generateRoster(20, 28, true),
+//                rosterGenerator.generateRoster(40, 28 * 2, true),
                 rosterGenerator.generateRoster(80, 28 * 4, true));
     }
 

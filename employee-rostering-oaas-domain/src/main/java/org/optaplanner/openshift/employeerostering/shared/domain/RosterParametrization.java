@@ -18,4 +18,10 @@ package org.optaplanner.openshift.employeerostering.shared.domain;
 
 public class RosterParametrization {
 
+    private long dummyWeight;
+
+    public long getDummyWeight() {
+        return dummyWeight;
+    }
+
 }
