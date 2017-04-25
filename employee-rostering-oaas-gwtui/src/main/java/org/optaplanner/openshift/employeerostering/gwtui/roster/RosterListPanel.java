@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.roster;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
@@ -38,6 +39,12 @@ public class RosterListPanel extends Composite {
                 for (Roster roster : rosterList) {
                     listBox.addItem(roster.getSkillList().size() + " skills"); // TODO
                 }
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                listBox.addItem("ERROR " + throwable.getMessage());
+                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }

@@ -3,6 +3,9 @@
     "http://www.gwtproject.org/doctype/2.8.0/gwt-module.dtd">
 <module rename-to="gwtui">
   <source path=""/>
+  <!-- TODO remove me once https://github.com/gwtproject/gwt/issues/611 has been fixed -->
+  <super-source path="emulate" />
+  <extend-configuration-property name="gwtjackson.configuration.extension" value="org.optaplanner.openshift.employeerostering.gwtui.gwtjackson.JavaTimeGwtJacksonConfiguration" />
 
   <inherits name="com.google.gwt.user.User"/>
   <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>

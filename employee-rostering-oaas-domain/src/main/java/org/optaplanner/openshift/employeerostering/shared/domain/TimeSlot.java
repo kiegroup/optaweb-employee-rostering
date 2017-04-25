@@ -18,12 +18,17 @@ package org.optaplanner.openshift.employeerostering.shared.domain;
 
 import java.time.LocalDateTime;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 public class TimeSlot {
 
-//    private LocalDateTime startDateTime;
-//    private LocalDateTime endDateTime;
+    private LocalDateTime startDateTime;
+    private LocalDateTime endDateTime;
 
     private TimeSlotState timeSlotState;
 
@@ -31,26 +36,32 @@ public class TimeSlot {
     public TimeSlot() {
     }
 
-//    public TimeSlot(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-//        this.startDateTime = startDateTime;
-//        this.endDateTime = endDateTime;
-//    }
-//
-//    public LocalDateTime getStartDateTime() {
-//        return startDateTime;
-//    }
-//
-//    public void setStartDateTime(LocalDateTime startDateTime) {
-//        this.startDateTime = startDateTime;
-//    }
-//
-//    public LocalDateTime getEndDateTime() {
-//        return endDateTime;
-//    }
-//
-//    public void setEndDateTime(LocalDateTime endDateTime) {
-//        this.endDateTime = endDateTime;
-//    }
+    public TimeSlot(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+    }
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public LocalDateTime getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(LocalDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public LocalDateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(LocalDateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
 
     public TimeSlotState getTimeSlotState() {
         return timeSlotState;
@@ -60,9 +71,9 @@ public class TimeSlot {
         this.timeSlotState = timeSlotState;
     }
 
-//    @Override
-//    public String toString() {
-//        return startDateTime + "-" + endDateTime.toLocalTime();
-//    }
+    @Override
+    public String toString() {
+        return startDateTime + "-" + endDateTime.toLocalTime();
+    }
 
 }
