@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.gwtjackson;
+package org.optaplanner.openshift.employeerostering.gwtui.rebind;
 
 import java.time.LocalDateTime;
 

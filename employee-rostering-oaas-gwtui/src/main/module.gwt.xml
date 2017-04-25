@@ -5,14 +5,18 @@
   <source path=""/>
   <!-- TODO remove me once https://github.com/gwtproject/gwt/issues/611 has been fixed -->
   <super-source path="emulate" />
-  <extend-configuration-property name="gwtjackson.configuration.extension" value="org.optaplanner.openshift.employeerostering.gwtui.gwtjackson.JavaTimeGwtJacksonConfiguration" />
 
   <inherits name="com.google.gwt.user.User"/>
+
+  <extend-configuration-property name="gwtjackson.configuration.extension" value="org.optaplanner.openshift.employeerostering.gwtui.rebind.JavaTimeGwtJacksonConfiguration" />
+  <inherits name="com.github.nmorel.gwtjackson.GwtJackson" />
+  <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
+
   <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
+
+  <entry-point class="org.optaplanner.openshift.employeerostering.gwtui.OptaShiftRosteringEntryPoint"/>
 
   <!--&lt;!&ndash; We only use this gwt.xml during development (in production, everything is tied together) &ndash;&gt;-->
   <!--<set-property name="user.agent" value="gecko1_8,safari"/>-->
   <!--<set-property name="locale" value="default"/>-->
-
-  <entry-point class="org.optaplanner.openshift.employeerostering.gwtui.OptaShiftRosteringEntryPoint"/>
 </module>

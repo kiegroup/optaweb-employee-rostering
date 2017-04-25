@@ -24,6 +24,14 @@
       <artifactId>employee-rostering-oaas-domain</artifactId>
       <classifier>sources</classifier>
     </dependency>
+    <dependency>
+      <groupId>com.github.nmorel.gwtjackson</groupId>
+      <artifactId>gwt-jackson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.nmorel.gwtjackson</groupId>
+      <artifactId>gwt-jackson-rest-processor</artifactId>
+    </dependency>
   </dependencies>
 
   <build>

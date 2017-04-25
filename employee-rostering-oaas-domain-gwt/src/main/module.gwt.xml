@@ -4,5 +4,6 @@
 <module>
   <source path=""/>
 
+  <inherits name="com.github.nmorel.gwtjackson.GwtJackson" />
   <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
 </module>

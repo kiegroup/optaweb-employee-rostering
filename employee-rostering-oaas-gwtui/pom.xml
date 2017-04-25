@@ -32,6 +32,10 @@
     </dependency>
     <dependency>
       <groupId>com.github.nmorel.gwtjackson</groupId>
+      <artifactId>gwt-jackson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.nmorel.gwtjackson</groupId>
       <artifactId>gwt-jackson-rest-processor</artifactId>
     </dependency>
     <dependency>
