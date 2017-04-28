@@ -11,10 +11,7 @@ public class LocalDateTimeJsonDeserializer extends JsonDeserializer<LocalDateTim
 
     @Override
     protected LocalDateTime doDeserialize(JsonReader reader, JsonDeserializationContext ctx, JsonDeserializerParameters params) {
-        String text = reader.nextValue();
-        // Remove quotes
-        text = text.substring(1, text.length() - 1);
-
+        String text = reader.nextString();
         // TODO the super source of DateTimeFormatter is broken
 //        return LocalDateTime.parse(text, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         return LocalDateTime.parse(text);
