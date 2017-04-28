@@ -161,6 +161,8 @@
           <version>1.0-rc-6</version>
           <extensions>true</extensions>
           <configuration>
+            <!-- TODO turn this one, probably after GWT supports java.time -->
+            <!--<failOnError>true</failOnError>-->
             <!-- Remove warnings that only appear on OpenShift -->
             <!--<compilerArgs>-XdisableUpdateCheck</compilerArgs>-->
           </configuration>
