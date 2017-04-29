@@ -11,17 +11,11 @@
     </b:Row>
     <b:Row>
       <b:Column size="XS_12">
-        <b.gwt:CellTable bordered="true" condensed="true" striped="true" hover="true" height="300px"
-                         width="100%" ui:field="rosterTable"/>
-        <!--<b:Pagination ui:field="cellTablePagination"/>-->
+        <b.gwt:DataGrid bordered="true" condensed="true" striped="true" hover="true" height="300px"
+                        width="100%" ui:field="rosterTable"/>
+        <b:Pagination ui:field="rosterPagination"/>
       </b:Column>
     </b:Row>
   </b:Container>
-  <!--<b:Container fluid="true">-->
-    <!--<b:Row>-->
-      <!--<b:Column size="MD_4">First Name</b:Column>-->
-      <!--<b:Column size="MD_8">Last Name</b:Column>-->
-    <!--</b:Row>-->
-  <!--</b:Container>-->
 
 </ui:UiBinder>

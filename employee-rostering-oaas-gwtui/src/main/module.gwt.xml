@@ -12,11 +12,14 @@
   <inherits name="com.github.nmorel.gwtjackson.GwtJackson" />
   <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
 
-  <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
+  <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
 
   <entry-point class="org.optaplanner.openshift.employeerostering.gwtui.OptaShiftRosteringEntryPoint"/>
+
 
   <!--&lt;!&ndash; We only use this gwt.xml during development (in production, everything is tied together) &ndash;&gt;-->
   <!--<set-property name="user.agent" value="gecko1_8,safari"/>-->
   <!--<set-property name="locale" value="default"/>-->
+  <!--<extend-property name="locale" values="en"/>-->
+  <!--<set-property-fallback name="locale" value="en"/>-->
 </module>
