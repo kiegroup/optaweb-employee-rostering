@@ -75,6 +75,7 @@ public class RosterGenerator {
 
     private List<Skill> createSkillList(int size) {
         List<Skill> skillList = new ArrayList<>(size);
+        skillNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = skillNameGenerator.generateNextValue();
             skillList.add(new Skill(name));
@@ -84,6 +85,7 @@ public class RosterGenerator {
 
     private List<Spot> createSpotList(int size, List<Skill> skillList) {
         List<Spot> spotList = new ArrayList<>(size);
+        spotNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = spotNameGenerator.generateNextValue();
             spotList.add(new Spot(name, skillList.get(random.nextInt(skillList.size()))));
@@ -115,6 +117,7 @@ public class RosterGenerator {
 
     private List<Employee> createEmployeeList(int size, List<Skill> generalSkillList, List<TimeSlot> timeSlotList) {
         List<Employee> employeeList = new ArrayList<>(size);
+        employeeNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = employeeNameGenerator.generateNextValue();
             LinkedHashSet<Skill> skillSet = new LinkedHashSet<>(extractRandomSubList(generalSkillList, 1.0));
