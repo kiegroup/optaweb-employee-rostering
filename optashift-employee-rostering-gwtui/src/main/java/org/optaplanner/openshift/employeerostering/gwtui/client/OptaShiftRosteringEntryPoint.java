@@ -1,9 +1,9 @@
-package org.optaplanner.openshift.employeerostering.gwtui;
+package org.optaplanner.openshift.employeerostering.gwtui.client;
 
 import com.github.nmorel.gwtjackson.rest.api.RestRequestBuilder;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.dom.client.Document;
-import org.optaplanner.openshift.employeerostering.gwtui.roster.RosterListPanel;
+import org.optaplanner.openshift.employeerostering.gwtui.client.roster.RosterListPanel;
 
 public class OptaShiftRosteringEntryPoint implements EntryPoint {
 

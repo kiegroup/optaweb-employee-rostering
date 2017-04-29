@@ -2,7 +2,7 @@
 <!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.0//EN"
     "http://www.gwtproject.org/doctype/2.8.0/gwt-module.dtd">
 <module rename-to="gwtui">
-  <source path=""/>
+  <source path="client"/>
   <!-- TODO remove me once https://github.com/gwtproject/gwt/issues/611 has been fixed -->
   <super-source path="emulate" />
 
@@ -14,7 +14,7 @@
 
   <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
 
-  <entry-point class="org.optaplanner.openshift.employeerostering.gwtui.OptaShiftRosteringEntryPoint"/>
+  <entry-point class="org.optaplanner.openshift.employeerostering.gwtui.client.OptaShiftRosteringEntryPoint"/>
 
 
   <!--&lt;!&ndash; We only use this gwt.xml during development (in production, everything is tied together) &ndash;&gt;-->

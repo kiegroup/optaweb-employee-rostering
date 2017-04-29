@@ -1,31 +1,21 @@
-package org.optaplanner.openshift.employeerostering.gwtui.roster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 
-import java.util.HashSet;
 import java.util.List;
 
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.ProvidesResize;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.RangeChangeEvent;
 import org.gwtbootstrap3.client.ui.Pagination;
-import org.gwtbootstrap3.client.ui.constants.ButtonType;
-import org.gwtbootstrap3.client.ui.constants.IconType;
-import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
 import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
-import org.optaplanner.openshift.employeerostering.shared.domain.Skill;
 import org.optaplanner.openshift.employeerostering.shared.rest.RosterServiceBuilder;
 
 public class RosterListPanel extends Composite {
