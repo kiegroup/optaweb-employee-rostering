@@ -23,4 +23,4 @@ mvn clean package -Popenshift
 . Create a new JBoss run configuration to a local WildFly instance:
 .. In the _Before launch_ list, remove `Make project`
 .. In the _Before launch_ list, add `Run Maven goal` on the root pom with arguments `clean install -Dgwt.draftCompile`
-.. In the _Deployment_ tab, in _Deploy at startup_, add `employee-rostering-oaas-webapp:war exploded`.
+.. In the _Deployment_ tab, in _Deploy at startup_, add `optashift-employee-rostering-webapp:war exploded`.

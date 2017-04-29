@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.optaplanner.openshift</groupId>
-    <artifactId>employee-rostering-oaas</artifactId>
+    <artifactId>optashift-employee-rostering</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>employee-rostering-oaas-webapp</artifactId>
+  <artifactId>optashift-employee-rostering-webapp</artifactId>
   <packaging>war</packaging>
 
   <name>Employee Rostering as a Service Webapp</name>
@@ -17,17 +17,17 @@
   <dependencies>
     <dependency>
       <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>employee-rostering-oaas-domain</artifactId>
+      <artifactId>optashift-employee-rostering-shared</artifactId>
     </dependency>
     <dependency>
       <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>employee-rostering-oaas-gwtui</artifactId>
+      <artifactId>optashift-employee-rostering-gwtui</artifactId>
       <type>war</type>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>employee-rostering-oaas-service</artifactId>
+      <artifactId>optashift-employee-rostering-server</artifactId>
     </dependency>
     <dependency>
       <groupId>javax</groupId>
@@ -46,7 +46,7 @@
       <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
       <id>openshift</id>
       <build>
-        <finalName>employee-rostering-oaas</finalName>
+        <finalName>optashift-employee-rostering</finalName>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>

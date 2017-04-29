@@ -6,7 +6,7 @@
   <!-- Use JBoss parent so all plugins have a decent base version-->
 
   <groupId>org.optaplanner.openshift</groupId>
-  <artifactId>employee-rostering-oaas</artifactId>
+  <artifactId>optashift-employee-rostering</artifactId>
   <packaging>pom</packaging>
   <version>0.1.0-SNAPSHOT</version>
 
@@ -27,11 +27,11 @@
   </properties>
 
   <modules>
-    <module>employee-rostering-oaas-domain</module>
-    <module>employee-rostering-oaas-domain-gwt</module>
-    <module>employee-rostering-oaas-gwtui</module>
-    <module>employee-rostering-oaas-service</module>
-    <module>employee-rostering-oaas-webapp</module>
+    <module>optashift-employee-rostering-shared</module>
+    <module>optashift-employee-rostering-shared-gwt</module>
+    <module>optashift-employee-rostering-gwtui</module>
+    <module>optashift-employee-rostering-server</module>
+    <module>optashift-employee-rostering-webapp</module>
   </modules>
 
   <dependencyManagement>
@@ -39,37 +39,31 @@
       <!-- Internal -->
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>employee-rostering-oaas-domain</artifactId>
+        <artifactId>optashift-employee-rostering-shared</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>employee-rostering-oaas-domain</artifactId>
+        <artifactId>optashift-employee-rostering-shared</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>employee-rostering-oaas-domain-gwt</artifactId>
+        <artifactId>optashift-employee-rostering-shared-gwt</artifactId>
         <type>gwt-lib</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>employee-rostering-oaas-gwtui</artifactId>
+        <artifactId>optashift-employee-rostering-gwtui</artifactId>
         <type>war</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>employee-rostering-oaas-service</artifactId>
+        <artifactId>optashift-employee-rostering-server</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>employee-rostering-oaas-service</artifactId>
-        <version>${project.version}</version>
-        <classifier>sources</classifier>
       </dependency>
 
       <!-- JEE -->

@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.optaplanner.openshift</groupId>
-    <artifactId>employee-rostering-oaas</artifactId>
+    <artifactId>optashift-employee-rostering</artifactId>
     <version>0.1.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>employee-rostering-oaas-gwtui</artifactId>
+  <artifactId>optashift-employee-rostering-gwtui</artifactId>
   <packaging>gwt-app</packaging>
 
   <name>Employee Rostering as a Service GWT UI</name>
@@ -22,7 +22,7 @@
     </dependency>
     <dependency>
       <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>employee-rostering-oaas-domain-gwt</artifactId>
+      <artifactId>optashift-employee-rostering-shared-gwt</artifactId>
       <type>gwt-lib</type>
     </dependency>
     <!-- GWT -->
