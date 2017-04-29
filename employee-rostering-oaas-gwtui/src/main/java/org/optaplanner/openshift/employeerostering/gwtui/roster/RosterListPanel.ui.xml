@@ -11,7 +11,7 @@
     </b:Row>
     <b:Row>
       <b:Column size="XS_12">
-        <b.gwt:DataGrid bordered="true" condensed="true" striped="true" hover="true" height="300px"
+        <b.gwt:CellTable bordered="true" condensed="true" striped="true" hover="true" height="300px"
                         width="100%" ui:field="rosterTable"/>
         <b:Pagination ui:field="rosterPagination"/>
       </b:Column>

@@ -22,13 +22,13 @@ import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
-import org.gwtbootstrap3.client.ui.gwt.DataGrid;
+import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
 import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
 import org.optaplanner.openshift.employeerostering.shared.domain.Skill;
 import org.optaplanner.openshift.employeerostering.shared.rest.RosterServiceBuilder;
 
-public class RosterListPanel extends Composite implements ProvidesResize {
+public class RosterListPanel extends Composite {
 
     interface RosterListUiBinder extends UiBinder<Widget, RosterListPanel> {}
     private static final RosterListUiBinder uiBinder = GWT.create(RosterListUiBinder.class);
@@ -36,8 +36,9 @@ public class RosterListPanel extends Composite implements ProvidesResize {
     @UiField
     protected ListBox listBox;
 
+    // TODO use DataGrid instead
     @UiField(provided = true)
-    DataGrid<Employee> rosterTable = new DataGrid<>(10);
+    CellTable<Employee> rosterTable = new CellTable<>(10);
     @UiField
     Pagination rosterPagination;
 
@@ -53,29 +54,7 @@ public class RosterListPanel extends Composite implements ProvidesResize {
     protected void initWidget(Widget widget) {
         super.initWidget(widget);
         initRosterTable();
-rosterProvider.getList().add(new Employee("Foo", new HashSet<>()));
-rosterProvider.flush();
-rosterPagination.rebuild(rosterPager);
-        RosterServiceBuilder.getRosterList(new RestCallback<List<Roster>>() {
-            @Override
-            public void onSuccess(List<Roster> rosterList) {
-                for (Roster roster : rosterList) {
-                    listBox.addItem(roster.getEmployeeList().size() + " employees"); // TODO
-                }
-                if (!rosterList.isEmpty()) {
-                    Roster roster = rosterList.get(0);
-                    rosterProvider.getList().addAll(roster.getEmployeeList());
-                    rosterProvider.flush();
-                    rosterPagination.rebuild(rosterPager);
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                listBox.addItem("ERROR " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
-            }
-        });
+        refreshRoster();
     }
 
     private void initRosterTable() {
@@ -106,6 +85,29 @@ rosterPagination.rebuild(rosterPager);
         rosterPager.setDisplay(rosterTable);
         rosterPagination.clear();
         rosterProvider.addDataDisplay(rosterTable);
+    }
+
+    protected void refreshRoster() {
+        RosterServiceBuilder.getRosterList(new RestCallback<List<Roster>>() {
+            @Override
+            public void onSuccess(List<Roster> rosterList) {
+                for (Roster roster : rosterList) {
+                    listBox.addItem(roster.getEmployeeList().size() + " employees"); // TODO
+                }
+                if (!rosterList.isEmpty()) {
+                    Roster roster = rosterList.get(0);
+                    rosterProvider.getList().addAll(roster.getEmployeeList());
+                    rosterProvider.flush();
+                    rosterPagination.rebuild(rosterPager);
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                listBox.addItem("ERROR " + throwable.getMessage());
+                throw new IllegalStateException("REST call failure", throwable);
+            }
+        });
     }
 
 }
