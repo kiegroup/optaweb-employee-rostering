@@ -18,6 +18,10 @@ package org.optaplanner.openshift.employeerostering.shared.domain;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Employee extends AbstractPersistable {
 
     private String name;
