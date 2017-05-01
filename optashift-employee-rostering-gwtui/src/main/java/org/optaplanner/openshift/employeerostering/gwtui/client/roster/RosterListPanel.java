@@ -16,7 +16,7 @@ import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
 import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
-import org.optaplanner.openshift.employeerostering.shared.rest.RosterServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.rest.RosterRestServiceBuilder;
 
 public class RosterListPanel extends Composite {
 
@@ -78,7 +78,7 @@ public class RosterListPanel extends Composite {
     }
 
     protected void refreshRoster() {
-        RosterServiceBuilder.getRosterList(new RestCallback<List<Roster>>() {
+        RosterRestServiceBuilder.getRosterList(new RestCallback<List<Roster>>() {
             @Override
             public void onSuccess(List<Roster> rosterList) {
                 for (Roster roster : rosterList) {

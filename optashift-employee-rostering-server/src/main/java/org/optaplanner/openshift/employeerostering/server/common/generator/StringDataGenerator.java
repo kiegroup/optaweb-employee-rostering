@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.server.generator;
+package org.optaplanner.openshift.employeerostering.server.common.generator;
 
 import java.util.ArrayList;
 import java.util.List;

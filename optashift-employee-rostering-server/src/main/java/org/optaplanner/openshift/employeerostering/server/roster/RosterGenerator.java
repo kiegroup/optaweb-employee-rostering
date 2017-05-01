@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.server.generator;
+package org.optaplanner.openshift.employeerostering.server.roster;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -33,6 +33,7 @@ import org.optaplanner.openshift.employeerostering.shared.domain.Skill;
 import org.optaplanner.openshift.employeerostering.shared.domain.Spot;
 import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlotState;
+import org.optaplanner.openshift.employeerostering.server.common.generator.StringDataGenerator;
 
 public class RosterGenerator {
 
@@ -59,7 +60,7 @@ public class RosterGenerator {
                     "inspector",
                     "analyst");
 
-    protected Random random = new Random(37);
+    private Random random = new Random(37);
 
     public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning) {
         int employeeListSize = spotListSize * 7 / 2;

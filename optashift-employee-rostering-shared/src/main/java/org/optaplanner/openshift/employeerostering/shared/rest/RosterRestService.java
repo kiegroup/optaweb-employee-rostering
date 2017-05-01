@@ -15,11 +15,11 @@ import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @GenRestBuilder
-public interface RosterService {
+public interface RosterRestService {
 
     @GET
     @Path("/{id}")
-    Roster getRoster(@PathParam("id") String id);
+    Roster getRoster(@PathParam("id") Long id);
 
     @GET
     @Path("/")
