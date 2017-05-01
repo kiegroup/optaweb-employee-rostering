@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,37 +16,33 @@
 
 package org.optaplanner.openshift.employeerostering.shared.domain;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.Serializable;
 
-public class Skill extends AbstractPersistable {
+import org.optaplanner.core.api.domain.lookup.PlanningId;
 
-    private String name;
+public abstract class AbstractPersistable implements Serializable {
+
+    @PlanningId
+    protected Long id;
 
     @SuppressWarnings("unused")
-    public Skill() {
+    public AbstractPersistable() {
     }
 
-    public Skill(Long id, String name) {
-        super(id);
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return name;
+    protected AbstractPersistable(Long id) {
+        this.id = id;
     }
 
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
 
-    public String getName() {
-        return name;
+    public Long getId() {
+        return id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setId(Long id) {
+        this.id = id;
     }
 
 }

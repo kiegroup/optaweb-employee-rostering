@@ -16,9 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.shared.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-public class Spot {
+public class Spot extends AbstractPersistable {
 
     private String name;
     private Skill requiredSkill;
@@ -27,10 +25,20 @@ public class Spot {
     public Spot() {
     }
 
-    public Spot(String name, Skill requiredSkill) {
+    public Spot(Long id, String name, Skill requiredSkill) {
+        super(id);
         this.name = name;
         this.requiredSkill = requiredSkill;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    // ************************************************************************
+    // Simple getters and setters
+    // ************************************************************************
 
     public String getName() {
         return name;
@@ -46,11 +54,6 @@ public class Spot {
 
     public void setRequiredSkill(Skill requiredSkill) {
         this.requiredSkill = requiredSkill;
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 
 }

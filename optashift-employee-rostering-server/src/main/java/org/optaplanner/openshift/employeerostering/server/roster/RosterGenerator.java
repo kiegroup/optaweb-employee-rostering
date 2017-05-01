@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
@@ -62,15 +63,24 @@ public class RosterGenerator {
 
     private Random random = new Random(37);
 
+    // All generated data have negative id's so the real ones can start from zero.
+    private AtomicLong rosterIdGenerator = new AtomicLong(-1L);
+    private AtomicLong skillIdGenerator = new AtomicLong(-1L);
+    private AtomicLong spotIdGenerator = new AtomicLong(-1L);
+    private AtomicLong timeSlotIdGenerator = new AtomicLong(-1L);
+    private AtomicLong employeeIdGenerator = new AtomicLong(-1L);
+    private AtomicLong shiftAssignmentIdGenerator = new AtomicLong(-1L);
+
     public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
+        Long id = rosterIdGenerator.getAndDecrement();
         List<Skill> skillList = createSkillList(skillListSize);
         List<Spot> spotList = createSpotList(spotListSize, skillList);
         List<TimeSlot> timeSlotList = createTimeSlotList(timeSlotListSize, continuousPlanning);
         List<Employee> employeeList = createEmployeeList(employeeListSize, skillList, timeSlotList);
         List<ShiftAssignment> shiftAssignmentList = createShiftAssignmentList(spotList, timeSlotList, employeeList, continuousPlanning);
-        return new Roster(skillList, spotList, timeSlotList, employeeList,
+        return new Roster(id, skillList, spotList, timeSlotList, employeeList,
                 shiftAssignmentList);
     }
 
@@ -78,8 +88,9 @@ public class RosterGenerator {
         List<Skill> skillList = new ArrayList<>(size);
         skillNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
+            Long id = skillIdGenerator.getAndDecrement();
             String name = skillNameGenerator.generateNextValue();
-            skillList.add(new Skill(name));
+            skillList.add(new Skill(id, name));
         }
         return skillList;
     }
@@ -88,8 +99,9 @@ public class RosterGenerator {
         List<Spot> spotList = new ArrayList<>(size);
         spotNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
+            Long id = spotIdGenerator.getAndDecrement();
             String name = spotNameGenerator.generateNextValue();
-            spotList.add(new Spot(name, skillList.get(random.nextInt(skillList.size()))));
+            spotList.add(new Spot(id, name, skillList.get(random.nextInt(skillList.size()))));
         }
         return spotList;
     }
@@ -98,9 +110,10 @@ public class RosterGenerator {
         List<TimeSlot> timeSlotList = new ArrayList<>(size);
         LocalDateTime previousEndDateTime = LocalDateTime.of(2017, 2, 1, 6, 0);
         for (int i = 0; i < size; i++) {
+            Long id = timeSlotIdGenerator.getAndDecrement();
             LocalDateTime startDateTime = previousEndDateTime;
             LocalDateTime endDateTime = startDateTime.plusHours(8);
-            TimeSlot timeSlot = new TimeSlot(startDateTime, endDateTime);
+            TimeSlot timeSlot = new TimeSlot(id, startDateTime, endDateTime);
             if (continuousPlanning && i < size / 2) {
                 if (i < size / 4) {
                     timeSlot.setTimeSlotState(TimeSlotState.HISTORY);
@@ -120,9 +133,10 @@ public class RosterGenerator {
         List<Employee> employeeList = new ArrayList<>(size);
         employeeNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
+            Long id = employeeIdGenerator.getAndDecrement();
             String name = employeeNameGenerator.generateNextValue();
             LinkedHashSet<Skill> skillSet = new LinkedHashSet<>(extractRandomSubList(generalSkillList, 1.0));
-            Employee employee = new Employee(name, skillSet);
+            Employee employee = new Employee(id, name, skillSet);
             Set<TimeSlot> unavailableTimeSlotSet = new LinkedHashSet<>(extractRandomSubList(timeSlotList, 0.2));
             employee.setUnavailableTimeSlotSet(unavailableTimeSlotSet);
             employeeList.add(employee);
@@ -147,7 +161,8 @@ public class RosterGenerator {
                     timeSlotIndex++;
                     continue;
                 }
-                ShiftAssignment shiftAssignment = new ShiftAssignment(spot, timeSlot);
+                Long id = shiftAssignmentIdGenerator.getAndDecrement();
+                ShiftAssignment shiftAssignment = new ShiftAssignment(id, spot, timeSlot);
                 if (continuousPlanning) {
                     if (timeSlotIndex < timeSlotList.size() / 2) {
                         List<Employee> availableEmployeeList = employeeList.stream()

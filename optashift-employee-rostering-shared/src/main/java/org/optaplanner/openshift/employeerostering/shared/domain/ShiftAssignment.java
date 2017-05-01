@@ -21,7 +21,7 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.openshift.employeerostering.shared.domain.solver.MovableShiftAssignmentFilter;
 
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftAssignmentFilter.class)
-public class ShiftAssignment {
+public class ShiftAssignment extends AbstractPersistable {
 
     private Spot spot;
     private TimeSlot timeSlot;
@@ -35,10 +35,20 @@ public class ShiftAssignment {
     public ShiftAssignment() {
     }
 
-    public ShiftAssignment(Spot spot, TimeSlot timeSlot) {
+    public ShiftAssignment(Long id, Spot spot, TimeSlot timeSlot) {
+        super(id);
         this.timeSlot = timeSlot;
         this.spot = spot;
     }
+
+    @Override
+    public String toString() {
+        return spot + " " + timeSlot;
+    }
+
+    // ************************************************************************
+    // Simple getters and setters
+    // ************************************************************************
 
     public Spot getSpot() {
         return spot;
@@ -70,11 +80,6 @@ public class ShiftAssignment {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
-    }
-
-    @Override
-    public String toString() {
-        return spot + " " + timeSlot;
     }
 
 }

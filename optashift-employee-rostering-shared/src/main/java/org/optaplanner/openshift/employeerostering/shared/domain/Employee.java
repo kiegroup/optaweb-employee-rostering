@@ -18,7 +18,7 @@ package org.optaplanner.openshift.employeerostering.shared.domain;
 
 import java.util.Set;
 
-public class Employee {
+public class Employee extends AbstractPersistable {
 
     private String name;
     private Set<Skill> skillSet;
@@ -29,10 +29,20 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String name, Set<Skill> skillSet) {
+    public Employee(Long id, String name, Set<Skill> skillSet) {
+        super(id);
         this.name = name;
         this.skillSet = skillSet;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    // ************************************************************************
+    // Simple getters and setters
+    // ************************************************************************
 
     public String getName() {
         return name;
@@ -56,11 +66,6 @@ public class Employee {
 
     public void setUnavailableTimeSlotSet(Set<TimeSlot> unavailableTimeSlotSet) {
         this.unavailableTimeSlotSet = unavailableTimeSlotSet;
-    }
-
-    @Override
-    public String toString() {
-        return name;
     }
 
 }

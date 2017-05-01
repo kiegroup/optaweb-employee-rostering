@@ -25,7 +25,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
-public class TimeSlot {
+public class TimeSlot extends AbstractPersistable {
 
     private LocalDateTime startDateTime;
     private LocalDateTime endDateTime;
@@ -36,10 +36,20 @@ public class TimeSlot {
     public TimeSlot() {
     }
 
-    public TimeSlot(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public TimeSlot(Long id, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        super(id);
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }
+
+    @Override
+    public String toString() {
+        return startDateTime + "-" + endDateTime.toLocalTime();
+    }
+
+    // ************************************************************************
+    // Simple getters and setters
+    // ************************************************************************
 
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -69,11 +79,6 @@ public class TimeSlot {
 
     public void setTimeSlotState(TimeSlotState timeSlotState) {
         this.timeSlotState = timeSlotState;
-    }
-
-    @Override
-    public String toString() {
-        return startDateTime + "-" + endDateTime.toLocalTime();
     }
 
 }

@@ -28,7 +28,7 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 
 @PlanningSolution
-public class Roster {
+public class Roster extends AbstractPersistable {
 
     @ProblemFactCollectionProperty
     private List<Skill> skillList;
@@ -51,14 +51,19 @@ public class Roster {
     public Roster() {
     }
 
-    public Roster(List<Skill> skillList, List<Spot> spotList, List<TimeSlot> timeSlotList, List<Employee> employeeList,
+    public Roster(Long id, List<Skill> skillList, List<Spot> spotList, List<TimeSlot> timeSlotList, List<Employee> employeeList,
             List<ShiftAssignment> shiftAssignmentList) {
+        super(id);
         this.skillList = skillList;
         this.spotList = spotList;
         this.timeSlotList = timeSlotList;
         this.employeeList = employeeList;
         this.shiftAssignmentList = shiftAssignmentList;
     }
+
+    // ************************************************************************
+    // Simple getters and setters
+    // ************************************************************************
 
     public List<Skill> getSkillList() {
         return skillList;
