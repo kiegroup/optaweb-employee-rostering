@@ -34,7 +34,7 @@ public class RosterDao {
     private ConcurrentMap<Long, Roster> idToRosterMap = new ConcurrentHashMap<>();
 
     @PostConstruct
-    public void initializeDatabase() {
+    public void setUpGeneratedData() {
         RosterGenerator rosterGenerator = new RosterGenerator();
         addGeneratedRoster(rosterGenerator.generateRoster(10, 7, false));
 //        addGeneratedRoster(rosterGenerator.generateRoster(10, 28, false));
@@ -67,6 +67,10 @@ public class RosterDao {
             throw new IllegalArgumentException("There is no roster with id (" + id + ").");
         }
         return roster;
+    }
+
+    public void updateRoster(Roster roster) {
+        idToRosterMap.put(roster.getId(), roster);
     }
 
 }

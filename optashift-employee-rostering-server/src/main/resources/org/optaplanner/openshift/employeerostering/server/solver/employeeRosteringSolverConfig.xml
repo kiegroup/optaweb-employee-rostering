@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <!--<environmentMode>FAST_ASSERT</environmentMode>-->
+  <solutionClass>org.optaplanner.openshift.employeerostering.shared.domain.Roster</solutionClass>
+  <entityClass>org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment</entityClass>
+
+  <scoreDirectorFactory>
+    <scoreDrl>org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringScoreRules.drl</scoreDrl>
+  </scoreDirectorFactory>
+
+  <termination>
+    <secondsSpentLimit>30</secondsSpentLimit>
+  </termination>
+</solver>

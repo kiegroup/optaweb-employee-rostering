@@ -20,7 +20,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
+import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverManager;
 import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
 import org.optaplanner.openshift.employeerostering.shared.rest.RosterRestService;
 
@@ -29,14 +29,22 @@ public class RosterRestServiceImpl implements RosterRestService {
     @Inject
     private RosterDao rosterDao;
 
+    @Inject
+    private WannabeSolverManager solverManager;
+
+    @Override
+    public List<Roster> getRosterList() {
+        return rosterDao.getRosterList();
+    }
+
     @Override
     public Roster getRoster(Long id) {
         return rosterDao.getRoster(id);
     }
 
     @Override
-    public List<Roster> getRosterList() {
-        return rosterDao.getRosterList();
+    public void solveRoster(Long id) {
+        solverManager.solve(id);
     }
 
 }
