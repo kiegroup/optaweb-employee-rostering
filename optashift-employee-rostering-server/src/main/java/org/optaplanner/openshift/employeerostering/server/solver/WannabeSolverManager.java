@@ -71,13 +71,13 @@ public class WannabeSolverManager {
                 Solver<Roster> solver = solverFactory.buildSolver();
                 solver.addEventListener(event -> {
                     if (event.isEveryProblemFactChangeProcessed()) {
+                        logger.info("  New best solution found for rosterId ({}).", rosterId);
                         Roster newBestRoster = event.getNewBestSolution();
                         // TODO if this throws an OptimisticLockingException, does it kill the solver?
                         rosterDao.updateRoster(newBestRoster);
                     }
                 });
                 Roster roster = rosterDao.getRoster(rosterId);
-                logger.info("Starting solving for rosterId ({})...", rosterId);
                 try {
                     idToSolverStateMap.put(rosterId, SolverStatus.SOLVING);
                     // TODO No need to store the returned roster because the SolverEventListener already does it?
@@ -85,7 +85,6 @@ public class WannabeSolverManager {
                 } finally {
                     idToSolverStateMap.put(rosterId, SolverStatus.TERMINATED);
                 }
-                logger.info("Finished solving for rosterId ({})...", rosterId);
             } catch (Throwable e) {
                 // TODO handle errors through Thread'sExceptionHandler
                 logger.error("Error solving for rosterId(" + rosterId + ").", e);
