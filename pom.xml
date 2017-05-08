@@ -188,4 +188,26 @@
     </pluginManagement>
   </build>
 
+  <profiles>
+    <profile>
+      <!-- Use this profile for any OpenShift specific customization your app will need. -->
+      <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
+      <id>openshift</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>net.ltgt.gwt.maven</groupId>
+            <artifactId>gwt-maven-plugin</artifactId>
+            <configuration>
+              <!-- Remove warnings that only appear on OpenShift -->
+              <compilerArgs>
+                <arg>-XdisableUpdateCheck</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
 </project>
