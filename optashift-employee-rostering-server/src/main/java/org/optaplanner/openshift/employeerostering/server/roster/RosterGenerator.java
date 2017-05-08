@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
 import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
 import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
-import org.optaplanner.openshift.employeerostering.shared.domain.Skill;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.domain.Spot;
 import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlotState;

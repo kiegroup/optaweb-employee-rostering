@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.shared.domain;
+package org.optaplanner.openshift.employeerostering.shared.skill;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.optaplanner.openshift.employeerostering.shared.domain.AbstractPersistable;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Skill extends AbstractPersistable {

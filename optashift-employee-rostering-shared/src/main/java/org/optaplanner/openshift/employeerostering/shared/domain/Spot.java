@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.shared.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Spot extends AbstractPersistable {
