@@ -170,8 +170,6 @@
           <configuration>
             <!-- TODO turn this one, probably after GWT supports java.time -->
             <!--<failOnError>true</failOnError>-->
-            <!-- Remove warnings that only appear on OpenShift -->
-            <!--<compilerArgs>-XdisableUpdateCheck</compilerArgs>-->
           </configuration>
         </plugin>
         <plugin>
@@ -203,6 +201,11 @@
               <compilerArgs>
                 <arg>-XdisableUpdateCheck</arg>
               </compilerArgs>
+              <!-- Avoid crash "error code 137" on OpenShift -->
+              <localWorkers>1</localWorkers>
+              <jvmArgs>
+                 <arg>-Xmx300m</arg>
+              </jvmArgs>
             </configuration>
           </plugin>
         </plugins>
