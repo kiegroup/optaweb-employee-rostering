@@ -49,7 +49,7 @@
           <compilerArgs>
           	<arg>-XdisableUpdateCheck</arg>
           </compilerArgs>
-          <!-- Avoid crash "error code 137" on OpenShift? -->
+          <!-- Avoid crash "error code 137" on OpenShift -->
           <jvmArgs>
           	 <arg>-Xmx300m</arg>
           </jvmArgs>
