@@ -57,9 +57,9 @@ public class SkillRestServiceImpl implements SkillRestService {
     }
 
     @Override
-    public Boolean removeSkill(Long tenantId, Skill skill) {
+    public Boolean removeSkill(Long tenantId, Long id) {
         List<Skill> skillList = rosterDao.getRoster(tenantId).getSkillList();
-        return skillList.removeIf(s -> s.getId().equals(skill.getId()));
+        return skillList.removeIf(s -> s.getId().equals(id));
     }
 
 }

@@ -37,14 +37,16 @@ public interface SkillRestService {
      * @return never null, the id
      */
     @POST
+    @Path("/add")
     Long addSkill(@PathParam("tenantId") Long tenantId, Skill skill);
 
     /**
-     * @param skill never null
+     * @param id never null
      * @return never null, the id
      */
     @DELETE
-    Boolean removeSkill(@PathParam("tenantId") Long tenantId, Skill skill);
+    @Path("/{id}")
+    Boolean removeSkill(@PathParam("tenantId") Long tenantId, @PathParam("id") Long id);
 
 
 }

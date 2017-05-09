@@ -75,7 +75,7 @@ public class SkillListPanel extends Composite {
             }
         };
         deleteColumn.setFieldUpdater((index, skill, value) -> {
-            SkillRestServiceBuilder.removeSkill(tenantId, skill, new RestCallback<Boolean>() {
+            SkillRestServiceBuilder.removeSkill(tenantId, skill.getId(), new RestCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean removed) {
                     refreshData();

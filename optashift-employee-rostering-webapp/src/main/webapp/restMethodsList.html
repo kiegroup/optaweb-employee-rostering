@@ -6,9 +6,23 @@
 <body>
   <h1>List of REST methods</h1>
   <ul>
-    <li><b><a href="rest/roster/">rest/roster/</a></b> (GET)</li>
-    <li><b><a href="rest/roster/-1">rest/roster/{id}</a></b> (GET)</li>
-    <li><b><a href="rest/roster/-1/solve">rest/roster/{id}/solve</a></b> (POST)</li>
+    <li>
+      <p>Skill</p>
+      <ul>
+        <li><b><a href="rest/tenant/-1/skill">rest/tenant/{tenantId}/skill</a></b> (GET): Get a list of all skills.</li>
+        <li><b><a href="rest/roster/-1/skill/-1">rest/tenant/{tenantId}/skill/{id}</a></b> (GET): Get a skill by id.</li>
+        <li><b><a href="rest/roster/-1/skill/add">rest/tenant/{tenantId}/skill/add</a></b> (POST): Add a skill.</li>
+        <li><b><a href="rest/roster/-1/skill/-1">rest/tenant/{tenantId}/skill/{id}</a></b> (DELETE): Delete a skill.</li>
+      </ul>
+    </li>
+    <li>
+      <p>Roster (TODO remove me)</p>
+      <ul>
+        <li><b><a href="rest/roster/">rest/roster/</a></b> (GET)</li>
+        <li><b><a href="rest/roster/-1">rest/roster/{id}</a></b> (GET)</li>
+        <li><b><a href="rest/roster/-1/solve">rest/roster/{id}/solve</a></b> (POST)</li>
+      </ul>
+    </li>
   </ul>
 </body>
 </html>
