@@ -5,6 +5,8 @@ import java.util.List;
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -14,6 +16,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
@@ -36,6 +39,8 @@ public class SkillListPanel extends Composite {
     CellTable<Skill> table = new CellTable<>(10);
     @UiField
     Pagination pagination;
+    @UiField
+    Button addButton;
 
     private SimplePager pager = new SimplePager();
     private ListDataProvider<Skill> dataProvider = new ListDataProvider<>();
@@ -49,6 +54,9 @@ public class SkillListPanel extends Composite {
     protected void initWidget(Widget widget) {
         super.initWidget(widget);
         initTable();
+        addButton.addClickHandler(event -> {
+            Window.alert("Add");
+        });
         refreshData();
     }
 

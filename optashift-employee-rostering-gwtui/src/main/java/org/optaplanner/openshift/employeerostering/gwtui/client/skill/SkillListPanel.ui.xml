@@ -10,6 +10,9 @@
         <b:Pagination ui:field="pagination"/>
       </b:Column>
     </b:Row>
+    <b:Row>
+      <b:Button type="SUCCESS" icon="PLUS" ui:field="addButton">Add</b:Button>
+    </b:Row>
   </b:Container>
 
 </ui:UiBinder>
