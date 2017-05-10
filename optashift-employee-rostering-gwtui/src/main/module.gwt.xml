@@ -13,6 +13,7 @@
   <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
 
   <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
+  <inherits name="org.jboss.errai.ui.UI" />
 
   <entry-point class="org.optaplanner.openshift.employeerostering.gwtui.client.OptaShiftRosteringEntryPoint"/>
 
