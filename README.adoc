@@ -11,6 +11,7 @@ mvn clean install
 ```
 
 === Like OpenShift
+
 ```
 mvn clean package -Popenshift
 ```
