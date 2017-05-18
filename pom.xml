@@ -182,6 +182,7 @@
           <version>1.0-rc-6</version>
           <extensions>true</extensions>
           <configuration>
+            <style>PRETTY</style>
             <!-- TODO turn this one, probably after GWT supports java.time -->
             <!--<failOnError>true</failOnError>-->
           </configuration>
@@ -211,6 +212,8 @@
             <groupId>net.ltgt.gwt.maven</groupId>
             <artifactId>gwt-maven-plugin</artifactId>
             <configuration>
+              <!-- Minify the JavaScript code to improve latency -->
+              <style>OBFUSCATED</style>
               <!-- Remove warnings that only appear on OpenShift -->
               <compilerArgs>
                 <arg>-XdisableUpdateCheck</arg>

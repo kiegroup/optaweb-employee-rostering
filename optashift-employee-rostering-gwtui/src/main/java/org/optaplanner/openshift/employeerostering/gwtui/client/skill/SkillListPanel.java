@@ -6,19 +6,12 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
@@ -26,8 +19,6 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
-import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
-import org.optaplanner.openshift.employeerostering.shared.rest.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.jboss.errai.ui.client.local.api.IsElement;
@@ -49,13 +40,23 @@ public class SkillListPanel implements IsElement {
 
     // TODO use DataGrid instead
     @DataField
-    private CellTable<Skill> table = new CellTable<>(10);
-    @Inject
+    private CellTable<Skill> table;
     @DataField
     private Pagination pagination;
 
     private SimplePager pager = new SimplePager();
     private ListDataProvider<Skill> dataProvider = new ListDataProvider<>();
+
+    public SkillListPanel() {
+        table = new CellTable<>(10);
+        table.setBordered(true);
+        table.setCondensed(true);
+        table.setStriped(true);
+        table.setHover(true);
+        table.setHeight("100%");
+        table.setWidth("100%");
+        pagination = new Pagination();
+    }
 
     @PostConstruct
     protected void initWidget() {
@@ -121,6 +122,7 @@ public class SkillListPanel implements IsElement {
     public void add(ClickEvent e) {
         String skillName = skillNameTextBox.getValue();
         skillNameTextBox.setValue("");
+        skillNameTextBox.setFocus(true);
         SkillRestServiceBuilder.addSkill(tenantId, new Skill(null, skillName), new RestCallback<Long>() {
             @Override
             public void onSuccess(Long skillId) {
