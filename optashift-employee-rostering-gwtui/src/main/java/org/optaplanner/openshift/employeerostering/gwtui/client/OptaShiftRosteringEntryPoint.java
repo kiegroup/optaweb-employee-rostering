@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import com.github.nmorel.gwtjackson.rest.api.RestRequestBuilder;
 import org.jboss.errai.common.client.dom.Document;
 import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.MenuPanel;
 
 @EntryPoint
 public class OptaShiftRosteringEntryPoint {
@@ -20,21 +20,11 @@ public class OptaShiftRosteringEntryPoint {
     private Document document;
 
     @Inject
-    private SkillListPanel skillListPanel;
+    private MenuPanel menuPanel;
 
     @PostConstruct
     public void onModuleLoad() {
-
-        document.getBody().appendChild(skillListPanel.getElement());
-//        Button b = new Button("Click me 3",
-//                (ClickHandler) event -> Window.alert("OptaShiftRosteringEntryPoint, the new GWT stuff"));
-//        RootPanel.get().add(b);
-
-//        SkillListPanel skillListPanel = new SkillListPanel();
-//        Document.get().getBody().appendChild(skillListPanel.getElement());
-//        RosterListPanel rosterListPanel = new RosterListPanel();
-//        Document.get().getBody().appendChild(rosterListPanel.getElement());
-
+        document.getBody().appendChild(menuPanel.getElement());
     }
 
 }
