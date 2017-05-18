@@ -2,6 +2,9 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.skill;
 
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -14,6 +17,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
@@ -26,37 +30,36 @@ import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
 import org.optaplanner.openshift.employeerostering.shared.rest.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
+import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-public class SkillListPanel extends Composite {
-
-    interface SkillListUiBinder extends UiBinder<Widget, SkillListPanel> {}
-    private static final SkillListUiBinder uiBinder = GWT.create(SkillListUiBinder.class);
+@Templated
+public class SkillListPanel implements IsElement {
 
     private Long tenantId = -1L;
 
+    @Inject
+    @DataField
+    private TextBox skillNameTextBox;
+    @Inject
+    @DataField
+    private Button addButton;
+
     // TODO use DataGrid instead
-    @UiField(provided = true)
-    CellTable<Skill> table = new CellTable<>(10);
-    @UiField
-    Pagination pagination;
-    @UiField
-    Button addButton;
+    @DataField
+    private CellTable<Skill> table = new CellTable<>(10);
+    @Inject
+    @DataField
+    private Pagination pagination;
 
     private SimplePager pager = new SimplePager();
     private ListDataProvider<Skill> dataProvider = new ListDataProvider<>();
 
-    public SkillListPanel() {
-        // sets listBox
-        initWidget(uiBinder.createAndBindUi(this));
-    }
-
-    @Override
-    protected void initWidget(Widget widget) {
-        super.initWidget(widget);
+    @PostConstruct
+    protected void initWidget() {
         initTable();
-        addButton.addClickHandler(event -> {
-            Window.alert("Add");
-        });
         refreshData();
     }
 
@@ -97,13 +100,31 @@ public class SkillListPanel extends Composite {
         dataProvider.addDataDisplay(table);
     }
 
-    protected void refreshData() {
+    private void refreshData() {
         SkillRestServiceBuilder.getSkillList(tenantId, new RestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {
                 dataProvider.setList(skillList);
                 dataProvider.flush();
                 pagination.rebuild(pager);
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Window.alert("Failure calling REST method: " + throwable.getMessage());
+                throw new IllegalStateException("REST call failure", throwable);
+            }
+        });
+    }
+
+    @EventHandler("addButton")
+    public void add(ClickEvent e) {
+        String skillName = skillNameTextBox.getValue();
+        skillNameTextBox.setValue("");
+        SkillRestServiceBuilder.addSkill(tenantId, new Skill(null, skillName), new RestCallback<Long>() {
+            @Override
+            public void onSuccess(Long skillId) {
+                refreshData();
             }
 
             @Override

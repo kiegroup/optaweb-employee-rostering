@@ -44,12 +44,11 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-ui</artifactId>
+      <artifactId>errai-javaee-all</artifactId>
     </dependency>
     <dependency>
-      <!-- TODO remove me, workdaround for https://github.com/errai/errai/issues/258 -->
       <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-data-binding</artifactId>
+      <artifactId>errai-ui</artifactId>
     </dependency>
   </dependencies>
 
