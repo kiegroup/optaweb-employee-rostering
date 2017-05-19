@@ -21,8 +21,9 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.openshift.employeerostering.shared.domain.solver.MovableShiftAssignmentFilter;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftAssignmentFilter.class)
 public class ShiftAssignment extends AbstractPersistable {
 

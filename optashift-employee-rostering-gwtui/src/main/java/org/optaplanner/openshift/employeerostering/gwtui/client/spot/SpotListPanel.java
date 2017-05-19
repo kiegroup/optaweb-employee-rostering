@@ -1,7 +1,6 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.skill;
+package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
 import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -11,6 +10,7 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
@@ -19,33 +19,38 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
-import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
-import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
+import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 @Templated
-public class SkillListPanel implements IsElement {
+public class SpotListPanel implements IsElement {
 
     private Long tenantId = -1L;
 
     @Inject @DataField
-    private TextBox skillNameTextBox;
+    private TextBox spotNameTextBox;
+    @Inject @DataField
+    private ListBox requiredSkillListBox;
+    private List<Skill> requiredSkillListBoxValues;
     @Inject @DataField
     private Button addButton;
 
     // TODO use DataGrid instead
     @DataField
-    private CellTable<Skill> table;
+    private CellTable<Spot> table;
     @DataField
     private Pagination pagination;
 
     private SimplePager pager = new SimplePager();
-    private ListDataProvider<Skill> dataProvider = new ListDataProvider<>();
+    private ListDataProvider<Spot> dataProvider = new ListDataProvider<>();
 
-    public SkillListPanel() {
+    public SpotListPanel() {
         table = new CellTable<>(10);
         table.setBordered(true);
         table.setCondensed(true);
@@ -58,26 +63,50 @@ public class SkillListPanel implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
+        refreshRequiredSkillsListBox();
         initTable();
         refreshTable();
     }
 
-    private void initTable() {
-        table.addColumn(new TextColumn<Skill>() {
+    private void refreshRequiredSkillsListBox() {
+
+        SkillRestServiceBuilder.getSkillList(tenantId, new RestCallback<List<Skill>>() {
             @Override
-            public String getValue(Skill skill) {
-                return skill.getName();
+            public void onSuccess(List<Skill> skillList) {
+                requiredSkillListBoxValues = skillList;
+                requiredSkillListBox.clear();
+                skillList.forEach(skill -> requiredSkillListBox.addItem(skill.getName()));
+            }
+
+            @Override
+            public void onFailure(Throwable throwable) {
+                Window.alert("Failure calling REST method: " + throwable.getMessage());
+                throw new IllegalStateException("REST call failure", throwable);
+            }
+        });
+    }
+
+    private void initTable() {
+        table.addColumn(new TextColumn<Spot>() {
+            @Override
+            public String getValue(Spot spot) {
+                return spot.getName();
             }
         }, "Name");
-
-        Column<Skill, String> deleteColumn = new Column<Skill, String>(new ButtonCell(ButtonType.DANGER, IconType.REMOVE)) {
+        table.addColumn(new TextColumn<Spot>() {
             @Override
-            public String getValue(Skill skill) {
+            public String getValue(Spot spot) {
+                return spot.getRequiredSkill().getName();
+            }
+        }, "Required skill");
+        Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(ButtonType.DANGER, IconType.REMOVE)) {
+            @Override
+            public String getValue(Spot spot) {
                 return "Delete";
             }
         };
-        deleteColumn.setFieldUpdater((index, skill, value) -> {
-            SkillRestServiceBuilder.removeSkill(tenantId, skill.getId(), new RestCallback<Boolean>() {
+        deleteColumn.setFieldUpdater((index, spot, value) -> {
+            SpotRestServiceBuilder.removeSpot(tenantId, spot.getId(), new RestCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean removed) {
                     refreshTable();
@@ -100,10 +129,10 @@ public class SkillListPanel implements IsElement {
     }
 
     private void refreshTable() {
-        SkillRestServiceBuilder.getSkillList(tenantId, new RestCallback<List<Skill>>() {
+        SpotRestServiceBuilder.getSpotList(tenantId, new RestCallback<List<Spot>>() {
             @Override
-            public void onSuccess(List<Skill> skillList) {
-                dataProvider.setList(skillList);
+            public void onSuccess(List<Spot> spotList) {
+                dataProvider.setList(spotList);
                 dataProvider.flush();
                 pagination.rebuild(pager);
             }
@@ -118,12 +147,15 @@ public class SkillListPanel implements IsElement {
 
     @EventHandler("addButton")
     public void add(ClickEvent e) {
-        String skillName = skillNameTextBox.getValue();
-        skillNameTextBox.setValue("");
-        skillNameTextBox.setFocus(true);
-        SkillRestServiceBuilder.addSkill(tenantId, new Skill(null, skillName), new RestCallback<Long>() {
+        String spotName = spotNameTextBox.getValue();
+        spotNameTextBox.setValue("");
+        spotNameTextBox.setFocus(true);
+        int requiredSkillIndex = requiredSkillListBox.getSelectedIndex();
+        Skill requiredSkill = requiredSkillIndex < 0 ? null : requiredSkillListBoxValues.get(requiredSkillIndex);
+
+        SpotRestServiceBuilder.addSpot(tenantId, new Spot(null, spotName, requiredSkill), new RestCallback<Long>() {
             @Override
-            public void onSuccess(Long skillId) {
+            public void onSuccess(Long spotId) {
                 refreshTable();
             }
 

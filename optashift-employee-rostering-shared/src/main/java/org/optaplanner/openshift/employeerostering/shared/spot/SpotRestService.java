@@ -1,28 +1,26 @@
-package org.optaplanner.openshift.employeerostering.shared.skill;
+package org.optaplanner.openshift.employeerostering.shared.spot;
 
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
-import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
 
-@Path("/tenant/{tenantId}/skill")
+@Path("/tenant/{tenantId}/spot")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @GenRestBuilder
-public interface SkillRestService {
+public interface SpotRestService {
 
     @GET
     @Path("/")
-    List<Skill> getSkillList(@PathParam("tenantId") Long tenantId);
+    List<Spot> getSpotList(@PathParam("tenantId") Long tenantId);
 
     /**
      * @param id never null
@@ -30,15 +28,15 @@ public interface SkillRestService {
      */
     @GET
     @Path("/{id}")
-    Skill getSkill(@PathParam("tenantId") Long tenantId, @PathParam("id") Long id);
+    Spot getSpot(@PathParam("tenantId") Long tenantId, @PathParam("id") Long id);
 
     /**
-     * @param skill never null
+     * @param spot never null
      * @return never null, the id
      */
     @POST
     @Path("/add")
-    Long addSkill(@PathParam("tenantId") Long tenantId, Skill skill);
+    Long addSpot(@PathParam("tenantId") Long tenantId, Spot spot);
 
     /**
      * @param id never null
@@ -46,6 +44,6 @@ public interface SkillRestService {
      */
     @DELETE
     @Path("/{id}")
-    Boolean removeSkill(@PathParam("tenantId") Long tenantId, @PathParam("id") Long id);
+    Boolean removeSpot(@PathParam("tenantId") Long tenantId, @PathParam("id") Long id);
 
 }
