@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+  <deployment>
+    <!--
+      Exclude WildFly default's logging that ignores the logback.xml file which prepends the classname
+      which messes up indentation, which making the OptaPlanner logs unreadable.
+    -->
+    <exclude-subsystems>
+      <subsystem name="logging" />
+    </exclude-subsystems>
+  </deployment>
+</jboss-deployment-structure>
