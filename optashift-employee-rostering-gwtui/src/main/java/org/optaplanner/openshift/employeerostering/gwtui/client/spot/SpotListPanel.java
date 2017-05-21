@@ -69,7 +69,6 @@ public class SpotListPanel implements IsElement {
     }
 
     private void refreshRequiredSkillsListBox() {
-
         SkillRestServiceBuilder.getSkillList(tenantId, new RestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {

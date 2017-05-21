@@ -1,103 +1,163 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
+import org.gwtbootstrap3.client.ui.constants.ButtonType;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
-import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
-import org.optaplanner.openshift.employeerostering.shared.rest.RosterRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlot;
+import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
+import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
-public class RosterListPanel extends Composite {
+@Templated
+public class RosterListPanel implements IsElement {
 
-    interface RosterListUiBinder extends UiBinder<Widget, RosterListPanel> {}
-    private static final RosterListUiBinder uiBinder = GWT.create(RosterListUiBinder.class);
+    private Long tenantId = -1L;
 
-    @UiField
-    protected ListBox listBox;
+    @Inject @DataField
+    private Button refreshButton;
+    @Inject @DataField
+    private Button solveButton;
 
     // TODO use DataGrid instead
-    @UiField(provided = true)
-    CellTable<Employee> rosterTable = new CellTable<>(10);
-    @UiField
-    Pagination rosterPagination;
+    @DataField
+    private CellTable<Employee> table;
+    @DataField
+    private Pagination pagination;
 
-    private SimplePager rosterPager = new SimplePager();
-    private ListDataProvider<Employee> rosterProvider = new ListDataProvider<>();
+    private SimplePager pager = new SimplePager();
+    private ListDataProvider<Employee> dataProvider = new ListDataProvider<>();
+
+    private List<TimeSlot> timeSlotList;
+    private Map<TimeSlot, Map<Employee, List<ShiftAssignment>>> shiftAssignmentMap;
 
     public RosterListPanel() {
-        // sets listBox
-        initWidget(uiBinder.createAndBindUi(this));
+        table = new CellTable<>(10);
+        table.setBordered(true);
+        table.setCondensed(true);
+        table.setStriped(true);
+        table.setHover(true);
+        table.setHeight("100%");
+        table.setWidth("100%");
+        pagination = new Pagination();
     }
 
-    @Override
-    protected void initWidget(Widget widget) {
-        super.initWidget(widget);
-        initRosterTable();
-        refreshRoster();
+    @PostConstruct
+    protected void initWidget() {
+        initTable();
+        refreshTable();
     }
 
-    private void initRosterTable() {
-        rosterTable.addColumn(new TextColumn<Employee>() {
+    private void initTable() {
+        table.addColumn(new TextColumn<Employee>() {
             @Override
             public String getValue(Employee employee) {
-                return String.valueOf(employee.getName());
+                return employee.getName();
             }
-        }, "Name");
-        rosterTable.addColumn(new TextColumn<Employee>() {
-            @Override
-            public String getValue(Employee employee) {
-                return String.valueOf(employee.getSkillSet().size());
-            }
-        }, "# skills");
+        }, "Employee");
+        for (int i = 0; i < 10; i++) {
+            int timeSlotIndex = i;
+            table.addColumn(new TextColumn<Employee>() {
+                @Override
+                public String getValue(Employee employee) {
+                    if (timeSlotList == null || timeSlotIndex >= timeSlotList.size()) {
+                        return "No timeslot";
+                    }
+                    TimeSlot timeSlot = timeSlotList.get(timeSlotIndex);
+                    List<ShiftAssignment> shiftAssignmentList = shiftAssignmentMap
+                            .get(timeSlot).get(employee);
+                    if (shiftAssignmentList == null) {
+                        return "Free";
+                    }
+                    return shiftAssignmentList.stream().map(shiftAssignment -> shiftAssignment.getSpot().getName())
+                            .collect(Collectors.joining(", "));
+                }
+            }, "Timeslot " + timeSlotIndex);
+        }
+        table.addRangeChangeHandler(event -> pagination.rebuild(pager));
 
-//        final Column<Employee, String> col4 = new Column<Employee, String>(new ButtonCell(ButtonType.PRIMARY, IconType.GITHUB)) {
-//            @Override
-//            public String getValue(Employee object) {
-//                return "Click Me";
-//            }
-//        };
-//        col4.setFieldUpdater((index, object, value) -> Window.alert("Clicked!"));
-//        rosterTable.addColumn(col4, "Buttons");
-
-        rosterTable.addRangeChangeHandler(event -> rosterPagination.rebuild(rosterPager));
-
-        rosterPager.setDisplay(rosterTable);
-        rosterPagination.clear();
-        rosterProvider.addDataDisplay(rosterTable);
+        pager.setDisplay(table);
+        pagination.clear();
+        dataProvider.addDataDisplay(table);
     }
 
-    protected void refreshRoster() {
-        RosterRestServiceBuilder.getRosterList(new RestCallback<List<Roster>>() {
+    private void refreshTable() {
+        RosterRestServiceBuilder.getRoster(tenantId, new RestCallback<Roster>() {
             @Override
-            public void onSuccess(List<Roster> rosterList) {
-                for (Roster roster : rosterList) {
-                    listBox.addItem(roster.getEmployeeList().size() + " employees"); // TODO
+            public void onSuccess(Roster roster) {
+                List<Employee> employeeList = roster.getEmployeeList();
+                timeSlotList = roster.getTimeSlotList();
+                shiftAssignmentMap = new LinkedHashMap<>(timeSlotList.size());
+                timeSlotList.forEach(timeSlot -> shiftAssignmentMap.put(
+                        timeSlot, new LinkedHashMap<>(employeeList.size())));
+                for (ShiftAssignment shiftAssignment : roster.getShiftAssignmentList()) {
+                    Map<Employee, List<ShiftAssignment>> subMap = shiftAssignmentMap.get(shiftAssignment.getTimeSlot());
+                    Employee employee = shiftAssignment.getEmployee();
+                    if (employee != null) {
+                        // GWT does not support computeIfAbsent
+                        List<ShiftAssignment> shiftAssignmentList = subMap.get(employee);
+                        if (shiftAssignmentList == null) {
+                            shiftAssignmentList = new ArrayList<>(2);
+                            subMap.put(employee, shiftAssignmentList);
+                        }
+                        shiftAssignmentList.add(shiftAssignment);
+                    }
                 }
-                if (!rosterList.isEmpty()) {
-                    Roster roster = rosterList.get(0);
-                    rosterProvider.getList().addAll(roster.getEmployeeList());
-                    rosterProvider.flush();
-                    rosterPagination.rebuild(rosterPager);
-                }
+                dataProvider.setList(roster.getEmployeeList());
+                dataProvider.flush();
+                pagination.rebuild(pager);
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-                listBox.addItem("ERROR " + throwable.getMessage());
+                Window.alert("Failure calling REST method: " + throwable.getMessage());
                 throw new IllegalStateException("REST call failure", throwable);
             }
         });
+    }
+
+    @EventHandler("refreshButton")
+    public void refresh(ClickEvent e) {
+        refreshTable();
+    }
+
+    @EventHandler("solveButton")
+    public void solve(ClickEvent e) {
+        RosterRestServiceBuilder.solveRoster(tenantId);
     }
 
 }

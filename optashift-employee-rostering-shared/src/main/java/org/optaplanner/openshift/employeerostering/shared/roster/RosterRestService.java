@@ -1,6 +1,5 @@
-package org.optaplanner.openshift.employeerostering.shared.rest;
+package org.optaplanner.openshift.employeerostering.shared.roster;
 
-import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,24 +9,21 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
-import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
 
-@Path("/roster")
+@Path("/tenant/{tenantId}/roster")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @GenRestBuilder
 public interface RosterRestService {
-
+    /**
+     * @return never null, the id
+     */
     @GET
     @Path("/")
-    List<Roster> getRosterList();
-
-    @GET
-    @Path("/{id}")
-    Roster getRoster(@PathParam("id") Long id);
+    Roster getRoster(@PathParam("tenantId") Long tenantId);
 
     @POST
-    @Path("/{id}/solve")
-    void solveRoster(@PathParam("id") Long id);
+    @Path("/solve")
+    void solveRoster(@PathParam("tenantId") Long tenantId);
 
 }

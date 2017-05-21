@@ -18,8 +18,6 @@ package org.optaplanner.openshift.employeerostering.server.solver;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
@@ -29,7 +27,7 @@ import javax.inject.Inject;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
-import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
+import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

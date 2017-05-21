@@ -18,7 +18,7 @@ package org.optaplanner.openshift.employeerostering.shared.domain.solver;
 
 import org.optaplanner.core.impl.heuristic.selector.common.decorator.SelectionFilter;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
+import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
 import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlotState;
 

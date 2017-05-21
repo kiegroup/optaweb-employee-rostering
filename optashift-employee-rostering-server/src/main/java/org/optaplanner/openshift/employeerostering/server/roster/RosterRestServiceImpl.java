@@ -16,13 +16,11 @@
 
 package org.optaplanner.openshift.employeerostering.server.roster;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverManager;
-import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
-import org.optaplanner.openshift.employeerostering.shared.rest.RosterRestService;
+import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 
 public class RosterRestServiceImpl implements RosterRestService {
 
@@ -33,18 +31,13 @@ public class RosterRestServiceImpl implements RosterRestService {
     private WannabeSolverManager solverManager;
 
     @Override
-    public List<Roster> getRosterList() {
-        return rosterDao.getRosterList();
+    public Roster getRoster(Long tenantId) {
+        return rosterDao.getRoster(tenantId);
     }
 
     @Override
-    public Roster getRoster(Long id) {
-        return rosterDao.getRoster(id);
-    }
-
-    @Override
-    public void solveRoster(Long id) {
-        solverManager.solve(id);
+    public void solveRoster(Long tenantId) {
+        solverManager.solve(tenantId);
     }
 
 }

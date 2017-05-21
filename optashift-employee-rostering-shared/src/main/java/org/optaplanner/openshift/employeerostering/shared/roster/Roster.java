@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.shared.domain;
+package org.optaplanner.openshift.employeerostering.shared.roster;
 
 import java.util.List;
 
@@ -24,6 +24,10 @@ import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
+import org.optaplanner.openshift.employeerostering.shared.domain.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
+import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 

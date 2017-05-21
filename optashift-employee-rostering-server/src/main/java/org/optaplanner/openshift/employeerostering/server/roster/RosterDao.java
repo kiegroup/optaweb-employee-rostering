@@ -20,12 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 
-import org.optaplanner.openshift.employeerostering.shared.domain.Roster;
+import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 
 @ApplicationScoped
 public class RosterDao {
