@@ -157,7 +157,7 @@ public class RosterListPanel implements IsElement {
 
     @EventHandler("solveButton")
     public void solve(ClickEvent e) {
-        RosterRestServiceBuilder.solveRoster(tenantId);
+        RosterRestServiceBuilder.solveRoster(tenantId).send();
     }
 
 }

@@ -85,7 +85,7 @@ public class WannabeSolverManager {
                 }
             } catch (Throwable e) {
                 // TODO handle errors through Thread'sExceptionHandler
-                logger.error("Error solving for rosterId(" + rosterId + ").", e);
+                logger.error("Error solving for rosterId (" + rosterId + ").", e);
             }
         });
     }
