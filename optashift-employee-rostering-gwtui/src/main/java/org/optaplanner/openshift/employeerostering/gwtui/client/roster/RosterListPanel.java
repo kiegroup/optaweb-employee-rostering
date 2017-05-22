@@ -10,24 +10,13 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
-import org.gwtbootstrap3.client.ui.constants.ButtonType;
-import org.gwtbootstrap3.client.ui.constants.IconType;
-import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -38,10 +27,6 @@ import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment
 import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
-import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 @Templated
 public class RosterListPanel implements IsElement {
@@ -63,7 +48,7 @@ public class RosterListPanel implements IsElement {
     private ListDataProvider<Employee> dataProvider = new ListDataProvider<>();
 
     private List<TimeSlot> timeSlotList;
-    private Map<TimeSlot, Map<Employee, List<ShiftAssignment>>> shiftAssignmentMap;
+    private Map<Long, Map<Long, List<ShiftAssignment>>> timeSlotIdToEmployeeIdToShiftAssignmentMap;
 
     public RosterListPanel() {
         table = new CellTable<>(10);
@@ -98,8 +83,8 @@ public class RosterListPanel implements IsElement {
                         return "No timeslot";
                     }
                     TimeSlot timeSlot = timeSlotList.get(timeSlotIndex);
-                    List<ShiftAssignment> shiftAssignmentList = shiftAssignmentMap
-                            .get(timeSlot).get(employee);
+                    List<ShiftAssignment> shiftAssignmentList = timeSlotIdToEmployeeIdToShiftAssignmentMap
+                            .get(timeSlot.getId()).get(employee.getId());
                     if (shiftAssignmentList == null) {
                         return "Free";
                     }
@@ -121,18 +106,21 @@ public class RosterListPanel implements IsElement {
             public void onSuccess(Roster roster) {
                 List<Employee> employeeList = roster.getEmployeeList();
                 timeSlotList = roster.getTimeSlotList();
-                shiftAssignmentMap = new LinkedHashMap<>(timeSlotList.size());
-                timeSlotList.forEach(timeSlot -> shiftAssignmentMap.put(
-                        timeSlot, new LinkedHashMap<>(employeeList.size())));
+                timeSlotIdToEmployeeIdToShiftAssignmentMap = new LinkedHashMap<>(timeSlotList.size());
+                for (TimeSlot timeSlot : timeSlotList) {
+                    timeSlotIdToEmployeeIdToShiftAssignmentMap.put(timeSlot.getId(),
+                            new LinkedHashMap<>(employeeList.size()));
+                }
                 for (ShiftAssignment shiftAssignment : roster.getShiftAssignmentList()) {
-                    Map<Employee, List<ShiftAssignment>> subMap = shiftAssignmentMap.get(shiftAssignment.getTimeSlot());
+                    TimeSlot timeSlot = shiftAssignment.getTimeSlot();
+                    Map<Long, List<ShiftAssignment>> subMap = timeSlotIdToEmployeeIdToShiftAssignmentMap.get(timeSlot.getId());
                     Employee employee = shiftAssignment.getEmployee();
                     if (employee != null) {
+                        List<ShiftAssignment> shiftAssignmentList = subMap.get(employee.getId());
                         // GWT does not support computeIfAbsent
-                        List<ShiftAssignment> shiftAssignmentList = subMap.get(employee);
                         if (shiftAssignmentList == null) {
                             shiftAssignmentList = new ArrayList<>(2);
-                            subMap.put(employee, shiftAssignmentList);
+                            subMap.put(employee.getId(), shiftAssignmentList);
                         }
                         shiftAssignmentList.add(shiftAssignment);
                     }
