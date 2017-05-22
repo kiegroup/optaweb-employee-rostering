@@ -17,6 +17,65 @@
 package org.optaplanner.openshift.employeerostering.server.solver;
     dialect "java"
 
+import java.time.temporal.ChronoUnit;
+
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
+import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
+import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlot;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
+import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 global HardSoftScoreHolder scoreHolder;
+
+// ############################################################################
+// Hard constraints
+// ############################################################################
+
+rule "Required skill for a shift"
+    when
+        ShiftAssignment(
+                employee != null,
+                !getEmployee().getSkillSet().contains(getSpot().getRequiredSkill()))
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -100);
+end
+
+rule "Unavailable time slots for an employee"
+    when
+        ShiftAssignment(
+                employee != null,
+                getEmployee().getUnavailableTimeSlotSet().contains(getTimeSlot()))
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -50);
+end
+
+rule "At most one shift assignment per day per employee"
+    when
+        $s : ShiftAssignment(
+                employee != null,
+                $e : employee,
+                $leftDay : getTimeSlot().getStartDateTime().toLocalDate())
+        ShiftAssignment(
+                employee == $e,
+                getTimeSlot().getStartDateTime().toLocalDate() == $leftDay,
+                this != $s)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -10);
+end
+
+rule "No 2 shifts within 10 hours from each other"
+    when
+        $s : ShiftAssignment(
+                employee != null,
+                $e : employee,
+                $leftEndDateTime : getTimeSlot().getEndDateTime())
+        ShiftAssignment(
+                employee == $e,
+                $leftEndDateTime <= getTimeSlot().getEndDateTime(),
+                $leftEndDateTime.until(getTimeSlot().getStartDateTime(), ChronoUnit.HOURS) < 10,
+                this != $s)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
