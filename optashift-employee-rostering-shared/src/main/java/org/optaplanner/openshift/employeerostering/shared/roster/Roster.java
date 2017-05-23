@@ -20,16 +20,22 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
+import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.domain.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
 import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
 import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.persistence.jackson.api.score.ScoreJacksonJsonSerializer;
+import org.optaplanner.persistence.jackson.api.score.buildin.hardsoft.HardSoftScoreJacksonJsonDeserializer;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @PlanningSolution
@@ -48,10 +54,10 @@ public class Roster extends AbstractPersistable {
     @PlanningEntityCollectionProperty
     private List<ShiftAssignment> shiftAssignmentList;
 
-//    @JsonSerialize(using = ScoreJacksonJsonSerializer.class)
-//    @JsonDeserialize(using = HardSoftScoreJacksonJsonDeserializer.class)
-//    @PlanningScore
-//    private HardSoftScore score = null;
+    @JsonSerialize(using = ScoreJacksonJsonSerializer.class)
+    @JsonDeserialize(using = HardSoftScoreJacksonJsonDeserializer.class)
+    @PlanningScore
+    private HardSoftScore score = null;
 
     @SuppressWarnings("unused")
     public Roster() {
@@ -111,12 +117,12 @@ public class Roster extends AbstractPersistable {
         this.shiftAssignmentList = shiftAssignmentList;
     }
 
-//    public HardSoftScore getScore() {
-//        return score;
-//    }
-//
-//    public void setScore(HardSoftScore score) {
-//        this.score = score;
-//    }
+    public HardSoftScore getScore() {
+        return score;
+    }
+
+    public void setScore(HardSoftScore score) {
+        this.score = score;
+    }
 
 }

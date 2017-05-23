@@ -8,7 +8,8 @@
 
   <inherits name="com.google.gwt.user.User"/>
 
-  <extend-configuration-property name="gwtjackson.configuration.extension" value="org.optaplanner.openshift.employeerostering.gwtui.rebind.JavaTimeGwtJacksonConfiguration" />
+  <extend-configuration-property name="gwtjackson.configuration.extension"
+      value="org.optaplanner.openshift.employeerostering.gwtui.rebind.OptaShiftRosteringGwtJacksonConfiguration" />
   <inherits name="com.github.nmorel.gwtjackson.GwtJackson" />
   <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
 
