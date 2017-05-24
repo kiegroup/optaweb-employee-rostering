@@ -121,7 +121,7 @@ public class SkillListPanel implements IsElement {
         String skillName = skillNameTextBox.getValue();
         skillNameTextBox.setValue("");
         skillNameTextBox.setFocus(true);
-        SkillRestServiceBuilder.addSkill(tenantId, new Skill(null, skillName), new RestCallback<Long>() {
+        SkillRestServiceBuilder.addSkill(tenantId, new Skill(skillName), new RestCallback<Long>() {
             @Override
             public void onSuccess(Long skillId) {
                 refreshTable();

@@ -20,7 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
-import org.optaplanner.openshift.employeerostering.shared.domain.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestService;
 

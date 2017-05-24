@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 
@@ -32,9 +33,11 @@ public class RosterDao {
     // TODO do not fake a database, but connect to one
     private ConcurrentMap<Long, Roster> idToRosterMap = new ConcurrentHashMap<>();
 
+    @Inject
+    private RosterGenerator rosterGenerator;
+
     @PostConstruct
     public void setUpGeneratedData() {
-        RosterGenerator rosterGenerator = new RosterGenerator();
         addGeneratedRoster(rosterGenerator.generateRoster(10, 7, false));
 //        addGeneratedRoster(rosterGenerator.generateRoster(10, 28, false));
 //        addGeneratedRoster(rosterGenerator.generateRoster(20, 28, false));

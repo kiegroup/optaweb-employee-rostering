@@ -16,10 +16,9 @@
 
 package org.optaplanner.openshift.employeerostering.shared.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.domain.solver.MovableShiftAssignmentFilter;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 

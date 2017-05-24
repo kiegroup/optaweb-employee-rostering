@@ -18,9 +18,12 @@ package org.optaplanner.openshift.employeerostering.server.skill;
 
 import java.util.List;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
-import org.optaplanner.openshift.employeerostering.shared.domain.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService;
 
@@ -29,37 +32,37 @@ public class SkillRestServiceImpl implements SkillRestService {
     @Inject
     private RosterDao rosterDao;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Override
+    @Transactional
     public List<Skill> getSkillList(Long tenantId) {
-        List<Skill> skillList = rosterDao.getRoster(tenantId).getSkillList();
-        return skillList;
+        return entityManager.createNamedQuery("Skill.findAll", Skill.class).getResultList();
     }
 
     @Override
+    @Transactional
     public Skill getSkill(Long tenantId, Long id) {
-        List<Skill> skillList = rosterDao.getRoster(tenantId).getSkillList();
-        return skillList.stream()
-                .filter(skill -> skill.getId().equals(id))
-                .findFirst().orElse(null);
+        return entityManager.find(Skill.class, id);
     }
 
     @Override
+    @Transactional
     public Long addSkill(Long tenantId, Skill skill) {
-        List<Skill> skillList = rosterDao.getRoster(tenantId).getSkillList();
-        if (skill.getId() != null) {
-            throw new IllegalArgumentException("The skill (" + skill
-                    + ") to add already has an id (" + skill.getId() + ").");
-        }
-        long skillId = skillList.stream().mapToLong(AbstractPersistable::getId).max().orElse(0L) + 1L;
-        skill.setId(skillId);
-        skillList.add(skill);
-        return skillId;
+        entityManager.persist(skill);
+        return skill.getId();
     }
 
     @Override
+    @Transactional
     public Boolean removeSkill(Long tenantId, Long id) {
-        List<Skill> skillList = rosterDao.getRoster(tenantId).getSkillList();
-        return skillList.removeIf(s -> s.getId().equals(id));
+        Skill skill = entityManager.find(Skill.class, id);
+        if (skill == null) {
+            return false;
+        }
+        entityManager.remove(skill);
+        return true;
     }
 
 }

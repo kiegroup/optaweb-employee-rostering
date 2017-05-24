@@ -16,23 +16,30 @@
 
 package org.optaplanner.openshift.employeerostering.shared.skill;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.optaplanner.openshift.employeerostering.shared.domain.AbstractPersistable;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
+@Entity
+@NamedQueries({
+        @NamedQuery(name = "Skill.findAll", query = "SELECT s FROM Skill s"),
+})
 public class Skill extends AbstractPersistable {
 
+    @NotNull
+    @Size(max = 120)
     private String name;
 
     @SuppressWarnings("unused")
     public Skill() {
     }
 
-    public Skill(Long id, String name) {
-        super(id);
+    public Skill(String name) {
         this.name = name;
     }
 
