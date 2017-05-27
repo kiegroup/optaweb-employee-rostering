@@ -19,6 +19,7 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -47,6 +48,9 @@ public class MenuPanel implements IsElement {
     @Inject
     private RosterListPanel rosterListPanel;
 
+    @Inject @DataField
+    private Div content;
+
     public MenuPanel() {
     }
 
@@ -56,17 +60,20 @@ public class MenuPanel implements IsElement {
 
     @EventHandler("skillsAnchor")
     public void showSkills(ClickEvent e) {
-        getElement().appendChild(skillListPanel.getElement());
+        content.removeChild(content.getFirstChild());
+        content.appendChild(skillListPanel.getElement());
     }
 
     @EventHandler("spotsAnchor")
     public void showSpots(ClickEvent e) {
-        getElement().appendChild(spotListPanel.getElement());
+        content.removeChild(content.getFirstChild());
+        content.appendChild(spotListPanel.getElement());
     }
 
     @EventHandler("rosterAnchor")
     public void showRoster(ClickEvent e) {
-        getElement().appendChild(rosterListPanel.getElement());
+        content.removeChild(content.getFirstChild());
+        content.appendChild(rosterListPanel.getElement());
     }
 
 }
