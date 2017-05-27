@@ -16,21 +16,36 @@
 
 package org.optaplanner.openshift.employeerostering.shared.spot;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
+@Entity
+@NamedQueries({
+        @NamedQuery(name = "Spot.findAll", query = "SELECT s FROM Spot s WHERE s.tenantId = :tenantId"),
+})
 public class Spot extends AbstractPersistable {
 
+    @NotNull
+    @Size(max = 120)
     private String name;
+    @ManyToOne(fetch = FetchType.EAGER)
     private Skill requiredSkill;
 
     @SuppressWarnings("unused")
     public Spot() {
     }
 
-    public Spot(Long id, String name, Skill requiredSkill) {
-        super(id);
+    public Spot(Integer tenantId, String name, Skill requiredSkill) {
+        super(tenantId);
         this.name = name;
         this.requiredSkill = requiredSkill;
     }

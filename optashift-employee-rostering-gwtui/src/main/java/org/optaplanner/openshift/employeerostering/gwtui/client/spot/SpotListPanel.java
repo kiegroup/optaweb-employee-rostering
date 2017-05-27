@@ -152,7 +152,7 @@ public class SpotListPanel implements IsElement {
         int requiredSkillIndex = requiredSkillListBox.getSelectedIndex();
         Skill requiredSkill = requiredSkillIndex < 0 ? null : requiredSkillListBoxValues.get(requiredSkillIndex);
 
-        SpotRestServiceBuilder.addSpot(tenantId, new Spot(null, spotName, requiredSkill), new RestCallback<Long>() {
+        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, requiredSkill), new RestCallback<Long>() {
             @Override
             public void onSuccess(Long spotId) {
                 refreshTable();

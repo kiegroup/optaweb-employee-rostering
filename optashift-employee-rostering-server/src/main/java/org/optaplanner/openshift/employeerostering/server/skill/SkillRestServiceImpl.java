@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.server.skill;
 
 import java.util.List;
+import java.util.Objects;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -26,6 +27,7 @@ import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 public class SkillRestServiceImpl implements SkillRestService {
 
@@ -42,12 +44,15 @@ public class SkillRestServiceImpl implements SkillRestService {
     @Override
     @Transactional
     public Skill getSkill(Integer tenantId, Long id) {
-        return entityManager.find(Skill.class, id);
+        Skill skill = entityManager.find(Skill.class, id);
+        validateTenantIdParameter(tenantId, skill);
+        return skill;
     }
 
     @Override
     @Transactional
     public Long addSkill(Integer tenantId, Skill skill) {
+        validateTenantIdParameter(tenantId, skill);
         entityManager.persist(skill);
         return skill.getId();
     }
@@ -59,8 +64,16 @@ public class SkillRestServiceImpl implements SkillRestService {
         if (skill == null) {
             return false;
         }
+        validateTenantIdParameter(tenantId, skill);
         entityManager.remove(skill);
         return true;
+    }
+
+    private void validateTenantIdParameter(Integer tenantId, Skill skill) {
+        if (!Objects.equals(skill.getTenantId(), tenantId)) {
+            throw new IllegalStateException("The tenantId (" + tenantId
+                    + ") does not match the skill (" + skill + ")'s tenantId (" + skill.getTenantId() + ").");
+        }
     }
 
 }

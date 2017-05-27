@@ -17,49 +17,58 @@
 package org.optaplanner.openshift.employeerostering.server.spot;
 
 import java.util.List;
+import java.util.Objects;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestService;
 
 public class SpotRestServiceImpl implements SpotRestService {
 
-    @Inject
-    private RosterDao rosterDao;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public List<Spot> getSpotList(Integer tenantId) {
-        List<Spot> spotList = rosterDao.getRoster(tenantId).getSpotList();
-        return spotList;
+        return entityManager.createNamedQuery("Spot.findAll", Spot.class)
+                .setParameter("tenantId", tenantId).getResultList();
     }
 
     @Override
     public Spot getSpot(Integer tenantId, Long id) {
-        List<Spot> spotList = rosterDao.getRoster(tenantId).getSpotList();
-        return spotList.stream()
-                .filter(spot -> spot.getId().equals(id))
-                .findFirst().orElse(null);
+        Spot spot = entityManager.find(Spot.class, id);
+        validateTenantIdParameter(tenantId, spot);
+        return spot;
     }
 
     @Override
     public Long addSpot(Integer tenantId, Spot spot) {
-        List<Spot> spotList = rosterDao.getRoster(tenantId).getSpotList();
-        if (spot.getId() != null) {
-            throw new IllegalArgumentException("The spot (" + spot
-                    + ") to add already has an id (" + spot.getId() + ").");
-        }
-        long spotId = spotList.stream().mapToLong(AbstractPersistable::getId).max().orElse(0L) + 1L;
-        spot.setId(spotId);
-        spotList.add(spot);
-        return spotId;
+        validateTenantIdParameter(tenantId, spot);
+        entityManager.persist(spot);
+        return spot.getId();
     }
 
     @Override
     public Boolean removeSpot(Integer tenantId, Long id) {
-        List<Spot> spotList = rosterDao.getRoster(tenantId).getSpotList();
-        return spotList.removeIf(s -> s.getId().equals(id));
+        Spot spot = entityManager.find(Spot.class, id);
+        if (spot == null) {
+            return false;
+        }
+        validateTenantIdParameter(tenantId, spot);
+        entityManager.remove(spot);
+        return true;
+    }
+
+    private void validateTenantIdParameter(Integer tenantId, Spot spot) {
+        if (!Objects.equals(spot.getTenantId(), tenantId)) {
+            throw new IllegalStateException("The tenantId (" + tenantId
+                    + ") does not match the spot (" + spot + ")'s tenantId (" + spot.getTenantId() + ").");
+        }
     }
 
 }
