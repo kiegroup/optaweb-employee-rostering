@@ -14,9 +14,14 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.shared.domain;
+package org.optaplanner.openshift.employeerostering.shared.timeslot;
 
 import java.time.LocalDateTime;
+
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -26,19 +31,26 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
+@Entity
+@NamedQueries({
+        @NamedQuery(name = "TimeSlot.findAll", query = "SELECT t FROM TimeSlot t WHERE t.tenantId = :tenantId"),
+})
 public class TimeSlot extends AbstractPersistable {
 
+    @NotNull
     private LocalDateTime startDateTime;
+    @NotNull
     private LocalDateTime endDateTime;
 
+    @NotNull
     private TimeSlotState timeSlotState;
 
     @SuppressWarnings("unused")
     public TimeSlot() {
     }
 
-    public TimeSlot(Long id, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        super(id);
+    public TimeSlot(Integer tenantId, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        super(tenantId);
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
     }

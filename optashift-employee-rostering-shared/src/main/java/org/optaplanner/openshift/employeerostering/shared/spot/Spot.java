@@ -34,10 +34,10 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 })
 public class Spot extends AbstractPersistable {
 
-    @NotNull
-    @Size(max = 120)
+    @NotNull @Size(max = 120)
     private String name;
     @ManyToOne(fetch = FetchType.EAGER)
+    @NotNull
     private Skill requiredSkill;
 
     @SuppressWarnings("unused")

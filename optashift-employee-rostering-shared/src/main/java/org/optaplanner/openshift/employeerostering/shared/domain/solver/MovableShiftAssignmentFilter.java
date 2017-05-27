@@ -20,7 +20,7 @@ import org.optaplanner.core.impl.heuristic.selector.common.decorator.SelectionFi
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
-import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlotState;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
 
 public class MovableShiftAssignmentFilter implements SelectionFilter<Roster, ShiftAssignment> {
 

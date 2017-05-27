@@ -28,19 +28,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
-import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlot;
-import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlotState;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
 import org.optaplanner.openshift.employeerostering.server.common.generator.StringDataGenerator;
 
+@ApplicationScoped
 public class RosterGenerator {
 
     private final StringDataGenerator employeeNameGenerator = StringDataGenerator.buildFullNames();
@@ -70,9 +72,6 @@ public class RosterGenerator {
 
     // All generated data have negative id's so the real ones can start from zero.
     private AtomicInteger rosterIdGenerator = new AtomicInteger(-1);
-    private AtomicLong spotIdGenerator = new AtomicLong(-1L);
-    private AtomicLong timeSlotIdGenerator = new AtomicLong(-1L);
-    private AtomicLong employeeIdGenerator = new AtomicLong(-1L);
     private AtomicLong shiftAssignmentIdGenerator = new AtomicLong(-1L);
 
     @PersistenceContext
@@ -84,10 +83,10 @@ public class RosterGenerator {
         int skillListSize = (spotListSize + 4) / 5;
         Integer tenantId = rosterIdGenerator.getAndDecrement();
         List<Skill> skillList = createSkillList(tenantId, skillListSize);
-        List<Spot> spotList = createSpotList(spotListSize, skillList);
-        List<TimeSlot> timeSlotList = createTimeSlotList(timeSlotListSize, continuousPlanning);
-        List<Employee> employeeList = createEmployeeList(employeeListSize, skillList, timeSlotList);
-        List<ShiftAssignment> shiftAssignmentList = createShiftAssignmentList(spotList, timeSlotList, employeeList, continuousPlanning);
+        List<Spot> spotList = createSpotList(tenantId, spotListSize, skillList);
+        List<TimeSlot> timeSlotList = createTimeSlotList(tenantId, timeSlotListSize, continuousPlanning);
+        List<Employee> employeeList = createEmployeeList(tenantId, employeeListSize, skillList, timeSlotList);
+        List<ShiftAssignment> shiftAssignmentList = createShiftAssignmentList(tenantId, spotList, timeSlotList, employeeList, continuousPlanning);
         return new Roster((long) tenantId, skillList, spotList, timeSlotList, employeeList,
                 shiftAssignmentList);
     }
@@ -104,25 +103,25 @@ public class RosterGenerator {
         return skillList;
     }
 
-    private List<Spot> createSpotList(int size, List<Skill> skillList) {
+    private List<Spot> createSpotList(Integer tenantId, int size, List<Skill> skillList) {
         List<Spot> spotList = new ArrayList<>(size);
         spotNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
-            Long id = spotIdGenerator.getAndDecrement();
             String name = spotNameGenerator.generateNextValue();
-            spotList.add(new Spot(id, name, skillList.get(random.nextInt(skillList.size()))));
+            Spot spot = new Spot(tenantId, name, skillList.get(random.nextInt(skillList.size())));
+            entityManager.persist(spot);
+            spotList.add(spot);
         }
         return spotList;
     }
 
-    private List<TimeSlot> createTimeSlotList(int size, boolean continuousPlanning) {
+    private List<TimeSlot> createTimeSlotList(Integer tenantId, int size, boolean continuousPlanning) {
         List<TimeSlot> timeSlotList = new ArrayList<>(size);
         LocalDateTime previousEndDateTime = LocalDateTime.of(2017, 2, 1, 6, 0);
         for (int i = 0; i < size; i++) {
-            Long id = timeSlotIdGenerator.getAndDecrement();
             LocalDateTime startDateTime = previousEndDateTime;
             LocalDateTime endDateTime = startDateTime.plusHours(8);
-            TimeSlot timeSlot = new TimeSlot(id, startDateTime, endDateTime);
+            TimeSlot timeSlot = new TimeSlot(tenantId, startDateTime, endDateTime);
             if (continuousPlanning && i < size / 2) {
                 if (i < size / 4) {
                     timeSlot.setTimeSlotState(TimeSlotState.HISTORY);
@@ -132,28 +131,30 @@ public class RosterGenerator {
             } else {
                 timeSlot.setTimeSlotState(TimeSlotState.DRAFT);
             }
+            entityManager.persist(timeSlot);
             timeSlotList.add(timeSlot);
             previousEndDateTime = endDateTime;
         }
         return timeSlotList;
     }
 
-    private List<Employee> createEmployeeList(int size, List<Skill> generalSkillList, List<TimeSlot> timeSlotList) {
+    private List<Employee> createEmployeeList(Integer tenantId, int size, List<Skill> generalSkillList, List<TimeSlot> timeSlotList) {
         List<Employee> employeeList = new ArrayList<>(size);
         employeeNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
-            Long id = employeeIdGenerator.getAndDecrement();
             String name = employeeNameGenerator.generateNextValue();
             LinkedHashSet<Skill> skillSet = new LinkedHashSet<>(extractRandomSubList(generalSkillList, 1.0));
-            Employee employee = new Employee(id, name, skillSet);
+            Employee employee = new Employee(tenantId, name, skillSet);
             Set<TimeSlot> unavailableTimeSlotSet = new LinkedHashSet<>(extractRandomSubList(timeSlotList, 0.2));
             employee.setUnavailableTimeSlotSet(unavailableTimeSlotSet);
+// TODO
+//            entityManager.persist(employee);
             employeeList.add(employee);
         }
         return employeeList;
     }
 
-    private List<ShiftAssignment> createShiftAssignmentList(List<Spot> spotList, List<TimeSlot> timeSlotList,
+    private List<ShiftAssignment> createShiftAssignmentList(Integer tenantId, List<Spot> spotList, List<TimeSlot> timeSlotList,
             List<Employee> employeeList, boolean continuousPlanning) {
         List<ShiftAssignment> shiftAssignmentList = new ArrayList<>(spotList.size() * timeSlotList.size());
         for (Spot spot : spotList) {

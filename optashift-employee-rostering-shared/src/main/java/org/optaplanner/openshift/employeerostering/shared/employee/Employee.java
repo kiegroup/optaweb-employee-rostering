@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.shared.domain;
+package org.optaplanner.openshift.employeerostering.shared.employee;
 
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 public class Employee extends AbstractPersistable {
@@ -33,8 +37,8 @@ public class Employee extends AbstractPersistable {
     public Employee() {
     }
 
-    public Employee(Long id, String name, Set<Skill> skillSet) {
-        super(id);
+    public Employee(Integer tenantId, String name, Set<Skill> skillSet) {
+        super(tenantId);
         this.name = name;
         this.skillSet = skillSet;
     }

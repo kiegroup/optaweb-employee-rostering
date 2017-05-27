@@ -21,6 +21,7 @@ import java.util.Objects;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
@@ -34,12 +35,14 @@ public class SpotRestServiceImpl implements SpotRestService {
     private EntityManager entityManager;
 
     @Override
+    @Transactional
     public List<Spot> getSpotList(Integer tenantId) {
         return entityManager.createNamedQuery("Spot.findAll", Spot.class)
                 .setParameter("tenantId", tenantId).getResultList();
     }
 
     @Override
+    @Transactional
     public Spot getSpot(Integer tenantId, Long id) {
         Spot spot = entityManager.find(Spot.class, id);
         validateTenantIdParameter(tenantId, spot);
@@ -47,6 +50,7 @@ public class SpotRestServiceImpl implements SpotRestService {
     }
 
     @Override
+    @Transactional
     public Long addSpot(Integer tenantId, Spot spot) {
         validateTenantIdParameter(tenantId, spot);
         entityManager.persist(spot);
@@ -54,6 +58,7 @@ public class SpotRestServiceImpl implements SpotRestService {
     }
 
     @Override
+    @Transactional
     public Boolean removeSpot(Integer tenantId, Long id) {
         Spot spot = entityManager.find(Spot.class, id);
         if (spot == null) {

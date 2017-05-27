@@ -31,8 +31,7 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 })
 public class Skill extends AbstractPersistable {
 
-    @NotNull
-    @Size(max = 120)
+    @NotNull @Size(max = 120)
     private String name;
 
     @SuppressWarnings("unused")
