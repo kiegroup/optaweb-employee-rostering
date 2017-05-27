@@ -30,13 +30,13 @@ public class SpotRestServiceImpl implements SpotRestService {
     private RosterDao rosterDao;
 
     @Override
-    public List<Spot> getSpotList(Long tenantId) {
+    public List<Spot> getSpotList(Integer tenantId) {
         List<Spot> spotList = rosterDao.getRoster(tenantId).getSpotList();
         return spotList;
     }
 
     @Override
-    public Spot getSpot(Long tenantId, Long id) {
+    public Spot getSpot(Integer tenantId, Long id) {
         List<Spot> spotList = rosterDao.getRoster(tenantId).getSpotList();
         return spotList.stream()
                 .filter(spot -> spot.getId().equals(id))
@@ -44,7 +44,7 @@ public class SpotRestServiceImpl implements SpotRestService {
     }
 
     @Override
-    public Long addSpot(Long tenantId, Spot spot) {
+    public Long addSpot(Integer tenantId, Spot spot) {
         List<Spot> spotList = rosterDao.getRoster(tenantId).getSpotList();
         if (spot.getId() != null) {
             throw new IllegalArgumentException("The spot (" + spot
@@ -57,7 +57,7 @@ public class SpotRestServiceImpl implements SpotRestService {
     }
 
     @Override
-    public Boolean removeSpot(Long tenantId, Long id) {
+    public Boolean removeSpot(Integer tenantId, Long id) {
         List<Spot> spotList = rosterDao.getRoster(tenantId).getSpotList();
         return spotList.removeIf(s -> s.getId().equals(id));
     }

@@ -45,7 +45,7 @@ public class WannabeSolverManager {
     @Inject
     private RosterDao rosterDao;
 
-    private ConcurrentMap<Long, SolverStatus> idToSolverStateMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<Integer, SolverStatus> tenantIdToSolverStateMap = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void setUpSolverFactory() {
@@ -54,12 +54,12 @@ public class WannabeSolverManager {
     }
 
 
-    public void solve(Long rosterId) {
-        logger.info("Scheduling solver for rosterId ({})...", rosterId);
+    public void solve(Integer tenantId) {
+        logger.info("Scheduling solver for tenantId ({})...", tenantId);
         // No 2 solve() calls of the same dataset in parallel
-        idToSolverStateMap.compute(rosterId, (k, solverStatus) -> {
+        tenantIdToSolverStateMap.compute(tenantId, (k, solverStatus) -> {
             if (solverStatus != null && solverStatus != SolverStatus.TERMINATED) {
-                throw new IllegalStateException("The roster with id (" + rosterId
+                throw new IllegalStateException("The roster with tenantId (" + tenantId
                         + ") is already solving with solverStatus (" + solverStatus + ").");
             }
             return SolverStatus.SCHEDULED;
@@ -69,23 +69,23 @@ public class WannabeSolverManager {
                 Solver<Roster> solver = solverFactory.buildSolver();
                 solver.addEventListener(event -> {
                     if (event.isEveryProblemFactChangeProcessed()) {
-                        logger.info("  New best solution found for rosterId ({}).", rosterId);
+                        logger.info("  New best solution found for tenantId ({}).", tenantId);
                         Roster newBestRoster = event.getNewBestSolution();
                         // TODO if this throws an OptimisticLockingException, does it kill the solver?
                         rosterDao.updateRoster(newBestRoster);
                     }
                 });
-                Roster roster = rosterDao.getRoster(rosterId);
+                Roster roster = rosterDao.getRoster(tenantId);
                 try {
-                    idToSolverStateMap.put(rosterId, SolverStatus.SOLVING);
+                    tenantIdToSolverStateMap.put(tenantId, SolverStatus.SOLVING);
                     // TODO No need to store the returned roster because the SolverEventListener already does it?
                     solver.solve(roster);
                 } finally {
-                    idToSolverStateMap.put(rosterId, SolverStatus.TERMINATED);
+                    tenantIdToSolverStateMap.put(tenantId, SolverStatus.TERMINATED);
                 }
             } catch (Throwable e) {
                 // TODO handle errors through Thread'sExceptionHandler
-                logger.error("Error solving for rosterId (" + rosterId + ").", e);
+                logger.error("Error solving for tenantId (" + tenantId + ").", e);
             }
         });
     }

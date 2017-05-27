@@ -20,7 +20,7 @@ public interface SkillRestService {
 
     @GET
     @Path("/")
-    List<Skill> getSkillList(@PathParam("tenantId") Long tenantId);
+    List<Skill> getSkillList(@PathParam("tenantId") Integer tenantId);
 
     /**
      * @param id never null
@@ -28,7 +28,7 @@ public interface SkillRestService {
      */
     @GET
     @Path("/{id}")
-    Skill getSkill(@PathParam("tenantId") Long tenantId, @PathParam("id") Long id);
+    Skill getSkill(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
     /**
      * @param skill never null
@@ -36,7 +36,7 @@ public interface SkillRestService {
      */
     @POST
     @Path("/add")
-    Long addSkill(@PathParam("tenantId") Long tenantId, Skill skill);
+    Long addSkill(@PathParam("tenantId") Integer tenantId, Skill skill);
 
     /**
      * @param id never null
@@ -44,6 +44,6 @@ public interface SkillRestService {
      */
     @DELETE
     @Path("/{id}")
-    Boolean removeSkill(@PathParam("tenantId") Long tenantId, @PathParam("id") Long id);
+    Boolean removeSkill(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
 }

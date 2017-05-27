@@ -29,34 +29,32 @@ import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService
 
 public class SkillRestServiceImpl implements SkillRestService {
 
-    @Inject
-    private RosterDao rosterDao;
-
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
     @Transactional
-    public List<Skill> getSkillList(Long tenantId) {
-        return entityManager.createNamedQuery("Skill.findAll", Skill.class).getResultList();
+    public List<Skill> getSkillList(Integer tenantId) {
+        return entityManager.createNamedQuery("Skill.findAll", Skill.class)
+                .setParameter("tenantId", tenantId).getResultList();
     }
 
     @Override
     @Transactional
-    public Skill getSkill(Long tenantId, Long id) {
+    public Skill getSkill(Integer tenantId, Long id) {
         return entityManager.find(Skill.class, id);
     }
 
     @Override
     @Transactional
-    public Long addSkill(Long tenantId, Skill skill) {
+    public Long addSkill(Integer tenantId, Skill skill) {
         entityManager.persist(skill);
         return skill.getId();
     }
 
     @Override
     @Transactional
-    public Boolean removeSkill(Long tenantId, Long id) {
+    public Boolean removeSkill(Integer tenantId, Long id) {
         Skill skill = entityManager.find(Skill.class, id);
         if (skill == null) {
             return false;

@@ -27,7 +27,7 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Skill.findAll", query = "SELECT s FROM Skill s"),
+        @NamedQuery(name = "Skill.findAll", query = "SELECT s FROM Skill s WHERE s.tenantId = :tenantId"),
 })
 public class Skill extends AbstractPersistable {
 
@@ -39,7 +39,8 @@ public class Skill extends AbstractPersistable {
     public Skill() {
     }
 
-    public Skill(String name) {
+    public Skill(Integer tenantId, String name) {
+        super(tenantId);
         this.name = name;
     }
 

@@ -23,6 +23,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
+import javax.validation.constraints.NotNull;
 
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
@@ -34,6 +35,9 @@ public abstract class AbstractPersistable implements Serializable {
     @PlanningId
     protected Long id;
 
+    @NotNull
+    protected Integer tenantId;
+
     @Version
     protected Long version;
 
@@ -43,6 +47,10 @@ public abstract class AbstractPersistable implements Serializable {
 
     protected AbstractPersistable(Long id) {
         this.id = id;
+    }
+
+    protected AbstractPersistable(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 
     @Override
@@ -87,6 +95,14 @@ public abstract class AbstractPersistable implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
     }
 
     public Long getVersion() {

@@ -20,7 +20,7 @@ public interface SpotRestService {
 
     @GET
     @Path("/")
-    List<Spot> getSpotList(@PathParam("tenantId") Long tenantId);
+    List<Spot> getSpotList(@PathParam("tenantId") Integer tenantId);
 
     /**
      * @param id never null
@@ -28,7 +28,7 @@ public interface SpotRestService {
      */
     @GET
     @Path("/{id}")
-    Spot getSpot(@PathParam("tenantId") Long tenantId, @PathParam("id") Long id);
+    Spot getSpot(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
     /**
      * @param spot never null
@@ -36,7 +36,7 @@ public interface SpotRestService {
      */
     @POST
     @Path("/add")
-    Long addSpot(@PathParam("tenantId") Long tenantId, Spot spot);
+    Long addSpot(@PathParam("tenantId") Integer tenantId, Spot spot);
 
     /**
      * @param id never null
@@ -44,6 +44,6 @@ public interface SpotRestService {
      */
     @DELETE
     @Path("/{id}")
-    Boolean removeSpot(@PathParam("tenantId") Long tenantId, @PathParam("id") Long id);
+    Boolean removeSpot(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
 }

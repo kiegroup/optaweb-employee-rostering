@@ -20,10 +20,10 @@ public interface RosterRestService {
      */
     @GET
     @Path("/")
-    Roster getRoster(@PathParam("tenantId") Long tenantId);
+    Roster getRoster(@PathParam("tenantId") Integer tenantId);
 
     @POST
     @Path("/solve")
-    void solveRoster(@PathParam("tenantId") Long tenantId);
+    void solveRoster(@PathParam("tenantId") Integer tenantId);
 
 }

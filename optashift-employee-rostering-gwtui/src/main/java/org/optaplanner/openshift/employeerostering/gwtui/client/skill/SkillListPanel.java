@@ -29,7 +29,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @Templated
 public class SkillListPanel implements IsElement {
 
-    private Long tenantId = -1L;
+    private Integer tenantId = -1;
 
     @Inject @DataField
     private TextBox skillNameTextBox;
@@ -121,7 +121,7 @@ public class SkillListPanel implements IsElement {
         String skillName = skillNameTextBox.getValue();
         skillNameTextBox.setValue("");
         skillNameTextBox.setFocus(true);
-        SkillRestServiceBuilder.addSkill(tenantId, new Skill(skillName), new RestCallback<Long>() {
+        SkillRestServiceBuilder.addSkill(tenantId, new Skill(tenantId, skillName), new RestCallback<Long>() {
             @Override
             public void onSuccess(Long skillId) {
                 refreshTable();

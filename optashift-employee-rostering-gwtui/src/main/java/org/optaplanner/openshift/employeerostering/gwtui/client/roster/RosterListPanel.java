@@ -31,7 +31,7 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServi
 @Templated
 public class RosterListPanel implements IsElement {
 
-    private Long tenantId = -1L;
+    private Integer tenantId = -1;
 
     @Inject @DataField
     private Button refreshButton;

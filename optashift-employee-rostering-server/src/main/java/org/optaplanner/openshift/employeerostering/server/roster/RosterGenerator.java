@@ -24,6 +24,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -68,7 +69,7 @@ public class RosterGenerator {
     private Random random = new Random(37);
 
     // All generated data have negative id's so the real ones can start from zero.
-    private AtomicLong rosterIdGenerator = new AtomicLong(-1L);
+    private AtomicInteger rosterIdGenerator = new AtomicInteger(-1);
     private AtomicLong spotIdGenerator = new AtomicLong(-1L);
     private AtomicLong timeSlotIdGenerator = new AtomicLong(-1L);
     private AtomicLong employeeIdGenerator = new AtomicLong(-1L);
@@ -81,22 +82,22 @@ public class RosterGenerator {
     public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
-        Long id = rosterIdGenerator.getAndDecrement();
-        List<Skill> skillList = createSkillList(skillListSize);
+        Integer tenantId = rosterIdGenerator.getAndDecrement();
+        List<Skill> skillList = createSkillList(tenantId, skillListSize);
         List<Spot> spotList = createSpotList(spotListSize, skillList);
         List<TimeSlot> timeSlotList = createTimeSlotList(timeSlotListSize, continuousPlanning);
         List<Employee> employeeList = createEmployeeList(employeeListSize, skillList, timeSlotList);
         List<ShiftAssignment> shiftAssignmentList = createShiftAssignmentList(spotList, timeSlotList, employeeList, continuousPlanning);
-        return new Roster(id, skillList, spotList, timeSlotList, employeeList,
+        return new Roster((long) tenantId, skillList, spotList, timeSlotList, employeeList,
                 shiftAssignmentList);
     }
 
-    private List<Skill> createSkillList(int size) {
+    private List<Skill> createSkillList(Integer tenantId, int size) {
         List<Skill> skillList = new ArrayList<>(size);
         skillNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = skillNameGenerator.generateNextValue();
-            Skill skill = new Skill(name);
+            Skill skill = new Skill(tenantId, name);
             entityManager.persist(skill);
             skillList.add(skill);
         }

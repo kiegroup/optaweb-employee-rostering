@@ -31,12 +31,12 @@ public class RosterRestServiceImpl implements RosterRestService {
     private WannabeSolverManager solverManager;
 
     @Override
-    public Roster getRoster(Long tenantId) {
+    public Roster getRoster(Integer tenantId) {
         return rosterDao.getRoster(tenantId);
     }
 
     @Override
-    public void solveRoster(Long tenantId) {
+    public void solveRoster(Integer tenantId) {
         solverManager.solve(tenantId);
     }
 

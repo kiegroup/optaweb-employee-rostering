@@ -31,7 +31,7 @@ import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 public class RosterDao {
 
     // TODO do not fake a database, but connect to one
-    private ConcurrentMap<Long, Roster> idToRosterMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<Integer, Roster> idToRosterMap = new ConcurrentHashMap<>();
 
     @Inject
     private RosterGenerator rosterGenerator;
@@ -51,7 +51,7 @@ public class RosterDao {
 
     private void addGeneratedRoster(Roster roster) {
         Long id = roster.getId();
-        Roster old = idToRosterMap.putIfAbsent(id, roster);
+        Roster old = idToRosterMap.putIfAbsent(id.intValue(), roster);
         if (old != null) {
             throw new IllegalArgumentException("Cannot add roster (" + roster
                     + ") because is already a roster (" + old + ") with id (" + id + ").");
@@ -63,7 +63,7 @@ public class RosterDao {
         return new ArrayList<>(idToRosterMap.values());
     }
 
-    public Roster getRoster(Long id) {
+    public Roster getRoster(Integer id) {
         Roster roster = idToRosterMap.get(id);
         if (roster == null) {
             throw new IllegalArgumentException("There is no roster with id (" + id + ").");
@@ -72,7 +72,7 @@ public class RosterDao {
     }
 
     public void updateRoster(Roster roster) {
-        idToRosterMap.put(roster.getId(), roster);
+        idToRosterMap.put(roster.getId().intValue(), roster);
     }
 
 }
