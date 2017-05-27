@@ -95,7 +95,11 @@ public class SpotListPanel implements IsElement {
         table.addColumn(new TextColumn<Spot>() {
             @Override
             public String getValue(Spot spot) {
-                return spot.getRequiredSkill().getName();
+                Skill requiredSkill = spot.getRequiredSkill();
+                if (requiredSkill == null) {
+                    return "";
+                }
+                return requiredSkill.getName();
             }
         }, "Required skill");
         Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(ButtonType.DANGER, IconType.REMOVE)) {
