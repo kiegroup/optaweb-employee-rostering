@@ -60,19 +60,19 @@ public class MenuPanel implements IsElement {
 
     @EventHandler("skillsAnchor")
     public void showSkills(ClickEvent e) {
-        content.removeChild(content.getFirstChild());
+        content.removeChild(content.getLastChild());
         content.appendChild(skillListPanel.getElement());
     }
 
     @EventHandler("spotsAnchor")
     public void showSpots(ClickEvent e) {
-        content.removeChild(content.getFirstChild());
+        content.removeChild(content.getLastChild());
         content.appendChild(spotListPanel.getElement());
     }
 
     @EventHandler("rosterAnchor")
     public void showRoster(ClickEvent e) {
-        content.removeChild(content.getFirstChild());
+        content.removeChild(content.getLastChild());
         content.appendChild(rosterListPanel.getElement());
     }
 
