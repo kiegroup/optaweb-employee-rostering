@@ -50,6 +50,12 @@
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-ui</artifactId>
     </dependency>
+    <dependency>
+      <!-- Only used for EmbeddedWildFlyLauncher during GWT Super Dev Mode -->
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-cdi-jboss</artifactId>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>
