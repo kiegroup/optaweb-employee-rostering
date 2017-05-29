@@ -258,7 +258,7 @@
               <!-- Avoid crash "error code 137" on OpenShift -->
               <localWorkers>1</localWorkers>
               <jvmArgs>
-                 <arg>-Xmx386m</arg>
+                 <arg>-Xmx576m</arg>
               </jvmArgs>
             </configuration>
           </plugin>
