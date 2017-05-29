@@ -16,9 +16,12 @@
 
 package org.optaplanner.openshift.employeerostering.shared.skill;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -29,6 +32,7 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 @NamedQueries({
         @NamedQuery(name = "Skill.findAll", query = "SELECT s FROM Skill s WHERE s.tenantId = :tenantId"),
 })
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Skill extends AbstractPersistable {
 
     @NotNull @Size(min = 1, max = 120)

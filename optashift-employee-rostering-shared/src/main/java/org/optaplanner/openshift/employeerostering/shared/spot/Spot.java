@@ -21,6 +21,8 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,6 +34,7 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 @NamedQueries({
         @NamedQuery(name = "Spot.findAll", query = "SELECT s FROM Spot s WHERE s.tenantId = :tenantId"),
 })
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Spot extends AbstractPersistable {
 
     @NotNull @Size(min = 1, max = 120)
