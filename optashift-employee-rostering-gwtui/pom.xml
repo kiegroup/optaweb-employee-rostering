@@ -19,6 +19,13 @@
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-dev</artifactId>
+      <exclusions>
+        <exclusion>
+          <!-- Contains a ServletContainerInitializer that breaks the EmbeddedWildFlyLauncher during GWT Super Dev Mode -->
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>apache-jsp</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.optaplanner.openshift</groupId>
