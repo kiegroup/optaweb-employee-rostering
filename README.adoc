@@ -48,3 +48,12 @@ If you unzipped WildFly to a different directory, use:
 ```
 mvn gwt:devmode -Dwildfly.home=/.../wildfly
 ```
+
+== Creating OpenShift environment
+Deploy the application to OpenShift by creating a new project and processing the provided template.
+```
+oc login -u developer
+oc new-project optashift-employee-rostering
+oc process -f openshift/templates/optashift-employee-rostering-template.yaml | oc create -f -
+```
+
