@@ -213,7 +213,7 @@
               <arg>-server</arg>
               <arg>org.jboss.errai.cdi.server.gwt.EmbeddedWildFlyLauncher</arg>
               <arg>-startupUrl</arg>
-              <arg>http://127.0.0.1:9876/gwtui/gwtui.html</arg>
+              <arg>gwtui/gwtui.html</arg>
             </devmodeArgs>
             <systemProperties>
               <errai.jboss.home>${wildfly.home}</errai.jboss.home>
