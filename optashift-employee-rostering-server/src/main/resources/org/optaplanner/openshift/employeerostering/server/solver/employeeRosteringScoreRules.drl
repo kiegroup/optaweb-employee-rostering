@@ -20,9 +20,9 @@ package org.optaplanner.openshift.employeerostering.server.solver;
 import java.time.temporal.ChronoUnit;
 
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
-import org.optaplanner.openshift.employeerostering.shared.domain.Employee;
-import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
-import org.optaplanner.openshift.employeerostering.shared.domain.TimeSlot;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;

@@ -35,7 +35,7 @@ import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
-import org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;

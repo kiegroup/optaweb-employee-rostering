@@ -2,7 +2,7 @@
 <solver>
   <!--<environmentMode>FAST_ASSERT</environmentMode>-->
   <solutionClass>org.optaplanner.openshift.employeerostering.shared.roster.Roster</solutionClass>
-  <entityClass>org.optaplanner.openshift.employeerostering.shared.domain.ShiftAssignment</entityClass>
+  <entityClass>org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment</entityClass>
 
   <scoreDirectorFactory>
     <scoreDrl>org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringScoreRules.drl</scoreDrl>
