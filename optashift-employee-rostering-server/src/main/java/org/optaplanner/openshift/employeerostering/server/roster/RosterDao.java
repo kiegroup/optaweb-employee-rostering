@@ -27,7 +27,8 @@ import javax.inject.Inject;
 
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 
-@ApplicationScoped
+@javax.ejb.Singleton
+@javax.ejb.Startup
 public class RosterDao {
 
     // TODO do not fake a database, but connect to one
