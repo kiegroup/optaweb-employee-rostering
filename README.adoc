@@ -50,10 +50,9 @@ mvn gwt:devmode -Dwildfly.home=/.../wildfly
 ```
 
 == Creating OpenShift environment
-Deploy the application to OpenShift by creating a new project and processing the provided template.
-```
-oc login -u developer
-oc new-project optashift-employee-rostering
-oc process -f openshift/templates/optashift-employee-rostering-template.yaml | oc create -f -
-```
+Deploy the application to OpenShift by running the provided provisioning script `provision.sh`:
+
+* Deploy the application: `provision.sh deploy employee-rostering`
+* Deploy the application (OpenShift binary build): `provision.sh deploy employee-rostering --binary`
+* Delete the application: `provision.sh delete employee-rostering`
 
