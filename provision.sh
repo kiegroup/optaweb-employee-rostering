@@ -1,0 +1,335 @@
+#!/bin/sh
+#!/bin/bash
+################################################################################
+# Provisioning script to deploy the demo on an OpenShift environment           #
+################################################################################
+function usage() {
+    echo
+    echo "Usage:"
+    echo " $0 [command] [demo-name] [options]"
+    echo " $0 --help"
+    echo
+    echo "Example:"
+    echo " $0 deploy --maven-mirror-url http://nexus.repo.com/content/groups/public/ --project-suffix s40d"
+    echo
+    echo "COMMANDS:"
+    echo "   deploy                   Set up the demo projects and deploy demo apps"
+    echo "   delete                   Clean up and remove demo projects and objects"
+    echo "   verify                   Verify the demo is deployed correctly"
+    echo "   idle                     Make all demo servies idle"
+    echo
+    echo "DEMOS:"
+    echo "   employee-rostering       OptaPlanner Employee Rostering demo."
+    echo
+    echo "OPTIONS:"
+    echo "   --binary                  Performs an OpenShift 'binary-build', which builds the WAR file locally and sends it to the OpenShift BuildConfig. Requires less memory in OpenShift."
+    echo "   --user [username]         The admin user for the demo projects. mandatory if logged in as system:admin"
+    echo "   --project-suffix [suffix] Suffix to be added to demo project names e.g. ci-SUFFIX. If empty, user will be used as suffix"
+    echo "   --run-verify              Run verify after provisioning"
+    echo
+}
+
+ARG_USERNAME=
+ARG_PROJECT_SUFFIX=
+ARG_COMMAND=
+ARG_RUN_VERIFY=false
+ARG_BINARY_BUILD=false
+ARG_DEMO=
+
+while :; do
+    case $1 in
+        deploy)
+            ARG_COMMAND=deploy
+            if [ -n "$2" ]; then
+                ARG_DEMO=$2
+                shift
+            fi
+            ;;
+        delete)
+            ARG_COMMAND=delete
+            if [ -n "$2" ]; then
+                ARG_DEMO=$2
+                shift
+            fi
+            ;;
+        verify)
+            ARG_COMMAND=verify
+            if [ -n "$2" ]; then
+                ARG_DEMO=$2
+                shift
+            fi
+            ;;
+        idle)
+            ARG_COMMAND=idle
+            if [ -n "$2" ]; then
+                ARG_DEMO=$2
+                shift
+            fi
+            ;;
+        --user)
+            if [ -n "$2" ]; then
+                ARG_USERNAME=$2
+                shift
+            else
+                printf 'ERROR: "--user" requires a non-empty value.\n' >&2
+                usage
+                exit 255
+            fi
+            ;;
+        --project-suffix)
+            if [ -n "$2" ]; then
+                ARG_PROJECT_SUFFIX=$2
+                shift
+            else
+                printf 'ERROR: "--project-suffix" requires a non-empty value.\n' >&2
+                usage
+                exit 255
+            fi
+            ;;
+        --run-verify)
+            ARG_RUN_VERIFY=true
+            ;;
+        --binary)
+            ARG_BINARY_BUILD=true
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -?*)
+            printf 'WARN: Unknown option (ignored): %s\n' "$1" >&2
+            shift
+            ;;
+        *)               # Default case: If no more options then break out of the loop.
+            break
+    esac
+
+    shift
+done
+
+
+################################################################################
+# Configuration                                                                #
+################################################################################
+LOGGEDIN_USER=$(oc whoami)
+OPENSHIFT_USER=${ARG_USERNAME:-$LOGGEDIN_USER}
+
+PRJ="optashift"
+PRJ_DISPLAY_NAME="OptaShift"
+PRJ_DESCRIPTION="OptaShift Empoloyee Rostering Demo"
+#GIT_URI="https://github.com/ge0ffrey/optashift-employee-rostering"
+GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
+#GIT_REF=master
+GIT_REF=openshift-template
+
+# config
+GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-ge0frey}
+GIT_REF=${GITHUB_REF:-openshift-template}
+#GIT_URI=https://github.com/$GITHUB_ACCOUNT/optashift-employee-rostering
+GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
+
+################################################################################
+# DEMO MATRIX                                                                  #
+################################################################################
+case $ARG_DEMO in
+    employee-rostering)
+	   # No need to set anything here anymore.
+	;;
+    *)
+        echo "ERROR: Invalid demo name: \"$ARG_DEMO\""
+        usage
+        exit 255
+        ;;
+esac
+
+
+################################################################################
+# Functions                                                                    #
+################################################################################
+
+function echo_header() {
+  echo
+  echo "########################################################################"
+  echo $1
+  echo "########################################################################"
+}
+
+function print_info() {
+  echo_header "Configuration"
+
+  OPENSHIFT_MASTER=$(oc status | head -1 | sed 's#.*\(https://[^ ]*\)#\1#g') # must run after projects are created
+
+  echo "Demo name:           $ARG_DEMO"
+  echo "OpenShift master:    $OPENSHIFT_MASTER"
+  echo "Current user:        $LOGGEDIN_USER"
+  echo "Project suffix:      $PRJ_SUFFIX"
+  echo "GitHub repo:         $GIT_URI"
+  echo "GitHub branch/tag:   $GITHUB_REF"
+}
+
+# waits while the condition is true until it becomes false or it times out
+function wait_while_empty() {
+  local _NAME=$1
+  local _TIMEOUT=$(($2/5))
+  local _CONDITION=$3
+
+  echo "Waiting for $_NAME to be ready..."
+  local x=1
+  while [ -z "$(eval ${_CONDITION})" ]
+  do
+    echo "."
+    sleep 5
+    x=$(( $x + 1 ))
+    if [ $x -gt $_TIMEOUT ]
+    then
+      echo "$_NAME still not ready, I GIVE UP!"
+      exit 255
+    fi
+  done
+
+  echo "$_NAME is ready."
+}
+
+# Create Project
+function create_projects() {
+  echo_header "Creating project..."
+
+  echo "Creating project $PRJ"
+  oc new-project $PRJ --display-name="$PRJ_DISPLAY_NAME" --description="$PRJ_DESCRIPTION" >/dev/null
+}
+
+
+function create_application() {
+  echo_header "Creating OptaShift Build and Deployment config."
+  oc process -f openshift/templates/optashift-employee-rostering-template.yaml -p GIT_URI="$GIT_URI" -p GIT_REF="$GIT_REF" -n $PRJ | oc create -f - -n $PRJ
+}
+
+function start_maven_build() {
+    echo_header "Starting Maven build."
+    mvn clean install -P openshift
+}
+
+
+function create_application_binary() {
+  echo_header "Creating OptaShift Build and Deployment config."
+  oc process -f openshift/templates/optashift-employee-rostering-template-binary.yaml -p GIT_URI="$GIT_URI" -p GIT_REF="$GIT_REF" -n $PRJ | oc create -f - -n $PRJ
+  
+  start_maven_build
+  
+  echo_header "Starting OpenShift binary build..."
+  oc start-build optashift-employee-rostering --from-file=target/ROOT.war
+}
+
+function verify_build_and_deployments() {
+  echo_header "Verifying build and deployments"
+
+  # verify builds
+  local _BUILDS_FAILED=false
+  for buildconfig in optaplanner-employee-rostering
+  do
+    if [ -n "$(oc get builds -n $PRJ | grep $buildconfig | grep Failed)" ] && [ -z "$(oc get builds -n $PRJ | grep $buildconfig | grep Complete)" ]; then
+      _BUILDS_FAILED=true
+      echo "WARNING: Build $project/$buildconfig has failed..."
+    fi
+  done
+
+  # verify deployments
+  for project in $PRJ
+  do
+    local _DC=
+    for dc in $(oc get dc -n $project -o=custom-columns=:.metadata.name,:.status.replicas); do
+      if [ $dc = 0 ] && [ -z "$(oc get pods -n $project | grep "$dc-[0-9]\+-deploy" | grep Running)" ] ; then
+        echo "WARNING: Deployment $project/$_DC in project $project is not complete..."
+      fi
+      _DC=$dc
+    done
+  done
+}
+
+function make_idle() {
+  echo_header "Idling Services"
+  oc idle -n $PRJ_CI --all
+  oc idle -n $PRJ_TRAVEL_AGENCY_PROD --all
+}
+
+# GPTE convention
+function set_default_project() {
+  if [ $LOGGEDIN_USER == 'system:admin' ] ; then
+    oc project default >/dev/null
+  fi
+}
+
+################################################################################
+# Main deployment                                                              #
+################################################################################
+
+if [ "$LOGGEDIN_USER" == 'system:admin' ] && [ -z "$ARG_USERNAME" ] ; then
+  # for verify and delete, --project-suffix is enough
+  if [ "$ARG_COMMAND" == "delete" ] || [ "$ARG_COMMAND" == "verify" ] && [ -z "$ARG_PROJECT_SUFFIX" ]; then
+    echo "--user or --project-suffix must be provided when running $ARG_COMMAND as 'system:admin'"
+    exit 255
+  # deploy command
+  elif [ "$ARG_COMMAND" != "delete" ] && [ "$ARG_COMMAND" != "verify" ] ; then
+    echo "--user must be provided when running $ARG_COMMAND as 'system:admin'"
+    exit 255
+  fi
+fi
+
+#pushd ~ >/dev/null
+START=`date +%s`
+
+echo_header "BPM Suite Travel Agency Demo ($(date))"
+
+case "$ARG_COMMAND" in
+    delete)
+        echo "Delete OptaPlanner demo ($ARG_DEMO)..."
+        oc delete project $PRJ
+        ;;
+
+    verify)
+        echo "Verifying OptaPlanner demo ($ARG_DEMO)..."
+        print_info
+        verify_build_and_deployments
+        ;;
+
+    idle)
+        echo "Idling BPM Suite Travel Agency demo ($ARG_DEMO)..."
+        print_info
+        make_idle
+        ;;
+
+    deploy)
+        echo "Deploying OptaPlanner demo ($ARG_DEMO)..."
+
+        print_info
+        create_projects
+
+        if [ "$ARG_BINARY_BUILD" = true ] ; then
+            create_application_binary
+        else
+            create_application
+        fi
+
+        if [ "$ARG_RUN_VERIFY" = true ] ; then
+          echo "Waiting for deployments to finish..."
+          sleep 30
+          verify_build_and_deployments
+        fi
+        ;;
+
+    *)
+        echo "Invalid command specified: '$ARG_COMMAND'"
+        usage
+        ;;
+esac
+
+set_default_project
+#popd >/dev/null
+
+END=`date +%s`
+echo
+echo "Provisioning done! (Completed in $(( ($END - $START)/60 )) min $(( ($END - $START)%60 )) sec)"
