@@ -123,8 +123,7 @@ PRJ_DISPLAY_NAME="OptaShift"
 PRJ_DESCRIPTION="OptaShift Empoloyee Rostering Demo"
 #GIT_URI="https://github.com/ge0ffrey/optashift-employee-rostering"
 GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
-#GIT_REF=master
-GIT_REF=openshift-template
+GIT_REF=master
 
 # config
 GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-ge0ffrey}
