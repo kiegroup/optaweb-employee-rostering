@@ -24,6 +24,7 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.RosterListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
@@ -42,6 +43,11 @@ public class MenuPanel implements IsElement {
     private Anchor spotsAnchor;
     @Inject
     private SpotListPanel spotListPanel;
+
+    @Inject @DataField
+    private Anchor employeesAnchor;
+    @Inject
+    private EmployeeListPanel employeeListPanel;
 
     @Inject @DataField
     private Anchor rosterAnchor;
@@ -68,6 +74,12 @@ public class MenuPanel implements IsElement {
     public void showSpots(ClickEvent e) {
         content.removeChild(content.getLastChild());
         content.appendChild(spotListPanel.getElement());
+    }
+
+    @EventHandler("employeesAnchor")
+    public void showEmployees(ClickEvent e) {
+        content.removeChild(content.getLastChild());
+        content.appendChild(employeeListPanel.getElement());
     }
 
     @EventHandler("rosterAnchor")

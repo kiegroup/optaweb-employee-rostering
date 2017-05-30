@@ -31,8 +31,9 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Skill.findAll",
-                query = "SELECT s FROM Skill s" +
-                        " WHERE s.tenantId = :tenantId"),
+                query = "select s from Skill s" +
+                        " where s.tenantId = :tenantId" +
+                        " order by s.name"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Skill extends AbstractPersistable {

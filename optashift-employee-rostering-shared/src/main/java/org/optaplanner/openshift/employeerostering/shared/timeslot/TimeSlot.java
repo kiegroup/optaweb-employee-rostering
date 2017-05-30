@@ -33,7 +33,9 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "TimeSlot.findAll", query = "SELECT t FROM TimeSlot t WHERE t.tenantId = :tenantId"),
+        @NamedQuery(name = "TimeSlot.findAll",
+                query = "select t from TimeSlot t" +
+                        " where t.tenantId = :tenantId"),
 })
 public class TimeSlot extends AbstractPersistable {
 

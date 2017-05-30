@@ -33,8 +33,9 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Spot.findAll",
-                query = "SELECT s FROM Spot s" +
-                        " WHERE s.tenantId = :tenantId"),
+                query = "select s from Spot s" +
+                        " where s.tenantId = :tenantId" +
+                        " order by s.name"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Spot extends AbstractPersistable {

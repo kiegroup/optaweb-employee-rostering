@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.shared.employee;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -38,8 +39,9 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Employee.findAll",
-                query = "SELECT e FROM Employee e left join fetch e.skillProficiencyList" +
-                        " WHERE e.tenantId = :tenantId"),
+                query = "select distinct e from Employee e left join fetch e.skillProficiencyList sp left join fetch sp.skill s" +
+                        " where e.tenantId = :tenantId" +
+                        " order by e.name, s.name"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Employee extends AbstractPersistable {
@@ -61,6 +63,7 @@ public class Employee extends AbstractPersistable {
     public Employee(Integer tenantId, String name) {
         super(tenantId);
         this.name = name;
+        skillProficiencyList = new ArrayList<>(2);
     }
 
     public boolean hasSkill(Skill skill) {
