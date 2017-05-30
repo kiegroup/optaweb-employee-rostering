@@ -210,12 +210,16 @@
             <!-- TODO turn this one, probably after GWT supports java.time -->
             <!--<failOnError>true</failOnError>-->
             <devmodeArgs>
+              <!-- GWT Super Dev Mode: Replace default backend by WildFly -->
               <arg>-server</arg>
               <arg>org.jboss.errai.cdi.server.gwt.EmbeddedWildFlyLauncher</arg>
               <arg>-startupUrl</arg>
               <arg>gwtui/gwtui.html</arg>
             </devmodeArgs>
+            <!-- GWT Super Dev Mode: deploy backend correctly -->
+            <warDir>optashift-employee-rostering-webapp/target/optashift-employee-rostering-webapp-${project.version}</warDir>
             <systemProperties>
+              <!-- GWT Super Dev Mode: which WildFly to use -->
               <errai.jboss.home>${wildfly.home}</errai.jboss.home>
             </systemProperties>
           </configuration>
