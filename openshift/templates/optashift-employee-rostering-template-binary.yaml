@@ -26,10 +26,8 @@ objects:
         kind: ImageStreamTag
         name: optashift-employee-rostering:latest
     source:
-      git:
-        ref: ${GIT_REF}
-        uri: ${GIT_URI}
-      type: Git
+      binary: {}
+      type: Binary
     strategy:
       sourceStrategy:
         from:
@@ -37,17 +35,13 @@ objects:
           name: wildfly:10.1
           namespace: openshift
       type: Source
-    triggers:
-    - type: ConfigChange
-    - imageChange: {}
-      type: ImageChange
     resources:
       limits:
         cpu: "1"
-        memory: 1400Mi
+        memory: 1Gi
       requests:
         cpu: "1"
-        memory: 1400Mi
+        memory: 1Gi
     runPolicy: Serial
 - apiVersion: v1
   kind: DeploymentConfig
