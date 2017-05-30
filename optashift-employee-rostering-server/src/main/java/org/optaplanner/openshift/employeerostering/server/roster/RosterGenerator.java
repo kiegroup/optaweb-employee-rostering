@@ -34,6 +34,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
@@ -143,12 +144,14 @@ public class RosterGenerator {
         employeeNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = employeeNameGenerator.generateNextValue();
-            LinkedHashSet<Skill> skillSet = new LinkedHashSet<>(extractRandomSubList(generalSkillList, 1.0));
-            Employee employee = new Employee(tenantId, name, skillSet);
+            Employee employee = new Employee(tenantId, name);
+            employee.setSkillProficiencyList(
+                    extractRandomSubList(generalSkillList, 1.0).stream()
+                            .map(skill -> new EmployeeSkillProficiency(tenantId, employee, skill))
+                            .collect(Collectors.toCollection(ArrayList::new)));
             Set<TimeSlot> unavailableTimeSlotSet = new LinkedHashSet<>(extractRandomSubList(timeSlotList, 0.2));
-            employee.setUnavailableTimeSlotSet(unavailableTimeSlotSet);
-// TODO
-//            entityManager.persist(employee);
+//            employee.setUnavailableTimeSlotSet(unavailableTimeSlotSet);
+            entityManager.persist(employee);
             employeeList.add(employee);
         }
         return employeeList;
@@ -176,7 +179,7 @@ public class RosterGenerator {
                 if (continuousPlanning) {
                     if (timeSlotIndex < timeSlotList.size() / 2) {
                         List<Employee> availableEmployeeList = employeeList.stream()
-                                .filter(employee -> !employee.getUnavailableTimeSlotSet().contains(timeSlot))
+//                                .filter(employee -> !employee.getUnavailableTimeSlotSet().contains(timeSlot))
                                 .collect(Collectors.toList());
                         Employee employee = availableEmployeeList.get(random.nextInt(availableEmployeeList.size()));
                         shiftAssignment.setEmployee(employee);

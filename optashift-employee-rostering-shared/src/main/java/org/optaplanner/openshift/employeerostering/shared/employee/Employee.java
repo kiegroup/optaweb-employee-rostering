@@ -16,31 +16,56 @@
 
 package org.optaplanner.openshift.employeerostering.shared.employee;
 
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
+@Entity
+@NamedQueries({
+        @NamedQuery(name = "Employee.findAll",
+                query = "SELECT e FROM Employee e left join fetch e.skillProficiencyList" +
+                        " WHERE e.tenantId = :tenantId"),
+})
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Employee extends AbstractPersistable {
 
+    @NotNull @Size(min = 1, max = 120)
     private String name;
-    private Set<Skill> skillSet;
+    @JsonManagedReference
+    @NotNull
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EmployeeSkillProficiency> skillProficiencyList;
 
-    private Set<TimeSlot> unavailableTimeSlotSet;
+//    @NotNull
+//    private Set<TimeSlot> unavailableTimeSlotSet;
 
     @SuppressWarnings("unused")
     public Employee() {
     }
 
-    public Employee(Integer tenantId, String name, Set<Skill> skillSet) {
+    public Employee(Integer tenantId, String name) {
         super(tenantId);
         this.name = name;
-        this.skillSet = skillSet;
+    }
+
+    public boolean hasSkill(Skill skill) {
+        return skillProficiencyList.stream()
+                .anyMatch(skillProficiency -> skillProficiency.getSkill().equals(skill));
     }
 
     @Override
@@ -60,20 +85,20 @@ public class Employee extends AbstractPersistable {
         this.name = name;
     }
 
-    public Set<Skill> getSkillSet() {
-        return skillSet;
+    public List<EmployeeSkillProficiency> getSkillProficiencyList() {
+        return skillProficiencyList;
     }
 
-    public void setSkillSet(Set<Skill> skillSet) {
-        this.skillSet = skillSet;
+    public void setSkillProficiencyList(List<EmployeeSkillProficiency> skillProficiencyList) {
+        this.skillProficiencyList = skillProficiencyList;
     }
 
-    public Set<TimeSlot> getUnavailableTimeSlotSet() {
-        return unavailableTimeSlotSet;
-    }
-
-    public void setUnavailableTimeSlotSet(Set<TimeSlot> unavailableTimeSlotSet) {
-        this.unavailableTimeSlotSet = unavailableTimeSlotSet;
-    }
+//    public Set<TimeSlot> getUnavailableTimeSlotSet() {
+//        return unavailableTimeSlotSet;
+//    }
+//
+//    public void setUnavailableTimeSlotSet(Set<TimeSlot> unavailableTimeSlotSet) {
+//        this.unavailableTimeSlotSet = unavailableTimeSlotSet;
+//    }
 
 }

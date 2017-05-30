@@ -14,56 +14,72 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.shared.skill;
+package org.optaplanner.openshift.employeerostering.shared.employee;
 
-import javax.persistence.Column;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
-@NamedQueries({
-        @NamedQuery(name = "Skill.findAll",
-                query = "SELECT s FROM Skill s" +
-                        " WHERE s.tenantId = :tenantId"),
-})
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
-public class Skill extends AbstractPersistable {
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "skill_id"}))
+public class EmployeeSkillProficiency extends AbstractPersistable {
 
-    @NotNull @Size(min = 1, max = 120)
-    private String name;
+    @JsonBackReference
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Employee employee;
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Skill skill;
 
     @SuppressWarnings("unused")
-    public Skill() {
+    public EmployeeSkillProficiency() {
     }
 
-    public Skill(Integer tenantId, String name) {
+    public EmployeeSkillProficiency(Integer tenantId, Employee employee, Skill skill) {
         super(tenantId);
-        this.name = name;
+        this.employee = employee;
+        this.skill = skill;
     }
 
     @Override
     public String toString() {
-        return name;
+        return employee + "-" + skill;
     }
 
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
 
-    public String getName() {
-        return name;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
+    }
+
+    public Skill getSkill() {
+        return skill;
+    }
+
+    public void setSkill(Skill skill) {
+        this.skill = skill;
     }
 
 }

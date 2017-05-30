@@ -32,15 +32,17 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Spot.findAll", query = "SELECT s FROM Spot s WHERE s.tenantId = :tenantId"),
+        @NamedQuery(name = "Spot.findAll",
+                query = "SELECT s FROM Spot s" +
+                        " WHERE s.tenantId = :tenantId"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Spot extends AbstractPersistable {
 
     @NotNull @Size(min = 1, max = 120)
     private String name;
-    @ManyToOne(fetch = FetchType.EAGER)
     @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
     private Skill requiredSkill;
 
     @SuppressWarnings("unused")
