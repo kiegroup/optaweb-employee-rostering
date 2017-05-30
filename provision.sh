@@ -127,10 +127,10 @@ GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
 GIT_REF=openshift-template
 
 # config
-GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-ge0frey}
+GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-ge0ffrey}
 GIT_REF=${GITHUB_REF:-openshift-template}
-#GIT_URI=https://github.com/$GITHUB_ACCOUNT/optashift-employee-rostering
-GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
+GIT_URI=https://github.com/$GITHUB_ACCOUNT/optashift-employee-rostering
+#GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
 
 ################################################################################
 # DEMO MATRIX                                                                  #
