@@ -59,7 +59,7 @@ public class EmployeeSkillProficiency extends AbstractPersistable {
 
     @Override
     public String toString() {
-        return employee + "-" + skill;
+        return employee + " " + skill;
     }
 
     // ************************************************************************

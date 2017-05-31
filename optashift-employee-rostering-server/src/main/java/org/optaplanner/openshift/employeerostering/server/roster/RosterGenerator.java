@@ -73,7 +73,6 @@ public class RosterGenerator {
 
     // All generated data have negative id's so the real ones can start from zero.
     private AtomicInteger rosterIdGenerator = new AtomicInteger(-1);
-    private AtomicLong shiftAssignmentIdGenerator = new AtomicLong(-1L);
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -174,8 +173,7 @@ public class RosterGenerator {
                     timeSlotIndex++;
                     continue;
                 }
-                Long id = shiftAssignmentIdGenerator.getAndDecrement();
-                ShiftAssignment shiftAssignment = new ShiftAssignment(id, spot, timeSlot);
+                ShiftAssignment shiftAssignment = new ShiftAssignment(tenantId, spot, timeSlot);
                 if (continuousPlanning) {
                     if (timeSlotIndex < timeSlotList.size() / 2) {
                         List<Employee> availableEmployeeList = employeeList.stream()
@@ -186,6 +184,7 @@ public class RosterGenerator {
                         shiftAssignment.setLockedByUser(random.nextDouble() < 0.05);
                     }
                 }
+                entityManager.persist(shiftAssignment);
                 shiftAssignmentList.add(shiftAssignment);
                 timeSlotIndex++;
             }

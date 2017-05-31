@@ -16,6 +16,12 @@
 
 package org.optaplanner.openshift.employeerostering.shared.shift;
 
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.validation.constraints.NotNull;
+
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
@@ -25,14 +31,29 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
+@Entity
+@NamedQueries({
+        @NamedQuery(name = "ShiftAssignment.findAll",
+                query = "select distinct sa from ShiftAssignment sa" +
+                        " left join fetch sa.spot s" +
+                        " left join fetch sa.timeSlot t" +
+                        " left join fetch sa.employee e" +
+                        " where sa.tenantId = :tenantId" +
+                        " order by t.startDateTime, s.name, e.name"),
+})
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftAssignmentFilter.class)
 public class ShiftAssignment extends AbstractPersistable {
 
+    @NotNull
+    @ManyToOne
     private Spot spot;
+    @NotNull
+    @ManyToOne
     private TimeSlot timeSlot;
 
     private boolean lockedByUser = false;
 
+    @ManyToOne
     @PlanningVariable(valueRangeProviderRefs = "employeeRange")
     private Employee employee = null;
 
@@ -40,8 +61,8 @@ public class ShiftAssignment extends AbstractPersistable {
     public ShiftAssignment() {
     }
 
-    public ShiftAssignment(Long id, Spot spot, TimeSlot timeSlot) {
-        super(id);
+    public ShiftAssignment(Integer tenantId, Spot spot, TimeSlot timeSlot) {
+        super(tenantId);
         this.timeSlot = timeSlot;
         this.spot = spot;
     }
