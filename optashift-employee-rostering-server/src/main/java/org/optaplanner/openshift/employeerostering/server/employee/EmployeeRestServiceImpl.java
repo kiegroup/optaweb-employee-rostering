@@ -35,7 +35,8 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
     @Transactional
     public List<Employee> getEmployeeList(Integer tenantId) {
         return entityManager.createNamedQuery("Employee.findAll", Employee.class)
-                .setParameter("tenantId", tenantId).getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
     }
 
     @Override

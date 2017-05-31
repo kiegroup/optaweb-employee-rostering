@@ -38,7 +38,8 @@ public class SkillRestServiceImpl implements SkillRestService {
     @Transactional
     public List<Skill> getSkillList(Integer tenantId) {
         return entityManager.createNamedQuery("Skill.findAll", Skill.class)
-                .setParameter("tenantId", tenantId).getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
     }
 
     @Override

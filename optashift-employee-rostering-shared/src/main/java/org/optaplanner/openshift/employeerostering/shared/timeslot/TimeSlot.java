@@ -35,7 +35,13 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 @NamedQueries({
         @NamedQuery(name = "TimeSlot.findAll",
                 query = "select t from TimeSlot t" +
-                        " where t.tenantId = :tenantId"),
+                        " where t.tenantId = :tenantId" +
+                        " order by t.startDateTime"),
+//        @NamedQuery(name = "TimeSlot.findByStartDateEndDate",
+//                query = "select t from TimeSlot t" +
+//                        " where t.tenantId = :tenantId" +
+//                        " and t.startDateTime between :startDate and :endDate"
+//                        " order by t.startDateTime"),
 })
 public class TimeSlot extends AbstractPersistable {
 

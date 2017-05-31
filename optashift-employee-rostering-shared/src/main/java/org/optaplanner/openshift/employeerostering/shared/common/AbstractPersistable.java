@@ -53,6 +53,12 @@ public abstract class AbstractPersistable implements Serializable {
         this.tenantId = tenantId;
     }
 
+    protected AbstractPersistable(AbstractPersistable other) {
+        this.id = other.id;
+        this.tenantId = other.tenantId;
+        this.version = other.version;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

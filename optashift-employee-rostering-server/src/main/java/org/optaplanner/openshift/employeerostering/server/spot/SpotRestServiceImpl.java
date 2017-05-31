@@ -38,7 +38,8 @@ public class SpotRestServiceImpl implements SpotRestService {
     @Transactional
     public List<Spot> getSpotList(Integer tenantId) {
         return entityManager.createNamedQuery("Spot.findAll", Spot.class)
-                .setParameter("tenantId", tenantId).getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
     }
 
     @Override

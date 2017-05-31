@@ -16,28 +16,110 @@
 
 package org.optaplanner.openshift.employeerostering.server.roster;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverManager;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftAssignmentView;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class RosterRestServiceImpl implements RosterRestService {
 
-    @Inject
-    private RosterDao rosterDao;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Inject
     private WannabeSolverManager solverManager;
 
     @Override
-    public Roster getRoster(Integer tenantId) {
-        return rosterDao.getRoster(tenantId);
+    @Transactional
+    public SpotRosterView getCurrentSpotRosterView(Integer tenantId) {
+        List<TimeSlot> timeSlotList = entityManager.createNamedQuery("TimeSlot.findAll", TimeSlot.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        LocalDate startDate;
+        LocalDate endDate;
+        if (timeSlotList.isEmpty()) {
+            startDate = LocalDate.parse("1900-01-01");
+            endDate = LocalDate.parse("2900-01-01");
+        } else {
+            startDate = timeSlotList.get(0).getStartDateTime().toLocalDate();
+            endDate = timeSlotList.get(timeSlotList.size() - 1).getStartDateTime().toLocalDate();
+        }
+        return getCurrentSpotRosterView(tenantId, startDate, endDate);
+    }
+
+    @Override
+    @Transactional
+    public SpotRosterView getCurrentSpotRosterView(Integer tenantId, String startDateString, String endDateString) {
+        LocalDate startDate = LocalDate.parse(startDateString);
+        LocalDate endDate = LocalDate.parse(endDateString);
+        return getCurrentSpotRosterView(tenantId, startDate, endDate);
+    }
+
+    @Transactional
+    protected SpotRosterView getCurrentSpotRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate) {
+        SpotRosterView spotRosterView = new SpotRosterView(tenantId, startDate, endDate);
+        List<Spot> spotList = entityManager.createNamedQuery("Spot.findAll", Spot.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        spotRosterView.setSpotList(spotList);
+        List<Employee> employeeList = entityManager.createNamedQuery("Employee.findAll", Employee.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        spotRosterView.setEmployeeList(employeeList);
+        List<TimeSlot> timeSlotList = entityManager.createNamedQuery("TimeSlot.findAll", TimeSlot.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        spotRosterView.setTimeSlotList(timeSlotList);
+//        spotRosterView.setTimeSlotList(entityManager.createNamedQuery("TimeSlot.findByStartDateEndDate", TimeSlot.class)
+//                .setParameter("tenantId", tenantId)
+//                .setParameter("startDate", startDate)
+//                .setParameter("endDate", endDate)
+//                .getResultList());
+        List<ShiftAssignment> shiftAssignmentList = entityManager.createNamedQuery("ShiftAssignment.findAll", ShiftAssignment.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        Map<Long, Map<Long, List<ShiftAssignmentView>>> spotIdMap = new LinkedHashMap<>(spotList.size());
+        for (ShiftAssignment shiftAssignment : shiftAssignmentList) {
+            Long spotId = shiftAssignment.getSpot().getId();
+            Map<Long, List<ShiftAssignmentView>> timeSlotIdMap = spotIdMap
+                    .computeIfAbsent(spotId, k -> new LinkedHashMap<>(timeSlotList.size()));
+            Long timeSlotId = shiftAssignment.getTimeSlot().getId();
+            List<ShiftAssignmentView> shiftAssignmentViewList = timeSlotIdMap
+                    .computeIfAbsent(timeSlotId, k -> new ArrayList<>(2));
+            shiftAssignmentViewList.add(new ShiftAssignmentView(shiftAssignment));
+        }
+        spotRosterView.setSpotIdToTimeSlotIdToShiftAssignmentViewListMap(spotIdMap);
+        return spotRosterView;
     }
 
     @Override
     public void solveRoster(Integer tenantId) {
         solverManager.solve(tenantId);
+    }
+
+    // TODO remove these
+    @Inject
+    private RosterDao rosterDao;
+
+    // TODO remove these
+    @Override
+    public Roster getRoster(Integer tenantId) {
+        return rosterDao.getRoster(tenantId);
     }
 
 }
