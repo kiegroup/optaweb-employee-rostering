@@ -22,6 +22,13 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftAssignmentView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -71,6 +78,9 @@ public class SpotRosterView implements Serializable {
         this.tenantId = tenantId;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -79,6 +89,9 @@ public class SpotRosterView implements Serializable {
         this.startDate = startDate;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getEndDate() {
         return endDate;
     }
