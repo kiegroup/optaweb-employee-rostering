@@ -94,11 +94,22 @@ public class SpotRosterViewPanel implements IsElement {
                     List<ShiftAssignmentView> shiftAssignmentViewList
                             = spotRosterView.getSpotIdToTimeSlotIdToShiftAssignmentViewListMap().get(spotId)
                             .get(timeSlotId);
-                    if (shiftAssignmentViewList.isEmpty()) {
-                        return "No spots";
+                    if (shiftAssignmentViewList == null || shiftAssignmentViewList.isEmpty()) {
+                        return ""; // No shifts during this timeslot in this spot
                     }
                     return shiftAssignmentViewList.stream()
-                            .map(shiftAssignmentView -> employeeMap.get(shiftAssignmentView.getEmployeeId()).getName())
+                            .map(shiftAssignmentView -> {
+                                Long employeeId = shiftAssignmentView.getEmployeeId();
+                                if (employeeId == null) {
+                                    return "Unassigned";
+                                }
+                                Employee employee = employeeMap.get(employeeId);
+                                if (employee == null) {
+                                    throw new IllegalStateException("Impossible situation: the employeeId ("
+                                            + employeeId + ") does not exist in the employeeMap.");
+                                }
+                                return employee.getName();
+                            })
                             .collect(Collectors.joining(", "));
                 }
             }, "Timeslot " + timeSlotIndex);
