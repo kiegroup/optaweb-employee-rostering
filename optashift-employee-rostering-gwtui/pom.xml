@@ -51,7 +51,31 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.errai</groupId>
-      <artifactId>errai-javaee-all</artifactId>
+      <artifactId>errai-ioc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-cdi-client</artifactId>
+    </dependency>
+    <dependency><!-- TODO Remove me, we don't use JPA on the client, but removing this gives blank screen at runtime -->
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-jpa-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-javax-enterprise</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-navigation</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-data-binding</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-validation</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.errai</groupId>
