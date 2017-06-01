@@ -14,6 +14,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
@@ -77,43 +78,6 @@ public class SpotRosterViewPanel implements IsElement {
                 return (spot == null) ? "" : spot.getName();
             }
         }, "Spot");
-        for (int i = 0; i < 10; i++) {
-            int timeSlotIndex = i;
-            table.addColumn(new TextColumn<Spot>() {
-                @Override
-                public String getValue(Spot spot) {
-                    if (spotRosterView == null) {
-                        return "";
-                    }
-                    List<TimeSlot> timeSlotList = spotRosterView.getTimeSlotList();
-                    if (timeSlotIndex >= timeSlotList.size()) {
-                        return "No timeslot";
-                    }
-                    Long timeSlotId = timeSlotList.get(timeSlotIndex).getId();
-                    Long spotId = spot.getId();
-                    List<ShiftAssignmentView> shiftAssignmentViewList
-                            = spotRosterView.getSpotIdToTimeSlotIdToShiftAssignmentViewListMap().get(spotId)
-                            .get(timeSlotId);
-                    if (shiftAssignmentViewList == null || shiftAssignmentViewList.isEmpty()) {
-                        return ""; // No shifts during this timeslot in this spot
-                    }
-                    return shiftAssignmentViewList.stream()
-                            .map(shiftAssignmentView -> {
-                                Long employeeId = shiftAssignmentView.getEmployeeId();
-                                if (employeeId == null) {
-                                    return "Unassigned";
-                                }
-                                Employee employee = employeeMap.get(employeeId);
-                                if (employee == null) {
-                                    throw new IllegalStateException("Impossible situation: the employeeId ("
-                                            + employeeId + ") does not exist in the employeeMap.");
-                                }
-                                return employee.getName();
-                            })
-                            .collect(Collectors.joining(", "));
-                }
-            }, "Timeslot " + timeSlotIndex);
-        }
         table.addRangeChangeHandler(event -> pagination.rebuild(pager));
 
         pager.setDisplay(table);
@@ -128,6 +92,38 @@ public class SpotRosterViewPanel implements IsElement {
                 SpotRosterViewPanel.this.spotRosterView = spotRosterView;
                 employeeMap = spotRosterView.getEmployeeList().stream()
                         .collect(Collectors.toMap(Employee::getId, Function.identity()));
+                for (int i = table.getColumnCount() - 1; i > 0; i--) {
+                    table.removeColumn(i);
+                }
+                for (TimeSlot timeSlot : spotRosterView.getTimeSlotList()) {
+                    table.addColumn(new TextColumn<Spot>() {
+                        @Override
+                        public String getValue(Spot spot) {
+                            Long timeSlotId = timeSlot.getId();
+                            Long spotId = spot.getId();
+                            List<ShiftAssignmentView> shiftAssignmentViewList
+                                    = spotRosterView.getSpotIdToTimeSlotIdToShiftAssignmentViewListMap().get(spotId)
+                                    .get(timeSlotId);
+                            if (shiftAssignmentViewList == null || shiftAssignmentViewList.isEmpty()) {
+                                return ""; // No shifts during this timeslot in this spot
+                            }
+                            return shiftAssignmentViewList.stream()
+                                    .map(shiftAssignmentView -> {
+                                        Long employeeId = shiftAssignmentView.getEmployeeId();
+                                        if (employeeId == null) {
+                                            return "Unassigned";
+                                        }
+                                        Employee employee = employeeMap.get(employeeId);
+                                        if (employee == null) {
+                                            throw new IllegalStateException("Impossible situation: the employeeId ("
+                                                    + employeeId + ") does not exist in the employeeMap.");
+                                        }
+                                        return employee.getName();
+                                    })
+                                    .collect(Collectors.joining(", "));
+                        }
+                    }, timeSlot.getStartDateTime().toString());
+                }
                 dataProvider.setList(spotRosterView.getSpotList());
                 dataProvider.flush();
                 pagination.rebuild(pager);
