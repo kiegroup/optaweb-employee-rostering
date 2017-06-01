@@ -122,14 +122,13 @@ PRJ="optashift"
 PRJ_DISPLAY_NAME="OptaShift"
 PRJ_DESCRIPTION="OptaShift Empoloyee Rostering Demo"
 #GIT_URI="https://github.com/ge0ffrey/optashift-employee-rostering"
-GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
-GIT_REF=master
+#GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
+#GIT_REF="openshift-template"
 
 # config
 GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-ge0ffrey}
-GIT_REF=${GITHUB_REF:-openshift-template}
+GIT_REF=${GITHUB_REF:-master}
 GIT_URI=https://github.com/$GITHUB_ACCOUNT/optashift-employee-rostering
-#GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
 
 ################################################################################
 # DEMO MATRIX                                                                  #
@@ -281,7 +280,7 @@ fi
 #pushd ~ >/dev/null
 START=`date +%s`
 
-echo_header "BPM Suite Travel Agency Demo ($(date))"
+echo_header "OptaPlanner OpenShift Demo ($(date))"
 
 case "$ARG_COMMAND" in
     delete)
@@ -296,7 +295,7 @@ case "$ARG_COMMAND" in
         ;;
 
     idle)
-        echo "Idling BPM Suite Travel Agency demo ($ARG_DEMO)..."
+        echo "Idling OptaPlanner OpenShift demo ($ARG_DEMO)..."
         print_info
         make_idle
         ;;
