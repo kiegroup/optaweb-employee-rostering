@@ -1,9 +1,5 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;

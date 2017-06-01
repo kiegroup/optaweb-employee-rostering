@@ -51,25 +51,37 @@ public class MenuPanel implements IsElement {
     @EventHandler("skillsAnchor")
     public void showSkills(ClickEvent e) {
         content.removeChild(content.getLastChild());
+        switchActive(skillsAnchor);
         content.appendChild(skillListPanel.getElement());
     }
 
     @EventHandler("spotsAnchor")
     public void showSpots(ClickEvent e) {
         content.removeChild(content.getLastChild());
+        switchActive(spotsAnchor);
         content.appendChild(spotListPanel.getElement());
     }
 
     @EventHandler("employeesAnchor")
     public void showEmployees(ClickEvent e) {
         content.removeChild(content.getLastChild());
+        switchActive(employeesAnchor);
         content.appendChild(employeeListPanel.getElement());
     }
 
     @EventHandler("spotRosterAnchor")
     public void showSpotRoster(ClickEvent e) {
         content.removeChild(content.getLastChild());
+        switchActive(spotRosterAnchor);
         content.appendChild(spotRosterViewPanel.getElement());
+    }
+
+    private void switchActive(Anchor anchor) {
+        skillsAnchor.getElement().getParentElement().removeClassName("active");
+        spotsAnchor.getElement().getParentElement().removeClassName("active");
+        employeesAnchor.getElement().getParentElement().removeClassName("active");
+        spotRosterAnchor.getElement().getParentElement().removeClassName("active");
+        anchor.getElement().getParentElement().addClassName("active");
     }
 
 }
