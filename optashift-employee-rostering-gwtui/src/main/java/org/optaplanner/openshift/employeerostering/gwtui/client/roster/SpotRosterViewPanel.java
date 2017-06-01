@@ -1,5 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,6 +13,7 @@ import javax.inject.Inject;
 
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
@@ -122,7 +125,17 @@ public class SpotRosterViewPanel implements IsElement {
                                     })
                                     .collect(Collectors.joining(", "));
                         }
-                    }, timeSlot.getStartDateTime().toString());
+                    }, new SafeHtmlBuilder()
+                            .appendHtmlConstant("<div>")
+                            .appendEscaped(timeSlot.getStartDateTime().getDayOfWeek().toString().toLowerCase())
+                            .appendHtmlConstant("<br/>")
+                            .appendEscaped(timeSlot.getStartDateTime().toLocalDate().toString())
+                            .appendHtmlConstant("<br/>")
+                            .appendEscaped(timeSlot.getStartDateTime().toLocalTime().toString())
+                            .appendEscaped("-")
+                            .appendEscaped(timeSlot.getEndDateTime().toLocalTime().toString())
+                            .appendHtmlConstant("</div>")
+                            .toSafeHtml() );
                 }
                 dataProvider.setList(spotRosterView.getSpotList());
                 dataProvider.flush();
