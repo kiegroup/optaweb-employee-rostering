@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -8,8 +9,19 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
+import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.CompositeCell;
+import com.google.gwt.cell.client.HasCell;
+import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.cellview.client.IdentityColumn;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.Window;
@@ -17,6 +29,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
+import org.gwtbootstrap3.client.ui.constants.ButtonType;
+import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -95,33 +110,7 @@ public class SpotRosterViewPanel implements IsElement {
                     table.removeColumn(i);
                 }
                 for (TimeSlot timeSlot : spotRosterView.getTimeSlotList()) {
-                    table.addColumn(new TextColumn<Spot>() {
-                        @Override
-                        public String getValue(Spot spot) {
-                            Long timeSlotId = timeSlot.getId();
-                            Long spotId = spot.getId();
-                            List<ShiftAssignmentView> shiftAssignmentViewList
-                                    = spotRosterView.getSpotIdToTimeSlotIdToShiftAssignmentViewListMap().get(spotId)
-                                    .get(timeSlotId);
-                            if (shiftAssignmentViewList == null || shiftAssignmentViewList.isEmpty()) {
-                                return ""; // No shifts during this timeslot in this spot
-                            }
-                            return shiftAssignmentViewList.stream()
-                                    .map(shiftAssignmentView -> {
-                                        Long employeeId = shiftAssignmentView.getEmployeeId();
-                                        if (employeeId == null) {
-                                            return "Unassigned";
-                                        }
-                                        Employee employee = employeeMap.get(employeeId);
-                                        if (employee == null) {
-                                            throw new IllegalStateException("Impossible situation: the employeeId ("
-                                                    + employeeId + ") does not exist in the employeeMap.");
-                                        }
-                                        return employee.getName();
-                                    })
-                                    .collect(Collectors.joining(", "));
-                        }
-                    }, new SafeHtmlBuilder()
+                    SafeHtml headerHtml = new SafeHtmlBuilder()
                             .appendHtmlConstant("<div>")
                             .appendEscaped(timeSlot.getStartDateTime().getDayOfWeek().toString().toLowerCase())
                             .appendHtmlConstant("<br/>")
@@ -131,7 +120,61 @@ public class SpotRosterViewPanel implements IsElement {
                             .appendEscaped("-")
                             .appendEscaped(timeSlot.getEndDateTime().toLocalTime().toString())
                             .appendHtmlConstant("</div>")
-                            .toSafeHtml() );
+                            .toSafeHtml();
+
+                    table.addColumn(new IdentityColumn<>(new AbstractCell<Spot>("click") {
+                        @Override
+                        public void render(Context context, Spot spot, SafeHtmlBuilder sb) {
+                            Long timeSlotId = timeSlot.getId();
+                            Long spotId = spot.getId();
+                            List<ShiftAssignmentView> shiftAssignmentViewList
+                                    = spotRosterView.getSpotIdToTimeSlotIdToShiftAssignmentViewListMap().get(spotId)
+                                    .get(timeSlotId);
+                            if (shiftAssignmentViewList != null && !shiftAssignmentViewList.isEmpty()) {
+                                for (ShiftAssignmentView shiftAssignmentView : shiftAssignmentViewList) {
+                                    Long employeeId = shiftAssignmentView.getEmployeeId();
+                                    String employeeName;
+                                    if (employeeId == null) {
+                                        employeeName = null;
+                                    } else {
+                                        Employee employee = employeeMap.get(employeeId);
+                                        if (employee == null) {
+                                            throw new IllegalStateException("Impossible situation: the employeeId ("
+                                                    + employeeId + ") does not exist in the employeeMap.");
+                                        }
+                                        employeeName = employee.getName();
+                                    }
+                                    sb.appendHtmlConstant("<span class=\"badge");
+                                    if (employeeName == null) {
+                                        sb.appendHtmlConstant(" badge-important");
+                                    }
+                                    sb.appendHtmlConstant("\">");
+                                    sb.appendEscaped(employeeName == null ? "Unassigned" : employeeName);
+                                    sb.appendHtmlConstant("<a class=\"btn btn-sm shiftRemove\" style=\"padding: 5px\" aria-label=\"Remove shift\">" +
+                                            "<span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"/>" +
+                                            "</a>");
+                                    sb.appendHtmlConstant("</span>");
+                                }
+                            }
+                            sb.appendHtmlConstant("<a class=\"btn btn-sm shiftAdd\" aria-label=\"Add shift\">" +
+                                    "<span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"/>" +
+                                    "</a>");
+                        }
+
+                        @Override
+                        public void onBrowserEvent(Context context, Element parent, Spot spot, NativeEvent event, ValueUpdater<Spot> valueUpdater) {
+                            super.onBrowserEvent(context, parent, spot, event, valueUpdater);
+                            if ("click".equals(event.getType())) {
+                                Element targetElement = Element.as(event.getEventTarget());
+                                if (targetElement.hasClassName("shiftRemove") || targetElement.getParentElement().hasClassName("shiftRemove")) {
+                                    Window.alert("Remove shift " + spot + " " + timeSlot); // TODO
+                                }
+                                if (targetElement.hasClassName("shiftAdd") || targetElement.getParentElement().hasClassName("shiftAdd")) {
+                                    Window.alert("Add shift " + spot + " " + timeSlot); // TODO
+                                }
+                            }
+                        }
+                    }), headerHtml);
                 }
                 dataProvider.setList(spotRosterView.getSpotList());
                 dataProvider.flush();
