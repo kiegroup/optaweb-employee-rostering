@@ -28,8 +28,10 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -158,7 +160,18 @@ public class SpotRosterViewPanel implements IsElement {
                                     Window.alert("Remove shift " + spot + " " + timeSlot); // TODO
                                 }
                                 if (targetElement.hasClassName("shiftAdd") || targetElement.getParentElement().hasClassName("shiftAdd")) {
-                                    Window.alert("Add shift " + spot + " " + timeSlot); // TODO
+                                    ShiftRestServiceBuilder.addShift(tenantId, new ShiftView(tenantId, spot, timeSlot), new RestCallback<Long>() {
+                                        @Override
+                                        public void onSuccess(Long shiftId) {
+                                            refreshTable();
+                                        }
+
+                                        @Override
+                                        public void onFailure(Throwable throwable) {
+                                            Window.alert("Failure calling REST method: " + throwable.getMessage());
+                                            throw new IllegalStateException("REST call failure", throwable);
+                                        }
+                                    });
                                 }
                             }
                         }

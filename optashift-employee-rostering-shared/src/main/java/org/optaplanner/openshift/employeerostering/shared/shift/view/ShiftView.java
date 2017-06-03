@@ -20,6 +20,8 @@ import javax.validation.constraints.NotNull;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class ShiftView extends AbstractPersistable {
 
@@ -30,10 +32,16 @@ public class ShiftView extends AbstractPersistable {
 
     private boolean lockedByUser = false;
 
-    private Long employeeId;
+    private Long employeeId = null;
 
     @SuppressWarnings("unused")
     public ShiftView() {
+    }
+
+    public ShiftView(Integer tenantId, Spot spot, TimeSlot timeSlot) {
+        super(tenantId);
+        this.spotId = spot.getId();
+        this.timeSlotId = timeSlot.getId();
     }
 
     public ShiftView(Shift shift) {
