@@ -141,7 +141,7 @@ public class SpotRosterViewPanel implements IsElement {
                                     }
                                     sb.appendHtmlConstant("\">");
                                     sb.appendEscaped(employeeName == null ? "Unassigned" : employeeName);
-                                    sb.appendHtmlConstant("<a class=\"btn btn-sm shiftRemove\" style=\"padding: 5px\" aria-label=\"Remove shift\">" +
+                                    sb.appendHtmlConstant("<a class=\"btn btn-sm shiftRemove\" data-shiftId=\"" + shiftView.getId() + "\" style=\"padding: 5px\" aria-label=\"Remove shift\">" +
                                             "<span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"/>" +
                                             "</a>");
                                     sb.appendHtmlConstant("</span>");
@@ -157,13 +157,21 @@ public class SpotRosterViewPanel implements IsElement {
                             super.onBrowserEvent(context, parent, spot, event, valueUpdater);
                             if ("click".equals(event.getType())) {
                                 Element targetElement = Element.as(event.getEventTarget());
-                                if (targetElement.hasClassName("shiftRemove") || targetElement.getParentElement().hasClassName("shiftRemove")) {
-                                    Window.alert("Remove shift " + spot + " " + timeSlot); // TODO
-                                }
                                 if (targetElement.hasClassName("shiftAdd") || targetElement.getParentElement().hasClassName("shiftAdd")) {
                                     ShiftRestServiceBuilder.addShift(tenantId, new ShiftView(tenantId, spot, timeSlot), new FailureShownRestCallback<Long>() {
                                         @Override
                                         public void onSuccess(Long shiftId) {
+                                            refreshTable();
+                                        }
+                                    });
+                                } else if (targetElement.hasClassName("shiftRemove") || targetElement.getParentElement().hasClassName("shiftRemove")) {
+                                    String shiftIdString = targetElement.hasClassName("shiftRemove") ?
+                                            targetElement.getAttribute("data-shiftId")
+                                            : targetElement.getParentElement().getAttribute("data-shiftId");
+                                    Long shiftId = Long.parseLong(shiftIdString);
+                                    ShiftRestServiceBuilder.removeShift(tenantId, shiftId, new FailureShownRestCallback<Boolean>() {
+                                        @Override
+                                        public void onSuccess(Boolean removed) {
                                             refreshTable();
                                         }
                                     });
