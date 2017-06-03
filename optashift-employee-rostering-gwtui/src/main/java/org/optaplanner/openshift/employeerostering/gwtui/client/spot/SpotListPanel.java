@@ -23,6 +23,7 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -69,18 +70,12 @@ public class SpotListPanel implements IsElement {
     }
 
     private void refreshRequiredSkillsListBox() {
-        SkillRestServiceBuilder.getSkillList(tenantId, new RestCallback<List<Skill>>() {
+        SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {
                 requiredSkillListBoxValues = skillList;
                 requiredSkillListBox.clear();
                 skillList.forEach(skill -> requiredSkillListBox.addItem(skill.getName()));
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                Window.alert("Failure calling REST method: " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }
@@ -109,16 +104,10 @@ public class SpotListPanel implements IsElement {
             }
         };
         deleteColumn.setFieldUpdater((index, spot, value) -> {
-            SpotRestServiceBuilder.removeSpot(tenantId, spot.getId(), new RestCallback<Boolean>() {
+            SpotRestServiceBuilder.removeSpot(tenantId, spot.getId(), new FailureShownRestCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean removed) {
                     refreshTable();
-                }
-
-                @Override
-                public void onFailure(Throwable throwable) {
-                    Window.alert("Failure calling REST method: " + throwable.getMessage());
-                    throw new IllegalStateException("REST call failure", throwable);
                 }
             });
         });
@@ -132,18 +121,12 @@ public class SpotListPanel implements IsElement {
     }
 
     private void refreshTable() {
-        SpotRestServiceBuilder.getSpotList(tenantId, new RestCallback<List<Spot>>() {
+        SpotRestServiceBuilder.getSpotList(tenantId, new FailureShownRestCallback<List<Spot>>() {
             @Override
             public void onSuccess(List<Spot> spotList) {
                 dataProvider.setList(spotList);
                 dataProvider.flush();
                 pagination.rebuild(pager);
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                Window.alert("Failure calling REST method: " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }
@@ -156,16 +139,10 @@ public class SpotListPanel implements IsElement {
         int requiredSkillIndex = requiredSkillListBox.getSelectedIndex();
         Skill requiredSkill = requiredSkillIndex < 0 ? null : requiredSkillListBoxValues.get(requiredSkillIndex);
 
-        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, requiredSkill), new RestCallback<Long>() {
+        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, requiredSkill), new FailureShownRestCallback<Long>() {
             @Override
             public void onSuccess(Long spotId) {
                 refreshTable();
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                Window.alert("Failure calling REST method: " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }

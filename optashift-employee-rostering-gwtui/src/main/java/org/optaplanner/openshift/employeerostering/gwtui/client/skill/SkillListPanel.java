@@ -19,6 +19,7 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.jboss.errai.ui.client.local.api.IsElement;
@@ -77,16 +78,10 @@ public class SkillListPanel implements IsElement {
             }
         };
         deleteColumn.setFieldUpdater((index, skill, value) -> {
-            SkillRestServiceBuilder.removeSkill(tenantId, skill.getId(), new RestCallback<Boolean>() {
+            SkillRestServiceBuilder.removeSkill(tenantId, skill.getId(), new FailureShownRestCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean removed) {
                     refreshTable();
-                }
-
-                @Override
-                public void onFailure(Throwable throwable) {
-                    Window.alert("Failure calling REST method: " + throwable.getMessage());
-                    throw new IllegalStateException("REST call failure", throwable);
                 }
             });
         });
@@ -100,18 +95,12 @@ public class SkillListPanel implements IsElement {
     }
 
     private void refreshTable() {
-        SkillRestServiceBuilder.getSkillList(tenantId, new RestCallback<List<Skill>>() {
+        SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {
                 dataProvider.setList(skillList);
                 dataProvider.flush();
                 pagination.rebuild(pager);
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                Window.alert("Failure calling REST method: " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }
@@ -121,16 +110,10 @@ public class SkillListPanel implements IsElement {
         String skillName = skillNameTextBox.getValue();
         skillNameTextBox.setValue("");
         skillNameTextBox.setFocus(true);
-        SkillRestServiceBuilder.addSkill(tenantId, new Skill(tenantId, skillName), new RestCallback<Long>() {
+        SkillRestServiceBuilder.addSkill(tenantId, new Skill(tenantId, skillName), new FailureShownRestCallback<Long>() {
             @Override
             public void onSuccess(Long skillId) {
                 refreshTable();
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                Window.alert("Failure calling REST method: " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }

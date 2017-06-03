@@ -23,6 +23,7 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
@@ -70,18 +71,12 @@ public class EmployeeListPanel implements IsElement {
     }
 
     private void refreshSkillsListBox() {
-        SkillRestServiceBuilder.getSkillList(tenantId, new RestCallback<List<Skill>>() {
+        SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {
                 skillListBoxValues = skillList;
 //                requiredSkillListBox.clear();
 //                skillList.forEach(skill -> requiredSkillListBox.addItem(skill.getName()));
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                Window.alert("Failure calling REST method: " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }
@@ -111,16 +106,10 @@ public class EmployeeListPanel implements IsElement {
             }
         };
         deleteColumn.setFieldUpdater((index, employee, value) -> {
-            EmployeeRestServiceBuilder.removeEmployee(tenantId, employee.getId(), new RestCallback<Boolean>() {
+            EmployeeRestServiceBuilder.removeEmployee(tenantId, employee.getId(), new FailureShownRestCallback<Boolean>() {
                 @Override
                 public void onSuccess(Boolean removed) {
                     refreshTable();
-                }
-
-                @Override
-                public void onFailure(Throwable throwable) {
-                    Window.alert("Failure calling REST method: " + throwable.getMessage());
-                    throw new IllegalStateException("REST call failure", throwable);
                 }
             });
         });
@@ -134,18 +123,12 @@ public class EmployeeListPanel implements IsElement {
     }
 
     private void refreshTable() {
-        EmployeeRestServiceBuilder.getEmployeeList(tenantId, new RestCallback<List<Employee>>() {
+        EmployeeRestServiceBuilder.getEmployeeList(tenantId, new FailureShownRestCallback<List<Employee>>() {
             @Override
             public void onSuccess(List<Employee> employeeList) {
                 dataProvider.setList(employeeList);
                 dataProvider.flush();
                 pagination.rebuild(pager);
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                Window.alert("Failure calling REST method: " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }
@@ -158,16 +141,10 @@ public class EmployeeListPanel implements IsElement {
 //        int requiredSkillIndex = requiredSkillListBox.getSelectedIndex();
 //        Skill requiredSkill = requiredSkillIndex < 0 ? null : skillListBoxValues.get(requiredSkillIndex);
 
-        EmployeeRestServiceBuilder.addEmployee(tenantId, new Employee(tenantId, employeeName), new RestCallback<Long>() {
+        EmployeeRestServiceBuilder.addEmployee(tenantId, new Employee(tenantId, employeeName), new FailureShownRestCallback<Long>() {
             @Override
             public void onSuccess(Long employeeId) {
                 refreshTable();
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                Window.alert("Failure calling REST method: " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }

@@ -27,6 +27,7 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
@@ -90,7 +91,7 @@ public class SpotRosterViewPanel implements IsElement {
     }
 
     private void refreshTable() {
-        RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new RestCallback<SpotRosterView>() {
+        RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<SpotRosterView>() {
             @Override
             public void onSuccess(SpotRosterView spotRosterView) {
                 SpotRosterViewPanel.this.spotRosterView = spotRosterView;
@@ -160,16 +161,10 @@ public class SpotRosterViewPanel implements IsElement {
                                     Window.alert("Remove shift " + spot + " " + timeSlot); // TODO
                                 }
                                 if (targetElement.hasClassName("shiftAdd") || targetElement.getParentElement().hasClassName("shiftAdd")) {
-                                    ShiftRestServiceBuilder.addShift(tenantId, new ShiftView(tenantId, spot, timeSlot), new RestCallback<Long>() {
+                                    ShiftRestServiceBuilder.addShift(tenantId, new ShiftView(tenantId, spot, timeSlot), new FailureShownRestCallback<Long>() {
                                         @Override
                                         public void onSuccess(Long shiftId) {
                                             refreshTable();
-                                        }
-
-                                        @Override
-                                        public void onFailure(Throwable throwable) {
-                                            Window.alert("Failure calling REST method: " + throwable.getMessage());
-                                            throw new IllegalStateException("REST call failure", throwable);
                                         }
                                     });
                                 }
@@ -180,12 +175,6 @@ public class SpotRosterViewPanel implements IsElement {
                 dataProvider.setList(spotRosterView.getSpotList());
                 dataProvider.flush();
                 pagination.rebuild(pager);
-            }
-
-            @Override
-            public void onFailure(Throwable throwable) {
-                Window.alert("Failure calling REST method: " + throwable.getMessage());
-                throw new IllegalStateException("REST call failure", throwable);
             }
         });
     }
