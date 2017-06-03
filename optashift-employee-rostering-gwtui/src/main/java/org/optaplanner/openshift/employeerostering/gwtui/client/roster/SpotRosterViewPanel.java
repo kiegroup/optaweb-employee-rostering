@@ -140,7 +140,7 @@ public class SpotRosterViewPanel implements IsElement {
                                     }
                                     sb.appendHtmlConstant("\">");
                                     sb.appendEscaped(employeeName == null ? "Unassigned" : employeeName);
-                                    sb.appendHtmlConstant("<a class=\"btn btn-sm shiftRemove\" data-shiftId=\"" + shiftView.getId() + "\" style=\"padding: 5px\" aria-label=\"Remove shift\">" +
+                                    sb.appendHtmlConstant("<a class=\"btn btn-sm shiftRemove\" data-shiftId=\"" + shiftView.getId() + "\" aria-label=\"Remove shift\">" +
                                             "<span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"/>" +
                                             "</a>");
                                     sb.appendHtmlConstant("</span>");
