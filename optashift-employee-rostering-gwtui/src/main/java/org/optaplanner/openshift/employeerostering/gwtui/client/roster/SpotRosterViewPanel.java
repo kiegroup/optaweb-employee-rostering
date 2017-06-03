@@ -118,9 +118,8 @@ public class SpotRosterViewPanel implements IsElement {
                         public void render(Context context, Spot spot, SafeHtmlBuilder sb) {
                             Long timeSlotId = timeSlot.getId();
                             Long spotId = spot.getId();
-                            List<ShiftView> shiftViewList
-                                    = spotRosterView.getSpotIdToTimeSlotIdToShiftViewListMap().get(spotId)
-                                    .get(timeSlotId);
+                            Map<Long, List<ShiftView>> spotIdMap = spotRosterView.getSpotIdToTimeSlotIdToShiftViewListMap().get(spotId);
+                            List<ShiftView> shiftViewList = (spotIdMap == null) ? null : spotIdMap.get(timeSlotId);
                             if (shiftViewList != null && !shiftViewList.isEmpty()) {
                                 for (ShiftView shiftView : shiftViewList) {
                                     Long employeeId = shiftView.getEmployeeId();
