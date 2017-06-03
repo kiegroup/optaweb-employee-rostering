@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -36,7 +35,7 @@ import javax.transaction.Transactional;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -86,9 +85,9 @@ public class RosterGenerator {
         List<Spot> spotList = createSpotList(tenantId, spotListSize, skillList);
         List<TimeSlot> timeSlotList = createTimeSlotList(tenantId, timeSlotListSize, continuousPlanning);
         List<Employee> employeeList = createEmployeeList(tenantId, employeeListSize, skillList, timeSlotList);
-        List<ShiftAssignment> shiftAssignmentList = createShiftAssignmentList(tenantId, spotList, timeSlotList, employeeList, continuousPlanning);
+        List<Shift> shiftList = createShiftList(tenantId, spotList, timeSlotList, employeeList, continuousPlanning);
         return new Roster((long) tenantId, skillList, spotList, timeSlotList, employeeList,
-                shiftAssignmentList);
+                shiftList);
     }
 
     private List<Skill> createSkillList(Integer tenantId, int size) {
@@ -156,9 +155,9 @@ public class RosterGenerator {
         return employeeList;
     }
 
-    private List<ShiftAssignment> createShiftAssignmentList(Integer tenantId, List<Spot> spotList, List<TimeSlot> timeSlotList,
+    private List<Shift> createShiftList(Integer tenantId, List<Spot> spotList, List<TimeSlot> timeSlotList,
             List<Employee> employeeList, boolean continuousPlanning) {
-        List<ShiftAssignment> shiftAssignmentList = new ArrayList<>(spotList.size() * timeSlotList.size());
+        List<Shift> shiftList = new ArrayList<>(spotList.size() * timeSlotList.size());
         for (Spot spot : spotList) {
             boolean weekendEnabled = random.nextInt(10) < 8;
             boolean nightEnabled = weekendEnabled && random.nextInt(10) < 8;
@@ -173,24 +172,24 @@ public class RosterGenerator {
                     timeSlotIndex++;
                     continue;
                 }
-                ShiftAssignment shiftAssignment = new ShiftAssignment(tenantId, spot, timeSlot);
+                Shift shift = new Shift(tenantId, spot, timeSlot);
                 if (continuousPlanning) {
                     if (timeSlotIndex < timeSlotList.size() / 2) {
                         List<Employee> availableEmployeeList = employeeList.stream()
 //                                .filter(employee -> !employee.getUnavailableTimeSlotSet().contains(timeSlot))
                                 .collect(Collectors.toList());
                         Employee employee = availableEmployeeList.get(random.nextInt(availableEmployeeList.size()));
-                        shiftAssignment.setEmployee(employee);
-                        shiftAssignment.setLockedByUser(random.nextDouble() < 0.05);
+                        shift.setEmployee(employee);
+                        shift.setLockedByUser(random.nextDouble() < 0.05);
                     }
                 }
-                entityManager.persist(shiftAssignment);
-                shiftAssignmentList.add(shiftAssignment);
+                entityManager.persist(shift);
+                shiftList.add(shift);
                 timeSlotIndex++;
             }
 
         }
-        return shiftAssignmentList;
+        return shiftList;
 
     }
 

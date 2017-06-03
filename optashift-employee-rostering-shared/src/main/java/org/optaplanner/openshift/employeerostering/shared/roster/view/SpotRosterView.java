@@ -26,11 +26,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftAssignmentView;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
@@ -45,7 +43,7 @@ public class SpotRosterView implements Serializable {
     protected List<Spot> spotList;
     protected List<Employee> employeeList;
     protected List<TimeSlot> timeSlotList;
-    protected Map<Long, Map<Long, List<ShiftAssignmentView>>> spotIdToTimeSlotIdToShiftAssignmentViewListMap;
+    protected Map<Long, Map<Long, List<ShiftView>>> spotIdToTimeSlotIdToShiftViewListMap;
 
     @SuppressWarnings("unused")
     public SpotRosterView() {
@@ -124,12 +122,12 @@ public class SpotRosterView implements Serializable {
         this.timeSlotList = timeSlotList;
     }
 
-    public Map<Long, Map<Long, List<ShiftAssignmentView>>> getSpotIdToTimeSlotIdToShiftAssignmentViewListMap() {
-        return spotIdToTimeSlotIdToShiftAssignmentViewListMap;
+    public Map<Long, Map<Long, List<ShiftView>>> getSpotIdToTimeSlotIdToShiftViewListMap() {
+        return spotIdToTimeSlotIdToShiftViewListMap;
     }
 
-    public void setSpotIdToTimeSlotIdToShiftAssignmentViewListMap(Map<Long, Map<Long, List<ShiftAssignmentView>>> spotIdToTimeSlotIdToShiftAssignmentViewListMap) {
-        this.spotIdToTimeSlotIdToShiftAssignmentViewListMap = spotIdToTimeSlotIdToShiftAssignmentViewListMap;
+    public void setSpotIdToTimeSlotIdToShiftViewListMap(Map<Long, Map<Long, List<ShiftView>>> spotIdToTimeSlotIdToShiftViewListMap) {
+        this.spotIdToTimeSlotIdToShiftViewListMap = spotIdToTimeSlotIdToShiftViewListMap;
     }
 
 }

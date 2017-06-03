@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
-import org.optaplanner.openshift.employeerostering.shared.domain.solver.MovableShiftAssignmentFilter;
+import org.optaplanner.openshift.employeerostering.shared.domain.solver.MovableShiftFilter;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -33,16 +33,16 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 //@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "ShiftAssignment.findAll",
-                query = "select distinct sa from ShiftAssignment sa" +
+        @NamedQuery(name = "Shift.findAll",
+                query = "select distinct sa from Shift sa" +
                         " left join fetch sa.spot s" +
                         " left join fetch sa.timeSlot t" +
                         " left join fetch sa.employee e" +
                         " where sa.tenantId = :tenantId" +
                         " order by t.startDateTime, s.name, e.name"),
 })
-@PlanningEntity(movableEntitySelectionFilter = MovableShiftAssignmentFilter.class)
-public class ShiftAssignment extends AbstractPersistable {
+@PlanningEntity(movableEntitySelectionFilter = MovableShiftFilter.class)
+public class Shift extends AbstractPersistable {
 
     @NotNull
     @ManyToOne
@@ -58,10 +58,10 @@ public class ShiftAssignment extends AbstractPersistable {
     private Employee employee = null;
 
     @SuppressWarnings("unused")
-    public ShiftAssignment() {
+    public Shift() {
     }
 
-    public ShiftAssignment(Integer tenantId, Spot spot, TimeSlot timeSlot) {
+    public Shift(Integer tenantId, Spot spot, TimeSlot timeSlot) {
         super(tenantId);
         this.timeSlot = timeSlot;
         this.spot = spot;

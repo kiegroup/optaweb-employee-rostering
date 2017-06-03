@@ -22,11 +22,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 
-public class EmployeeRestServiceImpl implements EmployeeRestService {
+public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements EmployeeRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -67,11 +68,8 @@ public class EmployeeRestServiceImpl implements EmployeeRestService {
         return true;
     }
 
-    private void validateTenantIdParameter(Integer tenantId, Employee employee) {
-        if (!Objects.equals(employee.getTenantId(), tenantId)) {
-            throw new IllegalStateException("The tenantId (" + tenantId
-                    + ") does not match the employee (" + employee + ")'s tenantId (" + employee.getTenantId() + ").");
-        }
+    protected void validateTenantIdParameter(Integer tenantId, Employee employee) {
+        super.validateTenantIdParameter(tenantId, employee);
         for (EmployeeSkillProficiency skillProficiency : employee.getSkillProficiencyList()) {
             if (!Objects.equals(skillProficiency.getTenantId(), tenantId)) {
                 throw new IllegalStateException("The tenantId (" + tenantId

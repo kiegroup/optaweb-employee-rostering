@@ -19,15 +19,15 @@ package org.optaplanner.openshift.employeerostering.shared.domain.solver;
 import org.optaplanner.core.impl.heuristic.selector.common.decorator.SelectionFilter;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
 
-public class MovableShiftAssignmentFilter implements SelectionFilter<Roster, ShiftAssignment> {
+public class MovableShiftFilter implements SelectionFilter<Roster, Shift> {
 
     @Override
-    public boolean accept(ScoreDirector<Roster> scoreDirector, ShiftAssignment shiftAssignment) {
-        return !shiftAssignment.isLockedByUser()
-                && shiftAssignment.getTimeSlot().getTimeSlotState() != TimeSlotState.HISTORY;
+    public boolean accept(ScoreDirector<Roster> scoreDirector, Shift shift) {
+        return !shift.isLockedByUser()
+                && shift.getTimeSlot().getTimeSlotState() != TimeSlotState.HISTORY;
     }
 
 }

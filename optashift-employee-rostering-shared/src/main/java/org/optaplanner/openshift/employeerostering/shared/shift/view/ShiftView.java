@@ -19,9 +19,9 @@ package org.optaplanner.openshift.employeerostering.shared.shift.view;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
-public class ShiftAssignmentView extends AbstractPersistable {
+public class ShiftView extends AbstractPersistable {
 
     @NotNull
     private Long spotId;
@@ -33,15 +33,15 @@ public class ShiftAssignmentView extends AbstractPersistable {
     private Long employeeId;
 
     @SuppressWarnings("unused")
-    public ShiftAssignmentView() {
+    public ShiftView() {
     }
 
-    public ShiftAssignmentView(ShiftAssignment shiftAssignment) {
-        super(shiftAssignment);
-        this.spotId = shiftAssignment.getSpot().getId();
-        this.timeSlotId = shiftAssignment.getTimeSlot().getId();
-        this.lockedByUser = shiftAssignment.isLockedByUser();
-        this.employeeId = (shiftAssignment.getEmployee() == null) ? null : shiftAssignment.getEmployee().getId();
+    public ShiftView(Shift shift) {
+        super(shift);
+        this.spotId = shift.getSpot().getId();
+        this.timeSlotId = shift.getTimeSlot().getId();
+        this.lockedByUser = shift.isLockedByUser();
+        this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
     }
 
     @Override

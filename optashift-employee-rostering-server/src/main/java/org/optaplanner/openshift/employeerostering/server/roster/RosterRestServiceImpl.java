@@ -26,17 +26,18 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverManager;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment;
-import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftAssignmentView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
-public class RosterRestServiceImpl implements RosterRestService {
+public class RosterRestServiceImpl extends AbstractRestServiceImpl implements RosterRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -90,20 +91,20 @@ public class RosterRestServiceImpl implements RosterRestService {
 //                .setParameter("startDate", startDate)
 //                .setParameter("endDate", endDate)
 //                .getResultList());
-        List<ShiftAssignment> shiftAssignmentList = entityManager.createNamedQuery("ShiftAssignment.findAll", ShiftAssignment.class)
+        List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
-        Map<Long, Map<Long, List<ShiftAssignmentView>>> spotIdMap = new LinkedHashMap<>(spotList.size());
-        for (ShiftAssignment shiftAssignment : shiftAssignmentList) {
-            Long spotId = shiftAssignment.getSpot().getId();
-            Map<Long, List<ShiftAssignmentView>> timeSlotIdMap = spotIdMap
+        Map<Long, Map<Long, List<ShiftView>>> spotIdMap = new LinkedHashMap<>(spotList.size());
+        for (Shift shift : shiftList) {
+            Long spotId = shift.getSpot().getId();
+            Map<Long, List<ShiftView>> timeSlotIdMap = spotIdMap
                     .computeIfAbsent(spotId, k -> new LinkedHashMap<>(timeSlotList.size()));
-            Long timeSlotId = shiftAssignment.getTimeSlot().getId();
-            List<ShiftAssignmentView> shiftAssignmentViewList = timeSlotIdMap
+            Long timeSlotId = shift.getTimeSlot().getId();
+            List<ShiftView> shiftViewList = timeSlotIdMap
                     .computeIfAbsent(timeSlotId, k -> new ArrayList<>(2));
-            shiftAssignmentViewList.add(new ShiftAssignmentView(shiftAssignment));
+            shiftViewList.add(new ShiftView(shift));
         }
-        spotRosterView.setSpotIdToTimeSlotIdToShiftAssignmentViewListMap(spotIdMap);
+        spotRosterView.setSpotIdToTimeSlotIdToShiftViewListMap(spotIdMap);
         return spotRosterView;
     }
 

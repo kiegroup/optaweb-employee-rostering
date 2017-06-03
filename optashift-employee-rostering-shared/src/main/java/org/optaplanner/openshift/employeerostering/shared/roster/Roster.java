@@ -28,7 +28,7 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftAssignment;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -50,7 +50,7 @@ public class Roster extends AbstractPersistable {
     private List<Employee> employeeList;
 
     @PlanningEntityCollectionProperty
-    private List<ShiftAssignment> shiftAssignmentList;
+    private List<Shift> shiftList;
 
     @JsonSerialize(using = ScoreJacksonJsonSerializer.class)
     @JsonDeserialize(using = HardSoftScoreJacksonJsonDeserializer.class)
@@ -62,13 +62,13 @@ public class Roster extends AbstractPersistable {
     }
 
     public Roster(Long id, List<Skill> skillList, List<Spot> spotList, List<TimeSlot> timeSlotList, List<Employee> employeeList,
-            List<ShiftAssignment> shiftAssignmentList) {
+            List<Shift> shiftList) {
         super(id);
         this.skillList = skillList;
         this.spotList = spotList;
         this.timeSlotList = timeSlotList;
         this.employeeList = employeeList;
-        this.shiftAssignmentList = shiftAssignmentList;
+        this.shiftList = shiftList;
     }
 
     // ************************************************************************
@@ -107,12 +107,12 @@ public class Roster extends AbstractPersistable {
         this.employeeList = employeeList;
     }
 
-    public List<ShiftAssignment> getShiftAssignmentList() {
-        return shiftAssignmentList;
+    public List<Shift> getShiftList() {
+        return shiftList;
     }
 
-    public void setShiftAssignmentList(List<ShiftAssignment> shiftAssignmentList) {
-        this.shiftAssignmentList = shiftAssignmentList;
+    public void setShiftList(List<Shift> shiftList) {
+        this.shiftList = shiftList;
     }
 
     public HardSoftScore getScore() {

@@ -23,13 +23,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-public class SkillRestServiceImpl implements SkillRestService {
+public class SkillRestServiceImpl extends AbstractRestServiceImpl implements SkillRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -68,13 +69,6 @@ public class SkillRestServiceImpl implements SkillRestService {
         validateTenantIdParameter(tenantId, skill);
         entityManager.remove(skill);
         return true;
-    }
-
-    private void validateTenantIdParameter(Integer tenantId, Skill skill) {
-        if (!Objects.equals(skill.getTenantId(), tenantId)) {
-            throw new IllegalStateException("The tenantId (" + tenantId
-                    + ") does not match the skill (" + skill + ")'s tenantId (" + skill.getTenantId() + ").");
-        }
     }
 
 }
