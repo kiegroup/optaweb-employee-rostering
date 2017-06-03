@@ -26,8 +26,8 @@ import javax.inject.Inject;
 
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
-import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class WannabeSolverManager {
     private ManagedExecutorService executorService;
 
     @Inject
-    private RosterDao rosterDao;
+    private RosterRestService rosterRestService;
 
     private ConcurrentMap<Integer, SolverStatus> tenantIdToSolverStateMap = new ConcurrentHashMap<>();
 
@@ -72,10 +72,10 @@ public class WannabeSolverManager {
                         logger.info("  New best solution found for tenantId ({}).", tenantId);
                         Roster newBestRoster = event.getNewBestSolution();
                         // TODO if this throws an OptimisticLockingException, does it kill the solver?
-                        rosterDao.updateRoster(newBestRoster);
+                        rosterRestService.updateRoster(newBestRoster);
                     }
                 });
-                Roster roster = rosterDao.getRoster(tenantId);
+                Roster roster = rosterRestService.getRoster(tenantId);
                 try {
                     tenantIdToSolverStateMap.put(tenantId, SolverStatus.SOLVING);
                     // TODO No need to store the returned roster because the SolverEventListener already does it?

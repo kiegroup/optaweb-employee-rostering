@@ -34,6 +34,7 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServi
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
@@ -60,19 +61,19 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             startDate = timeSlotList.get(0).getStartDateTime().toLocalDate();
             endDate = timeSlotList.get(timeSlotList.size() - 1).getStartDateTime().toLocalDate();
         }
-        return getCurrentSpotRosterView(tenantId, startDate, endDate);
+        return getSpotRosterView(tenantId, startDate, endDate);
     }
 
     @Override
     @Transactional
-    public SpotRosterView getCurrentSpotRosterView(Integer tenantId, String startDateString, String endDateString) {
+    public SpotRosterView getSpotRosterView(Integer tenantId, String startDateString, String endDateString) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
-        return getCurrentSpotRosterView(tenantId, startDate, endDate);
+        return getSpotRosterView(tenantId, startDate, endDate);
     }
 
     @Transactional
-    protected SpotRosterView getCurrentSpotRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate) {
+    protected SpotRosterView getSpotRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate) {
         SpotRosterView spotRosterView = new SpotRosterView(tenantId, startDate, endDate);
         List<Spot> spotList = entityManager.createNamedQuery("Spot.findAll", Spot.class)
                 .setParameter("tenantId", tenantId)
@@ -113,14 +114,33 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         solverManager.solve(tenantId);
     }
 
-    // TODO remove these
-    @Inject
-    private RosterDao rosterDao;
-
-    // TODO remove these
     @Override
+    @Transactional
     public Roster getRoster(Integer tenantId) {
-        return rosterDao.getRoster(tenantId);
+        List<Skill> skillList = entityManager.createNamedQuery("Skill.findAll", Skill.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        List<Spot> spotList = entityManager.createNamedQuery("Spot.findAll", Spot.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        List<Employee> employeeList = entityManager.createNamedQuery("Employee.findAll", Employee.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        List<TimeSlot> timeSlotList = entityManager.createNamedQuery("TimeSlot.findAll", TimeSlot.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        return new Roster((long) tenantId, skillList, spotList, employeeList, timeSlotList, shiftList);
+    }
+
+    @Override
+    @Transactional
+    public void updateRoster(Roster newRoster) {
+        for (Shift shift : newRoster.getShiftList()) {
+            entityManager.merge(shift);
+        }
     }
 
 }

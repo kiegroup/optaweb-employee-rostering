@@ -44,10 +44,10 @@ public class Roster extends AbstractPersistable {
     @ProblemFactCollectionProperty
     private List<Spot> spotList;
     @ProblemFactCollectionProperty
-    private List<TimeSlot> timeSlotList;
-    @ProblemFactCollectionProperty
     @ValueRangeProvider(id = "employeeRange")
     private List<Employee> employeeList;
+    @ProblemFactCollectionProperty
+    private List<TimeSlot> timeSlotList;
 
     @PlanningEntityCollectionProperty
     private List<Shift> shiftList;
@@ -61,7 +61,7 @@ public class Roster extends AbstractPersistable {
     public Roster() {
     }
 
-    public Roster(Long id, List<Skill> skillList, List<Spot> spotList, List<TimeSlot> timeSlotList, List<Employee> employeeList,
+    public Roster(Long id, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList, List<TimeSlot> timeSlotList,
             List<Shift> shiftList) {
         super(id);
         this.skillList = skillList;
@@ -91,20 +91,20 @@ public class Roster extends AbstractPersistable {
         this.spotList = spotList;
     }
 
-    public List<TimeSlot> getTimeSlotList() {
-        return timeSlotList;
-    }
-
-    public void setTimeSlotList(List<TimeSlot> timeSlotList) {
-        this.timeSlotList = timeSlotList;
-    }
-
     public List<Employee> getEmployeeList() {
         return employeeList;
     }
 
     public void setEmployeeList(List<Employee> employeeList) {
         this.employeeList = employeeList;
+    }
+
+    public List<TimeSlot> getTimeSlotList() {
+        return timeSlotList;
+    }
+
+    public void setTimeSlotList(List<TimeSlot> timeSlotList) {
+        this.timeSlotList = timeSlotList;
     }
 
     public List<Shift> getShiftList() {

@@ -86,7 +86,7 @@ public class RosterGenerator {
         List<TimeSlot> timeSlotList = createTimeSlotList(tenantId, timeSlotListSize, continuousPlanning);
         List<Employee> employeeList = createEmployeeList(tenantId, employeeListSize, skillList, timeSlotList);
         List<Shift> shiftList = createShiftList(tenantId, spotList, timeSlotList, employeeList, continuousPlanning);
-        return new Roster((long) tenantId, skillList, spotList, timeSlotList, employeeList,
+        return new Roster((long) tenantId, skillList, spotList, employeeList, timeSlotList,
                 shiftList);
     }
 

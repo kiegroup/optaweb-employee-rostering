@@ -22,21 +22,22 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 public interface RosterRestService {
 
     @GET
-    @Path("/spotRosterView")
+    @Path("/spotRosterView/current")
     SpotRosterView getCurrentSpotRosterView(@PathParam("tenantId") Integer tenantId);
 
     @GET
     @Path("/spotRosterView")
-    SpotRosterView getCurrentSpotRosterView(@PathParam("tenantId") Integer tenantId,
+    SpotRosterView getSpotRosterView(@PathParam("tenantId") Integer tenantId,
             @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString);
-
-    @GET
-    @Path("/")
-    // TODO REMOVE ME
-    Roster getRoster(@PathParam("tenantId") Integer tenantId);
 
     @POST
     @Path("/solve")
     void solveRoster(@PathParam("tenantId") Integer tenantId);
+
+    // Not a REST method
+    Roster getRoster(Integer tenantId);
+
+    // Not a REST method
+    void updateRoster(Roster newRoster);
 
 }
