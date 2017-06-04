@@ -17,18 +17,13 @@
 package org.optaplanner.openshift.employeerostering.server.skill;
 
 import java.util.List;
-import java.util.Objects;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
-import org.optaplanner.openshift.employeerostering.server.roster.RosterDao;
-import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 public class SkillRestServiceImpl extends AbstractRestServiceImpl implements SkillRestService {
 

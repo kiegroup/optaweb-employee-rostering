@@ -27,6 +27,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
 import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -42,7 +45,8 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
 import org.optaplanner.openshift.employeerostering.server.common.generator.StringDataGenerator;
 
-@ApplicationScoped
+@Singleton
+@Startup
 public class RosterGenerator {
 
     private final StringDataGenerator employeeNameGenerator = StringDataGenerator.buildFullNames();
@@ -75,6 +79,19 @@ public class RosterGenerator {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @PostConstruct
+    public void setUpGeneratedData() {
+        generateRoster(10, 7, false);
+//        generateRoster(10, 28, false);
+//        generateRoster(20, 28, false);
+//        generateRoster(40, 28 * 2, false);
+//        generateRoster(80, 28 * 4, false);
+//        generateRoster(10, 28, true);
+//        generateRoster(20, 28, true);
+//        generateRoster(40, 28 * 2, true);
+        generateRoster(80, 28 * 4, true);
+    }
 
     @Transactional
     public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning) {

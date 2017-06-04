@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,10 @@ package org.optaplanner.openshift.employeerostering.shared.employee;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -34,63 +33,69 @@ import javax.validation.constraints.Size;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Employee.findAll",
-                query = "select distinct e from Employee e left join fetch e.skillProficiencyList sp left join fetch sp.skill s" +
+        @NamedQuery(name = "EmployeeAvailability.findAll",
+                query = "select distinct ea from EmployeeAvailability ea" +
+                        " left join fetch ea.employee e left join fetch ea.timeSlot t" +
                         " where e.tenantId = :tenantId" +
-                        " order by e.name, s.name"),
+                        " order by e.name, t.startDateTime"),
 })
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
-public class Employee extends AbstractPersistable {
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "employee_id", "timeSlot_id"}))
+public class EmployeeAvailability extends AbstractPersistable {
 
-    @NotNull @Size(min = 1, max = 120)
-    private String name;
-    @JsonManagedReference
     @NotNull
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EmployeeSkillProficiency> skillProficiencyList;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Employee employee;
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    private TimeSlot timeSlot;
+    @NotNull
+    private EmployeeAvailabilityState employeeAvailabilityState;
 
     @SuppressWarnings("unused")
-    public Employee() {
+    public EmployeeAvailability() {
     }
 
-    public Employee(Integer tenantId, String name) {
+    public EmployeeAvailability(Integer tenantId, Employee employee, TimeSlot timeSlot) {
         super(tenantId);
-        this.name = name;
-        skillProficiencyList = new ArrayList<>(2);
-    }
-
-    public boolean hasSkill(Skill skill) {
-        return skillProficiencyList.stream()
-                .anyMatch(skillProficiency -> skillProficiency.getSkill().equals(skill));
+        this.employee = employee;
+        this.timeSlot = timeSlot;
     }
 
     @Override
     public String toString() {
-        return name;
+        return employee + " " + timeSlot;
     }
 
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
 
-    public String getName() {
-        return name;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
-    public List<EmployeeSkillProficiency> getSkillProficiencyList() {
-        return skillProficiencyList;
+    public TimeSlot getTimeSlot() {
+        return timeSlot;
     }
 
-    public void setSkillProficiencyList(List<EmployeeSkillProficiency> skillProficiencyList) {
-        this.skillProficiencyList = skillProficiencyList;
+    public void setTimeSlot(TimeSlot timeSlot) {
+        this.timeSlot = timeSlot;
+    }
+
+    public EmployeeAvailabilityState getEmployeeAvailabilityState() {
+        return employeeAvailabilityState;
+    }
+
+    public void setEmployeeAvailabilityState(EmployeeAvailabilityState employeeAvailabilityState) {
+        this.employeeAvailabilityState = employeeAvailabilityState;
     }
 
 }
