@@ -24,6 +24,7 @@ import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 
@@ -77,6 +78,33 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
                         + ")'s tenantId (" + skillProficiency.getTenantId() + ").");
             }
         }
+    }
+
+    @Override
+    @Transactional
+    public Long addEmployeeAvailability(Integer tenantId, EmployeeAvailability employeeAvailability) {
+        validateTenantIdParameter(tenantId, employeeAvailability);
+        entityManager.persist(employeeAvailability);
+        return employeeAvailability.getId();
+    }
+
+    @Override
+    @Transactional
+    public void updateEmployeeAvailability(Integer tenantId, EmployeeAvailability employeeAvailability) {
+        validateTenantIdParameter(tenantId, employeeAvailability);
+        entityManager.merge(employeeAvailability);
+    }
+
+    @Override
+    @Transactional
+    public Boolean removeEmployeeAvailability(Integer tenantId, Long id) {
+        EmployeeAvailability employeeAvailability = entityManager.find(EmployeeAvailability.class, id);
+        if (employeeAvailability == null) {
+            return false;
+        }
+        validateTenantIdParameter(tenantId, employeeAvailability);
+        entityManager.remove(employeeAvailability);
+        return true;
     }
 
 }

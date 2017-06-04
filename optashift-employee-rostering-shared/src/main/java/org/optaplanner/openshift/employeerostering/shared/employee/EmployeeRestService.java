@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -46,5 +47,28 @@ public interface EmployeeRestService {
     @DELETE
     @Path("/{id}")
     Boolean removeEmployee(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+
+    /**
+     * @param employeeAvailability never null
+     * @return never null, the id
+     */
+    @POST
+    @Path("/availability/add")
+    Long addEmployeeAvailability(@PathParam("tenantId") Integer tenantId, EmployeeAvailability employeeAvailability);
+
+    /**
+     * @param employeeAvailability never null
+     */
+    @PUT
+    @Path("/availability/update")
+    void updateEmployeeAvailability(@PathParam("tenantId") Integer tenantId, EmployeeAvailability employeeAvailability);
+
+    /**
+     * @param id never null
+     * @return never null, the id
+     */
+    @DELETE
+    @Path("/availability/{id}")
+    Boolean removeEmployeeAvailability(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
 }
