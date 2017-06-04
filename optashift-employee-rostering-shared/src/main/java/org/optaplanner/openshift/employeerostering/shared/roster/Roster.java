@@ -28,6 +28,7 @@ import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
@@ -48,6 +49,8 @@ public class Roster extends AbstractPersistable {
     private List<Employee> employeeList;
     @ProblemFactCollectionProperty
     private List<TimeSlot> timeSlotList;
+    @ProblemFactCollectionProperty
+    private List<EmployeeAvailability> employeeAvailabilityList;
 
     @PlanningEntityCollectionProperty
     private List<Shift> shiftList;
@@ -62,12 +65,13 @@ public class Roster extends AbstractPersistable {
     }
 
     public Roster(Long id, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList, List<TimeSlot> timeSlotList,
-            List<Shift> shiftList) {
+            List<EmployeeAvailability> employeeAvailabilityList, List<Shift> shiftList) {
         super(id);
         this.skillList = skillList;
         this.spotList = spotList;
-        this.timeSlotList = timeSlotList;
         this.employeeList = employeeList;
+        this.timeSlotList = timeSlotList;
+        this.employeeAvailabilityList = employeeAvailabilityList;
         this.shiftList = shiftList;
     }
 
@@ -105,6 +109,14 @@ public class Roster extends AbstractPersistable {
 
     public void setTimeSlotList(List<TimeSlot> timeSlotList) {
         this.timeSlotList = timeSlotList;
+    }
+
+    public List<EmployeeAvailability> getEmployeeAvailabilityList() {
+        return employeeAvailabilityList;
+    }
+
+    public void setEmployeeAvailabilityList(List<EmployeeAvailability> employeeAvailabilityList) {
+        this.employeeAvailabilityList = employeeAvailabilityList;
     }
 
     public List<Shift> getShiftList() {

@@ -36,6 +36,8 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -101,9 +103,11 @@ public class RosterGenerator {
         List<Skill> skillList = createSkillList(tenantId, skillListSize);
         List<Spot> spotList = createSpotList(tenantId, spotListSize, skillList);
         List<TimeSlot> timeSlotList = createTimeSlotList(tenantId, timeSlotListSize, continuousPlanning);
-        List<Employee> employeeList = createEmployeeList(tenantId, employeeListSize, skillList, timeSlotList);
+        List<Employee> employeeList = createEmployeeList(tenantId, employeeListSize, skillList);
+        List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
+                tenantId, employeeList, timeSlotList);
         List<Shift> shiftList = createShiftList(tenantId, spotList, timeSlotList, employeeList, continuousPlanning);
-        return new Roster((long) tenantId, skillList, spotList, employeeList, timeSlotList,
+        return new Roster((long) tenantId, skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList,
                 shiftList);
     }
 
@@ -154,7 +158,7 @@ public class RosterGenerator {
         return timeSlotList;
     }
 
-    private List<Employee> createEmployeeList(Integer tenantId, int size, List<Skill> generalSkillList, List<TimeSlot> timeSlotList) {
+    private List<Employee> createEmployeeList(Integer tenantId, int size, List<Skill> generalSkillList) {
         List<Employee> employeeList = new ArrayList<>(size);
         employeeNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
@@ -164,12 +168,24 @@ public class RosterGenerator {
                     extractRandomSubList(generalSkillList, 1.0).stream()
                             .map(skill -> new EmployeeSkillProficiency(tenantId, employee, skill))
                             .collect(Collectors.toCollection(ArrayList::new)));
-            Set<TimeSlot> unavailableTimeSlotSet = new LinkedHashSet<>(extractRandomSubList(timeSlotList, 0.2));
-//            employee.setUnavailableTimeSlotSet(unavailableTimeSlotSet);
             entityManager.persist(employee);
             employeeList.add(employee);
         }
         return employeeList;
+    }
+
+    private List<EmployeeAvailability> createEmployeeAvailabilityList(Integer tenantId,
+            List<Employee> employeeList, List<TimeSlot> timeSlotList) {
+        List<EmployeeAvailability> employeeAvailabilityList = new ArrayList<>(employeeList.size() * timeSlotList.size());
+        for (Employee employee : employeeList) {
+            for (TimeSlot timeSlot : extractRandomSubList(timeSlotList, 0.6)) {
+                EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee, timeSlot);
+                employeeAvailability.setEmployeeAvailabilityState(EmployeeAvailabilityState.values()[
+                        random.nextInt(EmployeeAvailabilityState.values().length)]);
+                entityManager.persist(employeeAvailability);
+            }
+        }
+        return employeeAvailabilityList;
     }
 
     private List<Shift> createShiftList(Integer tenantId, List<Spot> spotList, List<TimeSlot> timeSlotList,

@@ -29,6 +29,7 @@ import javax.transaction.Transactional;
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverManager;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
@@ -129,10 +130,14 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         List<TimeSlot> timeSlotList = entityManager.createNamedQuery("TimeSlot.findAll", TimeSlot.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
+        List<EmployeeAvailability> employeeAvailabilityList
+                = entityManager.createNamedQuery("EmployeeAvailability.findAll", EmployeeAvailability.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
-        return new Roster((long) tenantId, skillList, spotList, employeeList, timeSlotList, shiftList);
+        return new Roster((long) tenantId, skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, shiftList);
     }
 
     @Override
