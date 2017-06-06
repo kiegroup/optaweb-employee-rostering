@@ -96,17 +96,17 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
-        Map<Long, Map<Long, List<ShiftView>>> spotIdMap = new LinkedHashMap<>(spotList.size());
+        Map<Long, Map<Long, List<ShiftView>>> timeSlotIdMap = new LinkedHashMap<>(timeSlotList.size());
         for (Shift shift : shiftList) {
-            Long spotId = shift.getSpot().getId();
-            Map<Long, List<ShiftView>> timeSlotIdMap = spotIdMap
-                    .computeIfAbsent(spotId, k -> new LinkedHashMap<>(timeSlotList.size()));
             Long timeSlotId = shift.getTimeSlot().getId();
-            List<ShiftView> shiftViewList = timeSlotIdMap
-                    .computeIfAbsent(timeSlotId, k -> new ArrayList<>(2));
+            Map<Long, List<ShiftView>> spotIdMap = timeSlotIdMap
+                    .computeIfAbsent(timeSlotId, k -> new LinkedHashMap<>(spotList.size()));
+            Long spotId = shift.getSpot().getId();
+            List<ShiftView> shiftViewList = spotIdMap
+                    .computeIfAbsent(spotId, k -> new ArrayList<>(2));
             shiftViewList.add(new ShiftView(shift));
         }
-        spotRosterView.setSpotIdToTimeSlotIdToShiftViewListMap(spotIdMap);
+        spotRosterView.setTimeSlotIdToSpotIdToShiftViewListMap(timeSlotIdMap);
         return spotRosterView;
     }
 

@@ -43,7 +43,7 @@ public class SpotRosterView implements Serializable {
     protected List<Spot> spotList;
     protected List<Employee> employeeList;
     protected List<TimeSlot> timeSlotList;
-    protected Map<Long, Map<Long, List<ShiftView>>> spotIdToTimeSlotIdToShiftViewListMap;
+    protected Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap;
 
     @SuppressWarnings("unused")
     public SpotRosterView() {
@@ -122,12 +122,12 @@ public class SpotRosterView implements Serializable {
         this.timeSlotList = timeSlotList;
     }
 
-    public Map<Long, Map<Long, List<ShiftView>>> getSpotIdToTimeSlotIdToShiftViewListMap() {
-        return spotIdToTimeSlotIdToShiftViewListMap;
+    public Map<Long, Map<Long, List<ShiftView>>> getTimeSlotIdToSpotIdToShiftViewListMap() {
+        return timeSlotIdToSpotIdToShiftViewListMap;
     }
 
-    public void setSpotIdToTimeSlotIdToShiftViewListMap(Map<Long, Map<Long, List<ShiftView>>> spotIdToTimeSlotIdToShiftViewListMap) {
-        this.spotIdToTimeSlotIdToShiftViewListMap = spotIdToTimeSlotIdToShiftViewListMap;
+    public void setTimeSlotIdToSpotIdToShiftViewListMap(Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap) {
+        this.timeSlotIdToSpotIdToShiftViewListMap = timeSlotIdToSpotIdToShiftViewListMap;
     }
 
 }

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import com.github.nmorel.gwtjackson.rest.api.RestCallback;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
@@ -18,7 +17,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.IdentityColumn;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
@@ -29,7 +27,6 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
@@ -113,13 +110,11 @@ public class SpotRosterViewPanel implements IsElement {
                             .appendHtmlConstant("</div>")
                             .toSafeHtml();
 
+                    Map<Long, List<ShiftView>> spotIdMap = spotRosterView.getTimeSlotIdToSpotIdToShiftViewListMap().get(timeSlot.getId());
                     table.addColumn(new IdentityColumn<>(new AbstractCell<Spot>("click") {
                         @Override
                         public void render(Context context, Spot spot, SafeHtmlBuilder sb) {
-                            Long timeSlotId = timeSlot.getId();
-                            Long spotId = spot.getId();
-                            Map<Long, List<ShiftView>> spotIdMap = spotRosterView.getSpotIdToTimeSlotIdToShiftViewListMap().get(spotId);
-                            List<ShiftView> shiftViewList = (spotIdMap == null) ? null : spotIdMap.get(timeSlotId);
+                            List<ShiftView> shiftViewList = (spotIdMap == null) ? null : spotIdMap.get(spot.getId());
                             if (shiftViewList != null && !shiftViewList.isEmpty()) {
                                 for (ShiftView shiftView : shiftViewList) {
                                     Long employeeId = shiftView.getEmployeeId();
@@ -188,6 +183,10 @@ public class SpotRosterViewPanel implements IsElement {
 
     @EventHandler("refreshButton")
     public void refresh(ClickEvent e) {
+        refresh();
+    }
+
+    public void refresh() {
         refreshTable();
     }
 
