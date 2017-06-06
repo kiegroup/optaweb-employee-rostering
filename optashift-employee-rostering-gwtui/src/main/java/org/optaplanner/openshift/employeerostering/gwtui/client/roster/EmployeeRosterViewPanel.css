@@ -1,0 +1,12 @@
+.timeSlotAvailability {
+    float: right;
+}
+.timeSlotUnavailable {
+    color: red !important;
+}
+.timeSlotUndesired {
+    color: yellow !important;
+}
+.timeSlotDesired {
+    color: green !important;
+}

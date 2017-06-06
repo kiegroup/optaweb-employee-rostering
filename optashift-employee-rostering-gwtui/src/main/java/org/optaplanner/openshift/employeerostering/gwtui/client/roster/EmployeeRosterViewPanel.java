@@ -141,9 +141,14 @@ public class EmployeeRosterViewPanel implements IsElement {
                                     sb.appendHtmlConstant("</span>");
                                 }
                             }
-//                            sb.appendHtmlConstant("<a class=\"btn btn-sm shiftAdd\" aria-label=\"Add shift\">" +
-//                                    "<span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"/>" +
-//                                    "</a>");
+                            sb.appendHtmlConstant("<div class=\"btn-group timeSlotAvailability\" role=\"group\" aria-label=\"availability\">" +
+                                    "<button type=\"button\" class=\"btn btn-xs btn-default\" aria-label=\"Unavailable\">" +
+                                    "<span class=\"glyphicon glyphicon-ban-circle timeSlotUnavailable\" aria-hidden=\"true\"/></button>" +
+                                    "<button type=\"button\" class=\"btn btn-xs btn-default\" aria-label=\"Undesired\">" +
+                                    "<span class=\"glyphicon glyphicon-remove-circle timeSlotUndesired\" aria-hidden=\"true\"/></button>" +
+                                    "<button type=\"button\" class=\"btn btn-xs btn-default\" aria-label=\"Desired\">" +
+                                    "<span class=\"glyphicon glyphicon-ok-circle timeSlotDesired\" aria-hidden=\"true\"/></button>" +
+                                    "</div>");
                         }
 
                         @Override
