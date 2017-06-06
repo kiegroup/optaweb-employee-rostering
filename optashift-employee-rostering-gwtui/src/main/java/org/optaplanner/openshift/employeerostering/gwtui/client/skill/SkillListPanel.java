@@ -33,6 +33,9 @@ public class SkillListPanel implements IsElement {
     private Integer tenantId = -1;
 
     @Inject @DataField
+    private Button refreshButton;
+
+    @Inject @DataField
     private TextBox skillNameTextBox;
     @Inject @DataField
     private Button addButton;
@@ -60,7 +63,7 @@ public class SkillListPanel implements IsElement {
     @PostConstruct
     protected void initWidget() {
         initTable();
-        refreshTable();
+        refresh();
     }
 
     private void initTable() {
@@ -92,6 +95,15 @@ public class SkillListPanel implements IsElement {
         pager.setDisplay(table);
         pagination.clear();
         dataProvider.addDataDisplay(table);
+    }
+
+    @EventHandler("refreshButton")
+    public void refresh(ClickEvent e) {
+        refresh();
+    }
+
+    public void refresh() {
+        refreshTable();
     }
 
     private void refreshTable() {

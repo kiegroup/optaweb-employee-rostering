@@ -53,6 +53,7 @@ public class MenuPanel implements IsElement {
         content.removeChild(content.getLastChild());
         switchActive(skillsAnchor);
         content.appendChild(skillListPanel.getElement());
+        skillListPanel.refresh();
     }
 
     @EventHandler("spotsAnchor")
@@ -60,6 +61,7 @@ public class MenuPanel implements IsElement {
         content.removeChild(content.getLastChild());
         switchActive(spotsAnchor);
         content.appendChild(spotListPanel.getElement());
+        spotListPanel.refresh();
     }
 
     @EventHandler("employeesAnchor")
@@ -67,6 +69,7 @@ public class MenuPanel implements IsElement {
         content.removeChild(content.getLastChild());
         switchActive(employeesAnchor);
         content.appendChild(employeeListPanel.getElement());
+        employeeListPanel.refresh();
     }
 
     @EventHandler("spotRosterAnchor")
@@ -74,6 +77,7 @@ public class MenuPanel implements IsElement {
         content.removeChild(content.getLastChild());
         switchActive(spotRosterAnchor);
         content.appendChild(spotRosterViewPanel.getElement());
+        spotRosterViewPanel.refresh();
     }
 
     private void switchActive(Anchor anchor) {

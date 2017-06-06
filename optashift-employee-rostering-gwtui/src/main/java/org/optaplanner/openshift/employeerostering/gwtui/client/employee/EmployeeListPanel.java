@@ -36,6 +36,9 @@ public class EmployeeListPanel implements IsElement {
     private Integer tenantId = -1;
 
     @Inject @DataField
+    private Button refreshButton;
+
+    @Inject @DataField
     private TextBox employeeNameTextBox;
 //    @Inject @DataField
 //    private ListBox requiredSkillListBox;
@@ -65,9 +68,8 @@ public class EmployeeListPanel implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
-        refreshSkillsListBox();
         initTable();
-        refreshTable();
+        refresh();
     }
 
     private void refreshSkillsListBox() {
@@ -120,6 +122,16 @@ public class EmployeeListPanel implements IsElement {
         pager.setDisplay(table);
         pagination.clear();
         dataProvider.addDataDisplay(table);
+    }
+
+    @EventHandler("refreshButton")
+    public void refresh(ClickEvent e) {
+        refresh();
+    }
+
+    public void refresh() {
+        refreshSkillsListBox();
+        refreshTable();
     }
 
     private void refreshTable() {

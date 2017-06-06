@@ -35,6 +35,9 @@ public class SpotListPanel implements IsElement {
     private Integer tenantId = -1;
 
     @Inject @DataField
+    private Button refreshButton;
+
+    @Inject @DataField
     private TextBox spotNameTextBox;
     @Inject @DataField
     private ListBox requiredSkillListBox;
@@ -64,9 +67,8 @@ public class SpotListPanel implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
-        refreshRequiredSkillsListBox();
         initTable();
-        refreshTable();
+        refresh();
     }
 
     private void refreshRequiredSkillsListBox() {
@@ -118,6 +120,16 @@ public class SpotListPanel implements IsElement {
         pager.setDisplay(table);
         pagination.clear();
         dataProvider.addDataDisplay(table);
+    }
+
+    @EventHandler("refreshButton")
+    public void refresh(ClickEvent e) {
+        refresh();
+    }
+
+    public void refresh() {
+        refreshRequiredSkillsListBox();
+        refreshTable();
     }
 
     private void refreshTable() {

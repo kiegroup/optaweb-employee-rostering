@@ -40,9 +40,9 @@ public class SpotRosterViewPanel implements IsElement {
     private Integer tenantId = -1;
 
     @Inject @DataField
-    private Button refreshButton;
-    @Inject @DataField
     private Button solveButton;
+    @Inject @DataField
+    private Button refreshButton;
 
     // TODO use DataGrid instead
     @DataField
