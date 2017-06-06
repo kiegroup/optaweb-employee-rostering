@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 
 @Path("/tenant/{tenantId}/employee")
 @Produces(MediaType.APPLICATION_JSON)
@@ -54,14 +55,14 @@ public interface EmployeeRestService {
      */
     @POST
     @Path("/availability/add")
-    Long addEmployeeAvailability(@PathParam("tenantId") Integer tenantId, EmployeeAvailability employeeAvailability);
+    Long addEmployeeAvailability(@PathParam("tenantId") Integer tenantId, EmployeeAvailabilityView employeeAvailability);
 
     /**
      * @param employeeAvailability never null
      */
     @PUT
     @Path("/availability/update")
-    void updateEmployeeAvailability(@PathParam("tenantId") Integer tenantId, EmployeeAvailability employeeAvailability);
+    void updateEmployeeAvailability(@PathParam("tenantId") Integer tenantId, EmployeeAvailabilityView employeeAvailability);
 
     /**
      * @param id never null

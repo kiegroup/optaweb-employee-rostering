@@ -61,7 +61,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
             Employee employee = entityManager.find(Employee.class, employeeId);
             if (employee == null) {
                 throw new IllegalArgumentException("ShiftView (" + shiftView
-                        + ") has an unexisting employeeId (" + employeeId + ").");
+                        + ") has an non-existing employeeId (" + employeeId + ").");
             }
             validateTenantIdParameter(tenantId, employee);
             shift.setEmployee(employee);

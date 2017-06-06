@@ -20,17 +20,14 @@ import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -180,7 +177,7 @@ public class RosterGenerator {
         for (Employee employee : employeeList) {
             for (TimeSlot timeSlot : extractRandomSubList(timeSlotList, 0.6)) {
                 EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee, timeSlot);
-                employeeAvailability.setEmployeeAvailabilityState(EmployeeAvailabilityState.values()[
+                employeeAvailability.setState(EmployeeAvailabilityState.values()[
                         random.nextInt(EmployeeAvailabilityState.values().length)]);
                 entityManager.persist(employeeAvailability);
             }

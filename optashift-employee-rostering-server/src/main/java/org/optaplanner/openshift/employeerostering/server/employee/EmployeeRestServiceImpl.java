@@ -27,6 +27,10 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements EmployeeRestService {
 
@@ -82,17 +86,29 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
 
     @Override
     @Transactional
-    public Long addEmployeeAvailability(Integer tenantId, EmployeeAvailability employeeAvailability) {
-        validateTenantIdParameter(tenantId, employeeAvailability);
+    public Long addEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
+        EmployeeAvailability employeeAvailability = convertFromView(tenantId, employeeAvailabilityView);
         entityManager.persist(employeeAvailability);
         return employeeAvailability.getId();
     }
 
     @Override
     @Transactional
-    public void updateEmployeeAvailability(Integer tenantId, EmployeeAvailability employeeAvailability) {
+    public void updateEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
+        EmployeeAvailability employeeAvailability = convertFromView(tenantId, employeeAvailabilityView);
         validateTenantIdParameter(tenantId, employeeAvailability);
         entityManager.merge(employeeAvailability);
+    }
+
+    private EmployeeAvailability convertFromView(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
+        validateTenantIdParameter(tenantId, employeeAvailabilityView);
+        Employee employee = entityManager.find(Employee.class, employeeAvailabilityView.getEmployeeId());
+        validateTenantIdParameter(tenantId, employee);
+        TimeSlot timeSlot = entityManager.find(TimeSlot.class, employeeAvailabilityView.getTimeSlotId());
+        validateTenantIdParameter(tenantId, timeSlot);
+        EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee, timeSlot);
+        employeeAvailability.setState(employeeAvailabilityView.getState());
+        return employeeAvailability;
     }
 
     @Override

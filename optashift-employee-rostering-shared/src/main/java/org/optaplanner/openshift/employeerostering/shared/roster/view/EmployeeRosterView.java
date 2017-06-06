@@ -28,11 +28,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
-public class SpotRosterView implements Serializable {
+public class EmployeeRosterView implements Serializable {
 
     @NotNull
     protected Integer tenantId;
@@ -49,17 +50,19 @@ public class SpotRosterView implements Serializable {
     @NotNull
     protected List<TimeSlot> timeSlotList;
     @NotNull
-    protected Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap;
+    protected Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToEmployeeIdToShiftViewListMap;
+    @NotNull
+    protected Map<Long, Map<Long, EmployeeAvailabilityView>> timeSlotIdToEmployeeIdToAvailabilityViewMap;
 
     @SuppressWarnings("unused")
-    public SpotRosterView() {
+    public EmployeeRosterView() {
     }
 
-    public SpotRosterView(Integer tenantId) {
+    public EmployeeRosterView(Integer tenantId) {
         this.tenantId = tenantId;
     }
 
-    public SpotRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate) {
+    public EmployeeRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate) {
         this(tenantId);
         this.startDate = startDate;
         this.endDate = endDate;
@@ -128,12 +131,20 @@ public class SpotRosterView implements Serializable {
         this.timeSlotList = timeSlotList;
     }
 
-    public Map<Long, Map<Long, List<ShiftView>>> getTimeSlotIdToSpotIdToShiftViewListMap() {
-        return timeSlotIdToSpotIdToShiftViewListMap;
+    public Map<Long, Map<Long, List<ShiftView>>> getTimeSlotIdToEmployeeIdToShiftViewListMap() {
+        return timeSlotIdToEmployeeIdToShiftViewListMap;
     }
 
-    public void setTimeSlotIdToSpotIdToShiftViewListMap(Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap) {
-        this.timeSlotIdToSpotIdToShiftViewListMap = timeSlotIdToSpotIdToShiftViewListMap;
+    public void setTimeSlotIdToEmployeeIdToShiftViewListMap(Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToEmployeeIdToShiftViewListMap) {
+        this.timeSlotIdToEmployeeIdToShiftViewListMap = timeSlotIdToEmployeeIdToShiftViewListMap;
+    }
+
+    public Map<Long, Map<Long, EmployeeAvailabilityView>> getTimeSlotIdToEmployeeIdToAvailabilityViewMap() {
+        return timeSlotIdToEmployeeIdToAvailabilityViewMap;
+    }
+
+    public void setTimeSlotIdToEmployeeIdToAvailabilityViewMap(Map<Long, Map<Long, EmployeeAvailabilityView>> timeSlotIdToEmployeeIdToAvailabilityViewMap) {
+        this.timeSlotIdToEmployeeIdToAvailabilityViewMap = timeSlotIdToEmployeeIdToAvailabilityViewMap;
     }
 
 }

@@ -16,23 +16,16 @@
 
 package org.optaplanner.openshift.employeerostering.shared.employee;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
-import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 @Entity
@@ -53,7 +46,7 @@ public class EmployeeAvailability extends AbstractPersistable {
     @ManyToOne(fetch = FetchType.EAGER)
     private TimeSlot timeSlot;
     @NotNull
-    private EmployeeAvailabilityState employeeAvailabilityState;
+    private EmployeeAvailabilityState state;
 
     @SuppressWarnings("unused")
     public EmployeeAvailability() {
@@ -90,12 +83,12 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.timeSlot = timeSlot;
     }
 
-    public EmployeeAvailabilityState getEmployeeAvailabilityState() {
-        return employeeAvailabilityState;
+    public EmployeeAvailabilityState getState() {
+        return state;
     }
 
-    public void setEmployeeAvailabilityState(EmployeeAvailabilityState employeeAvailabilityState) {
-        this.employeeAvailabilityState = employeeAvailabilityState;
+    public void setState(EmployeeAvailabilityState state) {
+        this.state = state;
     }
 
 }

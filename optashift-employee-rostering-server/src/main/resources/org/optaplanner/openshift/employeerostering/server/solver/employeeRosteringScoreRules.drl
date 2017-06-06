@@ -47,7 +47,7 @@ end
 rule "Unavailable time slot for an employee"
     when
         EmployeeAvailability(
-                employeeAvailabilityState == employeeAvailabilityState.UNAVAILABLE,
+                state == EmployeeAvailabilityState.UNAVAILABLE,
                 $e : employee,
                 $t : timeSlot)
         Shift(
@@ -93,7 +93,7 @@ end
 rule "Undesired time slot for an employee"
     when
         EmployeeAvailability(
-                employeeAvailabilityState == employeeAvailabilityState.UNDESIRED,
+                state == EmployeeAvailabilityState.UNDESIRED,
                 $e : employee,
                 $t : timeSlot)
         Shift(
@@ -106,7 +106,7 @@ end
 rule "Desired time slot for an employee"
     when
         EmployeeAvailability(
-                employeeAvailabilityState == employeeAvailabilityState.DESIRED,
+                state == EmployeeAvailabilityState.DESIRED,
                 $e : employee,
                 $t : timeSlot)
         Shift(

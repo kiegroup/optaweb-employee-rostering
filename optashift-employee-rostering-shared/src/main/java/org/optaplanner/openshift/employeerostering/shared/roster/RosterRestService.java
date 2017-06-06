@@ -12,6 +12,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
@@ -28,6 +29,15 @@ public interface RosterRestService {
     @GET
     @Path("/spotRosterView")
     SpotRosterView getSpotRosterView(@PathParam("tenantId") Integer tenantId,
+            @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString);
+
+    @GET
+    @Path("/employeeRosterView/current")
+    EmployeeRosterView getCurrentEmployeeRosterView(@PathParam("tenantId") Integer tenantId);
+
+    @GET
+    @Path("/employeeRosterView")
+    EmployeeRosterView getEmployeeRosterView(@PathParam("tenantId") Integer tenantId,
             @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString);
 
     @POST

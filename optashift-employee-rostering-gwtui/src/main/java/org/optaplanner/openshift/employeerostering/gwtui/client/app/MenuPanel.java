@@ -11,6 +11,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
+import org.optaplanner.openshift.employeerostering.gwtui.client.roster.EmployeeRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
@@ -37,6 +38,11 @@ public class MenuPanel implements IsElement {
     private Anchor spotRosterAnchor;
     @Inject
     private SpotRosterViewPanel spotRosterViewPanel;
+
+    @Inject @DataField
+    private Anchor employeeRosterAnchor;
+    @Inject
+    private EmployeeRosterViewPanel employeeRosterViewPanel;
 
     @Inject @DataField
     private Div content;
@@ -80,11 +86,20 @@ public class MenuPanel implements IsElement {
         spotRosterViewPanel.refresh();
     }
 
+    @EventHandler("employeeRosterAnchor")
+    public void showEmployeeRoster(ClickEvent e) {
+        content.removeChild(content.getLastChild());
+        switchActive(employeeRosterAnchor);
+        content.appendChild(employeeRosterViewPanel.getElement());
+        employeeRosterViewPanel.refresh();
+    }
+
     private void switchActive(Anchor anchor) {
         skillsAnchor.getElement().getParentElement().removeClassName("active");
         spotsAnchor.getElement().getParentElement().removeClassName("active");
         employeesAnchor.getElement().getParentElement().removeClassName("active");
         spotRosterAnchor.getElement().getParentElement().removeClassName("active");
+        employeeRosterAnchor.getElement().getParentElement().removeClassName("active");
         anchor.getElement().getParentElement().addClassName("active");
     }
 
