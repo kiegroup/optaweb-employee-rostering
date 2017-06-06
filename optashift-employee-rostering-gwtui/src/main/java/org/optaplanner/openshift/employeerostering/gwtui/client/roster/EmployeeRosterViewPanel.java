@@ -58,7 +58,7 @@ public class EmployeeRosterViewPanel implements IsElement {
     private Map<Long, Spot> spotMap;
 
     public EmployeeRosterViewPanel() {
-        table = new CellTable<>(10);
+        table = new CellTable<>(15);
         table.setBordered(true);
         table.setCondensed(true);
         table.setStriped(true);
@@ -126,31 +126,9 @@ public class EmployeeRosterViewPanel implements IsElement {
                     table.addColumn(new IdentityColumn<>(new AbstractCell<Employee>("click") {
                         @Override
                         public void render(Context context, Employee employee, SafeHtmlBuilder sb) {
-                            List<ShiftView> shiftViewList = (employeeIdToShiftViewListMap == null)
-                                    ? null : employeeIdToShiftViewListMap.get(employee.getId());
-                            if (shiftViewList != null && !shiftViewList.isEmpty()) {
-                                for (ShiftView shiftView : shiftViewList) {
-                                    Long spotId = shiftView.getSpotId();
-                                    String spotName;
-                                    if (spotId == null) {
-                                        spotName = null;
-                                    } else {
-                                        Spot spot = spotMap.get(spotId);
-                                        if (spot == null) {
-                                            throw new IllegalStateException("Impossible situation: the spotId ("
-                                                    + spotId + ") does not exist in the spotMap.");
-                                        }
-                                        spotName = spot.getName();
-                                    }
-                                    sb.appendHtmlConstant("<span class=\"badge\">");
-                                    sb.appendEscaped(spotName);
-                                    sb.appendHtmlConstant("</span>");
-                                }
-                            }
                             EmployeeAvailabilityView availabilityView = (employeeIdToAvailabilityViewMap == null)
                                     ? null : employeeIdToAvailabilityViewMap.get(employee.getId());
                             EmployeeAvailabilityState state = (availabilityView == null) ? null : availabilityView.getState();
-
                             sb.appendHtmlConstant("<div class=\"btn-group timeSlotAvailability\" role=\"group\" aria-label=\"availability\">" +
                                     "<button type=\"button\" class=\"btn btn-xs btn-default");
                             if (state == EmployeeAvailabilityState.UNAVAILABLE) {
@@ -171,6 +149,46 @@ public class EmployeeRosterViewPanel implements IsElement {
                             sb.appendHtmlConstant("\" aria-label=\"Desired\">" +
                                     "<span class=\"glyphicon glyphicon-ok-circle timeSlotDesired\" aria-hidden=\"true\"/></button>" +
                                     "</div>");
+                            List<ShiftView> shiftViewList = (employeeIdToShiftViewListMap == null)
+                                    ? null : employeeIdToShiftViewListMap.get(employee.getId());
+                            if (shiftViewList != null && !shiftViewList.isEmpty()) {
+                                String labelType;
+                                if (state == null) {
+                                    labelType = "label-default";
+                                } else switch (state) {
+                                    case UNAVAILABLE:
+                                        labelType = "label-danger";
+                                        break;
+                                    case UNDESIRED:
+                                        labelType = "label-warning";
+                                        break;
+                                    case DESIRED:
+                                        labelType = "label-success";
+                                        break;
+                                    default:
+                                        throw new IllegalStateException(
+                                                "The employeeAvailabilityState (" + state + ") is not implemented.");
+                                }
+                                for (ShiftView shiftView : shiftViewList) {
+                                    Long spotId = shiftView.getSpotId();
+                                    String spotName;
+                                    if (spotId == null) {
+                                        spotName = null;
+                                    } else {
+                                        Spot spot = spotMap.get(spotId);
+                                        if (spot == null) {
+                                            throw new IllegalStateException("Impossible situation: the spotId ("
+                                                    + spotId + ") does not exist in the spotMap.");
+                                        }
+                                        spotName = spot.getName();
+                                    }
+                                    sb.appendHtmlConstant("<span class=\"label ");
+                                    sb.appendHtmlConstant(labelType);
+                                    sb.appendHtmlConstant("\">");
+                                    sb.appendEscaped(spotName);
+                                    sb.appendHtmlConstant("</span>");
+                                }
+                            }
                         }
 
                         @Override

@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
+import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
@@ -50,7 +51,7 @@ public class SkillListPanel implements IsElement {
     private ListDataProvider<Skill> dataProvider = new ListDataProvider<>();
 
     public SkillListPanel() {
-        table = new CellTable<>(10);
+        table = new CellTable<>(15);
         table.setBordered(true);
         table.setCondensed(true);
         table.setStriped(true);
@@ -82,7 +83,7 @@ public class SkillListPanel implements IsElement {
             }
         }, "Name");
 
-        Column<Skill, String> deleteColumn = new Column<Skill, String>(new ButtonCell(ButtonType.DANGER, IconType.REMOVE)) {
+        Column<Skill, String> deleteColumn = new Column<Skill, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER, ButtonSize.SMALL)) {
             @Override
             public String getValue(Skill skill) {
                 return "Delete";

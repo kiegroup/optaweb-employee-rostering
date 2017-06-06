@@ -1,5 +1,6 @@
 .timeSlotAvailability {
-    float: right;
+    float: left;
+    margin-right: 5px;
 }
 .active > .timeSlotUnavailable {
     color: red !important;

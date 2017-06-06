@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
+import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
@@ -55,7 +56,7 @@ public class SpotListPanel implements IsElement {
     private ListDataProvider<Spot> dataProvider = new ListDataProvider<>();
 
     public SpotListPanel() {
-        table = new CellTable<>(10);
+        table = new CellTable<>(15);
         table.setBordered(true);
         table.setCondensed(true);
         table.setStriped(true);
@@ -108,7 +109,7 @@ public class SpotListPanel implements IsElement {
                 return requiredSkill.getName();
             }
         }, "Required skill");
-        Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(ButtonType.DANGER, IconType.REMOVE)) {
+        Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER, ButtonSize.SMALL)) {
             @Override
             public String getValue(Spot spot) {
                 return "Delete";

@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
+import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
@@ -56,7 +57,7 @@ public class EmployeeListPanel implements IsElement {
     private ListDataProvider<Employee> dataProvider = new ListDataProvider<>();
 
     public EmployeeListPanel() {
-        table = new CellTable<>(10);
+        table = new CellTable<>(15);
         table.setBordered(true);
         table.setCondensed(true);
         table.setStriped(true);
@@ -110,7 +111,7 @@ public class EmployeeListPanel implements IsElement {
                         .collect(Collectors.joining(", "));
             }
         }, "Skills");
-        Column<Employee, String> deleteColumn = new Column<Employee, String>(new ButtonCell(ButtonType.DANGER, IconType.REMOVE)) {
+        Column<Employee, String> deleteColumn = new Column<Employee, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER, ButtonSize.SMALL)) {
             @Override
             public String getValue(Employee employee) {
                 return "Delete";

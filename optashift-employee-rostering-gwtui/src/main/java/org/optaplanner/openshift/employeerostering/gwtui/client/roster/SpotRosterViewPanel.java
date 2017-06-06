@@ -57,7 +57,7 @@ public class SpotRosterViewPanel implements IsElement {
     private Map<Long, Employee> employeeMap;
 
     public SpotRosterViewPanel() {
-        table = new CellTable<>(10);
+        table = new CellTable<>(15);
         table.setBordered(true);
         table.setCondensed(true);
         table.setStriped(true);
@@ -137,10 +137,8 @@ public class SpotRosterViewPanel implements IsElement {
                                         }
                                         employeeName = employee.getName();
                                     }
-                                    sb.appendHtmlConstant("<span class=\"badge");
-                                    if (employeeName == null) {
-                                        sb.appendHtmlConstant(" badge-important");
-                                    }
+                                    sb.appendHtmlConstant("<span class=\"label ");
+                                    sb.appendHtmlConstant((employeeName == null) ? "label-danger" : "label-default");
                                     sb.appendHtmlConstant("\">");
                                     sb.appendEscaped(employeeName == null ? "Unassigned" : employeeName);
                                     sb.appendHtmlConstant("<a class=\"btn btn-xs shiftRemove\" data-shiftId=\"" + shiftView.getId() + "\" aria-label=\"Remove shift\">" +
