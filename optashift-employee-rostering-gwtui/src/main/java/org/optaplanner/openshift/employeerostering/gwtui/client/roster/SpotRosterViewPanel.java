@@ -70,6 +70,14 @@ public class SpotRosterViewPanel implements IsElement {
     @PostConstruct
     protected void initWidget() {
         initTable();
+    }
+
+    @EventHandler("refreshButton")
+    public void refresh(ClickEvent e) {
+        refresh();
+    }
+
+    public void refresh() {
         refreshTable();
     }
 
@@ -179,15 +187,6 @@ public class SpotRosterViewPanel implements IsElement {
                 pagination.rebuild(pager);
             }
         });
-    }
-
-    @EventHandler("refreshButton")
-    public void refresh(ClickEvent e) {
-        refresh();
-    }
-
-    public void refresh() {
-        refreshTable();
     }
 
     @EventHandler("solveButton")

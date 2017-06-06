@@ -69,7 +69,16 @@ public class EmployeeListPanel implements IsElement {
     @PostConstruct
     protected void initWidget() {
         initTable();
+    }
+
+    @EventHandler("refreshButton")
+    public void refresh(ClickEvent e) {
         refresh();
+    }
+
+    public void refresh() {
+        refreshSkillsListBox();
+        refreshTable();
     }
 
     private void refreshSkillsListBox() {
@@ -122,16 +131,6 @@ public class EmployeeListPanel implements IsElement {
         pager.setDisplay(table);
         pagination.clear();
         dataProvider.addDataDisplay(table);
-    }
-
-    @EventHandler("refreshButton")
-    public void refresh(ClickEvent e) {
-        refresh();
-    }
-
-    public void refresh() {
-        refreshSkillsListBox();
-        refreshTable();
     }
 
     private void refreshTable() {

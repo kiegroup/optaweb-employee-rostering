@@ -63,7 +63,15 @@ public class SkillListPanel implements IsElement {
     @PostConstruct
     protected void initWidget() {
         initTable();
+    }
+
+    @EventHandler("refreshButton")
+    public void refresh(ClickEvent e) {
         refresh();
+    }
+
+    public void refresh() {
+        refreshTable();
     }
 
     private void initTable() {
@@ -95,15 +103,6 @@ public class SkillListPanel implements IsElement {
         pager.setDisplay(table);
         pagination.clear();
         dataProvider.addDataDisplay(table);
-    }
-
-    @EventHandler("refreshButton")
-    public void refresh(ClickEvent e) {
-        refresh();
-    }
-
-    public void refresh() {
-        refreshTable();
     }
 
     private void refreshTable() {

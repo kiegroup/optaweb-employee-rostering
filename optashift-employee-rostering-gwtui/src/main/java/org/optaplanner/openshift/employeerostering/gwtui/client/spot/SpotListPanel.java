@@ -68,7 +68,16 @@ public class SpotListPanel implements IsElement {
     @PostConstruct
     protected void initWidget() {
         initTable();
+    }
+
+    @EventHandler("refreshButton")
+    public void refresh(ClickEvent e) {
         refresh();
+    }
+
+    public void refresh() {
+        refreshRequiredSkillsListBox();
+        refreshTable();
     }
 
     private void refreshRequiredSkillsListBox() {
@@ -120,16 +129,6 @@ public class SpotListPanel implements IsElement {
         pager.setDisplay(table);
         pagination.clear();
         dataProvider.addDataDisplay(table);
-    }
-
-    @EventHandler("refreshButton")
-    public void refresh(ClickEvent e) {
-        refresh();
-    }
-
-    public void refresh() {
-        refreshRequiredSkillsListBox();
-        refreshTable();
     }
 
     private void refreshTable() {
