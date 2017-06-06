@@ -27,6 +27,8 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
@@ -86,7 +88,7 @@ public class EmployeeRosterViewPanel implements IsElement {
             public String getValue(Employee employee) {
                 return (employee == null) ? "" : employee.getName();
             }
-        }, "Spot");
+        }, "Employee");
         table.addRangeChangeHandler(event -> pagination.rebuild(pager));
 
         pager.setDisplay(table);
@@ -117,11 +119,15 @@ public class EmployeeRosterViewPanel implements IsElement {
                             .appendHtmlConstant("</div>")
                             .toSafeHtml();
 
-                    Map<Long, List<ShiftView>> employeeIdMap = employeeRosterView.getTimeSlotIdToEmployeeIdToShiftViewListMap().get(timeSlot.getId());
+                    Map<Long, List<ShiftView>> employeeIdToShiftViewListMap
+                            = employeeRosterView.getTimeSlotIdToEmployeeIdToShiftViewListMap().get(timeSlot.getId());
+                    Map<Long, EmployeeAvailabilityView> employeeIdToAvailabilityViewMap
+                            = employeeRosterView.getTimeSlotIdToEmployeeIdToAvailabilityViewMap().get(timeSlot.getId());
                     table.addColumn(new IdentityColumn<>(new AbstractCell<Employee>("click") {
                         @Override
                         public void render(Context context, Employee employee, SafeHtmlBuilder sb) {
-                            List<ShiftView> shiftViewList = (employeeIdMap == null) ? null : employeeIdMap.get(employee.getId());
+                            List<ShiftView> shiftViewList = (employeeIdToShiftViewListMap == null)
+                                    ? null : employeeIdToShiftViewListMap.get(employee.getId());
                             if (shiftViewList != null && !shiftViewList.isEmpty()) {
                                 for (ShiftView shiftView : shiftViewList) {
                                     Long spotId = shiftView.getSpotId();
@@ -141,12 +147,28 @@ public class EmployeeRosterViewPanel implements IsElement {
                                     sb.appendHtmlConstant("</span>");
                                 }
                             }
+                            EmployeeAvailabilityView availabilityView = (employeeIdToAvailabilityViewMap == null)
+                                    ? null : employeeIdToAvailabilityViewMap.get(employee.getId());
+                            EmployeeAvailabilityState state = (availabilityView == null) ? null : availabilityView.getState();
+
                             sb.appendHtmlConstant("<div class=\"btn-group timeSlotAvailability\" role=\"group\" aria-label=\"availability\">" +
-                                    "<button type=\"button\" class=\"btn btn-xs btn-default\" aria-label=\"Unavailable\">" +
+                                    "<button type=\"button\" class=\"btn btn-xs btn-default");
+                            if (state == EmployeeAvailabilityState.UNAVAILABLE) {
+                                sb.appendHtmlConstant(" active");
+                            }
+                            sb.appendHtmlConstant("\" aria-label=\"Unavailable\">" +
                                     "<span class=\"glyphicon glyphicon-ban-circle timeSlotUnavailable\" aria-hidden=\"true\"/></button>" +
-                                    "<button type=\"button\" class=\"btn btn-xs btn-default\" aria-label=\"Undesired\">" +
+                                    "<button type=\"button\" class=\"btn btn-xs btn-default");
+                            if (state == EmployeeAvailabilityState.UNDESIRED) {
+                                sb.appendHtmlConstant(" active");
+                            }
+                            sb.appendHtmlConstant("\" aria-label=\"Undesired\">" +
                                     "<span class=\"glyphicon glyphicon-remove-circle timeSlotUndesired\" aria-hidden=\"true\"/></button>" +
-                                    "<button type=\"button\" class=\"btn btn-xs btn-default\" aria-label=\"Desired\">" +
+                                    "<button type=\"button\" class=\"btn btn-xs btn-default");
+                            if (state == EmployeeAvailabilityState.DESIRED) {
+                                sb.appendHtmlConstant(" active");
+                            }
+                            sb.appendHtmlConstant("\" aria-label=\"Desired\">" +
                                     "<span class=\"glyphicon glyphicon-ok-circle timeSlotDesired\" aria-hidden=\"true\"/></button>" +
                                     "</div>");
                         }
