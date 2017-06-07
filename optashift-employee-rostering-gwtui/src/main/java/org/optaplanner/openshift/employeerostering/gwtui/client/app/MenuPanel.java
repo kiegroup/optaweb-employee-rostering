@@ -52,6 +52,7 @@ public class MenuPanel implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
+        showSpotRoster(null);
     }
 
     @EventHandler("skillsAnchor")
