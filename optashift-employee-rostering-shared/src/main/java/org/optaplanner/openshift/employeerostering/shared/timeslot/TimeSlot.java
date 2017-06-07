@@ -30,7 +30,6 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 @NamedQueries({
         @NamedQuery(name = "TimeSlot.findAll",

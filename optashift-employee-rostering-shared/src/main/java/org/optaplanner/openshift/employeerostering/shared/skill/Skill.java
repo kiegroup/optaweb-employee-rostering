@@ -27,7 +27,6 @@ import javax.validation.constraints.Size;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Skill.findAll",

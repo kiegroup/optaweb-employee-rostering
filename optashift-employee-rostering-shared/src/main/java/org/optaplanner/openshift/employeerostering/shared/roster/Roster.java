@@ -36,7 +36,6 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.persistence.jackson.api.score.ScoreJacksonJsonSerializer;
 import org.optaplanner.persistence.jackson.api.score.buildin.hardsoft.HardSoftScoreJacksonJsonDeserializer;
 
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @PlanningSolution
 public class Roster extends AbstractPersistable {
 

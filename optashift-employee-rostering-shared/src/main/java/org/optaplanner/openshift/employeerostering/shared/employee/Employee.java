@@ -35,7 +35,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property="id")
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Employee.findAll",
