@@ -49,7 +49,7 @@ import org.optaplanner.openshift.employeerostering.server.common.generator.Strin
 public class RosterGenerator {
 
     private final StringDataGenerator employeeNameGenerator = StringDataGenerator.buildFullNames();
-    private final StringDataGenerator spotNameGenerator = StringDataGenerator.buildLocationNames();
+    private final StringDataGenerator spotNameGenerator = StringDataGenerator.buildAssemblyLineNames();
 
     private final StringDataGenerator skillNameGenerator = new StringDataGenerator()
             .addPart(
