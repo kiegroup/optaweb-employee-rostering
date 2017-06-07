@@ -41,16 +41,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 @Templated
-public class EmployeeRosterViewPanel implements IsElement {
-
-    private Integer tenantId = -1;
-
-    @Inject @DataField
-    private Button solveButton;
-    @Inject @DataField
-    private Button refreshButton;
-    @Inject @DataField
-    private Span solveStatus;
+public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
     // TODO use DataGrid instead
     @DataField
@@ -80,15 +71,6 @@ public class EmployeeRosterViewPanel implements IsElement {
         initTable();
     }
 
-    @EventHandler("refreshButton")
-    public void refresh(ClickEvent e) {
-        refresh();
-    }
-
-    public void refresh() {
-        refreshTable();
-    }
-
     private void initTable() {
         table.addColumn(new TextColumn<Employee>() {
             @Override
@@ -103,7 +85,8 @@ public class EmployeeRosterViewPanel implements IsElement {
         dataProvider.addDataDisplay(table);
     }
 
-    private void refreshTable() {
+    @Override
+    protected void refreshTable() {
         RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantId, new FailureShownRestCallback<EmployeeRosterView>() {
             @Override
             public void onSuccess(EmployeeRosterView employeeRosterView) {
@@ -255,49 +238,6 @@ public class EmployeeRosterViewPanel implements IsElement {
                 pagination.rebuild(pager);
             }
         });
-    }
-
-    @EventHandler("solveButton")
-    public void solve(ClickEvent e) {
-        RosterRestServiceBuilder.solveRoster(tenantId).send();
-        // TODO 6 * 5000ms = 30 seconds - Keep in sync with solver config
-        Scheduler.get().scheduleFixedDelay(new RefreshTableRepeatingCommand(6), 5000);
-    }
-
-    private class RefreshTableRepeatingCommand implements Scheduler.RepeatingCommand {
-
-        private int repeatCount;
-
-        public RefreshTableRepeatingCommand(int repeatCount) {
-            this.repeatCount = repeatCount;
-            updateSolverStatus();
-        }
-
-        @Override
-        public boolean execute() {
-            refreshTable();
-            // To repeat n times, return true only n-1 times.
-            repeatCount--;
-            if (repeatCount > 0) {
-                updateSolverStatus();
-                return true;
-            } else {
-                solveStatus.setInnerHTML(new SafeHtmlBuilder()
-                        .appendHtmlConstant("Solving finished.")
-                        .toSafeHtml().asString());
-                return false;
-            }
-        }
-
-        private void updateSolverStatus() {
-            int remainingSeconds = 5000 * repeatCount / 1000;
-            solveStatus.setInnerHTML(new SafeHtmlBuilder()
-                    .appendHtmlConstant("Solving for another ")
-                    .append(remainingSeconds)
-                    .appendHtmlConstant(" seconds...")
-                    .toSafeHtml().asString());
-        }
-
     }
 
 }

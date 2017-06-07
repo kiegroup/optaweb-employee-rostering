@@ -35,14 +35,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 @Templated
-public class SpotRosterViewPanel implements IsElement {
-
-    private Integer tenantId = -1;
-
-    @Inject @DataField
-    private Button solveButton;
-    @Inject @DataField
-    private Button refreshButton;
+public class SpotRosterViewPanel extends AbstractRosterViewPanel {
 
     // TODO use DataGrid instead
     @DataField
@@ -72,15 +65,6 @@ public class SpotRosterViewPanel implements IsElement {
         initTable();
     }
 
-    @EventHandler("refreshButton")
-    public void refresh(ClickEvent e) {
-        refresh();
-    }
-
-    public void refresh() {
-        refreshTable();
-    }
-
     private void initTable() {
         table.addColumn(new TextColumn<Spot>() {
             @Override
@@ -95,7 +79,8 @@ public class SpotRosterViewPanel implements IsElement {
         dataProvider.addDataDisplay(table);
     }
 
-    private void refreshTable() {
+    @Override
+    protected void refreshTable() {
         RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<SpotRosterView>() {
             @Override
             public void onSuccess(SpotRosterView spotRosterView) {
@@ -188,11 +173,6 @@ public class SpotRosterViewPanel implements IsElement {
                 pagination.rebuild(pager);
             }
         });
-    }
-
-    @EventHandler("solveButton")
-    public void solve(ClickEvent e) {
-        RosterRestServiceBuilder.solveRoster(tenantId).send();
     }
 
 }
