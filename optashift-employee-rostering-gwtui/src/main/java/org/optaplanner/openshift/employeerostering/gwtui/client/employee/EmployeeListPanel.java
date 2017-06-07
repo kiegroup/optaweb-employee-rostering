@@ -5,12 +5,10 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import com.github.nmorel.gwtjackson.rest.api.RestCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
@@ -20,6 +18,13 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.gwtbootstrap3.extras.tagsinput.client.ui.MVTagsInput;
+import org.gwtbootstrap3.extras.tagsinput.client.ui.TagsInput;
+import org.gwtbootstrap3.extras.tagsinput.client.ui.base.MultiValueTagsInput;
+import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
+import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
+import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
+import org.gwtbootstrap3.extras.typeahead.client.base.StringDataset;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -41,9 +46,8 @@ public class EmployeeListPanel implements IsElement {
 
     @Inject @DataField
     private TextBox employeeNameTextBox;
-//    @Inject @DataField
-//    private ListBox requiredSkillListBox;
-    private List<Skill> skillListBoxValues;
+    @Inject @DataField
+    private SingleValueTagsInput<Skill> skillsTagsInput;
     @Inject @DataField
     private Button addButton;
 
@@ -70,6 +74,9 @@ public class EmployeeListPanel implements IsElement {
     @PostConstruct
     protected void initWidget() {
         initTable();
+        skillsTagsInput.setItemValue(Skill::getName);
+        skillsTagsInput.setItemText(Skill::getName);
+        skillsTagsInput.reconfigure();
     }
 
     @EventHandler("refreshButton")
@@ -86,9 +93,14 @@ public class EmployeeListPanel implements IsElement {
         SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {
-                skillListBoxValues = skillList;
-//                requiredSkillListBox.clear();
-//                skillList.forEach(skill -> requiredSkillListBox.addItem(skill.getName()));
+                skillsTagsInput.removeAll();
+                skillsTagsInput.setDatasets((Dataset<Skill>) new CollectionDataset<Skill>(skillList) {
+                    @Override
+                    public String getValue(Skill skill) {
+                        return (skill == null) ? "" : skill.getName();
+                    }
+                });
+                skillsTagsInput.reconfigure();
             }
         });
     }
@@ -150,10 +162,12 @@ public class EmployeeListPanel implements IsElement {
         String employeeName = employeeNameTextBox.getValue();
         employeeNameTextBox.setValue("");
         employeeNameTextBox.setFocus(true);
-//        int requiredSkillIndex = requiredSkillListBox.getSelectedIndex();
-//        Skill requiredSkill = requiredSkillIndex < 0 ? null : skillListBoxValues.get(requiredSkillIndex);
-
-        EmployeeRestServiceBuilder.addEmployee(tenantId, new Employee(tenantId, employeeName), new FailureShownRestCallback<Long>() {
+        List<Skill> skillList = skillsTagsInput.getItems();
+        Employee employee = new Employee(tenantId, employeeName);
+        for (Skill skill : skillList) {
+            employee.getSkillProficiencyList().add(new EmployeeSkillProficiency(tenantId, employee, skill));
+        }
+        EmployeeRestServiceBuilder.addEmployee(tenantId, employee, new FailureShownRestCallback<Long>() {
             @Override
             public void onSuccess(Long employeeId) {
                 refreshTable();
