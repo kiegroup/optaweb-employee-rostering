@@ -14,6 +14,8 @@
   <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
 
   <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
+  <inherits name="org.gwtbootstrap3.extras.tagsinput.TagsInput"/>
+  <inherits name="org.gwtbootstrap3.extras.typeahead.Typeahead"/>
   <inherits name="org.jboss.errai.ioc.Container"/>
   <inherits name="org.jboss.errai.enterprise.CDI"/>
   <inherits name="org.jboss.errai.ui.UI" />
