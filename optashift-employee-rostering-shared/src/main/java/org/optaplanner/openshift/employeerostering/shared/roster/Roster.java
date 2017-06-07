@@ -33,8 +33,6 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.persistence.jackson.api.score.ScoreJacksonJsonSerializer;
-import org.optaplanner.persistence.jackson.api.score.buildin.hardsoft.HardSoftScoreJacksonJsonDeserializer;
 
 @PlanningSolution
 public class Roster extends AbstractPersistable {
@@ -54,8 +52,6 @@ public class Roster extends AbstractPersistable {
     @PlanningEntityCollectionProperty
     private List<Shift> shiftList;
 
-    @JsonSerialize(using = ScoreJacksonJsonSerializer.class)
-    @JsonDeserialize(using = HardSoftScoreJacksonJsonDeserializer.class)
     @PlanningScore
     private HardSoftScore score = null;
 

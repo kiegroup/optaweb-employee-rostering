@@ -33,22 +33,8 @@ import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
-public class EmployeeRosterView implements Serializable {
+public class EmployeeRosterView extends AbstractRosterView {
 
-    @NotNull
-    protected Integer tenantId;
-
-    @NotNull
-    protected LocalDate startDate; // inclusive
-    @NotNull
-    protected LocalDate endDate; // inclusive
-
-    @NotNull
-    protected List<Spot> spotList;
-    @NotNull
-    protected List<Employee> employeeList;
-    @NotNull
-    protected List<TimeSlot> timeSlotList;
     @NotNull
     protected Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToEmployeeIdToShiftViewListMap;
     @NotNull
@@ -68,68 +54,9 @@ public class EmployeeRosterView implements Serializable {
         this.endDate = endDate;
     }
 
-    @Override
-    public String toString() {
-        return startDate + " to " + endDate;
-    }
-
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
-
-    public Integer getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(Integer tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    public LocalDate getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    public LocalDate getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
-
-    public List<Spot> getSpotList() {
-        return spotList;
-    }
-
-    public void setSpotList(List<Spot> spotList) {
-        this.spotList = spotList;
-    }
-
-    public List<Employee> getEmployeeList() {
-        return employeeList;
-    }
-
-    public void setEmployeeList(List<Employee> employeeList) {
-        this.employeeList = employeeList;
-    }
-
-    public List<TimeSlot> getTimeSlotList() {
-        return timeSlotList;
-    }
-
-    public void setTimeSlotList(List<TimeSlot> timeSlotList) {
-        this.timeSlotList = timeSlotList;
-    }
 
     public Map<Long, Map<Long, List<ShiftView>>> getTimeSlotIdToEmployeeIdToShiftViewListMap() {
         return timeSlotIdToEmployeeIdToShiftViewListMap;

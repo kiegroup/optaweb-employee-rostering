@@ -222,6 +222,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
+        // TODO fill in the score too - do we inject a ScoreDirectorFactory?
         return new Roster((long) tenantId, tenantId,
                 skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, shiftList);
     }
