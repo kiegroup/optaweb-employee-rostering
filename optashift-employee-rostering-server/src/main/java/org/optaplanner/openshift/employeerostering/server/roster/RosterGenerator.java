@@ -104,8 +104,8 @@ public class RosterGenerator {
         List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
                 tenantId, employeeList, timeSlotList);
         List<Shift> shiftList = createShiftList(tenantId, spotList, timeSlotList, employeeList, continuousPlanning);
-        return new Roster((long) tenantId, skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList,
-                shiftList);
+        return new Roster((long) tenantId, tenantId,
+                skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, shiftList);
     }
 
     private List<Skill> createSkillList(Integer tenantId, int size) {

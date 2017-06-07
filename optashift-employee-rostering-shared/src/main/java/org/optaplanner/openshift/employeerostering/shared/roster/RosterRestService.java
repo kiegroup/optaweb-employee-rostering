@@ -45,9 +45,9 @@ public interface RosterRestService {
     void solveRoster(@PathParam("tenantId") Integer tenantId);
 
     // Not a REST method
-    Roster getRoster(Integer tenantId);
+    Roster buildRoster(Integer tenantId);
 
     // Not a REST method
-    void updateRoster(Roster newRoster);
+    void updateShiftsOfRoster(Roster newRoster);
 
 }

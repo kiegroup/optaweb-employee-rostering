@@ -64,9 +64,9 @@ public class Roster extends AbstractPersistable {
     public Roster() {
     }
 
-    public Roster(Long id, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList, List<TimeSlot> timeSlotList,
+    public Roster(Long id, Integer tenantId, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList, List<TimeSlot> timeSlotList,
             List<EmployeeAvailability> employeeAvailabilityList, List<Shift> shiftList) {
-        super(id);
+        super(id, tenantId);
         this.skillList = skillList;
         this.spotList = spotList;
         this.employeeList = employeeList;

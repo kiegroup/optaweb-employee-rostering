@@ -45,11 +45,12 @@ public abstract class AbstractPersistable implements Serializable {
     public AbstractPersistable() {
     }
 
-    protected AbstractPersistable(Long id) {
-        this.id = id;
+    protected AbstractPersistable(Integer tenantId) {
+        this(null, tenantId);
     }
 
-    protected AbstractPersistable(Integer tenantId) {
+    protected AbstractPersistable(Long id, Integer tenantId) {
+        this.id = id;
         this.tenantId = tenantId;
     }
 

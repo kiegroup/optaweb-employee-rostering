@@ -9,6 +9,6 @@
   </scoreDirectorFactory>
 
   <termination>
-    <secondsSpentLimit>10</secondsSpentLimit>
+    <secondsSpentLimit>30</secondsSpentLimit>
   </termination>
 </solver>

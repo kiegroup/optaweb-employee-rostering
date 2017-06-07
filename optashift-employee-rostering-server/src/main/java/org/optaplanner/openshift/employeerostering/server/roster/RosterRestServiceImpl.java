@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -200,7 +202,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Override
     @Transactional
-    public Roster getRoster(Integer tenantId) {
+    public Roster buildRoster(Integer tenantId) {
         List<Skill> skillList = entityManager.createNamedQuery("Skill.findAll", Skill.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
@@ -220,14 +222,29 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
-        return new Roster((long) tenantId, skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, shiftList);
+        return new Roster((long) tenantId, tenantId,
+                skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, shiftList);
     }
 
     @Override
     @Transactional
-    public void updateRoster(Roster newRoster) {
+    public void updateShiftsOfRoster(Roster newRoster) {
+        Integer tenantId = newRoster.getTenantId();
+        // TODO HACK avoids optimistic locking exception while solve(), but it circumvents optimistic locking completely
+        Map<Long, Employee> employeeIdMap = entityManager.createNamedQuery("Employee.findAll", Employee.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList().stream().collect(Collectors.toMap(Employee::getId, Function.identity()));
+        Map<Long, Shift> shiftIdMap = entityManager.createNamedQuery("Shift.findAll", Shift.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList().stream().collect(Collectors.toMap(Shift::getId, Function.identity()));
+
         for (Shift shift : newRoster.getShiftList()) {
-            entityManager.merge(shift);
+            Shift attachedShift = shiftIdMap.get(shift.getId());
+            if (attachedShift == null) {
+                continue;
+            }
+            attachedShift.setEmployee((shift.getEmployee() == null)
+                    ? null : employeeIdMap.get(shift.getEmployee().getId()));
         }
     }
 

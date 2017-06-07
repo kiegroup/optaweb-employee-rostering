@@ -72,10 +72,10 @@ public class WannabeSolverManager {
                         logger.info("  New best solution found for tenantId ({}).", tenantId);
                         Roster newBestRoster = event.getNewBestSolution();
                         // TODO if this throws an OptimisticLockingException, does it kill the solver?
-                        rosterRestService.updateRoster(newBestRoster);
+                        rosterRestService.updateShiftsOfRoster(newBestRoster);
                     }
                 });
-                Roster roster = rosterRestService.getRoster(tenantId);
+                Roster roster = rosterRestService.buildRoster(tenantId);
                 try {
                     tenantIdToSolverStateMap.put(tenantId, SolverStatus.SOLVING);
                     // TODO No need to store the returned roster because the SolverEventListener already does it?
