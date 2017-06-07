@@ -26,6 +26,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 @Entity
@@ -54,6 +55,12 @@ public class EmployeeAvailability extends AbstractPersistable {
 
     public EmployeeAvailability(Integer tenantId, Employee employee, TimeSlot timeSlot) {
         super(tenantId);
+        this.employee = employee;
+        this.timeSlot = timeSlot;
+    }
+
+    public EmployeeAvailability(EmployeeAvailabilityView employeeAvailabilityView, Employee employee, TimeSlot timeSlot) {
+        super(employeeAvailabilityView);
         this.employee = employee;
         this.timeSlot = timeSlot;
     }

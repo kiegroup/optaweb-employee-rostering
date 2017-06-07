@@ -157,14 +157,17 @@ public class SpotRosterViewPanel implements IsElement {
                             super.onBrowserEvent(context, parent, spot, event, valueUpdater);
                             if ("click".equals(event.getType())) {
                                 Element targetElement = Element.as(event.getEventTarget());
-                                if (targetElement.hasClassName("shiftAdd") || targetElement.getParentElement().hasClassName("shiftAdd")) {
+                                if (targetElement.hasClassName("glyphicon")) {
+                                    targetElement = targetElement.getParentElement();
+                                }
+                                if (targetElement.hasClassName("shiftAdd")) {
                                     ShiftRestServiceBuilder.addShift(tenantId, new ShiftView(tenantId, spot, timeSlot), new FailureShownRestCallback<Long>() {
                                         @Override
                                         public void onSuccess(Long shiftId) {
                                             refreshTable();
                                         }
                                     });
-                                } else if (targetElement.hasClassName("shiftRemove") || targetElement.getParentElement().hasClassName("shiftRemove")) {
+                                } else if (targetElement.hasClassName("shiftRemove")) {
                                     String shiftIdString = targetElement.hasClassName("shiftRemove") ?
                                             targetElement.getAttribute("data-shiftId")
                                             : targetElement.getParentElement().getAttribute("data-shiftId");

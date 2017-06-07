@@ -106,7 +106,7 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
         validateTenantIdParameter(tenantId, employee);
         TimeSlot timeSlot = entityManager.find(TimeSlot.class, employeeAvailabilityView.getTimeSlotId());
         validateTenantIdParameter(tenantId, timeSlot);
-        EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee, timeSlot);
+        EmployeeAvailability employeeAvailability = new EmployeeAvailability(employeeAvailabilityView, employee, timeSlot);
         employeeAvailability.setState(employeeAvailabilityView.getState());
         return employeeAvailability;
     }

@@ -21,6 +21,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.jboss.errai.common.client.logging.util.Console;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -28,9 +29,11 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -130,24 +133,24 @@ public class EmployeeRosterViewPanel implements IsElement {
                                     ? null : employeeIdToAvailabilityViewMap.get(employee.getId());
                             EmployeeAvailabilityState state = (availabilityView == null) ? null : availabilityView.getState();
                             sb.appendHtmlConstant("<div class=\"btn-group timeSlotAvailability\" role=\"group\" aria-label=\"availability\">" +
-                                    "<button type=\"button\" class=\"btn btn-xs btn-default");
+                                    "<button type=\"button\" class=\"btn btn-xs btn-default timeSlotUnavailable");
                             if (state == EmployeeAvailabilityState.UNAVAILABLE) {
                                 sb.appendHtmlConstant(" active");
                             }
                             sb.appendHtmlConstant("\" aria-label=\"Unavailable\">" +
-                                    "<span class=\"glyphicon glyphicon-ban-circle timeSlotUnavailable\" aria-hidden=\"true\"/></button>" +
-                                    "<button type=\"button\" class=\"btn btn-xs btn-default");
+                                    "<span class=\"glyphicon glyphicon-ban-circle\" aria-hidden=\"true\"/></button>" +
+                                    "<button type=\"button\" class=\"btn btn-xs btn-default timeSlotUndesired");
                             if (state == EmployeeAvailabilityState.UNDESIRED) {
                                 sb.appendHtmlConstant(" active");
                             }
                             sb.appendHtmlConstant("\" aria-label=\"Undesired\">" +
-                                    "<span class=\"glyphicon glyphicon-remove-circle timeSlotUndesired\" aria-hidden=\"true\"/></button>" +
-                                    "<button type=\"button\" class=\"btn btn-xs btn-default");
+                                    "<span class=\"glyphicon glyphicon-remove-circle\" aria-hidden=\"true\"/></button>" +
+                                    "<button type=\"button\" class=\"btn btn-xs btn-default timeSlotDesired");
                             if (state == EmployeeAvailabilityState.DESIRED) {
                                 sb.appendHtmlConstant(" active");
                             }
                             sb.appendHtmlConstant("\" aria-label=\"Desired\">" +
-                                    "<span class=\"glyphicon glyphicon-ok-circle timeSlotDesired\" aria-hidden=\"true\"/></button>" +
+                                    "<span class=\"glyphicon glyphicon-ok-circle\" aria-hidden=\"true\"/></button>" +
                                     "</div>");
                             List<ShiftView> shiftViewList = (employeeIdToShiftViewListMap == null)
                                     ? null : employeeIdToShiftViewListMap.get(employee.getId());
@@ -196,6 +199,49 @@ public class EmployeeRosterViewPanel implements IsElement {
                             super.onBrowserEvent(context, parent, employee, event, valueUpdater);
                             if ("click".equals(event.getType())) {
                                 Element targetElement = Element.as(event.getEventTarget());
+                                if (targetElement.hasClassName("glyphicon")) {
+                                    targetElement = targetElement.getParentElement();
+                                }
+                                if (targetElement.getParentElement().hasClassName("timeSlotAvailability")) {
+                                    EmployeeAvailabilityState newState;
+                                    if (targetElement.hasClassName("timeSlotUnavailable")) {
+                                        newState = EmployeeAvailabilityState.UNAVAILABLE;
+                                    } else if (targetElement.hasClassName("timeSlotUndesired")) {
+                                        newState = EmployeeAvailabilityState.UNDESIRED;
+                                    } else if (targetElement.hasClassName("timeSlotDesired")) {
+                                        newState = EmployeeAvailabilityState.DESIRED;
+                                    } else {
+                                        throw new IllegalStateException("The targetElement's className (" + targetElement.getClassName()
+                                                + ") is not recognized as an employeeAvailabilityState.");
+                                    }
+                                    EmployeeAvailabilityView availabilityView = (employeeIdToAvailabilityViewMap == null)
+                                            ? null : employeeIdToAvailabilityViewMap.get(employee.getId());
+                                    if (availabilityView == null) {
+                                        EmployeeRestServiceBuilder.addEmployeeAvailability(tenantId, new EmployeeAvailabilityView(tenantId, employee, timeSlot, newState), new FailureShownRestCallback<Long>() {
+                                            @Override
+                                            public void onSuccess(Long shiftId) {
+                                                refreshTable();
+                                            }
+                                        });
+                                    } else {
+                                        if (availabilityView.getState() == newState) {
+                                            EmployeeRestServiceBuilder.removeEmployeeAvailability(tenantId, availabilityView.getId(), new FailureShownRestCallback<Boolean>() {
+                                                @Override
+                                                public void onSuccess(Boolean success) {
+                                                    refreshTable();
+                                                }
+                                            });
+                                        } else {
+                                            availabilityView.setState(newState);
+                                            EmployeeRestServiceBuilder.updateEmployeeAvailability(tenantId, availabilityView, new FailureShownRestCallback<Void>() {
+                                                @Override
+                                                public void onSuccess(Void result) {
+                                                    refreshTable();
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
                             }
                         }
                     }), headerHtml);

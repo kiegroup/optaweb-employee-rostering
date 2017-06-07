@@ -2,12 +2,12 @@
     float: left;
     margin-right: 5px;
 }
-.active > .timeSlotUnavailable {
+.active.timeSlotUnavailable span {
     color: red !important;
 }
-.active > .timeSlotUndesired {
+.active.timeSlotUndesired span {
     color: orange !important;
 }
-.active > .timeSlotDesired {
+.active.timeSlotDesired span {
     color: green !important;
 }
