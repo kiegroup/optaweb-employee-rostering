@@ -221,6 +221,8 @@
             <systemProperties>
               <!-- GWT Super Dev Mode: which WildFly to use -->
               <errai.jboss.home>${wildfly.home}</errai.jboss.home>
+              <!-- Make IDE war run config and GWT Super Dev Mode use same deployment context to avoid duplicate, conflicting deployment -->
+              <errai.dev.context>optashift-employee-rostering-webapp-${project.version}</errai.dev.context>
             </systemProperties>
           </configuration>
         </plugin>
