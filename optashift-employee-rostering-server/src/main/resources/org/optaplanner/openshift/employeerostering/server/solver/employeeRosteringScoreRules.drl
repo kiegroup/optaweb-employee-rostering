@@ -100,7 +100,7 @@ rule "Undesired time slot for an employee"
                 employee == $e,
                 timeSlot == $t)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -100);
+        scoreHolder.addSoftConstraintMatch(kcontext, -100);
 end
 
 rule "Desired time slot for an employee"
@@ -113,5 +113,5 @@ rule "Desired time slot for an employee"
                 employee == $e,
                 timeSlot == $t)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, +10);
+        scoreHolder.addSoftConstraintMatch(kcontext, +10);
 end
