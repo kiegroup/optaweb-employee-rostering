@@ -13,7 +13,7 @@ An example https://www.optaplanner.org/[OptaPlanner] webapp ready to deploy on h
 +
 To copy-paste your command, go to https://manage.openshift.com/[the OpenShift Online web console] and look for _Help_ > _Command line tools_.
 
-=== Binary S2I: build locally and deploy to OpenShift
+=== Binary S2I: build locally and deploy to OpenShift Online
 
 Create the project, build the `war` file locally and provision it on OpenShift:
 
@@ -32,7 +32,9 @@ Later, you can just run this command to deploy new code changes:
 ```
 
 
-=== Normal S2I (currently broken): build from source on OpenShift
+=== Normal S2I: build from source on OpenShift Dedicated
+
+WARNING: This does not work on OpenShift Online due to resource limits.
 
 Build it entirely from source on OpenShift and provision it there:
 
