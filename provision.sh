@@ -231,14 +231,14 @@ function create_application_binary() {
 
 function build_and_deploy() {
   echo_header "Starting OpenShift build and deploy..."
-  oc start-build optashift-employee-rostering
+  oc start-build employee-rostering
 }
 
 function build_and_deploy_binary() {
   start_maven_build
   
   echo_header "Starting OpenShift binary deploy..."
-  oc start-build optashift-employee-rostering --from-file=target/ROOT.war
+  oc start-build employee-rostering --from-file=target/ROOT.war
 }
 
 function start_maven_build() {
