@@ -18,10 +18,11 @@ function usage() {
     echo " $0 --help"
     echo
     echo "Example:"
-    echo " $0 deploy --maven-mirror-url http://nexus.repo.com/content/groups/public/ --project-suffix s40d"
+    echo " $0 setup --maven-mirror-url http://nexus.repo.com/content/groups/public/ --project-suffix s40d"
     echo
     echo "COMMANDS:"
-    echo "   deploy                   Set up the demo projects and deploy demo apps"
+    echo "   setup                    Set up the demo projects and deploy demo apps"
+    echo "   deploy                   Deploy demo apps"
     echo "   delete                   Clean up and remove demo projects and objects"
     echo "   verify                   Verify the demo is deployed correctly"
     echo "   idle                     Make all demo services idle"
@@ -32,8 +33,9 @@ function usage() {
     echo "OPTIONS:"
     echo "   --binary                  Performs an OpenShift 'binary-build', which builds the WAR file locally and sends it to the OpenShift BuildConfig. Requires less memory in OpenShift."
     echo "   --user [username]         The admin user for the demo projects. mandatory if logged in as system:admin"
-    echo "   --project-suffix [suffix] Suffix to be added to demo project names e.g. ci-SUFFIX. If empty, user will be used as suffix"
+    echo "   --project-suffix [suffix] Suffix to be added to demo project names e.g. ci-SUFFIX. If empty, user will be used as suffix."
     echo "   --run-verify              Run verify after provisioning"
+    # TODO support --maven-mirror-url
     echo
 }
 
@@ -46,6 +48,13 @@ ARG_DEMO=
 
 while :; do
     case $1 in
+        setup)
+            ARG_COMMAND=setup
+            if [ -n "$2" ]; then
+                ARG_DEMO=$2
+                shift
+            fi
+            ;;
         deploy)
             ARG_COMMAND=deploy
             if [ -n "$2" ]; then
@@ -215,20 +224,26 @@ function create_application() {
   oc process -f openshift/templates/optashift-employee-rostering-template.yaml -p GIT_URI="$GIT_URI" -p GIT_REF="$GIT_REF" -n $PRJ | oc create -f - -n $PRJ
 }
 
-function start_maven_build() {
-    echo_header "Starting Maven build."
-    mvn clean install -P openshift
-}
-
-
 function create_application_binary() {
   echo_header "Creating OptaShift Build and Deployment config."
   oc process -f openshift/templates/optashift-employee-rostering-template-binary.yaml -p GIT_URI="$GIT_URI" -p GIT_REF="$GIT_REF" -n $PRJ | oc create -f - -n $PRJ
-  
+}
+
+function build_and_deploy() {
+  echo_header "Starting OpenShift build and deploy..."
+  oc start-build optashift-employee-rostering
+}
+
+function build_and_deploy_binary() {
   start_maven_build
   
-  echo_header "Starting OpenShift binary build..."
+  echo_header "Starting OpenShift binary deploy..."
   oc start-build optashift-employee-rostering --from-file=target/ROOT.war
+}
+
+function start_maven_build() {
+    echo_header "Starting local Maven build..."
+    mvn clean install -P openshift
 }
 
 function verify_build_and_deployments() {
@@ -309,16 +324,36 @@ case "$ARG_COMMAND" in
         make_idle
         ;;
 
-    deploy)
-        echo "Deploying OptaPlanner demo ($ARG_DEMO)..."
+    setup)
+        echo "Setting up and deploying OptaPlanner demo ($ARG_DEMO)..."
 
         print_info
         create_projects
 
         if [ "$ARG_BINARY_BUILD" = true ] ; then
             create_application_binary
+            build_and_deploy_binary
         else
             create_application
+            build_and_deploy
+        fi
+
+        if [ "$ARG_RUN_VERIFY" = true ] ; then
+          echo "Waiting for deployments to finish..."
+          sleep 30
+          verify_build_and_deployments
+        fi
+        ;;
+
+    deploy)
+        echo "Deploying OptaPlanner demo ($ARG_DEMO)..."
+
+        print_info
+
+        if [ "$ARG_BINARY_BUILD" = true ] ; then
+            build_and_deploy_binary
+        else
+            build_and_deploy
         fi
 
         if [ "$ARG_RUN_VERIFY" = true ] ; then

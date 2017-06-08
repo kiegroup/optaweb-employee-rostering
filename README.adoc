@@ -15,14 +15,21 @@ To copy-paste your command, go to https://manage.openshift.com/[the OpenShift On
 
 === Binary S2I: build locally and deploy to OpenShift
 
-Build the `war` file locally and provision it on OpenShift:
+Create the project, build the `war` file locally and provision it on OpenShift:
+
+```
+./provision.sh setup employee-rostering --binary
+```
+
+That's it, it should now be running on the web.
+Go to https://manage.openshift.com/[the OpenShift Online web console]
+to get the `*.openshiftapps.com` URL.
+
+Later, you can just run this command to deploy new code changes:
 
 ```
 ./provision.sh deploy employee-rostering --binary
 ```
-
-That's it, it should now be running on the web.
-Go to https://manage.openshift.com/[the OpenShift Online web console] to get the URL.
 
 
 === Normal S2I (currently broken): build from source on OpenShift
@@ -34,7 +41,7 @@ Build it entirely from source on OpenShift and provision it there:
 ```
 
 
-=== Delete the OpenShift application
+=== Delete the OpenShift application and project
 
 ```
 ./provision.sh delete employee-rostering
