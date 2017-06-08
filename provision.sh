@@ -126,11 +126,12 @@ done
 LOGGEDIN_USER=$(oc whoami)
 OPENSHIFT_USER=${ARG_USERNAME:-$LOGGEDIN_USER}
 
-PRJ="optashift"
+# Project name needs to be unique across OpenShift Online
+PRJ="optashift-`oc whoami | sed -e 's/[^-a-z0-9]/-/g'`"
 PRJ_DISPLAY_NAME="OptaShift"
 PRJ_DESCRIPTION="OptaShift Employee Rostering Demo"
 #GIT_URI="https://github.com/ge0ffrey/optashift-employee-rostering"
-#GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
+#GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering" // TODO rename to optashift-employee-rostering
 #GIT_REF="openshift-template"
 
 # config
