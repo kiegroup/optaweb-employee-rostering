@@ -1,5 +1,13 @@
 #!/bin/sh
 #!/bin/bash
+set -e
+
+command -v oc >/dev/null 2>&1 || {
+  echo >&2 "The oc client tools need to be installed to connect to OpenShift Online.";
+  echo >&2 "Download it from https://www.openshift.org/download.html and confirm that \"oc version\" runs.";
+  exit 1;
+}
+
 ################################################################################
 # Provisioning script to deploy the demo on an OpenShift environment           #
 ################################################################################
@@ -16,7 +24,7 @@ function usage() {
     echo "   deploy                   Set up the demo projects and deploy demo apps"
     echo "   delete                   Clean up and remove demo projects and objects"
     echo "   verify                   Verify the demo is deployed correctly"
-    echo "   idle                     Make all demo servies idle"
+    echo "   idle                     Make all demo services idle"
     echo
     echo "DEMOS:"
     echo "   employee-rostering       OptaPlanner Employee Rostering demo."
@@ -120,7 +128,7 @@ OPENSHIFT_USER=${ARG_USERNAME:-$LOGGEDIN_USER}
 
 PRJ="optashift"
 PRJ_DISPLAY_NAME="OptaShift"
-PRJ_DESCRIPTION="OptaShift Empoloyee Rostering Demo"
+PRJ_DESCRIPTION="OptaShift Employee Rostering Demo"
 #GIT_URI="https://github.com/ge0ffrey/optashift-employee-rostering"
 #GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering"
 #GIT_REF="openshift-template"

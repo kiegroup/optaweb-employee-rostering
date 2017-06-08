@@ -1,24 +1,59 @@
 = Employee Rostering Optimization as a Service
 
-An example https://www.optaplanner.org/[OptaPlanner] app to be deployed on https://www.openshift.com/[OpenShift 3].
+An example https://www.optaplanner.org/[OptaPlanner] webapp ready to deploy on https://www.openshift.com/[OpenShift 3].
 
-== Building from source
 
-=== Normal
+== Running on OpenShift
+
+=== Prerequisites
+
+. Install https://www.openshift.org/download.html[the oc client tools] and log in.
+
+
+=== Binary S2I: build locally and deploy to OpenShift
+
+Build the `war` file locally and provision it on OpenShift:
+
+```
+./provision.sh deploy employee-rostering --binary
+```
+
+That's it, it should now be running on the web.
+Go to https://manage.openshift.com/[the OpenShift Online web console] to get the URL.
+
+
+=== Normal S2I (currently broken): build from source on OpenShift
+
+Build it entirely from source on OpenShift and provision it there:
+
+```
+./provision.sh deploy employee-rostering
+```
+
+
+=== Delete the OpenShift application
+
+```
+./provision.sh delete employee-rostering
+```
+
+
+== Development
+
+=== Building from source
 
 ```
 mvn clean install
 ```
 
-=== Like OpenShift
+Under the covers, OpenShift builds activate the `openshift` profile.
+To reproduce locally, add it explicitly (the `provision.sh` script already does this):
 
 ```
-mvn clean package -Popenshift
+mvn clean package -P openshift
 ```
 
-== Run configurations
-
-=== IntelliJ IDEA
+=== IntelliJ IDEA run configurations
 
 . https://youtrack.jetbrains.com/issue/IDEA-171158[IntelliJ does not support the new GWT plugin yet]
 . Create a new JBoss run configuration to a local WildFly instance:
@@ -26,7 +61,8 @@ mvn clean package -Popenshift
 .. In the _Before launch_ list, add `Run Maven goal` on the root pom with arguments `clean install -Dgwt.draftCompile`
 .. In the _Deployment_ tab, in _Deploy at startup_, add `optashift-employee-rostering-webapp:war exploded`.
 
-== GWT Super Dev Mode
+
+=== GWT Super Dev Mode from the command line
 
 . Download http://wildfly.org/downloads/[WildFly]
 .. Unzip it into `local/appserver/` in the project root.
@@ -48,11 +84,3 @@ If you unzipped WildFly to a different directory, use:
 ```
 mvn gwt:devmode -Dwildfly.home=/.../wildfly
 ```
-
-== Creating OpenShift environment
-Deploy the application to OpenShift by running the provided provisioning script `provision.sh`:
-
-* Deploy the application: `provision.sh deploy employee-rostering`
-* Deploy the application (OpenShift binary build): `provision.sh deploy employee-rostering --binary`
-* Delete the application: `provision.sh delete employee-rostering`
-
