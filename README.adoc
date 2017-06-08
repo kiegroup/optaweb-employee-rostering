@@ -9,6 +9,9 @@ An example https://www.optaplanner.org/[OptaPlanner] webapp ready to deploy on h
 
 . Install https://www.openshift.org/download.html[the oc client tools] and log in.
 
+. Login with `oc login <url> <token>` from the command line.
++
+To copy-paste your command, go to https://manage.openshift.com/[the OpenShift Online web console] and look for _Help_ > _Command line tools_.
 
 === Binary S2I: build locally and deploy to OpenShift
 
