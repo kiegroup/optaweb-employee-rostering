@@ -34,7 +34,7 @@ Later, you can just run this command to deploy new code changes:
 
 === Normal S2I: build from source on OpenShift Dedicated
 
-WARNING: This does not work on OpenShift Online due to resource limits.
+WARNING: This currently does not work on OpenShift Online due to resource limits.
 
 Build it entirely from source on OpenShift and provision it there:
 
