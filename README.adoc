@@ -2,10 +2,7 @@
 
 An example https://www.optaplanner.org/[OptaPlanner] webapp ready to deploy on https://www.openshift.com/[OpenShift 3].
 
-+++
-<iframe width="853" height="480" src="https://www.youtube.com/embed/sOWC4qrXxFk" frameborder="0" allowfullscreen></iframe>
-+++
-
+See https://www.youtube.com/watch?v=sOWC4qrXxFk[the video demo].
 
 == Running on OpenShift
 
