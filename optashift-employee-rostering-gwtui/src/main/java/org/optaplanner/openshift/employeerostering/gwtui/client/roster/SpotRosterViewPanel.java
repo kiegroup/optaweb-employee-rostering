@@ -2,6 +2,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -126,6 +127,11 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                     sb.appendHtmlConstant((employeeName == null) ? "label-danger" : "label-default");
                                     sb.appendHtmlConstant("\">");
                                     sb.appendEscaped(employeeName == null ? "Unassigned" : employeeName);
+                                    if (shiftView.isLockedByUser()) {
+                                        sb.appendHtmlConstant("<a class=\"btn btn-xs shiftLockedByUser\" data-shiftId=\"" + shiftView.getId() + "\" aria-label=\"Locked\">" +
+                                                "<span class=\"glyphicon glyphicon-lock\" aria-hidden=\"true\"/>" +
+                                                "</a>");
+                                    }
                                     sb.appendHtmlConstant("<a class=\"btn btn-xs shiftRemove\" data-shiftId=\"" + shiftView.getId() + "\" aria-label=\"Remove shift\">" +
                                             "<span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"/>" +
                                             "</a>");
@@ -153,9 +159,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                         }
                                     });
                                 } else if (targetElement.hasClassName("shiftRemove")) {
-                                    String shiftIdString = targetElement.hasClassName("shiftRemove") ?
-                                            targetElement.getAttribute("data-shiftId")
-                                            : targetElement.getParentElement().getAttribute("data-shiftId");
+                                    String shiftIdString = targetElement.getAttribute("data-shiftId");
                                     Long shiftId = Long.parseLong(shiftIdString);
                                     ShiftRestServiceBuilder.removeShift(tenantId, shiftId, new FailureShownRestCallback<Boolean>() {
                                         @Override
@@ -163,6 +167,21 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                             refreshTable();
                                         }
                                     });
+                                } else if (targetElement.hasClassName("shiftLockedByUser")) {
+                                    String shiftIdString = targetElement.getAttribute("data-shiftId");
+                                    Long shiftId = Long.parseLong(shiftIdString);
+                                    List<ShiftView> shiftViewList = (spotIdMap == null) ? null : spotIdMap.get(spot.getId());
+                                    Optional<ShiftView> shiftOptional = shiftViewList.stream().filter(shiftView -> shiftView.getId().equals(shiftId)).findFirst();
+                                    if (shiftOptional.isPresent()) {
+                                        ShiftView shift = shiftOptional.get();
+                                        shift.setLockedByUser(false);
+                                        ShiftRestServiceBuilder.updateShift(tenantId, shift, new FailureShownRestCallback<Void>() {
+                                            @Override
+                                            public void onSuccess(Void result) {
+                                                refreshTable();
+                                            }
+                                        });
+                                    }
                                 }
                             }
                         }
