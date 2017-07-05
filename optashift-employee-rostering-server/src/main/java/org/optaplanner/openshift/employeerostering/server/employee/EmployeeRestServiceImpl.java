@@ -96,7 +96,6 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
     @Transactional
     public void updateEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability employeeAvailability = convertFromView(tenantId, employeeAvailabilityView);
-        validateTenantIdParameter(tenantId, employeeAvailability);
         entityManager.merge(employeeAvailability);
     }
 

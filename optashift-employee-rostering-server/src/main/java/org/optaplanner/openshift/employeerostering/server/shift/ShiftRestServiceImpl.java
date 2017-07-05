@@ -26,6 +26,7 @@ import javax.transaction.Transactional;
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
@@ -49,6 +50,19 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @Override
     @Transactional
     public Long addShift(Integer tenantId, ShiftView shiftView) {
+        Shift shift = convertFromView(tenantId, shiftView);
+        entityManager.persist(shift);
+        return shift.getId();
+    }
+
+    @Override
+    @Transactional
+    public void updateShift(Integer tenantId, ShiftView shiftView) {
+        Shift shift = convertFromView(tenantId, shiftView);
+        entityManager.merge(shift);
+    }
+
+    private Shift convertFromView(Integer tenantId, ShiftView shiftView) {
         validateTenantIdParameter(tenantId, shiftView);
         Spot spot = entityManager.find(Spot.class, shiftView.getSpotId());
         validateTenantIdParameter(tenantId, spot);
@@ -66,8 +80,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
             validateTenantIdParameter(tenantId, employee);
             shift.setEmployee(employee);
         }
-        entityManager.persist(shift);
-        return shift.getId();
+        return shift;
     }
 
     @Override
