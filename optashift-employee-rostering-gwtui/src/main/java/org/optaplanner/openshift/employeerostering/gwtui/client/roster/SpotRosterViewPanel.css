@@ -1,3 +1,15 @@
 .shiftRemove {
     padding-right: 0;
 }
+
+.label {
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.label > span {
+    padding-right: 5px;
+}
+.label > .btn-xs {
+    padding: 0;
+}

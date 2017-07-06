@@ -138,9 +138,10 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                         employeeName = employee.getName();
                                     }
                                     sb.appendHtmlConstant("<span class=\"label ");
-                                    sb.appendHtmlConstant((employeeName == null) ? "label-danger" : "label-default");
-                                    sb.appendHtmlConstant("\">");
+                                    sb.appendHtmlConstant((employeeName == null) ? "label-danger" : "label-info");
+                                    sb.appendHtmlConstant("\"><span>");
                                     sb.appendEscaped(employeeName == null ? "Unassigned" : employeeName);
+                                    sb.appendHtmlConstant("</span>");
                                     if (shiftView.isLockedByUser()) {
                                         sb.appendHtmlConstant("<a class=\"btn btn-xs shiftLockedByUser\" data-shiftId=\"" + shiftView.getId() + "\" aria-label=\"Locked\">" +
                                                 "<span class=\"glyphicon glyphicon-lock\" aria-hidden=\"true\"/>" +
