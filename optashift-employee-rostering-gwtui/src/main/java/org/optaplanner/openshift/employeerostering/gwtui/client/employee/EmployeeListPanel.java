@@ -18,13 +18,9 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
-import org.gwtbootstrap3.extras.tagsinput.client.ui.MVTagsInput;
-import org.gwtbootstrap3.extras.tagsinput.client.ui.TagsInput;
-import org.gwtbootstrap3.extras.tagsinput.client.ui.base.MultiValueTagsInput;
 import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
 import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
 import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
-import org.gwtbootstrap3.extras.typeahead.client.base.StringDataset;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -85,11 +81,11 @@ public class EmployeeListPanel implements IsElement {
     }
 
     public void refresh() {
-        refreshSkillsListBox();
+        refreshSkillsTagsInput();
         refreshTable();
     }
 
-    private void refreshSkillsListBox() {
+    private void refreshSkillsTagsInput() {
         SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {

@@ -19,6 +19,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.IdentityColumn;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.shared.event.ModalShowEvent;
 import org.gwtbootstrap3.client.shared.event.ModalShowHandler;
@@ -29,6 +30,9 @@ import org.gwtbootstrap3.client.ui.ModalFooter;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.gwtbootstrap3.client.ui.html.Span;
+import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
+import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
+import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -36,10 +40,12 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
@@ -189,34 +195,38 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                     });
                                 } else if (targetElement.hasClassName("shiftEdit")) {
                                     final ShiftView shift = lookupShift(spot, targetElement);
+                                    EmployeeRestServiceBuilder.getEmployeeList(tenantId, new FailureShownRestCallback<List<Employee>>() {
+                                        @Override
+                                        public void onSuccess(final List<Employee> employeeList) {
+                                            final Modal modal = new Modal();
+                                            modal.setTitle("Select employee");
+                                            modal.setClosable(true);
+                                            modal.setRemoveOnHide(true);
 
-                                    final Modal modal = new Modal();
-                                    modal.setTitle("Select employee");
-                                    modal.setClosable(true);
-                                    modal.setRemoveOnHide(true);
-                                    modal.addShowHandler(showEvent -> {
-                                        // TODO FIXME
+                                            ListBox employeeListBox = new ListBox();
+                                            employeeList.forEach(employee -> employeeListBox.addItem(employee.getName()));
 
+                                            final ModalBody modalBody = new ModalBody();
+                                            modalBody.add(employeeListBox);
+                                            final ModalFooter modalFooter = new ModalFooter();
+                                            modalFooter.add(new Button("Assign", clickEvent -> {
+                                                int employeeIndex = employeeListBox.getSelectedIndex();
+                                                Employee employee = employeeIndex < 0 ? null : employeeList.get(employeeIndex);
+                                                shift.setEmployeeId(employee == null ?  null : employee.getId());
+                                                shift.setLockedByUser(true);
+                                                ShiftRestServiceBuilder.updateShift(tenantId, shift, new FailureShownRestCallback<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void result) {
+                                                        refreshTable();
+                                                    }
+                                                });
+                                                modal.hide();
+                                            }));
+                                            modal.add(modalBody);
+                                            modal.add(modalFooter);
+                                            modal.show();
+                                        }
                                     });
-
-                                    final ModalBody modalBody = new ModalBody();
-                                    modalBody.add(new Span("Assign to: Hugo Watt")); // TODO FIXME!
-
-                                    final ModalFooter modalFooter = new ModalFooter();
-                                    modalFooter.add(new Button("Assign", clickEvent -> {
-                                        shift.setEmployeeId(91L); // TODO FIXME!
-                                        shift.setLockedByUser(true);
-                                        ShiftRestServiceBuilder.updateShift(tenantId, shift, new FailureShownRestCallback<Void>() {
-                                            @Override
-                                            public void onSuccess(Void result) {
-                                                refreshTable();
-                                            }
-                                        });
-                                        modal.hide();
-                                    }));
-                                    modal.add(modalBody);
-                                    modal.add(modalFooter);
-                                    modal.show();
                                 }
                             }
                         }
