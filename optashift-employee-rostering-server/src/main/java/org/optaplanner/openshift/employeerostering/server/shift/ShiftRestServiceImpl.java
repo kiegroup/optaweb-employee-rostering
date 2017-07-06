@@ -68,7 +68,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         validateTenantIdParameter(tenantId, spot);
         TimeSlot timeSlot = entityManager.find(TimeSlot.class, shiftView.getTimeSlotId());
         validateTenantIdParameter(tenantId, timeSlot);
-        Shift shift = new Shift(tenantId, spot, timeSlot);
+        Shift shift = new Shift(shiftView, spot, timeSlot);
         shift.setLockedByUser(shiftView.isLockedByUser());
         Long employeeId = shiftView.getEmployeeId();
         if (employeeId != null) {

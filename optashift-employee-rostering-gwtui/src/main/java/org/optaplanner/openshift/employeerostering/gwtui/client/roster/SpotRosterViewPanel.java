@@ -13,21 +13,29 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.IdentityColumn;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.view.client.ListDataProvider;
+import org.gwtbootstrap3.client.shared.event.ModalShowEvent;
+import org.gwtbootstrap3.client.shared.event.ModalShowHandler;
 import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.ModalBody;
+import org.gwtbootstrap3.client.ui.ModalFooter;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
@@ -132,6 +140,9 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                                 "<span class=\"glyphicon glyphicon-lock\" aria-hidden=\"true\"/>" +
                                                 "</a>");
                                     }
+                                    sb.appendHtmlConstant("<a class=\"btn btn-xs shiftEdit\" data-shiftId=\"" + shiftView.getId() + "\" aria-label=\"Edit shift\">" +
+                                            "<span class=\"glyphicon glyphicon-edit\" aria-hidden=\"true\"/>" +
+                                            "</a>");
                                     sb.appendHtmlConstant("<a class=\"btn btn-xs shiftRemove\" data-shiftId=\"" + shiftView.getId() + "\" aria-label=\"Remove shift\">" +
                                             "<span class=\"glyphicon glyphicon-remove\" aria-hidden=\"true\"/>" +
                                             "</a>");
@@ -168,22 +179,54 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                         }
                                     });
                                 } else if (targetElement.hasClassName("shiftLockedByUser")) {
-                                    String shiftIdString = targetElement.getAttribute("data-shiftId");
-                                    Long shiftId = Long.parseLong(shiftIdString);
-                                    List<ShiftView> shiftViewList = (spotIdMap == null) ? null : spotIdMap.get(spot.getId());
-                                    Optional<ShiftView> shiftOptional = shiftViewList.stream().filter(shiftView -> shiftView.getId().equals(shiftId)).findFirst();
-                                    if (shiftOptional.isPresent()) {
-                                        ShiftView shift = shiftOptional.get();
-                                        shift.setLockedByUser(false);
+                                    ShiftView shift = lookupShift(spot, targetElement);
+                                    shift.setLockedByUser(false);
+                                    ShiftRestServiceBuilder.updateShift(tenantId, shift, new FailureShownRestCallback<Void>() {
+                                        @Override
+                                        public void onSuccess(Void result) {
+                                            refreshTable();
+                                        }
+                                    });
+                                } else if (targetElement.hasClassName("shiftEdit")) {
+                                    final ShiftView shift = lookupShift(spot, targetElement);
+
+                                    final Modal modal = new Modal();
+                                    modal.setTitle("Select employee");
+                                    modal.setClosable(true);
+                                    modal.setRemoveOnHide(true);
+                                    modal.addShowHandler(showEvent -> {
+                                        // TODO FIXME
+
+                                    });
+
+                                    final ModalBody modalBody = new ModalBody();
+                                    modalBody.add(new Span("Assign to: Hugo Watt")); // TODO FIXME!
+
+                                    final ModalFooter modalFooter = new ModalFooter();
+                                    modalFooter.add(new Button("Assign", clickEvent -> {
+                                        shift.setEmployeeId(91L); // TODO FIXME!
+                                        shift.setLockedByUser(true);
                                         ShiftRestServiceBuilder.updateShift(tenantId, shift, new FailureShownRestCallback<Void>() {
                                             @Override
                                             public void onSuccess(Void result) {
                                                 refreshTable();
                                             }
                                         });
-                                    }
+                                        modal.hide();
+                                    }));
+                                    modal.add(modalBody);
+                                    modal.add(modalFooter);
+                                    modal.show();
                                 }
                             }
+                        }
+
+                        private ShiftView lookupShift(Spot spot, Element targetElement) {
+                            String shiftIdString = targetElement.getAttribute("data-shiftId");
+                            Long shiftId = Long.parseLong(shiftIdString);
+                            List<ShiftView> shiftViewList = spotIdMap.get(spot.getId());
+                            return shiftViewList.stream()
+                                    .filter(shiftView -> shiftView.getId().equals(shiftId)).findFirst().get();
                         }
                     }), headerHtml);
                 }

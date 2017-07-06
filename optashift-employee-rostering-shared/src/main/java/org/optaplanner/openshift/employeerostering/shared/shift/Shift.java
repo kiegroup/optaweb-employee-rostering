@@ -27,6 +27,7 @@ import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.domain.solver.MovableShiftFilter;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
@@ -62,6 +63,12 @@ public class Shift extends AbstractPersistable {
 
     public Shift(Integer tenantId, Spot spot, TimeSlot timeSlot) {
         super(tenantId);
+        this.timeSlot = timeSlot;
+        this.spot = spot;
+    }
+
+    public Shift(ShiftView shiftView, Spot spot, TimeSlot timeSlot) {
+        super(shiftView);
         this.timeSlot = timeSlot;
         this.spot = spot;
     }
