@@ -79,6 +79,17 @@ public class RosterGenerator {
     @PersistenceContext
     private EntityManager entityManager;
 
+    @SuppressWarnings("unused")
+    public RosterGenerator() {}
+
+    /**
+     * For benchmark only
+     * @param entityManager never null
+     */
+    public RosterGenerator(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
     @PostConstruct
     public void setUpGeneratedData() {
         generateRoster(10, 7, false);

@@ -59,6 +59,7 @@
     <module>optashift-employee-rostering-gwtui</module>
     <module>optashift-employee-rostering-server</module>
     <module>optashift-employee-rostering-webapp</module>
+    <module>optashift-employee-rostering-benchmark</module>
   </modules>
 
   <dependencyManagement>

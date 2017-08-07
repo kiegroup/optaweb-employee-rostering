@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- OVERWRITES the normal persistence.xml in the server module -->
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             version="2.1" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+  <persistence-unit name="optashift-employee-rostering-persistence-unit">
+    <description>Overwritten Hibernate Persistence Unit for Benchmark</description>
+    <class>org.optaplanner.openshift.employeerostering.shared.skill.Skill</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.spot.Spot</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.employee.Employee</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.shift.Shift</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:hsqldb:mem:testdb"/>
+      <property name="javax.persistence.jdbc.user" value="sa"/>
+      <property name="javax.persistence.jdbc.password" value=""/>
+
+      <property name="hibernate.hbm2ddl.auto" value="create"/>
+      <!--<property name="hibernate.show_sql" value="true"/>-->
+      <property name="hibernate.format_sql" value="true"/>
+      <property name="hibernate.transaction.flush_before_completion" value="true"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.event.merge.entity_copy_observer" value="allow"/>
+    </properties>
+  </persistence-unit>
+</persistence>
