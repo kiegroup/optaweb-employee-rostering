@@ -14,6 +14,8 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServi
 
 public abstract class AbstractRosterViewPanel implements IsElement {
 
+    protected static final int REFRESH_RATE = 2000;
+
     protected Integer tenantId = -1;
 
     @Inject @DataField
@@ -37,8 +39,8 @@ public abstract class AbstractRosterViewPanel implements IsElement {
     @EventHandler("solveButton")
     public void solve(ClickEvent e) {
         RosterRestServiceBuilder.solveRoster(tenantId).send();
-        // TODO 6 * 5000ms = 30 seconds - Keep in sync with solver config
-        Scheduler.get().scheduleFixedDelay(new RefreshTableRepeatingCommand(6), 5000);
+        // TODO 15 * 2000ms = 30 seconds - Keep in sync with solver config
+        Scheduler.get().scheduleFixedDelay(new RefreshTableRepeatingCommand(15), REFRESH_RATE);
     }
 
     protected class RefreshTableRepeatingCommand implements Scheduler.RepeatingCommand {
@@ -67,7 +69,7 @@ public abstract class AbstractRosterViewPanel implements IsElement {
         }
 
         private void updateSolverStatus() {
-            int remainingSeconds = 5000 * repeatCount / 1000;
+            int remainingSeconds = REFRESH_RATE * repeatCount / 1000;
             solveStatus.setInnerHTML(new SafeHtmlBuilder()
                     .appendHtmlConstant("Solving for another ")
                     .append(remainingSeconds)
