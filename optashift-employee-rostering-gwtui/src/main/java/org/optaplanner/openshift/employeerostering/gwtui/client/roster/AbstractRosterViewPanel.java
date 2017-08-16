@@ -16,7 +16,7 @@ public abstract class AbstractRosterViewPanel implements IsElement {
 
     protected static final int REFRESH_RATE = 2000;
 
-    protected Integer tenantId = -1;
+    protected Integer tenantId = 1;
 
     @Inject @DataField
     protected Button solveButton;

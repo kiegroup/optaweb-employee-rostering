@@ -40,6 +40,7 @@ import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
 import org.optaplanner.openshift.employeerostering.server.common.generator.StringDataGenerator;
@@ -48,6 +49,7 @@ import org.optaplanner.openshift.employeerostering.server.common.generator.Strin
 @Startup
 public class RosterGenerator {
 
+    private final StringDataGenerator tenantNameGenerator = StringDataGenerator.buildLocationNames();
     private final StringDataGenerator employeeNameGenerator = StringDataGenerator.buildFullNames();
     private final StringDataGenerator spotNameGenerator = StringDataGenerator.buildAssemblyLineNames();
 
@@ -73,9 +75,6 @@ public class RosterGenerator {
 
     private Random random = new Random(37);
 
-    // All generated data have negative id's so the real ones can start from zero.
-    private AtomicInteger rosterIdGenerator = new AtomicInteger(-1);
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -92,6 +91,7 @@ public class RosterGenerator {
 
     @PostConstruct
     public void setUpGeneratedData() {
+        tenantNameGenerator.predictMaximumSizeAndReset(2);
         generateRoster(10, 7, false);
 //        generateRoster(10, 28, false);
 //        generateRoster(20, 28, false);
@@ -107,7 +107,7 @@ public class RosterGenerator {
     public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
-        Integer tenantId = rosterIdGenerator.getAndDecrement();
+        Integer tenantId = createTenant(spotListSize, employeeListSize);
         List<Skill> skillList = createSkillList(tenantId, skillListSize);
         List<Spot> spotList = createSpotList(tenantId, spotListSize, skillList);
         List<TimeSlot> timeSlotList = createTimeSlotList(tenantId, timeSlotListSize, continuousPlanning);
@@ -117,6 +117,13 @@ public class RosterGenerator {
         List<Shift> shiftList = createShiftList(tenantId, spotList, timeSlotList, employeeList, continuousPlanning);
         return new Roster((long) tenantId, tenantId,
                 skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, shiftList);
+    }
+
+    private Integer createTenant(int spotListSize, int employeeListSize) {
+        Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue()
+                + " (" + employeeListSize +  " employees, " + spotListSize + "spots)");
+        entityManager.persist(tenant);
+        return tenant.getId();
     }
 
     private List<Skill> createSkillList(Integer tenantId, int size) {

@@ -33,7 +33,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBu
 @Templated
 public class SpotListPanel implements IsElement {
 
-    private Integer tenantId = -1;
+    private Integer tenantId = 1;
 
     @Inject @DataField
     private Button refreshButton;

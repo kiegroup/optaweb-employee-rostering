@@ -31,7 +31,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @Templated
 public class SkillListPanel implements IsElement {
 
-    private Integer tenantId = -1;
+    private Integer tenantId = 1;
 
     @Inject @DataField
     private Button refreshButton;

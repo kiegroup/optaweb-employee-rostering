@@ -11,6 +11,7 @@
     <class>org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency</class>
     <class>org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot</class>
     <class>org.optaplanner.openshift.employeerostering.shared.shift.Shift</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.tenant.Tenant</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
