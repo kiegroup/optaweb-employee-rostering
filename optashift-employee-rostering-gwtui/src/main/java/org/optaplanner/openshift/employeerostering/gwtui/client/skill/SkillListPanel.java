@@ -3,6 +3,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.skill;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
@@ -27,11 +28,12 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 @Templated
 public class SkillListPanel implements IsElement {
 
-    private Integer tenantId = 1;
+    private Integer tenantId = null;
 
     @Inject @DataField
     private Button refreshButton;
@@ -64,6 +66,11 @@ public class SkillListPanel implements IsElement {
     @PostConstruct
     protected void initWidget() {
         initTable();
+    }
+
+    public void onAnyTenantEvent(@Observes Tenant tenant) {
+        tenantId = tenant.getId();
+        refresh();
     }
 
     @EventHandler("refreshButton")
@@ -107,6 +114,9 @@ public class SkillListPanel implements IsElement {
     }
 
     private void refreshTable() {
+        if (tenantId == null) {
+            return;
+        }
         SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {
@@ -119,6 +129,9 @@ public class SkillListPanel implements IsElement {
 
     @EventHandler("addButton")
     public void add(ClickEvent e) {
+        if (tenantId == null) {
+            throw new IllegalStateException("The tenantId (" + tenantId + ") can not be null at this time.");
+        }
         String skillName = skillNameTextBox.getValue();
         skillNameTextBox.setValue("");
         skillNameTextBox.setFocus(true);

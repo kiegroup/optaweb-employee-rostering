@@ -96,6 +96,9 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
 
     @Override
     protected void refreshTable() {
+        if (tenantId == null) {
+            return;
+        }
         RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<SpotRosterView>() {
             @Override
             public void onSuccess(SpotRosterView spotRosterView) {

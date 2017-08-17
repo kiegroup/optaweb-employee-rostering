@@ -93,13 +93,13 @@ public class RosterGenerator {
     public void setUpGeneratedData() {
         tenantNameGenerator.predictMaximumSizeAndReset(2);
         generateRoster(10, 7, false);
-//        generateRoster(10, 28, false);
-//        generateRoster(20, 28, false);
-//        generateRoster(40, 28 * 2, false);
-//        generateRoster(80, 28 * 4, false);
-//        generateRoster(10, 28, true);
-//        generateRoster(20, 28, true);
-//        generateRoster(40, 28 * 2, true);
+        generateRoster(10, 28, false);
+        generateRoster(20, 28, false);
+        generateRoster(40, 28 * 2, false);
+        generateRoster(80, 28 * 4, false);
+        generateRoster(10, 28, true);
+        generateRoster(20, 28, true);
+        generateRoster(40, 28 * 2, true);
         generateRoster(80, 28 * 4, true);
     }
 

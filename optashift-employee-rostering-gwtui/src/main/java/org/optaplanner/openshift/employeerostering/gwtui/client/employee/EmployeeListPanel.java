@@ -3,6 +3,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -31,11 +32,12 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 @Templated
 public class EmployeeListPanel implements IsElement {
 
-    private Integer tenantId = 1;
+    private Integer tenantId = null;
 
     @Inject @DataField
     private Button refreshButton;
@@ -75,6 +77,11 @@ public class EmployeeListPanel implements IsElement {
         skillsTagsInput.reconfigure();
     }
 
+    public void onAnyTenantEvent(@Observes Tenant tenant) {
+        tenantId = tenant.getId();
+        refresh();
+    }
+
     @EventHandler("refreshButton")
     public void refresh(ClickEvent e) {
         refresh();
@@ -86,6 +93,9 @@ public class EmployeeListPanel implements IsElement {
     }
 
     private void refreshSkillsTagsInput() {
+        if (tenantId == null) {
+            return;
+        }
         SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {
@@ -143,6 +153,9 @@ public class EmployeeListPanel implements IsElement {
     }
 
     private void refreshTable() {
+        if (tenantId == null) {
+            return;
+        }
         EmployeeRestServiceBuilder.getEmployeeList(tenantId, new FailureShownRestCallback<List<Employee>>() {
             @Override
             public void onSuccess(List<Employee> employeeList) {
@@ -155,6 +168,9 @@ public class EmployeeListPanel implements IsElement {
 
     @EventHandler("addButton")
     public void add(ClickEvent e) {
+        if (tenantId == null) {
+            throw new IllegalStateException("The tenantId (" + tenantId + ") can not be null at this time.");
+        }
         String employeeName = employeeNameTextBox.getValue();
         employeeNameTextBox.setValue("");
         employeeNameTextBox.setFocus(true);

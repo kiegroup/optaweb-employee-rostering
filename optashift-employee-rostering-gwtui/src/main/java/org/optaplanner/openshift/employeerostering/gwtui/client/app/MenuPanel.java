@@ -1,48 +1,65 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.app;
 
+import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.ListBox;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.EmployeeRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
+import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @Templated
 public class MenuPanel implements IsElement {
+
+    private Integer tenantId = null;
 
     @Inject @DataField
     private Anchor skillsAnchor;
     @Inject
     private SkillListPanel skillListPanel;
-
     @Inject @DataField
     private Anchor spotsAnchor;
     @Inject
     private SpotListPanel spotListPanel;
-
     @Inject @DataField
     private Anchor employeesAnchor;
     @Inject
     private EmployeeListPanel employeeListPanel;
-
     @Inject @DataField
     private Anchor spotRosterAnchor;
     @Inject
     private SpotRosterViewPanel spotRosterViewPanel;
-
     @Inject @DataField
     private Anchor employeeRosterAnchor;
     @Inject
     private EmployeeRosterViewPanel employeeRosterViewPanel;
+
+    @Inject @DataField
+    private ListBox tenantListBox;
+    private List<Tenant> tenantListBoxValues;
+    @Inject @Any
+    private Event<Tenant> tenantEvent;
 
     @Inject @DataField
     private Div content;
@@ -53,6 +70,25 @@ public class MenuPanel implements IsElement {
     @PostConstruct
     protected void initWidget() {
         showSpotRoster(null);
+        refreshTenantListBox();
+    }
+
+    private void refreshTenantListBox() {
+        TenantRestServiceBuilder.getTenantList(new FailureShownRestCallback<List<Tenant>>() {
+            @Override
+            public void onSuccess(List<Tenant> tenantList) {
+                tenantListBoxValues = tenantList;
+                tenantListBox.clear();
+                tenantList.forEach(tenant -> tenantListBox.addItem(tenant.getName()));
+                if (tenantId == null) {
+                    if (!tenantList.isEmpty()) {
+                        Tenant tenant = tenantList.get(0);
+                        tenantId = tenant.getId();
+                        tenantEvent.fire(tenant);
+                    }
+                }
+            }
+        });
     }
 
     @EventHandler("skillsAnchor")
@@ -102,6 +138,14 @@ public class MenuPanel implements IsElement {
         spotRosterAnchor.getElement().getParentElement().removeClassName("active");
         employeeRosterAnchor.getElement().getParentElement().removeClassName("active");
         anchor.getElement().getParentElement().addClassName("active");
+    }
+
+    @EventHandler("tenantListBox")
+    public void selectTenant(ClickEvent e) {
+        int tenantIndex = tenantListBox.getSelectedIndex();
+        Tenant tenant = tenantIndex < 0 ? null : tenantListBoxValues.get(tenantIndex);
+        tenantId = tenant.getId();
+        tenantEvent.fire(tenant);
     }
 
 }

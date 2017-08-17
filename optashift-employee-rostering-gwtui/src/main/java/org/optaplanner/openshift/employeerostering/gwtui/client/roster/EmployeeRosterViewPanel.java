@@ -87,6 +87,9 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
     @Override
     protected void refreshTable() {
+        if (tenantId == null) {
+            return;
+        }
         RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantId, new FailureShownRestCallback<EmployeeRosterView>() {
             @Override
             public void onSuccess(EmployeeRosterView employeeRosterView) {

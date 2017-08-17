@@ -2,14 +2,13 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.github.nmorel.gwtjackson.rest.api.RestCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.view.client.ListDataProvider;
@@ -29,11 +28,12 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 @Templated
 public class SpotListPanel implements IsElement {
 
-    private Integer tenantId = 1;
+    private Integer tenantId = null;
 
     @Inject @DataField
     private Button refreshButton;
@@ -71,17 +71,25 @@ public class SpotListPanel implements IsElement {
         initTable();
     }
 
+    public void onAnyTenantEvent(@Observes Tenant tenant) {
+        tenantId = tenant.getId();
+        refresh();
+    }
+
     @EventHandler("refreshButton")
     public void refresh(ClickEvent e) {
         refresh();
     }
 
     public void refresh() {
-        refreshRequiredSkillsListBox();
+        refreshRequiredSkillListBox();
         refreshTable();
     }
 
-    private void refreshRequiredSkillsListBox() {
+    private void refreshRequiredSkillListBox() {
+        if (tenantId == null) {
+            return;
+        }
         SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
             @Override
             public void onSuccess(List<Skill> skillList) {
@@ -133,6 +141,9 @@ public class SpotListPanel implements IsElement {
     }
 
     private void refreshTable() {
+        if (tenantId == null) {
+            return;
+        }
         SpotRestServiceBuilder.getSpotList(tenantId, new FailureShownRestCallback<List<Spot>>() {
             @Override
             public void onSuccess(List<Spot> spotList) {
@@ -145,6 +156,9 @@ public class SpotListPanel implements IsElement {
 
     @EventHandler("addButton")
     public void add(ClickEvent e) {
+        if (tenantId == null) {
+            throw new IllegalStateException("The tenantId (" + tenantId + ") can not be null at this time.");
+        }
         String spotName = spotNameTextBox.getValue();
         spotNameTextBox.setValue("");
         spotNameTextBox.setFocus(true);

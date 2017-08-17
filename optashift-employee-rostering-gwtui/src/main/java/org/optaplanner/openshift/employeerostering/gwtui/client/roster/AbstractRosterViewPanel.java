@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;
@@ -11,12 +12,13 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 public abstract class AbstractRosterViewPanel implements IsElement {
 
     protected static final int REFRESH_RATE = 2000;
 
-    protected Integer tenantId = 1;
+    protected Integer tenantId = null;
 
     @Inject @DataField
     protected Button solveButton;
@@ -24,6 +26,11 @@ public abstract class AbstractRosterViewPanel implements IsElement {
     protected Button refreshButton;
     @Inject @DataField
     protected Span solveStatus;
+
+    public void onAnyTenantEvent(@Observes Tenant tenant) {
+        tenantId = tenant.getId();
+        refresh();
+    }
 
     @EventHandler("refreshButton")
     public void refresh(ClickEvent e) {
@@ -38,6 +45,9 @@ public abstract class AbstractRosterViewPanel implements IsElement {
 
     @EventHandler("solveButton")
     public void solve(ClickEvent e) {
+        if (tenantId == null) {
+            throw new IllegalStateException("The tenantId (" + tenantId + ") can not be null at this time.");
+        }
         RosterRestServiceBuilder.solveRoster(tenantId).send();
         // TODO 15 * 2000ms = 30 seconds - Keep in sync with solver config
         Scheduler.get().scheduleFixedDelay(new RefreshTableRepeatingCommand(15), REFRESH_RATE);
