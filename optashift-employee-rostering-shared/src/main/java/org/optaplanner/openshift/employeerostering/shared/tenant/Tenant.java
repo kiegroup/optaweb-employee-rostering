@@ -36,7 +36,8 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 @NamedQueries({
         @NamedQuery(name = "Tenant.findAll",
                 query = "select t from Tenant t" +
-                        " order by t.name"),
+                        // Deliberately order by id instead of name to use generated order
+                        " order by t.id"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 public class Tenant implements Serializable {
