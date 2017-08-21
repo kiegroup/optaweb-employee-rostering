@@ -217,6 +217,10 @@
               <arg>-startupUrl</arg>
               <arg>gwtui/gwtui.html</arg>
             </devmodeArgs>
+            <jvmArgs>
+              <!-- Remote debugger: uncomment this line to debug the WildFly backend -->
+              <!--<arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</arg>-->
+            </jvmArgs>
             <!-- GWT Super Dev Mode: deploy backend correctly -->
             <warDir>optashift-employee-rostering-webapp/target/optashift-employee-rostering-webapp-${project.version}</warDir>
             <systemProperties>
