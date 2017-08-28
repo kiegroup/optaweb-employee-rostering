@@ -77,6 +77,11 @@ mvn clean package -P openshift
 
 === GWT Super Dev Mode from the command line
 
+```
+mvn -N wildfly:start wildfly:deploy
+mvn gwt:codeserver
+```
+
 . Download http://wildfly.org/downloads/[WildFly]
 .. Unzip it into `local/appserver/` in the project root.
 The `local` directory is ignored by Git.

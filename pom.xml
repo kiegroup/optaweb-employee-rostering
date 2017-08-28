@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-  <!-- Use JBoss parent so all plugins have a decent base version-->
+  <!-- Use JBoss parent so all plugins have a decent base version -->
 
   <groupId>org.optaplanner.openshift</groupId>
   <artifactId>optashift-employee-rostering</artifactId>
@@ -39,7 +39,13 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
-    <wildfly.home>../local/appserver/wildfly</wildfly.home>
+    <wildfly.parent>${project.basedir}/local/appserver</wildfly.parent>
+    <wildfly.home>${wildfly.parent}/wildfly-${version.org.wildfly.wildfly-dist}</wildfly.home>
+    <wildfly.launchdir>${project.basedir}/local/appserver/wildfly-${version.org.wildfly.wildfly-dist}</wildfly.launchdir>
+    <wildfly.install.skip>false</wildfly.install.skip>
+    <deployment.parent>${project.basedir}/${project.artifactId}-webapp/target</deployment.parent>
+    <deployment.name>${project.artifactId}-webapp-${project.version}</deployment.name>
+    <antrun.skip>false</antrun.skip>
 
     <version.org.optaplanner>7.3.0-SNAPSHOT</version.org.optaplanner>
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
@@ -51,6 +57,9 @@
     <version.com.github.nmorel.gwtjackson>0.14.2</version.com.github.nmorel.gwtjackson>
     <version.com.github.nmorel.gwtjackson.restprocessor>0.4.1</version.com.github.nmorel.gwtjackson.restprocessor>
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
+    <version.org.wildfly.wildfly-dist>10.1.0.Final</version.org.wildfly.wildfly-dist>
+    <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
+    <version.org.apache.maven.plugins.maven-antrun-plugin>1.8</version.org.apache.maven.plugins.maven-antrun-plugin>
   </properties>
 
   <modules>
@@ -194,11 +203,90 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <skip>${wildfly.install.skip}</skip>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.wildfly</groupId>
+                  <artifactId>wildfly-dist</artifactId>
+                  <version>${version.org.wildfly.wildfly-dist}</version>
+                  <type>zip</type>
+                  <overWrite>false</overWrite>
+                  <outputDirectory>${wildfly.parent}</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>create-symbolic-link</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <skip>${antrun.skip}</skip>
+              <target>
+                <symlink
+                  link="${wildfly.launchdir}/standalone/deployments/${deployment.name}.war"
+                  resource="${deployment.parent}/${deployment.name}"
+                  overwrite="true" />
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+
       <plugin>
         <groupId>net.ltgt.gwt.maven</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
       </plugin>
+
+      <plugin>
+        <groupId>org.wildfly.plugins</groupId>
+        <artifactId>wildfly-maven-plugin</artifactId>
+        <version>${version.org.wildfly-plugins.wildfly-maven-plugin}</version>
+        <inherited>false</inherited>
+        <executions>
+          <execution>
+            <id>default-cli</id>
+            <goals>
+              <goal>start</goal>
+              <goal>deploy</goal>
+              <goal>redeploy-only</goal>
+            </goals>
+            <configuration>
+              <jbossHome>${wildfly.launchdir}</jbossHome>
+              <filename>${deployment.name}.war/</filename>
+              <targetDir>${wildfly.launchdir}/standalone/deployments</targetDir>
+              <name>optashift-employee-rostering.war</name>
+              <checkPackaging>false</checkPackaging>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
+
     <pluginManagement>
       <plugins>
         <plugin>
@@ -209,7 +297,7 @@
           <configuration>
             <style>PRETTY</style>
             <!-- TODO turn this one, probably after GWT supports java.time -->
-            <!--<failOnError>true</failOnError>-->
+            <!--<failOnError>true</failOnError> -->
             <devmodeArgs>
               <!-- GWT Super Dev Mode: Replace default backend by WildFly -->
               <arg>-server</arg>
@@ -218,16 +306,18 @@
               <arg>gwtui/gwtui.html</arg>
             </devmodeArgs>
             <jvmArgs>
-              <!-- Remote debugger: uncomment this line to debug the WildFly backend -->
-              <!--<arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</arg>-->
+              <!-- Remote debugger: uncomment this line to debug the WildFly 
+                backend -->
+              <!--<arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</arg> -->
             </jvmArgs>
             <!-- GWT Super Dev Mode: deploy backend correctly -->
-            <warDir>optashift-employee-rostering-webapp/target/optashift-employee-rostering-webapp-${project.version}</warDir>
+            <launcherDir>${deployment.parent}/${deployment.name}</launcherDir>
             <systemProperties>
               <!-- GWT Super Dev Mode: which WildFly to use -->
               <errai.jboss.home>${wildfly.home}</errai.jboss.home>
-              <!-- Make IDE war run config and GWT Super Dev Mode use same deployment context to avoid duplicate, conflicting deployment -->
-              <errai.dev.context>optashift-employee-rostering-webapp-${project.version}</errai.dev.context>
+              <!-- Make IDE war run config and GWT Super Dev Mode use same 
+                deployment context to avoid duplicate, conflicting deployment -->
+              <errai.dev.context>optashift-employee-rostering</errai.dev.context>
             </systemProperties>
           </configuration>
         </plugin>
@@ -236,10 +326,17 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.6.1</version>
         </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-war-plugin</artifactId>
           <version>2.6</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-antrun-plugin</artifactId>
+          <version>${version.org.apache.maven.plugins.maven-antrun-plugin}</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -247,9 +344,15 @@
 
   <profiles>
     <profile>
-      <!-- Use this profile for any OpenShift specific customization your app will need. -->
-      <!-- By default that is to put the resulting archive into the 'deployments' folder. -->
+      <!-- Use this profile for any OpenShift specific customization your 
+        app will need. -->
+      <!-- By default that is to put the resulting archive into the 'deployments' 
+        folder. -->
       <id>openshift</id>
+      <properties>
+        <wildfly.install.skip>true</wildfly.install.skip>
+        <antrun.skip>true</antrun.skip>
+      </properties>
       <build>
         <plugins>
           <plugin>
@@ -265,13 +368,20 @@
               <!-- Avoid crash "error code 137" on OpenShift -->
               <localWorkers>1</localWorkers>
               <jvmArgs>
-                 <arg>-Xmx576m</arg>
-                 <arg>-Xss256k</arg>
+                <arg>-Xmx576m</arg>
+                <arg>-Xss256k</arg>
               </jvmArgs>
             </configuration>
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <id>deploy</id>
+      <properties>
+        <antrun.skip>true</antrun.skip>
+      </properties>
     </profile>
   </profiles>
 
