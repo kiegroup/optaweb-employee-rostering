@@ -3,16 +3,20 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.gwtbootstrap3.client.ui.Button;
 import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
 
 public abstract class AbstractRosterViewPanel implements IsElement {
 
@@ -26,6 +30,9 @@ public abstract class AbstractRosterViewPanel implements IsElement {
     protected Button refreshButton;
     @Inject @DataField
     protected Span solveStatus;
+
+    @Inject
+    private TranslationService CONSTANTS;
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {
         tenantId = tenant.getId();
@@ -46,7 +53,7 @@ public abstract class AbstractRosterViewPanel implements IsElement {
     @EventHandler("solveButton")
     public void solve(ClickEvent e) {
         if (tenantId == null) {
-            throw new IllegalStateException("The tenantId (" + tenantId + ") can not be null at this time.");
+            throw new IllegalStateException("The tenantId (" + tenantId + ") cannot be null at this time.");
         }
         RosterRestServiceBuilder.solveRoster(tenantId).send();
         // TODO 15 * 2000ms = 30 seconds - Keep in sync with solver config
@@ -72,7 +79,7 @@ public abstract class AbstractRosterViewPanel implements IsElement {
                 return true;
             } else {
                 solveStatus.setInnerHTML(new SafeHtmlBuilder()
-                        .appendHtmlConstant("Solving finished.")
+                        .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_finishedSolving) + ".")
                         .toSafeHtml().asString());
                 return false;
             }
@@ -81,9 +88,7 @@ public abstract class AbstractRosterViewPanel implements IsElement {
         private void updateSolverStatus() {
             int remainingSeconds = REFRESH_RATE * repeatCount / 1000;
             solveStatus.setInnerHTML(new SafeHtmlBuilder()
-                    .appendHtmlConstant("Solving for another ")
-                    .append(remainingSeconds)
-                    .appendHtmlConstant(" seconds...")
+                    .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_solvingFor,remainingSeconds))
                     .toSafeHtml().asString());
         }
 

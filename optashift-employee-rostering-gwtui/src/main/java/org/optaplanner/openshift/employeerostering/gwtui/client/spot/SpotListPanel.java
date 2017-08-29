@@ -5,6 +5,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
@@ -20,6 +21,7 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -29,6 +31,8 @@ import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
 
 @Templated
 public class SpotListPanel implements IsElement {
@@ -54,6 +58,9 @@ public class SpotListPanel implements IsElement {
 
     private SimplePager pager = new SimplePager();
     private ListDataProvider<Spot> dataProvider = new ListDataProvider<>();
+
+    @Inject
+    private TranslationService CONSTANTS;
 
     public SpotListPanel() {
         table = new CellTable<>(15);
@@ -106,7 +113,8 @@ public class SpotListPanel implements IsElement {
             public String getValue(Spot spot) {
                 return spot.getName();
             }
-        }, "Name");
+        },
+                        CONSTANTS.format(General_name));
         table.addColumn(new TextColumn<Spot>() {
             @Override
             public String getValue(Spot spot) {
@@ -120,7 +128,7 @@ public class SpotListPanel implements IsElement {
         Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER, ButtonSize.SMALL)) {
             @Override
             public String getValue(Spot spot) {
-                return "Delete";
+                return CONSTANTS.format(General_delete);
             }
         };
         deleteColumn.setFieldUpdater((index, spot, value) -> {
@@ -131,7 +139,7 @@ public class SpotListPanel implements IsElement {
                 }
             });
         });
-        table.addColumn(deleteColumn, "Actions");
+        table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
 
         table.addRangeChangeHandler(event -> pagination.rebuild(pager));
 

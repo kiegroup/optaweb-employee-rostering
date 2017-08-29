@@ -6,9 +6,11 @@ import javax.inject.Inject;
 import com.github.nmorel.gwtjackson.rest.api.RestRequestBuilder;
 import org.jboss.errai.common.client.dom.Document;
 import org.jboss.errai.ioc.client.api.EntryPoint;
+import org.jboss.errai.ui.shared.api.annotations.Bundle;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.MenuPanel;
 
 @EntryPoint
+@Bundle("resources/i18n/OptaShiftUIConstants.properties")
 public class OptaShiftRosteringEntryPoint {
 
     static {

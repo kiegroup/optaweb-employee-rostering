@@ -7,17 +7,22 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.RootPanel;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
+import org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.EmployeeRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
@@ -33,7 +38,7 @@ import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServi
 public class MenuPanel implements IsElement {
 
     private Integer tenantId = null;
-
+    
     @Inject @DataField
     private Anchor skillsAnchor;
     @Inject

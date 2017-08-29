@@ -23,6 +23,7 @@ import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
 import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
 import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
 import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -33,6 +34,8 @@ import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
 
 @Templated
 public class EmployeeListPanel implements IsElement {
@@ -57,6 +60,9 @@ public class EmployeeListPanel implements IsElement {
 
     private SimplePager pager = new SimplePager();
     private ListDataProvider<Employee> dataProvider = new ListDataProvider<>();
+    
+    @Inject
+    private TranslationService CONSTANTS;
 
     public EmployeeListPanel() {
         table = new CellTable<>(15);
@@ -117,7 +123,7 @@ public class EmployeeListPanel implements IsElement {
             public String getValue(Employee employee) {
                 return employee.getName();
             }
-        }, "Name");
+        }, CONSTANTS.format(General_name));
         table.addColumn(new TextColumn<Employee>() {
             @Override
             public String getValue(Employee employee) {
@@ -128,11 +134,11 @@ public class EmployeeListPanel implements IsElement {
                 return skillProficiencyList.stream().map(skillProficiency -> skillProficiency.getSkill().getName())
                         .collect(Collectors.joining(", "));
             }
-        }, "Skills");
+        }, CONSTANTS.format(General_skills));
         Column<Employee, String> deleteColumn = new Column<Employee, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER, ButtonSize.SMALL)) {
             @Override
             public String getValue(Employee employee) {
-                return "Delete";
+                return CONSTANTS.format(General_delete);
             }
         };
         deleteColumn.setFieldUpdater((index, employee, value) -> {
@@ -143,7 +149,7 @@ public class EmployeeListPanel implements IsElement {
                 }
             });
         });
-        table.addColumn(deleteColumn, "Actions");
+        table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
 
         table.addRangeChangeHandler(event -> pagination.rebuild(pager));
 
