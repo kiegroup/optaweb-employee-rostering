@@ -9,24 +9,19 @@ import javax.inject.Inject;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
-import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.IdentityColumn;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.view.client.ListDataProvider;
-import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
-import org.jboss.errai.common.client.dom.Span;
-import org.jboss.errai.common.client.logging.util.Console;
-import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -35,11 +30,11 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestS
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
 @Templated
 public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
@@ -54,6 +49,9 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
     private EmployeeRosterView employeeRosterView;
     private Map<Long, Spot> spotMap;
+
+    @Inject
+    private TranslationService CONSTANTS;
 
     public EmployeeRosterViewPanel() {
         table = new CellTable<>(15);
@@ -77,7 +75,8 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
             public String getValue(Employee employee) {
                 return (employee == null) ? "" : employee.getName();
             }
-        }, "Employee");
+        },
+                        CONSTANTS.format(General_employee));
         table.addRangeChangeHandler(event -> pagination.rebuild(pager));
 
         pager.setDisplay(table);

@@ -20,6 +20,8 @@
   <inherits name="org.jboss.errai.enterprise.CDI"/>
   <inherits name="org.jboss.errai.ui.UI" />
 
+  <extend-property name="locale" values="en"/>
+
   <!--&lt;!&ndash; We only use this gwt.xml during development (in production, everything is tied together) &ndash;&gt;-->
   <!--<set-property name="user.agent" value="gecko1_8,safari"/>-->
   <!--<set-property name="locale" value="default"/>-->
