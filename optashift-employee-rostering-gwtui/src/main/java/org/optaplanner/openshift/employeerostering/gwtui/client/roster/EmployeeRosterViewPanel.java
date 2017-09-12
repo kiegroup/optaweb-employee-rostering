@@ -24,6 +24,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -93,6 +94,9 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
             @Override
             public void onSuccess(EmployeeRosterView employeeRosterView) {
                 EmployeeRosterViewPanel.this.employeeRosterView = employeeRosterView;
+                if (null == employeeRosterView) {
+                    throw new IllegalStateException(CONSTANTS.format(AbstractRosterViewPanel_emptyResult));
+                }
                 spotMap = employeeRosterView.getSpotList().stream()
                         .collect(Collectors.toMap(Spot::getId, Function.identity()));
                 for (int i = table.getColumnCount() - 1; i > 0; i--) {

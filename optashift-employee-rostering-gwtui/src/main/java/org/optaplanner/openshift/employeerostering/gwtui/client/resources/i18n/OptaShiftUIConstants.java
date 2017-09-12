@@ -31,6 +31,8 @@ public interface OptaShiftUIConstants {
     final String MenuPanel_employees = "MenuPanel.employees";
 	
 	
+	@TranslationKey(defaultValue="The server returned an empty result which is impossible.\nMaybe the server is using the wrong WildFly version. Try using WildFly 10.1.0.Final.")
+    final String AbstractRosterViewPanel_emptyResult = "AbstractRosterViewPanel.emptyResult";
 	
 	@TranslationKey(defaultValue="Finished solving")
     final String AbstractRosterViewPanel_finishedSolving = "AbstractRosterViewPanel.finishedSolving";
