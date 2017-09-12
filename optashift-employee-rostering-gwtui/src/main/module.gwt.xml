@@ -12,6 +12,7 @@
       value="org.optaplanner.openshift.employeerostering.gwtui.rebind.OptaShiftRosteringGwtJacksonConfiguration" />
   <inherits name="com.github.nmorel.gwtjackson.GwtJackson" />
   <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
+  <inherits name="com.google.gwt.resources.Resources" />
 
   <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
   <inherits name="org.gwtbootstrap3.extras.tagsinput.TagsInput"/>
