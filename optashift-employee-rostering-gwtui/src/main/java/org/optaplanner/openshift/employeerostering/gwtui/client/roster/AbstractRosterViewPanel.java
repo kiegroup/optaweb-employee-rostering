@@ -13,6 +13,7 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
@@ -55,7 +56,12 @@ public abstract class AbstractRosterViewPanel implements IsElement {
         if (tenantId == null) {
             throw new IllegalStateException("The tenantId (" + tenantId + ") cannot be null at this time.");
         }
-        RosterRestServiceBuilder.solveRoster(tenantId).send();
+        RosterRestServiceBuilder.solveRoster(tenantId, new FailureShownRestCallback<Void>() {
+            public void onSuccess(Void t) {
+                
+            }
+        }
+        );
         // TODO 15 * 2000ms = 30 seconds - Keep in sync with solver config
         Scheduler.get().scheduleFixedDelay(new RefreshTableRepeatingCommand(15), REFRESH_RATE);
     }

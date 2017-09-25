@@ -8,4 +8,9 @@
     <!-- Keep in sync with *EntryPoint -->
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
+  
+  <context-param>
+    <param-name>resteasy.provider</param-name>
+    <param-value>package org.optaplanner.openshift.employeerostering.server.exceptions.OptashiftExceptionMapper</param-value>
+  </context-param>
 </web-app>
