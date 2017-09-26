@@ -65,6 +65,7 @@
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
     <version.org.wildfly.wildfly-dist>10.1.0.Final</version.org.wildfly.wildfly-dist>
     <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
+    <version.net.ltgt.gwt.maven.gwt-maven-plugin>1.0-rc-7</version.net.ltgt.gwt.maven.gwt-maven-plugin>
   </properties>
 
   <modules>
@@ -197,19 +198,6 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
         <inherited>false</inherited>
         <executions>
@@ -296,7 +284,7 @@
         <plugin>
           <groupId>net.ltgt.gwt.maven</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
-          <version>1.0-rc-7</version>
+          <version>${version.net.ltgt.gwt.maven.gwt-maven-plugin}</version>
           <extensions>true</extensions>
           <configuration>
             <style>PRETTY</style>
