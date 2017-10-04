@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.server.exceptions;
+package org.optaplanner.openshift.employeerostering.server.common.exception;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;

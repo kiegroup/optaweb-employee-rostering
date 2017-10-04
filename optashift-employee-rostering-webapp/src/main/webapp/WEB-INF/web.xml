@@ -11,6 +11,6 @@
   
   <context-param>
     <param-name>resteasy.provider</param-name>
-    <param-value>package org.optaplanner.openshift.employeerostering.server.exceptions.OptashiftExceptionMapper</param-value>
+    <param-value>package org.optaplanner.openshift.employeerostering.server.common.exception.OptashiftExceptionMapper</param-value>
   </context-param>
 </web-app>
