@@ -1,10 +1,11 @@
 .main{}
 
 .panel {
-    position:absolute;
+    position:fixed;
     color: #D8000C;
     background-color: #FFBABA;
     padding: 10px;
     top: 25%;
+    left: 15%;
     z-index: 8192;
 }
