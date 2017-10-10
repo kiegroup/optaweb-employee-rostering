@@ -43,6 +43,11 @@ public interface RosterRestService {
     @POST
     @Path("/solve")
     void solveRoster(@PathParam("tenantId") Integer tenantId);
+    
+    @POST
+    @Path("/plan")
+    List<Long> planUntil(@PathParam("tenantId") Integer tenantId, @QueryParam("baseDate") String baseDateString,
+            @QueryParam("targetDate") String targetDateString, @QueryParam("duration") String durationString);
 
     // Not a REST method
     Roster buildRoster(Integer tenantId);

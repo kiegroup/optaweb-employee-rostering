@@ -32,7 +32,12 @@ public class OptaShiftRosteringEntryPoint {
         GWT.setUncaughtExceptionHandler(new
                 GWT.UncaughtExceptionHandler() {
                 public void onUncaughtException(Throwable e) {
-                  ErrorPopup.show(e.getMessage());
+                    StringBuilder out = new StringBuilder(e.getMessage());
+                    out.append("\n\n");
+                    for (StackTraceElement element : e.getStackTrace()) {
+                        out.append(element.toString());
+                    }
+                  ErrorPopup.show(out.toString());
               }
           });
     }

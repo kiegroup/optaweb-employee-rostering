@@ -1,5 +1,7 @@
 package org.optaplanner.openshift.employeerostering.shared.shift;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -19,7 +21,13 @@ import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 @Consumes(MediaType.APPLICATION_JSON)
 @GenRestBuilder
 public interface ShiftRestService {
-
+    /**
+     * @return never null, List<ShiftView>
+     */
+    @GET
+    @Path("/")
+    List<ShiftView> getShifts(@PathParam("tenantId") Integer tenantId);
+    
     /**
      * @param id never null
      * @return never null, the id
