@@ -12,16 +12,19 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.IdentityColumn;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
@@ -31,6 +34,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestS
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -44,6 +48,9 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     private CellTable<Employee> table;
     @DataField
     private Pagination pagination;
+    
+    @Inject @DataField
+    private Button planNextPeriod;
 
     private SimplePager pager = new SimplePager();
     private ListDataProvider<Employee> dataProvider = new ListDataProvider<>();
@@ -53,6 +60,34 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
     @Inject
     private TranslationService CONSTANTS;
+    
+        @EventHandler("planNextPeriod")
+        public void plan(ClickEvent e) {
+            ShiftRestServiceBuilder.addShiftsFromTemplate(tenantId,
+                    employeeRosterView.getTimeSlotList().stream().max((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getEndDateTime().toString(),
+                    employeeRosterView.getTimeSlotList().stream().max((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getEndDateTime().plusWeeks(2).toString(),
+                    "WEEK\n" +
+                    ";\n" +
+                    "0:0:0;0:8:0;Battery",
+                        new FailureShownRestCallback<List<Long>>() {
+                            public void onSuccess(List<Long> lst) {
+                                StringBuilder out = new StringBuilder();
+                                out.append("Start Date: ");
+                                out.append(employeeRosterView.getStartDate().toString());
+                                out.append("\nEnd Date: ");
+                                out.append(employeeRosterView.getEndDate().toString());
+                                out.append('\n');
+                                out.append('[');
+                                for (Long id : lst) {
+                                    out.append(id);
+                                    out.append(',');
+                                }
+                                out.append(']');
+                                ErrorPopup.show(out.toString());
+                            }
+                        }
+                    );
+        }
 
     public EmployeeRosterViewPanel() {
         table = new CellTable<>(15);
