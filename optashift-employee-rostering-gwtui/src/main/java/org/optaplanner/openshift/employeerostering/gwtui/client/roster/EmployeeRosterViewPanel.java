@@ -66,7 +66,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
             ShiftRestServiceBuilder.addShiftsFromTemplate(tenantId,
                     employeeRosterView.getTimeSlotList().stream().max((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getEndDateTime().toString(),
                     employeeRosterView.getTimeSlotList().stream().max((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getEndDateTime().plusWeeks(2).toString(),
-                    "WEEK\n" +
+                    "NONE\n" +
                     ";\n" +
                     "0:0:0;0:8:0;Battery",
                         new FailureShownRestCallback<List<Long>>() {
