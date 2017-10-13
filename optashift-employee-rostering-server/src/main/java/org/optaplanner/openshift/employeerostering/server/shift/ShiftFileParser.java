@@ -1,6 +1,7 @@
 package org.optaplanner.openshift.employeerostering.server.shift;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,21 +18,27 @@ public class ShiftFileParser {
     
     public static List<Shift> parse(Integer tenantId, List<Spot> spots, LocalDateTime start, LocalDateTime end, String input) throws ParserException {
         String[] tokens = input.split("\n");
-        DateMode dateMode = DateMode.valueOf(tokens[0]);
+        RepeatMode dateMode = RepeatMode.valueOf(tokens[0]);
         
         int i = 1;
-        int repeatDays, repeatWeeks, repeatMonths, repeatYears;
+        long repeatDays, repeatWeeks, repeatMonths, repeatYears;
         
-        if (DateMode.CUSTOM == dateMode) {
+        if (RepeatMode.CUSTOM == dateMode) {
             String[] duration = tokens[i].split(":");
             if (4 != duration.length) {
                 throw new ParserException("Badly formatted custom duration");
             }
-            repeatDays = Integer.parseInt(duration[0]);
-            repeatWeeks = Integer.parseInt(duration[1]);
-            repeatMonths = Integer.parseInt(duration[2]);
-            repeatYears = Integer.parseInt(duration[3]);
+            repeatDays = Long.parseLong(duration[0]);
+            repeatWeeks = Long.parseLong(duration[1]);
+            repeatMonths = Long.parseLong(duration[2]);
+            repeatYears = Long.parseLong(duration[3]);
             i++;
+        }
+        else if (RepeatMode.NONE == dateMode) {
+            repeatDays = Math.abs(Duration.between(start, end).toDays()) + 1;
+            repeatWeeks = 0;
+            repeatMonths = 0;
+            repeatYears = 0;
         }
         else {
             repeatDays = dateMode.days;
@@ -67,7 +74,7 @@ public class ShiftFileParser {
             }
             String[] spotNames = new String[shiftParts.length - 2];
             for (int j = 2; j < shiftParts.length; j++) {
-                spotNames[j-2] = shiftParts[j];
+                spotNames[j-2] = unescapeSpotName(shiftParts[j]);
             }
             
             for (LocalDateTime startDate = parseDate(start, shiftParts[0]),
@@ -206,15 +213,75 @@ public class ShiftFileParser {
         }
     }
     
-    private static enum DateMode {
+    public static String escapeSpotName(String spotName) {
+        StringBuilder out = new StringBuilder();
+        for (char c : spotName.toCharArray()) {
+            switch (c) {
+                case ';':
+                    out.append("\\D");
+                    break;
+                case '\n':
+                    out.append("\\n");
+                    break;
+                case '\t':
+                    out.append("\\t");
+                    break;
+                    
+                case '\\':
+                    out.append("\\B");
+                    break;
+                    
+                default:
+                    out.append(c);
+                    break;
+            }
+        }
+        return out.toString();
+    }
+    
+    public static String unescapeSpotName(String escapedSpotName) throws ParserException {
+        StringBuilder out = new StringBuilder();
+        boolean escapedChar = false;
+        for (char c : escapedSpotName.toCharArray()) {
+            if ('\\' == c) {
+                escapedChar = true;
+            }
+            else if (!escapedChar) {
+                out.append(c);
+            }
+            else {
+                switch (c) {
+                    case 'D':
+                        out.append(';');
+                        break;
+                    case 'n':
+                        out.append('\n');
+                        break;
+                    case 't':
+                        out.append('\t');
+                        break;
+                        
+                    case 'B':
+                        out.append('\\');
+                        break;
+                    default:
+                        throw new ParserException("Badly formatted Spot Name: " + escapedSpotName);
+                }
+                escapedChar = false;
+            }
+        }
+        return out.toString();
+    }
+    private static enum RepeatMode {
         DAY(1,0,0,0),
         WEEK(0,1,0,0),
         MONTH(0,0,1,0),
         YEAR(0,0,0,1),
+        NONE(0,0,0,0),
         CUSTOM(0,0,0,0);
         
-        int days,weeks,months,years;
-        DateMode(int days, int weeks, int months, int years) {
+        long days,weeks,months,years;
+        RepeatMode(long days, long weeks, long months, long years) {
             this.days = days;
             this.weeks = weeks;
             this.months = months;
