@@ -27,6 +27,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.roster.EmployeeR
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.ConfigurationEditor;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -59,6 +60,10 @@ public class MenuPanel implements IsElement {
     private Anchor employeeRosterAnchor;
     @Inject
     private EmployeeRosterViewPanel employeeRosterViewPanel;
+    @Inject @DataField
+    private Anchor configAnchor;
+    @Inject
+    private ConfigurationEditor configEditor;
 
     @Inject @DataField
     private ListBox tenantListBox;
@@ -135,6 +140,14 @@ public class MenuPanel implements IsElement {
         content.appendChild(employeeRosterViewPanel.getElement());
         employeeRosterViewPanel.refresh();
     }
+    
+    @EventHandler("configAnchor")
+    public void showConfigurationEditor(ClickEvent e) {
+        content.removeChild(content.getLastChild());
+        switchActive(configAnchor);
+        content.appendChild(configEditor.getElement());
+        configEditor.refresh();
+    }
 
     private void switchActive(Anchor anchor) {
         skillsAnchor.getElement().getParentElement().removeClassName("active");
@@ -142,6 +155,7 @@ public class MenuPanel implements IsElement {
         employeesAnchor.getElement().getParentElement().removeClassName("active");
         spotRosterAnchor.getElement().getParentElement().removeClassName("active");
         employeeRosterAnchor.getElement().getParentElement().removeClassName("active");
+        configAnchor.getElement().getParentElement().removeClassName("active");
         anchor.getElement().getParentElement().addClassName("active");
     }
 
