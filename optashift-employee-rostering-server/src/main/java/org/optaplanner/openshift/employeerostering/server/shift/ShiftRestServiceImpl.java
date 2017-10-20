@@ -16,8 +16,11 @@
 
 package org.optaplanner.openshift.employeerostering.server.shift;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,6 +33,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestService;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -38,7 +42,17 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @PersistenceContext
     private EntityManager entityManager;
-
+    
+    @Override
+    public List<ShiftView> getShifts(Integer tenantId) {
+        List<Shift> shifts = entityManager.createNamedQuery("Shift.findAll", Shift.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        return shifts.stream()
+                .map((s) -> new ShiftView(s))
+                .collect(Collectors.toList());
+    }
+    
     @Override
     @Transactional
     public ShiftView getShift(Integer tenantId, Long id) {

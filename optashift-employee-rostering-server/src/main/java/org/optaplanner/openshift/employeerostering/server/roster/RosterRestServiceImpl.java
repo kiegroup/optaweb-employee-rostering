@@ -16,8 +16,14 @@
 
 package org.optaplanner.openshift.employeerostering.server.roster;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +44,13 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServi
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestService;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
 
 public class RosterRestServiceImpl extends AbstractRestServiceImpl implements RosterRestService {
 
@@ -50,6 +59,9 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Inject
     private WannabeSolverManager solverManager;
+    
+    @Inject
+    private ShiftRestService shiftRestService;
 
     @Override
     @Transactional
@@ -247,6 +259,50 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             attachedShift.setEmployee((shift.getEmployee() == null)
                     ? null : employeeIdMap.get(shift.getEmployee().getId()));
         }
+    }
+
+    @Override
+    @Transactional
+    public List<Long> planUntil(Integer tenantId, String baseDateString, String targetDateString, String durationString) {
+        LocalDateTime baseDate = LocalDateTime.parse(baseDateString);
+        LocalDateTime targetDate = LocalDateTime.parse(targetDateString);
+        Duration duration = Duration.parse(durationString);
+        
+        LocalDateTime baseEndDate = baseDate.plus(duration);
+        Duration diff = Duration.between(baseDate, targetDate);
+        
+        List<Shift> allShifts = entityManager.createNamedQuery("Shift.findAll", Shift.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+        
+        List<Shift> shiftsInPeriod = allShifts.stream()
+                .filter((shift) -> {
+                return !shift.getTimeSlot().getStartDateTime().isBefore(baseDate) && 
+                        !shift.getTimeSlot().getStartDateTime().isAfter(baseEndDate);
+                }).collect(Collectors.toList());
+        
+        List<Long> out = new ArrayList<Long>();
+        HashMap<String,TimeSlot> timeSlotMap = new HashMap<>();
+        
+        for (Shift shift : shiftsInPeriod) {
+            if (!timeSlotMap.containsKey(shift.getTimeSlot().toString())) {
+                TimeSlot newTimeSlot = new TimeSlot(tenantId,
+                        shift.getTimeSlot().getStartDateTime().plus(diff),
+                        shift.getTimeSlot().getEndDateTime().plus(diff));
+                newTimeSlot.setTimeSlotState(TimeSlotState.DRAFT);
+                entityManager.persist(newTimeSlot);
+                timeSlotMap.put(shift.getTimeSlot().toString(), newTimeSlot);
+            }
+            
+            TimeSlot newTimeSlot = timeSlotMap.get(shift.getTimeSlot().toString());
+            //Spot newSpot = new Spot(tenantId, shift.getSpot().getName(), shift.getSpot().getRequiredSkill());
+            //entityManager.persist(newSpot);
+            Shift newShift = new Shift(tenantId, shift.getSpot(), newTimeSlot);
+            entityManager.persist(newShift);
+            out.add(newShift.getId());
+        }
+        
+        return out;
     }
 
 }
