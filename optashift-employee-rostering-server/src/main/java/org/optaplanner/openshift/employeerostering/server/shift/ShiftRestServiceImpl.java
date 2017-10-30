@@ -23,6 +23,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
@@ -125,6 +127,13 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         } catch (ParserException e) {
             throw new Exception(e.getMessage());
         }
+    }
+
+    @Override
+    public List<Shift> getShifts(Integer tenantId) {
+        TypedQuery<Shift> q = entityManager.createNamedQuery("Shift.findAll", Shift.class);
+        q.setParameter("tenantId", tenantId);
+        return q.getResultList();
     }
 
 }

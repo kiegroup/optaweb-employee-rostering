@@ -30,6 +30,10 @@ public interface ShiftRestService {
     @GET
     @Path("/{id}")
     ShiftView getShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+    
+    @GET
+    @Path("/")
+    List<Shift> getShifts(@PathParam("tenantId") Integer tenantId);
 
     /**
      * @param shift never null

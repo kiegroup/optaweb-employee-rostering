@@ -1,55 +1,53 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
-import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.dom.client.DivElement;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.user.client.Event;
+import elemental2.dom.CanvasRenderingContext2D;
+import elemental2.dom.HTMLCanvasElement;
+import elemental2.dom.MouseEvent;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.FocusPanel;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 
 public class Calendar {
-    Canvas canvas;
+    HTMLCanvasElement canvas;
     CalendarView view;
     Collection<ShiftData> shifts;
+    Integer tenantId;
     
-    public Calendar(DivElement canvasElement) {
-        this.canvas = Canvas.createIfSupported();
-        FocusPanel focusPanel = new FocusPanel();
-        int width = Window.getClientWidth() - canvasElement.getAbsoluteLeft() - 100;
-        int height = Window.getClientHeight() - canvasElement.getAbsoluteTop() - 100;
+    public Calendar(HTMLCanvasElement canvasElement, Integer tenantId) {
+        this.canvas = canvasElement;
+        this.tenantId = tenantId;
         
-        canvas.setWidth(width + "px");
-        canvas.setCoordinateSpaceWidth(width);
-         
-        canvas.setHeight(height + "px");      
-        canvas.setCoordinateSpaceHeight(height);
+        double width = Window.getClientWidth() - canvasElement.offsetLeft - 100;
+        double height = Window.getClientHeight() - canvasElement.offsetTop - 100;
         
-        canvas.getCanvasElement().getStyle().setBackgroundColor("#FFFFFF");
-        canvas.getCanvasElement().setDraggable(Element.DRAGGABLE_FALSE);
+        canvas.width = width;
+        canvas.height = height;
         
+        Window.addResizeHandler((e) -> {
+            canvas.width = e.getWidth() - canvasElement.offsetLeft - 100;
+            canvas.height = e.getHeight() - canvasElement.offsetTop - 100;
+            draw();
+        });
+        canvas.draggable = false;
+        canvas.style.background = "#FFFFFF";
         
-        canvas.addMouseMoveHandler((e) -> getView().onMouseMove(e));
-        canvas.addMouseUpHandler((e) -> getView().onMouseUp(e));
-        
-        focusPanel.add(canvas);
-        
+        canvas.onmousedown = (e) -> {onMouseDown((MouseEvent) e); return e;};
+        canvas.onmousemove = (e) -> {onMouseMove((MouseEvent) e); return e;};
+        canvas.onmouseup = (e) -> {onMouseUp((MouseEvent) e); return e;};
         
         shifts = new ArrayList<ShiftData>();
         
-        view = new WeekView(this);
+        view = new TwoDayView(this);
         
-        canvasElement.appendChild(focusPanel.getElement());
-        
-        focusPanel.addDomHandler((e) -> {ErrorPopup.show("test");getView().onMouseDown(e);}, MouseDownEvent.getType());
-        Event.sinkEvents(canvas.getCanvasElement(), Event.MOUSEEVENTS);
         draw();
     }
     
@@ -57,18 +55,45 @@ public class Calendar {
         return view;
     }
     
-    public void draw() {
-        Context2d g = canvas.getContext2d();
-        
-        int screenWidth = canvas.getCoordinateSpaceWidth();
-        int screenHeight = canvas.getCoordinateSpaceHeight(); 
-        
-        view.draw(g, screenWidth, screenHeight, shifts);
+    public Integer getTenantId() {
+        return tenantId;
     }
     
-    public static class ShiftData {
-        LocalDateTime start;
-        LocalDateTime end;
-        Collection<String> spots;
+    public void setTenantId(Integer tenantId) {
+        this.tenantId = tenantId;
+    }
+    
+    public void draw() {
+        ShiftRestServiceBuilder.getShifts(tenantId, new FailureShownRestCallback<List<Shift>>() {
+            @Override
+            public void onSuccess(List<Shift> theShifts) {
+                shifts = new ArrayList<>();
+                LocalDateTime min = theShifts.stream().min((a,b) -> a.getTimeSlot().getStartDateTime().compareTo(b.getTimeSlot().getStartDateTime())).get().getTimeSlot().getStartDateTime();
+                for (Shift shift : theShifts) {
+                    shifts.add(new ShiftData(shift.getTimeSlot().getStartDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
+                            shift.getTimeSlot().getEndDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
+                            Arrays.asList(shift.getSpot().toString())));
+                }
+                view.setShifts(shifts);
+                CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) canvas.getContext("2d");            
+                view.draw(g, canvas.width, canvas.height);
+            }
+        });
+    }
+    
+    public void onMouseDown(MouseEvent e) {
+        getView().onMouseDown(e);
+    }
+    
+    public void onMouseMove(MouseEvent e) {
+        getView().onMouseMove(e);
+    }
+    
+    public void onMouseUp(MouseEvent e) {
+        getView().onMouseUp(e);
+    }
+    
+    public void addShift(ShiftData shift) {
+        shifts.add(shift);
     }
 }
