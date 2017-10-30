@@ -2,14 +2,13 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
 import java.util.Collection;
 
-import com.google.gwt.canvas.dom.client.Context2d;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseMoveEvent;
-import com.google.gwt.event.dom.client.MouseUpEvent;
+import elemental2.dom.CanvasRenderingContext2D;
+import elemental2.dom.MouseEvent;
 
 public interface CalendarView {
-    void draw(Context2d g, int screenWidth, int screenHeight, Collection<Calendar.ShiftData> shifts);
-    void onMouseDown(MouseDownEvent e);
-    void onMouseMove(MouseMoveEvent e);
-    void onMouseUp(MouseUpEvent e);
+    void setShifts(Collection<ShiftData> shifts);
+    void draw(CanvasRenderingContext2D g, double screenWidth, double screenHeight);
+    void onMouseDown(MouseEvent e);
+    void onMouseMove(MouseEvent e);
+    void onMouseUp(MouseEvent e);
 }
