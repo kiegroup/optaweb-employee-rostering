@@ -120,4 +120,10 @@ public class WeekView implements CalendarView{
         this.shifts = shifts;
         
     }
+
+    @Override
+    public void setTenantId(Integer id) {
+        // TODO Auto-generated method stub
+        
+    }
 }

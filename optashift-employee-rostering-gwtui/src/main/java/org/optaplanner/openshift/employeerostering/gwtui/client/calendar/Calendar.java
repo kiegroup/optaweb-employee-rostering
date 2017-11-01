@@ -11,6 +11,10 @@ import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
+import org.gwtbootstrap3.client.ui.html.Div;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
@@ -22,7 +26,7 @@ public class Calendar {
     Collection<ShiftData> shifts;
     Integer tenantId;
     
-    public Calendar(HTMLCanvasElement canvasElement, Integer tenantId) {
+    public Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Div topPanel, Div bottomPanel, Span sidePanel) {
         this.canvas = canvasElement;
         this.tenantId = tenantId;
         
@@ -47,21 +51,6 @@ public class Calendar {
         shifts = new ArrayList<ShiftData>();
         
         view = new TwoDayView(this);
-        
-        ShiftRestServiceBuilder.getShifts(tenantId, new FailureShownRestCallback<List<Shift>>() {
-            @Override
-            public void onSuccess(List<Shift> theShifts) {
-                shifts = new ArrayList<>();
-                LocalDateTime min = theShifts.stream().min((a,b) -> a.getTimeSlot().getStartDateTime().compareTo(b.getTimeSlot().getStartDateTime())).get().getTimeSlot().getStartDateTime();
-                for (Shift shift : theShifts) {
-                    shifts.add(new ShiftData(shift.getTimeSlot().getStartDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
-                            shift.getTimeSlot().getEndDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
-                            Arrays.asList(shift.getSpot().toString())));
-                }
-                view.setShifts(shifts);
-                draw();
-            }
-        });
     }
     
     private CalendarView getView() {
@@ -74,6 +63,20 @@ public class Calendar {
     
     public void setTenantId(Integer tenantId) {
         this.tenantId = tenantId;
+        view.setTenantId(tenantId);
+        ShiftRestServiceBuilder.getShifts(tenantId, new FailureShownRestCallback<List<Shift>>() {
+            @Override
+            public void onSuccess(List<Shift> theShifts) {
+                shifts = new ArrayList<>();
+                LocalDateTime min = theShifts.stream().min((a,b) -> a.getTimeSlot().getStartDateTime().compareTo(b.getTimeSlot().getStartDateTime())).get().getTimeSlot().getStartDateTime();
+                for (Shift shift : theShifts) {
+                    shifts.add(new ShiftData(shift.getTimeSlot().getStartDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
+                            shift.getTimeSlot().getEndDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
+                            Arrays.asList(shift.getSpot().toString())));
+                }
+                view.setShifts(shifts);
+            }
+        });
     }
     
     public void draw() {

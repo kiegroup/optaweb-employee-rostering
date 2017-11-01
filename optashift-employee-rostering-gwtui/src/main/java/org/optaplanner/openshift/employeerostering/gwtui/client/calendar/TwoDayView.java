@@ -60,13 +60,6 @@ public class TwoDayView implements CalendarView {
     public TwoDayView(Calendar calendar) {
         this.calendar = calendar;
         curr = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
-        SpotRestServiceBuilder.getSpotList(calendar.getTenantId(), new FailureShownRestCallback<List<Spot>>() {
-            @Override
-            public void onSuccess(List<Spot> spotList) {
-                spots = spotList;
-                calendar.draw();
-            }
-        });
         mouseX = 0;
         mouseY = 0;
         selectedSpot = null;
@@ -165,7 +158,7 @@ public class TwoDayView implements CalendarView {
     }
     
     private void drawCreateShiftForSpotBar(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
-        if (null != selectedSpot) {
+        /*if (null != selectedSpot) {
             return;
         }
         
@@ -184,13 +177,19 @@ public class TwoDayView implements CalendarView {
         }
         if (null != overSpot) {
             cursorIndex.put(overSpot, spotPos.get(overSpot));
-        }
+        }*/
     }
     
     private void handleMouseDown(double eventX, double eventY) {
         for (String spot : spotAddPlane.keySet()) {
             if (spotContainer.get(spot).getGlobalX() < mouseX && spotContainer.get(spot).getGlobalY() < mouseY && mouseY < spotAddPlane.get(spot).getGlobalY() + spotHeight ) {
+                long index = (long) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
+                if (null != overSpot) {
+                    cursorIndex.put(overSpot, spotPos.get(overSpot));
+                }
                 selectedSpot = spot;
+                overSpot = spot;
+                cursorIndex.put(overSpot, index);
                 selectedIndex = (long) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
                 break;
             }
@@ -453,6 +452,16 @@ public class TwoDayView implements CalendarView {
 
     public void preparePopup(String text) {
         popupText = text;
+    }
+
+    @Override
+    public void setTenantId(Integer id) {
+        SpotRestServiceBuilder.getSpotList(calendar.getTenantId(), new FailureShownRestCallback<List<Spot>>() {
+            @Override
+            public void onSuccess(List<Spot> spotList) {
+                spots = spotList;
+            }
+        });
     }
 
 }
