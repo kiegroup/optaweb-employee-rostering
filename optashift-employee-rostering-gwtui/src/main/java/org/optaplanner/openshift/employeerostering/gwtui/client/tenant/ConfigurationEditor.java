@@ -28,6 +28,8 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.gwtbootstrap3.client.ui.html.Div;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.common.client.api.annotations.BrowserEvent;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -52,9 +54,13 @@ public class ConfigurationEditor implements IsElement {
     private Integer tenantId = null;
     
     @Inject @DataField
-    private Button addTemplate;
-    @Inject @DataField
     private HTMLCanvasElement canvasElement;
+    @Inject @DataField
+    private Div topPanel;
+    @Inject @DataField
+    private Div bottomPanel;
+    @Inject @DataField
+    private Span sidePanel;
     
     @Inject
     private TranslationService CONSTANTS;
@@ -67,18 +73,13 @@ public class ConfigurationEditor implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
-        
+        calendar = new Calendar(canvasElement, tenantId, topPanel, bottomPanel, sidePanel);
     }
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {
         tenantId = tenant.getId();
         calendar.setTenantId(tenantId);
         refresh();
-    }
-
-   @EventHandler("addTemplate")
-    public void addNewTemplate(ClickEvent e) {
-       calendar = new Calendar(canvasElement, tenantId);
     }
    
    public void refresh() {

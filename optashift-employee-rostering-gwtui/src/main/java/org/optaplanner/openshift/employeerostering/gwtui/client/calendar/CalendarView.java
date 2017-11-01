@@ -7,6 +7,7 @@ import elemental2.dom.MouseEvent;
 
 public interface CalendarView {
     void setShifts(Collection<ShiftData> shifts);
+    void setTenantId(Integer id);
     void draw(CanvasRenderingContext2D g, double screenWidth, double screenHeight);
     void onMouseDown(MouseEvent e);
     void onMouseMove(MouseEvent e);
