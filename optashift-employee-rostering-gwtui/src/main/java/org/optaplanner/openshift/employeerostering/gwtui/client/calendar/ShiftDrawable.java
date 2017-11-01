@@ -59,7 +59,8 @@ public class ShiftDrawable extends AbstractDrawable {
 
     @Override
     public double getLocalY() {
-        return index*view.getSpotHeight();
+        Long cursorIndex = view.getSpotCursorIndex(spot);
+        return (null != cursorIndex && cursorIndex > index)? index*view.getSpotHeight() : (index+1)*view.getSpotHeight();
     }
     
     public void setIndex(int index) {

@@ -40,14 +40,21 @@ public class TwoDayView implements CalendarView {
     
     private List<Spot> spots = new ArrayList<>();
     private HashMap<String,Long> spotPos = new HashMap<>();
+    private HashMap<String,Long> cursorIndex = new HashMap<>();
     private HashMap<String, DynamicContainer> spotContainer = new HashMap<>();
+    private HashMap<String, DynamicContainer> spotAddPlane = new HashMap<>();
     private Collection<ShiftData> shifts;
     private Collection<ShiftDrawable> shiftDrawables;
     LocalDateTime curr;
     
     double mouseX, mouseY;
+    double dragStartX, dragStartY;
     double widthPerMinute, spotHeight;
-    long totalSpotSlots; 
+    long totalSpotSlots;
+    boolean isDragging, creatingEvent;
+    String selectedSpot;
+    Long selectedIndex;
+    String overSpot;
     String popupText;
     
     public TwoDayView(Calendar calendar) {
@@ -62,7 +69,11 @@ public class TwoDayView implements CalendarView {
         });
         mouseX = 0;
         mouseY = 0;
+        selectedSpot = null;
+        isDragging = false;
+        creatingEvent = false;
         popupText = null;
+        selectedIndex = null;
     }
     
     @Override
@@ -77,6 +88,8 @@ public class TwoDayView implements CalendarView {
         drawShiftsBackground(g, screenWidth, screenHeight);
         drawSpots(g, screenWidth, screenHeight);
         drawTimes(g, screenWidth, screenHeight);
+        drawCreateShiftForSpotBar(g, screenWidth, screenHeight);
+        drawSpotToCreate(g, screenWidth, screenHeight);
         drawPopup(g, screenWidth, screenHeight);
     }
     
@@ -125,6 +138,80 @@ public class TwoDayView implements CalendarView {
         }
     }
     
+    private void drawSpotToCreate(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
+        if (null != selectedSpot) {
+            CanvasUtils.setFillColor(g, "#00FF00");
+            long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH) / widthPerMinute); 
+            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC);
+            long toMins = Math.max(0,Math.round((mouseX - SPOT_NAME_WIDTH) / widthPerMinute)); 
+            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC);
+            if (to.isBefore(from)) {
+                LocalDateTime tmp = to;
+                to = from;
+                from = tmp;
+            }
+            StringBuilder timeslot = new StringBuilder(".");
+            timeslot.append(' ');
+            timeslot.append(pad(from.getHour() + "", 2));
+            timeslot.append(':');
+            timeslot.append(pad(from.getMinute() + "", 2));
+            timeslot.append('-');
+            timeslot.append(pad(to.getHour() + "", 2));
+            timeslot.append(':');
+            timeslot.append(pad(to.getMinute() + "", 2));
+            preparePopup(timeslot.toString());
+            g.fillRect(dragStartX, spotContainer.get(selectedSpot).getGlobalY() + spotHeight*selectedIndex, (toMins - fromMins)*widthPerMinute, spotHeight);
+        }
+    }
+    
+    private void drawCreateShiftForSpotBar(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
+        if (null != selectedSpot) {
+            return;
+        }
+        
+        for (String spot : spotAddPlane.keySet()) {
+            if (spotContainer.get(spot).getGlobalX() < mouseX && spotContainer.get(spot).getGlobalY() < mouseY && mouseY < spotAddPlane.get(spot).getGlobalY() + spotHeight ) {
+                long index = (long) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
+                CanvasUtils.setFillColor(g, "#00ff00");
+                if (null != overSpot) {
+                    cursorIndex.put(overSpot, spotPos.get(overSpot));
+                }
+                overSpot = spot;
+                cursorIndex.put(overSpot, index);
+                g.fillRect(SPOT_NAME_WIDTH, spotContainer.get(spot).getGlobalY() + spotHeight*index, screenWidth - SPOT_NAME_WIDTH, spotHeight);
+                return;
+            }
+        }
+        if (null != overSpot) {
+            cursorIndex.put(overSpot, spotPos.get(overSpot));
+        }
+    }
+    
+    private void handleMouseDown(double eventX, double eventY) {
+        for (String spot : spotAddPlane.keySet()) {
+            if (spotContainer.get(spot).getGlobalX() < mouseX && spotContainer.get(spot).getGlobalY() < mouseY && mouseY < spotAddPlane.get(spot).getGlobalY() + spotHeight ) {
+                selectedSpot = spot;
+                selectedIndex = (long) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
+                break;
+            }
+        }
+    }
+    
+    private void handleMouseUp(double eventX, double eventY) {
+        if (null != selectedSpot) {
+            long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH) / widthPerMinute); 
+            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC);
+            long toMins = Math.max(0,Math.round((eventX - SPOT_NAME_WIDTH) / widthPerMinute)); 
+            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC);
+            if (to.isBefore(from)) {
+                LocalDateTime tmp = to;
+                to = from;
+                from = tmp;
+            }
+            calendar.addShift(new ShiftData(from, to, Arrays.asList(selectedSpot)));
+        }
+    }
+    
     private void drawTimes(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
         CanvasUtils.setFillColor(g, "#000000");
         
@@ -139,6 +226,10 @@ public class TwoDayView implements CalendarView {
     public void onMouseDown(MouseEvent e) {
         mouseX = CanvasUtils.getCanvasX(calendar.canvas, e);
         mouseY = CanvasUtils.getCanvasY(calendar.canvas, e);
+        dragStartX = mouseX;
+        dragStartY = mouseY;
+        handleMouseDown(mouseX, mouseY);
+        isDragging = true;
         calendar.draw();
     }
     
@@ -146,6 +237,9 @@ public class TwoDayView implements CalendarView {
     public void onMouseUp(MouseEvent e) {
         mouseX = CanvasUtils.getCanvasX(calendar.canvas, e);
         mouseY = CanvasUtils.getCanvasY(calendar.canvas, e);
+        handleMouseUp(mouseX, mouseY);
+        isDragging = false;
+        selectedSpot = null;
         calendar.draw();
     }
 
@@ -153,15 +247,22 @@ public class TwoDayView implements CalendarView {
     public void onMouseMove(MouseEvent e) {
         mouseX = CanvasUtils.getCanvasX(calendar.canvas, e);
         mouseY = CanvasUtils.getCanvasY(calendar.canvas, e);
+        if (isDragging) {
+            onMouseDrag(mouseX, mouseY);
+        }
         calendar.draw();
     }
     
-    private List<ShiftData> getShiftsDuring(LocalDateTime time, Collection<ShiftData> shifts) {
-        return shifts.stream().filter((shift) -> isTimeInShift(time, shift)).collect(Collectors.toList());
+    private void onMouseDrag(double x, double y) {
     }
     
-    private static boolean isTimeInShift(LocalDateTime time, ShiftData shift) {
-        return !shift.start.isAfter(time) && shift.end.isAfter(time);
+    private List<ShiftData> getShiftsDuring(ShiftData time, Collection<ShiftData> shifts) {
+        return shifts.stream().filter((shift) -> doTimeslotsIntersect(time.start, time.end,shift.start,shift.end)).collect(Collectors.toList());
+    }
+    
+    private static boolean doTimeslotsIntersect(LocalDateTime start1, LocalDateTime end1,
+            LocalDateTime start2, LocalDateTime end2) {
+        return start1.isBefore(end2) && end1.isAfter(start2);
     }
 
     @Override
@@ -171,6 +272,8 @@ public class TwoDayView implements CalendarView {
         totalSpotSlots = 0;
         spotPos.clear();
         spotContainer.clear();
+        spotAddPlane.clear();
+        cursorIndex.clear();
         HashMap<String, HashMap<ShiftData,Integer>> placedSpots = new HashMap<>();
         HashMap<String, String> colorMap = new HashMap<>();
         
@@ -179,11 +282,11 @@ public class TwoDayView implements CalendarView {
             final long spotStartPos = totalSpotSlots;
             spotContainer.put(spot.getName(), new DynamicContainer(()->new Position(SPOT_NAME_WIDTH, HEADER_HEIGHT + spotStartPos*getSpotHeight())));
             colorMap.put(spot.getName(), ColorUtils.getColor(colorMap.size()));
-            long max = 1;
+            long max = 0;
             List<ShiftData> spotShifts = shifts.stream().filter((shift) -> shift.spots.contains(spot.getName())).collect(Collectors.toList());
             HashMap<ShiftData,Integer> placedShifts = new HashMap<ShiftData,Integer>();
             for (ShiftData spotShift : spotShifts) {
-                List<ShiftData> concurrentShifts = getShiftsDuring(spotShift.start, placedShifts.keySet());
+                List<ShiftData> concurrentShifts = getShiftsDuring(spotShift, placedShifts.keySet());
                 HashMap<ShiftData,Integer> concurrentPlacedShifts = new HashMap<>();
                 placedShifts.forEach((k,v) -> {
                     if (concurrentShifts.contains(k)) {
@@ -197,7 +300,9 @@ public class TwoDayView implements CalendarView {
                 placedShifts.put(spotShift, index);
                 max = Math.max(max, index);
             }
-            totalSpotSlots += max;
+            totalSpotSlots += max + 2;
+            final long spotEndPos = totalSpotSlots;
+            spotAddPlane.put(spot.getName(), new DynamicContainer(() -> new Position(SPOT_NAME_WIDTH,HEADER_HEIGHT + getSpotHeight()*(spotEndPos-1))));
             placedSpots.put(spot.getName(), placedShifts);
         }
         
@@ -213,6 +318,10 @@ public class TwoDayView implements CalendarView {
                     shiftDrawables.add(drawable);
                 }
             }
+        }
+        
+        for (Spot spot : spots) {
+            cursorIndex.put(spot.getName(), spotPos.get(spot.getName()));
         }
     }
     
@@ -230,6 +339,10 @@ public class TwoDayView implements CalendarView {
     
     public double getMouseY() {
         return mouseY;
+    }
+    
+    public Long getSpotCursorIndex(String spot) {
+        return cursorIndex.get(spot);
     }
     
     
@@ -328,6 +441,14 @@ public class TwoDayView implements CalendarView {
     private static boolean isDigit(int a) {
         char[] chars = Character.toChars(a);
         return chars.length == 1 && Character.isDigit(chars[0]);
+    }
+    
+    private String pad(String str, int len) {
+        StringBuilder out = new StringBuilder(str);
+        while (out.length() < len) {
+            out.insert(0, "0");
+        }
+        return out.toString();
     }
 
     public void preparePopup(String text) {
