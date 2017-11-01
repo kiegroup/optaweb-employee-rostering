@@ -48,7 +48,20 @@ public class Calendar {
         
         view = new TwoDayView(this);
         
-        draw();
+        ShiftRestServiceBuilder.getShifts(tenantId, new FailureShownRestCallback<List<Shift>>() {
+            @Override
+            public void onSuccess(List<Shift> theShifts) {
+                shifts = new ArrayList<>();
+                LocalDateTime min = theShifts.stream().min((a,b) -> a.getTimeSlot().getStartDateTime().compareTo(b.getTimeSlot().getStartDateTime())).get().getTimeSlot().getStartDateTime();
+                for (Shift shift : theShifts) {
+                    shifts.add(new ShiftData(shift.getTimeSlot().getStartDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
+                            shift.getTimeSlot().getEndDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
+                            Arrays.asList(shift.getSpot().toString())));
+                }
+                view.setShifts(shifts);
+                draw();
+            }
+        });
     }
     
     private CalendarView getView() {
@@ -64,21 +77,8 @@ public class Calendar {
     }
     
     public void draw() {
-        ShiftRestServiceBuilder.getShifts(tenantId, new FailureShownRestCallback<List<Shift>>() {
-            @Override
-            public void onSuccess(List<Shift> theShifts) {
-                shifts = new ArrayList<>();
-                LocalDateTime min = theShifts.stream().min((a,b) -> a.getTimeSlot().getStartDateTime().compareTo(b.getTimeSlot().getStartDateTime())).get().getTimeSlot().getStartDateTime();
-                for (Shift shift : theShifts) {
-                    shifts.add(new ShiftData(shift.getTimeSlot().getStartDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
-                            shift.getTimeSlot().getEndDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
-                            Arrays.asList(shift.getSpot().toString())));
-                }
-                view.setShifts(shifts);
-                CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) canvas.getContext("2d");            
-                view.draw(g, canvas.width, canvas.height);
-            }
-        });
+        CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) canvas.getContext("2d");            
+        view.draw(g, canvas.width, canvas.height);
     }
     
     public void onMouseDown(MouseEvent e) {
@@ -95,5 +95,7 @@ public class Calendar {
     
     public void addShift(ShiftData shift) {
         shifts.add(shift);
+        getView().setShifts(shifts);
+        draw();
     }
 }

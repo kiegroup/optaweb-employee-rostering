@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 public class ShiftData {
-    LocalDateTime start;
-    LocalDateTime end;
-    Collection<String> spots;
+    public LocalDateTime start;
+    public LocalDateTime end;
+    public Collection<String> spots;
     final long UID;
     private static long total;
     
@@ -16,5 +16,23 @@ public class ShiftData {
         this.spots = spots;
         UID = total;
         total++;
+    }
+    
+    public String toString() {
+        StringBuilder out = new StringBuilder();
+        for (String spot : spots) {
+            out.append(spot);
+            out.append(';');
+        }
+        out.deleteCharAt(out.length() - 1);
+        out.append(':');
+        
+        out.append(start.toString());
+        out.append("-");
+        out.append(end.toString());
+        
+        out.append(':');
+        out.append(UID);
+        return out.toString();
     }
 }
