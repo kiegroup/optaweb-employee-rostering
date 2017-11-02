@@ -65,7 +65,7 @@ public abstract class AbstractPersistable implements Serializable {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || !getClass().equals(o.getClass())) {
             return false;
         }
         AbstractPersistable other = (AbstractPersistable) o;

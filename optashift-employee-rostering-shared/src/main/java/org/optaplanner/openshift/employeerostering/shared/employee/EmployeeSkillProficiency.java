@@ -16,24 +16,16 @@
 
 package org.optaplanner.openshift.employeerostering.shared.employee;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id", "skill_id"}))

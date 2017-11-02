@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.server.employee;
 
 import java.util.List;
 import java.util.Objects;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -28,8 +29,6 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements EmployeeRestService {
@@ -119,6 +118,14 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
         }
         validateTenantIdParameter(tenantId, employeeAvailability);
         entityManager.remove(employeeAvailability);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateEmployee(Integer tenantId, Long id, Employee newValue) {
+        validateTenantIdParameter(tenantId, newValue);
+        update(entityManager, newValue, id);
         return true;
     }
 

@@ -1,0 +1,27 @@
+.main{}
+
+.panel {
+    position:fixed;
+    color: #000000;
+    background-color: #A0A0A0;
+    padding: 10px;
+    top: 25%;
+    left: 15%;
+    width: 600px;
+    height: 400px;
+    z-index: 8192;
+}
+
+.singleValueTagInput {
+    position: relative;
+    display: inline-block;
+    direction: ltr;
+    width: 50%;
+}
+
+.textbox {
+    position: relative;
+    display: inline-block;
+    direction: ltr;
+    width: 50%;
+}
