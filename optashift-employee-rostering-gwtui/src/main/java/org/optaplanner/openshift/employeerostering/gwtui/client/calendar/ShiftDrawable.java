@@ -2,18 +2,13 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 import elemental2.dom.CanvasRenderingContext2D;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 
-
-public class ShiftDrawable extends AbstractDrawable {
+public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
     String spot;
     LocalDateTime startTime;
     LocalDateTime endTime;
@@ -50,6 +45,26 @@ public class ShiftDrawable extends AbstractDrawable {
             
         }
     }
+    
+    @Override
+    public void doDrawAt(CanvasRenderingContext2D g, double x, double y) {
+        CanvasUtils.setFillColor(g, color);
+        
+        double start = startTime.toEpochSecond(ZoneOffset.UTC) / 60;
+        double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
+        double duration = end - start;
+        
+        CanvasUtils.drawCurvedRect(g, x, y, duration*view.getWidthPerMinute(), view.getSpotHeight());
+        
+        CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
+        g.fillText(spot, x, y + view.getSpotHeight());
+        
+        if (view.getMouseX() >= x && view.getMouseX() <= y + view.getWidthPerMinute()*duration &&
+                view.getMouseY() >= x && view.getMouseY() <= y + view.getSpotHeight() ) {
+            view.preparePopup(this.toString());
+            
+        }
+    }
 
     @Override
     public double getLocalX() {
@@ -59,7 +74,7 @@ public class ShiftDrawable extends AbstractDrawable {
 
     @Override
     public double getLocalY() {
-        Long cursorIndex = view.getSpotCursorIndex(spot);
+        Integer cursorIndex = view.getSpotCursorIndex(spot);
         return (null != cursorIndex && cursorIndex > index)? index*view.getSpotHeight() : (index+1)*view.getSpotHeight();
     }
     
@@ -71,22 +86,34 @@ public class ShiftDrawable extends AbstractDrawable {
     public String toString() {
         StringBuilder out = new StringBuilder(spot);
         out.append(' ');
-        out.append(pad(startTime.getHour() + "", 2));
+        out.append(CommonUtils.pad(startTime.getHour() + "", 2));
         out.append(':');
-        out.append(pad(startTime.getMinute() + "", 2));
+        out.append(CommonUtils.pad(startTime.getMinute() + "", 2));
         out.append('-');
-        out.append(pad(endTime.getHour() + "", 2));
+        out.append(CommonUtils.pad(endTime.getHour() + "", 2));
         out.append(':');
-        out.append(pad(endTime.getMinute() + "", 2));
+        out.append(CommonUtils.pad(endTime.getMinute() + "", 2));
         return out.toString();
     }
-    
-    private String pad(String str, int len) {
-        StringBuilder out = new StringBuilder(str);
-        while (out.length() < len) {
-            out.insert(0, "0");
-        }
-        return out.toString();
+
+    @Override
+    public int getIndex() {
+        return index;
+    }
+
+    @Override
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    @Override
+    public String getGroupId() {
+        return spot;
     }
 
 }
