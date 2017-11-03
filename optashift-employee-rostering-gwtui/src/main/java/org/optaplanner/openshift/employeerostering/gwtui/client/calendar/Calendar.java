@@ -25,22 +25,17 @@ public class Calendar {
     CalendarView view;
     Collection<ShiftData> shifts;
     Integer tenantId;
+    Div topPanel;
+    Div bottomPanel;
+    Span sidePanel;
     
     public Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Div topPanel, Div bottomPanel, Span sidePanel) {
         this.canvas = canvasElement;
         this.tenantId = tenantId;
+        this.topPanel = topPanel;
+        this.bottomPanel = bottomPanel;
+        this.sidePanel = sidePanel;
         
-        double width = Window.getClientWidth() - canvasElement.offsetLeft - 100;
-        double height = Window.getClientHeight() - canvasElement.offsetTop - 100;
-        
-        canvas.width = width;
-        canvas.height = height;
-        
-        Window.addResizeHandler((e) -> {
-            canvas.width = e.getWidth() - canvasElement.offsetLeft - 100;
-            canvas.height = e.getHeight() - canvasElement.offsetTop - 100;
-            draw();
-        });
         canvas.draggable = false;
         canvas.style.background = "#FFFFFF";
         
@@ -50,7 +45,15 @@ public class Calendar {
         
         shifts = new ArrayList<ShiftData>();
         
-        view = new TwoDayView(this);
+        view = new TwoDayView(this,topPanel,bottomPanel,sidePanel);
+        
+        refresh();
+        
+        Window.addResizeHandler((e) -> {
+            canvas.width = e.getWidth() - canvasElement.offsetLeft - sidePanel.getOffsetWidth() - 100;
+            canvas.height = e.getHeight() - canvasElement.offsetTop - topPanel.getOffsetHeight() - bottomPanel.getOffsetHeight() - 100;
+            draw();
+        });
     }
     
     private CalendarView getView() {
@@ -80,8 +83,17 @@ public class Calendar {
     }
     
     public void draw() {
+        refresh();
         CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) canvas.getContext("2d");            
         view.draw(g, canvas.width, canvas.height);
+    }
+    
+    public void refresh() {
+        double width = Window.getClientWidth() - canvas.offsetLeft - sidePanel.getOffsetWidth()  - 100;
+        double height = Window.getClientHeight() - canvas.offsetTop - topPanel.getOffsetHeight() - bottomPanel.getOffsetHeight() - 100;
+        
+        canvas.width = width;
+        canvas.height = height;
     }
     
     public void onMouseDown(MouseEvent e) {

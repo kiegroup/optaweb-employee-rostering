@@ -83,7 +83,7 @@ public class ConfigurationEditor implements IsElement {
     }
    
    public void refresh() {
-       
+       calendar.refresh();
    }
 
 }

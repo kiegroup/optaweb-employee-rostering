@@ -8,65 +8,130 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.HasRows;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.view.client.NoSelectionModel;
+import com.google.gwt.view.client.Range;
+import com.google.gwt.view.client.RangeChangeEvent;
+import com.google.gwt.view.client.RangeChangeEvent.Handler;
+import com.google.gwt.view.client.RowCountChangeEvent;
+import com.google.gwt.view.client.SelectionModel;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
+import org.gwtbootstrap3.client.ui.Pagination;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
-public class TwoDayView implements CalendarView {
+public class TwoDayView implements CalendarView, HasRows, HasData<Collection<ShiftDrawable>> {
     Calendar calendar;
     
     private static final String BACKGROUND_1 = "#efefef";
     private static final String BACKGROUND_2 = "#e0e0e0";
     private static final String LINE_COLOR = "#000000";
     private static final String[] WEEKDAYS = LocaleInfo.getCurrentLocale().getDateTimeFormatInfo().weekdaysFull();
+    private static final int WEEK_START = LocaleInfo.getCurrentLocale().getDateTimeFormatInfo().firstDayOfTheWeek();
     
     private static final int HEADER_HEIGHT = 64;
     private static final double SPOT_NAME_WIDTH = 200;
     
     
     private List<Spot> spots = new ArrayList<>();
-    private HashMap<String,Long> spotPos = new HashMap<>();
-    private HashMap<String,Long> cursorIndex = new HashMap<>();
+    private Collection<Handler> rangeHandlers = new ArrayList<>();
+    private Collection<com.google.gwt.view.client.RowCountChangeEvent.Handler> rowCountHandlers = new ArrayList<>();
+    private HashMap<String,Integer> spotPos = new HashMap<>();
+    private HashMap<String,Integer> cursorIndex = new HashMap<>();
     private HashMap<String, DynamicContainer> spotContainer = new HashMap<>();
     private HashMap<String, DynamicContainer> spotAddPlane = new HashMap<>();
     private Collection<ShiftData> shifts;
     private Collection<ShiftDrawable> shiftDrawables;
-    LocalDateTime curr;
+    private Pagination pagination;
+    private SimplePager pager;
+    private ListDataProvider<Collection<ShiftDrawable>> dataProvider = new ListDataProvider<>();
+    private SelectionModel<? super Collection<ShiftDrawable>> selectionModel;
+    private int rangeStart, rangeEnd;
+    private int totalDisplayedSpotSlots;
+    int currDay;
     
     double mouseX, mouseY;
     double dragStartX, dragStartY;
     double widthPerMinute, spotHeight;
-    long totalSpotSlots;
+    int totalSpotSlots;
     boolean isDragging, creatingEvent;
     String selectedSpot;
     Long selectedIndex;
     String overSpot;
     String popupText;
     
-    public TwoDayView(Calendar calendar) {
+    Panel topPanel, bottomPanel, sidePanel;
+    
+    public TwoDayView(Calendar calendar, Panel top, Panel bottom, Panel side) {
         this.calendar = calendar;
-        curr = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+        currDay = 0;
         mouseX = 0;
         mouseY = 0;
+        rangeStart = 0;
+        rangeEnd = 10;
+        totalDisplayedSpotSlots = 10;
         selectedSpot = null;
         isDragging = false;
         creatingEvent = false;
         popupText = null;
         selectedIndex = null;
+        topPanel = top;
+        bottomPanel = bottom;
+        sidePanel = side;
+        shiftDrawables = new ArrayList<>();
+        selectionModel = new NoSelectionModel<Collection<ShiftDrawable>>((g) -> (g.isEmpty())? null : g.iterator().next().getGroupId());
+        initPanels();
+    }
+    
+    private void initPanels() {
+        Label title = new Label();
+        title.setText("Configuration Editor");
+        topPanel.add(title);
+        
+        
+        Button prevButton = new Button();
+        prevButton.setText("Previous Day");
+        prevButton.addClickHandler((e) -> {currDay -= 1; calendar.draw();});
+        bottomPanel.add(prevButton);
+        
+        Button nextButton = new Button();
+        nextButton.setText("Next Day");
+        nextButton.addClickHandler((e) -> {currDay += 1; calendar.draw();});
+        bottomPanel.add(nextButton);
+        
+        pagination = new Pagination();
+        pager = new SimplePager();
+        
+        bottomPanel.add(pagination);
+        
+        pager.setDisplay(this);
+        pager.setPageSize(totalDisplayedSpotSlots);
+        pagination.clear();
+        dataProvider.addDataDisplay(this);
     }
     
     @Override
@@ -76,7 +141,7 @@ public class TwoDayView implements CalendarView {
                 .plusDays(1).toEpochSecond(ZoneOffset.UTC);
         long minutesPerDay = secondsPerDay/60;
         widthPerMinute = (screenWidth - SPOT_NAME_WIDTH)/(2*minutesPerDay);
-        spotHeight = (screenHeight - HEADER_HEIGHT)/totalSpotSlots;
+        spotHeight = (screenHeight - HEADER_HEIGHT)/totalDisplayedSpotSlots;
         
         drawShiftsBackground(g, screenWidth, screenHeight);
         drawSpots(g, screenWidth, screenHeight);
@@ -91,18 +156,44 @@ public class TwoDayView implements CalendarView {
         for (Spot spot : spots) {
             minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot.getName(), SPOT_NAME_WIDTH, spotHeight));
         }
-        g.font = CanvasUtils.getFont(minSize);
         
+        g.save();
+        g.translate(-currDay*(60*24)*widthPerMinute, 0);
+        int index = 0;
+        Iterable<Collection<ShiftDrawable>> toDraw = getVisibleItems();
+        Set<String> drawnSpots = new HashSet<>();
+        HashMap<String, Integer> spotIndex = new HashMap<>();
+        String lastGroup = null;
+        for (Collection<ShiftDrawable> group : toDraw) {
+            if (!group.isEmpty()) {
+                String groupId = group.iterator().next().getGroupId();
+                if (lastGroup != null && !lastGroup.equals(groupId)) {
+                    index++;
+                }
+                
+                if (!drawnSpots.contains(groupId)) {
+                    drawnSpots.add(groupId);
+                    spotIndex.put(groupId, index);
+                }
+                lastGroup = groupId;
+            }
+            for (ShiftDrawable drawable : group) {
+                drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + index*spotHeight);
+            }
+            index++;
+        }
+        g.restore();
+        
+        CanvasUtils.setFillColor(g, "#FFFFFF");
+        g.fillRect(0, HEADER_HEIGHT, SPOT_NAME_WIDTH, screenHeight - HEADER_HEIGHT);
         CanvasUtils.setFillColor(g, "#000000");
         double textHeight = CanvasUtils.getTextHeight(g, minSize);
-        for (Spot spot : spots) {
-            long pos = spotPos.get(spot.getName());
+        g.font = CanvasUtils.getFont(minSize);
+        
+        for (Spot spot : spots.stream().filter((s) -> drawnSpots.contains(s.getName())).collect(Collectors.toList())) {
+            int pos = spotIndex.get(spot.getName());
             g.fillText(spot.getName(), 0, HEADER_HEIGHT + spotHeight*pos + textHeight + (spotHeight - textHeight)/2);
             CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + spotHeight*pos, screenWidth, HEADER_HEIGHT + spotHeight*pos);
-        }
-        
-        for (ShiftDrawable drawable : shiftDrawables) {
-            drawable.draw(g);
         }
     }
     
@@ -135,9 +226,9 @@ public class TwoDayView implements CalendarView {
         if (null != selectedSpot) {
             CanvasUtils.setFillColor(g, "#00FF00");
             long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH) / widthPerMinute); 
-            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC);
+            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC).plusDays(currDay);
             long toMins = Math.max(0,Math.round((mouseX - SPOT_NAME_WIDTH) / widthPerMinute)); 
-            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC);
+            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC).plusDays(currDay);
             if (to.isBefore(from)) {
                 LocalDateTime tmp = to;
                 to = from;
@@ -145,13 +236,13 @@ public class TwoDayView implements CalendarView {
             }
             StringBuilder timeslot = new StringBuilder(".");
             timeslot.append(' ');
-            timeslot.append(pad(from.getHour() + "", 2));
+            timeslot.append(CommonUtils.pad(from.getHour() + "", 2));
             timeslot.append(':');
-            timeslot.append(pad(from.getMinute() + "", 2));
+            timeslot.append(CommonUtils.pad(from.getMinute() + "", 2));
             timeslot.append('-');
-            timeslot.append(pad(to.getHour() + "", 2));
+            timeslot.append(CommonUtils.pad(to.getHour() + "", 2));
             timeslot.append(':');
-            timeslot.append(pad(to.getMinute() + "", 2));
+            timeslot.append(CommonUtils.pad(to.getMinute() + "", 2));
             preparePopup(timeslot.toString());
             g.fillRect(dragStartX, spotContainer.get(selectedSpot).getGlobalY() + spotHeight*selectedIndex, (toMins - fromMins)*widthPerMinute, spotHeight);
         }
@@ -183,7 +274,7 @@ public class TwoDayView implements CalendarView {
     private void handleMouseDown(double eventX, double eventY) {
         for (String spot : spotAddPlane.keySet()) {
             if (spotContainer.get(spot).getGlobalX() < mouseX && spotContainer.get(spot).getGlobalY() < mouseY && mouseY < spotAddPlane.get(spot).getGlobalY() + spotHeight ) {
-                long index = (long) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
+                int index = (int) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
                 if (null != overSpot) {
                     cursorIndex.put(overSpot, spotPos.get(overSpot));
                 }
@@ -199,9 +290,9 @@ public class TwoDayView implements CalendarView {
     private void handleMouseUp(double eventX, double eventY) {
         if (null != selectedSpot) {
             long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH) / widthPerMinute); 
-            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC);
+            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC).plusDays(currDay);
             long toMins = Math.max(0,Math.round((eventX - SPOT_NAME_WIDTH) / widthPerMinute)); 
-            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC);
+            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC).plusDays(currDay);
             if (to.isBefore(from)) {
                 LocalDateTime tmp = to;
                 to = from;
@@ -213,8 +304,13 @@ public class TwoDayView implements CalendarView {
     
     private void drawTimes(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
         CanvasUtils.setFillColor(g, "#000000");
-        
-        
+        String week = "Week " + currDay/7;
+        int textSize = CanvasUtils.fitTextToBox(g, week, SPOT_NAME_WIDTH, HEADER_HEIGHT/2);
+        g.font = CanvasUtils.getFont(textSize);
+        g.fillText(week, 0, HEADER_HEIGHT/2);
+        for (int x = 0; x < 2; x++) {
+            g.fillText(WEEKDAYS[Math.abs((WEEK_START + x + currDay)) % 7], SPOT_NAME_WIDTH + (24*x)*60*widthPerMinute, HEADER_HEIGHT/2);
+        }
         for (int x = 0; x < 8; x++) {
             g.fillText(((6*x) % 24) + ":00", SPOT_NAME_WIDTH + x*6*60*widthPerMinute, HEADER_HEIGHT);
             CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + x*6*widthPerMinute*60, HEADER_HEIGHT, SPOT_NAME_WIDTH + x*6*widthPerMinute*60, screenHeight);
@@ -276,7 +372,7 @@ public class TwoDayView implements CalendarView {
         HashMap<String, HashMap<ShiftData,Integer>> placedSpots = new HashMap<>();
         HashMap<String, String> colorMap = new HashMap<>();
         
-        for (Spot spot : spots.stream().sorted((a,b) -> stringWithIntCompareTo(a.getName(),b.getName())).collect(Collectors.toList())) {
+        for (Spot spot : spots.stream().sorted((a,b) -> CommonUtils.stringWithIntCompareTo(a.getName(),b.getName())).collect(Collectors.toList())) {
             spotPos.put(spot.getName(), totalSpotSlots);
             final long spotStartPos = totalSpotSlots;
             spotContainer.put(spot.getName(), new DynamicContainer(()->new Position(SPOT_NAME_WIDTH, HEADER_HEIGHT + spotStartPos*getSpotHeight())));
@@ -322,6 +418,10 @@ public class TwoDayView implements CalendarView {
         for (Spot spot : spots) {
             cursorIndex.put(spot.getName(), spotPos.get(spot.getName()));
         }
+        
+        dataProvider.setList(getItems());
+        dataProvider.flush();
+        pagination.rebuild(pager);
     }
     
     public double getWidthPerMinute() {
@@ -340,114 +440,16 @@ public class TwoDayView implements CalendarView {
         return mouseY;
     }
     
-    public Long getSpotCursorIndex(String spot) {
+    public double getDragStartX() {
+        return dragStartX;
+    }
+    
+    public double getDragStartY() {
+        return dragStartY;
+    }
+    
+    public Integer getSpotCursorIndex(String spot) {
         return cursorIndex.get(spot);
-    }
-    
-    
-    //TODO: Move this to another file
-    //This is a lexicographic ordering of strings, but for different strings
-    //of the format s(num1)p and s(num2)q, it would use numeric ordering on the num1 and num2 part (so 10 > 2)
-    private static int stringWithIntCompareTo(String a, String b) {
-        Iterator<Integer> aIter = a.chars().iterator();
-        Iterator<Integer> bIter = b.chars().iterator();
-        
-        while (true) {
-            if (!aIter.hasNext() && !bIter.hasNext()) {
-                return 0;
-            }
-            else if (!aIter.hasNext()) {
-                return -1;
-            }
-            else if (!bIter.hasNext()) {
-                return 1;
-            }
-            
-            int aChar = aIter.next();
-            int bChar = bIter.next();
-            
-            if (isDigit(aChar)) {
-                if (isDigit(bChar)) {
-                    char[] aValue = Character.toChars(aChar);
-                    char[] bValue = Character.toChars(bChar);
-                    StringBuilder aNum = new StringBuilder();
-                    StringBuilder bNum = new StringBuilder();
-                    boolean aHasChar = false;
-                    boolean bHasChar = false;
-                    
-                    for (char c : aValue) {
-                        aNum.append(c);
-                    }
-                    for (char c : bValue) {
-                        bNum.append(c);
-                    }
-                    
-                    while (aIter.hasNext()) {
-                        aChar = aIter.next();
-                        aValue = Character.toChars(aChar);
-                        if (!isDigit(aChar)) {
-                            aHasChar = true;
-                            break;
-                        }
-                        for (char c : aValue) {
-                            aNum.append(c);
-                        }
-                    }
-                    while (bIter.hasNext()) {
-                        bChar = bIter.next();
-                        bValue = Character.toChars(bChar);
-                        if (!isDigit(aChar)) {
-                            bHasChar = true;
-                            break;
-                        }
-                        for (char c : aValue) {
-                            bNum.append(c);
-                        }
-                    }
-                    int aInt = Integer.parseInt(aNum.toString());
-                    int bInt = Integer.parseInt(bNum.toString());
-                    if (aInt != bInt) {
-                        return Integer.compare(aInt, bInt);
-                    }
-                    if (aHasChar && bHasChar) {
-                        if (Integer.compare(aChar, bChar) != 0) {
-                            return Integer.compare(aChar, bChar);
-                        }
-                    }
-                    else if (aHasChar) {
-                        return 1;
-                    }
-                    else if (bHasChar) {
-                        return -1;
-                    }
-                    else {
-                        return 0;
-                    }
-                    
-                }
-                else {
-                    return Integer.compare(aChar, bChar);
-                }
-            }
-            else {
-                if (Integer.compare(aChar, bChar) != 0) {
-                    return Integer.compare(aChar, bChar);
-                }
-            }
-        }
-    }
-    
-    private static boolean isDigit(int a) {
-        char[] chars = Character.toChars(a);
-        return chars.length == 1 && Character.isDigit(chars[0]);
-    }
-    
-    private String pad(String str, int len) {
-        StringBuilder out = new StringBuilder(str);
-        while (out.length() < len) {
-            out.insert(0, "0");
-        }
-        return out.toString();
     }
 
     public void preparePopup(String text) {
@@ -462,6 +464,154 @@ public class TwoDayView implements CalendarView {
                 spots = spotList;
             }
         });
+    }
+
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        if (event.getAssociatedType().equals(RowCountChangeEvent.getType())) {
+            rowCountHandlers.forEach((h) -> h.onRowCountChange((RowCountChangeEvent) event));
+        }
+        else if (event.getAssociatedType().equals(RangeChangeEvent.getType())) {
+            rangeHandlers.forEach((h) -> h.onRangeChange((RangeChangeEvent) event));
+        }
+    }
+
+    @Override
+    public HandlerRegistration addRangeChangeHandler(Handler handler) {
+        rangeHandlers.add(handler);
+        return new Registration<>(handler, rangeHandlers);
+    }
+
+    @Override
+    public HandlerRegistration addRowCountChangeHandler(com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
+        rowCountHandlers.add(handler);
+        return new Registration<>(handler, rowCountHandlers);
+    }
+
+    @Override
+    public int getRowCount() {
+        return totalSpotSlots;
+    }
+
+    @Override
+    public Range getVisibleRange() {
+        return new Range(rangeStart, rangeEnd - rangeStart);
+    }
+
+    @Override
+    public boolean isRowCountExact() {
+        return true;
+    }
+
+    @Override
+    public void setRowCount(int count) {
+        //Unimplemented; we control the rows
+    }
+
+    @Override
+    public void setRowCount(int count, boolean isExact) {
+        //Unimplemented; we control the rows
+    }
+
+    @Override
+    public void setVisibleRange(int start, int length) {
+        rangeStart = start;
+        rangeEnd = start + length;
+    }
+
+    @Override
+    public void setVisibleRange(Range range) {
+        rangeStart = range.getStart();
+        rangeEnd = range.getStart() + range.getLength();
+    }
+
+    @Override
+    public HandlerRegistration addCellPreviewHandler(com.google.gwt.view.client.CellPreviewEvent.Handler<Collection<ShiftDrawable>> handler) {
+        return new Registration<com.google.gwt.view.client.CellPreviewEvent.Handler<Collection<ShiftDrawable>>>();
+    }
+
+    @Override
+    public SelectionModel<? super Collection<ShiftDrawable>> getSelectionModel() {
+        return selectionModel;
+    }
+
+    @Override
+    public Collection<ShiftDrawable> getVisibleItem(int indexOnPage) {
+        return shiftDrawables.stream()
+                .filter((d) -> d.getIndex() + spotPos.get(d.getGroupId()) - rangeStart == indexOnPage)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public int getVisibleItemCount() {
+        return shiftDrawables.stream()
+                .map((d) -> d.getIndex() + spotPos.get(d.getGroupId()))
+                .filter((i) -> i >= rangeStart && i <= rangeEnd).collect(Collectors.toSet()).size();
+    }
+
+    @Override
+    public Iterable<Collection<ShiftDrawable>> getVisibleItems() {
+        HashMap<Integer,Set<ShiftDrawable>> out = new HashMap<>();
+        shiftDrawables.stream()
+                .forEach((d) -> {
+                    int index = d.getIndex() + spotPos.get(d.getGroupId());
+                    if (rangeStart <= index && index <= rangeEnd) {
+                        Set<ShiftDrawable> group = out.getOrDefault(index, new HashSet<>());
+                        group.add(d);
+                        out.put(index, group);
+                    }
+                });
+        
+        return out.keySet().stream().sorted().map((k) -> out.get(k))
+                .collect(Collectors.toList());
+    }
+    
+    public List<Collection<ShiftDrawable>> getItems() {
+        HashMap<Integer,Set<ShiftDrawable>> out = new HashMap<>();
+        shiftDrawables.stream()
+                .forEach((d) -> {
+                    int index = d.getIndex() + spotPos.get(d.getGroupId());
+                    Set<ShiftDrawable> group = out.getOrDefault(index, new HashSet<>());
+                    group.add(d);
+                    out.put(index, group);
+                });
+        return out.keySet().stream().sorted().map((k) -> out.get(k))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setRowData(int start, List<? extends Collection<ShiftDrawable>> values) {
+        
+    }
+
+    @Override
+    public void setSelectionModel(SelectionModel<? super Collection<ShiftDrawable>> selectionModel) {
+        this.selectionModel = selectionModel;
+    }
+
+    @Override
+    public void setVisibleRangeAndClearData(Range range, boolean forceRangeChangeEvent) {
+        setVisibleRange(range);
+        calendar.draw();
+    }
+    
+    private class Registration<T> implements HandlerRegistration {
+        Collection<T> backingCollection;
+        T handler;
+        
+        public Registration(T handler, Collection<T> backingCollection) {
+            this.handler = handler;
+            this.backingCollection = backingCollection;
+        }
+        
+        public Registration() {
+            backingCollection = new HashSet<>();
+        }
+        
+        @Override
+        public void removeHandler() {
+            backingCollection.remove(handler);
+        }
     }
 
 }
