@@ -39,8 +39,8 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
         g.fillText(spot, getLocalX(), getLocalY() + view.getSpotHeight());
         
-        if (view.getMouseX() >= getGlobalX() && view.getMouseX() <= getGlobalX() + view.getWidthPerMinute()*duration &&
-                view.getMouseY() >= getGlobalY() && view.getMouseY() <= getGlobalY() + view.getSpotHeight() ) {
+        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()*duration &&
+                view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view.getSpotHeight() ) {
             view.preparePopup(this.toString());
             
         }
@@ -59,8 +59,8 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
         g.fillText(spot, x, y + view.getSpotHeight());
         
-        if (view.getMouseX() >= x && view.getMouseX() <= y + view.getWidthPerMinute()*duration &&
-                view.getMouseY() >= x && view.getMouseY() <= y + view.getSpotHeight() ) {
+        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()*duration &&
+                view.getLocalMouseY() >= y && view.getLocalMouseY() <= y + view.getSpotHeight() ) {
             view.preparePopup(this.toString());
             
         }
