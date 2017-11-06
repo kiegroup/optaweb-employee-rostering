@@ -7,6 +7,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -66,6 +67,8 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     private HashMap<String, DynamicContainer> spotAddPlane = new HashMap<>();
     private Collection<ShiftData> shifts;
     private Collection<ShiftDrawable> shiftDrawables;
+    private List<Collection<ShiftDrawable>> cachedVisibleItems;
+    private List<Collection<ShiftDrawable>> allItems;
     private Pagination pagination;
     private SimplePager pager;
     private ListDataProvider<Collection<ShiftDrawable>> dataProvider = new ListDataProvider<>();
@@ -75,10 +78,11 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     int currDay;
     
     double mouseX, mouseY;
+    double screenWidth, screenHeight;
     double dragStartX, dragStartY;
     double widthPerMinute, spotHeight;
     int totalSpotSlots;
-    boolean isDragging, creatingEvent;
+    boolean isDragging, creatingEvent, visibleDirty, allDirty;
     String selectedSpot;
     Long selectedIndex;
     String overSpot;
@@ -103,6 +107,10 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         bottomPanel = bottom;
         sidePanel = side;
         shiftDrawables = new ArrayList<>();
+        visibleDirty = true;
+        allDirty = true;
+        screenWidth = 1;
+        screenHeight = 1;
         selectionModel = new NoSelectionModel<Collection<ShiftDrawable>>((g) -> (g.isEmpty())? null : g.iterator().next().getGroupId());
         initPanels();
     }
@@ -141,17 +149,19 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
                 .plusDays(1).toEpochSecond(ZoneOffset.UTC);
         long minutesPerDay = secondsPerDay/60;
         widthPerMinute = (screenWidth - SPOT_NAME_WIDTH)/(2*minutesPerDay);
-        spotHeight = (screenHeight - HEADER_HEIGHT)/totalDisplayedSpotSlots;
+        spotHeight = (screenHeight - HEADER_HEIGHT)/(totalDisplayedSpotSlots+1);
+        this.screenWidth = screenWidth;
+        this.screenHeight = screenHeight;
         
-        drawShiftsBackground(g, screenWidth, screenHeight);
-        drawSpots(g, screenWidth, screenHeight);
-        drawTimes(g, screenWidth, screenHeight);
-        drawCreateShiftForSpotBar(g, screenWidth, screenHeight);
-        drawSpotToCreate(g, screenWidth, screenHeight);
-        drawPopup(g, screenWidth, screenHeight);
+        drawShiftsBackground(g);
+        drawSpots(g);
+        drawTimes(g);
+        drawCreateShiftForSpotBar(g);
+        drawSpotToCreate(g);
+        drawPopup(g);
     }
     
-    private void drawSpots(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
+    private void drawSpots(CanvasRenderingContext2D g) {
         int minSize = Integer.MAX_VALUE;
         for (Spot spot : spots) {
             minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot.getName(), SPOT_NAME_WIDTH, spotHeight));
@@ -167,9 +177,6 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         for (Collection<ShiftDrawable> group : toDraw) {
             if (!group.isEmpty()) {
                 String groupId = group.iterator().next().getGroupId();
-                if (lastGroup != null && !lastGroup.equals(groupId)) {
-                    index++;
-                }
                 
                 if (!drawnSpots.contains(groupId)) {
                     drawnSpots.add(groupId);
@@ -180,7 +187,9 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
             for (ShiftDrawable drawable : group) {
                 drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + index*spotHeight);
             }
-            index++;
+            if (lastGroup != null) {
+                index++;
+            }
         }
         g.restore();
         
@@ -197,20 +206,20 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         }
     }
     
-    private void drawPopup(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
+    private void drawPopup(CanvasRenderingContext2D g) {
         if (null != popupText) {
             g.font = CanvasUtils.getFont(12);
             double[] preferredSize = CanvasUtils.getPreferredBoxSizeForText(g, popupText, 12);
-            g.strokeRect(getMouseX() - preferredSize[0], getMouseY() - preferredSize[1], preferredSize[0], preferredSize[1]);
+            g.strokeRect(getLocalMouseX() - preferredSize[0], getLocalMouseY() - preferredSize[1], preferredSize[0], preferredSize[1]);
             CanvasUtils.setFillColor(g, "#B18800");
-            g.fillRect(getMouseX() - preferredSize[0], getMouseY() - preferredSize[1], preferredSize[0], preferredSize[1]);
+            g.fillRect(getLocalMouseX() - preferredSize[0], getLocalMouseY() - preferredSize[1], preferredSize[0], preferredSize[1]);
             CanvasUtils.setFillColor(g, "#000000");
-            CanvasUtils.drawTextInBox(g, popupText, getMouseX() - preferredSize[0], getMouseY() - preferredSize[1], preferredSize[0], preferredSize[1]);
+            CanvasUtils.drawTextInBox(g, popupText, getLocalMouseX() - preferredSize[0], getLocalMouseY() - preferredSize[1], preferredSize[0], preferredSize[1]);
             popupText = null;
         }
     }
     
-    private void drawShiftsBackground(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
+    private void drawShiftsBackground(CanvasRenderingContext2D g) {
         for (int x = 0; x < 48; x++) {
             if (x % 2 == 0) {
                 CanvasUtils.setFillColor(g, BACKGROUND_1);
@@ -222,12 +231,12 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         }
     }
     
-    private void drawSpotToCreate(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
+    private void drawSpotToCreate(CanvasRenderingContext2D g) {
         if (null != selectedSpot) {
             CanvasUtils.setFillColor(g, "#00FF00");
-            long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH) / widthPerMinute); 
+            long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH - getOffsetX()) / widthPerMinute); 
             LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC).plusDays(currDay);
-            long toMins = Math.max(0,Math.round((mouseX - SPOT_NAME_WIDTH) / widthPerMinute)); 
+            long toMins = Math.max(0,Math.round((mouseX - SPOT_NAME_WIDTH - getOffsetX()) / widthPerMinute)); 
             LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC).plusDays(currDay);
             if (to.isBefore(from)) {
                 LocalDateTime tmp = to;
@@ -244,11 +253,11 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
             timeslot.append(':');
             timeslot.append(CommonUtils.pad(to.getMinute() + "", 2));
             preparePopup(timeslot.toString());
-            g.fillRect(dragStartX, spotContainer.get(selectedSpot).getGlobalY() + spotHeight*selectedIndex, (toMins - fromMins)*widthPerMinute, spotHeight);
+            g.fillRect(dragStartX - getOffsetX(), spotContainer.get(selectedSpot).getGlobalY() + spotHeight*selectedIndex - getOffsetY(), (toMins - fromMins)*widthPerMinute, spotHeight);
         }
     }
     
-    private void drawCreateShiftForSpotBar(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
+    private void drawCreateShiftForSpotBar(CanvasRenderingContext2D g) {
         /*if (null != selectedSpot) {
             return;
         }
@@ -272,8 +281,9 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     }
     
     private void handleMouseDown(double eventX, double eventY) {
+        double offsetX = getOffsetX();
         for (String spot : spotAddPlane.keySet()) {
-            if (spotContainer.get(spot).getGlobalX() < mouseX && spotContainer.get(spot).getGlobalY() < mouseY && mouseY < spotAddPlane.get(spot).getGlobalY() + spotHeight ) {
+            if (spotContainer.get(spot).getGlobalX() < mouseX - offsetX && spotContainer.get(spot).getGlobalY() < mouseY && mouseY < spotAddPlane.get(spot).getGlobalY() + spotHeight ) {
                 int index = (int) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
                 if (null != overSpot) {
                     cursorIndex.put(overSpot, spotPos.get(overSpot));
@@ -289,9 +299,9 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     
     private void handleMouseUp(double eventX, double eventY) {
         if (null != selectedSpot) {
-            long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH) / widthPerMinute); 
+            long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH - getOffsetX()) / widthPerMinute); 
             LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC).plusDays(currDay);
-            long toMins = Math.max(0,Math.round((eventX - SPOT_NAME_WIDTH) / widthPerMinute)); 
+            long toMins = Math.max(0, Math.round((eventX - SPOT_NAME_WIDTH - getOffsetX()) / widthPerMinute)); 
             LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC).plusDays(currDay);
             if (to.isBefore(from)) {
                 LocalDateTime tmp = to;
@@ -302,7 +312,7 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         }
     }
     
-    private void drawTimes(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
+    private void drawTimes(CanvasRenderingContext2D g) {
         CanvasUtils.setFillColor(g, "#000000");
         String week = "Week " + currDay/7;
         int textSize = CanvasUtils.fitTextToBox(g, week, SPOT_NAME_WIDTH, HEADER_HEIGHT/2);
@@ -319,8 +329,8 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     
     @Override
     public void onMouseDown(MouseEvent e) {
-        mouseX = CanvasUtils.getCanvasX(calendar.canvas, e);
-        mouseY = CanvasUtils.getCanvasY(calendar.canvas, e);
+        mouseX = CanvasUtils.getCanvasX(calendar.canvas, e) + getOffsetX();
+        mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
         dragStartX = mouseX;
         dragStartY = mouseY;
         handleMouseDown(mouseX, mouseY);
@@ -330,8 +340,8 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     
     @Override
     public void onMouseUp(MouseEvent e) {
-        mouseX = CanvasUtils.getCanvasX(calendar.canvas, e);
-        mouseY = CanvasUtils.getCanvasY(calendar.canvas, e);
+        mouseX = CanvasUtils.getCanvasX(calendar.canvas, e) + getOffsetX();
+        mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
         handleMouseUp(mouseX, mouseY);
         isDragging = false;
         selectedSpot = null;
@@ -340,8 +350,8 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
 
     @Override
     public void onMouseMove(MouseEvent e) {
-        mouseX = CanvasUtils.getCanvasX(calendar.canvas, e);
-        mouseY = CanvasUtils.getCanvasY(calendar.canvas, e);
+        mouseX = CanvasUtils.getCanvasX(calendar.canvas, e) + getOffsetX();
+        mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
         if (isDragging) {
             onMouseDrag(mouseX, mouseY);
         }
@@ -369,6 +379,8 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         spotContainer.clear();
         spotAddPlane.clear();
         cursorIndex.clear();
+        allDirty = true;
+        visibleDirty = true;
         HashMap<String, HashMap<ShiftData,Integer>> placedSpots = new HashMap<>();
         HashMap<String, String> colorMap = new HashMap<>();
         
@@ -432,12 +444,28 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         return spotHeight;
     }
     
-    public double getMouseX() {
+    public double getGlobalMouseX() {
         return mouseX;
     }
     
-    public double getMouseY() {
+    public double getGlobalMouseY() {
         return mouseY;
+    }
+    
+    public double getLocalMouseX() {
+        return mouseX - getOffsetX();
+    }
+    
+    public double getLocalMouseY() {
+        return mouseY - getOffsetY();
+    }
+    
+    private double getOffsetX() {
+        return (screenWidth - SPOT_NAME_WIDTH)*currDay*0.5;
+    }
+    
+    private double getOffsetY() {
+        return (screenHeight - HEADER_HEIGHT - spotHeight)*pager.getPage();
     }
     
     public double getDragStartX() {
@@ -490,7 +518,10 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
 
     @Override
     public int getRowCount() {
-        return totalSpotSlots;
+        if (allDirty) {
+            getItems();
+        }
+        return allItems.size();
     }
 
     @Override
@@ -515,12 +546,20 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
 
     @Override
     public void setVisibleRange(int start, int length) {
+        if (start == rangeStart && rangeEnd - rangeStart == length) {
+            return;
+        }
+        visibleDirty = true;
         rangeStart = start;
         rangeEnd = start + length;
     }
 
     @Override
     public void setVisibleRange(Range range) {
+        if (range.getStart() == rangeStart && rangeEnd - rangeStart == range.getLength()) {
+            return;
+        }
+        visibleDirty = true;
         rangeStart = range.getStart();
         rangeEnd = range.getStart() + range.getLength();
     }
@@ -537,46 +576,58 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
 
     @Override
     public Collection<ShiftDrawable> getVisibleItem(int indexOnPage) {
-        return shiftDrawables.stream()
-                .filter((d) -> d.getIndex() + spotPos.get(d.getGroupId()) - rangeStart == indexOnPage)
-                .collect(Collectors.toSet());
+        if (visibleDirty) {
+            getVisibleItems();
+        }
+        return cachedVisibleItems.get(indexOnPage);
     }
 
     @Override
     public int getVisibleItemCount() {
-        return shiftDrawables.stream()
-                .map((d) -> d.getIndex() + spotPos.get(d.getGroupId()))
-                .filter((i) -> i >= rangeStart && i <= rangeEnd).collect(Collectors.toSet()).size();
+        if (visibleDirty) {
+            getVisibleItems();
+        }
+        return cachedVisibleItems.size();
     }
 
     @Override
     public Iterable<Collection<ShiftDrawable>> getVisibleItems() {
-        HashMap<Integer,Set<ShiftDrawable>> out = new HashMap<>();
-        shiftDrawables.stream()
-                .forEach((d) -> {
-                    int index = d.getIndex() + spotPos.get(d.getGroupId());
-                    if (rangeStart <= index && index <= rangeEnd) {
-                        Set<ShiftDrawable> group = out.getOrDefault(index, new HashSet<>());
-                        group.add(d);
-                        out.put(index, group);
-                    }
-                });
+         if (visibleDirty) {
+             HashMap<Integer,Set<ShiftDrawable>> out = new HashMap<>();
+             shiftDrawables.stream()
+                     .forEach((d) -> {
+                         int index = d.getIndex() + spotPos.get(d.getGroupId());
+                         if (rangeStart <= index && index <= rangeEnd) {
+                             Set<ShiftDrawable> group = out.getOrDefault(index, new HashSet<>());
+                             group.add(d);
+                             out.put(index, group);
+                         }
+                     });
         
-        return out.keySet().stream().sorted().map((k) -> out.get(k))
-                .collect(Collectors.toList());
+             cachedVisibleItems = IntStream.range(rangeStart, rangeEnd).mapToObj((k) -> out.getOrDefault(k, Collections.emptySet()))
+                 .collect(Collectors.toList());
+             visibleDirty = false;
+         }
+         return cachedVisibleItems;
     }
     
     public List<Collection<ShiftDrawable>> getItems() {
-        HashMap<Integer,Set<ShiftDrawable>> out = new HashMap<>();
-        shiftDrawables.stream()
-                .forEach((d) -> {
-                    int index = d.getIndex() + spotPos.get(d.getGroupId());
-                    Set<ShiftDrawable> group = out.getOrDefault(index, new HashSet<>());
-                    group.add(d);
-                    out.put(index, group);
-                });
-        return out.keySet().stream().sorted().map((k) -> out.get(k))
-                .collect(Collectors.toList());
+        if (allDirty) {
+            HashMap<Integer,Set<ShiftDrawable>> out = new HashMap<>();
+            int[] max = {0};//Nifty trick to allow us to modify max within the forEach
+            shiftDrawables.stream()
+                    .forEach((d) -> {
+                        int index = d.getIndex() + spotPos.get(d.getGroupId());
+                        max[0] = Math.max(max[0], index);
+                        Set<ShiftDrawable> group = out.getOrDefault(index, new HashSet<>());
+                        group.add(d);
+                        out.put(index, group);
+                    });
+            allItems = IntStream.range(0, max[0]).mapToObj((k) -> out.get(k))
+                    .collect(Collectors.toList());
+            allDirty = false;
+        }
+        return allItems;
     }
 
     @Override
