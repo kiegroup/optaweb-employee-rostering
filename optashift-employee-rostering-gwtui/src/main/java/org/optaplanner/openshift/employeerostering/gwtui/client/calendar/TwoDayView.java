@@ -1,16 +1,12 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
-import java.awt.geom.Point2D;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,7 +16,6 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -39,14 +34,10 @@ import org.gwtbootstrap3.client.ui.Pagination;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
-import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
-public class TwoDayView implements CalendarView, HasRows, HasData<Collection<ShiftDrawable>> {
-    Calendar calendar;
+public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> implements CalendarView<I>, HasRows, HasData<Collection<D>> {
+    Calendar<I> calendar;
     
     private static final String BACKGROUND_1 = "#efefef";
     private static final String BACKGROUND_2 = "#e0e0e0";
@@ -58,21 +49,21 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     private static final double SPOT_NAME_WIDTH = 200;
     
     
-    private List<Spot> spots = new ArrayList<>();
+    private List<String> spots = new ArrayList<>();
     private Collection<Handler> rangeHandlers = new ArrayList<>();
     private Collection<com.google.gwt.view.client.RowCountChangeEvent.Handler> rowCountHandlers = new ArrayList<>();
     private HashMap<String,Integer> spotPos = new HashMap<>();
     private HashMap<String,Integer> cursorIndex = new HashMap<>();
     private HashMap<String, DynamicContainer> spotContainer = new HashMap<>();
     private HashMap<String, DynamicContainer> spotAddPlane = new HashMap<>();
-    private Collection<ShiftData> shifts;
-    private Collection<ShiftDrawable> shiftDrawables;
-    private List<Collection<ShiftDrawable>> cachedVisibleItems;
-    private List<Collection<ShiftDrawable>> allItems;
+    private Collection<I> shifts;
+    private Collection<D> shiftDrawables;
+    private List<Collection<D>> cachedVisibleItems;
+    private List<Collection<D>> allItems;
     private Pagination pagination;
     private SimplePager pager;
-    private ListDataProvider<Collection<ShiftDrawable>> dataProvider = new ListDataProvider<>();
-    private SelectionModel<? super Collection<ShiftDrawable>> selectionModel;
+    private ListDataProvider<Collection<D>> dataProvider = new ListDataProvider<>();
+    private SelectionModel<? super Collection<D>> selectionModel;
     private int rangeStart, rangeEnd;
     private int totalDisplayedSpotSlots;
     int currDay;
@@ -89,8 +80,9 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     String popupText;
     
     Panel topPanel, bottomPanel, sidePanel;
+    TimeRowDrawableProvider<I,D> drawableProvider;
     
-    public TwoDayView(Calendar calendar, Panel top, Panel bottom, Panel side) {
+    public TwoDayView(Calendar<I> calendar, Panel top, Panel bottom, Panel side, TimeRowDrawableProvider<I,D> drawableProvider) {
         this.calendar = calendar;
         currDay = 0;
         mouseX = 0;
@@ -111,7 +103,8 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         allDirty = true;
         screenWidth = 1;
         screenHeight = 1;
-        selectionModel = new NoSelectionModel<Collection<ShiftDrawable>>((g) -> (g.isEmpty())? null : g.iterator().next().getGroupId());
+        selectionModel = new NoSelectionModel<Collection<? extends D>>((g) -> (g.isEmpty())? null : g.iterator().next().getGroupId());
+        this.drawableProvider = drawableProvider;
         initPanels();
     }
     
@@ -163,19 +156,19 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     
     private void drawSpots(CanvasRenderingContext2D g) {
         int minSize = Integer.MAX_VALUE;
-        for (Spot spot : spots) {
-            minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot.getName(), SPOT_NAME_WIDTH, spotHeight));
+        for (String spot : spots) {
+            minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot, SPOT_NAME_WIDTH, spotHeight));
         }
         
         g.save();
         g.translate(-currDay*(60*24)*widthPerMinute, 0);
         int index = 0;
-        Iterable<Collection<ShiftDrawable>> toDraw = getVisibleItems();
+        Iterable<Collection<D>> toDraw = getVisibleItems();
         Set<String> drawnSpots = new HashSet<>();
         HashMap<String, Integer> spotIndex = new HashMap<>();
         String lastGroup = null;
         int groupIndex = 0;
-        for (Collection<ShiftDrawable> group : toDraw) {
+        for (Collection<D> group : toDraw) {
             if (!group.isEmpty()) {
                 String groupId = group.iterator().next().getGroupId();
                 
@@ -186,7 +179,7 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
                 }
                 lastGroup = groupId;
                 
-                for (ShiftDrawable drawable : group) {
+                for (D drawable : group) {
                     if (groupId.equals(selectedSpot) && groupIndex >= selectedIndex) {
                         drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + (index+1)*spotHeight);
                     }
@@ -208,9 +201,9 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         double textHeight = CanvasUtils.getTextHeight(g, minSize);
         g.font = CanvasUtils.getFont(minSize);
         
-        for (Spot spot : spots.stream().filter((s) -> drawnSpots.contains(s.getName())).collect(Collectors.toList())) {
-            int pos = spotIndex.get(spot.getName());
-            g.fillText(spot.getName(), 0, HEADER_HEIGHT + spotHeight*pos + textHeight + (spotHeight - textHeight)/2);
+        for (String spot : spots.stream().filter((s) -> drawnSpots.contains(s)).collect(Collectors.toList())) {
+            int pos = spotIndex.get(spot);
+            g.fillText(spot, 0, HEADER_HEIGHT + spotHeight*pos + textHeight + (spotHeight - textHeight)/2);
             CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + spotHeight*pos, screenWidth, HEADER_HEIGHT + spotHeight*pos);
         }
     }
@@ -317,7 +310,7 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
                 to = from;
                 from = tmp;
             }
-            calendar.addShift(new ShiftData(from, to, Arrays.asList(selectedSpot)));
+            calendar.addShift(selectedSpot, from, to);
         }
     }
     
@@ -370,8 +363,10 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     private void onMouseDrag(double x, double y) {
     }
     
-    private List<ShiftData> getShiftsDuring(ShiftData time, Collection<ShiftData> shifts) {
-        return shifts.stream().filter((shift) -> doTimeslotsIntersect(time.start, time.end,shift.start,shift.end)).collect(Collectors.toList());
+    private List<I> getShiftsDuring(I time, Collection<I> shifts) {
+        return shifts.stream()
+                .filter((shift) -> doTimeslotsIntersect(time.getStartTime(), time.getEndTime(),
+                        shift.getStartTime(),shift.getEndTime())).collect(Collectors.toList());
     }
     
     private static boolean doTimeslotsIntersect(LocalDateTime start1, LocalDateTime end1,
@@ -380,7 +375,7 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     }
 
     @Override
-    public void setShifts(Collection<ShiftData> shifts) {
+    public void setShifts(Collection<I> shifts) {
         this.shifts = shifts;
         shiftDrawables = new ArrayList<>();
         totalSpotSlots = 0;
@@ -390,54 +385,49 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         cursorIndex.clear();
         allDirty = true;
         visibleDirty = true;
-        HashMap<String, HashMap<ShiftData,Integer>> placedSpots = new HashMap<>();
+        HashMap<String, HashMap<I,Integer>> placedSpots = new HashMap<>();
         HashMap<String, String> colorMap = new HashMap<>();
         
-        for (Spot spot : spots.stream().sorted((a,b) -> CommonUtils.stringWithIntCompareTo(a.getName(),b.getName())).collect(Collectors.toList())) {
-            spotPos.put(spot.getName(), totalSpotSlots);
-            final long spotStartPos = totalSpotSlots;
-            spotContainer.put(spot.getName(), new DynamicContainer(()->new Position(SPOT_NAME_WIDTH, HEADER_HEIGHT + spotStartPos*getSpotHeight())));
-            colorMap.put(spot.getName(), ColorUtils.getColor(colorMap.size()));
+        for (String spot : spots.stream().sorted((a,b) -> CommonUtils.stringWithIntCompareTo(a,b)).collect(Collectors.toList())) {
+            HashMap<I,Integer> placedShifts = new HashMap<>();
             long max = 0;
-            List<ShiftData> spotShifts = shifts.stream().filter((shift) -> shift.spots.contains(spot.getName())).collect(Collectors.toList());
-            HashMap<ShiftData,Integer> placedShifts = new HashMap<ShiftData,Integer>();
-            for (ShiftData spotShift : spotShifts) {
-                List<ShiftData> concurrentShifts = getShiftsDuring(spotShift, placedShifts.keySet());
-                HashMap<ShiftData,Integer> concurrentPlacedShifts = new HashMap<>();
+            for (I shift : shifts.stream().filter((s) -> s.getGroupId().equals(spot)).collect(Collectors.toList())) {
+                spotPos.put(spot, totalSpotSlots);
+                final long spotStartPos = totalSpotSlots;
+                spotContainer.put(spot, new DynamicContainer(()->new Position(SPOT_NAME_WIDTH, HEADER_HEIGHT + spotStartPos*getSpotHeight())));
+                colorMap.put(spot, ColorUtils.getColor(colorMap.size()));
+                List<I> concurrentShifts = getShiftsDuring(shift, placedShifts.keySet());
+                HashMap<I,Integer> concurrentPlacedShifts = new HashMap<>();
                 placedShifts.forEach((k,v) -> {
                     if (concurrentShifts.contains(k)) {
                         concurrentPlacedShifts.put(k, v);
-;                    }
+                        ;                }
                 });
                 int index = 0;
                 while (concurrentPlacedShifts.containsValue(index)) {
                     index++;
                 }
-                placedShifts.put(spotShift, index);
+                placedShifts.put(shift, index);
                 max = Math.max(max, index);
             }
             totalSpotSlots += max + 2;
             final long spotEndPos = totalSpotSlots;
-            spotAddPlane.put(spot.getName(), new DynamicContainer(() -> new Position(SPOT_NAME_WIDTH,HEADER_HEIGHT + getSpotHeight()*(spotEndPos-1))));
-            placedSpots.put(spot.getName(), placedShifts);
+            spotAddPlane.put(spot, new DynamicContainer(() -> new Position(SPOT_NAME_WIDTH,HEADER_HEIGHT + getSpotHeight()*(spotEndPos-1))));
+            placedSpots.put(spot, placedShifts);
         }
         
-        for (ShiftData shift : shifts) {
-            for (String spot : shift.spots) {
-                if (placedSpots.containsKey(spot) && placedSpots.get(spot).containsKey(shift)) {
-                    ShiftDrawable drawable = new ShiftDrawable(this,
-                            spot,
-                            shift.start, shift.end,
-                            colorMap.get(spot),
-                            placedSpots.get(spot).get(shift));
-                    drawable.setParent(spotContainer.get(spot));
-                    shiftDrawables.add(drawable);
-                }
+        for (I shift : shifts) {
+            if (placedSpots.containsKey(shift.getGroupId()) && placedSpots.get(shift.getGroupId()).containsKey(shift)) {
+                D drawable = drawableProvider.createDrawable(this,
+                        shift,
+                        placedSpots.get(shift.getGroupId()).get(shift));
+                drawable.setParent(spotContainer.get(shift.getGroupId()));
+                shiftDrawables.add(drawable);
             }
         }
         
-        for (Spot spot : spots) {
-            cursorIndex.put(spot.getName(), spotPos.get(spot.getName()));
+        for (String spot : spots) {
+            cursorIndex.put(spot, spotPos.get(spot));
         }
         
         dataProvider.setList(getItems());
@@ -494,13 +484,14 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     }
 
     @Override
-    public void setTenantId(Integer id) {
-        SpotRestServiceBuilder.getSpotList(calendar.getTenantId(), new FailureShownRestCallback<List<Spot>>() {
+    public void setGroups(List<String> groups) {
+        this.spots = groups;
+        /*SpotRestServiceBuilder.getSpotList(calendar.getTenantId(), new FailureShownRestCallback<List<Spot>>() {
             @Override
             public void onSuccess(List<Spot> spotList) {
                 spots = spotList;
             }
-        });
+        });*/
     }
 
     @Override
@@ -574,17 +565,17 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     }
 
     @Override
-    public HandlerRegistration addCellPreviewHandler(com.google.gwt.view.client.CellPreviewEvent.Handler<Collection<ShiftDrawable>> handler) {
+    public HandlerRegistration addCellPreviewHandler(com.google.gwt.view.client.CellPreviewEvent.Handler<Collection<D>> handler) {
         return new Registration<com.google.gwt.view.client.CellPreviewEvent.Handler<Collection<ShiftDrawable>>>();
     }
 
     @Override
-    public SelectionModel<? super Collection<ShiftDrawable>> getSelectionModel() {
+    public SelectionModel<? super Collection<D>> getSelectionModel() {
         return selectionModel;
     }
 
     @Override
-    public Collection<ShiftDrawable> getVisibleItem(int indexOnPage) {
+    public Collection<D> getVisibleItem(int indexOnPage) {
         if (visibleDirty) {
             getVisibleItems();
         }
@@ -600,14 +591,14 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     }
 
     @Override
-    public Iterable<Collection<ShiftDrawable>> getVisibleItems() {
+    public Iterable<Collection<D>> getVisibleItems() {
          if (visibleDirty) {
-             HashMap<Integer,Set<ShiftDrawable>> out = new HashMap<>();
+             HashMap<Integer,Set<D>> out = new HashMap<>();
              shiftDrawables.stream()
                      .forEach((d) -> {
                          int index = d.getIndex() + spotPos.get(d.getGroupId());
                          if (rangeStart <= index && index <= rangeEnd) {
-                             Set<ShiftDrawable> group = out.getOrDefault(index, new HashSet<>());
+                             Set<D> group = out.getOrDefault(index, new HashSet<>());
                              group.add(d);
                              out.put(index, group);
                          }
@@ -620,15 +611,15 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
          return cachedVisibleItems;
     }
     
-    public List<Collection<ShiftDrawable>> getItems() {
+    public List<Collection<D>> getItems() {
         if (allDirty) {
-            HashMap<Integer,Set<ShiftDrawable>> out = new HashMap<>();
+            HashMap<Integer,Set<D>> out = new HashMap<>();
             int[] max = {0};//Nifty trick to allow us to modify max within the forEach
             shiftDrawables.stream()
                     .forEach((d) -> {
                         int index = d.getIndex() + spotPos.get(d.getGroupId());
                         max[0] = Math.max(max[0], index);
-                        Set<ShiftDrawable> group = out.getOrDefault(index, new HashSet<>());
+                        Set<D> group = out.getOrDefault(index, new HashSet<>());
                         group.add(d);
                         out.put(index, group);
                     });
@@ -640,12 +631,12 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
     }
 
     @Override
-    public void setRowData(int start, List<? extends Collection<ShiftDrawable>> values) {
+    public void setRowData(int start, List<? extends Collection<D>> values) {
         
     }
 
     @Override
-    public void setSelectionModel(SelectionModel<? super Collection<ShiftDrawable>> selectionModel) {
+    public void setSelectionModel(SelectionModel<? super Collection<D>> selectionModel) {
         this.selectionModel = selectionModel;
     }
 

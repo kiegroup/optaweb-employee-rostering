@@ -1,5 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client;
 
+import java.util.Arrays;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -29,11 +31,11 @@ public class OptaShiftRosteringEntryPoint {
     @PostConstruct
     public void onModuleLoad() {
         document.getBody().appendChild(menuPanel.getElement());
-        GWT.setUncaughtExceptionHandler(new
+        /*GWT.setUncaughtExceptionHandler(new
                 GWT.UncaughtExceptionHandler() {
                 public void onUncaughtException(Throwable e) {
-                  ErrorPopup.show(e.getMessage());
+                  ErrorPopup.show(Arrays.asList(e.getStackTrace()).stream().reduce("", (a,b) -> a.toString() + "\n" + b.toString(), (a,b) -> a + "\n" + b));
               }
-          });
+          });*/
     }
 }

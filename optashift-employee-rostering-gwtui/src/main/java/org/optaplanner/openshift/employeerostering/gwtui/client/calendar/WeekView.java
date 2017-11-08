@@ -3,6 +3,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 import java.time.DayOfWeek;
 import java.time.format.TextStyle;
 import java.util.Collection;
+import java.util.List;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.i18n.client.LocaleInfo;
@@ -10,11 +11,12 @@ import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.Event;
 import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
 //TODO: See if you can replace me with a Google Calendar widget
-public class WeekView implements CalendarView{
-    Calendar calendar;
+public class WeekView<I extends HasTimeslot> implements CalendarView<I>{
+    Calendar<I> calendar;
     
     private static final String BACKGROUND_1 = "#efefef";
     private static final String BACKGROUND_2 = "#e0e0e0";
@@ -26,9 +28,9 @@ public class WeekView implements CalendarView{
     private static final String[] WEEKDAYS = LocaleInfo.getCurrentLocale().getDateTimeFormatInfo().weekdaysFull();
     
     double x, y;
-    private Collection<ShiftData> shifts;
+    private Collection<I> shifts;
     
-    public WeekView(Calendar calendar) {
+    public WeekView(Calendar<I> calendar) {
         this.calendar = calendar;
         x = 0;
         y = 0;
@@ -116,13 +118,13 @@ public class WeekView implements CalendarView{
     }
 
     @Override
-    public void setShifts(Collection<ShiftData> shifts) {
+    public void setShifts(Collection<I> shifts) {
         this.shifts = shifts;
         
     }
 
     @Override
-    public void setTenantId(Integer id) {
+    public void setGroups(List<String> groups) {
         // TODO Auto-generated method stub
         
     }
