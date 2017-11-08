@@ -1,9 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -11,30 +9,34 @@ import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.Label;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.DataProvider;
+import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
-public class Calendar {
+public class Calendar<I extends HasTimeslot> {
     HTMLCanvasElement canvas;
-    CalendarView view;
-    Collection<ShiftData> shifts;
+    CalendarView<I> view;
+    Collection<I> shifts;
     Integer tenantId;
     Div topPanel;
     Div bottomPanel;
     Span sidePanel;
+    Fetchable<Collection<I>> dataProvider;
+    Fetchable<List<String>> groupProvider;
+    DataProvider<I> instanceCreator;
     
-    public Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Div topPanel, Div bottomPanel, Span sidePanel) {
+    public Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Div topPanel, Div bottomPanel, Span sidePanel,
+            Fetchable<Collection<I>> dataProvider, Fetchable<List<String>> groupProvider, DataProvider<I> instanceCreator) {
         this.canvas = canvasElement;
         this.tenantId = tenantId;
         this.topPanel = topPanel;
         this.bottomPanel = bottomPanel;
         this.sidePanel = sidePanel;
+        this.groupProvider = groupProvider;
+        this.dataProvider = dataProvider;
+        this.instanceCreator = instanceCreator;
         
         canvas.draggable = false;
         canvas.style.background = "#FFFFFF";
@@ -43,9 +45,12 @@ public class Calendar {
         canvas.onmousemove = (e) -> {onMouseMove((MouseEvent) e); return e;};
         canvas.onmouseup = (e) -> {onMouseUp((MouseEvent) e); return e;};
         
-        shifts = new ArrayList<ShiftData>();
+        shifts = new ArrayList<>();
         
-        view = new TwoDayView(this,topPanel,bottomPanel,sidePanel);
+        view = new TwoDayView<I,ShiftDrawable>(this,topPanel,bottomPanel,sidePanel,
+                (v,d,i) -> new ShiftDrawable(v, d.getGroupId(),d.getStartTime(), d.getEndTime(), "#000000", i));
+        groupProvider.setUpdatable((groups) -> getView().setGroups(groups));
+        dataProvider.setUpdatable((d) -> {shifts = d; getView().setShifts(d);});
         
         refresh();
         
@@ -56,7 +61,7 @@ public class Calendar {
         });
     }
     
-    private CalendarView getView() {
+    private CalendarView<I> getView() {
         return view;
     }
     
@@ -66,20 +71,7 @@ public class Calendar {
     
     public void setTenantId(Integer tenantId) {
         this.tenantId = tenantId;
-        view.setTenantId(tenantId);
-        ShiftRestServiceBuilder.getShifts(tenantId, new FailureShownRestCallback<List<Shift>>() {
-            @Override
-            public void onSuccess(List<Shift> theShifts) {
-                shifts = new ArrayList<>();
-                LocalDateTime min = theShifts.stream().min((a,b) -> a.getTimeSlot().getStartDateTime().compareTo(b.getTimeSlot().getStartDateTime())).get().getTimeSlot().getStartDateTime();
-                for (Shift shift : theShifts) {
-                    shifts.add(new ShiftData(shift.getTimeSlot().getStartDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
-                            shift.getTimeSlot().getEndDateTime().minusSeconds(min.toEpochSecond(ZoneOffset.UTC)),
-                            Arrays.asList(shift.getSpot().toString())));
-                }
-                view.setShifts(shifts);
-            }
-        });
+        groupProvider.fetchData(() -> dataProvider.fetchData(Fetchable.DO_NOTHING));
     }
     
     public void draw() {
@@ -108,7 +100,8 @@ public class Calendar {
         getView().onMouseUp(e);
     }
     
-    public void addShift(ShiftData shift) {
+    public void addShift(String groupId, LocalDateTime start, LocalDateTime end) {
+        I shift = instanceCreator.getInstance(groupId, start, end);
         shifts.add(shift);
         getView().setShifts(shifts);
         draw();

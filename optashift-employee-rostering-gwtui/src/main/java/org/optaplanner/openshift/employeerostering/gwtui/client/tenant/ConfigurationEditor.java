@@ -38,8 +38,11 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotNameFetchable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotShiftFetchable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -65,7 +68,7 @@ public class ConfigurationEditor implements IsElement {
     @Inject
     private TranslationService CONSTANTS;
     
-    private Calendar calendar;
+    private Calendar<ShiftData> calendar;
     
 
     public ConfigurationEditor() {     
@@ -73,13 +76,19 @@ public class ConfigurationEditor implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
-        calendar = new Calendar(canvasElement, tenantId, topPanel, bottomPanel, sidePanel);
+        calendar = new Calendar<ShiftData>(canvasElement, tenantId, topPanel, bottomPanel, sidePanel,
+                new SpotShiftFetchable(() -> getTenantId()), new SpotNameFetchable(() -> getTenantId()),
+                (name,start,end) -> new ShiftData(start,end,name));
     }
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {
         tenantId = tenant.getId();
         calendar.setTenantId(tenantId);
         refresh();
+    }
+    
+    private Integer getTenantId() {
+        return tenantId;
     }
    
    public void refresh() {
