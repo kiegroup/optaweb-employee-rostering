@@ -174,6 +174,7 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
         Set<String> drawnSpots = new HashSet<>();
         HashMap<String, Integer> spotIndex = new HashMap<>();
         String lastGroup = null;
+        int groupIndex = 0;
         for (Collection<ShiftDrawable> group : toDraw) {
             if (!group.isEmpty()) {
                 String groupId = group.iterator().next().getGroupId();
@@ -181,12 +182,20 @@ public class TwoDayView implements CalendarView, HasRows, HasData<Collection<Shi
                 if (!drawnSpots.contains(groupId)) {
                     drawnSpots.add(groupId);
                     spotIndex.put(groupId, index);
+                    groupIndex = 0;
                 }
                 lastGroup = groupId;
+                
+                for (ShiftDrawable drawable : group) {
+                    if (groupId.equals(selectedSpot) && groupIndex >= selectedIndex) {
+                        drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + (index+1)*spotHeight);
+                    }
+                    else {
+                        drawable.doDrawAt(g,drawable.getGlobalX(), HEADER_HEIGHT + index*spotHeight);
+                    }
+                }
             }
-            for (ShiftDrawable drawable : group) {
-                drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + index*spotHeight);
-            }
+            groupIndex++;
             if (lastGroup != null) {
                 index++;
             }
