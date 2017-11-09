@@ -35,6 +35,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
 public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> implements CalendarView<I>, HasRows, HasData<Collection<D>> {
     Calendar<I> calendar;
@@ -49,13 +50,14 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     private static final double SPOT_NAME_WIDTH = 200;
     
     
-    private List<String> spots = new ArrayList<>();
+    private List<String> groups = new ArrayList<>();
     private Collection<Handler> rangeHandlers = new ArrayList<>();
     private Collection<com.google.gwt.view.client.RowCountChangeEvent.Handler> rowCountHandlers = new ArrayList<>();
-    private HashMap<String,Integer> spotPos = new HashMap<>();
+    private HashMap<String,Integer> groupPos = new HashMap<>();
+    private HashMap<String,Integer> groupEndPos = new HashMap<>();
     private HashMap<String,Integer> cursorIndex = new HashMap<>();
-    private HashMap<String, DynamicContainer> spotContainer = new HashMap<>();
-    private HashMap<String, DynamicContainer> spotAddPlane = new HashMap<>();
+    private HashMap<String, DynamicContainer> groupContainer = new HashMap<>();
+    private HashMap<String, DynamicContainer> groupAddPlane = new HashMap<>();
     private Collection<I> shifts;
     private Collection<D> shiftDrawables;
     private List<Collection<D>> cachedVisibleItems;
@@ -149,14 +151,13 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         drawShiftsBackground(g);
         drawSpots(g);
         drawTimes(g);
-        drawCreateShiftForSpotBar(g);
         drawSpotToCreate(g);
         drawPopup(g);
     }
     
     private void drawSpots(CanvasRenderingContext2D g) {
         int minSize = Integer.MAX_VALUE;
-        for (String spot : spots) {
+        for (String spot : groups) {
             minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot, SPOT_NAME_WIDTH, spotHeight));
         }
         
@@ -167,30 +168,42 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         Set<String> drawnSpots = new HashSet<>();
         HashMap<String, Integer> spotIndex = new HashMap<>();
         String lastGroup = null;
-        int groupIndex = 0;
+        int groupIndex = groups.indexOf(groupPos.keySet().stream()
+                .filter((group) -> groupEndPos.get(group) >= rangeStart).min((a,b) -> groupEndPos.get(a) - groupEndPos.get(b))
+                .get());
+        
+        spotIndex.put(groups.get(groupIndex), index);
+        drawnSpots.add(groups.get(groupIndex));
+        int offset = 0;
+        
         for (Collection<D> group : toDraw) {
             if (!group.isEmpty()) {
                 String groupId = group.iterator().next().getGroupId();
-                
-                if (!drawnSpots.contains(groupId)) {
-                    drawnSpots.add(groupId);
-                    spotIndex.put(groupId, index);
-                    groupIndex = 0;
-                }
                 lastGroup = groupId;
                 
+                int drawIndex = index;
                 for (D drawable : group) {
-                    if (groupId.equals(selectedSpot) && groupIndex >= selectedIndex) {
-                        drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + (index+1)*spotHeight);
+                    if (groupId.equals(selectedSpot) && drawable.getIndex() >= selectedIndex) {
+                        drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + (drawIndex+1)*spotHeight);
                     }
                     else {
-                        drawable.doDrawAt(g,drawable.getGlobalX(), HEADER_HEIGHT + index*spotHeight);
+                        drawable.doDrawAt(g,drawable.getGlobalX(), HEADER_HEIGHT + drawIndex*spotHeight);
                     }
                 }
-            }
-            groupIndex++;
-            if (lastGroup != null) {
                 index++;
+            }
+            else {
+                index++;
+                if (groupIndex < groups.size() && rangeStart + index > groupEndPos.get(groups.get(groupIndex))) {
+                    groupIndex++;
+                    if (groupIndex < groups.size()) {
+                        spotIndex.put(groups.get(groupIndex), index);
+                        drawnSpots.add(groups.get(groupIndex));
+                    }
+                }
+                else {
+                    offset++;
+                }
             }
         }
         g.restore();
@@ -201,7 +214,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         double textHeight = CanvasUtils.getTextHeight(g, minSize);
         g.font = CanvasUtils.getFont(minSize);
         
-        for (String spot : spots.stream().filter((s) -> drawnSpots.contains(s)).collect(Collectors.toList())) {
+        for (String spot : groups.stream().filter((s) -> drawnSpots.contains(s)).collect(Collectors.toList())) {
             int pos = spotIndex.get(spot);
             g.fillText(spot, 0, HEADER_HEIGHT + spotHeight*pos + textHeight + (spotHeight - textHeight)/2);
             CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + spotHeight*pos, screenWidth, HEADER_HEIGHT + spotHeight*pos);
@@ -255,45 +268,22 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
             timeslot.append(':');
             timeslot.append(CommonUtils.pad(to.getMinute() + "", 2));
             preparePopup(timeslot.toString());
-            g.fillRect(dragStartX - getOffsetX(), spotContainer.get(selectedSpot).getGlobalY() + spotHeight*selectedIndex - getOffsetY(), (toMins - fromMins)*widthPerMinute, spotHeight);
+            g.fillRect(dragStartX - getOffsetX(), groupContainer.get(selectedSpot).getGlobalY() + spotHeight*selectedIndex - getOffsetY(), (toMins - fromMins)*widthPerMinute, spotHeight);
         }
-    }
-    
-    private void drawCreateShiftForSpotBar(CanvasRenderingContext2D g) {
-        /*if (null != selectedSpot) {
-            return;
-        }
-        
-        for (String spot : spotAddPlane.keySet()) {
-            if (spotContainer.get(spot).getGlobalX() < mouseX && spotContainer.get(spot).getGlobalY() < mouseY && mouseY < spotAddPlane.get(spot).getGlobalY() + spotHeight ) {
-                long index = (long) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
-                CanvasUtils.setFillColor(g, "#00ff00");
-                if (null != overSpot) {
-                    cursorIndex.put(overSpot, spotPos.get(overSpot));
-                }
-                overSpot = spot;
-                cursorIndex.put(overSpot, index);
-                g.fillRect(SPOT_NAME_WIDTH, spotContainer.get(spot).getGlobalY() + spotHeight*index, screenWidth - SPOT_NAME_WIDTH, spotHeight);
-                return;
-            }
-        }
-        if (null != overSpot) {
-            cursorIndex.put(overSpot, spotPos.get(overSpot));
-        }*/
     }
     
     private void handleMouseDown(double eventX, double eventY) {
         double offsetX = getOffsetX();
-        for (String spot : spotAddPlane.keySet()) {
-            if (spotContainer.get(spot).getGlobalX() < mouseX - offsetX && spotContainer.get(spot).getGlobalY() < mouseY && mouseY < spotAddPlane.get(spot).getGlobalY() + spotHeight ) {
-                int index = (int) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
+        for (String spot : groupAddPlane.keySet()) {
+            if (groupContainer.get(spot).getGlobalX() < mouseX - offsetX && groupContainer.get(spot).getGlobalY() < mouseY && mouseY < groupAddPlane.get(spot).getGlobalY() + spotHeight ) {
+                int index = (int) Math.floor((mouseY - groupContainer.get(spot).getGlobalY())/spotHeight);
                 if (null != overSpot) {
-                    cursorIndex.put(overSpot, spotPos.get(overSpot));
+                    cursorIndex.put(overSpot, groupPos.get(overSpot));
                 }
                 selectedSpot = spot;
                 overSpot = spot;
                 cursorIndex.put(overSpot, index);
-                selectedIndex = (long) Math.floor((mouseY - spotContainer.get(spot).getGlobalY())/spotHeight);
+                selectedIndex = (long) Math.floor((mouseY - groupContainer.get(spot).getGlobalY())/spotHeight);
                 break;
             }
         }
@@ -379,24 +369,25 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         this.shifts = shifts;
         shiftDrawables = new ArrayList<>();
         totalSpotSlots = 0;
-        spotPos.clear();
-        spotContainer.clear();
-        spotAddPlane.clear();
+        groupPos.clear();
+        groupEndPos.clear();
+        groupContainer.clear();
+        groupAddPlane.clear();
         cursorIndex.clear();
         allDirty = true;
         visibleDirty = true;
         HashMap<String, HashMap<I,Integer>> placedSpots = new HashMap<>();
         HashMap<String, String> colorMap = new HashMap<>();
         
-        for (String spot : spots.stream().sorted((a,b) -> CommonUtils.stringWithIntCompareTo(a,b)).collect(Collectors.toList())) {
+        for (String group : groups.stream().sorted((a,b) -> CommonUtils.stringWithIntCompareTo(a,b)).collect(Collectors.toList())) {
             HashMap<I,Integer> placedShifts = new HashMap<>();
-            long max = 0;
-            spotPos.put(spot, totalSpotSlots);
+            int max = 1;
+            groupPos.put(group, totalSpotSlots);
             final long spotStartPos = totalSpotSlots;
-            spotContainer.put(spot, new DynamicContainer(()->new Position(SPOT_NAME_WIDTH, HEADER_HEIGHT + spotStartPos*getGroupHeight())));
-            colorMap.put(spot, ColorUtils.getColor(colorMap.size()));
+            groupContainer.put(group, new DynamicContainer(()->new Position(SPOT_NAME_WIDTH, HEADER_HEIGHT + spotStartPos*getGroupHeight())));
+            colorMap.put(group, ColorUtils.getColor(colorMap.size()));
             
-            for (I shift : shifts.stream().filter((s) -> s.getGroupId().equals(spot)).collect(Collectors.toList())) {
+            for (I shift : shifts.stream().filter((s) -> s.getGroupId().equals(group)).collect(Collectors.toList())) {
                 List<I> concurrentShifts = getShiftsDuring(shift, placedShifts.keySet());
                 HashMap<I,Integer> concurrentPlacedShifts = new HashMap<>();
                 placedShifts.forEach((k,v) -> {
@@ -411,10 +402,12 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
                 placedShifts.put(shift, index);
                 max = Math.max(max, index);
             }
+            
             totalSpotSlots += max + 2;
-            final long spotEndPos = totalSpotSlots;
-            spotAddPlane.put(spot, new DynamicContainer(() -> new Position(SPOT_NAME_WIDTH,HEADER_HEIGHT + getGroupHeight()*(spotEndPos-1))));
-            placedSpots.put(spot, placedShifts);
+            final int spotEndPos = totalSpotSlots;
+            groupEndPos.put(group, spotEndPos - 1);
+            groupAddPlane.put(group, new DynamicContainer(() -> new Position(SPOT_NAME_WIDTH,HEADER_HEIGHT + getGroupHeight()*(spotEndPos-1))));
+            placedSpots.put(group, placedShifts);
         }
         
         for (I shift : shifts) {
@@ -422,13 +415,13 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
                 D drawable = drawableProvider.createDrawable(this,
                         shift,
                         placedSpots.get(shift.getGroupId()).get(shift));
-                drawable.setParent(spotContainer.get(shift.getGroupId()));
+                drawable.setParent(groupContainer.get(shift.getGroupId()));
                 shiftDrawables.add(drawable);
             }
         }
         
-        for (String spot : spots) {
-            cursorIndex.put(spot, spotPos.get(spot));
+        for (String spot : groups) {
+            cursorIndex.put(spot, groupPos.get(spot));
         }
         
         dataProvider.setList(getItems());
@@ -445,7 +438,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     }
     
     public int getGroupIndex(String groupId) {
-        return spots.indexOf(groupId);
+        return groups.indexOf(groupId);
     }
     
     public double getGlobalMouseX() {
@@ -490,7 +483,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
 
     @Override
     public void setGroups(List<String> groups) {
-        this.spots = groups;
+        this.groups = groups;
     }
 
     @Override
@@ -595,7 +588,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
              HashMap<Integer,Set<D>> out = new HashMap<>();
              shiftDrawables.stream()
                      .forEach((d) -> {
-                         int index = d.getIndex() + spotPos.get(d.getGroupId());
+                         int index = d.getIndex() + groupPos.get(d.getGroupId());
                          if (rangeStart <= index && index <= rangeEnd) {
                              Set<D> group = out.getOrDefault(index, new HashSet<>());
                              group.add(d);
@@ -616,7 +609,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
             int[] max = {0};//Nifty trick to allow us to modify max within the forEach
             shiftDrawables.stream()
                     .forEach((d) -> {
-                        int index = d.getIndex() + spotPos.get(d.getGroupId());
+                        int index = d.getIndex() + groupPos.get(d.getGroupId());
                         max[0] = Math.max(max[0], index);
                         Set<D> group = out.getOrDefault(index, new HashSet<>());
                         group.add(d);
