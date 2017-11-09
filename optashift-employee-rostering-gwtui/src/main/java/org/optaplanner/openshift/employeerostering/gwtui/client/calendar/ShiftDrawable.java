@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 import elemental2.dom.CanvasRenderingContext2D;
+import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
 public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
     String spot;
