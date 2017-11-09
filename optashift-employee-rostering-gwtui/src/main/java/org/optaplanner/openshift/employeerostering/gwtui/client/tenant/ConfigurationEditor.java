@@ -17,6 +17,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calenda
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotNameFetchable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotShiftFetchable;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
@@ -47,7 +48,7 @@ public class ConfigurationEditor implements IsElement {
     @PostConstruct
     protected void initWidget() {
         calendar = new Calendar<ShiftData>(canvasElement, tenantId, topPanel, bottomPanel, sidePanel,
-                new ConstantFetchable<Collection<ShiftData>>(Collections.emptyList()), new SpotNameFetchable(() -> getTenantId()),
+                /*new SpotShiftFetchable(() -> getTenantId())*/new ConstantFetchable<Collection<ShiftData>>(Collections.emptyList()), new SpotNameFetchable(() -> getTenantId()),
                 (name,start,end) -> new ShiftData(start,end,name));
     }
 
