@@ -72,6 +72,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
 
     @PostConstruct
     protected void initWidget() {
+        super.init();
         initTable();
     }
 

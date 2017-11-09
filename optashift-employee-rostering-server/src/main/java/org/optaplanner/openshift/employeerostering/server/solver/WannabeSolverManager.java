@@ -46,14 +46,27 @@ public class WannabeSolverManager {
     private RosterRestService rosterRestService;
 
     private ConcurrentMap<Integer, SolverStatus> tenantIdToSolverStateMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<Integer, Solver<Roster>> tenantIdToSolverMap = new ConcurrentHashMap<>();
 
     @PostConstruct
     public void setUpSolverFactory() {
         solverFactory = SolverFactory.createFromXmlResource(
                 "org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringSolverConfig.xml");
     }
-
-
+    
+    public void terminate(Integer tenantId) {
+        Solver<Roster> solver = tenantIdToSolverMap.get(tenantId);
+        if (null != solver) {
+            tenantIdToSolverMap.remove(tenantId);
+            tenantIdToSolverStateMap.put(tenantId, SolverStatus.TERMINATED);
+            solver.terminateEarly();
+        }
+        else {
+            throw new IllegalStateException("The roster with tenantId (" + tenantId
+                    + ") is not being solved currently.");
+        }
+    }
+    
     public void solve(Integer tenantId) {
         logger.info("Scheduling solver for tenantId ({})...", tenantId);
         // No 2 solve() calls of the same dataset in parallel
@@ -67,6 +80,7 @@ public class WannabeSolverManager {
         executorService.submit(() -> {
             try {
                 Solver<Roster> solver = solverFactory.buildSolver();
+                tenantIdToSolverMap.put(tenantId, solver);
                 solver.addEventListener(event -> {
                     if (event.isEveryProblemFactChangeProcessed()) {
                         logger.info("  New best solution found for tenantId ({}).", tenantId);
@@ -81,6 +95,7 @@ public class WannabeSolverManager {
                     // TODO No need to store the returned roster because the SolverEventListener already does it?
                     solver.solve(roster);
                 } finally {
+                    tenantIdToSolverMap.remove(tenantId);
                     tenantIdToSolverStateMap.put(tenantId, SolverStatus.TERMINATED);
                 }
             } catch (Throwable e) {
