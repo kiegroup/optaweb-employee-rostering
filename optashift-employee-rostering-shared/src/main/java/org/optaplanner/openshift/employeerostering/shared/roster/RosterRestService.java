@@ -43,6 +43,10 @@ public interface RosterRestService {
     @POST
     @Path("/solve")
     void solveRoster(@PathParam("tenantId") Integer tenantId);
+    
+    @POST
+    @Path("/terminate")
+    void terminateRosterEarly(@PathParam("tenantId") Integer tenantId);
 
     // Not a REST method
     Roster buildRoster(Integer tenantId);

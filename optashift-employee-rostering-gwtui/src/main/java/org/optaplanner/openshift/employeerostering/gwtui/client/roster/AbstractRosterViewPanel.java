@@ -8,7 +8,8 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.gwtbootstrap3.client.ui.Button;
-import org.jboss.errai.common.client.dom.Span;
+import org.gwtbootstrap3.client.ui.html.Div;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -19,7 +20,7 @@ import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
 
-public abstract class AbstractRosterViewPanel implements IsElement {
+public abstract class AbstractRosterViewPanel implements Observer, IsElement {
 
     protected static final int REFRESH_RATE = 2000;
 
@@ -31,9 +32,25 @@ public abstract class AbstractRosterViewPanel implements IsElement {
     protected Button refreshButton;
     @Inject @DataField
     protected Span solveStatus;
-
+    
+    protected static Observable solverObservable = new Observable();
+    
+    protected Span buttonContent;
+    private boolean isSolving = false;
     @Inject
     private TranslationService CONSTANTS;
+    
+    protected void init() {
+        buttonContent= new Span();
+        solveButton.getElement().setAttribute("class","btn btn-success");
+        buttonContent.getElement().setAttribute("class", "glyphicon glyphicon-play");
+        buttonContent.getElement().setAttribute("aria-hidden", "true");
+        buttonContent.setHTML(new SafeHtmlBuilder()
+                .appendEscaped(CONSTANTS.format("AbstractRosterViewPanel.solve"))
+                .toSafeHtml().asString());
+        solveButton.add(buttonContent);
+        solverObservable.addObserver(this);
+    }
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {
         tenantId = tenant.getId();
@@ -48,6 +65,38 @@ public abstract class AbstractRosterViewPanel implements IsElement {
     public void refresh() {
         refreshTable();
     }
+    
+    public void update(Observable observable, Object arg) {
+        if (solverObservable == observable) {
+            if (arg instanceof StartSolvingEvent) {
+                solveButton.getElement().setAttribute("class","btn btn-danger");
+                buttonContent.getElement().setAttribute("class", "glyphicon glyphicon-stop");
+                buttonContent.getElement().setAttribute("aria-hidden", "true");
+                buttonContent.setHTML(new SafeHtmlBuilder()
+                        .appendEscaped(CONSTANTS.format("AbstractRosterViewPanel.terminateEarly"))
+                        .toSafeHtml().asString());
+                isSolving = true;
+            }
+            else if (arg instanceof TerminateSolvingEvent) {
+                solveButton.getElement().setAttribute("class","btn btn-success");
+                buttonContent.getElement().setAttribute("class", "glyphicon glyphicon-play");
+                buttonContent.getElement().setAttribute("aria-hidden", "true");
+                buttonContent.setHTML(new SafeHtmlBuilder()
+                        .appendEscaped(CONSTANTS.format("AbstractRosterViewPanel.solve"))
+                        .toSafeHtml().asString());
+                isSolving = false;
+                solveStatus.setHTML(new SafeHtmlBuilder()
+                        .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_finishedSolving) + ".")
+                        .toSafeHtml().asString());
+            }
+            else if (arg instanceof SetSolvingTimeEvent) {
+                SetSolvingTimeEvent event = (SetSolvingTimeEvent) arg;
+                solveStatus.setHTML(new SafeHtmlBuilder()
+                        .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_solvingFor,event.getSecondsRemaining()))
+                        .toSafeHtml().asString());
+            }
+        }
+    }
 
     protected abstract void refreshTable();
 
@@ -56,27 +105,57 @@ public abstract class AbstractRosterViewPanel implements IsElement {
         if (tenantId == null) {
             throw new IllegalStateException("The tenantId (" + tenantId + ") cannot be null at this time.");
         }
-        RosterRestServiceBuilder.solveRoster(tenantId, new FailureShownRestCallback<Void>() {
-            public void onSuccess(Void t) {
-                
-            }
+        if (isSolving) {
+            RosterRestServiceBuilder.terminateRosterEarly(tenantId, new FailureShownRestCallback<Void>() {
+                public void onSuccess(Void t) {
+                    solverObservable.notifyObservers(new TerminateSolvingEvent());
+                }
+            });
         }
-        );
-        // TODO 15 * 2000ms = 30 seconds - Keep in sync with solver config
-        Scheduler.get().scheduleFixedDelay(new RefreshTableRepeatingCommand(15), REFRESH_RATE);
+        else {
+            RosterRestServiceBuilder.solveRoster(tenantId, new FailureShownRestCallback<Void>() {
+                public void onSuccess(Void t) {
+                    solverObservable.notifyObservers(new StartSolvingEvent());
+                }
+            });
+            // TODO 15 * 2000ms = 30 seconds - Keep in sync with solver config
+            Scheduler.get().scheduleFixedDelay(new RefreshTableRepeatingCommand(15), REFRESH_RATE);
+        }
+        
+    }
+    
+    protected class StartSolvingEvent {}
+    protected class TerminateSolvingEvent {}
+    
+    protected class SetSolvingTimeEvent {
+        final int secondsRemaining;
+        
+        public SetSolvingTimeEvent(int secondRemaining) {
+            this.secondsRemaining = secondRemaining;
+        }
+        
+        public int getSecondsRemaining() {
+            return secondsRemaining;
+        }
     }
 
-    protected class RefreshTableRepeatingCommand implements Scheduler.RepeatingCommand {
+    protected class RefreshTableRepeatingCommand implements Scheduler.RepeatingCommand, Observer {
 
         private int repeatCount;
-
+        boolean terminateEarly = false;
+        
         public RefreshTableRepeatingCommand(int repeatCount) {
             this.repeatCount = repeatCount;
+            solverObservable.addObserver(this);
             updateSolverStatus();
         }
 
         @Override
         public boolean execute() {
+            if (terminateEarly) {
+                solverObservable.removeObserver(this);
+                return false;
+            }
             refreshTable();
             // To repeat n times, return true only n-1 times.
             repeatCount--;
@@ -84,18 +163,23 @@ public abstract class AbstractRosterViewPanel implements IsElement {
                 updateSolverStatus();
                 return true;
             } else {
-                solveStatus.setInnerHTML(new SafeHtmlBuilder()
-                        .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_finishedSolving) + ".")
-                        .toSafeHtml().asString());
+                solverObservable.removeObserver(this);
+                solverObservable.notifyObservers(new TerminateSolvingEvent());
                 return false;
             }
         }
 
         private void updateSolverStatus() {
             int remainingSeconds = REFRESH_RATE * repeatCount / 1000;
-            solveStatus.setInnerHTML(new SafeHtmlBuilder()
-                    .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_solvingFor,remainingSeconds))
-                    .toSafeHtml().asString());
+            solverObservable.notifyObservers(new SetSolvingTimeEvent(remainingSeconds));
+            
+        }
+
+        @Override
+        public void update(Observable observable, Object argument) {
+            if (observable == solverObservable && argument instanceof TerminateSolvingEvent) {
+                terminateEarly = true;
+            }
         }
 
     }

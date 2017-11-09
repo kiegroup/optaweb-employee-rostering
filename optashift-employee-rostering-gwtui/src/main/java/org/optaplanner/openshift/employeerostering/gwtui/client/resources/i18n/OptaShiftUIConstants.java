@@ -13,6 +13,9 @@ public interface OptaShiftUIConstants {
 	@TranslationKey(defaultValue="AbstractRosterViewPanel.startSolving")
 	final String AbstractRosterViewPanel_startSolving = "Click the <i>Solve</i> button to start solving.";
 	
+	@TranslationKey(defaultValue="AbstractRosterViewPanel.terminateEarly")
+	final String AbstractRosterViewPanel_terminateEarly = "Terminate";
+	
 	@TranslationKey(defaultValue="Delete")
     final String General_delete = "General.delete";
 	

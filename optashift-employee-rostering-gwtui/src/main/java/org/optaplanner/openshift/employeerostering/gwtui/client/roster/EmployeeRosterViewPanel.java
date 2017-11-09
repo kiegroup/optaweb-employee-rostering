@@ -67,6 +67,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
     @PostConstruct
     protected void initWidget() {
+        super.init();
         initTable();
     }
 

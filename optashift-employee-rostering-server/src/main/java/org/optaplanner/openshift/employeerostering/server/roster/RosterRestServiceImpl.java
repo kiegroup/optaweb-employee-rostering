@@ -199,6 +199,11 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     public void solveRoster(Integer tenantId) {
         solverManager.solve(tenantId);
     }
+    
+    @Override
+    public void terminateRosterEarly(Integer tenantId) {
+        solverManager.terminate(tenantId);
+    }
 
     @Override
     @Transactional
