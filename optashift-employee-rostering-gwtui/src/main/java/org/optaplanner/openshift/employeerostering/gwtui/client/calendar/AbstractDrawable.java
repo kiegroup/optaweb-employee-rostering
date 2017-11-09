@@ -56,14 +56,14 @@ public abstract class AbstractDrawable implements Drawable {
     }
     
     @Override
-    public void onMouseMove(MouseEvent e, double x, double y) {}
+    public boolean onMouseMove(MouseEvent e, double x, double y) {return false;}
     
     @Override
-    public void onMouseDrag(MouseEvent e, double x, double y) {}
+    public boolean onMouseDrag(MouseEvent e, double x, double y) {return false;}
     
     @Override
-    public void onMouseDown(MouseEvent e, double x, double y) {}
+    public boolean onMouseDown(MouseEvent e, double x, double y) {return false;}
         
     @Override
-    public void onMouseUp(MouseEvent e, double x, double y) {}
+    public boolean onMouseUp(MouseEvent e, double x, double y) {return false;}
 }
