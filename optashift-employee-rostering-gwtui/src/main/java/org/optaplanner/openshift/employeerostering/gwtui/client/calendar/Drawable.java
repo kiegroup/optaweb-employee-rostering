@@ -11,6 +11,7 @@ public interface Drawable {
     public double getLocalY();
     public double getGlobalX();
     public double getGlobalY();
+    public void onMouseDrag(MouseEvent e, double x, double y);
     public void onMouseMove(MouseEvent e, double x, double y);
     public void onMouseDown(MouseEvent e, double x, double y);
     public void onMouseUp(MouseEvent e, double x, double y);
