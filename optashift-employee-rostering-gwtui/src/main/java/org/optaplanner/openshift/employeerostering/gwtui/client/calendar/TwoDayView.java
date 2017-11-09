@@ -320,19 +320,22 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
         dragStartX = mouseX;
         dragStartY = mouseY;
-        handleMouseDown(mouseX, mouseY);
         isDragging = true;
         
+        boolean consumed = false;
         for (D drawable : shiftDrawables) {
             LocalDateTime mouseTime = getMouseLocalDateTime();
             double drawablePos = drawable.getGlobalY();
             
             if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
                 if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
-                    drawable.onMouseDown(e, mouseX, mouseY);
+                    consumed = drawable.onMouseDown(e, mouseX, mouseY);
                     break;
                 }
             }
+        }
+        if (!consumed) {
+            handleMouseDown(mouseX, mouseY);
         }
         
         calendar.draw();
@@ -342,21 +345,26 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     public void onMouseUp(MouseEvent e) {
         mouseX = CanvasUtils.getCanvasX(calendar.canvas, e) + getOffsetX();
         mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
-        handleMouseUp(mouseX, mouseY);
-        isDragging = false;
-        selectedSpot = null;
         
+        boolean consumed = false;
         for (D drawable : shiftDrawables) {
             LocalDateTime mouseTime = getMouseLocalDateTime();
             double drawablePos = drawable.getGlobalY();
             
             if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
                 if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
-                    drawable.onMouseUp(e, mouseX, mouseY);
+                    consumed = drawable.onMouseUp(e, mouseX, mouseY);
                     break;
                 }
             }
         }
+        if (!consumed) {
+            handleMouseUp(mouseX, mouseY);
+        }
+        
+        isDragging = false;
+        selectedSpot = null;
+       
         
         calendar.draw();
     }
@@ -365,18 +373,22 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     public void onMouseMove(MouseEvent e) {
         mouseX = CanvasUtils.getCanvasX(calendar.canvas, e) + getOffsetX();
         mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
+        boolean consumed = false;
+        
         if (isDragging) {
-            onMouseDrag(mouseX, mouseY);
             for (D drawable : shiftDrawables) {
                 LocalDateTime mouseTime = getMouseLocalDateTime();
                 double drawablePos = drawable.getGlobalY();
 
                 if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
                     if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
-                        drawable.onMouseDrag(e, mouseX, mouseY);
+                        consumed = drawable.onMouseDrag(e, mouseX, mouseY);
                         break;
                     }
                 }
+            }
+            if (!consumed) {
+                onMouseDrag(mouseX, mouseY);
             }
         }
         else {
@@ -386,7 +398,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
 
                 if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
                     if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
-                        drawable.onMouseMove(e, mouseX, mouseY);
+                        consumed = drawable.onMouseMove(e, mouseX, mouseY);
                         break;
                     }
                 }
