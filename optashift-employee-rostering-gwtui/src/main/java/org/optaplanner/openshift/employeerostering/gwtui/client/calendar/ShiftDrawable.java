@@ -17,12 +17,12 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
     TwoDayView view;
     
     
-    public ShiftDrawable(TwoDayView view, String spot, LocalDateTime startTime, LocalDateTime endTime, String color, int index) {
+    public ShiftDrawable(TwoDayView view, ShiftData data, int index) {
         this.view = view;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.spot = spot;
-        this.color = color;
+        this.startTime = data.getStartTime();
+        this.endTime = data.getEndTime();
+        this.spot = data.getGroupId();
+        this.color = ColorUtils.getColor(view.getGroupIndex(data.getGroupId()));
         this.index = index;
     }
 
@@ -34,13 +34,13 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
         double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
         double duration = end - start;
         
-        CanvasUtils.drawCurvedRect(g, getLocalX(), getLocalY(), duration*view.getWidthPerMinute(), view.getSpotHeight());
+        CanvasUtils.drawCurvedRect(g, getLocalX(), getLocalY(), duration*view.getWidthPerMinute(), view.getGroupHeight());
         
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
-        g.fillText(spot, getLocalX(), getLocalY() + view.getSpotHeight());
+        g.fillText(spot, getLocalX(), getLocalY() + view.getGroupHeight());
         
         if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()*duration &&
-                view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view.getSpotHeight() ) {
+                view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view.getGroupHeight() ) {
             view.preparePopup(this.toString());
             
         }
@@ -54,13 +54,13 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
         double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
         double duration = end - start;
         
-        CanvasUtils.drawCurvedRect(g, x, y, duration*view.getWidthPerMinute(), view.getSpotHeight());
+        CanvasUtils.drawCurvedRect(g, x, y, duration*view.getWidthPerMinute(), view.getGroupHeight());
         
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
-        g.fillText(spot, x, y + view.getSpotHeight());
+        g.fillText(spot, x, y + view.getGroupHeight());
         
         if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()*duration &&
-                view.getLocalMouseY() >= y && view.getLocalMouseY() <= y + view.getSpotHeight() ) {
+                view.getLocalMouseY() >= y && view.getLocalMouseY() <= y + view.getGroupHeight() ) {
             view.preparePopup(this.toString());
             
         }
@@ -74,8 +74,8 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
 
     @Override
     public double getLocalY() {
-        Integer cursorIndex = view.getSpotCursorIndex(spot);
-        return (null != cursorIndex && cursorIndex > index)? index*view.getSpotHeight() : (index+1)*view.getSpotHeight();
+        Integer cursorIndex = view.getCursorIndex(spot);
+        return (null != cursorIndex && cursorIndex > index)? index*view.getGroupHeight() : (index+1)*view.getGroupHeight();
     }
     
     public void setIndex(int index) {

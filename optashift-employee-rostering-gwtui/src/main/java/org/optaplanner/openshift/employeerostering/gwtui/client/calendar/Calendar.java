@@ -48,9 +48,9 @@ public class Calendar<I extends HasTimeslot> {
         shifts = new ArrayList<>();
         
         view = new TwoDayView<I,ShiftDrawable>(this,topPanel,bottomPanel,sidePanel,
-                (v,d,i) -> new ShiftDrawable(v, d.getGroupId(),d.getStartTime(), d.getEndTime(), "#000000", i));
+                (v,d,i) -> new ShiftDrawable(v, (ShiftData) d, i));
         groupProvider.setUpdatable((groups) -> getView().setGroups(groups));
-        dataProvider.setUpdatable((d) -> {shifts = d; getView().setShifts(d);});
+        dataProvider.setUpdatable((d) -> {shifts = new ArrayList<>(d); getView().setShifts(shifts);});
         
         refresh();
         

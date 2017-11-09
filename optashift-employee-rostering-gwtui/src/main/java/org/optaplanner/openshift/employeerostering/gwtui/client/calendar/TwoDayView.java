@@ -391,17 +391,18 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         for (String spot : spots.stream().sorted((a,b) -> CommonUtils.stringWithIntCompareTo(a,b)).collect(Collectors.toList())) {
             HashMap<I,Integer> placedShifts = new HashMap<>();
             long max = 0;
+            spotPos.put(spot, totalSpotSlots);
+            final long spotStartPos = totalSpotSlots;
+            spotContainer.put(spot, new DynamicContainer(()->new Position(SPOT_NAME_WIDTH, HEADER_HEIGHT + spotStartPos*getGroupHeight())));
+            colorMap.put(spot, ColorUtils.getColor(colorMap.size()));
+            
             for (I shift : shifts.stream().filter((s) -> s.getGroupId().equals(spot)).collect(Collectors.toList())) {
-                spotPos.put(spot, totalSpotSlots);
-                final long spotStartPos = totalSpotSlots;
-                spotContainer.put(spot, new DynamicContainer(()->new Position(SPOT_NAME_WIDTH, HEADER_HEIGHT + spotStartPos*getSpotHeight())));
-                colorMap.put(spot, ColorUtils.getColor(colorMap.size()));
                 List<I> concurrentShifts = getShiftsDuring(shift, placedShifts.keySet());
                 HashMap<I,Integer> concurrentPlacedShifts = new HashMap<>();
                 placedShifts.forEach((k,v) -> {
                     if (concurrentShifts.contains(k)) {
                         concurrentPlacedShifts.put(k, v);
-                        ;                }
+                    }
                 });
                 int index = 0;
                 while (concurrentPlacedShifts.containsValue(index)) {
@@ -412,7 +413,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
             }
             totalSpotSlots += max + 2;
             final long spotEndPos = totalSpotSlots;
-            spotAddPlane.put(spot, new DynamicContainer(() -> new Position(SPOT_NAME_WIDTH,HEADER_HEIGHT + getSpotHeight()*(spotEndPos-1))));
+            spotAddPlane.put(spot, new DynamicContainer(() -> new Position(SPOT_NAME_WIDTH,HEADER_HEIGHT + getGroupHeight()*(spotEndPos-1))));
             placedSpots.put(spot, placedShifts);
         }
         
@@ -439,8 +440,12 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         return widthPerMinute;
     }
     
-    public double getSpotHeight() {
+    public double getGroupHeight() {
         return spotHeight;
+    }
+    
+    public int getGroupIndex(String groupId) {
+        return spots.indexOf(groupId);
     }
     
     public double getGlobalMouseX() {
@@ -475,7 +480,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         return dragStartY;
     }
     
-    public Integer getSpotCursorIndex(String spot) {
+    public Integer getCursorIndex(String spot) {
         return cursorIndex.get(spot);
     }
 
@@ -486,12 +491,6 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     @Override
     public void setGroups(List<String> groups) {
         this.spots = groups;
-        /*SpotRestServiceBuilder.getSpotList(calendar.getTenantId(), new FailureShownRestCallback<List<Spot>>() {
-            @Override
-            public void onSuccess(List<Spot> spotList) {
-                spots = spotList;
-            }
-        });*/
     }
 
     @Override
@@ -623,7 +622,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
                         group.add(d);
                         out.put(index, group);
                     });
-            allItems = IntStream.range(0, max[0]).mapToObj((k) -> out.get(k))
+            allItems = IntStream.range(0, totalSpotSlots).mapToObj((k) -> out.get(k))
                     .collect(Collectors.toList());
             allDirty = false;
         }
