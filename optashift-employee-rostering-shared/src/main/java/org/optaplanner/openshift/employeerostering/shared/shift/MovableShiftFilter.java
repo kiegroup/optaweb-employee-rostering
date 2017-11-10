@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.shared.domain.solver;
+package org.optaplanner.openshift.employeerostering.shared.shift;
 
 import org.optaplanner.core.impl.heuristic.selector.common.decorator.SelectionFilter;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
 
 public class MovableShiftFilter implements SelectionFilter<Roster, Shift> {

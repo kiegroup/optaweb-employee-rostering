@@ -25,7 +25,6 @@ import javax.validation.constraints.NotNull;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
-import org.optaplanner.openshift.employeerostering.shared.domain.solver.MovableShiftFilter;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
