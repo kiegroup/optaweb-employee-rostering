@@ -41,13 +41,6 @@ objects:
     - type: ConfigChange
     - imageChange: {}
       type: ImageChange
-    resources:
-      limits:
-        cpu: "1"
-        memory: 1400Mi
-      requests:
-        cpu: "1"
-        memory: 1400Mi
     runPolicy: Serial
 - apiVersion: v1
   kind: DeploymentConfig
