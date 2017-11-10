@@ -81,6 +81,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     Long selectedIndex;
     String overSpot;
     String popupText;
+    D mouseOverDrawable;
     
     Panel topPanel, bottomPanel, sidePanel;
     TimeRowDrawableProvider<I,D> drawableProvider;
@@ -109,6 +110,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         screenHeight = 1;
         selectionModel = new NoSelectionModel<Collection<? extends D>>((g) -> (g.isEmpty())? null : g.iterator().next().getGroupId());
         this.drawableProvider = drawableProvider;
+        mouseOverDrawable = null;
         initPanels();
     }
     
@@ -273,7 +275,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
             if (groupContainer.get(spot).getGlobalX() < mouseX - offsetX && groupContainer.get(spot).getGlobalY() < mouseY && mouseY < groupAddPlane.get(spot).getGlobalY() + spotHeight ) {
                 int index = (int) Math.floor((mouseY - groupContainer.get(spot).getGlobalY())/spotHeight);
                 if (null != overSpot) {
-                    cursorIndex.put(overSpot, groupPos.get(overSpot));
+                    cursorIndex.put(overSpot, groupEndPos.get(overSpot));
                 }
                 selectedSpot = spot;
                 overSpot = spot;
@@ -374,6 +376,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         mouseX = CanvasUtils.getCanvasX(calendar.canvas, e) + getOffsetX();
         mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
         boolean consumed = false;
+        boolean foundDrawable = false;
         
         if (isDragging) {
             for (D drawable : shiftDrawables) {
@@ -390,6 +393,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
             if (!consumed) {
                 onMouseDrag(mouseX, mouseY);
             }
+           
         }
         else {
             for (D drawable : shiftDrawables) {
@@ -398,10 +402,22 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
 
                 if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
                     if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
+                        if (drawable != mouseOverDrawable) {
+                            if (null != mouseOverDrawable) {
+                                mouseOverDrawable.onMouseExit(e, mouseX, mouseY); 
+                            }
+                            mouseOverDrawable = drawable;
+                            drawable.onMouseEnter(e, mouseX, mouseY);
+                        }
+                        foundDrawable = true;
                         consumed = drawable.onMouseMove(e, mouseX, mouseY);
                         break;
                     }
                 }
+            }
+            if (!foundDrawable && null != mouseOverDrawable) {
+                mouseOverDrawable.onMouseExit(e, mouseX, mouseY);
+                mouseOverDrawable = null;
             }
         }
         
@@ -434,6 +450,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         cursorIndex.clear();
         allDirty = true;
         visibleDirty = true;
+        mouseOverDrawable = null;
         HashMap<String, HashMap<I,Integer>> placedSpots = new HashMap<>();
         HashMap<String, String> colorMap = new HashMap<>();
         
@@ -479,7 +496,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         }
         
         for (String spot : groups) {
-            cursorIndex.put(spot, groupPos.get(spot));
+            cursorIndex.put(spot, groupEndPos.get(spot));
         }
         
         dataProvider.setList(getItems());

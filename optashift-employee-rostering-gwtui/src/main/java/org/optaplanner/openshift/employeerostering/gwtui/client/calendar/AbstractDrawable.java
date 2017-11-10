@@ -56,6 +56,12 @@ public abstract class AbstractDrawable implements Drawable {
     }
     
     @Override
+    public boolean onMouseEnter(MouseEvent e, double x, double y) {return false;}
+    
+    @Override
+    public boolean onMouseExit(MouseEvent e, double x, double y) {return false;}
+    
+    @Override
     public boolean onMouseMove(MouseEvent e, double x, double y) {return false;}
     
     @Override

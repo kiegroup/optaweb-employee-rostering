@@ -13,6 +13,8 @@ public interface Drawable {
     public double getGlobalY();
     
     //These events return true if the event is consumed
+    public boolean onMouseEnter(MouseEvent e, double x, double y);
+    public boolean onMouseExit(MouseEvent e, double x, double y);
     public boolean onMouseDrag(MouseEvent e, double x, double y);
     public boolean onMouseMove(MouseEvent e, double x, double y);
     public boolean onMouseDown(MouseEvent e, double x, double y);
