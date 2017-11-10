@@ -16,6 +16,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
     LocalDateTime endTime;
     String color;
     int index;
+    boolean isMouseOver;
     TwoDayView view;
     
     
@@ -26,6 +27,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
         this.spot = data.getGroupId();
         this.color = ColorUtils.getColor(view.getGroupIndex(data.getGroupId()));
         this.index = index;
+        this.isMouseOver = false;
     }
 
     @Override
@@ -50,7 +52,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
     
     @Override
     public void doDrawAt(CanvasRenderingContext2D g, double x, double y) {
-        CanvasUtils.setFillColor(g, color);
+        CanvasUtils.setFillColor(g, (isMouseOver)? ColorUtils.brighten(color, 0.25) :color);
         
         double start = startTime.toEpochSecond(ZoneOffset.UTC) / 60;
         double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
@@ -82,6 +84,18 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
     
     public void setIndex(int index) {
         this.index = index;
+    }
+    
+    @Override
+    public boolean onMouseEnter(MouseEvent e, double x, double y) {
+        isMouseOver = true;
+        return true;
+    }
+    
+    @Override
+    public boolean onMouseExit(MouseEvent e, double x, double y) {
+        isMouseOver = false;
+        return true;
     }
     
     @Override
