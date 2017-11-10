@@ -116,12 +116,11 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
             RosterRestServiceBuilder.solveRoster(tenantId, new FailureShownRestCallback<Void>() {
                 public void onSuccess(Void t) {
                     solverObservable.notifyObservers(new StartSolvingEvent());
+                    // TODO 15 * 2000ms = 30 seconds - Keep in sync with solver config
+                    Scheduler.get().scheduleFixedDelay(new RefreshTableRepeatingCommand(15), REFRESH_RATE);
                 }
             });
-            // TODO 15 * 2000ms = 30 seconds - Keep in sync with solver config
-            Scheduler.get().scheduleFixedDelay(new RefreshTableRepeatingCommand(15), REFRESH_RATE);
         }
-        
     }
     
     protected class StartSolvingEvent {}
