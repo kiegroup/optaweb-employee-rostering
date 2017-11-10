@@ -1,5 +1,5 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 
-interface Observer {
+public interface Observer {
     void update(Observable observable, Object argument);
 }

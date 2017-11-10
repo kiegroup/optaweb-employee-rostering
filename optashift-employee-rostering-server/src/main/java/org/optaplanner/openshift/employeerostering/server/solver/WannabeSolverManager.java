@@ -57,8 +57,6 @@ public class WannabeSolverManager {
     public void terminate(Integer tenantId) {
         Solver<Roster> solver = tenantIdToSolverMap.get(tenantId);
         if (null != solver) {
-            tenantIdToSolverMap.remove(tenantId);
-            tenantIdToSolverStateMap.put(tenantId, SolverStatus.TERMINATED);
             solver.terminateEarly();
         }
         else {

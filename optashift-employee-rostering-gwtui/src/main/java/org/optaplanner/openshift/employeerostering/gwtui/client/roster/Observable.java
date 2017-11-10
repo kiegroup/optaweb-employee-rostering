@@ -3,7 +3,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 import java.util.ArrayList;
 import java.util.Collection;
 
-class Observable {
+public class Observable {
     Collection<Observer> observers;
     
     public Observable() {
