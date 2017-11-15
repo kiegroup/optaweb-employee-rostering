@@ -10,11 +10,20 @@ public interface OptaShiftUIConstants {
 	@TranslationKey(defaultValue="Add")
 	final String General_add = "General.add";
 	
+	@TranslationKey(defaultValue="Cancel")
+    final String General_cancel = "General.cancel";
+	
 	@TranslationKey(defaultValue="AbstractRosterViewPanel.startSolving")
 	final String AbstractRosterViewPanel_startSolving = "Click the <i>Solve</i> button to start solving.";
 	
 	@TranslationKey(defaultValue="Delete")
     final String General_delete = "General.delete";
+	
+	@TranslationKey(defaultValue="Edit")
+    final String General_edit = "General.edit";
+	
+	@TranslationKey(defaultValue="Update")
+    final String General_update = "General.update";
 	
 	
 	

@@ -27,7 +27,7 @@ public interface EmployeeRestService {
 
     /**
      * @param id never null
-     * @return never null, the id
+     * @return never null, the employee with the id
      */
     @GET
     @Path("/{id}")
@@ -35,15 +35,24 @@ public interface EmployeeRestService {
 
     /**
      * @param employee never null
-     * @return never null, the id
+     * @return never null, the id of the newly created employee
      */
     @POST
     @Path("/add")
     Long addEmployee(@PathParam("tenantId") Integer tenantId, Employee employee);
+    
+    /**
+     * @param id never null
+     * @param employee never null
+     * @return true if the employee was successfully updated, false otherwise
+     */
+    @POST
+    @Path("/update/{id}")
+    Boolean updateEmployee(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Employee newValue);
 
     /**
      * @param id never null
-     * @return never null, the id
+     * @return true if the employee was removed, false otherwise
      */
     @DELETE
     @Path("/{id}")

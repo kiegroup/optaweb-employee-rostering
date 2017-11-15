@@ -12,6 +12,16 @@ public interface CssResources extends ClientBundle {
         String panel();
     }
     
+    interface PopupCss extends CssResource {
+        String main();
+        String panel();
+        String singleValueTagInput();
+        String textbox();
+    }
+    
     @Source("errorpopup.css")
     ErrorPopupCss errorpopup();
+    
+    @Source("popup.css")
+    PopupCss popup();
 }

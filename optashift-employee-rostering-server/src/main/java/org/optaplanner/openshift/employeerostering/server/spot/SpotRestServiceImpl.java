@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.server.spot;
 
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -63,6 +64,14 @@ public class SpotRestServiceImpl extends AbstractRestServiceImpl implements Spot
         }
         validateTenantIdParameter(tenantId, spot);
         entityManager.remove(spot);
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateSpot(Integer tenantId, Long id, Spot newValue) {
+        validateTenantIdParameter(tenantId, newValue);
+        update(entityManager, newValue, id);
         return true;
     }
 

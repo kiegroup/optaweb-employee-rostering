@@ -45,7 +45,7 @@ public interface ShiftRestService {
 
     /**
      * @param id never null
-     * @return never null, the id
+     * @return return true if the shift was removed, false otherwise
      */
     @DELETE
     @Path("/{id}")

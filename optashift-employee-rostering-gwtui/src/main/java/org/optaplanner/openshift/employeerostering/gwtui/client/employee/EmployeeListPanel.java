@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -11,7 +12,12 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
@@ -28,6 +34,8 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
@@ -149,7 +157,90 @@ public class EmployeeListPanel implements IsElement {
                 }
             });
         });
+        Column<Employee, String> editColumn = new Column<Employee, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT, ButtonSize.SMALL)) {
+            @Override
+            public String getValue(Employee employee) {
+                return CONSTANTS.format(General_edit);
+            }
+        };
+        editColumn.setFieldUpdater((index, employee, value) -> {
+            CssResources.INSTANCE.popup().ensureInjected();
+            PopupPanel popup = new PopupPanel(false);
+            popup.setGlassEnabled(true);
+            popup.setStyleName(CssResources.INSTANCE.popup().panel());
+            
+            VerticalPanel panel = new VerticalPanel();
+            HorizontalPanel datafield = new HorizontalPanel();
+            
+            Label label = new Label("Employee Name");
+            TextBox employeeName = new TextBox();
+            employeeName.setValue(employee.getName());
+            employeeName.setStyleName(CssResources.INSTANCE.popup().textbox());
+            datafield.add(label);
+            datafield.add(employeeName);
+            panel.add(datafield);
+            
+            datafield = new HorizontalPanel();
+            label = new Label("Skills");
+            SingleValueTagsInput<Skill> newSkillsTagsInput = new SingleValueTagsInput<>();
+            
+            SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
+                @Override
+                public void onSuccess(List<Skill> skillList) {
+                    newSkillsTagsInput.removeAll();
+                    CollectionDataset<Skill> data = new CollectionDataset<Skill>(skillList) {
+                        @Override
+                        public String getValue(Skill skill) {
+                            return (skill == null) ? "" : skill.getName();
+                        }
+                    };
+                    newSkillsTagsInput.setDatasets((Dataset<Skill>) data);
+                    newSkillsTagsInput.setItemValue(Skill::getName);
+                    newSkillsTagsInput.setItemText(Skill::getName);
+                    newSkillsTagsInput.reconfigure();
+                    newSkillsTagsInput.add(employee.getSkillProficiencyList().stream()
+                            .map((p) -> p.getSkill())
+                            .collect(Collectors.toList()));
+                }
+            });
+            newSkillsTagsInput.setStyleName(CssResources.INSTANCE.popup().singleValueTagInput());
+            datafield.add(label);
+            datafield.add(newSkillsTagsInput);
+            panel.add(datafield);
+            
+            datafield = new HorizontalPanel();
+            Button confirm = new Button();
+            confirm.setText(CONSTANTS.format(General_update));
+            confirm.addClickHandler((e) -> {
+                List<Skill> skillList = newSkillsTagsInput.getItems();
+                Employee newValue = new Employee(tenantId, employeeName.getValue());
+                newValue.setId(employee.getId());
+                newValue.setVersion(employee.getVersion());
+                for (Skill skill : skillList) {
+                    newValue.getSkillProficiencyList().add(new EmployeeSkillProficiency(tenantId, employee, skill));
+                }
+                popup.hide();
+                EmployeeRestServiceBuilder.updateEmployee(tenantId, newValue.getId(), newValue, new FailureShownRestCallback<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean removed) {
+                        refreshTable();
+                    }
+                });
+            });
+            
+            Button cancel = new Button();
+            cancel.setText(CONSTANTS.format(General_cancel));
+            cancel.addClickHandler((e) -> popup.hide());
+            
+            datafield.add(confirm);
+            datafield.add(cancel);
+            panel.add(datafield);
+            
+            popup.setWidget(panel);
+            popup.center();
+        });
         table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
+        table.addColumn(editColumn);
 
         table.addRangeChangeHandler(event -> pagination.rebuild(pager));
 
