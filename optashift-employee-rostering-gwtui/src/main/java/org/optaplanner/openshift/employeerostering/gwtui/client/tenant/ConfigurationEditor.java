@@ -15,6 +15,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftData;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotNameFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotShiftFetchable;
@@ -47,9 +48,14 @@ public class ConfigurationEditor implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
-        calendar = new Calendar<ShiftData>(canvasElement, tenantId, topPanel, bottomPanel, sidePanel,
-                /*new SpotShiftFetchable(() -> getTenantId())*/new ConstantFetchable<Collection<ShiftData>>(Collections.emptyList()), new SpotNameFetchable(() -> getTenantId()),
-                (name,start,end) -> new ShiftData(start,end,name));
+        calendar = new Calendar.Builder<ShiftData,ShiftDrawable>(canvasElement,tenantId)
+                .withTopPanel(topPanel)
+                .withBottomPanel(bottomPanel)
+                .withSidePanel(sidePanel)
+                .fetchingDataFrom(new ConstantFetchable<Collection<ShiftData>>(Collections.emptyList()))
+                .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
+                .creatingDataInstancesWith((name,start,end) -> new ShiftData(start,end,name))
+                .asTwoDayView((v,d,i) -> new ShiftDrawable(v,d,i));
     }
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {

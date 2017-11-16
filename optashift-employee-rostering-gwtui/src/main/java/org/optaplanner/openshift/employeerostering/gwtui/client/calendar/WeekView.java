@@ -1,6 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.Collection;
 import java.util.List;
@@ -125,6 +126,12 @@ public class WeekView<I extends HasTimeslot> implements CalendarView<I>{
 
     @Override
     public void setGroups(List<String> groups) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void setDate(LocalDateTime date) {
         // TODO Auto-generated method stub
         
     }

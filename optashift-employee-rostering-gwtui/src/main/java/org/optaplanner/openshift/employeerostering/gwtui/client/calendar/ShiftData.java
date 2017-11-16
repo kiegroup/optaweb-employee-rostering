@@ -8,15 +8,11 @@ public class ShiftData implements HasTimeslot {
     public LocalDateTime start;
     public LocalDateTime end;
     String spot;
-    final long UID;
-    private static long total;
     
     public ShiftData(LocalDateTime start, LocalDateTime end, String spot) {
         this.start = start;
         this.end = end;
         this.spot = spot;
-        UID = total;
-        total++;
     }
     
     public String toString() {
@@ -29,7 +25,6 @@ public class ShiftData implements HasTimeslot {
         out.append(end.toString());
         
         out.append(':');
-        out.append(UID);
         return out.toString();
     }
 

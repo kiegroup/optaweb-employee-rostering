@@ -20,13 +20,21 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.view.client.ListDataProvider;
+import elemental2.dom.HTMLCanvasElement;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.gwtbootstrap3.client.ui.html.Div;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeData;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeDataFetchable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeDrawable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeNameFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
@@ -44,19 +52,35 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.resources
 public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
     // TODO use DataGrid instead
-    @DataField
-    private CellTable<Employee> table;
-    @DataField
-    private Pagination pagination;
+    //@DataField
+    //private CellTable<Employee> table;
+    //@DataField
+    //private Pagination pagination;
     
     @Inject @DataField
     private Button planNextPeriod;
+    
+    @Inject @DataField
+    private Div topPanel;
+    
+    @Inject @DataField
+    private Div bottomPanel;
+    
+    @Inject @DataField
+    private Span sidePanel;
+    
+    @Inject @DataField
+    private HTMLCanvasElement canvasElement;
+    
+    private Calendar<EmployeeData> calendar;
 
-    private SimplePager pager = new SimplePager();
-    private ListDataProvider<Employee> dataProvider = new ListDataProvider<>();
+    //private SimplePager pager = new SimplePager();
+    //private ListDataProvider<Employee> dataProvider = new ListDataProvider<>();
 
     private EmployeeRosterView employeeRosterView;
     private Map<Long, Spot> spotMap;
+    
+    boolean isDateSet = false;
 
     @Inject
     private TranslationService CONSTANTS;
@@ -90,14 +114,15 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
         }
 
     public EmployeeRosterViewPanel() {
-        table = new CellTable<>(15);
+        
+        /*table = new CellTable<>(15);
         table.setBordered(true);
         table.setCondensed(true);
         table.setStriped(true);
         table.setHover(true);
         table.setHeight("100%");
         table.setWidth("100%");
-        pagination = new Pagination();
+        pagination = new Pagination();*/
     }
 
     @PostConstruct
@@ -107,7 +132,16 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        table.addColumn(new TextColumn<Employee>() {
+        calendar = new Calendar.Builder<EmployeeData,EmployeeDrawable>(canvasElement, tenantId)
+                .withTopPanel(topPanel)
+                .withBottomPanel(bottomPanel)
+                .withSidePanel(sidePanel)
+                .fetchingDataFrom(new EmployeeDataFetchable(() -> getTenantId()))
+                .fetchingGroupsFrom(new EmployeeNameFetchable(() -> getTenantId()))
+                .creatingDataInstancesWith((id,s,e) -> null)
+                .asTwoDayView((v,d,i) -> new EmployeeDrawable(v,d,i));
+        
+        /*table.addColumn(new TextColumn<Employee>() {
             @Override
             public String getValue(Employee employee) {
                 return (employee == null) ? "" : employee.getName();
@@ -118,7 +152,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
         pager.setDisplay(table);
         pagination.clear();
-        dataProvider.addDataDisplay(table);
+        dataProvider.addDataDisplay(table);*/
     }
 
     @Override
@@ -126,7 +160,16 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
         if (tenantId == null) {
             return;
         }
-        RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantId, new FailureShownRestCallback<EmployeeRosterView>() {
+        if (!isDateSet) {
+            RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantId, new FailureShownRestCallback<EmployeeRosterView>() {
+                @Override
+                public void onSuccess(EmployeeRosterView employeeRosterView) {
+                    isDateSet = true;
+                    calendar.setDate(employeeRosterView.getTimeSlotList().stream().min((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getStartDateTime());
+                }});
+        }
+        calendar.forceUpdate();
+        /*RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantId, new FailureShownRestCallback<EmployeeRosterView>() {
             @Override
             public void onSuccess(EmployeeRosterView employeeRosterView) {
                 EmployeeRosterViewPanel.this.employeeRosterView = employeeRosterView;
@@ -279,7 +322,11 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
                 dataProvider.flush();
                 pagination.rebuild(pager);
             }
-        });
+        });*/
+    }
+    
+    private Integer getTenantId() {
+        return tenantId;
     }
 
 }

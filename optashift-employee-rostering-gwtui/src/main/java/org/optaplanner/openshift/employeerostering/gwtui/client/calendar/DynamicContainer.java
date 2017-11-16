@@ -24,7 +24,7 @@ public class DynamicContainer extends AbstractDrawable {
     }
     
     @Override
-    void doDraw(CanvasRenderingContext2D g) {    
+    public void doDraw(CanvasRenderingContext2D g) {    
     }
     
     public interface Positionable {
