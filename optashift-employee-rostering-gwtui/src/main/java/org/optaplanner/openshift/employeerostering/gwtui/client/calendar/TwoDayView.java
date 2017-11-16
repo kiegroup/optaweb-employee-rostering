@@ -1,6 +1,8 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -69,9 +71,10 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     private int rangeStart, rangeEnd;
     private int totalDisplayedSpotSlots;
     LocalDateTime baseDate;
-    int currDay;
+    LocalDateTime currDay;
     
     double mouseX, mouseY;
+    double localMouseX, localMouseY;
     double screenWidth, screenHeight;
     double dragStartX, dragStartY;
     double widthPerMinute, spotHeight;
@@ -89,9 +92,11 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     public TwoDayView(Calendar<I> calendar, Panel top, Panel bottom, Panel side, TimeRowDrawableProvider<I,D> drawableProvider) {
         this.calendar = calendar;
         baseDate = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
-        currDay = 0;
+        currDay = baseDate;
         mouseX = 0;
         mouseY = 0;
+        localMouseX = 0;
+        localMouseY = 0;
         rangeStart = 0;
         rangeEnd = 10;
         totalDisplayedSpotSlots = 10;
@@ -114,6 +119,10 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         initPanels();
     }
     
+    private double getDifferenceFromBaseDate() {
+        return (currDay.toEpochSecond(ZoneOffset.UTC) - baseDate.toEpochSecond(ZoneOffset.UTC))/(60*60*24.0);
+    }
+    
     private void initPanels() {
         Label title = new Label();
         title.setText("Configuration Editor");
@@ -122,12 +131,12 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         
         Button prevButton = new Button();
         prevButton.setText("Previous Day");
-        prevButton.addClickHandler((e) -> {currDay -= 1; calendar.draw();});
+        prevButton.addClickHandler((e) -> {setDate(currDay.minusDays(1)); calendar.draw();});
         bottomPanel.add(prevButton);
         
         Button nextButton = new Button();
         nextButton.setText("Next Day");
-        nextButton.addClickHandler((e) -> {currDay += 1; calendar.draw();});
+        nextButton.addClickHandler((e) -> {setDate(currDay.plusDays(1)); calendar.draw();});
         bottomPanel.add(nextButton);
         
         pagination = new Pagination();
@@ -166,7 +175,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         }
         
         g.save();
-        g.translate(-currDay*(60*24)*widthPerMinute, 0);
+        g.translate(-getDifferenceFromBaseDate()*(60*24)*widthPerMinute, 0);
         int index = 0;
         Iterable<Collection<D>> toDraw = getVisibleItems();
         Set<String> drawnSpots = new HashSet<>();
@@ -247,9 +256,9 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         if (null != selectedSpot) {
             CanvasUtils.setFillColor(g, "#00FF00");
             long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH - getOffsetX()) / widthPerMinute); 
-            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC).plusDays(currDay);
+            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC).plusDays(Math.round(getDifferenceFromBaseDate()));
             long toMins = Math.max(0,Math.round((mouseX - SPOT_NAME_WIDTH - getOffsetX()) / widthPerMinute)); 
-            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC).plusDays(currDay);
+            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC).plusDays(Math.round(getDifferenceFromBaseDate()));
             if (to.isBefore(from)) {
                 LocalDateTime tmp = to;
                 to = from;
@@ -289,9 +298,9 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     private void handleMouseUp(double eventX, double eventY) {
         if (null != selectedSpot) {
             long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH - getOffsetX()) / widthPerMinute); 
-            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC).plusDays(currDay);
+            LocalDateTime from = LocalDateTime.ofEpochSecond(60*fromMins, 0, ZoneOffset.UTC).plusDays(Math.round(getDifferenceFromBaseDate()));
             long toMins = Math.max(0, Math.round((eventX - SPOT_NAME_WIDTH - getOffsetX()) / widthPerMinute)); 
-            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC).plusDays(currDay);
+            LocalDateTime to = LocalDateTime.ofEpochSecond(60*toMins, 0, ZoneOffset.UTC).plusDays(Math.round(getDifferenceFromBaseDate()));
             if (to.isBefore(from)) {
                 LocalDateTime tmp = to;
                 to = from;
@@ -303,12 +312,12 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     
     private void drawTimes(CanvasRenderingContext2D g) {
         CanvasUtils.setFillColor(g, "#000000");
-        String week = "Week " + currDay/7;
+        String week = "Week " + Math.round(getDifferenceFromBaseDate())/7;
         int textSize = CanvasUtils.fitTextToBox(g, week, SPOT_NAME_WIDTH, HEADER_HEIGHT/2);
         g.font = CanvasUtils.getFont(textSize);
         g.fillText(week, 0, HEADER_HEIGHT/2);
         for (int x = 0; x < 2; x++) {
-            g.fillText(WEEKDAYS[Math.abs((WEEK_START + x + currDay)) % 7], SPOT_NAME_WIDTH + (24*x)*60*widthPerMinute, HEADER_HEIGHT/2);
+            g.fillText(WEEKDAYS[(int) (Math.abs((WEEK_START + x + Math.round(getDifferenceFromBaseDate()))) % 7)], SPOT_NAME_WIDTH + (24*x)*60*widthPerMinute, HEADER_HEIGHT/2);
         }
         for (int x = 0; x < 8; x++) {
             g.fillText(((6*x) % 24) + ":00", SPOT_NAME_WIDTH + x*6*60*widthPerMinute, HEADER_HEIGHT);
@@ -318,8 +327,10 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     
     @Override
     public void onMouseDown(MouseEvent e) {
-        mouseX = CanvasUtils.getCanvasX(calendar.canvas, e) + getOffsetX();
-        mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
+        localMouseX = CanvasUtils.getCanvasX(calendar.canvas, e);
+        localMouseY = CanvasUtils.getCanvasY(calendar.canvas, e); 
+        mouseX = localMouseX + getOffsetX();
+        mouseY = localMouseY + getOffsetY();
         dragStartX = mouseX;
         dragStartY = mouseY;
         isDragging = true;
@@ -345,8 +356,10 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     
     @Override
     public void onMouseUp(MouseEvent e) {
-        mouseX = CanvasUtils.getCanvasX(calendar.canvas, e) + getOffsetX();
-        mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
+        localMouseX = CanvasUtils.getCanvasX(calendar.canvas, e);
+        localMouseY = CanvasUtils.getCanvasY(calendar.canvas, e); 
+        mouseX = localMouseX + getOffsetX();
+        mouseY = localMouseY + getOffsetY();
         
         boolean consumed = false;
         for (D drawable : shiftDrawables) {
@@ -373,8 +386,10 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
 
     @Override
     public void onMouseMove(MouseEvent e) {
-        mouseX = CanvasUtils.getCanvasX(calendar.canvas, e) + getOffsetX();
-        mouseY = CanvasUtils.getCanvasY(calendar.canvas, e) + getOffsetY();
+        localMouseX = CanvasUtils.getCanvasX(calendar.canvas, e);
+        localMouseY = CanvasUtils.getCanvasY(calendar.canvas, e); 
+        mouseX = localMouseX + getOffsetX();
+        mouseY = localMouseY + getOffsetY();
         boolean consumed = false;
         boolean foundDrawable = false;
         
@@ -521,7 +536,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     }
     
     public LocalDateTime getMouseLocalDateTime() {
-        return baseDate.plusMinutes(Math.round((getGlobalMouseX()-SPOT_NAME_WIDTH)/getWidthPerMinute()));
+        return currDay.plusMinutes(Math.round((localMouseX-SPOT_NAME_WIDTH)/getWidthPerMinute()));
     }
     
     public double getGlobalMouseY() {
@@ -529,15 +544,15 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     }
     
     public double getLocalMouseX() {
-        return mouseX - getOffsetX();
+        return localMouseX;
     }
     
     public double getLocalMouseY() {
-        return mouseY - getOffsetY();
+        return localMouseY;
     }
     
     private double getOffsetX() {
-        return (screenWidth - SPOT_NAME_WIDTH)*currDay*0.5;
+        return (screenWidth - SPOT_NAME_WIDTH)*Math.round(getDifferenceFromBaseDate())*0.5;
     }
     
     private double getOffsetY() {
@@ -734,6 +749,11 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         public void removeHandler() {
             backingCollection.remove(handler);
         }
+    }
+
+    @Override
+    public void setDate(LocalDateTime date) {
+        currDay = LocalDateTime.of(date.toLocalDate(), LocalTime.MIDNIGHT);
     }
 
 }

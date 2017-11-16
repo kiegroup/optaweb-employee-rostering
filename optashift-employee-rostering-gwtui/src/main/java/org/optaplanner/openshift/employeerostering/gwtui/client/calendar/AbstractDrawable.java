@@ -6,7 +6,7 @@ import elemental2.dom.MouseEvent;
 public abstract class AbstractDrawable implements Drawable {
     Drawable parent;
     
-    abstract void doDraw(CanvasRenderingContext2D g);
+    public abstract void doDraw(CanvasRenderingContext2D g);
     
     @Override
     public void draw(CanvasRenderingContext2D g) {

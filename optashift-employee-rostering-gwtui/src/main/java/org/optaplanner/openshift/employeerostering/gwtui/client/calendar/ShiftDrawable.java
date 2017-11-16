@@ -82,10 +82,6 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
         return (null != cursorIndex && cursorIndex > index)? index*view.getGroupHeight() : (index+1)*view.getGroupHeight();
     }
     
-    public void setIndex(int index) {
-        this.index = index;
-    }
-    
     @Override
     public boolean onMouseEnter(MouseEvent e, double x, double y) {
         isMouseOver = true;

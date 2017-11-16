@@ -9,25 +9,27 @@ import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Panel;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.DataProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
 public class Calendar<I extends HasTimeslot> {
     HTMLCanvasElement canvas;
     CalendarView<I> view;
     Collection<I> shifts;
     Integer tenantId;
-    Div topPanel;
-    Div bottomPanel;
-    Span sidePanel;
+    Panel topPanel;
+    Panel bottomPanel;
+    Panel sidePanel;
     Fetchable<Collection<I>> dataProvider;
     Fetchable<List<String>> groupProvider;
     DataProvider<I> instanceCreator;
     
-    public Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Div topPanel, Div bottomPanel, Span sidePanel,
+    private Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Panel topPanel, Panel bottomPanel, Panel sidePanel,
             Fetchable<Collection<I>> dataProvider, Fetchable<List<String>> groupProvider, DataProvider<I> instanceCreator) {
         this.canvas = canvasElement;
         this.tenantId = tenantId;
@@ -47,8 +49,6 @@ public class Calendar<I extends HasTimeslot> {
         
         shifts = new ArrayList<>();
         
-        view = new TwoDayView<I,ShiftDrawable>(this,topPanel,bottomPanel,sidePanel,
-                (v,d,i) -> new ShiftDrawable(v, (ShiftData) d, i));
         groupProvider.setUpdatable((groups) -> getView().setGroups(groups));
         dataProvider.setUpdatable((d) -> {shifts = new ArrayList<>(d); getView().setShifts(shifts);});
         
@@ -59,6 +59,10 @@ public class Calendar<I extends HasTimeslot> {
             canvas.height = e.getHeight() - canvasElement.offsetTop - topPanel.getOffsetHeight() - bottomPanel.getOffsetHeight() - 100;
             draw();
         });
+    }
+    
+    private void setView(CalendarView<I> view) {
+        this.view = view;
     }
     
     private CalendarView<I> getView() {
@@ -88,6 +92,10 @@ public class Calendar<I extends HasTimeslot> {
         canvas.height = height;
     }
     
+    public void forceUpdate() {
+        groupProvider.fetchData(() -> dataProvider.fetchData(() -> draw()));
+    }
+    
     public void onMouseDown(MouseEvent e) {
         getView().onMouseDown(e);
     }
@@ -100,10 +108,96 @@ public class Calendar<I extends HasTimeslot> {
         getView().onMouseUp(e);
     }
     
+    public void setDate(LocalDateTime date) {
+        view.setDate(date);
+    }
+    
     public void addShift(String groupId, LocalDateTime start, LocalDateTime end) {
         I shift = instanceCreator.getInstance(groupId, start, end);
         shifts.add(shift);
         getView().setShifts(shifts);
         draw();
+    }
+    
+    public static class Builder<T extends HasTimeslot, D extends TimeRowDrawable> {
+        HTMLCanvasElement canvas;
+        Collection<T> shifts;
+        Integer tenantId;
+        Panel topPanel;
+        Panel bottomPanel;
+        Panel sidePanel;
+        LocalDateTime startAt;
+        Fetchable<Collection<T>> dataProvider;
+        Fetchable<List<String>> groupProvider;
+        DataProvider<T> instanceCreator;
+        
+        public Builder(HTMLCanvasElement canvas, Integer tenantId) {
+            this.canvas = canvas;
+            this.tenantId = tenantId;
+            
+            topPanel = null;
+            bottomPanel = null;
+            sidePanel = null;
+            dataProvider = null;
+            groupProvider = null;
+            instanceCreator = null;
+            startAt = null;
+        }
+        
+        public Builder<T,D> withTopPanel(Panel topPanel) {
+            this.topPanel = topPanel;
+            return this;
+        }
+        
+        public Builder<T,D> withBottomPanel(Panel bottomPanel) {
+            this.bottomPanel = bottomPanel;
+            return this;
+        }
+        
+        public Builder<T,D> withSidePanel(Panel sidePanel) {
+            this.sidePanel = sidePanel;
+            return this;
+        }
+        
+        public Builder<T,D> fetchingDataFrom(Fetchable<Collection<T>> dataProvider) {
+            this.dataProvider = dataProvider;
+            return this;
+        }
+        
+        public Builder<T,D> fetchingGroupsFrom(Fetchable<List<String>> groupProvider) {
+            this.groupProvider = groupProvider;
+            return this;
+        }
+        
+        public Builder<T,D> creatingDataInstancesWith(DataProvider<T> instanceCreator) {
+            this.instanceCreator = instanceCreator;
+            return this;
+        }
+        
+        public Builder<T,D> startingAt(LocalDateTime start) { 
+            startAt = start;
+            return this;
+        }
+        
+        public Calendar<T> asTwoDayView(TimeRowDrawableProvider<T,D> drawableProvider) {
+            if (null != topPanel && null != bottomPanel && null != sidePanel && null != dataProvider
+                    && null != groupProvider && null != instanceCreator) {
+            Calendar<T> calendar = new Calendar<>(canvas, tenantId,
+                    topPanel, bottomPanel, sidePanel,
+                    dataProvider, groupProvider, instanceCreator);
+            TwoDayView<T,D> view = new TwoDayView<T,D>(calendar,topPanel,bottomPanel,sidePanel,drawableProvider);
+            calendar.setView(view);
+            
+            if (null != startAt) {
+                view.setDate(startAt);
+            }
+            return calendar;
+            }
+            else {
+                throw new IllegalStateException("You must set all of " + 
+            "(topPanel,bottomPanel,sidePanel,dataProvider,groupProvider,instanceProvider) before calling this method.");
+            }
+        }
+        
     }
 }

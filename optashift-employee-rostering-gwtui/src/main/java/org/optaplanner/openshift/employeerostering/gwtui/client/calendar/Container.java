@@ -27,6 +27,6 @@ public class Container extends AbstractDrawable {
     }
 
     @Override
-    void doDraw(CanvasRenderingContext2D g) {    
+    public void doDraw(CanvasRenderingContext2D g) {    
     }
 }
