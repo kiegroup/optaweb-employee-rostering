@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.common;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 public class CommonUtils {
@@ -103,5 +104,44 @@ public class CommonUtils {
             out.insert(0, "0");
         }
         return out.toString();
+    }
+    
+    public static <T> Iterable<T> flatten(Iterable<? extends Iterable<T>> collection) {
+        return new Iterable<T>() {
+            @Override
+            public Iterator<T> iterator() {
+                return new FlattenIterator<>(collection);
+            }
+        };
+    }
+    
+    private static class FlattenIterator<T> implements Iterator<T> {
+        Iterator<? extends Iterable<T>> mainIterator;
+        Iterator<T> subIterator;
+        
+        public FlattenIterator(Iterable<? extends Iterable<T>> iterable) {
+            mainIterator = iterable.iterator();
+            if (mainIterator.hasNext()) {
+                subIterator = mainIterator.next().iterator();
+            }
+        }
+        
+        @Override
+        public boolean hasNext() {
+            if (null == subIterator) {
+                return false;
+            }
+            
+            while (!subIterator.hasNext() && mainIterator.hasNext()) {
+                subIterator = mainIterator.next().iterator();
+            }
+            return subIterator.hasNext();
+        }
+
+        @Override
+        public T next() {
+            return subIterator.next();
+        }
+        
     }
 }

@@ -19,20 +19,33 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.view.client.ListDataProvider;
+import elemental2.dom.HTMLCanvasElement;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.ModalBody;
 import org.gwtbootstrap3.client.ui.ModalFooter;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.gwtbootstrap3.client.ui.html.Div;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeData;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeDataFetchable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeDrawable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeNameFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotDataFetchable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotDrawable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotNameFetchable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
@@ -45,29 +58,44 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.resources
 public class SpotRosterViewPanel extends AbstractRosterViewPanel {
 
     // TODO use DataGrid instead
-    @DataField
-    private CellTable<Spot> table;
-    @DataField
-    private Pagination pagination;
+    //@DataField
+    //private CellTable<Spot> table;
+    //@DataField
+    //private Pagination pagination;
 
-    private SimplePager pager = new SimplePager();
-    private ListDataProvider<Spot> dataProvider = new ListDataProvider<>();
+    //private SimplePager pager = new SimplePager();
+    //private ListDataProvider<Spot> dataProvider = new ListDataProvider<>();
 
     private SpotRosterView spotRosterView;
     private Map<Long, Employee> employeeMap;
-
+    
+    @Inject @DataField
+    private Div topPanel;
+    
+    @Inject @DataField
+    private Div bottomPanel;
+    
+    @Inject @DataField
+    private Span sidePanel;
+    
+    @Inject @DataField
+    private HTMLCanvasElement canvasElement;
+    
+    private Calendar<SpotData> calendar;
     @Inject
     private TranslationService CONSTANTS;
+    
+    boolean isDateSet = false;
 
     public SpotRosterViewPanel() {
-        table = new CellTable<>(15);
-        table.setBordered(true);
-        table.setCondensed(true);
-        table.setStriped(true);
-        table.setHover(true);
-        table.setHeight("100%");
-        table.setWidth("100%");
-        pagination = new Pagination();
+        //table = new CellTable<>(15);
+        //table.setBordered(true);
+        //table.setCondensed(true);
+        //table.setStriped(true);
+        //table.setHover(true);
+        //table.setHeight("100%");
+        //table.setWidth("100%");
+        //pagination = new Pagination();
     }
 
     @PostConstruct
@@ -77,7 +105,15 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        table.addColumn(new TextColumn<Spot>() {
+        calendar = new Calendar.Builder<SpotData,SpotDrawable>(canvasElement, tenantId)
+                .withTopPanel(topPanel)
+                .withBottomPanel(bottomPanel)
+                .withSidePanel(sidePanel)
+                .fetchingDataFrom(new SpotDataFetchable(() -> getTenantId()))
+                .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
+                .creatingDataInstancesWith((id,s,e) -> null)
+                .asTwoDayView((v,d,i) -> new SpotDrawable(v,d,i));
+        /*table.addColumn(new TextColumn<Spot>() {
             @Override
             public String getValue(Spot spot) {
                 return (spot == null) ? "" : spot.getName();
@@ -88,7 +124,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
 
         pager.setDisplay(table);
         pagination.clear();
-        dataProvider.addDataDisplay(table);
+        dataProvider.addDataDisplay(table);*/
     }
 
     @Override
@@ -96,7 +132,16 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
         if (tenantId == null) {
             return;
         }
-        RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<SpotRosterView>() {
+        if (!isDateSet) {
+            RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<SpotRosterView>() {
+                @Override
+                public void onSuccess(SpotRosterView spotRosterView) {
+                    isDateSet = true;
+                    calendar.setDate(spotRosterView.getTimeSlotList().stream().min((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getStartDateTime());
+                }});
+        }
+        calendar.forceUpdate();
+        /*RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<SpotRosterView>() {
             @Override
             public void onSuccess(SpotRosterView spotRosterView) {
                 SpotRosterViewPanel.this.spotRosterView = spotRosterView;
@@ -248,7 +293,11 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                 dataProvider.flush();
                 pagination.rebuild(pager);
             }
-        });
+        });*/
+    }
+    
+    private int getTenantId() {
+        return tenantId;
     }
 
 }
