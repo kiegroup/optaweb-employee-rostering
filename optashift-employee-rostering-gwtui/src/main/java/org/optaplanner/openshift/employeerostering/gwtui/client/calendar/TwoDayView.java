@@ -169,6 +169,10 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
     }
     
     private void drawSpots(CanvasRenderingContext2D g) {
+        if (groups.isEmpty()) {
+            return;
+        }
+        
         int minSize = Integer.MAX_VALUE;
         for (String spot : groups) {
             minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot, SPOT_NAME_WIDTH, spotHeight));
@@ -182,7 +186,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         HashMap<String, Integer> spotIndex = new HashMap<>();
         int groupIndex = groups.indexOf(groupPos.keySet().stream()
                 .filter((group) -> groupEndPos.get(group) >= rangeStart).min((a,b) -> groupEndPos.get(a) - groupEndPos.get(b))
-                .get());
+                .orElseGet(() -> groups.get(0)));
         
         spotIndex.put(groups.get(groupIndex), index);
         drawnSpots.add(groups.get(groupIndex));
@@ -336,7 +340,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         isDragging = true;
         
         boolean consumed = false;
-        for (D drawable : shiftDrawables) {
+        for (D drawable : CommonUtils.flatten(getVisibleItems())) {
             LocalDateTime mouseTime = getMouseLocalDateTime();
             double drawablePos = drawable.getGlobalY();
             
@@ -362,7 +366,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         mouseY = localMouseY + getOffsetY();
         
         boolean consumed = false;
-        for (D drawable : shiftDrawables) {
+        for (D drawable : CommonUtils.flatten(getVisibleItems())) {
             LocalDateTime mouseTime = getMouseLocalDateTime();
             double drawablePos = drawable.getGlobalY();
             
@@ -394,7 +398,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         boolean foundDrawable = false;
         
         if (isDragging) {
-            for (D drawable : shiftDrawables) {
+            for (D drawable : CommonUtils.flatten(getVisibleItems())) {
                 LocalDateTime mouseTime = getMouseLocalDateTime();
                 double drawablePos = drawable.getGlobalY();
 
@@ -411,7 +415,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
            
         }
         else {
-            for (D drawable : shiftDrawables) {
+            for (D drawable : CommonUtils.flatten(getVisibleItems())) {
                 LocalDateTime mouseTime = getMouseLocalDateTime();
                 double drawablePos = drawable.getGlobalY();
 
@@ -469,7 +473,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
         HashMap<String, HashMap<I,Integer>> placedSpots = new HashMap<>();
         HashMap<String, String> colorMap = new HashMap<>();
         
-        for (String group : groups.stream().sorted((a,b) -> CommonUtils.stringWithIntCompareTo(a,b)).collect(Collectors.toList())) {
+        for (String group : groups) {
             HashMap<I,Integer> placedShifts = new HashMap<>();
             int max = -1;
             groupPos.put(group, totalSpotSlots);
@@ -577,7 +581,7 @@ public class TwoDayView<I extends HasTimeslot,D extends TimeRowDrawable> impleme
 
     @Override
     public void setGroups(List<String> groups) {
-        this.groups = groups;
+        this.groups = groups.stream().sorted((a,b) -> CommonUtils.stringWithIntCompareTo(a,b)).collect(Collectors.toList());
     }
 
     @Override
