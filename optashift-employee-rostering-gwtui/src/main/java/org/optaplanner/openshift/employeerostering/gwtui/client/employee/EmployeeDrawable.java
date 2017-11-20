@@ -21,6 +21,10 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtil
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
@@ -109,14 +113,35 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
 
                 datafield = new HorizontalPanel();
                 label = new Label("Assigned Spot");
-                ListBox listbox = new ListBox();
-                spotList.forEach((s) -> listbox.addItem(s.getName()));
+                ListBox assignedSpot = new ListBox();
+                spotList.forEach((s) -> assignedSpot.addItem(s.getName()));
                 if (!data.isLocked()) {
-                    listbox.setEnabled(false);
+                    assignedSpot.setEnabled(false);
+                } else {
+                    assignedSpot.setSelectedIndex(spotList.indexOf(data.getSpot()));
                 }
-                checkbox.addValueChangeHandler((v) -> listbox.setEnabled(v.getValue()));
+                checkbox.addValueChangeHandler((v) -> assignedSpot.setEnabled(v.getValue()));
                 datafield.add(label);
-                datafield.add(listbox);
+                datafield.add(assignedSpot);
+                panel.add(datafield);
+
+                datafield = new HorizontalPanel();
+                label = new Label("Avaliability");
+                ListBox employeeAvaliability = new ListBox();
+                int index = 0;
+                for (EmployeeAvailabilityState availabilityState : EmployeeAvailabilityState.values()) {
+                    employeeAvaliability.addItem(availabilityState.toString());
+                    if (null != data.getAvailability() && availabilityState.equals(data.getAvailability().getState())) {
+                        employeeAvaliability.setSelectedIndex(index);
+                    }
+                    index++;
+                }
+                employeeAvaliability.addItem("NO PREFERENCE");
+                if (null == data.getAvailability()) {
+                    employeeAvaliability.setSelectedIndex(index);
+                }
+                datafield.add(label);
+                datafield.add(employeeAvaliability);
                 panel.add(datafield);
 
                 datafield = new HorizontalPanel();
@@ -124,8 +149,42 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
                 // TODO: Use i18n value when edit functionality is merged
                 confirm.setText("Confirm");
                 confirm.addClickHandler((c) -> {
+                    EmployeeAvailabilityState state = null;
+                    try {
+                        state = EmployeeAvailabilityState.valueOf(employeeAvaliability.getSelectedValue());
+                        if (null == data.getAvailability()) {
+                            EmployeeAvailabilityView availabilityView = new EmployeeAvailabilityView(data.getShift().getTenantId(), data.getEmployee(), data.getShift().getTimeSlot(), state);
+                            EmployeeRestServiceBuilder.addEmployeeAvailability(data.getShift().getTenantId(), availabilityView, new FailureShownRestCallback<Long>() {
+
+                                @Override
+                                public void onSuccess(Long id) {
+                                    view.getCalendar().forceUpdate();
+                                }
+                            });
+                        } else {
+                            data.getAvailability().setState(state);
+                            EmployeeRestServiceBuilder.updateEmployeeAvailability(data.getAvailability().getTenantId(), data.getAvailability(), new FailureShownRestCallback<Void>() {
+
+                                @Override
+                                public void onSuccess(Void result) {
+                                    view.getCalendar().forceUpdate();
+                                }
+                            });
+                        }
+                    } catch (IllegalArgumentException e) {
+                        if (data.getAvailability() != null) {
+                            EmployeeRestServiceBuilder.removeEmployeeAvailability(data.getAvailability().getTenantId(), data.getAvailability().getId(), new FailureShownRestCallback<Boolean>() {
+
+                                @Override
+                                public void onSuccess(Boolean result) {
+                                    view.getCalendar().forceUpdate();
+                                }
+                            });
+                        }
+                    }
+
                     if (checkbox.getValue()) {
-                        Spot spot = spotList.stream().filter((e) -> e.getName().equals(listbox.getSelectedValue())).findFirst().get();
+                        Spot spot = spotList.stream().filter((e) -> e.getName().equals(assignedSpot.getSelectedValue())).findFirst().get();
                         popup.hide();
                         ShiftRestServiceBuilder.getShifts(spot.getTenantId(), new FailureShownRestCallback<List<ShiftView>>() {
 
@@ -165,7 +224,7 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
 
                             }
                         });
-                    } else {
+                    } else if (data.isLocked()) {
                         data.getShift().setLockedByUser(false);
                         ShiftView shiftView = new ShiftView(data.getShift());
                         popup.hide();
@@ -177,6 +236,8 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
                             }
 
                         });
+                    } else {
+                        popup.hide();
                     }
 
                 });
