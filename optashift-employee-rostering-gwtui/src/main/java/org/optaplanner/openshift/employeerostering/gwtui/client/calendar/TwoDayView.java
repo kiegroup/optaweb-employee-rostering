@@ -17,6 +17,7 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -350,6 +351,8 @@ public class TwoDayView<I extends HasTimeslot, D extends TimeRowDrawable> implem
         }
         if (!consumed) {
             handleMouseDown(mouseX, mouseY);
+        } else {
+            isDragging = false;
         }
 
         calendar.draw();

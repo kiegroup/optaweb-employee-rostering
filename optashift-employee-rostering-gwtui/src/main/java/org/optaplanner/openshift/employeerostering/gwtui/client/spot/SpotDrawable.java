@@ -120,14 +120,16 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable {
 
                 datafield = new HorizontalPanel();
                 label = new Label("Assigned Employee");
-                ListBox listbox = new ListBox();
-                employeeList.forEach((e) -> listbox.addItem(e.getName()));
+                ListBox assignedEmployeeListBox = new ListBox();
+                employeeList.forEach((e) -> assignedEmployeeListBox.addItem(e.getName()));
                 if (!data.isLocked()) {
-                    listbox.setEnabled(false);
+                    assignedEmployeeListBox.setEnabled(false);
+                } else {
+                    assignedEmployeeListBox.setSelectedIndex(employeeList.indexOf(data.getAssignedEmployee()));
                 }
-                checkbox.addValueChangeHandler((v) -> listbox.setEnabled(v.getValue()));
+                checkbox.addValueChangeHandler((v) -> assignedEmployeeListBox.setEnabled(v.getValue()));
                 datafield.add(label);
-                datafield.add(listbox);
+                datafield.add(assignedEmployeeListBox);
                 panel.add(datafield);
 
                 datafield = new HorizontalPanel();
@@ -136,7 +138,7 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable {
                 confirm.setText("Confirm");
                 confirm.addClickHandler((c) -> {
                     if (checkbox.getValue()) {
-                        Employee employee = employeeList.stream().filter((e) -> e.getName().equals(listbox.getSelectedValue())).findFirst().get();
+                        Employee employee = employeeList.stream().filter((e) -> e.getName().equals(assignedEmployeeListBox.getSelectedValue())).findFirst().get();
                         data.getShift().setLockedByUser(true);
                         data.getShift().setEmployee(employee);
                         ShiftView shiftView = new ShiftView(data.getShift());
