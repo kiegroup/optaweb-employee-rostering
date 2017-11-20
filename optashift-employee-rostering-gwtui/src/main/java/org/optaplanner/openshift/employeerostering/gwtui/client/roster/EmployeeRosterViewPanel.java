@@ -138,7 +138,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
                 .withSidePanel(sidePanel)
                 .fetchingDataFrom(new EmployeeDataFetchable(() -> getTenantId()))
                 .fetchingGroupsFrom(new EmployeeNameFetchable(() -> getTenantId()))
-                .creatingDataInstancesWith((id,s,e) -> null)
+                .creatingDataInstancesWith((c,id,s,e) -> {})
                 .asTwoDayView((v,d,i) -> new EmployeeDrawable(v,d,i));
         
         /*table.addColumn(new TextColumn<Employee>() {

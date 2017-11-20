@@ -13,7 +13,9 @@ import javax.inject.Provider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -48,10 +50,24 @@ public class EmployeeDataFetchable implements Fetchable<Collection<EmployeeData>
                 
                 for (TimeSlot timeslot : timeslots) {
                     for (Employee employee : employees) {
-                        out.add(new EmployeeData(timeslot.getStartDateTime(),timeslot.getEndDateTime(),employee,
-                                timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot.getId()).get(employee.getId()),
-                                (null != timeSlotIdToEmployeeIdToShiftViewListMap.get(timeslot.getId()).get(employee.getId()))? timeSlotIdToEmployeeIdToShiftViewListMap.get(timeslot.getId()).get(employee.getId())
-                                .stream().map((e) -> spotMap.get(e.getSpotId())).collect(Collectors.toList()) : Collections.emptyList()));
+                        if (null != timeSlotIdToEmployeeIdToShiftViewListMap.get(timeslot.getId()).get(employee.getId())) {
+                            timeSlotIdToEmployeeIdToShiftViewListMap.get(timeslot.getId()).get(employee.getId())
+                                .stream().forEach((sv) -> {
+                                    Shift shift = new Shift(sv,null,timeslot);
+                                    shift.setEmployee(employee);
+                                    shift.setSpot(spotMap.get(sv.getSpotId()));
+                                    out.add(new EmployeeData(shift,
+                                            timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot.getId()).get(employee.getId())));
+                            });
+                        }
+                        else {
+                            Shift shift = new Shift();
+                            shift.setTenantId(employee.getTenantId());
+                            shift.setEmployee(employee);
+                            shift.setTimeSlot(timeslot);
+                            out.add(new EmployeeData(shift,
+                                    timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot.getId()).get(employee.getId())));
+                        }
                     }
                 }
                 updatable.onUpdate(out);

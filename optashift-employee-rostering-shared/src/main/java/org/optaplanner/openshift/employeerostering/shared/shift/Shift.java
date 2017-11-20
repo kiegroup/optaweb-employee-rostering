@@ -70,6 +70,7 @@ public class Shift extends AbstractPersistable {
         super(shiftView);
         this.timeSlot = timeSlot;
         this.spot = spot;
+        this.lockedByUser = shiftView.isLockedByUser();
     }
 
     @Override

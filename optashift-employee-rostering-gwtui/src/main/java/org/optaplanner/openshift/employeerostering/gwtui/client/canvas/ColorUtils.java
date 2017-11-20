@@ -1,16 +1,23 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.canvas;
 
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+
 public class ColorUtils {
     private static final double GOLDEN_RATIO = (1.0 + Math.sqrt(5))/2.0;
     
     // TODO: Make a proper brighten method
-    public static String brighten(String color, double amount) {
-        int[] rgb = getRGBFromHex(color);
-        int toAdd = (int) Math.round(amount);
-        for (int i = 0; i < 3; i++) {
-            rgb[i] = Math.min(255, rgb[i] + toAdd);
-        }
-        return getHexFromRGB(rgb);
+    public static String brighten(String color) {    
+        return blend(color, "#E0E0E0",0.5);
+    }
+    
+    public static String blend(String color1, String color2, double rgb2amount) {
+        int[] rgb1 = getRGBFromHex(color1);
+        int[] rgb2 = getRGBFromHex(color2);
+        double rgb1amount = 1 - rgb2amount;
+        
+        return getHexFromRGB(new int[] {(int)Math.round(rgb1[0]*rgb1amount + rgb2[0]*rgb2amount),
+                (int)Math.round(rgb1[1]*rgb1amount + rgb2[1]*rgb2amount),
+                (int)Math.round(rgb1[2]*rgb1amount + rgb2[2]*rgb2amount)});
     }
     
     public static String getColor(int num) {

@@ -20,10 +20,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
@@ -130,7 +131,11 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     }
 
     @Override
-    public List<Shift> getShifts(Integer tenantId) {
+    public List<ShiftView> getShifts(Integer tenantId) {
+        return getAllShifts(tenantId).stream().map((s) -> new ShiftView(s)).collect(Collectors.toList());
+    }
+
+    private List<Shift> getAllShifts(Integer tenantId) {
         TypedQuery<Shift> q = entityManager.createNamedQuery("Shift.findAll", Shift.class);
         q.setParameter("tenantId", tenantId);
         return q.getResultList();

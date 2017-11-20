@@ -1,6 +1,5 @@
 package org.optaplanner.openshift.employeerostering.shared.shift;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -30,10 +29,10 @@ public interface ShiftRestService {
     @GET
     @Path("/{id}")
     ShiftView getShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
-    
+
     @GET
     @Path("/")
-    List<Shift> getShifts(@PathParam("tenantId") Integer tenantId);
+    List<ShiftView> getShifts(@PathParam("tenantId") Integer tenantId);
 
     /**
      * @param shift never null
@@ -49,12 +48,10 @@ public interface ShiftRestService {
     @PUT
     @Path("/update")
     void updateShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
-    
+
     @PUT
     @Path("/add/fromTemplate")
-    List<Long> addShiftsFromTemplate(@PathParam("tenantId") Integer tenantId, 
-            @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString,
-            @QueryParam("data") String data) throws Exception;
+    List<Long> addShiftsFromTemplate(@PathParam("tenantId") Integer tenantId, @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString, @QueryParam("data") String data) throws Exception;
 
     /**
      * @param id never null

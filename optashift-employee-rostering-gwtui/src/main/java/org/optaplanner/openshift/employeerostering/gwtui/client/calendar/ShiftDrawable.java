@@ -42,17 +42,11 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
         
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
         g.fillText(spot, getLocalX(), getLocalY() + view.getGroupHeight());
-        
-        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()*duration &&
-                view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view.getGroupHeight() ) {
-            view.preparePopup(this.toString());
-            
-        }
     }
     
     @Override
     public void doDrawAt(CanvasRenderingContext2D g, double x, double y) {
-        CanvasUtils.setFillColor(g, (isMouseOver)? ColorUtils.brighten(color, 0.25) :color);
+        CanvasUtils.setFillColor(g, (isMouseOver)? ColorUtils.brighten(color) :color);
         
         double start = startTime.toEpochSecond(ZoneOffset.UTC) / 60;
         double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
@@ -62,12 +56,6 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
         
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
         g.fillText(spot, x, y + view.getGroupHeight());
-        
-        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()*duration &&
-                view.getLocalMouseY() >= y && view.getLocalMouseY() <= y + view.getGroupHeight() ) {
-            view.preparePopup(this.toString());
-            
-        }
     }
 
     @Override
@@ -80,6 +68,12 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable {
     public double getLocalY() {
         Integer cursorIndex = view.getCursorIndex(spot);
         return (null != cursorIndex && cursorIndex > index)? index*view.getGroupHeight() : (index+1)*view.getGroupHeight();
+    }
+    
+    @Override
+    public boolean onMouseMove(MouseEvent e, double x, double y) {
+        view.preparePopup(this.toString());
+        return true;
     }
     
     @Override

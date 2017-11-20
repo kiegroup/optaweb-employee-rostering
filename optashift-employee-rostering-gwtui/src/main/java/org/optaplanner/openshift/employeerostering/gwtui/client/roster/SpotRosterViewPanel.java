@@ -111,7 +111,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                 .withSidePanel(sidePanel)
                 .fetchingDataFrom(new SpotDataFetchable(() -> getTenantId()))
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
-                .creatingDataInstancesWith((id,s,e) -> null)
+                .creatingDataInstancesWith((c,id,s,e) -> {})
                 .asTwoDayView((v,d,i) -> new SpotDrawable(v,d,i));
         /*table.addColumn(new TextColumn<Spot>() {
             @Override
