@@ -1,54 +1,55 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 public class EmployeeData implements HasTimeslot{
-    private LocalDateTime start;
-    private LocalDateTime end;
-    private Employee employee;
+    Shift shift;
     private EmployeeAvailabilityView availabilityView;
-    private List<Spot> spots;
     
-    public EmployeeData(LocalDateTime start, LocalDateTime end, Employee employee,
-            EmployeeAvailabilityView availabilityView, List<Spot> spots) {
-        this.start = start;
-        this.end = end;
-        this.employee = employee;
+    public EmployeeData(Shift shift, EmployeeAvailabilityView availabilityView) {
+        this.shift = shift;
         this.availabilityView = availabilityView;
-        this.spots = spots;
     }
 
     @Override
     public String getGroupId() {
-        return employee.getName();
+        return shift.getEmployee().getName();
     }
     
     public Employee getEmployee() {
-        return employee;
+        return shift.getEmployee();
     }
     
     public EmployeeAvailabilityView getAvailability() {
         return availabilityView;
     }
     
-    public List<Spot> getSpots() {
-        return spots;
+    public Spot getSpot() {
+        return shift.getSpot();
+    }
+    
+    public boolean isLocked() {
+        return shift.isLockedByUser();
+    }
+    
+    public Shift getShift() {
+        return shift;
     }
 
     @Override
     public LocalDateTime getStartTime() {
-        return start;
+        return shift.getTimeSlot().getStartDateTime();
     }
 
     @Override
     public LocalDateTime getEndTime() {
-        return end;
+        return shift.getTimeSlot().getEndDateTime();
     }
     
     

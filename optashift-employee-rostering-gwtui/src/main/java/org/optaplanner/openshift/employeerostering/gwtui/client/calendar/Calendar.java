@@ -112,11 +112,14 @@ public class Calendar<I extends HasTimeslot> {
         view.setDate(date);
     }
     
-    public void addShift(String groupId, LocalDateTime start, LocalDateTime end) {
-        I shift = instanceCreator.getInstance(groupId, start, end);
+    public void addShift(I shift) {
         shifts.add(shift);
         getView().setShifts(shifts);
         draw();
+    }
+    
+    public void addShift(String groupId, LocalDateTime start, LocalDateTime end) {
+        instanceCreator.getInstance(this, groupId, start, end);
     }
     
     public static class Builder<T extends HasTimeslot, D extends TimeRowDrawable> {

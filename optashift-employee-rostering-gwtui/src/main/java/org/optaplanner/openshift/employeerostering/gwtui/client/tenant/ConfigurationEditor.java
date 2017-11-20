@@ -54,7 +54,7 @@ public class ConfigurationEditor implements IsElement {
                 .withSidePanel(sidePanel)
                 .fetchingDataFrom(new ConstantFetchable<Collection<ShiftData>>(Collections.emptyList()))
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
-                .creatingDataInstancesWith((name,start,end) -> new ShiftData(start,end,name))
+                .creatingDataInstancesWith((c,name,start,end) -> c.addShift(new ShiftData(start,end,name)))
                 .asTwoDayView((v,d,i) -> new ShiftDrawable(v,d,i));
     }
 

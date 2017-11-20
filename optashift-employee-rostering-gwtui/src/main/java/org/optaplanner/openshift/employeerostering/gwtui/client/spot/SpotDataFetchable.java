@@ -15,6 +15,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetch
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -46,10 +47,15 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                 
                 for (TimeSlot timeslot : timeslots) {
                     for (Spot spot : spots) {
-                        out.add(new SpotData(timeslot.getStartDateTime(), timeslot.getEndDateTime(),spot,
-                                (null != timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId()))? timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())
-                                        .stream().map((e) -> employeeMap.get(e.getEmployeeId())).collect(Collectors.toList()) : Collections.emptyList()));
-                    }
+                        if (null != timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())) {
+                            timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())
+                                .stream().forEach((sv) -> {
+                                    Shift shift = new Shift(sv,spot,timeslot);
+                                    shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
+                                    out.add(new SpotData(shift));
+                                });
+                            }
+                        } 
                 }
                 updatable.onUpdate(out);
                 after.execute();
