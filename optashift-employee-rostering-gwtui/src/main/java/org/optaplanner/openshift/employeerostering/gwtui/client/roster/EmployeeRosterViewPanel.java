@@ -34,6 +34,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureSh
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeDataFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeDrawable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeId;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeNameFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -48,6 +49,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
+
 @Templated
 public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
@@ -56,65 +58,70 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     //private CellTable<Employee> table;
     //@DataField
     //private Pagination pagination;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private Button planNextPeriod;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private Div topPanel;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private Div bottomPanel;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private Span sidePanel;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private HTMLCanvasElement canvasElement;
-    
-    private Calendar<EmployeeData> calendar;
+
+    private Calendar<EmployeeId, EmployeeData> calendar;
 
     //private SimplePager pager = new SimplePager();
     //private ListDataProvider<Employee> dataProvider = new ListDataProvider<>();
 
     private EmployeeRosterView employeeRosterView;
     private Map<Long, Spot> spotMap;
-    
+
     boolean isDateSet = false;
 
     @Inject
     private TranslationService CONSTANTS;
-    
-        @EventHandler("planNextPeriod")
-        public void plan(ClickEvent e) {
-            ShiftRestServiceBuilder.addShiftsFromTemplate(tenantId,
-                    employeeRosterView.getTimeSlotList().stream().max((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getEndDateTime().toString(),
-                    employeeRosterView.getTimeSlotList().stream().max((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getEndDateTime().plusWeeks(2).toString(),
-                    "NONE\n" +
-                    ";\n" +
-                    "0:0:0;0:8:0;Battery",
-                        new FailureShownRestCallback<List<Long>>() {
-                            public void onSuccess(List<Long> lst) {
-                                StringBuilder out = new StringBuilder();
-                                out.append("Start Date: ");
-                                out.append(employeeRosterView.getStartDate().toString());
-                                out.append("\nEnd Date: ");
-                                out.append(employeeRosterView.getEndDate().toString());
-                                out.append('\n');
-                                out.append('[');
-                                for (Long id : lst) {
-                                    out.append(id);
-                                    out.append(',');
-                                }
-                                out.append(']');
-                                ErrorPopup.show(out.toString());
-                            }
+
+    @EventHandler("planNextPeriod")
+    public void plan(ClickEvent e) {
+        ShiftRestServiceBuilder.addShiftsFromTemplate(tenantId,
+                calendar.getShifts().stream().max((a, b) -> a.getStartTime().compareTo(b
+                        .getStartTime())).get().getEndTime().toString(),
+                calendar.getShifts().stream().max((a, b) -> a.getStartTime().compareTo(b
+                        .getStartTime())).get().getEndTime().plusWeeks(2).toString(),
+                "test",
+                new FailureShownRestCallback<List<Long>>() {
+
+                    public void onSuccess(List<Long> lst) {
+                        StringBuilder out = new StringBuilder();
+                        out.append("Start Date: ");
+                        out.append(employeeRosterView.getStartDate().toString());
+                        out.append("\nEnd Date: ");
+                        out.append(employeeRosterView.getEndDate().toString());
+                        out.append('\n');
+                        out.append('[');
+                        for (Long id : lst) {
+                            out.append(id);
+                            out.append(',');
                         }
-                    );
-        }
+                        out.append(']');
+                        ErrorPopup.show(out.toString());
+                    }
+                });
+    }
 
     public EmployeeRosterViewPanel() {
-        
+
         /*table = new CellTable<>(15);
         table.setBordered(true);
         table.setCondensed(true);
@@ -132,15 +139,16 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        calendar = new Calendar.Builder<EmployeeData,EmployeeDrawable>(canvasElement, tenantId)
+        calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable>(canvasElement, tenantId)
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)
                 .fetchingDataFrom(new EmployeeDataFetchable(() -> getTenantId()))
                 .fetchingGroupsFrom(new EmployeeNameFetchable(() -> getTenantId()))
-                .creatingDataInstancesWith((c,id,s,e) -> {})
-                .asTwoDayView((v,d,i) -> new EmployeeDrawable(v,d,i));
-        
+                .creatingDataInstancesWith((c, id, s, e) -> {
+                })
+                .asTwoDayView((v, d, i) -> new EmployeeDrawable(v, d, i));
+
         /*table.addColumn(new TextColumn<Employee>() {
             @Override
             public String getValue(Employee employee) {
@@ -149,7 +157,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
         },
                         CONSTANTS.format(General_employee));
         table.addRangeChangeHandler(event -> pagination.rebuild(pager));
-
+        
         pager.setDisplay(table);
         pagination.clear();
         dataProvider.addDataDisplay(table);*/
@@ -161,12 +169,16 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
             return;
         }
         if (!isDateSet) {
-            RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantId, new FailureShownRestCallback<EmployeeRosterView>() {
+            RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantId, new FailureShownRestCallback<
+                    EmployeeRosterView>() {
+
                 @Override
                 public void onSuccess(EmployeeRosterView employeeRosterView) {
                     isDateSet = true;
-                    calendar.setDate(employeeRosterView.getTimeSlotList().stream().min((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getStartDateTime());
-                }});
+                    calendar.setDate(employeeRosterView.getTimeSlotList().stream().min((a, b) -> a.getStartDateTime()
+                            .compareTo(b.getStartDateTime())).get().getStartDateTime());
+                }
+            });
         }
         calendar.forceUpdate();
         /*RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantId, new FailureShownRestCallback<EmployeeRosterView>() {
@@ -193,7 +205,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
                             .appendEscaped(timeSlot.getEndDateTime().toLocalTime().toString())
                             .appendHtmlConstant("</div>")
                             .toSafeHtml();
-
+        
                     Map<Long, List<ShiftView>> employeeIdToShiftViewListMap
                             = employeeRosterView.getTimeSlotIdToEmployeeIdToShiftViewListMap().get(timeSlot.getId());
                     Map<Long, EmployeeAvailabilityView> employeeIdToAvailabilityViewMap
@@ -265,7 +277,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
                                 }
                             }
                         }
-
+        
                         @Override
                         public void onBrowserEvent(Context context, Element parent, Employee employee, NativeEvent event, ValueUpdater<Employee> valueUpdater) {
                             super.onBrowserEvent(context, parent, employee, event, valueUpdater);
@@ -324,7 +336,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
             }
         });*/
     }
-    
+
     private Integer getTenantId() {
         return tenantId;
     }

@@ -31,14 +31,14 @@ import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
-public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawable {
+public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawable<EmployeeId> {
 
-    TwoDayView view;
+    TwoDayView<EmployeeId, ?, ?> view;
     EmployeeData data;
     int index;
     boolean isMouseOver;
 
-    public EmployeeDrawable(TwoDayView view, EmployeeData data, int index) {
+    public EmployeeDrawable(TwoDayView<EmployeeId, ?, ?> view, EmployeeData data, int index) {
         this.view = view;
         this.data = data;
         this.index = index;
@@ -55,7 +55,8 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
     @Override
     public double getLocalY() {
         Integer cursorIndex = view.getCursorIndex(getGroupId());
-        return (null != cursorIndex && cursorIndex > index) ? index * view.getGroupHeight() : (index + 1) * view.getGroupHeight();
+        return (null != cursorIndex && cursorIndex > index) ? index * view.getGroupHeight() : (index + 1) * view
+                .getGroupHeight();
     }
 
     @Override
@@ -153,73 +154,84 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
                     try {
                         state = EmployeeAvailabilityState.valueOf(employeeAvaliability.getSelectedValue());
                         if (null == data.getAvailability()) {
-                            EmployeeAvailabilityView availabilityView = new EmployeeAvailabilityView(data.getShift().getTenantId(), data.getEmployee(), data.getShift().getTimeSlot(), state);
-                            EmployeeRestServiceBuilder.addEmployeeAvailability(data.getShift().getTenantId(), availabilityView, new FailureShownRestCallback<Long>() {
-
-                                @Override
-                                public void onSuccess(Long id) {
-                                    view.getCalendar().forceUpdate();
-                                }
-                            });
-                        } else {
-                            data.getAvailability().setState(state);
-                            EmployeeRestServiceBuilder.updateEmployeeAvailability(data.getAvailability().getTenantId(), data.getAvailability(), new FailureShownRestCallback<Void>() {
-
-                                @Override
-                                public void onSuccess(Void result) {
-                                    view.getCalendar().forceUpdate();
-                                }
-                            });
-                        }
-                    } catch (IllegalArgumentException e) {
-                        if (data.getAvailability() != null) {
-                            EmployeeRestServiceBuilder.removeEmployeeAvailability(data.getAvailability().getTenantId(), data.getAvailability().getId(), new FailureShownRestCallback<Boolean>() {
-
-                                @Override
-                                public void onSuccess(Boolean result) {
-                                    view.getCalendar().forceUpdate();
-                                }
-                            });
-                        }
-                    }
-
-                    if (checkbox.getValue()) {
-                        Spot spot = spotList.stream().filter((e) -> e.getName().equals(assignedSpot.getSelectedValue())).findFirst().get();
-                        popup.hide();
-                        ShiftRestServiceBuilder.getShifts(spot.getTenantId(), new FailureShownRestCallback<List<ShiftView>>() {
-
-                            @Override
-                            public void onSuccess(List<ShiftView> shifts) {
-                                ShiftView shift = shifts.stream().filter((s) -> s.getSpotId().equals(spot.getId()) && s.getTimeSlotId().equals(data.getShift().getTimeSlot().getId())).findFirst().get();
-                                data.getShift().setLockedByUser(false);
-                                shift.setEmployeeId(data.getEmployee().getId());
-                                shift.setLockedByUser(true);
-                                if (data.isLocked()) {
-                                    ShiftView oldShift = new ShiftView(data.getShift());
-
-                                    ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), oldShift, new FailureShownRestCallback<Void>() {
+                            EmployeeAvailabilityView availabilityView = new EmployeeAvailabilityView(data.getShift()
+                                    .getTenantId(), data.getEmployee(), data.getShift().getTimeSlot(), state);
+                            EmployeeRestServiceBuilder.addEmployeeAvailability(data.getShift().getTenantId(),
+                                    availabilityView, new FailureShownRestCallback<Long>() {
 
                                         @Override
-                                        public void onSuccess(Void result) {
-                                            ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shift, new FailureShownRestCallback<Void>() {
-
-                                                @Override
-                                                public void onSuccess(Void result2) {
-                                                    view.getCalendar().forceUpdate();
-                                                }
-
-                                            });
+                                        public void onSuccess(Long id) {
+                                            view.getCalendar().forceUpdate();
                                         }
-
                                     });
-                                } else {
-                                    ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shift, new FailureShownRestCallback<Void>() {
+                        } else {
+                            data.getAvailability().setState(state);
+                            EmployeeRestServiceBuilder.updateEmployeeAvailability(data.getAvailability().getTenantId(),
+                                    data.getAvailability(), new FailureShownRestCallback<Void>() {
 
                                         @Override
                                         public void onSuccess(Void result) {
                                             view.getCalendar().forceUpdate();
                                         }
                                     });
+                        }
+                    } catch (IllegalArgumentException e) {
+                        if (data.getAvailability() != null) {
+                            EmployeeRestServiceBuilder.removeEmployeeAvailability(data.getAvailability().getTenantId(),
+                                    data.getAvailability().getId(), new FailureShownRestCallback<Boolean>() {
+
+                                        @Override
+                                        public void onSuccess(Boolean result) {
+                                            view.getCalendar().forceUpdate();
+                                        }
+                                    });
+                        }
+                    }
+
+                    if (checkbox.getValue()) {
+                        Spot spot = spotList.stream().filter((e) -> e.getName().equals(assignedSpot.getSelectedValue()))
+                                .findFirst().get();
+                        popup.hide();
+                        ShiftRestServiceBuilder.getShifts(spot.getTenantId(), new FailureShownRestCallback<List<
+                                ShiftView>>() {
+
+                            @Override
+                            public void onSuccess(List<ShiftView> shifts) {
+                                ShiftView shift = shifts.stream().filter((s) -> s.getSpotId().equals(spot.getId()) && s
+                                        .getTimeSlotId().equals(data.getShift().getTimeSlot().getId())).findFirst()
+                                        .get();
+                                data.getShift().setLockedByUser(false);
+                                shift.setEmployeeId(data.getEmployee().getId());
+                                shift.setLockedByUser(true);
+                                if (data.isLocked()) {
+                                    ShiftView oldShift = new ShiftView(data.getShift());
+
+                                    ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), oldShift,
+                                            new FailureShownRestCallback<Void>() {
+
+                                                @Override
+                                                public void onSuccess(Void result) {
+                                                    ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(),
+                                                            shift, new FailureShownRestCallback<Void>() {
+
+                                                                @Override
+                                                                public void onSuccess(Void result2) {
+                                                                    view.getCalendar().forceUpdate();
+                                                                }
+
+                                                            });
+                                                }
+
+                                            });
+                                } else {
+                                    ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shift,
+                                            new FailureShownRestCallback<Void>() {
+
+                                                @Override
+                                                public void onSuccess(Void result) {
+                                                    view.getCalendar().forceUpdate();
+                                                }
+                                            });
                                 }
 
                             }
@@ -228,14 +240,15 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
                         data.getShift().setLockedByUser(false);
                         ShiftView shiftView = new ShiftView(data.getShift());
                         popup.hide();
-                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shiftView, new FailureShownRestCallback<Void>() {
+                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shiftView,
+                                new FailureShownRestCallback<Void>() {
 
-                            @Override
-                            public void onSuccess(Void result) {
-                                view.getCalendar().forceUpdate();
-                            }
+                                    @Override
+                                    public void onSuccess(Void result) {
+                                        view.getCalendar().forceUpdate();
+                                    }
 
-                        });
+                                });
                     } else {
                         popup.hide();
                     }
@@ -277,7 +290,7 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
     }
 
     @Override
-    public String getGroupId() {
+    public EmployeeId getGroupId() {
         return data.getGroupId();
     }
 
@@ -300,7 +313,8 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
         double end = getEndTime().toEpochSecond(ZoneOffset.UTC) / 60;
         double duration = end - start;
 
-        CanvasUtils.drawCurvedRect(g, getLocalX(), getLocalY(), duration * view.getWidthPerMinute(), view.getGroupHeight());
+        CanvasUtils.drawCurvedRect(g, getLocalX(), getLocalY(), duration * view.getWidthPerMinute(), view
+                .getGroupHeight());
 
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
 
@@ -315,7 +329,9 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
         }
         g.fillText(spot, getLocalX(), getLocalY() + view.getGroupHeight());
 
-        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute() * duration && view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view.getGroupHeight()) {
+        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()
+                * duration && view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view
+                        .getGroupHeight()) {
             view.preparePopup(this.toString());
 
         }

@@ -41,6 +41,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopu
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotDataFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotDrawable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotId;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotNameFetchable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -68,23 +69,27 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
 
     private SpotRosterView spotRosterView;
     private Map<Long, Employee> employeeMap;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private Div topPanel;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private Div bottomPanel;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private Span sidePanel;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private HTMLCanvasElement canvasElement;
-    
-    private Calendar<SpotData> calendar;
+
+    private Calendar<SpotId, SpotData> calendar;
     @Inject
     private TranslationService CONSTANTS;
-    
+
     boolean isDateSet = false;
 
     public SpotRosterViewPanel() {
@@ -105,14 +110,15 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        calendar = new Calendar.Builder<SpotData,SpotDrawable>(canvasElement, tenantId)
+        calendar = new Calendar.Builder<SpotId, SpotData, SpotDrawable>(canvasElement, tenantId)
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)
                 .fetchingDataFrom(new SpotDataFetchable(() -> getTenantId()))
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
-                .creatingDataInstancesWith((c,id,s,e) -> {})
-                .asTwoDayView((v,d,i) -> new SpotDrawable(v,d,i));
+                .creatingDataInstancesWith((c, id, s, e) -> {
+                })
+                .asTwoDayView((v, d, i) -> new SpotDrawable(v, d, i));
         /*table.addColumn(new TextColumn<Spot>() {
             @Override
             public String getValue(Spot spot) {
@@ -121,7 +127,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
         },
                         CONSTANTS.format(SpotRosterView_spot));
         table.addRangeChangeHandler(event -> pagination.rebuild(pager));
-
+        
         pager.setDisplay(table);
         pagination.clear();
         dataProvider.addDataDisplay(table);*/
@@ -134,11 +140,14 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
         }
         if (!isDateSet) {
             RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<SpotRosterView>() {
+
                 @Override
                 public void onSuccess(SpotRosterView spotRosterView) {
                     isDateSet = true;
-                    calendar.setDate(spotRosterView.getTimeSlotList().stream().min((a,b) -> a.getStartDateTime().compareTo(b.getStartDateTime())).get().getStartDateTime());
-                }});
+                    calendar.setDate(spotRosterView.getTimeSlotList().stream().min((a, b) -> a.getStartDateTime()
+                            .compareTo(b.getStartDateTime())).get().getStartDateTime());
+                }
+            });
         }
         calendar.forceUpdate();
         /*RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<SpotRosterView>() {
@@ -165,7 +174,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                             .appendEscaped(timeSlot.getEndDateTime().toLocalTime().toString())
                             .appendHtmlConstant("</div>")
                             .toSafeHtml();
-
+        
                     Map<Long, List<ShiftView>> spotIdMap = spotRosterView.getTimeSlotIdToSpotIdToShiftViewListMap().get(timeSlot.getId());
                     table.addColumn(new IdentityColumn<>(new AbstractCell<Spot>("click") {
                         @Override
@@ -208,7 +217,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                     "<span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"/>" +
                                     "</a>");
                         }
-
+        
                         @Override
                         public void onBrowserEvent(Context context, Element parent, Spot spot, NativeEvent event, ValueUpdater<Spot> valueUpdater) {
                             super.onBrowserEvent(context, parent, spot, event, valueUpdater);
@@ -251,10 +260,10 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                             modal.setTitle("Select employee");
                                             modal.setClosable(true);
                                             modal.setRemoveOnHide(true);
-
+        
                                             ListBox employeeListBox = new ListBox();
                                             employeeList.forEach(employee -> employeeListBox.addItem(employee.getName()));
-
+        
                                             final ModalBody modalBody = new ModalBody();
                                             modalBody.add(employeeListBox);
                                             final ModalFooter modalFooter = new ModalFooter();
@@ -279,7 +288,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                                 }
                             }
                         }
-
+        
                         private ShiftView lookupShift(Spot spot, Element targetElement) {
                             String shiftIdString = targetElement.getAttribute("data-shiftId");
                             Long shiftId = Long.parseLong(shiftIdString);
@@ -295,7 +304,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
             }
         });*/
     }
-    
+
     private int getTenantId() {
         return tenantId;
     }

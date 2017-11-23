@@ -8,12 +8,19 @@ import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
-public interface CalendarView<I extends HasTimeslot> {
+public interface CalendarView<G extends HasTitle, I extends HasTimeslot<G>> {
+
     void setDate(LocalDateTime date);
+
     void setShifts(Collection<I> shifts);
-    void setGroups(List<String> groups);
+
+    void setGroups(List<G> groups);
+
     void draw(CanvasRenderingContext2D g, double screenWidth, double screenHeight);
+
     void onMouseDown(MouseEvent e);
+
     void onMouseMove(MouseEvent e);
+
     void onMouseUp(MouseEvent e);
 }

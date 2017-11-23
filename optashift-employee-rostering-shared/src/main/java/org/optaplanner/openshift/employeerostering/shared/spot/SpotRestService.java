@@ -47,6 +47,34 @@ public interface SpotRestService {
     @Path("/update/{id}")
     Spot updateSpot(@PathParam("tenantId") Integer tenantId, Spot spot);
 
+    @GET
+    @Path("/groups/")
+    List<SpotGroup> getSpotGroups(@PathParam("tenantId") Integer tenantId);
+
+    @GET
+    @Path("/groups/{id}")
+    SpotGroup getSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+
+    @GET
+    @Path("/groups/{name}")
+    SpotGroup findSpotGroupByName(@PathParam("tenantId") Integer tenantId, @PathParam("name") String name);
+
+    @POST
+    @Path("/groups/create")
+    Long createSpotGroup(@PathParam("tenantId") Integer tenantId, SpotGroup spotGroup);
+
+    @POST
+    @Path("/groups/{id}/add")
+    void addSpotToSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Spot spot);
+
+    @POST
+    @Path("/groups/{id}/remove")
+    void removeSpotFromSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Spot spot);
+
+    @POST
+    @Path("/groups/delete/{id}")
+    Boolean deleteSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+
     /**
      * @param id never null
      * @return true if the spot was successfully removed, false otherwise
@@ -54,5 +82,4 @@ public interface SpotRestService {
     @DELETE
     @Path("/{id}")
     Boolean removeSpot(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
-
 }

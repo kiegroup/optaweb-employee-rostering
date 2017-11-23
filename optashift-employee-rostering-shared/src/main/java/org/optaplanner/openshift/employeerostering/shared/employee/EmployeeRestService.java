@@ -64,14 +64,46 @@ public interface EmployeeRestService {
      */
     @POST
     @Path("/availability/add")
-    Long addEmployeeAvailability(@PathParam("tenantId") Integer tenantId, EmployeeAvailabilityView employeeAvailability);
+    Long addEmployeeAvailability(@PathParam("tenantId") Integer tenantId,
+            EmployeeAvailabilityView employeeAvailability);
 
     /**
      * @param employeeAvailability never null
      */
     @PUT
     @Path("/availability/update")
-    void updateEmployeeAvailability(@PathParam("tenantId") Integer tenantId, EmployeeAvailabilityView employeeAvailability);
+    void updateEmployeeAvailability(@PathParam("tenantId") Integer tenantId,
+            EmployeeAvailabilityView employeeAvailability);
+
+    @GET
+    @Path("/groups/")
+    List<EmployeeGroup> getEmployeeGroups(@PathParam("tenantId") Integer tenantId);
+
+    @GET
+    @Path("/groups/{id}")
+    EmployeeGroup getEmployeeGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+
+    @GET
+    @Path("/groups/find/{name}")
+    EmployeeGroup findEmployeeGroupByName(@PathParam("tenantId") Integer tenantId, @PathParam("name") String name);
+
+    @POST
+    @Path("/groups/create")
+    Long createEmployeeGroup(@PathParam("tenantId") Integer tenantId, EmployeeGroup employeeGroup);
+
+    @POST
+    @Path("/groups/{id}/add")
+    void addEmployeeToEmployeeGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id,
+            Employee employee);
+
+    @POST
+    @Path("/groups/{id}/remove")
+    void removeEmployeeFromEmployeeGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id,
+            Employee employee);
+
+    @POST
+    @Path("/groups/delete/{id}")
+    Boolean deleteEmployeeGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
     /**
      * @param id never null

@@ -26,6 +26,7 @@ import javax.transaction.Transactional;
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeGroup;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
@@ -127,6 +128,76 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
         validateTenantIdParameter(tenantId, employeeAvailability);
         entityManager.remove(employeeAvailability);
         return true;
+    }
+
+    @Override
+    public List<EmployeeGroup> getEmployeeGroups(Integer tenantId) {
+        return entityManager.createNamedQuery("EmployeeGroup.findAll", EmployeeGroup.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+    }
+
+    @Override
+    public EmployeeGroup getEmployeeGroup(Integer tenantId, Long id) {
+        EmployeeGroup group = entityManager.find(EmployeeGroup.class, id);
+        validateTenantIdParameter(tenantId, group);
+        return group;
+    }
+
+    @Override
+    @Transactional
+    public Long createEmployeeGroup(Integer tenantId, EmployeeGroup employeeGroup) {
+        validateTenantIdParameter(tenantId, employeeGroup);
+        if (employeeGroup.getName().equals("ALL")) {
+            throw new IllegalArgumentException("ALL is a reserved EmployeeGroup");
+        }
+        entityManager.persist(employeeGroup);
+        return employeeGroup.getId();
+    }
+
+    @Override
+    @Transactional
+    public void addEmployeeToEmployeeGroup(Integer tenantId, Long id, Employee employee) {
+        EmployeeGroup group = getEmployeeGroup(tenantId, id);
+        validateTenantIdParameter(tenantId, employee);
+        group.getEmployees().add(employee);
+        entityManager.merge(group);
+    }
+
+    @Override
+    @Transactional
+    public void removeEmployeeFromEmployeeGroup(Integer tenantId, Long id, Employee employee) {
+        EmployeeGroup group = getEmployeeGroup(tenantId, id);
+        validateTenantIdParameter(tenantId, employee);
+        group.getEmployees().remove(employee);
+        entityManager.merge(group);
+    }
+
+    @Override
+    @Transactional
+    public Boolean deleteEmployeeGroup(Integer tenantId, Long id) {
+        EmployeeGroup group = entityManager.find(EmployeeGroup.class, id);
+        if (group == null) {
+            return false;
+        }
+        validateTenantIdParameter(tenantId, group);
+        entityManager.remove(group);
+        return true;
+    }
+
+    @Override
+    public EmployeeGroup findEmployeeGroupByName(Integer tenantId, String name) {
+        if (name.equals("ALL")) {
+            EmployeeGroup out = EmployeeGroup.getAllGroup(tenantId);
+            out.setEmployees(getEmployeeList(tenantId));
+            return out;
+        }
+        else {
+            return entityManager.createNamedQuery("EmployeeGroup.findByName", EmployeeGroup.class)
+                .setParameter("tenantId", tenantId)
+                .setParameter("name", name)
+                .getSingleResult();
+        }
     }
 
 }

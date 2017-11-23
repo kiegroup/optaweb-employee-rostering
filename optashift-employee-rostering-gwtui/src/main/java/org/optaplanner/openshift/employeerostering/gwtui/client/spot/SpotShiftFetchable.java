@@ -25,7 +25,7 @@ public class SpotShiftFetchable implements Fetchable<Collection<ShiftData>> {
     public void fetchData(Command after) {
         SpotDataFetchable spotDataFetchable = new SpotDataFetchable(tenantIdProvider);
         spotDataFetchable.setUpdatable((c) -> {
-            updatable.onUpdate(c.stream().map((s) -> new ShiftData(s.getStartTime(), s.getEndTime(), s.getGroupId())).collect(Collectors.toList()));
+            updatable.onUpdate(c.stream().map((s) -> new ShiftData(s)).collect(Collectors.toList()));
             after.execute();
         });
         spotDataFetchable.fetchData(() -> {

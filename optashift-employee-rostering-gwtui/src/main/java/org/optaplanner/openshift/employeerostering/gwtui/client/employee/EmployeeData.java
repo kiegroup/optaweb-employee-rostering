@@ -8,19 +8,16 @@ import org.optaplanner.openshift.employeerostering.shared.employee.view.Employee
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-public class EmployeeData implements HasTimeslot {
+public class EmployeeData implements HasTimeslot<EmployeeId> {
 
     Shift shift;
+    EmployeeId employeeId;
     private EmployeeAvailabilityView availabilityView;
 
     public EmployeeData(Shift shift, EmployeeAvailabilityView availabilityView) {
         this.shift = shift;
         this.availabilityView = availabilityView;
-    }
-
-    @Override
-    public String getGroupId() {
-        return shift.getEmployee().getName();
+        this.employeeId = new EmployeeId(shift.getEmployee());
     }
 
     public Employee getEmployee() {
@@ -55,6 +52,11 @@ public class EmployeeData implements HasTimeslot {
     @Override
     public LocalDateTime getEndTime() {
         return shift.getTimeSlot().getEndDateTime();
+    }
+
+    @Override
+    public EmployeeId getGroupId() {
+        return employeeId;
     }
 
 }

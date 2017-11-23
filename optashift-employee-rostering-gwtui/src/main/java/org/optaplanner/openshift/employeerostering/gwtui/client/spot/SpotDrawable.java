@@ -26,14 +26,14 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestS
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
-public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable {
+public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<SpotId> {
 
-    TwoDayView view;
+    TwoDayView<SpotId, ?, ?> view;
     SpotData data;
     int index;
     boolean isMouseOver;
 
-    public SpotDrawable(TwoDayView view, SpotData data, int index) {
+    public SpotDrawable(TwoDayView<SpotId, ?, ?> view, SpotData data, int index) {
         this.view = view;
         this.data = data;
         this.index = index;
@@ -50,7 +50,8 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable {
     @Override
     public double getLocalY() {
         Integer cursorIndex = view.getCursorIndex(getGroupId());
-        return (null != cursorIndex && cursorIndex > index) ? index * view.getGroupHeight() : (index + 1) * view.getGroupHeight();
+        return (null != cursorIndex && cursorIndex > index) ? index * view.getGroupHeight() : (index + 1) * view
+                .getGroupHeight();
     }
 
     @Override
@@ -98,7 +99,8 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable {
 
     @Override
     public boolean onMouseDown(MouseEvent mouseEvent, double x, double y) {
-        EmployeeRestServiceBuilder.getEmployeeList(data.getShift().getTenantId(), new FailureShownRestCallback<List<Employee>>() {
+        EmployeeRestServiceBuilder.getEmployeeList(data.getShift().getTenantId(), new FailureShownRestCallback<List<
+                Employee>>() {
 
             @Override
             public void onSuccess(List<Employee> employeeList) {
@@ -138,31 +140,34 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable {
                 confirm.setText("Confirm");
                 confirm.addClickHandler((c) -> {
                     if (checkbox.getValue()) {
-                        Employee employee = employeeList.stream().filter((e) -> e.getName().equals(assignedEmployeeListBox.getSelectedValue())).findFirst().get();
+                        Employee employee = employeeList.stream().filter((e) -> e.getName().equals(
+                                assignedEmployeeListBox.getSelectedValue())).findFirst().get();
                         data.getShift().setLockedByUser(true);
                         data.getShift().setEmployee(employee);
                         ShiftView shiftView = new ShiftView(data.getShift());
                         popup.hide();
-                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shiftView, new FailureShownRestCallback<Void>() {
+                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shiftView,
+                                new FailureShownRestCallback<Void>() {
 
-                            @Override
-                            public void onSuccess(Void result) {
-                                view.getCalendar().forceUpdate();
-                            }
+                                    @Override
+                                    public void onSuccess(Void result) {
+                                        view.getCalendar().forceUpdate();
+                                    }
 
-                        });
+                                });
                     } else {
                         data.getShift().setLockedByUser(false);
                         ShiftView shiftView = new ShiftView(data.getShift());
                         popup.hide();
-                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shiftView, new FailureShownRestCallback<Void>() {
+                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shiftView,
+                                new FailureShownRestCallback<Void>() {
 
-                            @Override
-                            public void onSuccess(Void result) {
-                                view.getCalendar().forceUpdate();
-                            }
+                                    @Override
+                                    public void onSuccess(Void result) {
+                                        view.getCalendar().forceUpdate();
+                                    }
 
-                        });
+                                });
                     }
 
                 });
@@ -190,7 +195,7 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable {
     }
 
     @Override
-    public String getGroupId() {
+    public SpotId getGroupId() {
         return data.getGroupId();
     }
 
@@ -213,7 +218,8 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable {
         double end = getEndTime().toEpochSecond(ZoneOffset.UTC) / 60;
         double duration = end - start;
 
-        CanvasUtils.drawCurvedRect(g, getLocalX(), getLocalY(), duration * view.getWidthPerMinute(), view.getGroupHeight());
+        CanvasUtils.drawCurvedRect(g, getLocalX(), getLocalY(), duration * view.getWidthPerMinute(), view
+                .getGroupHeight());
 
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
 
@@ -228,7 +234,9 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable {
         }
         g.fillText(employee, getLocalX(), getLocalY() + view.getGroupHeight());
 
-        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute() * duration && view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view.getGroupHeight()) {
+        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()
+                * duration && view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view
+                        .getGroupHeight()) {
             view.preparePopup(this.toString());
 
         }

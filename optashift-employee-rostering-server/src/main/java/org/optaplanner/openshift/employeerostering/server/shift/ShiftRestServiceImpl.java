@@ -18,8 +18,12 @@ package org.optaplanner.openshift.employeerostering.server.shift;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -28,9 +32,21 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
-import org.optaplanner.openshift.employeerostering.server.shift.ShiftFileParser.ParserException;
+import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeGroup;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
+import org.optaplanner.openshift.employeerostering.shared.file.FileService;
+import org.optaplanner.openshift.employeerostering.shared.lang.parser.ParserException;
+import org.optaplanner.openshift.employeerostering.shared.lang.tokens.BaseDateDefinitions;
+import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EnumOrCustom;
+import org.optaplanner.openshift.employeerostering.shared.lang.tokens.RepeatMode;
+import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
+import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
@@ -46,6 +62,12 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     
     @Inject
     private SpotRestService spotRestService;
+
+    @Inject
+    private EmployeeRestService employeeRestService;
+
+    @Inject
+    private FileService fileService;
 
     @Override
     @Transactional
@@ -105,13 +127,34 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Override
     @Transactional
-    public List<Long> addShiftsFromTemplate(Integer tenantId, String startDateString, String endDateString, String data) throws Exception {
+    public List<Long> addShiftsFromTemplate(Integer tenantId,
+            String startDateString, String endDateString, String fileName) throws Exception {
+
+        String data = fileService.getFileData(tenantId, fileName);
         LocalDateTime startDate = LocalDateTime.parse(startDateString);
         LocalDateTime endDate = LocalDateTime.parse(endDateString);
-        
+
+        Map<Long, List<Spot>> spotGroupMap = new HashMap<>();
+        Map<Long, List<Employee>> employeeGroupMap = new HashMap<>();
+        spotRestService.getSpotGroups(tenantId).forEach((g) -> spotGroupMap.put(g.getId(), g.getSpots()));
+        employeeRestService.getEmployeeGroups(tenantId).forEach((g) -> employeeGroupMap.put(g.getId(), g
+                .getEmployees()));
+        employeeGroupMap.put(EmployeeGroup.ALL_GROUP_ID, employeeRestService.getEmployeeList(tenantId));
+
         try {
-            List<Shift> shifts = ShiftFileParser.parse(tenantId, spotRestService.getSpotList(tenantId), startDate, endDate, data);
-            HashMap<String,TimeSlot> timeSlotMap = new HashMap<>();
+            ShiftFileParser.ParserOut parserOutput = ShiftFileParser.parse(tenantId,
+                    spotRestService.getSpotList(tenantId),
+                    employeeRestService.getEmployeeList(tenantId),
+                    spotGroupMap,
+                    employeeGroupMap,
+                    startDate,
+                    endDate,
+                    data);
+            List<Shift> shifts = parserOutput.getShiftsOut();
+
+            List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOut();
+
+            HashMap<String, TimeSlot> timeSlotMap = new HashMap<>();
             List<Long> out = new ArrayList<Long>();
             for (Shift shift : shifts) {
                 if (!timeSlotMap.containsKey(shift.getTimeSlot().toString())) {
@@ -123,6 +166,18 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
                 Shift newShift = new Shift(tenantId, shift.getSpot(), timeSlot);
                 entityManager.persist(newShift);
                 out.add(newShift.getId());
+            }
+
+            HashSet<String> employeeAvailabilitySet = new HashSet<>();
+            for (EmployeeAvailability availability : employeeAvailabilities) {
+                if (!employeeAvailabilitySet.contains(availability.toString())) {
+                    TimeSlot timeSlot = timeSlotMap.get(availability.getTimeSlot().toString());
+                    availability.setTimeSlot(timeSlot);
+                    if (null != availability.getState()) {
+                        entityManager.persist(availability);
+                    }
+                    employeeAvailabilitySet.add(availability.toString());
+                }
             }
             return out;
         } catch (ParserException e) {
@@ -139,6 +194,27 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         TypedQuery<Shift> q = entityManager.createNamedQuery("Shift.findAll", Shift.class);
         q.setParameter("tenantId", tenantId);
         return q.getResultList();
+    }
+
+    @Override
+    public void createTemplate(Integer tenantId, String name, Collection<ShiftInfo> shifts) {
+        ShiftTemplate template = new ShiftTemplate();
+        template.setBaseDateType(new EnumOrCustom(false, BaseDateDefinitions.SAME_AS_START_DATE.toString()));
+        long weeksInShifts = 1;
+        /*Math.round(Math.ceil(Duration.between(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+        shifts.stream()
+        .max((a, b) -> a.getEndTime().compareTo(b.getEndTime()))
+        .get().getEndTime()).toDays() / 7.0))*/;
+        template.setRepeatType(new EnumOrCustom(false, RepeatMode.NONE.toString()));
+        template.setUniversalExceptions(Collections.emptyList());
+        template.setShifts(shifts.stream().collect(Collectors.toList()));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            fileService.writeFile(tenantId, name, objectMapper.writeValueAsString(template));
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("Encountered an error when generating the JSON output", e);
+        }
     }
 
 }
