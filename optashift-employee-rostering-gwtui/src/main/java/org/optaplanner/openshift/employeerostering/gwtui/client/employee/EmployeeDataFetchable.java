@@ -24,49 +24,55 @@ import org.optaplanner.openshift.employeerostering.shared.employee.view.Employee
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 
 public class EmployeeDataFetchable implements Fetchable<Collection<EmployeeData>> {
+
     Updatable<Collection<EmployeeData>> updatable;
     Provider<Integer> tenantIdProvider;
-    
+
     public EmployeeDataFetchable(Provider<Integer> tenantIdProvider) {
         this.tenantIdProvider = tenantIdProvider;
     }
 
     @Override
     public void fetchData(Command after) {
-        RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantIdProvider.get(), new FailureShownRestCallback<EmployeeRosterView>() {
+        RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantIdProvider.get(), new FailureShownRestCallback<
+                EmployeeRosterView>() {
+
             @Override
             public void onSuccess(EmployeeRosterView employeeRosterView) {
-                Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToEmployeeIdToShiftViewListMap = employeeRosterView.
-                        getTimeSlotIdToEmployeeIdToShiftViewListMap();
-                
-                Map<Long, Map<Long, EmployeeAvailabilityView>> timeSlotIdToEmployeeIdToAvailabilityViewMap = employeeRosterView
-                        .getTimeSlotIdToEmployeeIdToAvailabilityViewMap();
+                Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToEmployeeIdToShiftViewListMap = employeeRosterView
+                        .getTimeSlotIdToEmployeeIdToShiftViewListMap();
+
+                Map<Long, Map<Long, EmployeeAvailabilityView>> timeSlotIdToEmployeeIdToAvailabilityViewMap =
+                        employeeRosterView
+                                .getTimeSlotIdToEmployeeIdToAvailabilityViewMap();
                 Map<Long, Spot> spotMap = employeeRosterView.getSpotList().stream()
                         .collect(Collectors.toMap(Spot::getId, Function.identity()));
-                
+
                 List<TimeSlot> timeslots = employeeRosterView.getTimeSlotList();
                 List<Employee> employees = employeeRosterView.getEmployeeList();
                 Collection<EmployeeData> out = new ArrayList<>();
-                
+
                 for (TimeSlot timeslot : timeslots) {
                     for (Employee employee : employees) {
-                        if (null != timeSlotIdToEmployeeIdToShiftViewListMap.get(timeslot.getId()).get(employee.getId())) {
+                        if (null != timeSlotIdToEmployeeIdToShiftViewListMap.get(timeslot.getId()).get(employee
+                                .getId())) {
                             timeSlotIdToEmployeeIdToShiftViewListMap.get(timeslot.getId()).get(employee.getId())
-                                .stream().forEach((sv) -> {
-                                    Shift shift = new Shift(sv,null,timeslot);
-                                    shift.setEmployee(employee);
-                                    shift.setSpot(spotMap.get(sv.getSpotId()));
-                                    out.add(new EmployeeData(shift,
-                                            timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot.getId()).get(employee.getId())));
-                            });
-                        }
-                        else {
+                                    .stream().forEach((sv) -> {
+                                        Shift shift = new Shift(sv, null, timeslot);
+                                        shift.setEmployee(employee);
+                                        shift.setSpot(spotMap.get(sv.getSpotId()));
+                                        out.add(new EmployeeData(shift,
+                                                timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot.getId()).get(
+                                                        employee.getId())));
+                                    });
+                        } else {
                             Shift shift = new Shift();
                             shift.setTenantId(employee.getTenantId());
                             shift.setEmployee(employee);
                             shift.setTimeSlot(timeslot);
                             out.add(new EmployeeData(shift,
-                                    timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot.getId()).get(employee.getId())));
+                                    timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot.getId()).get(employee
+                                            .getId())));
                         }
                     }
                 }
@@ -74,7 +80,7 @@ public class EmployeeDataFetchable implements Fetchable<Collection<EmployeeData>
                 after.execute();
             }
         });
-        
+
     }
 
     @Override

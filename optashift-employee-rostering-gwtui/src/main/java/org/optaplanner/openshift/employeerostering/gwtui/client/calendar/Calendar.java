@@ -8,31 +8,28 @@ import java.util.List;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
-import org.gwtbootstrap3.client.ui.html.Div;
-import org.gwtbootstrap3.client.ui.html.Span;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.DataProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
-public class Calendar<I extends HasTimeslot> {
+public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
 
     HTMLCanvasElement canvas;
-    CalendarView<I> view;
+    CalendarView<G, I> view;
     Collection<I> shifts;
     Integer tenantId;
     Panel topPanel;
     Panel bottomPanel;
     Panel sidePanel;
     Fetchable<Collection<I>> dataProvider;
-    Fetchable<List<String>> groupProvider;
-    DataProvider<I> instanceCreator;
+    Fetchable<List<G>> groupProvider;
+    DataProvider<G, I> instanceCreator;
 
-    private Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Panel topPanel, Panel bottomPanel, Panel sidePanel, Fetchable<Collection<I>> dataProvider, Fetchable<List<String>> groupProvider, DataProvider<I> instanceCreator) {
+    private Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Panel topPanel, Panel bottomPanel,
+            Panel sidePanel, Fetchable<Collection<I>> dataProvider, Fetchable<List<G>> groupProvider, DataProvider<G,
+                    I> instanceCreator) {
         this.canvas = canvasElement;
         this.tenantId = tenantId;
         this.topPanel = topPanel;
@@ -70,17 +67,18 @@ public class Calendar<I extends HasTimeslot> {
 
         Window.addResizeHandler((e) -> {
             canvas.width = e.getWidth() - canvasElement.offsetLeft - sidePanel.getOffsetWidth() - 100;
-            canvas.height = e.getHeight() - canvasElement.offsetTop - topPanel.getOffsetHeight() - bottomPanel.getOffsetHeight() - 100;
+            canvas.height = e.getHeight() - canvasElement.offsetTop - topPanel.getOffsetHeight() - bottomPanel
+                    .getOffsetHeight() - 100;
             draw();
         });
 
     }
 
-    private void setView(CalendarView<I> view) {
+    private void setView(CalendarView<G, I> view) {
         this.view = view;
     }
 
-    private CalendarView<I> getView() {
+    private CalendarView<G, I> getView() {
         return view;
     }
 
@@ -101,7 +99,8 @@ public class Calendar<I extends HasTimeslot> {
 
     public void refresh() {
         double width = Window.getClientWidth() - canvas.offsetLeft - sidePanel.getOffsetWidth() - 100;
-        double height = Window.getClientHeight() - canvas.offsetTop - topPanel.getOffsetHeight() - bottomPanel.getOffsetHeight() - 100;
+        double height = Window.getClientHeight() - canvas.offsetTop - topPanel.getOffsetHeight() - bottomPanel
+                .getOffsetHeight() - 100;
 
         canvas.width = width;
         canvas.height = height;
@@ -127,17 +126,21 @@ public class Calendar<I extends HasTimeslot> {
         view.setDate(date);
     }
 
+    public Collection<I> getShifts() {
+        return shifts;
+    }
+
     public void addShift(I shift) {
         shifts.add(shift);
         getView().setShifts(shifts);
         draw();
     }
 
-    public void addShift(String groupId, LocalDateTime start, LocalDateTime end) {
-        instanceCreator.getInstance(this, groupId, start, end);
+    public void addShift(G group, LocalDateTime start, LocalDateTime end) {
+        instanceCreator.getInstance(this, group, start, end);
     }
 
-    public static class Builder<T extends HasTimeslot, D extends TimeRowDrawable> {
+    public static class Builder<G extends HasTitle, T extends HasTimeslot<G>, D extends TimeRowDrawable<G>> {
 
         HTMLCanvasElement canvas;
         Collection<T> shifts;
@@ -147,8 +150,8 @@ public class Calendar<I extends HasTimeslot> {
         Panel sidePanel;
         LocalDateTime startAt;
         Fetchable<Collection<T>> dataProvider;
-        Fetchable<List<String>> groupProvider;
-        DataProvider<T> instanceCreator;
+        Fetchable<List<G>> groupProvider;
+        DataProvider<G, T> instanceCreator;
 
         public Builder(HTMLCanvasElement canvas, Integer tenantId) {
             this.canvas = canvas;
@@ -163,45 +166,49 @@ public class Calendar<I extends HasTimeslot> {
             startAt = null;
         }
 
-        public Builder<T, D> withTopPanel(Panel topPanel) {
+        public Builder<G, T, D> withTopPanel(Panel topPanel) {
             this.topPanel = topPanel;
             return this;
         }
 
-        public Builder<T, D> withBottomPanel(Panel bottomPanel) {
+        public Builder<G, T, D> withBottomPanel(Panel bottomPanel) {
             this.bottomPanel = bottomPanel;
             return this;
         }
 
-        public Builder<T, D> withSidePanel(Panel sidePanel) {
+        public Builder<G, T, D> withSidePanel(Panel sidePanel) {
             this.sidePanel = sidePanel;
             return this;
         }
 
-        public Builder<T, D> fetchingDataFrom(Fetchable<Collection<T>> dataProvider) {
+        public Builder<G, T, D> fetchingDataFrom(Fetchable<Collection<T>> dataProvider) {
             this.dataProvider = dataProvider;
             return this;
         }
 
-        public Builder<T, D> fetchingGroupsFrom(Fetchable<List<String>> groupProvider) {
+        public Builder<G, T, D> fetchingGroupsFrom(Fetchable<List<G>> groupProvider) {
             this.groupProvider = groupProvider;
             return this;
         }
 
-        public Builder<T, D> creatingDataInstancesWith(DataProvider<T> instanceCreator) {
+        public Builder<G, T, D> creatingDataInstancesWith(DataProvider<G, T> instanceCreator) {
             this.instanceCreator = instanceCreator;
             return this;
         }
 
-        public Builder<T, D> startingAt(LocalDateTime start) {
+        public Builder<G, T, D> startingAt(LocalDateTime start) {
             startAt = start;
             return this;
         }
 
-        public Calendar<T> asTwoDayView(TimeRowDrawableProvider<T, D> drawableProvider) {
-            if (null != topPanel && null != bottomPanel && null != sidePanel && null != dataProvider && null != groupProvider && null != instanceCreator) {
-                Calendar<T> calendar = new Calendar<>(canvas, tenantId, topPanel, bottomPanel, sidePanel, dataProvider, groupProvider, instanceCreator);
-                TwoDayView<T, D> view = new TwoDayView<T, D>(calendar, topPanel, bottomPanel, sidePanel, drawableProvider);
+        public Calendar<G, T> asTwoDayView(TimeRowDrawableProvider<G, T, D> drawableProvider) {
+            if (null != topPanel && null != bottomPanel && null != sidePanel && null != dataProvider
+                    && null != groupProvider && null != instanceCreator) {
+                Calendar<G, T> calendar = new Calendar<>(canvas, tenantId, topPanel, bottomPanel, sidePanel,
+                        dataProvider,
+                        groupProvider, instanceCreator);
+                TwoDayView<G, T, D> view = new TwoDayView<G, T, D>(calendar, topPanel, bottomPanel, sidePanel,
+                        drawableProvider);
                 calendar.setView(view);
 
                 if (null != startAt) {
@@ -209,7 +216,8 @@ public class Calendar<I extends HasTimeslot> {
                 }
                 return calendar;
             } else {
-                throw new IllegalStateException("You must set all of " + "(topPanel,bottomPanel,sidePanel,dataProvider,groupProvider,instanceProvider) before calling this method.");
+                throw new IllegalStateException("You must set all of "
+                        + "(topPanel,bottomPanel,sidePanel,dataProvider,groupProvider,instanceProvider) before calling this method.");
             }
         }
 

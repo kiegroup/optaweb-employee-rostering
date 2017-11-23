@@ -3,12 +3,16 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 import java.time.LocalDateTime;
 
 import elemental2.dom.CanvasRenderingContext2D;
-import elemental2.dom.MouseEvent;
 
-public interface TimeRowDrawable extends Drawable{
+public interface TimeRowDrawable<G extends HasTitle> extends Drawable {
+
     void doDrawAt(CanvasRenderingContext2D g, double x, double y);
+
     int getIndex();
-    String getGroupId();
+
+    G getGroupId();
+
     LocalDateTime getStartTime();
+
     LocalDateTime getEndTime();
 }

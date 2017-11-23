@@ -12,28 +12,32 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 
-public class EmployeeNameFetchable implements Fetchable<List<String>> {
-    Updatable<List<String>> updatable;
+public class EmployeeNameFetchable implements Fetchable<List<EmployeeId>> {
+
+    Updatable<List<EmployeeId>> updatable;
     Provider<Integer> tenantIdProvider;
-    
+
     public EmployeeNameFetchable(Provider<Integer> tenantIdProvider) {
         this.tenantIdProvider = tenantIdProvider;
     }
-    
+
     @Override
     public void fetchData(Command after) {
-        EmployeeRestServiceBuilder.getEmployeeList(tenantIdProvider.get(), new FailureShownRestCallback<List<Employee>>() {
+        EmployeeRestServiceBuilder.getEmployeeList(tenantIdProvider.get(), new FailureShownRestCallback<List<
+                Employee>>() {
+
             @Override
             public void onSuccess(List<Employee> employeeList) {
-                updatable.onUpdate(employeeList.stream().map((employee) -> employee.getName()).collect(Collectors.toList()));
+                updatable.onUpdate(employeeList.stream().map((employee) -> new EmployeeId(employee)).collect(Collectors
+                        .toList()));
                 after.execute();
             }
         });
-        
+
     }
 
     @Override
-    public void setUpdatable(Updatable<List<String>> listener) {
+    public void setUpdatable(Updatable<List<EmployeeId>> listener) {
         updatable = listener;
     }
 

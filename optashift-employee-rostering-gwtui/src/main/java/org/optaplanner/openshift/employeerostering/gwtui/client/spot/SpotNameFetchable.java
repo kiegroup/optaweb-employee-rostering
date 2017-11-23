@@ -11,28 +11,30 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updat
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
-public class SpotNameFetchable implements Fetchable<List<String>> {
-    Updatable<List<String>> updatable;
+public class SpotNameFetchable implements Fetchable<List<SpotId>> {
+
+    Updatable<List<SpotId>> updatable;
     Provider<Integer> tenantIdProvider;
-    
+
     public SpotNameFetchable(Provider<Integer> tenantIdProvider) {
         this.tenantIdProvider = tenantIdProvider;
     }
-    
+
     @Override
     public void fetchData(Command after) {
         SpotRestServiceBuilder.getSpotList(tenantIdProvider.get(), new FailureShownRestCallback<List<Spot>>() {
+
             @Override
             public void onSuccess(List<Spot> spotList) {
-                updatable.onUpdate(spotList.stream().map((spot) -> spot.getName()).collect(Collectors.toList()));
+                updatable.onUpdate(spotList.stream().map((spot) -> new SpotId(spot)).collect(Collectors.toList()));
                 after.execute();
             }
         });
-        
+
     }
 
     @Override
-    public void setUpdatable(Updatable<List<String>> listener) {
+    public void setUpdatable(Updatable<List<SpotId>> listener) {
         updatable = listener;
     }
 

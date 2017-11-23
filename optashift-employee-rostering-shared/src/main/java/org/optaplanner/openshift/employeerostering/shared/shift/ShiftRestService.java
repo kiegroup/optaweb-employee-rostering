@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.shared.shift;
 
+import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -14,6 +15,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
 @Path("/tenant/{tenantId}/shift")
@@ -50,8 +52,15 @@ public interface ShiftRestService {
     void updateShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
 
     @PUT
+    @Path("/template/{name}/create")
+    void createTemplate(@PathParam("tenantId") Integer tenantId, @PathParam("name") String name, Collection<
+            ShiftInfo> shifts);
+
+    @PUT
     @Path("/add/fromTemplate")
-    List<Long> addShiftsFromTemplate(@PathParam("tenantId") Integer tenantId, @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString, @QueryParam("data") String data) throws Exception;
+    List<Long> addShiftsFromTemplate(@PathParam("tenantId") Integer tenantId,
+            @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString,
+            @QueryParam("data") String data) throws Exception;
 
     /**
      * @param id never null
