@@ -12,6 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 
@@ -35,20 +36,19 @@ public interface EmployeeRestService {
 
     /**
      * @param employee never null
-     * @return never null, the id of the newly created employee
+     * @return never null, with a {@link AbstractPersistable#getId()} that is never null
      */
     @POST
     @Path("/add")
-    Long addEmployee(@PathParam("tenantId") Integer tenantId, Employee employee);
+    Employee addEmployee(@PathParam("tenantId") Integer tenantId, Employee employee);
     
     /**
-     * @param id never null
      * @param employee never null
-     * @return true if the employee was successfully updated, false otherwise
+     * @return never null, with an updated {@link AbstractPersistable#getVersion()}
      */
     @POST
     @Path("/update/{id}")
-    Boolean updateEmployee(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Employee employee);
+    Employee updateEmployee(@PathParam("tenantId") Integer tenantId, Employee employee);
 
     /**
      * @param id never null

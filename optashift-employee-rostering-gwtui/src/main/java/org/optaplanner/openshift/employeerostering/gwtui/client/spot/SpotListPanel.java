@@ -179,13 +179,13 @@ public class SpotListPanel implements IsElement {
             Button confirm = new Button();
             confirm.setText(CONSTANTS.format(General_update));
             confirm.addClickHandler((e) -> {
+                spot.setName(spotName.getValue());
                 int requiredSkillIndex = requiredSkillBox.getSelectedIndex();
-                Skill requiredSkill = requiredSkillIndex < 0 ? null : requiredSkillListBoxValues.get(requiredSkillIndex);
-                Spot newSpot = new Spot(tenantId, spotName.getValue(), requiredSkill);
+                spot.setRequiredSkill(requiredSkillIndex < 0 ? null : requiredSkillListBoxValues.get(requiredSkillIndex));
                 popup.hide();
-                SpotRestServiceBuilder.updateSpot(tenantId, spot.getId(), newSpot, new FailureShownRestCallback<Boolean>() {
+                SpotRestServiceBuilder.updateSpot(tenantId, spot, new FailureShownRestCallback<Spot>() {
                     @Override
-                    public void onSuccess(Boolean updated) {
+                    public void onSuccess(Spot spot) {
                         refreshTable();
                     }
                 });
@@ -237,9 +237,9 @@ public class SpotListPanel implements IsElement {
         int requiredSkillIndex = requiredSkillListBox.getSelectedIndex();
         Skill requiredSkill = requiredSkillIndex < 0 ? null : requiredSkillListBoxValues.get(requiredSkillIndex);
 
-        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, requiredSkill), new FailureShownRestCallback<Long>() {
+        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, requiredSkill), new FailureShownRestCallback<Spot>() {
             @Override
-            public void onSuccess(Long spotId) {
+            public void onSuccess(Spot spot) {
                 refreshTable();
             }
         });

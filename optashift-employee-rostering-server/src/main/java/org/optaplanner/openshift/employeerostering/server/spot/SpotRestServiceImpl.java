@@ -49,18 +49,18 @@ public class SpotRestServiceImpl extends AbstractRestServiceImpl implements Spot
 
     @Override
     @Transactional
-    public Long addSpot(Integer tenantId, Spot spot) {
+    public Spot addSpot(Integer tenantId, Spot spot) {
         validateTenantIdParameter(tenantId, spot);
         entityManager.persist(spot);
-        return spot.getId();
+        return spot;
     }
 
     @Override
     @Transactional
-    public Boolean updateSpot(Integer tenantId, Long id, Spot newValue) {
-        validateTenantIdParameter(tenantId, newValue);
-        update(entityManager, newValue, id);
-        return true;
+    public Spot updateSpot(Integer tenantId, Spot spot) {
+        validateTenantIdParameter(tenantId, spot);
+        spot = entityManager.merge(spot);
+        return spot;
     }
 
     @Override

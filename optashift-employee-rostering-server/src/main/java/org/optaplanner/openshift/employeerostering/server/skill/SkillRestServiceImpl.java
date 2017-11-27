@@ -49,18 +49,18 @@ public class SkillRestServiceImpl extends AbstractRestServiceImpl implements Ski
 
     @Override
     @Transactional
-    public Long addSkill(Integer tenantId, Skill skill) {
+    public Skill addSkill(Integer tenantId, Skill skill) {
         validateTenantIdParameter(tenantId, skill);
         entityManager.persist(skill);
-        return skill.getId();
+        return skill;
     }
 
     @Override
     @Transactional
-    public Boolean updateSkill(Integer tenantId, Long id, Skill newValue) {
-        validateTenantIdParameter(tenantId, newValue);
-        update(entityManager, newValue, id);
-        return true;
+    public Skill updateSkill(Integer tenantId, Skill skill) {
+        validateTenantIdParameter(tenantId, skill);
+        skill = entityManager.merge(skill);
+        return skill;
     }
 
     @Override

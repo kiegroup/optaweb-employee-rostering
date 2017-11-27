@@ -2,6 +2,8 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -212,17 +214,25 @@ public class EmployeeListPanel implements IsElement {
             Button confirm = new Button();
             confirm.setText(CONSTANTS.format(General_update));
             confirm.addClickHandler((e) -> {
+                employee.setName(employeeName.getValue());
+                Map<Skill, EmployeeSkillProficiency> proficiencyMap = employee.getSkillProficiencyList().stream()
+                        .collect(Collectors.toMap(EmployeeSkillProficiency::getSkill, Function.identity()));
                 List<Skill> skillList = newSkillsTagsInput.getItems();
-                Employee newValue = new Employee(tenantId, employeeName.getValue());
-                newValue.setId(employee.getId());
-                newValue.setVersion(employee.getVersion());
                 for (Skill skill : skillList) {
-                    newValue.getSkillProficiencyList().add(new EmployeeSkillProficiency(tenantId, employee, skill));
+                    if (proficiencyMap.containsKey(skill)) {
+                        proficiencyMap.remove(skill);
+                    } else {
+                        EmployeeSkillProficiency proficiency = new EmployeeSkillProficiency(tenantId, employee, skill);
+                        employee.getSkillProficiencyList().add(proficiency);
+                    }
+                }
+                for (EmployeeSkillProficiency proficiency : proficiencyMap.values()) {
+                    employee.getSkillProficiencyList().remove(proficiency);
                 }
                 popup.hide();
-                EmployeeRestServiceBuilder.updateEmployee(tenantId, newValue.getId(), newValue, new FailureShownRestCallback<Boolean>() {
+                EmployeeRestServiceBuilder.updateEmployee(tenantId, employee, new FailureShownRestCallback<Employee>() {
                     @Override
-                    public void onSuccess(Boolean removed) {
+                    public void onSuccess(Employee employee) {
                         refreshTable();
                     }
                 });
@@ -276,9 +286,9 @@ public class EmployeeListPanel implements IsElement {
         for (Skill skill : skillList) {
             employee.getSkillProficiencyList().add(new EmployeeSkillProficiency(tenantId, employee, skill));
         }
-        EmployeeRestServiceBuilder.addEmployee(tenantId, employee, new FailureShownRestCallback<Long>() {
+        EmployeeRestServiceBuilder.addEmployee(tenantId, employee, new FailureShownRestCallback<Employee>() {
             @Override
-            public void onSuccess(Long employeeId) {
+            public void onSuccess(Employee employee) {
                 refreshTable();
             }
         });

@@ -144,11 +144,11 @@ public class SkillListPanel implements IsElement {
             Button confirm = new Button();
             confirm.setText(CONSTANTS.format(General_update));
             confirm.addClickHandler((e) -> {
-                Skill newSkill = new Skill(tenantId, skillName.getValue());
+                skill.setName(skillName.getValue());
                 popup.hide();
-                SkillRestServiceBuilder.updateSkill(tenantId, skill.getId(), newSkill, new FailureShownRestCallback<Boolean>() {
+                SkillRestServiceBuilder.updateSkill(tenantId, skill, new FailureShownRestCallback<Skill>() {
                     @Override
-                    public void onSuccess(Boolean updated) {
+                    public void onSuccess(Skill skill) {
                         refreshTable();
                     }
                 });
@@ -197,9 +197,9 @@ public class SkillListPanel implements IsElement {
         String skillName = skillNameTextBox.getValue();
         skillNameTextBox.setValue("");
         skillNameTextBox.setFocus(true);
-        SkillRestServiceBuilder.addSkill(tenantId, new Skill(tenantId, skillName), new FailureShownRestCallback<Long>() {
+        SkillRestServiceBuilder.addSkill(tenantId, new Skill(tenantId, skillName), new FailureShownRestCallback<Skill>() {
             @Override
-            public void onSuccess(Long skillId) {
+            public void onSuccess(Skill skill) {
                 refreshTable();
             }
         });

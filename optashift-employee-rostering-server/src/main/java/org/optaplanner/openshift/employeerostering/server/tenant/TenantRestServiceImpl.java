@@ -46,9 +46,9 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
 
     @Override
     @Transactional
-    public Integer addTenant(Tenant tenant) {
+    public Tenant addTenant(Tenant tenant) {
         entityManager.persist(tenant);
-        return tenant.getId();
+        return tenant;
     }
 
 }

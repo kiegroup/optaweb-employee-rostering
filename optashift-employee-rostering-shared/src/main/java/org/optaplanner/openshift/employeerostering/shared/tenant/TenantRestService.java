@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
 @Path("/tenant")
 @Produces(MediaType.APPLICATION_JSON)
@@ -32,10 +33,10 @@ public interface TenantRestService {
 
     /**
      * @param tenant never null
-     * @return never null, the id
+     * @return never null, with a {@link AbstractPersistable#getId()} that is never null
      */
     @POST
     @Path("/add")
-    Integer addTenant(Tenant tenant);
+    Tenant addTenant(Tenant tenant);
 
 }

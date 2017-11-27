@@ -54,18 +54,18 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
 
     @Override
     @Transactional
-    public Long addEmployee(Integer tenantId, Employee employee) {
+    public Employee addEmployee(Integer tenantId, Employee employee) {
         validateTenantIdParameter(tenantId, employee);
         entityManager.persist(employee);
-        return employee.getId();
+        return employee;
     }
 
     @Override
     @Transactional
-    public Boolean updateEmployee(Integer tenantId, Long id, Employee newValue) {
-        validateTenantIdParameter(tenantId, newValue);
-        update(entityManager, newValue, id);
-        return true;
+    public Employee updateEmployee(Integer tenantId, Employee employee) {
+        validateTenantIdParameter(tenantId, employee);
+        employee = entityManager.merge(employee);
+        return employee;
     }
 
     @Override
