@@ -32,13 +32,24 @@ public interface OptaShiftUIConstants {
     @TranslationKey(defaultValue="Actions")
     final String General_actions = "General.actions";
 
-    @TranslationKey(defaultValue="Add")
-    final String General_add = "General.add";
-
-    @TranslationKey(defaultValue="Delete")
+	@TranslationKey(defaultValue="Add")
+	final String General_add = "General.add";
+	
+	@TranslationKey(defaultValue="Cancel")
+    final String General_cancel = "General.cancel";
+	
+	@TranslationKey(defaultValue="Delete")
     final String General_delete = "General.delete";
-
-    @TranslationKey(defaultValue="Employee")
+	
+	@TranslationKey(defaultValue="Edit")
+    final String General_edit = "General.edit";
+	
+	@TranslationKey(defaultValue="Update")
+    final String General_update = "General.update";
+	
+	
+	
+	@TranslationKey(defaultValue="Employee")
     final String General_employee = "General.employee";
 
     @TranslationKey(defaultValue="Name")

@@ -29,6 +29,15 @@ public interface SkillRestService {
     @GET
     @Path("/{id}")
     Skill getSkill(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+    
+    /**
+     * @param id never null
+     * @param skill never null
+     * @return true if the skill was successfully updated, false otherwise
+     */
+    @POST
+    @Path("/update/{id}")
+    Boolean updateSkill(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Skill newValue);
 
     /**
      * @param skill never null
@@ -40,7 +49,7 @@ public interface SkillRestService {
 
     /**
      * @param id never null
-     * @return never null, the id
+     * @return true if the skill was successfully removed, false otherwise
      */
     @DELETE
     @Path("/{id}")

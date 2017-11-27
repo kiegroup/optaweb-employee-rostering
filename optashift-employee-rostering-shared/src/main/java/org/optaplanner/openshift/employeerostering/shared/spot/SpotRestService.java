@@ -29,6 +29,15 @@ public interface SpotRestService {
     @GET
     @Path("/{id}")
     Spot getSpot(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+    
+    /**
+     * @param id never null
+     * @param spot never null
+     * @return true if the spot was successfully updated, false otherwise
+     */
+    @POST
+    @Path("/update/{id}")
+    Boolean updateSpot(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Spot newValue);
 
     /**
      * @param spot never null
@@ -40,7 +49,7 @@ public interface SpotRestService {
 
     /**
      * @param id never null
-     * @return never null, the id
+     * @return true if the spot was successfully removed, false otherwise
      */
     @DELETE
     @Path("/{id}")
