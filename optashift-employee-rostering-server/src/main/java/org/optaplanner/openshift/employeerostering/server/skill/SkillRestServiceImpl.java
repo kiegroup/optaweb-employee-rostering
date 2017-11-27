@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.server.skill;
 
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -48,10 +49,18 @@ public class SkillRestServiceImpl extends AbstractRestServiceImpl implements Ski
 
     @Override
     @Transactional
-    public Long addSkill(Integer tenantId, Skill skill) {
+    public Skill addSkill(Integer tenantId, Skill skill) {
         validateTenantIdParameter(tenantId, skill);
         entityManager.persist(skill);
-        return skill.getId();
+        return skill;
+    }
+
+    @Override
+    @Transactional
+    public Skill updateSkill(Integer tenantId, Skill skill) {
+        validateTenantIdParameter(tenantId, skill);
+        skill = entityManager.merge(skill);
+        return skill;
     }
 
     @Override

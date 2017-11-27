@@ -110,6 +110,8 @@ mvn -N wildfly:start wildfly:deploy
 mvn gwt:codeserver
 ```
 
+To stop the wildfly server, use `mvn -N wildfly:shutdown`.
+
 . Download http://wildfly.org/downloads/[WildFly]
 .. Unzip it into `local/appserver/` in the project root.
 The `local` directory is ignored by Git.

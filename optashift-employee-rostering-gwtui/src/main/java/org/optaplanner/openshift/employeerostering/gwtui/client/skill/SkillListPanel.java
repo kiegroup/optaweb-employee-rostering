@@ -11,7 +11,11 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
@@ -21,6 +25,9 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.jboss.errai.ui.client.local.api.IsElement;
@@ -110,7 +117,56 @@ public class SkillListPanel implements IsElement {
                 }
             });
         });
+        Column<Skill, String> editColumn = new Column<Skill, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT, ButtonSize.SMALL)) {
+            @Override
+            public String getValue(Skill skill) {
+                return CONSTANTS.format(General_edit);
+            }
+        };
+        editColumn.setFieldUpdater((index, skill, value) -> {
+            CssResources.INSTANCE.popup().ensureInjected();
+            PopupPanel popup = new PopupPanel(false);
+            popup.setGlassEnabled(true);
+            popup.setStyleName(CssResources.INSTANCE.popup().panel());
+            
+            VerticalPanel panel = new VerticalPanel();
+            HorizontalPanel datafield = new HorizontalPanel();
+            
+            Label label = new Label("Skill Name");
+            TextBox skillName = new TextBox();
+            skillName.setValue(skill.getName());
+            skillName.setStyleName(CssResources.INSTANCE.popup().textbox());
+            datafield.add(label);
+            datafield.add(skillName);
+            panel.add(datafield);
+            
+            datafield = new HorizontalPanel();
+            Button confirm = new Button();
+            confirm.setText(CONSTANTS.format(General_update));
+            confirm.addClickHandler((e) -> {
+                skill.setName(skillName.getValue());
+                popup.hide();
+                SkillRestServiceBuilder.updateSkill(tenantId, skill, new FailureShownRestCallback<Skill>() {
+                    @Override
+                    public void onSuccess(Skill skill) {
+                        refreshTable();
+                    }
+                });
+            });
+            
+            Button cancel = new Button();
+            cancel.setText(CONSTANTS.format(General_cancel));
+            cancel.addClickHandler((e) -> popup.hide());
+            
+            datafield.add(confirm);
+            datafield.add(cancel);
+            panel.add(datafield);
+            
+            popup.setWidget(panel);
+            popup.center();
+        });
         table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
+        table.addColumn(editColumn);
 
         table.addRangeChangeHandler(event -> pagination.rebuild(pager));
 
@@ -141,9 +197,9 @@ public class SkillListPanel implements IsElement {
         String skillName = skillNameTextBox.getValue();
         skillNameTextBox.setValue("");
         skillNameTextBox.setFocus(true);
-        SkillRestServiceBuilder.addSkill(tenantId, new Skill(tenantId, skillName), new FailureShownRestCallback<Long>() {
+        SkillRestServiceBuilder.addSkill(tenantId, new Skill(tenantId, skillName), new FailureShownRestCallback<Skill>() {
             @Override
-            public void onSuccess(Long skillId) {
+            public void onSuccess(Skill skill) {
                 refreshTable();
             }
         });

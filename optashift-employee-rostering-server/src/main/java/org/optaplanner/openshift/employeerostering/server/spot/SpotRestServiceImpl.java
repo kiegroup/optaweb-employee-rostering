@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.server.spot;
 
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -48,10 +49,18 @@ public class SpotRestServiceImpl extends AbstractRestServiceImpl implements Spot
 
     @Override
     @Transactional
-    public Long addSpot(Integer tenantId, Spot spot) {
+    public Spot addSpot(Integer tenantId, Spot spot) {
         validateTenantIdParameter(tenantId, spot);
         entityManager.persist(spot);
-        return spot.getId();
+        return spot;
+    }
+
+    @Override
+    @Transactional
+    public Spot updateSpot(Integer tenantId, Spot spot) {
+        validateTenantIdParameter(tenantId, spot);
+        spot = entityManager.merge(spot);
+        return spot;
     }
 
     @Override

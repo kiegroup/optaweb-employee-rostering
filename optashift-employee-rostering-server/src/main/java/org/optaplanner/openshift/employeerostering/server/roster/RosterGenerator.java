@@ -91,7 +91,7 @@ public class RosterGenerator {
 
     @PostConstruct
     public void setUpGeneratedData() {
-        tenantNameGenerator.predictMaximumSizeAndReset(2);
+        tenantNameGenerator.predictMaximumSizeAndReset(10);
         generateRoster(10, 7, false);
         generateRoster(10, 28, false);
         generateRoster(20, 28, false);

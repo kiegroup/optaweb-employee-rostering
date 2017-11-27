@@ -28,6 +28,7 @@
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-core</artifactId>
     </dependency>
+
     <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>

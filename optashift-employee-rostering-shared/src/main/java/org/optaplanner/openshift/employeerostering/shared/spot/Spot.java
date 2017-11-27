@@ -36,7 +36,7 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
                         " where s.tenantId = :tenantId" +
                         " order by s.name"),
 })
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}), @UniqueConstraint(columnNames = {"id"})})
 public class Spot extends AbstractPersistable {
 
     @NotNull @Size(min = 1, max = 120)

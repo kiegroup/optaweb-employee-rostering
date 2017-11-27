@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.server.employee;
 
 import java.util.List;
 import java.util.Objects;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -28,8 +29,6 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements EmployeeRestService {
@@ -55,10 +54,18 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
 
     @Override
     @Transactional
-    public Long addEmployee(Integer tenantId, Employee employee) {
+    public Employee addEmployee(Integer tenantId, Employee employee) {
         validateTenantIdParameter(tenantId, employee);
         entityManager.persist(employee);
-        return employee.getId();
+        return employee;
+    }
+
+    @Override
+    @Transactional
+    public Employee updateEmployee(Integer tenantId, Employee employee) {
+        validateTenantIdParameter(tenantId, employee);
+        employee = entityManager.merge(employee);
+        return employee;
     }
 
     @Override

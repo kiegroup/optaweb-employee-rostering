@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
 @Path("/tenant/{tenantId}/skill")
 @Produces(MediaType.APPLICATION_JSON)
@@ -32,15 +33,23 @@ public interface SkillRestService {
 
     /**
      * @param skill never null
-     * @return never null, the id
+     * @return never null, with a {@link AbstractPersistable#getId()} that is never null
      */
     @POST
     @Path("/add")
-    Long addSkill(@PathParam("tenantId") Integer tenantId, Skill skill);
+    Skill addSkill(@PathParam("tenantId") Integer tenantId, Skill skill);
+
+    /**
+     * @param skill never null
+     * @return never null, with an updated {@link AbstractPersistable#getVersion()}
+     */
+    @POST
+    @Path("/update/{id}")
+    Skill updateSkill(@PathParam("tenantId") Integer tenantId, Skill skill);
 
     /**
      * @param id never null
-     * @return never null, the id
+     * @return true if the skill was successfully removed, false otherwise
      */
     @DELETE
     @Path("/{id}")

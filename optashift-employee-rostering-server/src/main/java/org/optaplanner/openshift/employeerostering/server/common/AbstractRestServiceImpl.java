@@ -1,6 +1,10 @@
 package org.optaplanner.openshift.employeerostering.server.common;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.Objects;
+
+import javax.persistence.EntityManager;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 

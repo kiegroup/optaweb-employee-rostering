@@ -68,7 +68,7 @@ public class Tenant implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AbstractPersistable other = (AbstractPersistable) o;
+        Tenant other = (Tenant) o;
         if (id == null) {
             if (other.getId() != null) {
                 return false;

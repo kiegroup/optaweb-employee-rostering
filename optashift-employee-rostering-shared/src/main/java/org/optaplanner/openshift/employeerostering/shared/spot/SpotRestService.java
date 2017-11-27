@@ -11,6 +11,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
 @Path("/tenant/{tenantId}/spot")
 @Produces(MediaType.APPLICATION_JSON)
@@ -32,15 +33,23 @@ public interface SpotRestService {
 
     /**
      * @param spot never null
-     * @return never null, the id
+     * @return never null, with a {@link AbstractPersistable#getId()} that is never null
      */
     @POST
     @Path("/add")
-    Long addSpot(@PathParam("tenantId") Integer tenantId, Spot spot);
+    Spot addSpot(@PathParam("tenantId") Integer tenantId, Spot spot);
+
+    /**
+     * @param spot never null
+     * @return never null, with an updated {@link AbstractPersistable#getVersion()}
+     */
+    @POST
+    @Path("/update/{id}")
+    Spot updateSpot(@PathParam("tenantId") Integer tenantId, Spot spot);
 
     /**
      * @param id never null
-     * @return never null, the id
+     * @return true if the spot was successfully removed, false otherwise
      */
     @DELETE
     @Path("/{id}")
