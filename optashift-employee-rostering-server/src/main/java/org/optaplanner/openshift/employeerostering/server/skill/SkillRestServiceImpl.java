@@ -57,6 +57,14 @@ public class SkillRestServiceImpl extends AbstractRestServiceImpl implements Ski
 
     @Override
     @Transactional
+    public Boolean updateSkill(Integer tenantId, Long id, Skill newValue) {
+        validateTenantIdParameter(tenantId, newValue);
+        update(entityManager, newValue, id);
+        return true;
+    }
+
+    @Override
+    @Transactional
     public Boolean removeSkill(Integer tenantId, Long id) {
         Skill skill = entityManager.find(Skill.class, id);
         if (skill == null) {
@@ -64,14 +72,6 @@ public class SkillRestServiceImpl extends AbstractRestServiceImpl implements Ski
         }
         validateTenantIdParameter(tenantId, skill);
         entityManager.remove(skill);
-        return true;
-    }
-
-    @Override
-    @Transactional
-    public Boolean updateSkill(Integer tenantId, Long id, Skill newValue) {
-        validateTenantIdParameter(tenantId, newValue);
-        update(entityManager, newValue, id);
         return true;
     }
 

@@ -48,7 +48,7 @@ public interface EmployeeRestService {
      */
     @POST
     @Path("/update/{id}")
-    Boolean updateEmployee(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Employee newValue);
+    Boolean updateEmployee(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Employee employee);
 
     /**
      * @param id never null

@@ -62,6 +62,14 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
 
     @Override
     @Transactional
+    public Boolean updateEmployee(Integer tenantId, Long id, Employee newValue) {
+        validateTenantIdParameter(tenantId, newValue);
+        update(entityManager, newValue, id);
+        return true;
+    }
+
+    @Override
+    @Transactional
     public Boolean removeEmployee(Integer tenantId, Long id) {
         Employee employee = entityManager.find(Employee.class, id);
         if (employee == null) {
@@ -118,14 +126,6 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
         }
         validateTenantIdParameter(tenantId, employeeAvailability);
         entityManager.remove(employeeAvailability);
-        return true;
-    }
-
-    @Override
-    @Transactional
-    public Boolean updateEmployee(Integer tenantId, Long id, Employee newValue) {
-        validateTenantIdParameter(tenantId, newValue);
-        update(entityManager, newValue, id);
         return true;
     }
 
