@@ -36,6 +36,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
 public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> implements
         CalendarView<G,
@@ -62,6 +63,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     private HashMap<G, DynamicContainer> groupContainer = new HashMap<>();
     private HashMap<G, DynamicContainer> groupAddPlane = new HashMap<>();
     private Collection<I> shifts;
+
+    TimeSlotTable<D, G> timeslotTable;
+
     private Collection<D> shiftDrawables;
     private List<Collection<D>> cachedVisibleItems;
     private List<Collection<D>> allItems;
@@ -119,6 +123,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                 .getGroupId());
         this.drawableProvider = drawableProvider;
         mouseOverDrawable = null;
+        timeslotTable = new TimeSlotTable<D, G>(shiftDrawables, groupPos, getViewStartDate(), getViewEndDate());
         initPanels();
     }
 
@@ -470,13 +475,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     private List<I> getShiftsDuring(I time, Collection<I> shifts) {
-        return shifts.stream().filter((shift) -> doTimeslotsIntersect(time.getStartTime(), time.getEndTime(), shift
-                .getStartTime(), shift.getEndTime())).collect(Collectors.toList());
-    }
-
-    private static boolean doTimeslotsIntersect(LocalDateTime start1, LocalDateTime end1, LocalDateTime start2,
-            LocalDateTime end2) {
-        return start1.isBefore(end2) && end1.isAfter(start2);
+        return shifts.stream().filter((shift) -> TimeSlotUtils.doTimeslotsIntersect(time.getStartTime(), time
+                .getEndTime(), shift
+                        .getStartTime(), shift.getEndTime())).collect(Collectors.toList());
     }
 
     @Override
@@ -537,6 +538,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             }
         }
 
+        timeslotTable = new TimeSlotTable<D, G>(shiftDrawables, groupPos, getViewStartDate(), getViewEndDate());
+
         for (G spot : groups) {
             cursorIndex.put(spot, groupEndPos.get(spot));
         }
@@ -564,6 +567,14 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
     public LocalDateTime getMouseLocalDateTime() {
         return currDay.plusMinutes(Math.round((localMouseX - SPOT_NAME_WIDTH) / getWidthPerMinute()));
+    }
+
+    public LocalDateTime getViewStartDate() {
+        return currDay;
+    }
+
+    public LocalDateTime getViewEndDate() {
+        return currDay.plusDays(2);
     }
 
     public double getGlobalMouseY() {
@@ -709,18 +720,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     @Override
     public Iterable<Collection<D>> getVisibleItems() {
         if (visibleDirty) {
-            HashMap<Integer, Set<D>> out = new HashMap<>();
-            shiftDrawables.stream().forEach((d) -> {
-                int index = d.getIndex() + groupPos.get(d.getGroupId());
-                if (rangeStart <= index && index <= rangeEnd) {
-                    Set<D> group = out.getOrDefault(index, new HashSet<>());
-                    group.add(d);
-                    out.put(index, group);
-                }
-            });
-
-            cachedVisibleItems = IntStream.range(rangeStart, rangeEnd).mapToObj((k) -> out.getOrDefault(k, Collections
-                    .emptySet())).collect(Collectors.toList());
+            cachedVisibleItems = IntStream.range(rangeStart, rangeEnd).mapToObj((k) -> timeslotTable.getVisableRow(k))
+                    .collect(
+                            Collectors.toList());
             visibleDirty = false;
         }
         return cachedVisibleItems;
@@ -728,16 +730,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
     public List<Collection<D>> getItems() {
         if (allDirty) {
-            HashMap<Integer, Set<D>> out = new HashMap<>();
-            int[] max = {0};//Nifty trick to allow us to modify max within the forEach
-            shiftDrawables.stream().forEach((d) -> {
-                int index = d.getIndex() + groupPos.get(d.getGroupId());
-                max[0] = Math.max(max[0], index);
-                Set<D> group = out.getOrDefault(index, new HashSet<>());
-                group.add(d);
-                out.put(index, group);
-            });
-            allItems = IntStream.range(0, totalSpotSlots).mapToObj((k) -> out.get(k)).collect(Collectors.toList());
+            allItems = IntStream.range(0, totalSpotSlots).mapToObj((k) -> timeslotTable.getRow(k)).collect(Collectors
+                    .toList());
             allDirty = false;
         }
         return allItems;
@@ -781,7 +775,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
     @Override
     public void setDate(LocalDateTime date) {
+        visibleDirty = true;
         currDay = LocalDateTime.of(date.toLocalDate(), LocalTime.MIDNIGHT);
+        timeslotTable.setStartDate(getViewStartDate());
+        timeslotTable.setEndDate(getViewEndDate());
     }
 
 }
