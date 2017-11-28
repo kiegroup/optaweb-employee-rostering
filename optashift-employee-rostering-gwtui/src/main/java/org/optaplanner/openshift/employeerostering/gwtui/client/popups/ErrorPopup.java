@@ -18,35 +18,38 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.Cs
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.images.ImageResources;
 
 public class ErrorPopup extends PopupPanel {
+
     final static Queue<String> queuedErrors = new LinkedList<String>();
-    
+
     private HandlerRegistration windowResizeHandler;
-    
+
     public ErrorPopup(String msg) {
         super(false);
-        
+
         CssResources.INSTANCE.errorpopup().ensureInjected();
         setGlassEnabled(true);
         setStyleName(CssResources.INSTANCE.errorpopup().panel());
-        
+
         VerticalPanel vertPanel = new VerticalPanel();
         HorizontalPanel horizontalSubpanel = new HorizontalPanel();
         Image image = new Image(ImageResources.INSTANCE.errorIcon());
         horizontalSubpanel.add(image);
-        
+
         ScrollPanel scrollPanel = new ScrollPanel();
         scrollPanel.setHeight(image.getHeight() + "px");
         Span content = new Span(new SafeHtmlBuilder()
                 .appendEscapedLines(msg)
                 .toSafeHtml().asString());
-        
+
         scrollPanel.add(content);
-        scrollPanel.setWidth(Window.getClientWidth()/2 + "px");
-        windowResizeHandler = Window.addResizeHandler((e) -> {scrollPanel.setWidth(e.getWidth()/2 + "px");});
-        
+        scrollPanel.setWidth(Window.getClientWidth() / 2 + "px");
+        windowResizeHandler = Window.addResizeHandler((e) -> {
+            scrollPanel.setWidth(e.getWidth() / 2 + "px");
+        });
+
         horizontalSubpanel.add(scrollPanel);
         vertPanel.add(horizontalSubpanel);
-        
+
         horizontalSubpanel = new HorizontalPanel();
         horizontalSubpanel.add(new Span());
         Button button = new Button("Close");
@@ -56,26 +59,28 @@ public class ErrorPopup extends PopupPanel {
             queuedErrors.poll();
             if (!queuedErrors.isEmpty()) {
                 Timer timer = new Timer() {
+
                     @Override
                     public void run() {
                         showNextQueueError();
                     }
                 };
                 timer.schedule(500);
-            }});
+            }
+        });
         horizontalSubpanel.add(button);
-        
+
         vertPanel.add(horizontalSubpanel);
         setWidget(vertPanel);
     }
-    
+
     public static void show(String msg) {
         queuedErrors.add(msg);
         if (1 == queuedErrors.size()) {
             showNextQueueError();
         }
     }
-    
+
     private static void showNextQueueError() {
         final ErrorPopup popup = new ErrorPopup(queuedErrors.peek());
         popup.center();

@@ -39,39 +39,48 @@ import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServi
 public class MenuPanel implements IsElement {
 
     private Integer tenantId = null;
-    
-    @Inject @DataField
+
+    @Inject
+    @DataField
     private Anchor skillsAnchor;
     @Inject
     private SkillListPanel skillListPanel;
-    @Inject @DataField
+    @Inject
+    @DataField
     private Anchor spotsAnchor;
     @Inject
     private SpotListPanel spotListPanel;
-    @Inject @DataField
+    @Inject
+    @DataField
     private Anchor employeesAnchor;
     @Inject
     private EmployeeListPanel employeeListPanel;
-    @Inject @DataField
+    @Inject
+    @DataField
     private Anchor spotRosterAnchor;
     @Inject
     private SpotRosterViewPanel spotRosterViewPanel;
-    @Inject @DataField
+    @Inject
+    @DataField
     private Anchor employeeRosterAnchor;
     @Inject
     private EmployeeRosterViewPanel employeeRosterViewPanel;
-    @Inject @DataField
+    @Inject
+    @DataField
     private Anchor configAnchor;
     @Inject
     private ConfigurationEditor configEditor;
 
-    @Inject @DataField
+    @Inject
+    @DataField
     private ListBox tenantListBox;
     private List<Tenant> tenantListBoxValues;
-    @Inject @Any
+    @Inject
+    @Any
     private Event<Tenant> tenantEvent;
 
-    @Inject @DataField
+    @Inject
+    @DataField
     private Div content;
 
     public MenuPanel() {
@@ -85,6 +94,7 @@ public class MenuPanel implements IsElement {
 
     private void refreshTenantListBox() {
         TenantRestServiceBuilder.getTenantList(new FailureShownRestCallback<List<Tenant>>() {
+
             @Override
             public void onSuccess(List<Tenant> tenantList) {
                 tenantListBoxValues = tenantList;
@@ -140,7 +150,7 @@ public class MenuPanel implements IsElement {
         content.appendChild(employeeRosterViewPanel.getElement());
         employeeRosterViewPanel.refresh();
     }
-    
+
     @EventHandler("configAnchor")
     public void showConfigurationEditor(ClickEvent e) {
         content.removeChild(content.getLastChild());

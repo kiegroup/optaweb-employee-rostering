@@ -15,6 +15,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureSh
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.LoadingPopup;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -31,6 +32,7 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
     Provider<Integer> tenantIdProvider;
     SpotRosterView last;
     Calendar<SpotId, SpotData> calendar;
+    static final String LOADING_STRING = "Fetching Spot Roster";
 
     public SpotDataFetchable(Provider<Integer> tenantIdProvider) {
         this(null, tenantIdProvider);
@@ -46,6 +48,7 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
     public void fetchData(Command after) {
         Integer tenantId = tenantIdProvider.get();
         if (null == last || null == calendar || !last.getTenantId().equals(tenantId)) {
+            LoadingPopup.setLoading(LOADING_STRING);
             RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<
                     SpotRosterView>() {
 
@@ -75,6 +78,7 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                     }
                     updatable.onUpdate(out);
                     after.execute();
+                    LoadingPopup.clearLoading(LOADING_STRING);
                 }
             });
         } else {

@@ -1,0 +1,29 @@
+.main{}
+
+.spin {
+    animation: spin 1s infinite linear;
+    font-size: 15em;
+    -webkit-animation: spin2 1s infinite linear;
+}
+
+.panel {
+	position:fixed;
+    color: #000000;
+    background-color: #A0A0A0;
+    top: 25%;
+    left: 25%;
+    width: 50%;
+    height: 50%;
+    padding: 10px;
+    z-index: 8192;
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1) rotate(360deg); }
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}
