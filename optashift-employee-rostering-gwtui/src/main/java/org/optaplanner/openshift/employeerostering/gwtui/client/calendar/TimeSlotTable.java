@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
+
 public class TimeSlotTable<T extends TimeRowDrawable<G>, G extends HasTitle> {
 
     Collection<T> timeslots;

@@ -12,7 +12,15 @@ public interface CalendarView<G extends HasTitle, I extends HasTimeslot<G>> {
 
     void setDate(LocalDateTime date);
 
+    LocalDateTime getViewStartDate();
+
+    LocalDateTime getViewEndDate();
+
     void setShifts(Collection<I> shifts);
+
+    Collection<G> getVisibleGroups();
+
+    Collection<G> getGroups();
 
     void setGroups(List<G> groups);
 

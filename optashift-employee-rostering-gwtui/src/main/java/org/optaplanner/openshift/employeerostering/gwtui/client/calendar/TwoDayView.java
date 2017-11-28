@@ -37,6 +37,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtil
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 
 public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> implements
         CalendarView<G,
@@ -678,6 +679,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         visibleDirty = true;
         rangeStart = start;
         rangeEnd = start + length;
+        calendar.forceUpdate();
     }
 
     @Override
@@ -688,6 +690,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         visibleDirty = true;
         rangeStart = range.getStart();
         rangeEnd = range.getStart() + range.getLength();
+        calendar.forceUpdate();
     }
 
     @Override
@@ -779,6 +782,40 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         currDay = LocalDateTime.of(date.toLocalDate(), LocalTime.MIDNIGHT);
         timeslotTable.setStartDate(getViewStartDate());
         timeslotTable.setEndDate(getViewEndDate());
+        calendar.forceUpdate();
+    }
+
+    @Override
+    public Collection<G> getGroups() {
+        return Collections.unmodifiableList(groups);
+    }
+
+    @Override
+    public Collection<G> getVisibleGroups() {
+        int index = 0;
+        Set<G> drawnSpots = new HashSet<>();
+        int groupIndex = groups.indexOf(groupPos.keySet().stream().filter((group) -> groupEndPos.get(
+                group) >= rangeStart).min((a, b) -> groupEndPos.get(a) - groupEndPos.get(b)).orElseGet(() -> groups.get(
+                        0)));
+
+        drawnSpots.add(groups.get(groupIndex));
+
+        for (Collection<D> group : getVisibleItems()) {
+            if (!group.isEmpty()) {
+                index++;
+            } else {
+                index++;
+                if (groupIndex < groups.size() && rangeStart + index > groupEndPos.getOrDefault(groups.get(groupIndex),
+                        rangeStart + index)) {
+                    groupIndex++;
+                    if (groupIndex < groups.size()) {
+                        drawnSpots.add(groups.get(groupIndex));
+                    }
+                }
+            }
+        }
+
+        return drawnSpots;
     }
 
 }

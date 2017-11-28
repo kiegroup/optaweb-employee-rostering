@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
+package org.optaplanner.openshift.employeerostering.shared.timeslot;
 
 import java.time.LocalDateTime;
 
