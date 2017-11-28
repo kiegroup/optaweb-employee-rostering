@@ -3,6 +3,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import elemental2.dom.CanvasRenderingContext2D;
@@ -10,6 +11,7 @@ import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.DataProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
@@ -35,9 +37,6 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         this.topPanel = topPanel;
         this.bottomPanel = bottomPanel;
         this.sidePanel = sidePanel;
-        this.groupProvider = groupProvider;
-        this.dataProvider = dataProvider;
-        this.instanceCreator = instanceCreator;
 
         canvas.draggable = false;
         canvas.style.background = "#FFFFFF";
@@ -57,11 +56,9 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
 
         shifts = new ArrayList<>();
 
-        groupProvider.setUpdatable((groups) -> getView().setGroups(groups));
-        dataProvider.setUpdatable((d) -> {
-            shifts = new ArrayList<>(d);
-            getView().setShifts(shifts);
-        });
+        setInstanceCreator(instanceCreator);
+        setGroupProvider(groupProvider);
+        setDataProvider(dataProvider);
 
         refresh();
 
@@ -124,16 +121,61 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
 
     public void setDate(LocalDateTime date) {
         view.setDate(date);
+        dataProvider.fetchData(() -> {
+        });
+    }
+
+    public LocalDateTime getViewStartDate() {
+        return view.getViewStartDate();
+    }
+
+    public LocalDateTime getViewEndDate() {
+        return view.getViewEndDate();
     }
 
     public Collection<I> getShifts() {
         return shifts;
     }
 
+    public Collection<G> getGroups() {
+        return view.getGroups();
+    }
+
+    public Collection<G> getVisibleGroups() {
+        return view.getVisibleGroups();
+    }
+
     public void addShift(I shift) {
         shifts.add(shift);
         getView().setShifts(shifts);
         draw();
+    }
+
+    public void setDataProvider(Fetchable<Collection<I>> dataProvider) {
+        if (null == dataProvider) {
+            dataProvider = new ConstantFetchable<>(Collections.emptyList());
+        }
+        this.dataProvider = dataProvider;
+        dataProvider.setUpdatable((d) -> {
+            shifts = new ArrayList<>(d);
+            getView().setShifts(shifts);
+        });
+    }
+
+    public void setGroupProvider(Fetchable<List<G>> groupProvider) {
+        if (null == groupProvider) {
+            groupProvider = new ConstantFetchable<>(Collections.emptyList());
+        }
+        this.groupProvider = groupProvider;
+        groupProvider.setUpdatable((groups) -> getView().setGroups(groups));
+    }
+
+    public void setInstanceCreator(DataProvider<G, I> instanceCreator) {
+        if (null == instanceCreator) {
+            instanceCreator = (c, g, s, e) -> {
+            };
+        }
+        this.instanceCreator = instanceCreator;
     }
 
     public void addShift(G group, LocalDateTime start, LocalDateTime end) {
@@ -202,8 +244,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         }
 
         public Calendar<G, T> asTwoDayView(TimeRowDrawableProvider<G, T, D> drawableProvider) {
-            if (null != topPanel && null != bottomPanel && null != sidePanel && null != dataProvider
-                    && null != groupProvider && null != instanceCreator) {
+            if (null != topPanel && null != bottomPanel && null != sidePanel) {
                 Calendar<G, T> calendar = new Calendar<>(canvas, tenantId, topPanel, bottomPanel, sidePanel,
                         dataProvider,
                         groupProvider, instanceCreator);
@@ -217,7 +258,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
                 return calendar;
             } else {
                 throw new IllegalStateException("You must set all of "
-                        + "(topPanel,bottomPanel,sidePanel,dataProvider,groupProvider,instanceProvider) before calling this method.");
+                        + "(topPanel,bottomPanel,sidePanel) before calling this method.");
             }
         }
 
