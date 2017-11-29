@@ -115,7 +115,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         rangeStart = 0;
         rangeEnd = 10;
         totalDisplayedSpotSlots = 10;
-        daysShown = 1;
+        daysShown = 2;
         editMinuteGradality = 30;
         displayMinuteGradality = 60;
         dateFormat = dateDisplay;
