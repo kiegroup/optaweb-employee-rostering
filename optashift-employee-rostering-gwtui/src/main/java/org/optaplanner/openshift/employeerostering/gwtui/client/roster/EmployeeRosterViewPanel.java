@@ -139,7 +139,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable>(canvasElement, tenantId)
+        calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable>(canvasElement, tenantId, CONSTANTS)
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)

@@ -11,6 +11,7 @@ import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.DataProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
@@ -194,10 +195,13 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         Fetchable<Collection<T>> dataProvider;
         Fetchable<List<G>> groupProvider;
         DataProvider<G, T> instanceCreator;
+        TranslationService translator;
+        DateDisplay dateDisplay;
 
-        public Builder(HTMLCanvasElement canvas, Integer tenantId) {
+        public Builder(HTMLCanvasElement canvas, Integer tenantId, TranslationService translator) {
             this.canvas = canvas;
             this.tenantId = tenantId;
+            this.translator = translator;
 
             topPanel = null;
             bottomPanel = null;
@@ -206,6 +210,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
             groupProvider = null;
             instanceCreator = null;
             startAt = null;
+            dateDisplay = DateDisplay.WEEK_STARTING;
         }
 
         public Builder<G, T, D> withTopPanel(Panel topPanel) {
@@ -238,6 +243,11 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
             return this;
         }
 
+        public Builder<G, T, D> displayWeekAs(DateDisplay dateDisplay) {
+            this.dateDisplay = dateDisplay;
+            return this;
+        }
+
         public Builder<G, T, D> startingAt(LocalDateTime start) {
             startAt = start;
             return this;
@@ -249,7 +259,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
                         dataProvider,
                         groupProvider, instanceCreator);
                 TwoDayView<G, T, D> view = new TwoDayView<G, T, D>(calendar, topPanel, bottomPanel, sidePanel,
-                        drawableProvider);
+                        drawableProvider, dateDisplay, translator);
                 calendar.setView(view);
 
                 if (null != startAt) {

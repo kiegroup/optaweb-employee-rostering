@@ -110,7 +110,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        calendar = new Calendar.Builder<SpotId, SpotData, SpotDrawable>(canvasElement, tenantId)
+        calendar = new Calendar.Builder<SpotId, SpotData, SpotDrawable>(canvasElement, tenantId, CONSTANTS)
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)

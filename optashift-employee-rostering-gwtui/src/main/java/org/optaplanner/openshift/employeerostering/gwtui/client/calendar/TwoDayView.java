@@ -32,6 +32,7 @@ import com.google.gwt.view.client.SelectionModel;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.Pagination;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
@@ -98,9 +99,13 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     Panel topPanel, bottomPanel, sidePanel;
     TimeRowDrawableProvider<G, I, D> drawableProvider;
 
+    DateDisplay dateFormat;
+    TranslationService translator;
+
     public TwoDayView(Calendar<G, I> calendar, Panel top, Panel bottom, Panel side, TimeRowDrawableProvider<G, I,
-            D> drawableProvider) {
+            D> drawableProvider, DateDisplay dateDisplay, TranslationService translator) {
         this.calendar = calendar;
+        this.translator = translator;
         baseDate = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
         currDay = baseDate;
         mouseX = 0;
@@ -110,9 +115,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         rangeStart = 0;
         rangeEnd = 10;
         totalDisplayedSpotSlots = 10;
-        daysShown = 2;
+        daysShown = 1;
         editMinuteGradality = 30;
         displayMinuteGradality = 60;
+        dateFormat = dateDisplay;
         selectedSpot = null;
         isDragging = false;
         creatingEvent = false;
@@ -350,12 +356,15 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
     private void drawTimes(CanvasRenderingContext2D g) {
         CanvasUtils.setFillColor(g, "#000000");
-        String week = "Week " + Math.round(getDifferenceFromBaseDate()) / 7;
+        String week = dateFormat.format(currDay, WEEK_START, translator);
         int textSize = CanvasUtils.fitTextToBox(g, week, SPOT_NAME_WIDTH, HEADER_HEIGHT / 2);
         g.font = CanvasUtils.getFont(textSize);
         g.fillText(week, 0, HEADER_HEIGHT / 2);
+        int offset = (dateFormat != DateDisplay.WEEKS_FROM_EPOCH) ? 0 : LocalDateTime.ofEpochSecond(0, 0,
+                ZoneOffset.UTC).getDayOfWeek().getValue();
         for (int x = 0; x < daysShown; x++) {
-            g.fillText(WEEKDAYS[(int) (Math.abs((WEEK_START + x + Math.round(getDifferenceFromBaseDate()))) % 7)],
+            g.fillText(WEEKDAYS[(int) (Math.abs((WEEK_START + x + currDay.getDayOfWeek().getValue() - 1 + offset))
+                    % 7)],
                     SPOT_NAME_WIDTH + (24 * x) * 60 * widthPerMinute, HEADER_HEIGHT / 2);
             CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + (24 * x) * 60 * widthPerMinute, 0, SPOT_NAME_WIDTH + (24 * x) * 60
                     * widthPerMinute, HEADER_HEIGHT);
