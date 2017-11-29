@@ -57,15 +57,16 @@ public class SpotData implements HasTimeslot<SpotId> {
         return spotId;
     }
 
-    public static void update(Shift shift) {
+    public static boolean update(Shift shift) {
         Identity id = new Identity(shift.getSpot(), shift.getTimeSlot().getStartDateTime(), shift.getTimeSlot()
                 .getEndDateTime());
         SpotData data = dataMap.get(id);
         if (null != data) {
             data.shift = shift;
             data.spotId = new SpotId(shift.getSpot());
+            return true;
         } else {
-            ErrorPopup.show("A Critical Error occurred: Attempted to update a non-exisiting SpotData instance!");
+            return false;
         }
     }
 
