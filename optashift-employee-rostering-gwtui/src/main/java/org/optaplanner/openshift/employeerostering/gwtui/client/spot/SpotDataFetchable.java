@@ -109,7 +109,9 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                                         .stream().forEach((sv) -> {
                                                             Shift shift = new Shift(sv, spot, timeslot);
                                                             shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
-                                                            SpotData.update(shift);
+                                                            if (!SpotData.update(shift)) {
+                                                                calendar.addShift(new SpotData(shift));
+                                                            }
                                                         });
                                             }
                                         }

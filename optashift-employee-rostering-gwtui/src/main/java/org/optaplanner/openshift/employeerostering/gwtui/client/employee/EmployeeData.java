@@ -68,7 +68,7 @@ public class EmployeeData implements HasTimeslot<EmployeeId> {
         return employeeId;
     }
 
-    public static void update(Shift shift, EmployeeAvailabilityView availabilityView) {
+    public static boolean update(Shift shift, EmployeeAvailabilityView availabilityView) {
         Identity id = new Identity(shift.getEmployee(), shift.getTimeSlot().getStartDateTime(), shift.getTimeSlot()
                 .getEndDateTime());
         EmployeeData data = dataMap.get(id);
@@ -76,8 +76,9 @@ public class EmployeeData implements HasTimeslot<EmployeeId> {
             data.shift = shift;
             data.availabilityView = availabilityView;
             data.employeeId = new EmployeeId(shift.getEmployee());
+            return true;
         } else {
-            ErrorPopup.show("A Critical Error occurred: Attempted to update a non-exisiting EmployeeData instance!");
+            return false;
         }
     }
 

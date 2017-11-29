@@ -35,6 +35,11 @@ public interface CssResources extends ClientBundle {
         String panel();
     }
 
+    interface CalendarCss extends CssResource {
+
+        String main();
+    }
+
     @Source("errorpopup.css")
     ErrorPopupCss errorpopup();
 
@@ -43,4 +48,7 @@ public interface CssResources extends ClientBundle {
 
     @Source("loadingicon.css")
     LoadingIconCss loadingIcon();
+
+    @Source("calendar.css")
+    CalendarCss calendar();
 }

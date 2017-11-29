@@ -16,6 +16,8 @@ public interface CalendarView<G extends HasTitle, I extends HasTimeslot<G>> {
 
     LocalDateTime getViewEndDate();
 
+    void addShift(I shift);
+
     void setShifts(Collection<I> shifts);
 
     Collection<G> getVisibleGroups();

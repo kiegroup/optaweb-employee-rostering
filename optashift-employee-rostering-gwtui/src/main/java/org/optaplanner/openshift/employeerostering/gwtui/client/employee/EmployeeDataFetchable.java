@@ -129,21 +129,32 @@ public class EmployeeDataFetchable implements Fetchable<Collection<EmployeeData>
                                                     Shift shift = new Shift(sv, null, timeslot);
                                                     shift.setEmployee(employee);
                                                     shift.setSpot(spotMap.get(sv.getSpotId()));
-                                                    EmployeeData.update(shift,
+                                                    if (!EmployeeData.update(shift,
                                                             timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot
                                                                     .getId())
                                                                     .get(
-                                                                            employee.getId()));
+                                                                            employee.getId()))) {
+                                                        calendar.addShift(new EmployeeData(shift,
+                                                                timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot
+                                                                        .getId())
+                                                                        .get(
+                                                                                employee.getId())));
+                                                    }
                                                 });
                                     } else {
                                         Shift shift = new Shift();
                                         shift.setTenantId(employee.getTenantId());
                                         shift.setEmployee(employee);
                                         shift.setTimeSlot(timeslot);
-                                        EmployeeData.update(shift,
+                                        if (!EmployeeData.update(shift,
                                                 timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot.getId()).get(
                                                         employee
-                                                                .getId()));
+                                                                .getId()))) {
+                                            calendar.addShift(new EmployeeData(shift,
+                                                    timeSlotIdToEmployeeIdToAvailabilityViewMap.get(timeslot.getId())
+                                                            .get(employee
+                                                                    .getId())));
+                                        }
                                     }
                                 }
                             }

@@ -475,10 +475,78 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     private void onMouseDrag(double x, double y) {
     }
 
-    private List<I> getShiftsDuring(I time, Collection<I> shifts) {
+    private List<HasTimeslot<G>> getShiftsDuring(I time, Collection<? extends HasTimeslot<G>> shifts) {
         return shifts.stream().filter((shift) -> TimeSlotUtils.doTimeslotsIntersect(time.getStartTime(), time
                 .getEndTime(), shift
                         .getStartTime(), shift.getEndTime())).collect(Collectors.toList());
+    }
+
+    @Override
+    public void addShift(I shift) {
+        Set<D> placedShifts = new HashSet<>();
+        List<D> representives = new ArrayList<>();
+        CommonUtils.flatten(timeslotTable.allItems.values()).forEach((d) -> {
+            if (d.getGroupId().equals(shift.getGroupId())) {
+                if (0 == d.getIndex() && representives.isEmpty()) {
+                    representives.add(d);
+                }
+                placedShifts.add(d);
+            }
+        });
+
+        List<HasTimeslot<G>> concurrentShifts = getShiftsDuring(shift, placedShifts);
+        HashMap<D, Integer> concurrentPlacedShifts = new HashMap<>();
+
+        placedShifts.forEach((d) -> {
+            if (concurrentShifts.contains(d)) {
+                concurrentPlacedShifts.put(d, d.getIndex());
+            }
+        });
+        int index = 0;
+        while (concurrentPlacedShifts.containsValue(index)) {
+            index++;
+        }
+
+        int FINAL_INDEX = index;
+
+        D drawable = drawableProvider.createDrawable(this, shift, FINAL_INDEX);
+        drawable.setParent(groupContainer.get(shift.getGroupId()));
+
+        if (!representives.isEmpty() && index < placedShifts.size()) {
+            timeslotTable.getRow(timeslotTable.getRowIndexOf(representives.get(0)) + index).add(drawable);
+        } else {
+            timeslotTable.allItems.keySet().stream().filter((i) -> i >= FINAL_INDEX).sorted((a, b) -> -Integer.compare(
+                    a, b))
+                    .forEach((i) -> {
+                        timeslotTable.allItems.put(i + 1, timeslotTable.getRow(i));
+                    });
+            Set<D> newRow = new HashSet<>();
+            newRow.add(drawable);
+            timeslotTable.allItems.put(index, newRow);
+
+            groupPos.keySet().stream().filter((g) -> groupPos.get(g) > groupPos.get(drawable.getGroupId()))
+                    .forEach((g) -> groupPos.put(g, groupPos.get(g) + 1));
+
+            groupEndPos.keySet().stream().filter((g) -> groupEndPos.get(g) > groupEndPos.get(drawable.getGroupId()))
+                    .forEach((g) -> groupEndPos.put(g, groupEndPos.get(g) + 1));
+
+            //+1 here is + getGroupHeight()
+            groupContainer.keySet().stream().filter((g) -> groupContainer.get(g).pos.getPosition().y > groupContainer
+                    .get(drawable.getGroupId()).pos.getPosition().y)
+                    .forEach((g) -> {
+                        final DynamicContainer old = groupContainer.get(g);
+                        groupContainer.put(g, new DynamicContainer(() -> new Position(old.pos.getPosition().x, old.pos
+                                .getPosition().y + getGroupHeight())));
+                    });
+
+            groupAddPlane.keySet().stream().filter((g) -> groupAddPlane.get(g).pos.getPosition().y > groupAddPlane.get(
+                    drawable.getGroupId()).pos.getPosition().y)
+                    .forEach((g) -> {
+                        final DynamicContainer old = groupAddPlane.get(g);
+                        groupAddPlane.put(g, new DynamicContainer(() -> new Position(old.pos.getPosition().x, old.pos
+                                .getPosition().y + getGroupHeight())));
+                    });
+        }
     }
 
     @Override
@@ -507,8 +575,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             colorMap.put(group, ColorUtils.getColor(colorMap.size()));
 
             for (I shift : shifts.stream().filter((s) -> s.getGroupId().equals(group)).collect(Collectors.toList())) {
-                List<I> concurrentShifts = getShiftsDuring(shift, placedShifts.keySet());
-                HashMap<I, Integer> concurrentPlacedShifts = new HashMap<>();
+                List<HasTimeslot<G>> concurrentShifts = getShiftsDuring(shift, placedShifts.keySet());
+                HashMap<HasTimeslot<G>, Integer> concurrentPlacedShifts = new HashMap<>();
                 placedShifts.forEach((k, v) -> {
                     if (concurrentShifts.contains(k)) {
                         concurrentPlacedShifts.put(k, v);
