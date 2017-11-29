@@ -20,6 +20,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.DateDisplay;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
@@ -71,12 +72,13 @@ public class ConfigurationEditor implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
-        calendar = new Calendar.Builder<SpotId, ShiftData, ShiftDrawable>(canvasElement, tenantId)
+        calendar = new Calendar.Builder<SpotId, ShiftData, ShiftDrawable>(canvasElement, tenantId, CONSTANTS)
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)
                 .fetchingDataFrom(new ConstantFetchable<Collection<ShiftData>>(Collections.emptyList()))
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
+                .displayWeekAs(DateDisplay.WEEKS_FROM_EPOCH)
                 .creatingDataInstancesWith((c, name, start, end) -> c
                         .addShift(new ShiftData(new SpotData(new Shift(tenantId,
                                 name.getSpot(),

@@ -23,6 +23,17 @@ public interface OptaShiftUIConstants {
     final String AbstractRosterViewPanel_terminateEarly = "Terminate";
     
     
+    
+    @TranslationKey(defaultValue="Week {0}")
+    final String DateDisplay_WEEKS_FROM_EPOCH = "DateDisplay.WEEKS_FROM_EPOCH";
+    
+    @TranslationKey(defaultValue="Week starting {0}/{1}/{2}")
+    final String DateDisplay_WEEK_STARTING = "DateDisplay.WEEK_STARTING";
+    
+    @TranslationKey(defaultValue="Week ending {0}/{1}/{2}")
+    final String DateDisplay_WEEK_ENDING = "DateDisplay.WEEK_ENDING";
+    
+    
 
     @TranslationKey(defaultValue="Employee name")
     final String EmployeeListPanel_employeeName = "EmployeeListPanel.employeeName";
@@ -100,5 +111,5 @@ public interface OptaShiftUIConstants {
     
 
     @TranslationKey(defaultValue="Spot")
-    final String SpotRosterView_spot = "SpotRosterView.spot";	
+    final String SpotRosterView_spot = "SpotRosterView.spot";
 }
