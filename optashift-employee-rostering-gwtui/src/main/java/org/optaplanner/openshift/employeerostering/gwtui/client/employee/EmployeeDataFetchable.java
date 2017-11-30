@@ -1,5 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -91,6 +93,8 @@ public class EmployeeDataFetchable implements Fetchable<Collection<EmployeeData>
                     }
                     updatable.onUpdate(out);
                     after.execute();
+                    calendar.setHardStartDateBound(employeeRosterView.getStartDate().atTime(0, 0));
+                    calendar.setHardEndDateBound(employeeRosterView.getEndDate().atTime(0, 0));
                     LoadingPopup.clearLoading(LOADING_STRING);
                 }
             });

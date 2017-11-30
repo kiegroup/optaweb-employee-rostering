@@ -66,6 +66,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     private HashMap<G, DynamicContainer> groupContainer = new HashMap<>();
     private HashMap<G, DynamicContainer> groupAddPlane = new HashMap<>();
     private Collection<I> shifts;
+    private MockScrollBar scrollBar;
 
     TimeSlotTable<D, G> timeslotTable;
 
@@ -80,6 +81,45 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     private int totalDisplayedSpotSlots;
     LocalDateTime baseDate;
     LocalDateTime currDay;
+    LocalDateTime hardStartDateBound;
+
+    @Override
+    public LocalDateTime getHardStartDateBound() {
+        return hardStartDateBound;
+    }
+
+    @Override
+    public void setHardStartDateBound(LocalDateTime hardStartDateBound) {
+        this.hardStartDateBound = hardStartDateBound;
+        if (null != hardStartDateBound && null != hardEndDateBound) {
+            int daysBetween = (int) ((hardEndDateBound.toEpochSecond(ZoneOffset.UTC) - hardStartDateBound.toEpochSecond(
+                    ZoneOffset.UTC)) / (60 * 60 * 24));
+            scrollBar.setContentSize(daysBetween);
+            scrollBar.setContentShown(daysShown);
+        } else {
+            scrollBar.setContentShown(0);
+        }
+    }
+
+    @Override
+    public LocalDateTime getHardEndDateBound() {
+        return hardEndDateBound;
+    }
+
+    @Override
+    public void setHardEndDateBound(LocalDateTime hardEndDateBound) {
+        this.hardEndDateBound = hardEndDateBound;
+        if (null != hardStartDateBound && null != hardEndDateBound) {
+            int daysBetween = (int) ((hardEndDateBound.toEpochSecond(ZoneOffset.UTC) - hardStartDateBound.toEpochSecond(
+                    ZoneOffset.UTC)) / (60 * 60 * 24));
+            scrollBar.setContentSize(daysBetween);
+            scrollBar.setContentShown(daysShown);
+        } else {
+            scrollBar.setContentShown(0);
+        }
+    }
+
+    LocalDateTime hardEndDateBound;
 
     double mouseX, mouseY;
     double localMouseX, localMouseY;
@@ -90,6 +130,32 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     int daysShown;
     int editMinuteGradality;
     int displayMinuteGradality;
+
+    public int getDaysShown() {
+        return daysShown;
+    }
+
+    public void setDaysShown(int daysShown) {
+        scrollBar.setContentShown(daysShown);
+        this.daysShown = daysShown;
+    }
+
+    public int getEditMinuteGradality() {
+        return editMinuteGradality;
+    }
+
+    public void setEditMinuteGradality(int editMinuteGradality) {
+        this.editMinuteGradality = editMinuteGradality;
+    }
+
+    public int getDisplayMinuteGradality() {
+        return displayMinuteGradality;
+    }
+
+    public void setDisplayMinuteGradality(int displayMinuteGradality) {
+        this.displayMinuteGradality = displayMinuteGradality;
+    }
+
     boolean isDragging, creatingEvent, visibleDirty, allDirty, isCreating;
     G selectedSpot;
     Long selectedIndex;
@@ -104,9 +170,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     TranslationService translator;
 
     public TwoDayView(Calendar<G, I> calendar, Panel top, Panel bottom, Panel side, TimeRowDrawableProvider<G, I,
-            D> drawableProvider, DateDisplay dateDisplay, TranslationService translator) {
+            D> drawableProvider, DateDisplay dateDisplay, TranslationService translator, MockScrollBar scrollBar) {
         this.calendar = calendar;
         this.translator = translator;
+        this.scrollBar = scrollBar;
         baseDate = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
         currDay = baseDate;
         mouseX = 0;
@@ -151,26 +218,48 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         title.setText("Configuration Editor");
         topPanel.add(title);
 
-        Button prevButton = new Button();
-        prevButton.setText("Previous Day");
-        prevButton.addClickHandler((e) -> {
-            setDate(currDay.minusDays(1));
-            calendar.draw();
-        });
-        bottomPanel.add(prevButton);
-
-        Button nextButton = new Button();
-        nextButton.setText("Next Day");
-        nextButton.addClickHandler((e) -> {
-            setDate(currDay.plusDays(1));
-            calendar.draw();
-        });
-        bottomPanel.add(nextButton);
-
         pagination = new Pagination();
         pager = new SimplePager();
 
         bottomPanel.add(pagination);
+
+        scrollBar.setContentSize(1);
+        scrollBar.setContentIndex(0);
+        scrollBar.setContentShown(0);
+
+        scrollBar.setNextButtonAction(() -> {
+            if (null != getHardEndDateBound()) {
+                if (getViewEndDate().isBefore(getHardEndDateBound())) {
+                    setDate(getViewStartDate().plusDays(1));
+                    if (null != getHardStartDateBound()) {
+                        int dayDiff = (int) ((getViewStartDate().toEpochSecond(ZoneOffset.UTC) - getHardStartDateBound()
+                                .toEpochSecond(ZoneOffset.UTC)) / (60 * 60 * 24));
+                        scrollBar.setContentIndex(dayDiff);
+                    }
+                    calendar.draw();
+                }
+            } else {
+                setDate(getViewStartDate().plusDays(1));
+                calendar.draw();
+            }
+        });
+
+        scrollBar.setPreviousButtonAction(() -> {
+            if (null != getHardStartDateBound()) {
+                if (getViewStartDate().isAfter(getHardStartDateBound())) {
+                    setDate(getViewStartDate().minusDays(1));
+                    if (null != getHardEndDateBound()) {
+                        int dayDiff = (int) ((getViewStartDate().toEpochSecond(ZoneOffset.UTC) - getHardStartDateBound()
+                                .toEpochSecond(ZoneOffset.UTC)) / (60 * 60 * 24));
+                        scrollBar.setContentIndex(dayDiff);
+                    }
+                    calendar.draw();
+                }
+            } else {
+                setDate(getViewStartDate().minusDays(1));
+                calendar.draw();
+            }
+        });
 
         pager.setDisplay(this);
         pager.setPageSize(totalDisplayedSpotSlots);

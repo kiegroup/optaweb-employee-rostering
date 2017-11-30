@@ -189,6 +189,46 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         instanceCreator.getInstance(this, group, start, end);
     }
 
+    public LocalDateTime getHardStartDateBound() {
+        return view.getHardStartDateBound();
+    }
+
+    public void setHardStartDateBound(LocalDateTime hardStartDateBound) {
+        view.setHardStartDateBound(hardStartDateBound);
+    }
+
+    public LocalDateTime getHardEndDateBound() {
+        return view.getHardEndDateBound();
+    }
+
+    public void setHardEndDateBound(LocalDateTime hardEndDateBound) {
+        view.setHardEndDateBound(hardEndDateBound);
+    }
+
+    int getDaysShown() {
+        return view.getDaysShown();
+    }
+
+    void setDaysShown(int daysShown) {
+        view.setDaysShown(daysShown);
+    }
+
+    int getEditMinuteGradality() {
+        return view.getEditMinuteGradality();
+    }
+
+    void setEditMinuteGradality(int editMinuteGradality) {
+        view.setEditMinuteGradality(editMinuteGradality);
+    }
+
+    int getDisplayMinuteGradality() {
+        return view.getDisplayMinuteGradality();
+    }
+
+    void setDisplayMinuteGradality(int displayMinuteGradality) {
+        view.setDisplayMinuteGradality(displayMinuteGradality);
+    }
+
     public static class Builder<G extends HasTitle, T extends HasTimeslot<G>, D extends TimeRowDrawable<G>> {
 
         HTMLCanvasElement canvas;
@@ -202,6 +242,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         Fetchable<List<G>> groupProvider;
         DataProvider<G, T> instanceCreator;
         TranslationService translator;
+        MockScrollBar scrollBar;
         DateDisplay dateDisplay;
 
         public Builder(HTMLCanvasElement canvas, Integer tenantId, TranslationService translator) {
@@ -259,13 +300,18 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
             return this;
         }
 
+        public Builder<G, T, D> withScrollBar(MockScrollBar scrollBar) {
+            this.scrollBar = scrollBar;
+            return this;
+        }
+
         public Calendar<G, T> asTwoDayView(TimeRowDrawableProvider<G, T, D> drawableProvider) {
-            if (null != topPanel && null != bottomPanel && null != sidePanel) {
+            if (null != topPanel && null != bottomPanel && null != sidePanel && null != scrollBar) {
                 Calendar<G, T> calendar = new Calendar<>(canvas, tenantId, topPanel, bottomPanel, sidePanel,
                         dataProvider,
                         groupProvider, instanceCreator);
                 TwoDayView<G, T, D> view = new TwoDayView<G, T, D>(calendar, topPanel, bottomPanel, sidePanel,
-                        drawableProvider, dateDisplay, translator);
+                        drawableProvider, dateDisplay, translator, scrollBar);
                 calendar.setView(view);
 
                 if (null != startAt) {
@@ -274,7 +320,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
                 return calendar;
             } else {
                 throw new IllegalStateException("You must set all of "
-                        + "(topPanel,bottomPanel,sidePanel) before calling this method.");
+                        + "(topPanel,bottomPanel,sidePanel,scrollBar) before calling this method.");
             }
         }
 

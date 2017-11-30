@@ -16,6 +16,14 @@ public interface CalendarView<G extends HasTitle, I extends HasTimeslot<G>> {
 
     LocalDateTime getViewEndDate();
 
+    LocalDateTime getHardStartDateBound();
+
+    void setHardStartDateBound(LocalDateTime hardStartDateBound);
+
+    LocalDateTime getHardEndDateBound();
+
+    void setHardEndDateBound(LocalDateTime hardEndDateBound);
+
     void addShift(I shift);
 
     void removeShift(I shift);
@@ -35,4 +43,16 @@ public interface CalendarView<G extends HasTitle, I extends HasTimeslot<G>> {
     void onMouseMove(MouseEvent e);
 
     void onMouseUp(MouseEvent e);
+
+    int getDaysShown();
+
+    void setDaysShown(int daysShown);
+
+    int getEditMinuteGradality();
+
+    void setEditMinuteGradality(int editMinuteGradality);
+
+    int getDisplayMinuteGradality();
+
+    void setDisplayMinuteGradality(int displayMinuteGradality);
 }
