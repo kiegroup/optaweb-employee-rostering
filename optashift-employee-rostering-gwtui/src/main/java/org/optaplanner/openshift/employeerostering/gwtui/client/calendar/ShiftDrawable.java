@@ -22,7 +22,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     LocalDateTime endTime;
     String color;
     int index;
-    boolean isMouseOver;
+    boolean isMouseOver, isMoving;
     TwoDayView<SpotId, ShiftData, ShiftDrawable> view;
     ShiftData id;
     Long minsOffset;
@@ -68,6 +68,9 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
         CanvasUtils.setFillColor(g, "#FF0000");
         g.fillRect(x, y, 30, 30);
+
+        CanvasUtils.setFillColor(g, "#000000");
+        g.fillRect(x + duration * view.getWidthPerMinute() - 30, y + view.getGroupHeight() - 30, 30, 30);
     }
 
     @Override
@@ -91,10 +94,19 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
     @Override
     public PostMouseDownEvent onMouseDown(MouseEvent e, double x, double y) {
+        double start = startTime.toEpochSecond(ZoneOffset.UTC) / 60;
+        double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
+        double duration = end - start;
+
         if (x - getGlobalX() < 30 && y - getGlobalY() < 30) {
             view.getCalendar().removeShift(id);
             return PostMouseDownEvent.REMOVE_FOCUS;
+        } else if (x - getGlobalX() - duration * view.getWidthPerMinute() + 30 > 0 && y - getGlobalY() - view
+                .getGroupHeight() + 30 > 0) {
+            isMoving = false;
+            return PostMouseDownEvent.CAPTURE_DRAG;
         } else {
+            isMoving = true;
             minsOffset = (startTime.toEpochSecond(
                     ZoneOffset.UTC) - view.getMouseLocalDateTime().toEpochSecond(ZoneOffset.UTC)) / 60;
             return PostMouseDownEvent.CAPTURE_DRAG;
@@ -103,9 +115,16 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
     @Override
     public boolean onMouseDrag(MouseEvent e, double x, double y) {
-        long mins = (endTime.toEpochSecond(ZoneOffset.UTC) - startTime.toEpochSecond(ZoneOffset.UTC)) / 60;
-        startTime = view.roundLocalDateTime(view.getMouseLocalDateTime().plusMinutes(minsOffset));
-        endTime = startTime.plusMinutes(mins);
+        if (isMoving) {
+            long mins = (endTime.toEpochSecond(ZoneOffset.UTC) - startTime.toEpochSecond(ZoneOffset.UTC)) / 60;
+            startTime = view.roundLocalDateTime(view.getMouseLocalDateTime().plusMinutes(minsOffset));
+            endTime = startTime.plusMinutes(mins);
+        } else {
+            LocalDateTime newEndTime = view.roundLocalDateTime(view.getMouseLocalDateTime());
+            if (newEndTime.isAfter(startTime)) {
+                endTime = newEndTime;
+            }
+        }
         return true;
     }
 
