@@ -4,21 +4,28 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetch
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 
 public class ConstantFetchable<I> implements Fetchable<I> {
+
     Updatable<I> updatable;
     I toReturn;
-    
+    boolean ran = false;
+
     public ConstantFetchable(I toReturn) {
         this.toReturn = toReturn;
     }
+
     @Override
     public void fetchData(Command after) {
-        updatable.onUpdate(toReturn);
+        if (!ran) {
+            updatable.onUpdate(toReturn);
+            ran = true;
+        }
         after.execute();
     }
 
     @Override
     public void setUpdatable(Updatable<I> listener) {
         updatable = listener;
+        ran = false;
     }
 
 }

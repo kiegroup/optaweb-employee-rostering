@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -8,7 +9,10 @@ import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotId;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<SpotId> {
 
@@ -18,9 +22,11 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     String color;
     int index;
     boolean isMouseOver;
-    TwoDayView<SpotId, ?, ?> view;
+    TwoDayView<SpotId, ShiftData, ShiftDrawable> view;
+    ShiftData id;
+    Long minsOffset;
 
-    public ShiftDrawable(TwoDayView<SpotId, ?, ?> view, ShiftData data, int index) {
+    public ShiftDrawable(TwoDayView<SpotId, ShiftData, ShiftDrawable> view, ShiftData data, int index) {
         this.view = view;
         this.startTime = data.getStartTime();
         this.endTime = data.getEndTime();
@@ -28,6 +34,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
         this.color = ColorUtils.getColor(view.getGroupIndex(data.getGroupId()));
         this.index = index;
         this.isMouseOver = false;
+        this.id = data;
     }
 
     @Override
@@ -75,6 +82,31 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     @Override
     public boolean onMouseMove(MouseEvent e, double x, double y) {
         view.preparePopup(this.toString());
+        return true;
+    }
+
+    @Override
+    public PostMouseDownEvent onMouseDown(MouseEvent e, double x, double y) {
+        minsOffset = (startTime.toEpochSecond(
+                ZoneOffset.UTC) - view.getMouseLocalDateTime().toEpochSecond(ZoneOffset.UTC)) / 60;
+        return PostMouseDownEvent.CAPTURE_DRAG;
+    }
+
+    @Override
+    public boolean onMouseDrag(MouseEvent e, double x, double y) {
+        long mins = (endTime.toEpochSecond(ZoneOffset.UTC) - startTime.toEpochSecond(ZoneOffset.UTC)) / 60;
+        startTime = view.roundLocalDateTime(view.getMouseLocalDateTime().plusMinutes(minsOffset));
+        endTime = startTime.plusMinutes(mins);
+        return true;
+    }
+
+    @Override
+    public boolean onMouseUp(MouseEvent e, double x, double y) {
+        ShiftData shift = new ShiftData(new SpotData(new Shift(spot.getSpot().getTenantId(), spot.getSpot(),
+                new TimeSlot(spot.getSpot().getTenantId(), startTime, endTime))));
+        view.getCalendar().removeShift(id);
+        view.getCalendar().addShift(shift);
+        minsOffset = null;
         return true;
     }
 

@@ -98,7 +98,7 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
     }
 
     @Override
-    public boolean onMouseDown(MouseEvent mouseEvent, double x, double y) {
+    public PostMouseDownEvent onMouseDown(MouseEvent mouseEvent, double x, double y) {
         EmployeeRestServiceBuilder.getEmployeeList(data.getShift().getTenantId(), new FailureShownRestCallback<List<
                 Employee>>() {
 
@@ -186,7 +186,7 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
             }
         });
 
-        return true;
+        return PostMouseDownEvent.REMOVE_FOCUS;
     }
 
     @Override
