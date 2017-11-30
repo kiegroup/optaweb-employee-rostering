@@ -148,7 +148,13 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
 
     public void addShift(I shift) {
         shifts.add(shift);
-        getView().setShifts(shifts);
+        getView().addShift(shift);
+        draw();
+    }
+
+    public void removeShift(I shift) {
+        shifts.remove(shift);
+        getView().removeShift(shift);
         draw();
     }
 

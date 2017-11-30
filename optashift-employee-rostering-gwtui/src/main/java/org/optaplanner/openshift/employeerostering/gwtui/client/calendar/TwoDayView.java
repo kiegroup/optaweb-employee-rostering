@@ -33,6 +33,7 @@ import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawable.PostMouseDownEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
@@ -89,7 +90,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     int daysShown;
     int editMinuteGradality;
     int displayMinuteGradality;
-    boolean isDragging, creatingEvent, visibleDirty, allDirty;
+    boolean isDragging, creatingEvent, visibleDirty, allDirty, isCreating;
     G selectedSpot;
     Long selectedIndex;
     G overSpot;
@@ -130,6 +131,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         shiftDrawables = new ArrayList<>();
         visibleDirty = true;
         allDirty = true;
+        isCreating = false;
         screenWidth = 1;
         screenHeight = 1;
         selectionModel = new NoSelectionModel<Collection<? extends D>>((g) -> (g.isEmpty()) ? null : g.iterator().next()
@@ -222,7 +224,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                 G groupId = group.iterator().next().getGroupId();
 
                 for (D drawable : group) {
-                    if (groupId.equals(selectedSpot) && drawable.getIndex() >= selectedIndex) {
+                    if (groupId.equals(selectedSpot) && drawable.getIndex() >= selectedIndex
+                            && drawable != mouseOverDrawable) {
                         drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + (index + 1) * spotHeight);
                     } else {
                         drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + index * spotHeight);
@@ -287,7 +290,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     private void drawSpotToCreate(CanvasRenderingContext2D g) {
-        if (null != selectedSpot) {
+        if (isCreating) {
             CanvasUtils.setFillColor(g, "#00FF00");
             long fromMins = Math.round((dragStartX - SPOT_NAME_WIDTH - getOffsetX()) / (widthPerMinute
                     * editMinuteGradality)) * editMinuteGradality;
@@ -329,10 +332,18 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                 selectedSpot = spot;
                 overSpot = spot;
                 cursorIndex.put(overSpot, index);
+                isCreating = true;
                 selectedIndex = (long) Math.floor((mouseY - groupContainer.get(spot).getGlobalY()) / spotHeight);
                 break;
             }
         }
+    }
+
+    public LocalDateTime roundLocalDateTime(LocalDateTime toRound) {
+        long fromMins = Math.round(toRound.toEpochSecond(ZoneOffset.UTC) / (60.0 * editMinuteGradality))
+                * editMinuteGradality;
+        return LocalDateTime.ofEpochSecond(60 * fromMins, 0, ZoneOffset.UTC).plusDays(Math.round(
+                getDifferenceFromBaseDate()));
     }
 
     private void handleMouseUp(double eventX, double eventY) {
@@ -391,22 +402,26 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         dragStartY = mouseY;
         isDragging = true;
 
-        boolean consumed = false;
+        PostMouseDownEvent consumed = PostMouseDownEvent.IGNORE;
         for (D drawable : CommonUtils.flatten(getVisibleItems())) {
             LocalDateTime mouseTime = getMouseLocalDateTime();
             double drawablePos = drawable.getGlobalY();
 
             if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
                 if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
+                    mouseOverDrawable = drawable;
                     consumed = drawable.onMouseDown(e, mouseX, mouseY);
                     break;
                 }
             }
         }
-        if (!consumed) {
+        if (consumed == PostMouseDownEvent.IGNORE) {
             handleMouseDown(mouseX, mouseY);
-        } else {
+        } else if (consumed == PostMouseDownEvent.REMOVE_FOCUS) {
             isDragging = false;
+        } else {
+            selectedSpot = mouseOverDrawable.getGroupId();
+            selectedIndex = (long) mouseOverDrawable.getIndex();
         }
 
         calendar.draw();
@@ -418,25 +433,21 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         localMouseY = CanvasUtils.getCanvasY(calendar.canvas, e);
         mouseX = localMouseX + getOffsetX();
         mouseY = localMouseY + getOffsetY();
+        isCreating = false;
 
         boolean consumed = false;
-        for (D drawable : CommonUtils.flatten(getVisibleItems())) {
-            LocalDateTime mouseTime = getMouseLocalDateTime();
-            double drawablePos = drawable.getGlobalY();
-
-            if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
-                if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
-                    consumed = drawable.onMouseUp(e, mouseX, mouseY);
-                    break;
-                }
-            }
+        if (mouseOverDrawable != null) {
+            consumed = mouseOverDrawable.onMouseUp(e, mouseX, mouseY);
+            //cursorIndex.put(mouseOverDrawable.getGroupId(), mouseOverDrawable.getIndex());
         }
         if (!consumed) {
+            mouseOverDrawable = null;
             handleMouseUp(mouseX, mouseY);
         }
 
         isDragging = false;
         selectedSpot = null;
+        selectedIndex = 0L;
 
         calendar.draw();
     }
@@ -455,18 +466,12 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         boolean foundDrawable = false;
 
         if (isDragging) {
-            for (D drawable : CommonUtils.flatten(getVisibleItems())) {
-                LocalDateTime mouseTime = getMouseLocalDateTime();
-                double drawablePos = drawable.getGlobalY();
-
-                if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
-                    if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
-                        consumed = drawable.onMouseDrag(e, mouseX, mouseY);
-                        break;
-                    }
-                }
+            LocalDateTime mouseTime = getMouseLocalDateTime();
+            if (mouseOverDrawable != null) {
+                consumed = mouseOverDrawable.onMouseDrag(e, mouseX, mouseY);
             }
             if (!consumed) {
+                mouseOverDrawable = null;
                 onMouseDrag(mouseX, mouseY);
             }
 
@@ -510,70 +515,14 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
     @Override
     public void addShift(I shift) {
-        Set<D> placedShifts = new HashSet<>();
-        List<D> representives = new ArrayList<>();
-        CommonUtils.flatten(timeslotTable.allItems.values()).forEach((d) -> {
-            if (d.getGroupId().equals(shift.getGroupId())) {
-                if (0 == d.getIndex() && representives.isEmpty()) {
-                    representives.add(d);
-                }
-                placedShifts.add(d);
-            }
-        });
+        //TODO: Make this better
+        setShifts(calendar.getShifts());
+    }
 
-        List<HasTimeslot<G>> concurrentShifts = getShiftsDuring(shift, placedShifts);
-        HashMap<D, Integer> concurrentPlacedShifts = new HashMap<>();
-
-        placedShifts.forEach((d) -> {
-            if (concurrentShifts.contains(d)) {
-                concurrentPlacedShifts.put(d, d.getIndex());
-            }
-        });
-        int index = 0;
-        while (concurrentPlacedShifts.containsValue(index)) {
-            index++;
-        }
-
-        int FINAL_INDEX = index;
-
-        D drawable = drawableProvider.createDrawable(this, shift, FINAL_INDEX);
-        drawable.setParent(groupContainer.get(shift.getGroupId()));
-
-        if (!representives.isEmpty() && index < placedShifts.size()) {
-            timeslotTable.getRow(timeslotTable.getRowIndexOf(representives.get(0)) + index).add(drawable);
-        } else {
-            timeslotTable.allItems.keySet().stream().filter((i) -> i >= FINAL_INDEX).sorted((a, b) -> -Integer.compare(
-                    a, b))
-                    .forEach((i) -> {
-                        timeslotTable.allItems.put(i + 1, timeslotTable.getRow(i));
-                    });
-            Set<D> newRow = new HashSet<>();
-            newRow.add(drawable);
-            timeslotTable.allItems.put(index, newRow);
-
-            groupPos.keySet().stream().filter((g) -> groupPos.get(g) > groupPos.get(drawable.getGroupId()))
-                    .forEach((g) -> groupPos.put(g, groupPos.get(g) + 1));
-
-            groupEndPos.keySet().stream().filter((g) -> groupEndPos.get(g) > groupEndPos.get(drawable.getGroupId()))
-                    .forEach((g) -> groupEndPos.put(g, groupEndPos.get(g) + 1));
-
-            //+1 here is + getGroupHeight()
-            groupContainer.keySet().stream().filter((g) -> groupContainer.get(g).pos.getPosition().y > groupContainer
-                    .get(drawable.getGroupId()).pos.getPosition().y)
-                    .forEach((g) -> {
-                        final DynamicContainer old = groupContainer.get(g);
-                        groupContainer.put(g, new DynamicContainer(() -> new Position(old.pos.getPosition().x, old.pos
-                                .getPosition().y + getGroupHeight())));
-                    });
-
-            groupAddPlane.keySet().stream().filter((g) -> groupAddPlane.get(g).pos.getPosition().y > groupAddPlane.get(
-                    drawable.getGroupId()).pos.getPosition().y)
-                    .forEach((g) -> {
-                        final DynamicContainer old = groupAddPlane.get(g);
-                        groupAddPlane.put(g, new DynamicContainer(() -> new Position(old.pos.getPosition().x, old.pos
-                                .getPosition().y + getGroupHeight())));
-                    });
-        }
+    @Override
+    public void removeShift(I shift) {
+        //TODO: Make this better
+        setShifts(calendar.getShifts());
     }
 
     @Override

@@ -18,6 +18,8 @@ public interface CalendarView<G extends HasTitle, I extends HasTimeslot<G>> {
 
     void addShift(I shift);
 
+    void removeShift(I shift);
+
     void setShifts(Collection<I> shifts);
 
     Collection<G> getVisibleGroups();
