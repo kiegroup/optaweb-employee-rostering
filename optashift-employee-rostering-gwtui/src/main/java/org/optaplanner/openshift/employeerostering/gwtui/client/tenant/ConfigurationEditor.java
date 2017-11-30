@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.Button;
 import elemental2.dom.HTMLCanvasElement;
 import org.gwtbootstrap3.client.ui.html.Div;
@@ -21,6 +22,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.DateDisplay;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.MockScrollBar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
@@ -61,6 +63,12 @@ public class ConfigurationEditor implements IsElement {
     @Inject
     @DataField
     private Span sidePanel;
+    @Inject
+    @DataField
+    private Div myScrollBar;
+
+    @Inject
+    private MockScrollBar scrollBar;
 
     @Inject
     private TranslationService CONSTANTS;
@@ -72,6 +80,7 @@ public class ConfigurationEditor implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
+        myScrollBar.getElement().appendChild((Element) scrollBar.getElement());
         calendar = new Calendar.Builder<SpotId, ShiftData, ShiftDrawable>(canvasElement, tenantId, CONSTANTS)
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
@@ -79,6 +88,7 @@ public class ConfigurationEditor implements IsElement {
                 .fetchingDataFrom(new ConstantFetchable<Collection<ShiftData>>(Collections.emptyList()))
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
                 .displayWeekAs(DateDisplay.WEEKS_FROM_EPOCH)
+                .withScrollBar(scrollBar)
                 .creatingDataInstancesWith((c, name, start, end) -> c
                         .addShift(new ShiftData(new SpotData(new Shift(tenantId,
                                 name.getSpot(),

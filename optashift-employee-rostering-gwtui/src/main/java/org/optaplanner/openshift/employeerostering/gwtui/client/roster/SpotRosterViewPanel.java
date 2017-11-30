@@ -32,6 +32,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.MockScrollBar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeDataFetchable;
@@ -86,6 +87,13 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
     @DataField
     private HTMLCanvasElement canvasElement;
 
+    @Inject
+    @DataField
+    private Div myScrollBar;
+
+    @Inject
+    private MockScrollBar scrollBar;
+
     private Calendar<SpotId, SpotData> calendar;
     @Inject
     private TranslationService CONSTANTS;
@@ -110,11 +118,13 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
+        myScrollBar.getElement().appendChild((Element) scrollBar.getElement());
         calendar = new Calendar.Builder<SpotId, SpotData, SpotDrawable>(canvasElement, tenantId, CONSTANTS)
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
+                .withScrollBar(scrollBar)
                 .asTwoDayView((v, d, i) -> new SpotDrawable(v, d, i));
         calendar.setDataProvider(new SpotDataFetchable(calendar, () -> getTenantId()));
         /*table.addColumn(new TextColumn<Spot>() {

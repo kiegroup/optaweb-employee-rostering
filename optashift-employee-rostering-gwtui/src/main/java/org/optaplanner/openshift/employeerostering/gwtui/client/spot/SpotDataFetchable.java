@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -78,6 +79,8 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                     }
                     updatable.onUpdate(out);
                     after.execute();
+                    calendar.setHardStartDateBound(spotRosterView.getStartDate().atTime(0, 0));
+                    calendar.setHardEndDateBound(spotRosterView.getEndDate().atTime(0, 0));
                     LoadingPopup.clearLoading(LOADING_STRING);
                 }
             });
