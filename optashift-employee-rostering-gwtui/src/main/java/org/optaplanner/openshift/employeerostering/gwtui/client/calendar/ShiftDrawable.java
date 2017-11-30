@@ -9,6 +9,7 @@ import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotId;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -64,6 +65,9 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
         g.fillText(spot.getTitle(), x, y + view.getGroupHeight());
+
+        CanvasUtils.setFillColor(g, "#FF0000");
+        g.fillRect(x, y, 30, 30);
     }
 
     @Override
@@ -87,9 +91,14 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
     @Override
     public PostMouseDownEvent onMouseDown(MouseEvent e, double x, double y) {
-        minsOffset = (startTime.toEpochSecond(
-                ZoneOffset.UTC) - view.getMouseLocalDateTime().toEpochSecond(ZoneOffset.UTC)) / 60;
-        return PostMouseDownEvent.CAPTURE_DRAG;
+        if (x - getGlobalX() < 30 && y - getGlobalY() < 30) {
+            view.getCalendar().removeShift(id);
+            return PostMouseDownEvent.REMOVE_FOCUS;
+        } else {
+            minsOffset = (startTime.toEpochSecond(
+                    ZoneOffset.UTC) - view.getMouseLocalDateTime().toEpochSecond(ZoneOffset.UTC)) / 60;
+            return PostMouseDownEvent.CAPTURE_DRAG;
+        }
     }
 
     @Override
