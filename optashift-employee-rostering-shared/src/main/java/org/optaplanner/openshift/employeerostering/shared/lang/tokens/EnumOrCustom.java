@@ -1,12 +1,17 @@
 package org.optaplanner.openshift.employeerostering.shared.lang.tokens;
 
+import javax.persistence.Entity;
+
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+
 /**
  * Specifics if {@link EnumOrCustom#value} is either a custom value or an enum value.<br>
  * Properties:<br>
  * {@link EnumOrCustom#isCustom} <br>
  * {@link EnumOrCustom#value} <br>
  */
-public class EnumOrCustom {
+@Entity
+public class EnumOrCustom extends AbstractPersistable {
 
     /**
      * If true, {@link EnumOrCustom#value} is a custom value, otherwise
@@ -23,7 +28,8 @@ public class EnumOrCustom {
     public EnumOrCustom() {
     }
 
-    public EnumOrCustom(boolean isCustom, String value) {
+    public EnumOrCustom(Integer tenantId, boolean isCustom, String value) {
+        super(tenantId);
         this.isCustom = isCustom;
         this.value = value;
     }

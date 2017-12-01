@@ -1,6 +1,5 @@
 package org.optaplanner.openshift.employeerostering.server.lang.parser;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -13,9 +12,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
@@ -38,19 +34,7 @@ public class ShiftFileParser {
             List<Employee> employees, Map<Long, List<Spot>> spotGroupMap,
             Map<Long, List<Employee>> employeeGroupMap,
             LocalDateTime start, LocalDateTime end,
-            String input) throws ParserException {
-        ObjectMapper jsonParser = new ObjectMapper();
-        ShiftTemplate template;
-        try {
-            template = jsonParser.readValue(input, ShiftTemplate.class);
-        } catch (JsonParseException e1) {
-            throw new ParserException("Input is not a JSON Object");
-        } catch (JsonMappingException e1) {
-            throw new ParserException("Input is not a ShiftTemplate");
-        } catch (IOException e1) {
-            throw new ParserException("An IO problem occured");
-        }
-        
+            ShiftTemplate template) throws ParserException {
         ParserState state = new ParserState();
         state.tenantId = tenantId;
         state.startDate = start;
@@ -208,14 +192,14 @@ public class ShiftFileParser {
         TimeSlot timeslot = new TimeSlot(state.tenantId, startDate, endDate);
         for (IdOrGroup id : shiftInfo.getSpots()) {
             if (id.getIsGroup()) {
-                for (Spot spot : state.spotGroupMap.get(id.getId())) {
+                for (Spot spot : state.spotGroupMap.get(id.getItemId())) {
                     state.shiftsOut.add(new Shift(state.tenantId, spot, timeslot));
                 }
             }
             else {
-                Spot spot = state.spotMap.get(id.getId());
+                Spot spot = state.spotMap.get(id.getItemId());
                 if (null == spot) {
-                    throw new ParserException("spot is null! id: " + id.getId());
+                    throw new ParserException("spot is null! id: " + id.getItemId());
                 }
                 state.shiftsOut.add(new Shift(state.tenantId, spot, timeslot));
             }
@@ -242,8 +226,8 @@ public class ShiftFileParser {
                 employeeState = employeeStateCond.get().getReplacement();
             }
 
-            if (employeeInfo.getId().getIsGroup()) {
-                for (Employee employee : state.employeeGroupMap.get(employeeInfo.getId().getId())) {
+            if (employeeInfo.getEmployeeId().getIsGroup()) {
+                for (Employee employee : state.employeeGroupMap.get(employeeInfo.getEmployeeId().getItemId())) {
                     EmployeeAvailability employeeAvailability = new EmployeeAvailability(state.tenantId,
                             employee, timeslot);
                     employeeAvailability.setState(employeeState);
@@ -251,7 +235,7 @@ public class ShiftFileParser {
                 }
             } else {
                 EmployeeAvailability employeeAvailability = new EmployeeAvailability(state.tenantId,
-                        state.employeeMap.get(employeeInfo.getId().getId()), timeslot);
+                        state.employeeMap.get(employeeInfo.getEmployeeId().getItemId()), timeslot);
                 employeeAvailability.setState(employeeState);
                 state.employeeAvailabilityOut.add(employeeAvailability);
             }
