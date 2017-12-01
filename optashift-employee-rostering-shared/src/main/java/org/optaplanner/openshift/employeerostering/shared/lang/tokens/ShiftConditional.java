@@ -1,5 +1,10 @@
 package org.optaplanner.openshift.employeerostering.shared.lang.tokens;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.lang.parser.DateMatcher;
 
 /**
@@ -8,7 +13,8 @@ import org.optaplanner.openshift.employeerostering.shared.lang.parser.DateMatche
  * {@link ShiftConditional#condition} <br>
  * {@link ShiftConditional#shift} (Nullable) <br>
  */
-public class ShiftConditional {
+@Entity
+public class ShiftConditional extends AbstractPersistable {
 
     /**
      * A date matcher written in the language described in
@@ -20,18 +26,20 @@ public class ShiftConditional {
      * Shift to be used if the condition is met. Can be null, which
      * will cause no shift to be generated
      */
+    @ManyToOne(cascade = CascadeType.ALL)
     ShiftInfo shift;
 
     public ShiftConditional() {
 
     }
 
-    public ShiftConditional(String condition) {
+    public ShiftConditional(Integer tenantId, String condition) {
+        super(tenantId);
         this.condition = condition;
     }
 
-    public ShiftConditional(String condition, ShiftInfo shift) {
-        this(condition);
+    public ShiftConditional(Integer tenantId, String condition, ShiftInfo shift) {
+        this(tenantId, condition);
         this.shift = shift;
     }
 

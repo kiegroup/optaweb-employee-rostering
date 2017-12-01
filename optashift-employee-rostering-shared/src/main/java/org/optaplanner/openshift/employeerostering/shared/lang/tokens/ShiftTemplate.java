@@ -2,6 +2,15 @@ package org.optaplanner.openshift.employeerostering.shared.lang.tokens;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+
 /**
  * Describes the shifts to generate and how to generate them.<br>
  * Properties:<br>
@@ -10,18 +19,25 @@ import java.util.List;
  * {@link ShiftTemplate#universalExceptions} <br>
  * {@link ShiftTemplate#shifts} <br>
  */
-public class ShiftTemplate {
+@Entity
+@NamedQueries({
+        @NamedQuery(name = "ShiftTemplate.get", query = "select distinct t from ShiftTemplate t" +
+                " where t.tenantId = :tenantId")
+})
+public class ShiftTemplate extends AbstractPersistable {
 
     /**
      * Defines the base date used by {@link ShiftInfo#startTime} and {@link ShiftInfo#endTime}.
      * Valid values for non-custom definitions are the members of {@link BaseDateDefinitions}.
      */
+    @ManyToOne(cascade = CascadeType.ALL)
     EnumOrCustom baseDateType;
 
     /**
      * Define how to repeat the shifts defined in this template.
      * Valid values for non-custom definitions are members of {@link RepeatMode}
      */
+    @ManyToOne(cascade = CascadeType.ALL)
     EnumOrCustom repeatType;
 
     /**
@@ -30,19 +46,23 @@ public class ShiftTemplate {
      * shifts that match the exception. {@link ShiftTemplate#universalExceptions} are evaluated after
      * {@link ShiftInfo#exceptions}. 
      */
+    @OneToMany(cascade = CascadeType.ALL)
     List<ShiftConditional> universalExceptions;
 
     /**
      * List of shifts to generate
      */
+    @OneToMany(cascade = CascadeType.ALL)
     List<ShiftInfo> shifts;
 
     public ShiftTemplate() {
 
     }
 
-    public ShiftTemplate(EnumOrCustom baseDateType, EnumOrCustom repeatType, List<ShiftConditional> universalExceptions,
+    public ShiftTemplate(Integer tenantId, EnumOrCustom baseDateType, EnumOrCustom repeatType, List<
+            ShiftConditional> universalExceptions,
             List<ShiftInfo> shifts) {
+        super(tenantId);
         this.baseDateType = baseDateType;
         this.repeatType = repeatType;
         this.universalExceptions = universalExceptions;

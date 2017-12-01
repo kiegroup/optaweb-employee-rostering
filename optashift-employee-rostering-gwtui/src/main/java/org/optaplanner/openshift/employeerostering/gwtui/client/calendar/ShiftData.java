@@ -18,7 +18,7 @@ public class ShiftData extends ShiftInfo implements HasTimeslot<SpotId> {
         super();
         this.setStartTime(shift.getStartTime());
         this.setEndTime(shift.getEndTime());
-        this.setSpots(Arrays.asList(new IdOrGroup(false, shift.getSpot().getId())));
+        this.setSpots(Arrays.asList(new IdOrGroup(shift.getSpot().getTenantId(), false, shift.getSpot().getId())));
         this.shift = shift;
     }
 

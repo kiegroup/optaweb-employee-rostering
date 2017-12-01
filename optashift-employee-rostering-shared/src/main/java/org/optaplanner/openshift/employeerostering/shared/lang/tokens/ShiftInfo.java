@@ -3,9 +3,15 @@ package org.optaplanner.openshift.employeerostering.shared.lang.tokens;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateTimeDeserializer;
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateTimeSerializer;
 
@@ -18,7 +24,8 @@ import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateTimeS
  * {@link ShiftInfo#employees} <br>
  * {@link ShiftInfo#exceptions} (Nullable) <br>
  */
-public class ShiftInfo {
+@Entity
+public class ShiftInfo extends AbstractPersistable {
 
     /**
      * How long after the base date to create the shift. The time is calculated by the following formula:
@@ -51,6 +58,7 @@ public class ShiftInfo {
     /**
      * List of spots/spot groups to create
      */
+    @OneToMany(cascade = CascadeType.ALL)
     List<IdOrGroup> spots;
 
     /**
@@ -58,33 +66,35 @@ public class ShiftInfo {
      * times or in multiple groups in this list, their last entry in the list determines their
      * availability 
      */
+    @OneToMany(cascade = CascadeType.ALL)
     List<EmployeeTimeSlotInfo> employees;
 
     /**
      * List of conditions that causes this Shift not to be generated, potentially causing another
      * one to be generated instead. These are evalulated before {@link ShiftTemplate#universalExceptions}.
      */
+    @OneToMany(cascade = CascadeType.ALL)
     List<ShiftConditional> exceptions;
 
     public ShiftInfo() {
     }
 
-    public ShiftInfo(ShiftInfo src) {
-        this(src.startTime, src.endTime, src.spots, src.employees, src.exceptions);
+    public ShiftInfo(Integer tenantId, ShiftInfo src) {
+        this(tenantId, src.startTime, src.endTime, src.spots, src.employees, src.exceptions);
     }
 
-    public ShiftInfo(LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
+    public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
             EmployeeTimeSlotInfo> employees) {
-        super();
+        super(tenantId);
         this.startTime = startTime;
         this.endTime = endTime;
         this.spots = spots;
         this.employees = employees;
     }
 
-    public ShiftInfo(LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
+    public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
             EmployeeTimeSlotInfo> employees, List<ShiftConditional> exceptions) {
-        super();
+        super(tenantId);
         this.startTime = startTime;
         this.endTime = endTime;
         this.spots = spots;

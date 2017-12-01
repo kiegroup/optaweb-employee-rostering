@@ -104,10 +104,11 @@ public class ConfigurationEditor implements IsElement {
 
                 @Override
                 public void onSuccess(EmployeeGroup allEmployees) {
-                    shifts.forEach((s) -> s.setEmployees(Arrays.asList(new EmployeeTimeSlotInfo(new IdOrGroup(true,
+                    shifts.forEach((s) -> s.setEmployees(Arrays.asList(new EmployeeTimeSlotInfo(tenantId, new IdOrGroup(
+                            tenantId, true,
                             allEmployees.getId()), EmployeeAvailabilityState.DESIRED))));
                     List<ShiftInfo> shiftInfos = new ArrayList<>();
-                    shifts.forEach((s) -> shiftInfos.add(new ShiftInfo(s)));
+                    shifts.forEach((s) -> shiftInfos.add(new ShiftInfo(tenantId, s)));
 
                     ShiftRestServiceBuilder.createTemplate(tenantId, "test", shiftInfos, new FailureShownRestCallback<
                             Void>() {

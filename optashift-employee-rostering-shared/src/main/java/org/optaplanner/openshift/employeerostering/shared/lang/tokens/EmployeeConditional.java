@@ -1,6 +1,10 @@
 package org.optaplanner.openshift.employeerostering.shared.lang.tokens;
 
 import org.optaplanner.openshift.employeerostering.shared.lang.parser.DateMatcher;
+
+import javax.persistence.Entity;
+
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 
 /**
@@ -9,7 +13,8 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
  * {@link EmployeeConditional#condition} <br>
  * {@link EmployeeConditional#avaliability} (Nullable) <br>
  */
-public class EmployeeConditional {
+@Entity
+public class EmployeeConditional extends AbstractPersistable {
 
     /**
      * A date matcher written in the language described in
@@ -27,7 +32,8 @@ public class EmployeeConditional {
 
     }
 
-    public EmployeeConditional(String condition, EmployeeAvailabilityState avaliability) {
+    public EmployeeConditional(Integer tenantId, String condition, EmployeeAvailabilityState avaliability) {
+        super(tenantId);
         this.condition = condition;
         this.avaliability = avaliability;
     }

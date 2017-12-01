@@ -32,15 +32,12 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeGroup;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
-import org.optaplanner.openshift.employeerostering.shared.file.FileService;
 import org.optaplanner.openshift.employeerostering.shared.lang.parser.ParserException;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.BaseDateDefinitions;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EnumOrCustom;
@@ -65,9 +62,6 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Inject
     private EmployeeRestService employeeRestService;
-
-    @Inject
-    private FileService fileService;
 
     @Override
     @Transactional
@@ -129,8 +123,12 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @Transactional
     public List<Long> addShiftsFromTemplate(Integer tenantId,
             String startDateString, String endDateString, String fileName) throws Exception {
+        ShiftTemplate template = getTemplate(tenantId);
 
-        String data = fileService.getFileData(tenantId, fileName);
+        if (null == template) {
+            throw new IllegalStateException("You cannot add shifts if you don't have a template!");
+        }
+
         LocalDateTime startDate = LocalDateTime.parse(startDateString);
         LocalDateTime endDate = LocalDateTime.parse(endDateString);
 
@@ -149,7 +147,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
                     employeeGroupMap,
                     startDate,
                     endDate,
-                    data);
+                    template);
             List<Shift> shifts = parserOutput.getShiftsOut();
 
             List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOut();
@@ -196,25 +194,37 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         return q.getResultList();
     }
 
+    private ShiftTemplate getTemplate(Integer tenantId) {
+        TypedQuery<ShiftTemplate> q = entityManager.createNamedQuery("ShiftTemplate.get", ShiftTemplate.class);
+        q.setParameter("tenantId", tenantId);
+        List<ShiftTemplate> result = q.getResultList();
+        if (result.isEmpty()) {
+            return null;
+        } else if (1 != result.size()) {
+            throw new IllegalStateException("Each tenant can only have 1 template! Found " + result.size()
+                    + "templates!");
+        } else {
+            return result.get(0);
+        }
+    }
+
     @Override
+    @Transactional
     public void createTemplate(Integer tenantId, String name, Collection<ShiftInfo> shifts) {
-        ShiftTemplate template = new ShiftTemplate();
-        template.setBaseDateType(new EnumOrCustom(false, BaseDateDefinitions.SAME_AS_START_DATE.toString()));
+        ShiftTemplate old = getTemplate(tenantId);
+        ShiftTemplate template = (null != old) ? old : new ShiftTemplate();
+        template.setBaseDateType(new EnumOrCustom(tenantId, false, BaseDateDefinitions.SAME_AS_START_DATE.toString()));
         long weeksInShifts = 1;
         /*Math.round(Math.ceil(Duration.between(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
         shifts.stream()
         .max((a, b) -> a.getEndTime().compareTo(b.getEndTime()))
         .get().getEndTime()).toDays() / 7.0))*/;
-        template.setRepeatType(new EnumOrCustom(false, RepeatMode.NONE.toString()));
+        template.setRepeatType(new EnumOrCustom(tenantId, false, RepeatMode.NONE.toString()));
         template.setUniversalExceptions(Collections.emptyList());
         template.setShifts(shifts.stream().collect(Collectors.toList()));
+        template.setTenantId(tenantId);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            fileService.writeFile(tenantId, name, objectMapper.writeValueAsString(template));
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Encountered an error when generating the JSON output", e);
-        }
+        entityManager.merge(template);
     }
 
 }

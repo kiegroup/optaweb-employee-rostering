@@ -2,22 +2,30 @@ package org.optaplanner.openshift.employeerostering.shared.lang.tokens;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 
 /**
  * Describes the {@link EmployeeAvailabilityState} for an employee/employee group.<br>
  * Properties:<br>
- * {@link EmployeeTimeSlotInfo#id} <br>
+ * {@link EmployeeTimeSlotInfo#employeeId} <br>
  * {@link EmployeeTimeSlotInfo#defaultAvailability} (Nullable) <br>
  * {@link EmployeeTimeSlotInfo#availabilityConditions} (Nullable) <br>
  */
-public class EmployeeTimeSlotInfo {
+@Entity
+public class EmployeeTimeSlotInfo extends AbstractPersistable {
 
     /**
      * What Employee/Employee Group does this EmployeeTimeSlotInfo
      * apply to.
      */
-    IdOrGroup id;
+    @ManyToOne(cascade = CascadeType.ALL)
+    IdOrGroup employeeId;
 
     /**
      * The {@link EmployeeAvailabilityState} this group have if
@@ -30,38 +38,40 @@ public class EmployeeTimeSlotInfo {
      * List of conditions that cause another {@link EmployeeAvailabilityState} to be used
      * instead of {@link EmployeeTimeSlotInfo#defaultAvailability}.
      */
+    @OneToMany(cascade = CascadeType.ALL)
     List<EmployeeConditional> availabilityConditions;
 
     public EmployeeTimeSlotInfo() {
 
     }
 
-    public EmployeeTimeSlotInfo(IdOrGroup id, EmployeeAvailabilityState availability) {
-        this.id = id;
+    public EmployeeTimeSlotInfo(Integer tenantId, IdOrGroup id, EmployeeAvailabilityState availability) {
+        super(tenantId);
+        this.employeeId = id;
         this.defaultAvailability = availability;
     }
 
-    public EmployeeTimeSlotInfo(IdOrGroup id, EmployeeAvailabilityState availability, List<
+    public EmployeeTimeSlotInfo(Integer tenantId, IdOrGroup id, EmployeeAvailabilityState availability, List<
             EmployeeConditional> availabilityConditions) {
-        this(id, availability);
+        this(tenantId, id, availability);
         this.availabilityConditions = availabilityConditions;
     }
 
     /**
-     * Getter for {@link EmployeeTimeSlotInfo#id}
-     * @return Value of {@link EmployeeTimeSlotInfo#id}
+     * Getter for {@link EmployeeTimeSlotInfo#employeeId}
+     * @return Value of {@link EmployeeTimeSlotInfo#employeeId}
      */
-    public IdOrGroup getId() {
-        return id;
+    public IdOrGroup getEmployeeId() {
+        return employeeId;
     }
 
     /**
-     * Setter for {@link EmployeeTimeSlotInfo#id}
+     * Setter for {@link EmployeeTimeSlotInfo#employeeId}
      * 
-     * @param id Value to set {@link EmployeeTimeSlotInfo#id} to
+     * @param id Value to set {@link EmployeeTimeSlotInfo#employeeId} to
      */
-    public void setId(IdOrGroup id) {
-        this.id = id;
+    public void setEmployeeId(IdOrGroup id) {
+        this.employeeId = id;
     }
 
     /**
