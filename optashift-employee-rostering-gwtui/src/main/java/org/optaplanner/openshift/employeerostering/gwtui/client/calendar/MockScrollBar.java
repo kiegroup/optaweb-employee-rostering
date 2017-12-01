@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -39,6 +40,17 @@ public class MockScrollBar implements IsElement {
     private int contentSize = 1;
 
     private int contentIndex = 0;
+
+    @PostConstruct
+    public void initWidget() {
+        scrollbar.width = Window.getClientWidth() - scrollbar.offsetLeft - previousButton.getOffsetWidth() - nextButton
+                .getOffsetWidth() - 100;
+        Window.addResizeHandler((e) -> {
+            scrollbar.width = e.getWidth() - scrollbar.offsetLeft - previousButton.getOffsetWidth() - nextButton
+                    .getOffsetWidth() - 100;
+            draw();
+        });
+    }
 
     public void draw() {
         CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) scrollbar.getContext("2d");
