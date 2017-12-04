@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawabl
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.Value;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
@@ -627,11 +629,11 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         allDirty = true;
         visibleDirty = true;
         mouseOverDrawable = null;
-        HashMap<G, HashMap<I, Integer>> placedSpots = new HashMap<>();
+        HashMap<G, HashMap<I, Set<Integer>>> placedSpots = new HashMap<>();
         HashMap<G, String> colorMap = new HashMap<>();
 
         for (G group : groups) {
-            HashMap<I, Integer> placedShifts = new HashMap<>();
+            HashMap<I, Set<Integer>> placedShifts = new HashMap<>();
             int max = -1;
             groupPos.put(group, totalSpotSlots);
             final long spotStartPos = totalSpotSlots;
@@ -641,17 +643,21 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
             for (I shift : shifts.stream().filter((s) -> s.getGroupId().equals(group)).collect(Collectors.toList())) {
                 List<HasTimeslot<G>> concurrentShifts = getShiftsDuring(shift, placedShifts.keySet());
-                HashMap<HasTimeslot<G>, Integer> concurrentPlacedShifts = new HashMap<>();
+                HashMap<HasTimeslot<G>, Set<Integer>> concurrentPlacedShifts = new HashMap<>();
                 placedShifts.forEach((k, v) -> {
                     if (concurrentShifts.contains(k)) {
                         concurrentPlacedShifts.put(k, v);
                     }
                 });
                 int index = 0;
-                while (concurrentPlacedShifts.containsValue(index)) {
+                final Value<Integer> i = new Value<>(0);
+                while (concurrentPlacedShifts.values().stream().anyMatch((s) -> s.contains(i.get()))) {
                     index++;
+                    i.set(index);
                 }
-                placedShifts.put(shift, index);
+                Set<Integer> indicies = placedShifts.getOrDefault(shift, new HashSet<>());
+                indicies.add(index);
+                placedShifts.putIfAbsent(shift, indicies);
                 max = Math.max(max, index);
             }
 
@@ -665,10 +671,11 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
         for (I shift : shifts) {
             if (placedSpots.containsKey(shift.getGroupId()) && placedSpots.get(shift.getGroupId()).containsKey(shift)) {
-                D drawable = drawableProvider.createDrawable(this, shift, placedSpots.get(shift.getGroupId()).get(
-                        shift));
-                drawable.setParent(groupContainer.get(shift.getGroupId()));
-                shiftDrawables.add(drawable);
+                for (Integer index : placedSpots.get(shift.getGroupId()).get(shift)) {
+                    D drawable = drawableProvider.createDrawable(this, shift, index);
+                    drawable.setParent(groupContainer.get(shift.getGroupId()));
+                    shiftDrawables.add(drawable);
+                }
             }
         }
 
