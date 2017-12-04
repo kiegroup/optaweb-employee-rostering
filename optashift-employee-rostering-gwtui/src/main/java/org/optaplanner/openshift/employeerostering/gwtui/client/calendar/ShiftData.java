@@ -53,4 +53,18 @@ public class ShiftData extends ShiftInfo implements HasTimeslot<SpotId> {
     public Shift getShift() {
         return shift.getShift();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ShiftData) {
+            ShiftData other = (ShiftData) o;
+            return this.shift.equals(other.shift);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return shift.hashCode();
+    }
 }

@@ -74,6 +74,20 @@ public class SpotData implements HasTimeslot<SpotId> {
         dataMap.clear();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof SpotData) {
+            SpotData other = (SpotData) o;
+            return this.id.equals(other.id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     private static final class Identity {
 
         final Spot spot;
