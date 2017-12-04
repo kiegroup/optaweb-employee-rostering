@@ -110,7 +110,7 @@ public class ConfigurationEditor implements IsElement {
                     List<ShiftInfo> shiftInfos = new ArrayList<>();
                     shifts.forEach((s) -> shiftInfos.add(new ShiftInfo(tenantId, s)));
 
-                    ShiftRestServiceBuilder.createTemplate(tenantId, "test", shiftInfos, new FailureShownRestCallback<
+                    ShiftRestServiceBuilder.createTemplate(tenantId, shiftInfos, new FailureShownRestCallback<
                             Void>() {
 
                         @Override

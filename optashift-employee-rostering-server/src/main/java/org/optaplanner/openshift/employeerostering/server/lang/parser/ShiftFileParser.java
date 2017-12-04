@@ -58,6 +58,13 @@ public class ShiftFileParser {
                     state.baseDate = start
                             .minusDays(start.getDayOfWeek().getValue() - 1)
                             .toLocalDate().atStartOfDay();
+                    state.endDate = end.plusDays(6 - end.getDayOfWeek().getValue());
+                    break;
+                case WEEK_AFTER_START_DATE:
+                    state.baseDate = start
+                            .minusDays(start.getDayOfWeek().getValue() - 1)
+                            .toLocalDate().atStartOfDay().plusWeeks(1);
+                    state.endDate = end.plusDays(6 - (end.getDayOfWeek().getValue() - 1)).plusWeeks(1);
                     break;
                 default:
                     break;

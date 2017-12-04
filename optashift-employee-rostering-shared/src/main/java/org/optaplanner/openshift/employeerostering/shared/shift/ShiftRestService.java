@@ -52,15 +52,15 @@ public interface ShiftRestService {
     void updateShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
 
     @PUT
-    @Path("/template/{name}/create")
-    void createTemplate(@PathParam("tenantId") Integer tenantId, @PathParam("name") String name, Collection<
+    @Path("/template/create")
+    void createTemplate(@PathParam("tenantId") Integer tenantId, Collection<
             ShiftInfo> shifts);
 
     @PUT
     @Path("/add/fromTemplate")
     List<Long> addShiftsFromTemplate(@PathParam("tenantId") Integer tenantId,
-            @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString,
-            @QueryParam("data") String data) throws Exception;
+            @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString)
+            throws Exception;
 
     /**
      * @param id never null
