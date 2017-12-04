@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -84,6 +85,20 @@ public class EmployeeData implements HasTimeslot<EmployeeId> {
 
     public static void resetData() {
         dataMap.clear();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof EmployeeData) {
+            EmployeeData other = (EmployeeData) o;
+            return this.id.equals(other.id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
     }
 
     private static final class Identity {
