@@ -23,10 +23,10 @@ public class CssParser {
         var rules = styleElement.sheet.cssRules;
         var out = null;
         
-        for (var j = 0; j < rules.length; j++) {
+        for (var j = rules.length - 1; j >= 0; j--) {
             if (rules[j].selectorText) {
                 var styles = rules[j].selectorText.split(", ");
-                if (styles.indexOf(className) != -1) {
+                if (styles.indexOf(className) != -1 && rules[j].style[classProperty] !== undefined) {
                     out =  rules[j].style[classProperty];
                     break;
                 }

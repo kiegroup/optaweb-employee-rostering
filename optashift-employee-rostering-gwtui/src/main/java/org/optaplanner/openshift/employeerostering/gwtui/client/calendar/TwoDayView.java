@@ -63,6 +63,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     private Collection<Handler> rangeHandlers = new ArrayList<>();
     private Collection<com.google.gwt.view.client.RowCountChangeEvent.Handler> rowCountHandlers = new ArrayList<>();
     private HashMap<G, Integer> groupPos = new HashMap<>();
+    private HashMap<G, Integer> groupIndexOf = new HashMap<>();
     private HashMap<G, Integer> groupEndPos = new HashMap<>();
     private HashMap<G, Integer> cursorIndex = new HashMap<>();
     private HashMap<G, DynamicContainer> groupContainer = new HashMap<>();
@@ -292,10 +293,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             return;
         }
 
-        int minSize = Integer.MAX_VALUE;
-        for (G spot : groups) {
-            minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot.getTitle(), SPOT_NAME_WIDTH, spotHeight));
-        }
+        int minSize = 12;//Integer.MAX_VALUE;
+        //for (G spot : groups) {
+        //    minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot.getTitle(), SPOT_NAME_WIDTH, spotHeight));
+        //}
 
         g.save();
         g.translate(-getDifferenceFromBaseDate() * (60 * 24) * widthPerMinute, 0);
@@ -303,7 +304,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         Iterable<Collection<D>> toDraw = getVisibleItems();
         Set<G> drawnSpots = new HashSet<>();
         HashMap<G, Integer> spotIndex = new HashMap<>();
-        int groupIndex = groups.indexOf(groupPos.keySet().stream().filter((group) -> groupEndPos.get(
+        int groupIndex = getGroupIndex(groupPos.keySet().stream().filter((group) -> groupEndPos.get(
                 group) >= rangeStart).min((a, b) -> groupEndPos.get(a) - groupEndPos.get(b)).orElseGet(() -> groups.get(
                         0)));
 
@@ -625,14 +626,16 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         groupEndPos.clear();
         groupContainer.clear();
         groupAddPlane.clear();
+        groupIndexOf.clear();
         cursorIndex.clear();
         allDirty = true;
         visibleDirty = true;
         mouseOverDrawable = null;
         HashMap<G, HashMap<I, Set<Integer>>> placedSpots = new HashMap<>();
         HashMap<G, String> colorMap = new HashMap<>();
-
+        int groupIndex = 0;
         for (G group : groups) {
+            groupIndexOf.put(group, groupIndex);
             HashMap<I, Set<Integer>> placedShifts = new HashMap<>();
             int max = -1;
             groupPos.put(group, totalSpotSlots);
@@ -699,7 +702,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     public int getGroupIndex(G groupId) {
-        return groups.indexOf(groupId);
+        return groupIndexOf.get(groupId);
     }
 
     public double getGlobalMouseX() {

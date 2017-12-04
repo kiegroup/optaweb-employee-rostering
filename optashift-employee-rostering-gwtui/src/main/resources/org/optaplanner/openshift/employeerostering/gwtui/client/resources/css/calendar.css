@@ -1,3 +1,32 @@
+:root {
+  --first-color: #488cff;
+  --second-color: #ffff8c;
+}
+
 .main{
 	font-family: "Helvetica Neue";
+}
+
+.employeeShiftViewIndifferent .employeeShiftViewDesired .employeeShiftViewUnavailable .employeeShiftViewUndesired .spotShiftView {
+  textalign: center;
+}
+
+.employeeShiftViewIndifferent {
+	background-color: #0000FF;
+}
+
+.employeeShiftViewDesired {
+	background-color: #00FF00;
+}
+
+.employeeShiftViewUnavailable {
+	background-color: #000000;
+}
+
+.employeeShiftViewUndesired {
+	background-color: #FF0000;
+}
+
+.spotShiftView {
+    background-color: #0000FF;
 }

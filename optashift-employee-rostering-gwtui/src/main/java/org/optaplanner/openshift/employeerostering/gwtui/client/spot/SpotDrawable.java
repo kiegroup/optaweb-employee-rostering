@@ -20,6 +20,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -56,7 +57,7 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
 
     @Override
     public void doDrawAt(CanvasRenderingContext2D g, double x, double y) {
-        String color = getFillColor();
+        String color = (isMouseOver) ? ColorUtils.brighten(getFillColor()) : getFillColor();
         CanvasUtils.setFillColor(g, color);
 
         double start = getStartTime().toEpochSecond(ZoneOffset.UTC) / 60;
@@ -268,10 +269,9 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
     }
 
     private String getFillColor() {
-        if (isMouseOver) {
-            return ColorUtils.brighten("#000000");
-        }
-        return "#000000";
+        return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
+                CssResources.INSTANCE.calendar().spotShiftView(),
+                "background-color");
     }
 
 }
