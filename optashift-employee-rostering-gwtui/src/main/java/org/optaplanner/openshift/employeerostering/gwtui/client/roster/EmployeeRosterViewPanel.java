@@ -107,23 +107,9 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
                         .getStartTime())).get().getEndTime().toString(),
                 calendar.getShifts().stream().max((a, b) -> a.getStartTime().compareTo(b
                         .getStartTime())).get().getEndTime().plusWeeks(2).toString(),
-                "test",
                 new FailureShownRestCallback<List<Long>>() {
 
                     public void onSuccess(List<Long> lst) {
-                        StringBuilder out = new StringBuilder();
-                        out.append("Start Date: ");
-                        out.append(employeeRosterView.getStartDate().toString());
-                        out.append("\nEnd Date: ");
-                        out.append(employeeRosterView.getEndDate().toString());
-                        out.append('\n');
-                        out.append('[');
-                        for (Long id : lst) {
-                            out.append(id);
-                            out.append(',');
-                        }
-                        out.append(']');
-                        ErrorPopup.show(out.toString());
                     }
                 });
     }

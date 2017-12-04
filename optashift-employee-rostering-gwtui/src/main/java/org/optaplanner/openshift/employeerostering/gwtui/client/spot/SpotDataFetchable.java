@@ -55,33 +55,37 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
 
                 @Override
                 public void onSuccess(SpotRosterView spotRosterView) {
-                    last = spotRosterView;
-                    Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap = spotRosterView
-                            .getTimeSlotIdToSpotIdToShiftViewListMap();
-                    Map<Long, Employee> employeeMap = spotRosterView.getEmployeeList().stream()
-                            .collect(Collectors.toMap(Employee::getId, Function.identity()));
+                    try {
+                        last = spotRosterView;
+                        Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap = spotRosterView
+                                .getTimeSlotIdToSpotIdToShiftViewListMap();
+                        Map<Long, Employee> employeeMap = spotRosterView.getEmployeeList().stream()
+                                .collect(Collectors.toMap(Employee::getId, Function.identity()));
 
-                    List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
-                    List<Spot> spots = spotRosterView.getSpotList();
-                    Collection<SpotData> out = new ArrayList<>();
+                        List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
+                        List<Spot> spots = spotRosterView.getSpotList();
+                        Collection<SpotData> out = new ArrayList<>();
 
-                    for (TimeSlot timeslot : timeslots) {
-                        for (Spot spot : spots) {
-                            if (null != timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())) {
-                                timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())
-                                        .stream().forEach((sv) -> {
-                                            Shift shift = new Shift(sv, spot, timeslot);
-                                            shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
-                                            out.add(new SpotData(shift));
-                                        });
+                        for (TimeSlot timeslot : timeslots) {
+                            for (Spot spot : spots) {
+                                if (null != timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot
+                                        .getId())) {
+                                    timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())
+                                            .stream().forEach((sv) -> {
+                                                Shift shift = new Shift(sv, spot, timeslot);
+                                                shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
+                                                out.add(new SpotData(shift));
+                                            });
+                                }
                             }
                         }
+                        updatable.onUpdate(out);
+                        after.execute();
+                        calendar.setHardStartDateBound(spotRosterView.getStartDate().atTime(0, 0));
+                        calendar.setHardEndDateBound(spotRosterView.getEndDate().atTime(0, 0));
+                    } finally {
+                        LoadingPopup.clearLoading(LOADING_STRING);
                     }
-                    updatable.onUpdate(out);
-                    after.execute();
-                    calendar.setHardStartDateBound(spotRosterView.getStartDate().atTime(0, 0));
-                    calendar.setHardEndDateBound(spotRosterView.getEndDate().atTime(0, 0));
-                    LoadingPopup.clearLoading(LOADING_STRING);
                 }
             });
         } else {

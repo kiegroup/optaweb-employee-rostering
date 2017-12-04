@@ -122,7 +122,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @Override
     @Transactional
     public List<Long> addShiftsFromTemplate(Integer tenantId,
-            String startDateString, String endDateString, String fileName) throws Exception {
+            String startDateString, String endDateString) throws Exception {
         ShiftTemplate template = getTemplate(tenantId);
 
         if (null == template) {
@@ -210,16 +210,14 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Override
     @Transactional
-    public void createTemplate(Integer tenantId, String name, Collection<ShiftInfo> shifts) {
+    public void createTemplate(Integer tenantId, Collection<ShiftInfo> shifts) {
         ShiftTemplate old = getTemplate(tenantId);
         ShiftTemplate template = (null != old) ? old : new ShiftTemplate();
-        template.setBaseDateType(new EnumOrCustom(tenantId, false, BaseDateDefinitions.SAME_AS_START_DATE.toString()));
+        template.setBaseDateType(new EnumOrCustom(tenantId, false, BaseDateDefinitions.WEEK_AFTER_START_DATE
+                .toString()));
         long weeksInShifts = 1;
-        /*Math.round(Math.ceil(Duration.between(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
-        shifts.stream()
-        .max((a, b) -> a.getEndTime().compareTo(b.getEndTime()))
-        .get().getEndTime()).toDays() / 7.0))*/;
-        template.setRepeatType(new EnumOrCustom(tenantId, false, RepeatMode.NONE.toString()));
+
+        template.setRepeatType(new EnumOrCustom(tenantId, false, RepeatMode.WEEK.toString()));
         template.setUniversalExceptions(Collections.emptyList());
         template.setShifts(shifts.stream().collect(Collectors.toList()));
         template.setTenantId(tenantId);
