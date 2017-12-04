@@ -20,6 +20,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -366,18 +367,28 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
 
     private String getFillColor() {
         if (null == data.getAvailability()) {
-            return "#0000FF";
+            return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
+                    CssResources.INSTANCE.calendar().employeeShiftViewIndifferent(),
+                    "background-color");
         }
 
         switch (data.getAvailability().getState()) {
             case UNDESIRED:
-                return "#FF0000";
+                return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
+                        CssResources.INSTANCE.calendar().employeeShiftViewUndesired(),
+                        "background-color");
             case DESIRED:
-                return "#00FF00";
+                return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
+                        CssResources.INSTANCE.calendar().employeeShiftViewDesired(),
+                        "background-color");
             case UNAVAILABLE:
-                return "#000000";
+                return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
+                        CssResources.INSTANCE.calendar().employeeShiftViewUnavailable(),
+                        "background-color");
             default:
-                return "#FFFFFF";
+                return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
+                        CssResources.INSTANCE.calendar().employeeShiftViewIndifferent(),
+                        "background-color");
         }
     }
 

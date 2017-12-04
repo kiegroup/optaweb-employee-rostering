@@ -38,6 +38,16 @@ public interface CssResources extends ClientBundle {
     interface CalendarCss extends CssResource {
 
         String main();
+
+        String employeeShiftViewIndifferent();
+
+        String employeeShiftViewDesired();
+
+        String employeeShiftViewUnavailable();
+
+        String employeeShiftViewUndesired();
+
+        String spotShiftView();
     }
 
     @Source("errorpopup.css")

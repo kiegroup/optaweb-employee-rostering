@@ -9,7 +9,9 @@ import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotId;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -55,7 +57,8 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
     @Override
     public void doDrawAt(CanvasRenderingContext2D g, double x, double y) {
-        CanvasUtils.setFillColor(g, (isMouseOver) ? ColorUtils.brighten(color) : color);
+        String color = (isMouseOver) ? ColorUtils.brighten(getFillColor()) : getFillColor();
+        CanvasUtils.setFillColor(g, color);
 
         double start = startTime.toEpochSecond(ZoneOffset.UTC) / 60;
         double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
@@ -182,6 +185,12 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     @Override
     public SpotId getGroupId() {
         return spot;
+    }
+
+    private String getFillColor() {
+        return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
+                CssResources.INSTANCE.calendar().spotShiftView(),
+                "background-color");
     }
 
 }
