@@ -73,18 +73,23 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
             employee = "Unassigned";
         } else {
             employee = data.getAssignedEmployee().getName();
-            if (data.isLocked()) {
-                employee += " (locked)";
-            }
         }
 
-        int fontSize = CanvasUtils.fitTextToBox(g, employee, duration * view.getWidthPerMinute() * 0.75, view
+        String pad = (data.isLocked()) ? "BB" : "";
+
+        int fontSize = CanvasUtils.fitTextToBox(g, employee + pad, duration * view.getWidthPerMinute() * 0.75, view
                 .getGroupHeight() * 0.75);
         g.font = CanvasUtils.getFont(fontSize);
         double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, employee, 12);
 
         g.fillText(employee, x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
                 y + (view.getGroupHeight() + textSize[1]) * 0.5);
+
+        if (data.isLocked()) {
+            CanvasUtils.drawGlyph(g, CanvasUtils.Glyphs.LOCK, fontSize, x +
+                    (duration * view.getWidthPerMinute() + textSize[0]) * 0.5, y + (view.getGroupHeight() + textSize[1])
+                            * 0.5);
+        }
     }
 
     @Override

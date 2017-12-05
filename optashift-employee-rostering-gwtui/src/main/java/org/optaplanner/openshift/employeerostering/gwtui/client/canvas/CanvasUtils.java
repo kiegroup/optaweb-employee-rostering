@@ -178,4 +178,36 @@ public class CanvasUtils {
     public static double getCanvasY(HTMLCanvasElement canvas, MouseEvent e) {
         return e.pageY - canvas.offsetTop;
     }
+
+    public static void drawGlyph(CanvasRenderingContext2D g, Glyphs hexCode, int size, double x, double y) {
+        CssResources.INSTANCE.calendar().ensureInjected();
+        String oldFont = g.font;
+        g.font = size + "px glyphicon";
+        if (hexCode.useHalflings()) {
+            g.font += "s halflings";
+        }
+        char[] toDraw = Character.toChars(hexCode.getUnicode());
+        g.fillText(String.copyValueOf(toDraw), x, y);
+        g.font = oldFont;
+    }
+
+    public static enum Glyphs {
+        LOCK(true, 0xe033);
+
+        boolean useHalflings;
+        int unicode;
+
+        private Glyphs(boolean useHalflings, int unicode) {
+            this.unicode = unicode;
+            this.useHalflings = useHalflings;
+        }
+
+        public int getUnicode() {
+            return unicode;
+        }
+
+        public boolean useHalflings() {
+            return useHalflings;
+        }
+    }
 }

@@ -21,6 +21,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtil
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -78,17 +79,22 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
             spot = "Unassigned";
         } else {
             spot = data.getSpot().getName();
-            if (data.isLocked()) {
-                spot += " (locked)";
-            }
         }
-        int fontSize = CanvasUtils.fitTextToBox(g, spot, duration * view.getWidthPerMinute() * 0.75, view
+        String pad = (data.isLocked()) ? "BB" : "";
+
+        int fontSize = CanvasUtils.fitTextToBox(g, spot + pad, duration * view.getWidthPerMinute() * 0.75, view
                 .getGroupHeight() * 0.75);
         g.font = CanvasUtils.getFont(fontSize);
         double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, spot, 12);
 
         g.fillText(spot, x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
                 y + (view.getGroupHeight() + textSize[1]) * 0.5);
+
+        if (data.isLocked()) {
+            CanvasUtils.drawGlyph(g, CanvasUtils.Glyphs.LOCK, fontSize, x +
+                    (duration * view.getWidthPerMinute() + textSize[0]) * 0.5, y + (view.getGroupHeight() + textSize[1])
+                            * 0.5);
+        }
     }
 
     @Override
@@ -206,41 +212,47 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
                             public void onSuccess(List<ShiftView> shifts) {
                                 ShiftView shift = shifts.stream().filter((s) -> s.getSpotId().equals(spot.getId()) && s
                                         .getTimeSlotId().equals(data.getShift().getTimeSlot().getId())).findFirst()
-                                        .get();
-                                data.getShift().setLockedByUser(false);
-                                shift.setEmployeeId(data.getEmployee().getId());
-                                shift.setLockedByUser(true);
-                                if (data.isLocked()) {
-                                    ShiftView oldShift = new ShiftView(data.getShift());
+                                        .orElseGet(() -> null);
+                                if (null != shift) {
+                                    data.getShift().setLockedByUser(false);
+                                    shift.setEmployeeId(data.getEmployee().getId());
+                                    shift.setLockedByUser(true);
+                                    if (data.isLocked()) {
+                                        ShiftView oldShift = new ShiftView(data.getShift());
 
-                                    ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), oldShift,
-                                            new FailureShownRestCallback<Void>() {
+                                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), oldShift,
+                                                new FailureShownRestCallback<Void>() {
 
-                                                @Override
-                                                public void onSuccess(Void result) {
-                                                    ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(),
-                                                            shift, new FailureShownRestCallback<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void result) {
+                                                        ShiftRestServiceBuilder.updateShift(data.getShift()
+                                                                .getTenantId(),
+                                                                shift, new FailureShownRestCallback<Void>() {
 
-                                                                @Override
-                                                                public void onSuccess(Void result2) {
-                                                                    view.getCalendar().forceUpdate();
-                                                                }
+                                                                    @Override
+                                                                    public void onSuccess(Void result2) {
+                                                                        view.getCalendar().forceUpdate();
+                                                                    }
 
-                                                            });
-                                                }
+                                                                });
+                                                    }
 
-                                            });
+                                                });
+                                    } else {
+                                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shift,
+                                                new FailureShownRestCallback<Void>() {
+
+                                                    @Override
+                                                    public void onSuccess(Void result) {
+                                                        view.getCalendar().forceUpdate();
+                                                    }
+                                                });
+                                    }
+
                                 } else {
-                                    ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shift,
-                                            new FailureShownRestCallback<Void>() {
-
-                                                @Override
-                                                public void onSuccess(Void result) {
-                                                    view.getCalendar().forceUpdate();
-                                                }
-                                            });
+                                    ErrorPopup.show("Cannot find shift with spot " + spot.getName() + " for timeslot "
+                                            + data.getShift().getTimeSlot());
                                 }
-
                             }
                         });
                     } else if (data.isLocked()) {
