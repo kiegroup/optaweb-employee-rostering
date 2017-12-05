@@ -68,8 +68,9 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
 
                         for (TimeSlot timeslot : timeslots) {
                             for (Spot spot : spots) {
-                                if (null != timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot
-                                        .getId())) {
+                                if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot.getId(),
+                                        Collections.emptyMap()).get(spot
+                                                .getId())) {
                                     timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())
                                             .stream().forEach((sv) -> {
                                                 Shift shift = new Shift(sv, spot, timeslot);
@@ -109,8 +110,9 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
 
                                     for (TimeSlot timeslot : timeslots) {
                                         for (Spot spot : spots) {
-                                            if (null != timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(
-                                                    spot.getId())) {
+                                            if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot
+                                                    .getId(), Collections.emptyMap()).get(
+                                                            spot.getId())) {
                                                 timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot
                                                         .getId())
                                                         .stream().forEach((sv) -> {
