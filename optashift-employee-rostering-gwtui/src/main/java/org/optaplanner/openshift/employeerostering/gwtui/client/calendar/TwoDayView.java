@@ -670,6 +670,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             groupAddPlane.put(group, new DynamicContainer(() -> new Position(SPOT_NAME_WIDTH, HEADER_HEIGHT
                     + getGroupHeight() * (spotEndPos - 1))));
             placedSpots.put(group, placedShifts);
+            groupIndex++;
         }
 
         for (I shift : shifts) {
@@ -937,7 +938,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     public Collection<G> getVisibleGroups() {
         int index = 0;
         Set<G> drawnSpots = new HashSet<>();
-        int groupIndex = groups.indexOf(groupPos.keySet().stream().filter((group) -> groupEndPos.get(
+        int groupIndex = getGroupIndex(groupPos.keySet().stream().filter((group) -> groupEndPos.get(
                 group) >= rangeStart).min((a, b) -> groupEndPos.get(a) - groupEndPos.get(b)).orElseGet(() -> groups.get(
                         0)));
 
