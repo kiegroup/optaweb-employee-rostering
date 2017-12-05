@@ -186,9 +186,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         rangeStart = 0;
         rangeEnd = 10;
         totalDisplayedSpotSlots = 10;
-        daysShown = 2;
+        daysShown = 7;
         editMinuteGradality = 30;
-        displayMinuteGradality = 60;
+        displayMinuteGradality = 60 * 3;
         dateFormat = dateDisplay;
         selectedSpot = null;
         isDragging = false;
@@ -461,6 +461,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         CanvasUtils.setFillColor(g, "#000000");
         String week = dateFormat.format(currDay, WEEK_START, translator);
         int textSize = CanvasUtils.fitTextToBox(g, week, SPOT_NAME_WIDTH, HEADER_HEIGHT / 2);
+        for (String day : WEEKDAYS) {
+            textSize = Math.min(textSize, CanvasUtils.fitTextToBox(g, day, 24 * 60 * widthPerMinute,
+                    HEADER_HEIGHT / 2));
+        }
         g.font = CanvasUtils.getFont(textSize);
         g.fillText(week, 0, HEADER_HEIGHT / 2);
         int offset = (dateFormat != DateDisplay.WEEKS_FROM_EPOCH) ? 0 : LocalDateTime.ofEpochSecond(0, 0,

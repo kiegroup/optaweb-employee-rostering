@@ -82,7 +82,13 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
                 spot += " (locked)";
             }
         }
-        g.fillText(spot, x, y + view.getGroupHeight());
+        int fontSize = CanvasUtils.fitTextToBox(g, spot, duration * view.getWidthPerMinute() * 0.75, view
+                .getGroupHeight() * 0.75);
+        g.font = CanvasUtils.getFont(fontSize);
+        double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, spot, 12);
+
+        g.fillText(spot, x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
+                y + (view.getGroupHeight() + textSize[1]) * 0.5);
     }
 
     @Override

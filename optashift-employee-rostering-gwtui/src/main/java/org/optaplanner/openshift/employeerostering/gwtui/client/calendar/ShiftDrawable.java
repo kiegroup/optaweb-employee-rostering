@@ -67,7 +67,13 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
         CanvasUtils.drawCurvedRect(g, x, y, duration * view.getWidthPerMinute(), view.getGroupHeight());
 
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
-        g.fillText(spot.getTitle(), x, y + view.getGroupHeight());
+        int fontSize = CanvasUtils.fitTextToBox(g, spot.getTitle(), duration * view.getWidthPerMinute() * 0.75, view
+                .getGroupHeight() * 0.75);
+        g.font = CanvasUtils.getFont(fontSize);
+        double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, spot.getTitle(), 12);
+
+        g.fillText(spot.getTitle(), x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
+                y + (view.getGroupHeight() + textSize[1]) * 0.5);
 
         CanvasUtils.setFillColor(g, "#FF0000");
         g.fillRect(x, y, 30, 30);
@@ -118,6 +124,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
     @Override
     public boolean onMouseDrag(MouseEvent e, double x, double y) {
+        view.preparePopup(this.toString());
         if (isMoving) {
             long mins = (endTime.toEpochSecond(ZoneOffset.UTC) - startTime.toEpochSecond(ZoneOffset.UTC)) / 60;
             startTime = view.roundLocalDateTime(view.getMouseLocalDateTime().plusMinutes(minsOffset));
