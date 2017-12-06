@@ -31,6 +31,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRoste
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.ConfigurationEditor;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TemplateEditor;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
