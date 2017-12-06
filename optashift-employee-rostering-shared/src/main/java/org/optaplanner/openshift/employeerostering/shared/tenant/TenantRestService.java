@@ -31,6 +31,10 @@ public interface TenantRestService {
     @Path("/{id}")
     Tenant getTenant(@PathParam("id") Long id);
 
+    @POST
+    @Path("/{id}/config/update")
+    Tenant updateTenantConfiguration(TenantConfigurationView tenantConfiguration);
+
     /**
      * @param tenant never null
      * @return never null, with a {@link AbstractPersistable#getId()} that is never null

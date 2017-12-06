@@ -17,12 +17,14 @@
 package org.optaplanner.openshift.employeerostering.server.tenant;
 
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfigurationView;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestService;
 
 public class TenantRestServiceImpl extends AbstractRestServiceImpl implements TenantRestService {
@@ -49,6 +51,14 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
     public Tenant addTenant(Tenant tenant) {
         entityManager.persist(tenant);
         return tenant;
+    }
+
+    @Override
+    @Transactional
+    public Tenant updateTenantConfiguration(TenantConfigurationView tenantConfigurationView) {
+        Tenant tenant = entityManager.find(Tenant.class, tenantConfigurationView.getTenantId());
+        tenant.getConfiguration().setView(tenantConfigurationView);
+        return entityManager.merge(tenant);
     }
 
 }

@@ -204,7 +204,7 @@ public class RosterGenerator {
 
     private Integer createTenant(int spotListSize, int employeeListSize) {
         Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue()
-                + " (" + employeeListSize +  " employees, " + spotListSize + "spots)");
+                + " (" + employeeListSize + " employees, " + spotListSize + "spots)");
         entityManager.persist(tenant);
         return tenant.getId();
     }
