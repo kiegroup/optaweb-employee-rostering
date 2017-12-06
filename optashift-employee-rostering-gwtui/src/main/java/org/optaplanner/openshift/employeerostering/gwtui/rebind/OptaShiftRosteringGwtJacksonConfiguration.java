@@ -17,8 +17,10 @@ public class OptaShiftRosteringGwtJacksonConfiguration extends AbstractConfigura
     @Override
     protected void configure() {
         type(LocalDate.class).serializer(LocalDateJsonSerializer.class).deserializer(LocalDateJsonDeserializer.class);
-        type(LocalDateTime.class).serializer(LocalDateTimeJsonSerializer.class).deserializer(LocalDateTimeJsonDeserializer.class);
-        type(HardSoftScore.class).serializer(HardSoftScoreJsonSerializer.class).deserializer(HardSoftScoreJsonDeserializer.class);
+        type(LocalDateTime.class).serializer(LocalDateTimeJsonSerializer.class).deserializer(
+                LocalDateTimeJsonDeserializer.class);
+        type(HardSoftScore.class).serializer(HardSoftScoreJsonSerializer.class).deserializer(
+                HardSoftScoreJsonDeserializer.class);
     }
 
 }

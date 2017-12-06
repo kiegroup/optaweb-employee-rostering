@@ -96,7 +96,7 @@ public class TemplateEditor implements IsElement {
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)
-                .fetchingDataFrom(new ConstantFetchable<Collection<ShiftData>>(Collections.emptyList()))
+                .fetchingDataFrom(new TenantTemplateFetchable(() -> getTenantId()))
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
                 .displayWeekAs(DateDisplay.WEEKS_FROM_EPOCH)
                 .withScrollBar(scrollBar)

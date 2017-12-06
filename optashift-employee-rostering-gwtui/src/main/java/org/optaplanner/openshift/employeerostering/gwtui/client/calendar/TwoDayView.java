@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
@@ -715,7 +716,11 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     public LocalDateTime getMouseLocalDateTime() {
-        return currDay.plusMinutes(Math.round((localMouseX - SPOT_NAME_WIDTH) / getWidthPerMinute()));
+        try {
+            return currDay.plusMinutes(Math.round((localMouseX - SPOT_NAME_WIDTH) / getWidthPerMinute()));
+        } catch (DateTimeException e) {
+            return baseDate;
+        }
     }
 
     public LocalDateTime getViewStartDate() {

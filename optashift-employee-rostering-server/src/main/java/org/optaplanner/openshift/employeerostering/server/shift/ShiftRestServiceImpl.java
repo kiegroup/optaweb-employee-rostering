@@ -49,6 +49,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestService;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
 
@@ -194,7 +195,8 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         return q.getResultList();
     }
 
-    private ShiftTemplate getTemplate(Integer tenantId) {
+    @Override
+    public ShiftTemplate getTemplate(Integer tenantId) {
         TypedQuery<ShiftTemplate> q = entityManager.createNamedQuery("ShiftTemplate.get", ShiftTemplate.class);
         q.setParameter("tenantId", tenantId);
         List<ShiftTemplate> result = q.getResultList();
@@ -211,11 +213,15 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @Override
     @Transactional
     public void createTemplate(Integer tenantId, Collection<ShiftInfo> shifts) {
+        Tenant tenant = entityManager.find(Tenant.class, tenantId);
+        if (null == tenant) {
+            throw new IllegalStateException("Tenant " + tenantId + " does not exist!");
+        }
         ShiftTemplate old = getTemplate(tenantId);
         ShiftTemplate template = (null != old) ? old : new ShiftTemplate();
         template.setBaseDateType(new EnumOrCustom(tenantId, false, BaseDateDefinitions.WEEK_AFTER_START_DATE
                 .toString()));
-        long weeksInShifts = 1;
+        long weeksInShifts = tenant.getConfiguration().getView().getTemplateDuration();
 
         template.setRepeatType(new EnumOrCustom(tenantId, false, RepeatMode.WEEK.toString()));
         template.setUniversalExceptions(Collections.emptyList());

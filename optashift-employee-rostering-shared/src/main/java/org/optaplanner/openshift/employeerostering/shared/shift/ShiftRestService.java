@@ -16,6 +16,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
+import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
 @Path("/tenant/{tenantId}/shift")
@@ -55,6 +56,10 @@ public interface ShiftRestService {
     @Path("/template/create")
     void createTemplate(@PathParam("tenantId") Integer tenantId, Collection<
             ShiftInfo> shifts);
+
+    @GET
+    @Path("/template")
+    ShiftTemplate getTemplate(@PathParam("tenantId") Integer tenantId);
 
     @PUT
     @Path("/add/fromTemplate")

@@ -56,7 +56,7 @@ public interface SpotRestService {
     SpotGroup getSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
     @GET
-    @Path("/groups/{name}")
+    @Path("/groups/find/{name}")
     SpotGroup findSpotGroupByName(@PathParam("tenantId") Integer tenantId, @PathParam("name") String name);
 
     @POST

@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -38,7 +39,7 @@ public class EmployeeTimeSlotInfo extends AbstractPersistable {
      * List of conditions that cause another {@link EmployeeAvailabilityState} to be used
      * instead of {@link EmployeeTimeSlotInfo#defaultAvailability}.
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     List<EmployeeConditional> availabilityConditions;
 
     public EmployeeTimeSlotInfo() {

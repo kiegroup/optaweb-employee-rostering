@@ -4,11 +4,14 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
 /**
@@ -46,13 +49,15 @@ public class ShiftTemplate extends AbstractPersistable {
      * shifts that match the exception. {@link ShiftTemplate#universalExceptions} are evaluated after
      * {@link ShiftInfo#exceptions}. 
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderColumn(name = "orderIndex")
     List<ShiftConditional> universalExceptions;
 
     /**
      * List of shifts to generate
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderColumn(name = "orderIndex")
     List<ShiftInfo> shifts;
 
     public ShiftTemplate() {
