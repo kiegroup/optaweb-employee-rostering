@@ -5,8 +5,10 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -58,7 +60,8 @@ public class ShiftInfo extends AbstractPersistable {
     /**
      * List of spots/spot groups to create
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderColumn(name = "orderIndex")
     List<IdOrGroup> spots;
 
     /**
@@ -66,14 +69,16 @@ public class ShiftInfo extends AbstractPersistable {
      * times or in multiple groups in this list, their last entry in the list determines their
      * availability 
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderColumn(name = "orderIndex")
     List<EmployeeTimeSlotInfo> employees;
 
     /**
      * List of conditions that causes this Shift not to be generated, potentially causing another
      * one to be generated instead. These are evalulated before {@link ShiftTemplate#universalExceptions}.
      */
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderColumn(name = "orderIndex")
     List<ShiftConditional> exceptions;
 
     public ShiftInfo() {
