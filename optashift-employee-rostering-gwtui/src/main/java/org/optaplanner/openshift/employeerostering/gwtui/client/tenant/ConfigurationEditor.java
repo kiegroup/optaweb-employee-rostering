@@ -36,7 +36,7 @@ public class ConfigurationEditor implements IsElement {
         templateEditor.setConfigurationEditor(this);
         tenantConfigurationEditor.setConfigurationEditor(this);
         content.removeChild(content.getLastChild());
-        content.appendChild(tenantConfigurationEditor.getElement());
+        content.appendChild(templateEditor.getElement());
     }
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {
