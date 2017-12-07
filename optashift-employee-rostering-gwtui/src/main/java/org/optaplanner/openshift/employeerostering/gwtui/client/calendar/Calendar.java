@@ -242,7 +242,6 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         Fetchable<List<G>> groupProvider;
         DataProvider<G, T> instanceCreator;
         TranslationService translator;
-        MockScrollBar scrollBar;
         DateDisplay dateDisplay;
 
         public Builder(HTMLCanvasElement canvas, Integer tenantId, TranslationService translator) {
@@ -300,18 +299,13 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
             return this;
         }
 
-        public Builder<G, T, D> withScrollBar(MockScrollBar scrollBar) {
-            this.scrollBar = scrollBar;
-            return this;
-        }
-
         public Calendar<G, T> asTwoDayView(TimeRowDrawableProvider<G, T, D> drawableProvider) {
-            if (null != topPanel && null != bottomPanel && null != sidePanel && null != scrollBar) {
+            if (null != topPanel && null != bottomPanel && null != sidePanel) {
                 Calendar<G, T> calendar = new Calendar<>(canvas, tenantId, topPanel, bottomPanel, sidePanel,
                         dataProvider,
                         groupProvider, instanceCreator);
                 TwoDayView<G, T, D> view = new TwoDayView<G, T, D>(calendar, topPanel, bottomPanel, sidePanel,
-                        drawableProvider, dateDisplay, translator, scrollBar);
+                        drawableProvider, dateDisplay, translator);
                 calendar.setView(view);
 
                 if (null != startAt) {

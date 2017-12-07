@@ -30,7 +30,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.MockScrollBar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeDataFetchable;
@@ -80,13 +79,6 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     @DataField
     private HTMLCanvasElement canvasElement;
 
-    @Inject
-    @DataField
-    private Div myScrollBar;
-
-    @Inject
-    private MockScrollBar scrollBar;
-
     private Calendar<EmployeeId, EmployeeData> calendar;
 
     //private SimplePager pager = new SimplePager();
@@ -133,13 +125,11 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        myScrollBar.getElement().appendChild((Element) scrollBar.getElement());
         calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable>(canvasElement, tenantId, CONSTANTS)
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)
                 .fetchingGroupsFrom(new EmployeeNameFetchable(() -> getTenantId()))
-                .withScrollBar(scrollBar)
                 .asTwoDayView((v, d, i) -> new EmployeeDrawable(v, d, i));
 
         calendar.setDataProvider(new EmployeeDataFetchable(calendar, () -> getTenantId()));

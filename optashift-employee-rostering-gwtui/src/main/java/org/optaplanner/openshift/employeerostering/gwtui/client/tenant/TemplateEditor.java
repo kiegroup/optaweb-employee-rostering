@@ -27,7 +27,6 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.DateDisplay;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.MockScrollBar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
@@ -72,12 +71,6 @@ public class TemplateEditor implements IsElement {
     @Inject
     @DataField
     private Span sidePanel;
-    @Inject
-    @DataField
-    private Div myScrollBar;
-
-    @Inject
-    private MockScrollBar scrollBar;
 
     @Inject
     private TranslationService CONSTANTS;
@@ -91,7 +84,6 @@ public class TemplateEditor implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
-        myScrollBar.getElement().appendChild((Element) scrollBar.getElement());
         calendar = new Calendar.Builder<SpotId, ShiftData, ShiftDrawable>(canvasElement, tenantId, CONSTANTS)
                 .withTopPanel(topPanel)
                 .withBottomPanel(bottomPanel)
@@ -99,7 +91,6 @@ public class TemplateEditor implements IsElement {
                 .fetchingDataFrom(new TenantTemplateFetchable(() -> getTenantId()))
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
                 .displayWeekAs(DateDisplay.WEEKS_FROM_EPOCH)
-                .withScrollBar(scrollBar)
                 .creatingDataInstancesWith((c, name, start, end) -> c
                         .addShift(new ShiftData(new SpotData(new Shift(tenantId,
                                 name.getSpot(),
