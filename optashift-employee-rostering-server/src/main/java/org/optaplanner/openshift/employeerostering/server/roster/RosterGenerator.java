@@ -151,13 +151,13 @@ public class RosterGenerator {
 
     private List<ShiftInfo> generateShiftTemplate(Integer tenantId, List<Spot> spots, List<
             Employee> employees) {
-        LocalDateTime startTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).plusHours(9);
+        LocalDateTime startTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).plusHours(6);
         List<ShiftInfo> out = new ArrayList<ShiftInfo>(7);
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 7 * 3; i++) {
             //Generate the shift's timeslot
             ShiftInfo shift = new ShiftInfo();
             shift.setStartTime(startTime);
-            shift.setEndTime(startTime.plusHours(9));
+            shift.setEndTime(startTime.plusHours(8));
             shift.setTenantId(tenantId);
             List<EmployeeTimeSlotInfo> shiftAvailability = new ArrayList<>();
             EmployeeTimeSlotInfo employeeTimeslot = new EmployeeTimeSlotInfo();
@@ -191,13 +191,19 @@ public class RosterGenerator {
 
             //Generate spots using the timeslot
             List<IdOrGroup> shiftSpots = new ArrayList<>();
-            for (Spot spot : extractRandomSubList(spots, 1.0)) {
+            for (Spot spot : spots) {
+                boolean weekendEnabled = random.nextInt(10) < 8;
+                boolean nightEnabled = weekendEnabled && random.nextInt(10) < 8;
+
+                if ((!weekendEnabled && i >= 5 * 3) || (!nightEnabled && i % 3 == 2)) {
+                    continue;
+                }
                 shiftSpots.add(new IdOrGroup(tenantId, false, spot.getId()));
             }
             shift.setSpots(shiftSpots);
             out.add(shift);
 
-            startTime = startTime.plusDays(1);
+            startTime = startTime.plusHours(8);
         }
         return out;
     }

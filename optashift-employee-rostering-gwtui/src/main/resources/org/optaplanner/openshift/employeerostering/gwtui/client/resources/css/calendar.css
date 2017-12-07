@@ -17,21 +17,21 @@
 }
 
 .employeeShiftViewIndifferent {
-	background-color: #0000FF;
+	background-color: #bbbbbb;
 }
 
 .employeeShiftViewDesired {
-	background-color: #00FF00;
+	background-color: #3f9c35;
 }
 
 .employeeShiftViewUnavailable {
-	background-color: #000000;
+	background-color: #8b0000;
 }
 
 .employeeShiftViewUndesired {
-	background-color: #FF0000;
+	background-color: #f0ab00;
 }
 
 .spotShiftView {
-    background-color: #0000FF;
+    background-color: #bbbbbb;
 }

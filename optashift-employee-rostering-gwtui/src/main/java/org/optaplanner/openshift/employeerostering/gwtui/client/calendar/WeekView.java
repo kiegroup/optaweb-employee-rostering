@@ -78,7 +78,7 @@ public abstract class WeekView<G extends HasTitle, I extends HasTimeslot<G>> imp
 
         g.font = CanvasUtils.getFont(fontSize);
         for (int i = 0; i < 7; i++) {
-            CanvasUtils.drawLine(g, dayWidth * (i + 1), 0, dayWidth * (i + 1), screenHeight);
+            CanvasUtils.drawLine(g, dayWidth * (i + 1), 0, dayWidth * (i + 1), screenHeight, 1);
             double textWidth = g.measureText(WEEKDAYS[i]).width;
             double textHeight = CanvasUtils.getTextHeight(g, fontSize);
 
@@ -89,7 +89,7 @@ public abstract class WeekView<G extends HasTitle, I extends HasTimeslot<G>> imp
         fontSize = CanvasUtils.fitTextToBox(g, "0:00", dayWidth, hourHeight);
         g.font = CanvasUtils.getFont(fontSize);
         for (int i = 0; i < 24; i++) {
-            CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + i * hourHeight, screenWidth, HEADER_HEIGHT + i * hourHeight);
+            CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + i * hourHeight, screenWidth, HEADER_HEIGHT + i * hourHeight, 1);
             g.fillText(i + ":00", dayWidth - g.measureText(i + ":00").width, HEADER_HEIGHT + (i + 1) * hourHeight);
         }
 
