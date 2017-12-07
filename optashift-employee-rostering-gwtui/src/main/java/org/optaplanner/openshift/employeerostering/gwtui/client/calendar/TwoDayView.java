@@ -15,13 +15,19 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.CustomScrollPanel;
+import com.google.gwt.user.client.ui.HorizontalScrollbar;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.HasRows;
 import com.google.gwt.view.client.ListDataProvider;
@@ -70,7 +76,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     private HashMap<G, DynamicContainer> groupContainer = new HashMap<>();
     private HashMap<G, DynamicContainer> groupAddPlane = new HashMap<>();
     private Collection<I> shifts;
-    private MockScrollBar scrollBar;
+    private NativeHorizontalScrollbar scrollBar;
 
     TimeSlotTable<D, G> timeslotTable;
 
@@ -95,14 +101,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     @Override
     public void setHardStartDateBound(LocalDateTime hardStartDateBound) {
         this.hardStartDateBound = hardStartDateBound;
-        if (null != hardStartDateBound && null != hardEndDateBound) {
-            int daysBetween = (int) ((hardEndDateBound.toEpochSecond(ZoneOffset.UTC) - hardStartDateBound.toEpochSecond(
-                    ZoneOffset.UTC)) / (60 * 60 * 24));
-            scrollBar.setContentSize(daysBetween);
-            scrollBar.setContentShown(daysShown);
-        } else {
-            scrollBar.setContentShown(0);
+        if (getViewStartDate().isBefore(hardStartDateBound)) {
+            setDate(hardStartDateBound);
         }
+        updateScrollBar();
     }
 
     @Override
@@ -110,17 +112,29 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         return hardEndDateBound;
     }
 
-    @Override
-    public void setHardEndDateBound(LocalDateTime hardEndDateBound) {
-        this.hardEndDateBound = hardEndDateBound;
+    private void updateScrollBar() {
+        double oldPos = (scrollBar.getHorizontalScrollPosition() + 0.0) / scrollBar
+                .getMaximumHorizontalScrollPosition();
+        scrollBar.setWidth(Math.round(screenWidth) + "px");
+
         if (null != hardStartDateBound && null != hardEndDateBound) {
             int daysBetween = (int) ((hardEndDateBound.toEpochSecond(ZoneOffset.UTC) - hardStartDateBound.toEpochSecond(
                     ZoneOffset.UTC)) / (60 * 60 * 24));
-            scrollBar.setContentSize(daysBetween);
-            scrollBar.setContentShown(daysShown);
+            scrollBar.setScrollWidth((int) Math.round(screenWidth * ((daysBetween + 0.0) / daysShown)));
+            scrollBar.setHorizontalScrollPosition((int) Math.round(oldPos * scrollBar
+                    .getMaximumHorizontalScrollPosition()));
         } else {
-            scrollBar.setContentShown(0);
+            scrollBar.setScrollWidth(0);
         }
+    }
+
+    @Override
+    public void setHardEndDateBound(LocalDateTime hardEndDateBound) {
+        this.hardEndDateBound = hardEndDateBound;
+        if (getViewEndDate().isAfter(hardEndDateBound)) {
+            setDate(hardEndDateBound.minusDays(daysShown));
+        }
+        updateScrollBar();
     }
 
     LocalDateTime hardEndDateBound;
@@ -140,8 +154,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     public void setDaysShown(int daysShown) {
-        scrollBar.setContentShown(daysShown);
         this.daysShown = daysShown;
+        updateScrollBar();
     }
 
     public int getEditMinuteGradality() {
@@ -174,10 +188,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     TranslationService translator;
 
     public TwoDayView(Calendar<G, I> calendar, Panel top, Panel bottom, Panel side, TimeRowDrawableProvider<G, I,
-            D> drawableProvider, DateDisplay dateDisplay, TranslationService translator, MockScrollBar scrollBar) {
+            D> drawableProvider, DateDisplay dateDisplay, TranslationService translator) {
         this.calendar = calendar;
         this.translator = translator;
-        this.scrollBar = scrollBar;
         baseDate = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
         currDay = baseDate;
         mouseX = 0;
@@ -225,12 +238,29 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         pagination = new Pagination();
         pager = new SimplePager();
 
-        bottomPanel.add(pagination);
+        VerticalPanel bottomWidgets = new VerticalPanel();
 
-        scrollBar.setContentSize(1);
+        scrollBar = new NativeHorizontalScrollbar();
+        scrollBar.setWidth("100%");
+        scrollBar.addScrollHandler((e) -> {
+            double pos = (scrollBar.getHorizontalScrollPosition()
+                    + 0.0) /
+                    (scrollBar.getScrollWidth());
+            long secondsBetween = getHardEndDateBound().toEpochSecond(ZoneOffset.UTC) - getHardStartDateBound()
+                    .toEpochSecond(ZoneOffset.UTC);
+            setDate(getHardStartDateBound().plusSeconds(Math.round(secondsBetween * pos)));
+        });
+
+        bottomWidgets.add(scrollBar);
+
+        bottomWidgets.add(pagination);
+
+        bottomPanel.add(bottomWidgets);
+
+        /*scrollBar.setContentSize(1);
         scrollBar.setContentIndex(0);
         scrollBar.setContentShown(0);
-
+        
         scrollBar.setNextButtonAction(() -> {
             if (null != getHardEndDateBound()) {
                 if (getViewEndDate().isBefore(getHardEndDateBound())) {
@@ -247,7 +277,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                 calendar.draw();
             }
         });
-
+        
         scrollBar.setPreviousButtonAction(() -> {
             if (null != getHardStartDateBound()) {
                 if (getViewStartDate().isAfter(getHardStartDateBound())) {
@@ -263,7 +293,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                 setDate(getViewStartDate().minusDays(1));
                 calendar.draw();
             }
-        });
+        });*/
 
         pager.setDisplay(this);
         pager.setPageSize(totalDisplayedSpotSlots);
@@ -281,6 +311,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         spotHeight = (screenHeight - HEADER_HEIGHT) / (totalDisplayedSpotSlots + 1);
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
+        updateScrollBar();
 
         drawShiftsBackground(g);
         drawTimes(g);
