@@ -283,8 +283,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         this.screenHeight = screenHeight;
 
         drawShiftsBackground(g);
-        drawSpots(g);
         drawTimes(g);
+        drawSpots(g);
         drawSpotToCreate(g);
         drawPopup(g);
     }
@@ -342,6 +342,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         CanvasUtils.setFillColor(g, "#FFFFFF");
         g.fillRect(0, HEADER_HEIGHT, SPOT_NAME_WIDTH, screenHeight - HEADER_HEIGHT);
         CanvasUtils.setFillColor(g, "#000000");
+        CanvasUtils.drawLine(g, SPOT_NAME_WIDTH, HEADER_HEIGHT,
+                SPOT_NAME_WIDTH, screenHeight, 2);
+
         double textHeight = CanvasUtils.getTextHeight(g, minSize);
         g.font = CanvasUtils.getFont(minSize);
 
@@ -349,7 +352,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             int pos = spotIndex.get(spot);
             g.fillText(spot.getTitle(), 0, HEADER_HEIGHT + spotHeight * pos + textHeight + (spotHeight - textHeight)
                     / 2);
-            CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + spotHeight * pos, screenWidth, HEADER_HEIGHT + spotHeight * pos);
+            CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + spotHeight * pos, screenWidth, HEADER_HEIGHT + spotHeight * pos,
+                    2);
         }
     }
 
@@ -475,17 +479,16 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                     % 7)],
                     SPOT_NAME_WIDTH + (24 * x) * 60 * widthPerMinute, HEADER_HEIGHT / 2);
             CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + (24 * x) * 60 * widthPerMinute, 0, SPOT_NAME_WIDTH + (24 * x) * 60
-                    * widthPerMinute, HEADER_HEIGHT);
+                    * widthPerMinute, screenHeight, 2);
         }
         //for (int x = 0; x < 8; x++) {
         //    g.fillText(((6 * x) % 24) + ":00", SPOT_NAME_WIDTH + x * 6 * 60 * widthPerMinute, HEADER_HEIGHT);
         //    CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + x * 6 * widthPerMinute * 60, HEADER_HEIGHT, SPOT_NAME_WIDTH + x
         //            * 6 * widthPerMinute * 60, screenHeight);
         //}
-
-        for (int x = 0; x < (screenWidth / (getWidthPerMinute() * displayMinuteGradality)); x++) {
+        for (int x = 1; x < (screenWidth / (getWidthPerMinute() * displayMinuteGradality)); x++) {
             CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + x * widthPerMinute * displayMinuteGradality, HEADER_HEIGHT,
-                    SPOT_NAME_WIDTH + x * widthPerMinute * displayMinuteGradality, screenHeight);
+                    SPOT_NAME_WIDTH + x * widthPerMinute * displayMinuteGradality, screenHeight, 1);
         }
     }
 

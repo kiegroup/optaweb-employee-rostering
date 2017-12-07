@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.CanvasRenderingContext2D.FillStyleUnionType;
+import elemental2.dom.CanvasRenderingContext2D.StrokeStyleUnionType;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
@@ -16,7 +17,8 @@ public class CanvasUtils {
 
     public static String FONT_FAMILY = "Arial";
 
-    public static void drawLine(CanvasRenderingContext2D g, double x1, double y1, double x2, double y2) {
+    public static void drawLine(CanvasRenderingContext2D g, double x1, double y1, double x2, double y2, double size) {
+        g.lineWidth = size;
         g.beginPath();
         g.moveTo(x1, y1);
         g.lineTo(x2, y2);
@@ -169,6 +171,10 @@ public class CanvasUtils {
 
     public static void setFillColor(CanvasRenderingContext2D g, String color) {
         g.fillStyle = FillStyleUnionType.of(color);
+    }
+
+    public static void setStrokeStyle(CanvasRenderingContext2D g, String color) {
+        g.strokeStyle = StrokeStyleUnionType.of(color);
     }
 
     public static double getCanvasX(HTMLCanvasElement canvas, MouseEvent e) {
