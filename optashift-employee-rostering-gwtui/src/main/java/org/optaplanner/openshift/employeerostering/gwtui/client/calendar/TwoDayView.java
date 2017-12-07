@@ -231,10 +231,6 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     private void initPanels() {
-        Label title = new Label();
-        title.setText("Configuration Editor");
-        topPanel.add(title);
-
         pagination = new Pagination();
         pager = new SimplePager();
 
