@@ -26,28 +26,37 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
 
     protected Integer tenantId = null;
 
-    @Inject @DataField
+    @Inject
+    @DataField
     protected Button solveButton;
-    @Inject @DataField
+    @Inject
+    @DataField
     protected Button refreshButton;
-    @Inject @DataField
+    @Inject
+    @DataField
     protected Span solveStatus;
-    
+
     protected static Observable solverObservable = new Observable();
-    
+
     protected Span buttonContent;
+    protected Span buttonImage;
+    protected Span buttonText;
     private boolean isSolving = false;
     @Inject
     private TranslationService CONSTANTS;
-    
+
     protected void init() {
-        buttonContent= new Span();
-        solveButton.getElement().setAttribute("class","btn btn-success");
-        buttonContent.getElement().setAttribute("class", "glyphicon glyphicon-play");
-        buttonContent.getElement().setAttribute("aria-hidden", "true");
-        buttonContent.setHTML(new SafeHtmlBuilder()
+        buttonContent = new Span();
+        buttonImage = new Span();
+        buttonText = new Span();
+        solveButton.getElement().setAttribute("class", "btn btn-success");
+        buttonImage.getElement().setAttribute("class", "glyphicon glyphicon-play");
+        buttonImage.getElement().setAttribute("aria-hidden", "true");
+        buttonText.setHTML(new SafeHtmlBuilder()
                 .appendEscaped(CONSTANTS.format("AbstractRosterViewPanel.solve"))
                 .toSafeHtml().asString());
+        buttonContent.add(buttonImage);
+        buttonContent.add(buttonText);
         solveButton.add(buttonContent);
         solverObservable.addObserver(this);
     }
@@ -65,34 +74,33 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
     public void refresh() {
         refreshTable();
     }
-    
+
     public void update(Observable observable, Object arg) {
         if (solverObservable == observable) {
             if (arg instanceof StartSolvingEvent) {
-                solveButton.getElement().setAttribute("class","btn btn-danger");
-                buttonContent.getElement().setAttribute("class", "glyphicon glyphicon-stop");
-                buttonContent.getElement().setAttribute("aria-hidden", "true");
-                buttonContent.setHTML(new SafeHtmlBuilder()
+                solveButton.getElement().setAttribute("class", "btn btn-danger");
+                buttonImage.getElement().setAttribute("class", "glyphicon glyphicon-stop");
+                buttonImage.getElement().setAttribute("aria-hidden", "true");
+                buttonText.setHTML(new SafeHtmlBuilder()
                         .appendEscaped(CONSTANTS.format("AbstractRosterViewPanel.terminateEarly"))
                         .toSafeHtml().asString());
                 isSolving = true;
-            }
-            else if (arg instanceof TerminateSolvingEvent) {
-                solveButton.getElement().setAttribute("class","btn btn-success");
-                buttonContent.getElement().setAttribute("class", "glyphicon glyphicon-play");
-                buttonContent.getElement().setAttribute("aria-hidden", "true");
-                buttonContent.setHTML(new SafeHtmlBuilder()
+            } else if (arg instanceof TerminateSolvingEvent) {
+                solveButton.getElement().setAttribute("class", "btn btn-success");
+                buttonImage.getElement().setAttribute("class", "glyphicon glyphicon-play");
+                buttonImage.getElement().setAttribute("aria-hidden", "true");
+                buttonText.setHTML(new SafeHtmlBuilder()
                         .appendEscaped(CONSTANTS.format("AbstractRosterViewPanel.solve"))
                         .toSafeHtml().asString());
                 isSolving = false;
                 solveStatus.setHTML(new SafeHtmlBuilder()
                         .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_finishedSolving) + ".")
                         .toSafeHtml().asString());
-            }
-            else if (arg instanceof SetSolvingTimeEvent) {
+            } else if (arg instanceof SetSolvingTimeEvent) {
                 SetSolvingTimeEvent event = (SetSolvingTimeEvent) arg;
                 solveStatus.setHTML(new SafeHtmlBuilder()
-                        .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_solvingFor,event.getSecondsRemaining()))
+                        .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_solvingFor, event
+                                .getSecondsRemaining()))
                         .toSafeHtml().asString());
             }
         }
@@ -107,13 +115,14 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
         }
         if (isSolving) {
             RosterRestServiceBuilder.terminateRosterEarly(tenantId, new FailureShownRestCallback<Void>() {
+
                 public void onSuccess(Void t) {
                     solverObservable.notifyObservers(new TerminateSolvingEvent());
                 }
             });
-        }
-        else {
+        } else {
             RosterRestServiceBuilder.solveRoster(tenantId, new FailureShownRestCallback<Void>() {
+
                 public void onSuccess(Void t) {
                     solverObservable.notifyObservers(new StartSolvingEvent());
                     // TODO 15 * 2000ms = 30 seconds - Keep in sync with solver config
@@ -122,17 +131,21 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
             });
         }
     }
-    
-    protected class StartSolvingEvent {}
-    protected class TerminateSolvingEvent {}
-    
+
+    protected class StartSolvingEvent {
+    }
+
+    protected class TerminateSolvingEvent {
+    }
+
     protected class SetSolvingTimeEvent {
+
         final int secondsRemaining;
-        
+
         public SetSolvingTimeEvent(int secondRemaining) {
             this.secondsRemaining = secondRemaining;
         }
-        
+
         public int getSecondsRemaining() {
             return secondsRemaining;
         }
@@ -142,7 +155,7 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
 
         private int repeatCount;
         boolean terminateEarly = false;
-        
+
         public RefreshTableRepeatingCommand(int repeatCount) {
             this.repeatCount = repeatCount;
             solverObservable.addObserver(this);
@@ -171,7 +184,7 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
         private void updateSolverStatus() {
             int remainingSeconds = REFRESH_RATE * repeatCount / 1000;
             solverObservable.notifyObservers(new SetSolvingTimeEvent(remainingSeconds));
-            
+
         }
 
         @Override
