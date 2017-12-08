@@ -27,8 +27,9 @@ public class ErrorPopup extends PopupPanel {
         super(false);
 
         CssResources.INSTANCE.errorpopup().ensureInjected();
-        setGlassEnabled(true);
         setStyleName(CssResources.INSTANCE.errorpopup().panel());
+        getGlassElement().addClassName(CssResources.INSTANCE.errorpopup().glass());
+        setGlassEnabled(true);
 
         VerticalPanel vertPanel = new VerticalPanel();
         HorizontalPanel horizontalSubpanel = new HorizontalPanel();

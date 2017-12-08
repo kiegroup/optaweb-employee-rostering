@@ -9,3 +9,11 @@
     left: 15%;
     z-index: 8192;
 }
+
+.glass {
+	background-color:#8b8d8f;
+	opacity:0.45;
+	mozOpacity:0.45;
+	filter:alpha(opacity=45);
+	z-index: 8191;
+}
