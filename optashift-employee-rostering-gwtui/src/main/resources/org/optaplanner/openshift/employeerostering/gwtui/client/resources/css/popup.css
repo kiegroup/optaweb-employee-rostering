@@ -2,14 +2,29 @@
 
 .panel {
     position:fixed;
-    color: #000000;
-    background-color: #A0A0A0;
+    color: #030303;
+    background-color: #fafafa;
     padding: 10px;
     top: 25%;
     left: 15%;
-    width: 600px;
-    height: 400px;
+    width: 50%;
+    height: 50%;
     z-index: 8192;
+}
+
+.form {
+	color: #030303;
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+}
+
+.glass {
+	background-color:#8b8d8f;
+	opacity:0.45;
+	mozOpacity:0.45;
+	filter:alpha(opacity=45);
+	z-index: 8191;
 }
 
 .singleValueTagInput {
@@ -17,6 +32,45 @@
     display: inline-block;
     direction: ltr;
     width: 50%;
+}
+
+.submitDiv {
+	width: 100%;
+	height:100%;
+	justify-content: flex-end;
+    flex-direction: column;
+    display: flex;
+    top-margin: 100%;
+}
+
+.buttonGroup {
+	width: 100%;
+	height:100%;
+	flex-direction: row;
+	justify-content: flex-end;
+    display: flex;
+}
+
+.submit {
+	background-color: #0088ce;
+	color: #fafafa;
+	border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.cancel {
+	background-color: #d1d1d1;
+	color: #030303;
+	border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
 }
 
 .textbox {

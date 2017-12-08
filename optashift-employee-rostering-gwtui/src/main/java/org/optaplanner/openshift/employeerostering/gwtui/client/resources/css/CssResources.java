@@ -13,13 +13,27 @@ public interface CssResources extends ClientBundle {
         String main();
 
         String panel();
+
+        String glass();
     }
 
     interface PopupCss extends CssResource {
 
         String main();
 
+        String submit();
+
+        String cancel();
+
+        String buttonGroup();
+
+        String submitDiv();
+
         String panel();
+
+        String form();
+
+        String glass();
 
         String singleValueTagInput();
 

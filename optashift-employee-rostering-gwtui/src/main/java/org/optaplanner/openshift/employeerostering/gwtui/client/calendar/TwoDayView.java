@@ -978,6 +978,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         return Collections.unmodifiableList(groups);
     }
 
+    public TranslationService getTranslator() {
+        return translator;
+    }
+
     @Override
     public Collection<G> getVisibleGroups() {
         int index = 0;

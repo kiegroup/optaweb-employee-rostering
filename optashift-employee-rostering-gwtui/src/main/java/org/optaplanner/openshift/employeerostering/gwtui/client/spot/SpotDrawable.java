@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -13,6 +14,8 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
+import org.gwtbootstrap3.client.ui.html.Div;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.AbstractDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayView;
@@ -21,6 +24,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtil
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -117,13 +121,11 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
 
             @Override
             public void onSuccess(List<Employee> employeeList) {
-                CssResources.INSTANCE.errorpopup().ensureInjected();
-                PopupPanel popup = new PopupPanel(false);
-                popup.setGlassEnabled(true);
-                // TODO: Change errorpopup to popup when edit functionality is merged
-                popup.setStyleName(CssResources.INSTANCE.errorpopup().panel());
+                // TODO: i18n
+                FormPopup popup = FormPopup.getFormPopup();
 
                 VerticalPanel panel = new VerticalPanel();
+                panel.setStyleName(FormPopup.getStyles().form());
                 HorizontalPanel datafield = new HorizontalPanel();
 
                 Label label = new Label("Is Locked");
@@ -149,8 +151,9 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
 
                 datafield = new HorizontalPanel();
                 Button confirm = new Button();
-                // TODO: Use i18n value when edit functionality is merged
+
                 confirm.setText("Confirm");
+                confirm.setStyleName(FormPopup.getStyles().submit());
                 confirm.addClickHandler((c) -> {
                     if (checkbox.getValue()) {
                         Employee employee = employeeList.stream().filter((e) -> e.getName().equals(
@@ -188,11 +191,18 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
                 Button cancel = new Button();
                 // TODO: Replace with i18n later
                 cancel.setText("Cancel");
+                cancel.setStyleName(FormPopup.getStyles().cancel());
                 cancel.addClickHandler((e) -> popup.hide());
 
-                datafield.add(confirm);
+                Div submitDiv = new Div();
+                submitDiv.setStyleName(FormPopup.getStyles().submitDiv());
+
+                datafield.setStyleName(FormPopup.getStyles().buttonGroup());
                 datafield.add(cancel);
-                panel.add(datafield);
+                datafield.add(confirm);
+
+                submitDiv.add(datafield);
+                panel.add(submitDiv);
 
                 popup.setWidget(panel);
                 popup.center();

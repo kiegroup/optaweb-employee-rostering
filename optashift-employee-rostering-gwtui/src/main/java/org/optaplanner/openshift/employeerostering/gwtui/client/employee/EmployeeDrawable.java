@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
+import org.gwtbootstrap3.client.ui.html.Div;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.AbstractDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayView;
@@ -22,7 +23,9 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
+import org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
@@ -109,13 +112,11 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
 
             @Override
             public void onSuccess(List<Spot> spotList) {
-                CssResources.INSTANCE.errorpopup().ensureInjected();
-                PopupPanel popup = new PopupPanel(false);
-                popup.setGlassEnabled(true);
-                // TODO: Change errorpopup to popup when edit functionality is merged
-                popup.setStyleName(CssResources.INSTANCE.errorpopup().panel());
+                //TODO: i18n
+                FormPopup popup = FormPopup.getFormPopup();
 
                 VerticalPanel panel = new VerticalPanel();
+                panel.setStyleName(FormPopup.getStyles().form());
                 HorizontalPanel datafield = new HorizontalPanel();
 
                 Label label = new Label("Is Locked");
@@ -160,8 +161,8 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
 
                 datafield = new HorizontalPanel();
                 Button confirm = new Button();
-                // TODO: Use i18n value when edit functionality is merged
-                confirm.setText("Confirm");
+                confirm.setText(view.getTranslator().format(OptaShiftUIConstants.General_confirm));
+                confirm.setStyleName(FormPopup.getStyles().submit());
                 confirm.addClickHandler((c) -> {
                     EmployeeAvailabilityState state = null;
                     try {
@@ -277,11 +278,18 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
                 Button cancel = new Button();
                 // TODO: Replace with i18n later
                 cancel.setText("Cancel");
+                cancel.setStyleName(FormPopup.getStyles().cancel());
                 cancel.addClickHandler((e) -> popup.hide());
 
-                datafield.add(confirm);
+                Div submitDiv = new Div();
+                submitDiv.setStyleName(FormPopup.getStyles().submitDiv());
+
+                datafield.setStyleName(FormPopup.getStyles().buttonGroup());
                 datafield.add(cancel);
-                panel.add(datafield);
+                datafield.add(confirm);
+
+                submitDiv.add(datafield);
+                panel.add(submitDiv);
 
                 popup.setWidget(panel);
                 popup.center();
