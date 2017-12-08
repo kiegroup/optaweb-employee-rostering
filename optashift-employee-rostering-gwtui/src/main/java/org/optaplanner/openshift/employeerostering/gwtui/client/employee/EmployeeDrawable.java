@@ -325,35 +325,7 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
 
     @Override
     public void doDraw(CanvasRenderingContext2D g) {
-        String color = getFillColor();
-        CanvasUtils.setFillColor(g, color);
-
-        double start = getStartTime().toEpochSecond(ZoneOffset.UTC) / 60;
-        double end = getEndTime().toEpochSecond(ZoneOffset.UTC) / 60;
-        double duration = end - start;
-
-        CanvasUtils.drawCurvedRect(g, getLocalX(), getLocalY(), duration * view.getWidthPerMinute(), view
-                .getGroupHeight());
-
-        CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
-
-        String spot;
-        if (null == data.getSpot()) {
-            spot = "Unassigned";
-        } else {
-            spot = data.getSpot().getName();
-            if (data.isLocked()) {
-                spot += " (locked)";
-            }
-        }
-        g.fillText(spot, getLocalX(), getLocalY() + view.getGroupHeight());
-
-        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()
-                * duration && view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view
-                        .getGroupHeight()) {
-            view.preparePopup(this.toString());
-
-        }
+        doDrawAt(g, getGlobalX(), getGlobalY());
     }
 
     public String toString() {

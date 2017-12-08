@@ -42,17 +42,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
     @Override
     public void doDraw(CanvasRenderingContext2D g) {
-        CanvasUtils.setFillColor(g, color);
-
-        double start = startTime.toEpochSecond(ZoneOffset.UTC) / 60;
-        double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
-        double duration = end - start;
-
-        CanvasUtils.drawCurvedRect(g, getLocalX(), getLocalY(), duration * view.getWidthPerMinute(), view
-                .getGroupHeight());
-
-        CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
-        g.fillText(spot.getTitle(), getLocalX(), getLocalY() + view.getGroupHeight());
+        doDrawAt(g, getGlobalX(), getGlobalY());
     }
 
     @Override
