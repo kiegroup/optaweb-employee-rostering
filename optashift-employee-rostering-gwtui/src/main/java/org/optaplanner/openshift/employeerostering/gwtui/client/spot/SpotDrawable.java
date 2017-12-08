@@ -224,35 +224,7 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
 
     @Override
     public void doDraw(CanvasRenderingContext2D g) {
-        String color = getFillColor();
-        CanvasUtils.setFillColor(g, color);
-
-        double start = getStartTime().toEpochSecond(ZoneOffset.UTC) / 60;
-        double end = getEndTime().toEpochSecond(ZoneOffset.UTC) / 60;
-        double duration = end - start;
-
-        CanvasUtils.drawCurvedRect(g, getLocalX(), getLocalY(), duration * view.getWidthPerMinute(), view
-                .getGroupHeight());
-
-        CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
-
-        String employee;
-        if (null == data.getAssignedEmployee()) {
-            employee = "Unassigned";
-        } else {
-            employee = data.getAssignedEmployee().getName();
-            if (data.isLocked()) {
-                employee += " (locked)";
-            }
-        }
-        g.fillText(employee, getLocalX(), getLocalY() + view.getGroupHeight());
-
-        if (view.getGlobalMouseX() >= getGlobalX() && view.getGlobalMouseX() <= getGlobalX() + view.getWidthPerMinute()
-                * duration && view.getGlobalMouseY() >= getGlobalY() && view.getGlobalMouseY() <= getGlobalY() + view
-                        .getGroupHeight()) {
-            view.preparePopup(this.toString());
-
-        }
+        doDrawAt(g, getGlobalX(), getGlobalY());
     }
 
     public String toString() {
