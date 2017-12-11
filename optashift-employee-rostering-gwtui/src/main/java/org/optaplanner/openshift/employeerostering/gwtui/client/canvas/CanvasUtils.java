@@ -2,7 +2,9 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.canvas;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.canvas.dom.client.Context2d.TextBaseline;
 import elemental2.dom.CanvasRenderingContext2D;
@@ -16,6 +18,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.Cs
 public class CanvasUtils {
 
     public static String FONT_FAMILY = "Arial";
+
+    private static Map<DrawnText, Integer> textboxToFontSize = new HashMap<>();
 
     public static void drawLine(CanvasRenderingContext2D g, double x1, double y1, double x2, double y2, double size) {
         g.lineWidth = size;
@@ -32,6 +36,12 @@ public class CanvasUtils {
     }
 
     public static int fitTextToBox(CanvasRenderingContext2D g, String text, double w, double h) {
+        DrawnText drawnText = new DrawnText(text, w, h);
+
+        if (textboxToFontSize.containsKey(drawnText)) {
+            return textboxToFontSize.get(drawnText);
+        }
+
         String oldFont = g.font;
         String oldBaseline = g.textBaseline;
 
@@ -52,6 +62,7 @@ public class CanvasUtils {
 
         g.font = oldFont;
         g.textBaseline = oldBaseline;
+        textboxToFontSize.put(drawnText, size);
         return size;
     }
 
@@ -214,6 +225,66 @@ public class CanvasUtils {
 
         public boolean useHalflings() {
             return useHalflings;
+        }
+    }
+
+    private static final class DrawnText {
+
+        private final String text;
+        private final double w;
+        private final double h;
+
+        public DrawnText(String text, double w, double h) {
+            super();
+            this.text = text;
+            this.w = w;
+            this.h = h;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public double getW() {
+            return w;
+        }
+
+        public double getH() {
+            return h;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            long temp;
+            temp = Double.doubleToLongBits(h);
+            result = prime * result + (int) (temp ^ (temp >>> 32));
+            result = prime * result + ((text == null) ? 0 : text.hashCode());
+            temp = Double.doubleToLongBits(w);
+            result = prime * result + (int) (temp ^ (temp >>> 32));
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            DrawnText other = (DrawnText) obj;
+            if (Double.doubleToLongBits(h) != Double.doubleToLongBits(other.h))
+                return false;
+            if (text == null) {
+                if (other.text != null)
+                    return false;
+            } else if (!text.equals(other.text))
+                return false;
+            if (Double.doubleToLongBits(w) != Double.doubleToLongBits(other.w))
+                return false;
+            return true;
         }
     }
 }
