@@ -1,26 +1,28 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.popups;
 
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.PopupPanel;
+import org.gwtbootstrap3.client.ui.html.Div;
+import org.jboss.errai.ui.client.local.api.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 
 public class FormPopup extends PopupPanel {
 
     private static FormPopup formPopup = null;
 
-    private FormPopup() {
+    private FormPopup(IsElement content) {
         super(false);
 
         setStyleName(getStyles().panel());
         setGlassStyleName(getStyles().glass());
         setGlassEnabled(true);
 
-        formPopup = this;
-    }
+        Div container = new Div();
+        container.getElement().appendChild(Element.as((JavaScriptObject) content.getElement()));
+        setWidget(container);
 
-    @Override
-    public void show() {
-        super.show();
-        getContainerElement().setClassName(getStyles().form());
+        formPopup = this;
     }
 
     @Override
@@ -34,11 +36,11 @@ public class FormPopup extends PopupPanel {
         return CssResources.INSTANCE.popup();
     }
 
-    public static FormPopup getFormPopup() {
+    public static FormPopup getFormPopup(IsElement content) {
         if (null != formPopup) {
             throw new IllegalStateException("Cannot have two form popups at once!");
         }
-        return new FormPopup();
+        return new FormPopup(content);
     }
 
 }

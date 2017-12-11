@@ -25,6 +25,7 @@ import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -90,6 +91,9 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     boolean isDateSet = false;
 
     @Inject
+    private SyncBeanManager beanManager;
+
+    @Inject
     private TranslationService CONSTANTS;
 
     @EventHandler("planNextPeriod")
@@ -130,6 +134,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)
                 .fetchingGroupsFrom(new EmployeeNameFetchable(() -> getTenantId()))
+                .withBeanManager(beanManager)
                 .asTwoDayView((v, d, i) -> new EmployeeDrawable(v, d, i));
 
         calendar.setDataProvider(new EmployeeDataFetchable(calendar, () -> getTenantId()));

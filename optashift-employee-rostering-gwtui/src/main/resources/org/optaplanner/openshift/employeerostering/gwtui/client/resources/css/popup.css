@@ -2,21 +2,12 @@
 
 .panel {
     position:fixed;
-    color: #030303;
-    background-color: #fafafa;
     padding: 10px;
     top: 25%;
     left: 15%;
     width: 50%;
     height: 50%;
     z-index: 8192;
-}
-
-.form {
-	color: #030303;
-	width: 100%;
-	height: 100%;
-	padding: 10px;
 }
 
 .glass {

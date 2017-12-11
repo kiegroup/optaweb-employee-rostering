@@ -114,101 +114,17 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
         return true;
     }
 
+    public SpotData getData() {
+        return data;
+    }
+
+    public TwoDayView<SpotId, ?, ?> getCalendarView() {
+        return view;
+    }
+
     @Override
     public PostMouseDownEvent onMouseDown(MouseEvent mouseEvent, double x, double y) {
-        EmployeeRestServiceBuilder.getEmployeeList(data.getShift().getTenantId(), new FailureShownRestCallback<List<
-                Employee>>() {
-
-            @Override
-            public void onSuccess(List<Employee> employeeList) {
-                // TODO: i18n
-                FormPopup popup = FormPopup.getFormPopup();
-
-                VerticalPanel panel = new VerticalPanel();
-                panel.setStyleName(FormPopup.getStyles().form());
-                HorizontalPanel datafield = new HorizontalPanel();
-
-                Label label = new Label("Is Locked");
-                CheckBox checkbox = new CheckBox();
-                checkbox.setValue(data.isLocked());
-                datafield.add(label);
-                datafield.add(checkbox);
-                panel.add(datafield);
-
-                datafield = new HorizontalPanel();
-                label = new Label("Assigned Employee");
-                ListBox assignedEmployeeListBox = new ListBox();
-                employeeList.forEach((e) -> assignedEmployeeListBox.addItem(e.getName()));
-                if (!data.isLocked()) {
-                    assignedEmployeeListBox.setEnabled(false);
-                } else {
-                    assignedEmployeeListBox.setSelectedIndex(employeeList.indexOf(data.getAssignedEmployee()));
-                }
-                checkbox.addValueChangeHandler((v) -> assignedEmployeeListBox.setEnabled(v.getValue()));
-                datafield.add(label);
-                datafield.add(assignedEmployeeListBox);
-                panel.add(datafield);
-
-                datafield = new HorizontalPanel();
-                Button confirm = new Button();
-
-                confirm.setText("Confirm");
-                confirm.setStyleName(FormPopup.getStyles().submit());
-                confirm.addClickHandler((c) -> {
-                    if (checkbox.getValue()) {
-                        Employee employee = employeeList.stream().filter((e) -> e.getName().equals(
-                                assignedEmployeeListBox.getSelectedValue())).findFirst().get();
-                        data.getShift().setLockedByUser(true);
-                        data.getShift().setEmployee(employee);
-                        ShiftView shiftView = new ShiftView(data.getShift());
-                        popup.hide();
-                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shiftView,
-                                new FailureShownRestCallback<Void>() {
-
-                                    @Override
-                                    public void onSuccess(Void result) {
-                                        view.getCalendar().forceUpdate();
-                                    }
-
-                                });
-                    } else {
-                        data.getShift().setLockedByUser(false);
-                        ShiftView shiftView = new ShiftView(data.getShift());
-                        popup.hide();
-                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shiftView,
-                                new FailureShownRestCallback<Void>() {
-
-                                    @Override
-                                    public void onSuccess(Void result) {
-                                        view.getCalendar().forceUpdate();
-                                    }
-
-                                });
-                    }
-
-                });
-
-                Button cancel = new Button();
-                // TODO: Replace with i18n later
-                cancel.setText("Cancel");
-                cancel.setStyleName(FormPopup.getStyles().cancel());
-                cancel.addClickHandler((e) -> popup.hide());
-
-                Div submitDiv = new Div();
-                submitDiv.setStyleName(FormPopup.getStyles().submitDiv());
-
-                datafield.setStyleName(FormPopup.getStyles().buttonGroup());
-                datafield.add(cancel);
-                datafield.add(confirm);
-
-                submitDiv.add(datafield);
-                panel.add(submitDiv);
-
-                popup.setWidget(panel);
-                popup.center();
-            }
-        });
-
+        SpotShiftEditForm.create(this);
         return PostMouseDownEvent.REMOVE_FOCUS;
     }
 

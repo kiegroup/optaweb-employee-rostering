@@ -2,39 +2,17 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
-import org.gwtbootstrap3.client.ui.html.Div;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.AbstractDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
-import org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawable<EmployeeId> {
 
@@ -108,194 +86,7 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
 
     @Override
     public PostMouseDownEvent onMouseDown(MouseEvent mouseEvent, double x, double y) {
-        SpotRestServiceBuilder.getSpotList(data.getShift().getTenantId(), new FailureShownRestCallback<List<Spot>>() {
-
-            @Override
-            public void onSuccess(List<Spot> spotList) {
-                //TODO: i18n
-                FormPopup popup = FormPopup.getFormPopup();
-
-                VerticalPanel panel = new VerticalPanel();
-                panel.setStyleName(FormPopup.getStyles().form());
-                HorizontalPanel datafield = new HorizontalPanel();
-
-                Label label = new Label("Is Locked");
-                CheckBox checkbox = new CheckBox();
-                checkbox.setValue(data.isLocked());
-                datafield.add(label);
-                datafield.add(checkbox);
-                panel.add(datafield);
-
-                datafield = new HorizontalPanel();
-                label = new Label("Assigned Spot");
-                ListBox assignedSpot = new ListBox();
-                spotList.forEach((s) -> assignedSpot.addItem(s.getName()));
-                if (!data.isLocked()) {
-                    assignedSpot.setEnabled(false);
-                } else {
-                    assignedSpot.setSelectedIndex(spotList.indexOf(data.getSpot()));
-                }
-                checkbox.addValueChangeHandler((v) -> assignedSpot.setEnabled(v.getValue()));
-                datafield.add(label);
-                datafield.add(assignedSpot);
-                panel.add(datafield);
-
-                datafield = new HorizontalPanel();
-                label = new Label("Avaliability");
-                ListBox employeeAvaliability = new ListBox();
-                int index = 0;
-                for (EmployeeAvailabilityState availabilityState : EmployeeAvailabilityState.values()) {
-                    employeeAvaliability.addItem(availabilityState.toString());
-                    if (null != data.getAvailability() && availabilityState.equals(data.getAvailability().getState())) {
-                        employeeAvaliability.setSelectedIndex(index);
-                    }
-                    index++;
-                }
-                employeeAvaliability.addItem("NO PREFERENCE");
-                if (null == data.getAvailability()) {
-                    employeeAvaliability.setSelectedIndex(index);
-                }
-                datafield.add(label);
-                datafield.add(employeeAvaliability);
-                panel.add(datafield);
-
-                datafield = new HorizontalPanel();
-                Button confirm = new Button();
-                confirm.setText(view.getTranslator().format(OptaShiftUIConstants.General_confirm));
-                confirm.setStyleName(FormPopup.getStyles().submit());
-                confirm.addClickHandler((c) -> {
-                    EmployeeAvailabilityState state = null;
-                    try {
-                        state = EmployeeAvailabilityState.valueOf(employeeAvaliability.getSelectedValue());
-                        if (null == data.getAvailability()) {
-                            EmployeeAvailabilityView availabilityView = new EmployeeAvailabilityView(data.getShift()
-                                    .getTenantId(), data.getEmployee(), data.getShift().getTimeSlot(), state);
-                            EmployeeRestServiceBuilder.addEmployeeAvailability(data.getShift().getTenantId(),
-                                    availabilityView, new FailureShownRestCallback<Long>() {
-
-                                        @Override
-                                        public void onSuccess(Long id) {
-                                            view.getCalendar().forceUpdate();
-                                        }
-                                    });
-                        } else {
-                            data.getAvailability().setState(state);
-                            EmployeeRestServiceBuilder.updateEmployeeAvailability(data.getAvailability().getTenantId(),
-                                    data.getAvailability(), new FailureShownRestCallback<Void>() {
-
-                                        @Override
-                                        public void onSuccess(Void result) {
-                                            view.getCalendar().forceUpdate();
-                                        }
-                                    });
-                        }
-                    } catch (IllegalArgumentException e) {
-                        if (data.getAvailability() != null) {
-                            EmployeeRestServiceBuilder.removeEmployeeAvailability(data.getAvailability().getTenantId(),
-                                    data.getAvailability().getId(), new FailureShownRestCallback<Boolean>() {
-
-                                        @Override
-                                        public void onSuccess(Boolean result) {
-                                            view.getCalendar().forceUpdate();
-                                        }
-                                    });
-                        }
-                    }
-
-                    if (checkbox.getValue()) {
-                        Spot spot = spotList.stream().filter((e) -> e.getName().equals(assignedSpot.getSelectedValue()))
-                                .findFirst().get();
-                        popup.hide();
-                        ShiftRestServiceBuilder.getShifts(spot.getTenantId(), new FailureShownRestCallback<List<
-                                ShiftView>>() {
-
-                            @Override
-                            public void onSuccess(List<ShiftView> shifts) {
-                                ShiftView shift = shifts.stream().filter((s) -> s.getSpotId().equals(spot.getId()) && s
-                                        .getTimeSlotId().equals(data.getShift().getTimeSlot().getId())).findFirst()
-                                        .orElseGet(() -> null);
-                                if (null != shift) {
-                                    data.getShift().setLockedByUser(false);
-                                    shift.setEmployeeId(data.getEmployee().getId());
-                                    shift.setLockedByUser(true);
-                                    if (data.isLocked()) {
-                                        ShiftView oldShift = new ShiftView(data.getShift());
-
-                                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), oldShift,
-                                                new FailureShownRestCallback<Void>() {
-
-                                                    @Override
-                                                    public void onSuccess(Void result) {
-                                                        ShiftRestServiceBuilder.updateShift(data.getShift()
-                                                                .getTenantId(),
-                                                                shift, new FailureShownRestCallback<Void>() {
-
-                                                                    @Override
-                                                                    public void onSuccess(Void result2) {
-                                                                        view.getCalendar().forceUpdate();
-                                                                    }
-
-                                                                });
-                                                    }
-
-                                                });
-                                    } else {
-                                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shift,
-                                                new FailureShownRestCallback<Void>() {
-
-                                                    @Override
-                                                    public void onSuccess(Void result) {
-                                                        view.getCalendar().forceUpdate();
-                                                    }
-                                                });
-                                    }
-
-                                } else {
-                                    ErrorPopup.show("Cannot find shift with spot " + spot.getName() + " for timeslot "
-                                            + data.getShift().getTimeSlot());
-                                }
-                            }
-                        });
-                    } else if (data.isLocked()) {
-                        data.getShift().setLockedByUser(false);
-                        ShiftView shiftView = new ShiftView(data.getShift());
-                        popup.hide();
-                        ShiftRestServiceBuilder.updateShift(data.getShift().getTenantId(), shiftView,
-                                new FailureShownRestCallback<Void>() {
-
-                                    @Override
-                                    public void onSuccess(Void result) {
-                                        view.getCalendar().forceUpdate();
-                                    }
-
-                                });
-                    } else {
-                        popup.hide();
-                    }
-
-                });
-
-                Button cancel = new Button();
-                // TODO: Replace with i18n later
-                cancel.setText("Cancel");
-                cancel.setStyleName(FormPopup.getStyles().cancel());
-                cancel.addClickHandler((e) -> popup.hide());
-
-                Div submitDiv = new Div();
-                submitDiv.setStyleName(FormPopup.getStyles().submitDiv());
-
-                datafield.setStyleName(FormPopup.getStyles().buttonGroup());
-                datafield.add(cancel);
-                datafield.add(confirm);
-
-                submitDiv.add(datafield);
-                panel.add(submitDiv);
-
-                popup.setWidget(panel);
-                popup.center();
-            }
-        });
-
+        EmployeeShiftEditForm.create(this);
         return PostMouseDownEvent.REMOVE_FOCUS;
     }
 
@@ -361,6 +152,14 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
         out.append("; slot is ");
         out.append((data.getAvailability() != null) ? data.getAvailability().getState().toString() : "Indifferent");
         return out.toString();
+    }
+
+    public EmployeeData getData() {
+        return data;
+    }
+
+    public TwoDayView<EmployeeId, ?, ?> getCalendarView() {
+        return view;
     }
 
     private String getFillColor() {
