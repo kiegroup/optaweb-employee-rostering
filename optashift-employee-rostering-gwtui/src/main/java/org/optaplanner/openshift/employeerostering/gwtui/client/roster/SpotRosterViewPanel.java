@@ -28,6 +28,7 @@ import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -87,6 +88,10 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
     private HTMLCanvasElement canvasElement;
 
     private Calendar<SpotId, SpotData> calendar;
+
+    @Inject
+    private SyncBeanManager beanManager;
+
     @Inject
     private TranslationService CONSTANTS;
 
@@ -115,6 +120,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                 .withBottomPanel(bottomPanel)
                 .withSidePanel(sidePanel)
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
+                .withBeanManager(beanManager)
                 .asTwoDayView((v, d, i) -> new SpotDrawable(v, d, i));
         calendar.setDataProvider(new SpotDataFetchable(calendar, () -> getTenantId()));
         /*table.addColumn(new TextColumn<Spot>() {

@@ -30,6 +30,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -44,13 +45,19 @@ public class SkillListPanel implements IsElement {
 
     private Integer tenantId = null;
 
-    @Inject @DataField
+    @Inject
+    @DataField
     private Button refreshButton;
 
-    @Inject @DataField
+    @Inject
+    @DataField
     private TextBox skillNameTextBox;
-    @Inject @DataField
+    @Inject
+    @DataField
     private Button addButton;
+
+    @Inject
+    private SyncBeanManager beanManager;
 
     // TODO use DataGrid instead
     @DataField
@@ -60,7 +67,7 @@ public class SkillListPanel implements IsElement {
 
     private SimplePager pager = new SimplePager();
     private ListDataProvider<Skill> dataProvider = new ListDataProvider<>();
-    
+
     @Inject
     private TranslationService CONSTANTS;
 
@@ -96,14 +103,17 @@ public class SkillListPanel implements IsElement {
 
     private void initTable() {
         table.addColumn(new TextColumn<Skill>() {
+
             @Override
             public String getValue(Skill skill) {
                 return skill.getName();
             }
         },
-                        CONSTANTS.format(General_name));
+                CONSTANTS.format(General_name));
 
-        Column<Skill, String> deleteColumn = new Column<Skill, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER, ButtonSize.SMALL)) {
+        Column<Skill, String> deleteColumn = new Column<Skill, String>(new ButtonCell(IconType.REMOVE,
+                ButtonType.DANGER, ButtonSize.SMALL)) {
+
             @Override
             public String getValue(Skill skill) {
                 return CONSTANTS.format(General_delete);
@@ -111,59 +121,23 @@ public class SkillListPanel implements IsElement {
         };
         deleteColumn.setFieldUpdater((index, skill, value) -> {
             SkillRestServiceBuilder.removeSkill(tenantId, skill.getId(), new FailureShownRestCallback<Boolean>() {
+
                 @Override
                 public void onSuccess(Boolean removed) {
                     refreshTable();
                 }
             });
         });
-        Column<Skill, String> editColumn = new Column<Skill, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT, ButtonSize.SMALL)) {
+        Column<Skill, String> editColumn = new Column<Skill, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT,
+                ButtonSize.SMALL)) {
+
             @Override
             public String getValue(Skill skill) {
                 return CONSTANTS.format(General_edit);
             }
         };
         editColumn.setFieldUpdater((index, skill, value) -> {
-            CssResources.INSTANCE.popup().ensureInjected();
-            PopupPanel popup = new PopupPanel(false);
-            popup.setGlassEnabled(true);
-            popup.setStyleName(CssResources.INSTANCE.popup().panel());
-            
-            VerticalPanel panel = new VerticalPanel();
-            HorizontalPanel datafield = new HorizontalPanel();
-            
-            Label label = new Label("Skill Name");
-            TextBox skillName = new TextBox();
-            skillName.setValue(skill.getName());
-            skillName.setStyleName(CssResources.INSTANCE.popup().textbox());
-            datafield.add(label);
-            datafield.add(skillName);
-            panel.add(datafield);
-            
-            datafield = new HorizontalPanel();
-            Button confirm = new Button();
-            confirm.setText(CONSTANTS.format(General_update));
-            confirm.addClickHandler((e) -> {
-                skill.setName(skillName.getValue());
-                popup.hide();
-                SkillRestServiceBuilder.updateSkill(tenantId, skill, new FailureShownRestCallback<Skill>() {
-                    @Override
-                    public void onSuccess(Skill skill) {
-                        refreshTable();
-                    }
-                });
-            });
-            
-            Button cancel = new Button();
-            cancel.setText(CONSTANTS.format(General_cancel));
-            cancel.addClickHandler((e) -> popup.hide());
-            
-            datafield.add(confirm);
-            datafield.add(cancel);
-            panel.add(datafield);
-            
-            popup.setWidget(panel);
-            popup.center();
+            SkillEditForm.create(beanManager, this, skill);
         });
         table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
         table.addColumn(editColumn);
@@ -180,6 +154,7 @@ public class SkillListPanel implements IsElement {
             return;
         }
         SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
+
             @Override
             public void onSuccess(List<Skill> skillList) {
                 dataProvider.setList(skillList);
@@ -197,7 +172,9 @@ public class SkillListPanel implements IsElement {
         String skillName = skillNameTextBox.getValue();
         skillNameTextBox.setValue("");
         skillNameTextBox.setFocus(true);
-        SkillRestServiceBuilder.addSkill(tenantId, new Skill(tenantId, skillName), new FailureShownRestCallback<Skill>() {
+        SkillRestServiceBuilder.addSkill(tenantId, new Skill(tenantId, skillName), new FailureShownRestCallback<
+                Skill>() {
+
             @Override
             public void onSuccess(Skill skill) {
                 refreshTable();

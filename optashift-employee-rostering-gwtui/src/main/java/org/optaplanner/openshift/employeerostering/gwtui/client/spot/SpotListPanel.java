@@ -24,6 +24,7 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -44,15 +45,19 @@ public class SpotListPanel implements IsElement {
 
     private Integer tenantId = null;
 
-    @Inject @DataField
+    @Inject
+    @DataField
     private Button refreshButton;
 
-    @Inject @DataField
+    @Inject
+    @DataField
     private TextBox spotNameTextBox;
-    @Inject @DataField
+    @Inject
+    @DataField
     private ListBox requiredSkillListBox;
     private List<Skill> requiredSkillListBoxValues;
-    @Inject @DataField
+    @Inject
+    @DataField
     private Button addButton;
 
     // TODO use DataGrid instead
@@ -64,6 +69,8 @@ public class SpotListPanel implements IsElement {
     private SimplePager pager = new SimplePager();
     private ListDataProvider<Spot> dataProvider = new ListDataProvider<>();
 
+    @Inject
+    private SyncBeanManager beanManager;
     @Inject
     private TranslationService CONSTANTS;
 
@@ -103,6 +110,7 @@ public class SpotListPanel implements IsElement {
             return;
         }
         SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
+
             @Override
             public void onSuccess(List<Skill> skillList) {
                 requiredSkillListBoxValues = skillList;
@@ -114,13 +122,15 @@ public class SpotListPanel implements IsElement {
 
     private void initTable() {
         table.addColumn(new TextColumn<Spot>() {
+
             @Override
             public String getValue(Spot spot) {
                 return spot.getName();
             }
         },
-                        CONSTANTS.format(General_name));
+                CONSTANTS.format(General_name));
         table.addColumn(new TextColumn<Spot>() {
+
             @Override
             public String getValue(Spot spot) {
                 Skill requiredSkill = spot.getRequiredSkill();
@@ -130,7 +140,9 @@ public class SpotListPanel implements IsElement {
                 return requiredSkill.getName();
             }
         }, "Required skill");
-        Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER, ButtonSize.SMALL)) {
+        Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER,
+                ButtonSize.SMALL)) {
+
             @Override
             public String getValue(Spot spot) {
                 return CONSTANTS.format(General_delete);
@@ -138,69 +150,23 @@ public class SpotListPanel implements IsElement {
         };
         deleteColumn.setFieldUpdater((index, spot, value) -> {
             SpotRestServiceBuilder.removeSpot(tenantId, spot.getId(), new FailureShownRestCallback<Boolean>() {
+
                 @Override
                 public void onSuccess(Boolean removed) {
                     refreshTable();
                 }
             });
         });
-        Column<Spot, String> editColumn = new Column<Spot, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT, ButtonSize.SMALL)) {
+        Column<Spot, String> editColumn = new Column<Spot, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT,
+                ButtonSize.SMALL)) {
+
             @Override
             public String getValue(Spot spot) {
                 return CONSTANTS.format(General_edit);
             }
         };
         editColumn.setFieldUpdater((index, spot, value) -> {
-            CssResources.INSTANCE.popup().ensureInjected();
-            PopupPanel popup = new PopupPanel(false);
-            popup.setGlassEnabled(true);
-            popup.setStyleName(CssResources.INSTANCE.popup().panel());
-            
-            VerticalPanel panel = new VerticalPanel();
-            HorizontalPanel datafield = new HorizontalPanel();
-            
-            Label label = new Label("Spot Name");
-            TextBox spotName = new TextBox();
-            spotName.setValue(spot.getName());
-            spotName.setStyleName(CssResources.INSTANCE.popup().textbox());
-            datafield.add(label);
-            datafield.add(spotName);
-            panel.add(datafield);
-            
-            label = new Label("Required Skill");
-            ListBox requiredSkillBox = new ListBox();
-            requiredSkillListBoxValues.forEach((s) -> requiredSkillBox.addItem(s.getName()));
-            requiredSkillBox.setItemSelected(requiredSkillListBoxValues.indexOf(spot.getRequiredSkill()), true);
-            datafield.add(label);
-            datafield.add(requiredSkillBox);
-            panel.add(datafield);
-            
-            datafield = new HorizontalPanel();
-            Button confirm = new Button();
-            confirm.setText(CONSTANTS.format(General_update));
-            confirm.addClickHandler((e) -> {
-                spot.setName(spotName.getValue());
-                int requiredSkillIndex = requiredSkillBox.getSelectedIndex();
-                spot.setRequiredSkill(requiredSkillIndex < 0 ? null : requiredSkillListBoxValues.get(requiredSkillIndex));
-                popup.hide();
-                SpotRestServiceBuilder.updateSpot(tenantId, spot, new FailureShownRestCallback<Spot>() {
-                    @Override
-                    public void onSuccess(Spot spot) {
-                        refreshTable();
-                    }
-                });
-            });
-            
-            Button cancel = new Button();
-            cancel.setText(CONSTANTS.format(General_cancel));
-            cancel.addClickHandler((e) -> popup.hide());
-            
-            datafield.add(confirm);
-            datafield.add(cancel);
-            panel.add(datafield);
-            
-            popup.setWidget(panel);
-            popup.center();
+            SpotEditForm.create(beanManager, this, spot, requiredSkillListBoxValues);
         });
         table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
         table.addColumn(editColumn);
@@ -217,6 +183,7 @@ public class SpotListPanel implements IsElement {
             return;
         }
         SpotRestServiceBuilder.getSpotList(tenantId, new FailureShownRestCallback<List<Spot>>() {
+
             @Override
             public void onSuccess(List<Spot> spotList) {
                 dataProvider.setList(spotList);
@@ -237,12 +204,14 @@ public class SpotListPanel implements IsElement {
         int requiredSkillIndex = requiredSkillListBox.getSelectedIndex();
         Skill requiredSkill = requiredSkillIndex < 0 ? null : requiredSkillListBoxValues.get(requiredSkillIndex);
 
-        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, requiredSkill), new FailureShownRestCallback<Spot>() {
-            @Override
-            public void onSuccess(Spot spot) {
-                refreshTable();
-            }
-        });
+        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, requiredSkill),
+                new FailureShownRestCallback<Spot>() {
+
+                    @Override
+                    public void onSuccess(Spot spot) {
+                        refreshTable();
+                    }
+                });
     }
 
 }

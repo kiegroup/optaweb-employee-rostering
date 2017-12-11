@@ -11,6 +11,7 @@ import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.DataProvider;
@@ -26,14 +27,16 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
     Panel topPanel;
     Panel bottomPanel;
     Panel sidePanel;
+    SyncBeanManager beanManager;
     Fetchable<Collection<I>> dataProvider;
     Fetchable<List<G>> groupProvider;
     DataProvider<G, I> instanceCreator;
 
     private Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Panel topPanel, Panel bottomPanel,
             Panel sidePanel, Fetchable<Collection<I>> dataProvider, Fetchable<List<G>> groupProvider, DataProvider<G,
-                    I> instanceCreator) {
+                    I> instanceCreator, SyncBeanManager beanManager) {
         this.canvas = canvasElement;
+        this.beanManager = beanManager;
         this.tenantId = tenantId;
         this.topPanel = topPanel;
         this.bottomPanel = bottomPanel;
@@ -229,6 +232,10 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         view.setDisplayMinuteGradality(displayMinuteGradality);
     }
 
+    public <T> T getInstanceOf(Class<T> clazz) {
+        return beanManager.lookupBean(clazz).newInstance();
+    }
+
     public static class Builder<G extends HasTitle, T extends HasTimeslot<G>, D extends TimeRowDrawable<G>> {
 
         HTMLCanvasElement canvas;
@@ -241,6 +248,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         Fetchable<Collection<T>> dataProvider;
         Fetchable<List<G>> groupProvider;
         DataProvider<G, T> instanceCreator;
+        SyncBeanManager beanManager;
         TranslationService translator;
         DateDisplay dateDisplay;
 
@@ -299,11 +307,16 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
             return this;
         }
 
+        public Builder<G, T, D> withBeanManager(SyncBeanManager beanManager) {
+            this.beanManager = beanManager;
+            return this;
+        }
+
         public Calendar<G, T> asTwoDayView(TimeRowDrawableProvider<G, T, D> drawableProvider) {
-            if (null != topPanel && null != bottomPanel && null != sidePanel) {
+            if (null != topPanel && null != bottomPanel && null != sidePanel && null != beanManager) {
                 Calendar<G, T> calendar = new Calendar<>(canvas, tenantId, topPanel, bottomPanel, sidePanel,
                         dataProvider,
-                        groupProvider, instanceCreator);
+                        groupProvider, instanceCreator, beanManager);
                 TwoDayView<G, T, D> view = new TwoDayView<G, T, D>(calendar, topPanel, bottomPanel, sidePanel,
                         drawableProvider, dateDisplay, translator);
                 calendar.setView(view);
@@ -314,7 +327,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
                 return calendar;
             } else {
                 throw new IllegalStateException("You must set all of "
-                        + "(topPanel,bottomPanel,sidePanel,scrollBar) before calling this method.");
+                        + "(topPanel,bottomPanel,sidePanel,scrollBar,beanManager) before calling this method.");
             }
         }
 

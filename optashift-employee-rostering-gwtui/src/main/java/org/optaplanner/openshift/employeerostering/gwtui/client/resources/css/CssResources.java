@@ -31,8 +31,6 @@ public interface CssResources extends ClientBundle {
 
         String panel();
 
-        String form();
-
         String glass();
 
         String singleValueTagInput();

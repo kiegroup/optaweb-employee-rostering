@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Button;
 import elemental2.dom.HTMLCanvasElement;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
+import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -75,6 +76,9 @@ public class TemplateEditor implements IsElement {
     @Inject
     private TranslationService CONSTANTS;
 
+    @Inject
+    private SyncBeanManager beanManager;
+
     private Calendar<SpotId, ShiftData> calendar;
 
     private ConfigurationEditor configurationEditor;
@@ -91,6 +95,7 @@ public class TemplateEditor implements IsElement {
                 .fetchingDataFrom(new TenantTemplateFetchable(() -> getTenantId()))
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
                 .displayWeekAs(DateDisplay.WEEKS_FROM_EPOCH)
+                .withBeanManager(beanManager)
                 .creatingDataInstancesWith((c, name, start, end) -> c
                         .addShift(new ShiftData(new SpotData(new Shift(tenantId,
                                 name.getSpot(),
