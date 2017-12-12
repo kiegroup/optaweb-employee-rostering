@@ -31,7 +31,8 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
     Fetchable<Collection<I>> dataProvider;
     Fetchable<List<G>> groupProvider;
     DataProvider<G, I> instanceCreator;
-
+    final int H_PAD = 150;
+    
     private Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Panel topPanel, Panel bottomPanel,
             Panel sidePanel, Fetchable<Collection<I>> dataProvider, Fetchable<List<G>> groupProvider, DataProvider<G,
                     I> instanceCreator, SyncBeanManager beanManager) {
@@ -67,9 +68,8 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         refresh();
 
         Window.addResizeHandler((e) -> {
-            canvas.width = e.getWidth() - canvasElement.offsetLeft - sidePanel.getOffsetWidth() - 100;
-            canvas.height = e.getHeight() - canvasElement.offsetTop - topPanel.getOffsetHeight() - bottomPanel
-                    .getOffsetHeight() - 100;
+            canvas.width = e.getWidth() - canvasElement.offsetLeft - H_PAD;
+            canvas.height = e.getHeight() - canvasElement.offsetTop - 100;
             draw();
         });
 
@@ -99,9 +99,8 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
     }
 
     public void refresh() {
-        double width = Window.getClientWidth() - canvas.offsetLeft - sidePanel.getOffsetWidth() - 100;
-        double height = Window.getClientHeight() - canvas.offsetTop - topPanel.getOffsetHeight() - bottomPanel
-                .getOffsetHeight() - 100;
+        double width = Window.getClientWidth() - canvas.offsetLeft - H_PAD;
+        double height = Window.getClientHeight() - canvas.offsetTop - 100;
 
         canvas.width = width;
         canvas.height = height;

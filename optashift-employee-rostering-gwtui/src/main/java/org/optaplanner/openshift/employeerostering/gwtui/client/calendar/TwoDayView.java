@@ -20,6 +20,8 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CustomScrollPanel;
 import com.google.gwt.user.client.ui.HorizontalScrollbar;
@@ -40,14 +42,17 @@ import com.google.gwt.view.client.SelectionModel;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.Pagination;
+import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawable.PostMouseDownEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.RangeSlider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Value;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 
 public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> implements
@@ -76,7 +81,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     private HashMap<G, DynamicContainer> groupContainer = new HashMap<>();
     private HashMap<G, DynamicContainer> groupAddPlane = new HashMap<>();
     private Collection<I> shifts;
-    private NativeHorizontalScrollbar scrollBar;
+    private NativeHorizontalScrollbar startDateControlScrollbar;
+    private RangeSlider daysShownRangeSlider;
+    private Span daysShownRangeSliderContainer;
 
     TimeSlotTable<D, G> timeslotTable;
 
@@ -105,6 +112,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             setDate(hardStartDateBound);
         }
         updateScrollBar();
+        calendar.draw();
     }
 
     @Override
@@ -113,18 +121,20 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     private void updateScrollBar() {
-        double oldPos = (scrollBar.getHorizontalScrollPosition() + 0.0) / scrollBar
+        double oldPos = (startDateControlScrollbar.getHorizontalScrollPosition() + 0.0) / startDateControlScrollbar
                 .getMaximumHorizontalScrollPosition();
-        scrollBar.setWidth(Math.round(screenWidth) + "px");
-
+        startDateControlScrollbar.setWidth(Math.round(screenWidth) + "px");
+        daysShownRangeSliderContainer.setHeight(Math.round(screenHeight) + "px");
+        daysShownRangeSlider.setAttribute("style", "height:" + Math.round(screenHeight) + "px;");
+        
         if (null != hardStartDateBound && null != hardEndDateBound) {
             int daysBetween = (int) ((hardEndDateBound.toEpochSecond(ZoneOffset.UTC) - hardStartDateBound.toEpochSecond(
                     ZoneOffset.UTC)) / (60 * 60 * 24));
-            scrollBar.setScrollWidth((int) Math.round(screenWidth * ((daysBetween + 0.0) / daysShown)));
-            scrollBar.setHorizontalScrollPosition((int) Math.round(oldPos * scrollBar
+            startDateControlScrollbar.setScrollWidth((int) Math.round(screenWidth * ((daysBetween + 0.0) / daysShown)));
+            startDateControlScrollbar.setHorizontalScrollPosition((int) Math.round(oldPos * startDateControlScrollbar
                     .getMaximumHorizontalScrollPosition()));
         } else {
-            scrollBar.setScrollWidth(0);
+            startDateControlScrollbar.setScrollWidth(0);
         }
     }
 
@@ -135,6 +145,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             setDate(hardEndDateBound.minusDays(daysShown));
         }
         updateScrollBar();
+        calendar.draw();
     }
 
     LocalDateTime hardEndDateBound;
@@ -154,8 +165,12 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     public void setDaysShown(int daysShown) {
+    	if (this.daysShown == daysShown) {
+    		return;
+    	}
         this.daysShown = daysShown;
         updateScrollBar();
+        calendar.draw();
     }
 
     public int getEditMinuteGradality() {
@@ -200,7 +215,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         rangeStart = 0;
         rangeEnd = 10;
         totalDisplayedSpotSlots = 10;
-        daysShown = 7;
+        daysShown = Math.min(7, Math.max(1, Window.getClientWidth()/250));
         editMinuteGradality = 30;
         displayMinuteGradality = 60 * 3;
         dateFormat = dateDisplay;
@@ -236,18 +251,37 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
         VerticalPanel bottomWidgets = new VerticalPanel();
 
-        scrollBar = new NativeHorizontalScrollbar();
-        scrollBar.setWidth("100%");
-        scrollBar.addScrollHandler((e) -> {
-            double pos = (scrollBar.getHorizontalScrollPosition()
+        startDateControlScrollbar = new NativeHorizontalScrollbar();
+        startDateControlScrollbar.setWidth("100%");
+        startDateControlScrollbar.addScrollHandler((e) -> {
+            double pos = (startDateControlScrollbar.getHorizontalScrollPosition()
                     + 0.0) /
-                    (scrollBar.getScrollWidth());
+                    (startDateControlScrollbar.getScrollWidth());
             long secondsBetween = getHardEndDateBound().toEpochSecond(ZoneOffset.UTC) - getHardStartDateBound()
                     .toEpochSecond(ZoneOffset.UTC);
             setDate(getHardStartDateBound().plusSeconds(Math.round(secondsBetween * pos)));
         });
+        
+        daysShownRangeSlider = RangeSlider.create();
+        daysShownRangeSlider.setMin("1");
+        daysShownRangeSlider.setMax("7");
+        daysShownRangeSlider.setStep("1");
+        daysShownRangeSlider.setAttribute("orient", "vertical");
+        CssResources.INSTANCE.calendar().ensureInjected();
+        daysShownRangeSlider.setClassName(CssResources.INSTANCE.calendar().verticalSlider());
+        daysShownRangeSlider.setValue(Integer.toString(daysShown));
+        Event.setEventListener(daysShownRangeSlider, (e) ->
+        {
+                setDaysShown(Integer
+                    .parseInt(daysShownRangeSlider.getValue()));
+        });
+        //Work around for there not being a Event.ONINPUT
+        Event.sinkEvents(daysShownRangeSlider, ~0);    
+        daysShownRangeSliderContainer = new Span();
+        daysShownRangeSliderContainer.getElement().appendChild(daysShownRangeSlider);
+        sidePanel.add(daysShownRangeSliderContainer);
 
-        bottomWidgets.add(scrollBar);
+        bottomWidgets.add(startDateControlScrollbar);
 
         bottomWidgets.add(pagination);
 
@@ -502,7 +536,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         //    CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + x * 6 * widthPerMinute * 60, HEADER_HEIGHT, SPOT_NAME_WIDTH + x
         //            * 6 * widthPerMinute * 60, screenHeight);
         //}
-        for (int x = 0; x < (screenWidth / (getWidthPerMinute() * displayMinuteGradality)); x++) {
+        for (int x = 0; x < (screenWidth / 2*(getWidthPerMinute() * displayMinuteGradality)); x++) {
             if (x % 2 == 0) {
                 CanvasUtils.setFillColor(g, BACKGROUND_1);
             } else {
