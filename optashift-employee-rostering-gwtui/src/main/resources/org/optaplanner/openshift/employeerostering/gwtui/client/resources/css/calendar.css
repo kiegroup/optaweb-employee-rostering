@@ -12,6 +12,13 @@
 	font-family: "Helvetica Neue";
 }
 
+.verticalSlider {
+	writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 8px;
+    height: 100px;
+}
+
 .employeeShiftViewIndifferent .employeeShiftViewDesired .employeeShiftViewUnavailable .employeeShiftViewUndesired .spotShiftView {
   textalign: center;
 }
