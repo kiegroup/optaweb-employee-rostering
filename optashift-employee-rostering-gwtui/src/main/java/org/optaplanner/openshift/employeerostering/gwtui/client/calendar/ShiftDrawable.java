@@ -25,11 +25,11 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     String color;
     int index;
     boolean isMouseOver, isMoving;
-    TwoDayView<SpotId, ShiftData, ShiftDrawable> view;
+    TwoDayViewPresenter<SpotId, ShiftData, ShiftDrawable> view;
     ShiftData id;
     Long minsOffset;
 
-    public ShiftDrawable(TwoDayView<SpotId, ShiftData, ShiftDrawable> view, ShiftData data, int index) {
+    public ShiftDrawable(TwoDayViewPresenter<SpotId, ShiftData, ShiftDrawable> view, ShiftData data, int index) {
         this.view = view;
         this.startTime = data.getStartTime();
         this.endTime = data.getEndTime();

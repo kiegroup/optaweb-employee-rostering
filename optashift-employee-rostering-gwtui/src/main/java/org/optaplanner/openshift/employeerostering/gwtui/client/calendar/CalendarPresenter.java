@@ -4,11 +4,11 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
-import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
+import org.jboss.errai.ui.client.local.api.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
-public interface CalendarView<G extends HasTitle, I extends HasTimeslot<G>> {
+public interface CalendarPresenter<G extends HasTitle, I extends HasTimeslot<G>> extends IsElement {
 
     void setDate(LocalDateTime date);
 
@@ -36,7 +36,7 @@ public interface CalendarView<G extends HasTitle, I extends HasTimeslot<G>> {
 
     void setGroups(List<G> groups);
 
-    void draw(CanvasRenderingContext2D g, double screenWidth, double screenHeight);
+    void draw();
 
     void onMouseDown(MouseEvent e);
 

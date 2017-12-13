@@ -66,19 +66,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
     @Inject
     @DataField
-    private Div topPanel;
-
-    @Inject
-    @DataField
-    private Div bottomPanel;
-
-    @Inject
-    @DataField
-    private Span sidePanel;
-
-    @Inject
-    @DataField
-    private HTMLCanvasElement canvasElement;
+    private Div container;
 
     private Calendar<EmployeeId, EmployeeData> calendar;
 
@@ -129,10 +117,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable>(canvasElement, tenantId, CONSTANTS)
-                .withTopPanel(topPanel)
-                .withBottomPanel(bottomPanel)
-                .withSidePanel(sidePanel)
+        calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable>(container, tenantId, CONSTANTS)
                 .fetchingGroupsFrom(new EmployeeNameFetchable(() -> getTenantId()))
                 .withBeanManager(beanManager)
                 .asTwoDayView((v, d, i) -> new EmployeeDrawable(v, d, i));

@@ -37,7 +37,11 @@ public enum DateDisplay {
                         .getYear(), weekEnd
                                 .getMonth().getValue(), weekEnd.getDayOfMonth());
             default:
-                return "YOU ARE A HACKER!";//If the user ever see this, they are a hacker
+                throw new IllegalStateException(
+                        "A fatal error has occurred in the application, please forward the following\n"
+                                + "message and stack trace to the current maintainer of the project:\n\n"
+                                + "DataDisplay." + this.name() + " is missing a case in"
+                                + " DateDisplay.format(LocalDateTime,int,TranslationService)");
         }
     }
 }

@@ -73,19 +73,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
 
     @Inject
     @DataField
-    private Div topPanel;
-
-    @Inject
-    @DataField
-    private Div bottomPanel;
-
-    @Inject
-    @DataField
-    private Span sidePanel;
-
-    @Inject
-    @DataField
-    private HTMLCanvasElement canvasElement;
+    private Div container;
 
     private Calendar<SpotId, SpotData> calendar;
 
@@ -115,10 +103,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        calendar = new Calendar.Builder<SpotId, SpotData, SpotDrawable>(canvasElement, tenantId, CONSTANTS)
-                .withTopPanel(topPanel)
-                .withBottomPanel(bottomPanel)
-                .withSidePanel(sidePanel)
+        calendar = new Calendar.Builder<SpotId, SpotData, SpotDrawable>(container, tenantId, CONSTANTS)
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
                 .withBeanManager(beanManager)
                 .asTwoDayView((v, d, i) -> new SpotDrawable(v, d, i));
