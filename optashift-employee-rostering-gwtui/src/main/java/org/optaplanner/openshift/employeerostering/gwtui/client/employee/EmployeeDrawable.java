@@ -8,6 +8,7 @@ import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.AbstractDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayViewPresenter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
@@ -16,12 +17,12 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.Cs
 
 public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawable<EmployeeId> {
 
-    TwoDayView<EmployeeId, ?, ?> view;
+    TwoDayViewPresenter<EmployeeId, ?, ?> view;
     EmployeeData data;
     int index;
     boolean isMouseOver;
 
-    public EmployeeDrawable(TwoDayView<EmployeeId, ?, ?> view, EmployeeData data, int index) {
+    public EmployeeDrawable(TwoDayViewPresenter<EmployeeId, ?, ?> view, EmployeeData data, int index) {
         this.view = view;
         this.data = data;
         this.index = index;
@@ -158,7 +159,7 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
         return data;
     }
 
-    public TwoDayView<EmployeeId, ?, ?> getCalendarView() {
+    public TwoDayViewPresenter<EmployeeId, ?, ?> getCalendarView() {
         return view;
     }
 

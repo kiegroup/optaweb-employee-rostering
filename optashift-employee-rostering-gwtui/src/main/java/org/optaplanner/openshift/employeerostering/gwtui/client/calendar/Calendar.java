@@ -6,11 +6,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import elemental2.dom.CanvasRenderingContext2D;
-import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
+import org.gwtbootstrap3.client.ui.html.Div;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
@@ -20,44 +20,19 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTi
 
 public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
 
-    HTMLCanvasElement canvas;
-    CalendarView<G, I> view;
+    CalendarPresenter<G, I> view;
     Collection<I> shifts;
     Integer tenantId;
-    Panel topPanel;
-    Panel bottomPanel;
-    Panel sidePanel;
     SyncBeanManager beanManager;
     Fetchable<Collection<I>> dataProvider;
     Fetchable<List<G>> groupProvider;
     DataProvider<G, I> instanceCreator;
-    final int H_PAD = 150;
-    
-    private Calendar(HTMLCanvasElement canvasElement, Integer tenantId, Panel topPanel, Panel bottomPanel,
-            Panel sidePanel, Fetchable<Collection<I>> dataProvider, Fetchable<List<G>> groupProvider, DataProvider<G,
+
+    private Calendar(Integer tenantId, Fetchable<Collection<I>> dataProvider, Fetchable<List<G>> groupProvider,
+            DataProvider<G,
                     I> instanceCreator, SyncBeanManager beanManager) {
-        this.canvas = canvasElement;
         this.beanManager = beanManager;
         this.tenantId = tenantId;
-        this.topPanel = topPanel;
-        this.bottomPanel = bottomPanel;
-        this.sidePanel = sidePanel;
-
-        canvas.draggable = false;
-        canvas.style.background = "#FFFFFF";
-
-        canvas.onmousedown = (e) -> {
-            onMouseDown((MouseEvent) e);
-            return e;
-        };
-        canvas.onmousemove = (e) -> {
-            onMouseMove((MouseEvent) e);
-            return e;
-        };
-        canvas.onmouseup = (e) -> {
-            onMouseUp((MouseEvent) e);
-            return e;
-        };
 
         shifts = new ArrayList<>();
 
@@ -67,19 +42,13 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
 
         refresh();
 
-        Window.addResizeHandler((e) -> {
-            canvas.width = e.getWidth() - canvasElement.offsetLeft - H_PAD;
-            canvas.height = e.getHeight() - canvasElement.offsetTop - 100;
-            draw();
-        });
-
     }
 
-    private void setView(CalendarView<G, I> view) {
+    private void setView(CalendarPresenter<G, I> view) {
         this.view = view;
     }
 
-    private CalendarView<G, I> getView() {
+    private CalendarPresenter<G, I> getView() {
         return view;
     }
 
@@ -94,32 +63,14 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
 
     public void draw() {
         refresh();
-        CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) canvas.getContext("2d");
-        view.draw(g, canvas.width, canvas.height);
+        view.draw();
     }
 
     public void refresh() {
-        double width = Window.getClientWidth() - canvas.offsetLeft - H_PAD;
-        double height = Window.getClientHeight() - canvas.offsetTop - 100;
-
-        canvas.width = width;
-        canvas.height = height;
     }
 
     public void forceUpdate() {
         groupProvider.fetchData(() -> dataProvider.fetchData(() -> draw()));
-    }
-
-    public void onMouseDown(MouseEvent e) {
-        getView().onMouseDown(e);
-    }
-
-    public void onMouseMove(MouseEvent e) {
-        getView().onMouseMove(e);
-    }
-
-    public void onMouseUp(MouseEvent e) {
-        getView().onMouseUp(e);
     }
 
     public void setDate(LocalDateTime date) {
@@ -235,14 +186,15 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         return beanManager.lookupBean(clazz).newInstance();
     }
 
+    public SyncBeanManager getBeanManager() {
+        return beanManager;
+    }
+
     public static class Builder<G extends HasTitle, T extends HasTimeslot<G>, D extends TimeRowDrawable<G>> {
 
-        HTMLCanvasElement canvas;
+        Panel container;
         Collection<T> shifts;
         Integer tenantId;
-        Panel topPanel;
-        Panel bottomPanel;
-        Panel sidePanel;
         LocalDateTime startAt;
         Fetchable<Collection<T>> dataProvider;
         Fetchable<List<G>> groupProvider;
@@ -251,34 +203,16 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         TranslationService translator;
         DateDisplay dateDisplay;
 
-        public Builder(HTMLCanvasElement canvas, Integer tenantId, TranslationService translator) {
-            this.canvas = canvas;
+        public Builder(Panel container, Integer tenantId, TranslationService translator) {
+            this.container = container;
             this.tenantId = tenantId;
             this.translator = translator;
 
-            topPanel = null;
-            bottomPanel = null;
-            sidePanel = null;
             dataProvider = null;
             groupProvider = null;
             instanceCreator = null;
             startAt = null;
             dateDisplay = DateDisplay.WEEK_STARTING;
-        }
-
-        public Builder<G, T, D> withTopPanel(Panel topPanel) {
-            this.topPanel = topPanel;
-            return this;
-        }
-
-        public Builder<G, T, D> withBottomPanel(Panel bottomPanel) {
-            this.bottomPanel = bottomPanel;
-            return this;
-        }
-
-        public Builder<G, T, D> withSidePanel(Panel sidePanel) {
-            this.sidePanel = sidePanel;
-            return this;
         }
 
         public Builder<G, T, D> fetchingDataFrom(Fetchable<Collection<T>> dataProvider) {
@@ -312,21 +246,24 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         }
 
         public Calendar<G, T> asTwoDayView(TimeRowDrawableProvider<G, T, D> drawableProvider) {
-            if (null != topPanel && null != bottomPanel && null != sidePanel && null != beanManager) {
-                Calendar<G, T> calendar = new Calendar<>(canvas, tenantId, topPanel, bottomPanel, sidePanel,
+            if (null != beanManager) {
+                Calendar<G, T> calendar = new Calendar<>(tenantId,
                         dataProvider,
                         groupProvider, instanceCreator, beanManager);
-                TwoDayView<G, T, D> view = new TwoDayView<G, T, D>(calendar, topPanel, bottomPanel, sidePanel,
+                TwoDayViewPresenter<G, T, D> view = new TwoDayViewPresenter<G, T, D>(calendar,
                         drawableProvider, dateDisplay, translator);
                 calendar.setView(view);
 
                 if (null != startAt) {
                     view.setDate(startAt);
                 }
+                Div tmp = new Div();
+                tmp.getElement().appendChild((com.google.gwt.dom.client.Element) view.getElement());
+                container.add(tmp);
                 return calendar;
             } else {
                 throw new IllegalStateException("You must set all of "
-                        + "(topPanel,bottomPanel,sidePanel,scrollBar,beanManager) before calling this method.");
+                        + "(beanManager) before calling this method.");
             }
         }
 

@@ -2,43 +2,26 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
 
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
-import org.gwtbootstrap3.client.ui.html.Div;
-import org.gwtbootstrap3.client.ui.html.Span;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.AbstractDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayViewPresenter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
-import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
 public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<SpotId> {
 
-    TwoDayView<SpotId, ?, ?> view;
+    TwoDayViewPresenter<SpotId, ?, ?> view;
     SpotData data;
     int index;
     boolean isMouseOver;
 
-    public SpotDrawable(TwoDayView<SpotId, ?, ?> view, SpotData data, int index) {
+    public SpotDrawable(TwoDayViewPresenter<SpotId, ?, ?> view, SpotData data, int index) {
         this.view = view;
         this.data = data;
         this.index = index;
@@ -118,7 +101,7 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
         return data;
     }
 
-    public TwoDayView<SpotId, ?, ?> getCalendarView() {
+    public TwoDayViewPresenter<SpotId, ?, ?> getCalendarView() {
         return view;
     }
 

@@ -16,7 +16,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTi
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
 //TODO: See if you can replace me with a Google Calendar widget
-public abstract class WeekView<G extends HasTitle, I extends HasTimeslot<G>> implements CalendarView<G, I> {
+public abstract class WeekView<G extends HasTitle, I extends HasTimeslot<G>> implements CalendarPresenter<G, I> {
 
     Calendar<G, I> calendar;
 
@@ -38,7 +38,6 @@ public abstract class WeekView<G extends HasTitle, I extends HasTimeslot<G>> imp
         y = 0;
     }
 
-    @Override
     public void draw(CanvasRenderingContext2D g, double screenWidth, double screenHeight) {
         g.clearRect(0, 0, screenWidth, screenHeight);
         double dayWidth = screenWidth / 8.0;
@@ -96,43 +95,4 @@ public abstract class WeekView<G extends HasTitle, I extends HasTimeslot<G>> imp
         g.fillRect(x, y, 5, 5);
     }
 
-    @Override
-    public void onMouseDown(MouseEvent e) {
-        ErrorPopup.show("Hello");
-        x = CanvasUtils.getCanvasX(calendar.canvas, e);
-        y = CanvasUtils.getCanvasY(calendar.canvas, e);
-        calendar.draw();
-    }
-
-    @Override
-    public void onMouseUp(MouseEvent e) {
-        x = CanvasUtils.getCanvasX(calendar.canvas, e);
-        y = CanvasUtils.getCanvasY(calendar.canvas, e);
-        calendar.draw();
-    }
-
-    @Override
-    public void onMouseMove(MouseEvent e) {
-        x = CanvasUtils.getCanvasX(calendar.canvas, e);
-        y = CanvasUtils.getCanvasY(calendar.canvas, e);
-        calendar.draw();
-    }
-
-    @Override
-    public void setShifts(Collection<I> shifts) {
-        this.shifts = shifts;
-
-    }
-
-    @Override
-    public void setGroups(List<G> groups) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void setDate(LocalDateTime date) {
-        // TODO Auto-generated method stub
-
-    }
 }

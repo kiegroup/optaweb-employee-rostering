@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.dom.client.Element;
+import org.jboss.errai.common.client.dom.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Button;
 import elemental2.dom.HTMLCanvasElement;
@@ -60,18 +60,14 @@ public class TemplateEditor implements IsElement {
     @Inject
     @DataField
     private Button backButton;
+
     @Inject
     @DataField
-    private HTMLCanvasElement canvasElement;
+    private Button saveButton;
+
     @Inject
     @DataField
-    private Div topPanel;
-    @Inject
-    @DataField
-    private Div bottomPanel;
-    @Inject
-    @DataField
-    private Span sidePanel;
+    private Div container;
 
     @Inject
     private TranslationService CONSTANTS;
@@ -88,10 +84,7 @@ public class TemplateEditor implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
-        calendar = new Calendar.Builder<SpotId, ShiftData, ShiftDrawable>(canvasElement, tenantId, CONSTANTS)
-                .withTopPanel(topPanel)
-                .withBottomPanel(bottomPanel)
-                .withSidePanel(sidePanel)
+        calendar = new Calendar.Builder<SpotId, ShiftData, ShiftDrawable>(container, tenantId, CONSTANTS)
                 .fetchingDataFrom(new TenantTemplateFetchable(() -> getTenantId()))
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
                 .displayWeekAs(DateDisplay.WEEKS_FROM_EPOCH)
@@ -104,32 +97,6 @@ public class TemplateEditor implements IsElement {
                                         end))))))
                 .asTwoDayView((v, d, i) -> new ShiftDrawable(v, d, i));
         calendar.setHardStartDateBound(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
-        Button button = new Button("Create Template");
-        button.addClickHandler((e) -> {
-            Collection<ShiftData> shifts = calendar.getShifts();
-            EmployeeRestServiceBuilder.findEmployeeGroupByName(tenantId, "ALL", new FailureShownRestCallback<
-                    EmployeeGroup>() {
-
-                @Override
-                public void onSuccess(EmployeeGroup allEmployees) {
-                    shifts.forEach((s) -> s.setEmployees(Arrays.asList(new EmployeeTimeSlotInfo(tenantId, new IdOrGroup(
-                            tenantId, true,
-                            allEmployees.getId()), EmployeeAvailabilityState.DESIRED))));
-                    List<ShiftInfo> shiftInfos = new ArrayList<>();
-                    shifts.forEach((s) -> shiftInfos.add(new ShiftInfo(tenantId, s)));
-
-                    ShiftRestServiceBuilder.createTemplate(tenantId, shiftInfos, new FailureShownRestCallback<
-                            Void>() {
-
-                        @Override
-                        public void onSuccess(Void result) {
-                        }
-                    });
-                }
-            });
-        });
-
-        sidePanel.add(button);
     }
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {
@@ -156,6 +123,31 @@ public class TemplateEditor implements IsElement {
     @EventHandler("backButton")
     private void onBackButtonClick(ClickEvent e) {
         configurationEditor.switchView(Views.TENANT_CONFIGURATION_EDITOR);
+    }
+
+    @EventHandler("saveButton")
+    private void onSaveButtonClick(ClickEvent e) {
+        Collection<ShiftData> shifts = calendar.getShifts();
+        EmployeeRestServiceBuilder.findEmployeeGroupByName(tenantId, "ALL", new FailureShownRestCallback<
+                EmployeeGroup>() {
+
+            @Override
+            public void onSuccess(EmployeeGroup allEmployees) {
+                shifts.forEach((s) -> s.setEmployees(Arrays.asList(new EmployeeTimeSlotInfo(tenantId, new IdOrGroup(
+                        tenantId, true,
+                        allEmployees.getId()), EmployeeAvailabilityState.DESIRED))));
+                List<ShiftInfo> shiftInfos = new ArrayList<>();
+                shifts.forEach((s) -> shiftInfos.add(new ShiftInfo(tenantId, s)));
+
+                ShiftRestServiceBuilder.createTemplate(tenantId, shiftInfos, new FailureShownRestCallback<
+                        Void>() {
+
+                    @Override
+                    public void onSuccess(Void result) {
+                    }
+                });
+            }
+        });
     }
 
 }
