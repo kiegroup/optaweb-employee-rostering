@@ -60,6 +60,8 @@ public interface CssResources extends ClientBundle {
         String employeeShiftViewUndesired();
 
         String spotShiftView();
+        
+        String verticalSlider();
     }
 
     @Source("errorpopup.css")
