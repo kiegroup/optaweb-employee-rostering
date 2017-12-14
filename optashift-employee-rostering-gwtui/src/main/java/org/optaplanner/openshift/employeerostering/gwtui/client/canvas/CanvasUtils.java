@@ -209,7 +209,8 @@ public class CanvasUtils {
     }
 
     public static enum Glyphs {
-        LOCK(true, 0xe033);
+        LOCK(true, 0xe033),
+        REMOVE(true, 0xe014);
 
         boolean useHalflings;
         int unicode;

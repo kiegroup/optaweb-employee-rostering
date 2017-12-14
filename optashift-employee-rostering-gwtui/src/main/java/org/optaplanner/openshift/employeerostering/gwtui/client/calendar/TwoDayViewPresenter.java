@@ -34,6 +34,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtil
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Value;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 
 public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> implements
@@ -95,6 +96,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     private Long selectedIndex;
     private G overSpot;
     private String popupText;
+    private Drawable toolBox;
     private D mouseOverDrawable;
 
     private int page;
@@ -131,6 +133,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         isDragging = false;
         creatingEvent = false;
         popupText = null;
+        toolBox = null;
         selectedIndex = null;
         shiftDrawables = new ArrayList<>();
         visibleDirty = true;
@@ -289,6 +292,14 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         this.popupText = popupText;
     }
 
+    public Drawable getToolBox() {
+        return toolBox;
+    }
+
+    public void setToolBox(Drawable d) {
+        toolBox = d;
+    }
+
     public D getMouseOverDrawable() {
         return mouseOverDrawable;
     }
@@ -347,7 +358,8 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     public double getOffsetX() {
-        return (screenWidth - SPOT_NAME_WIDTH) * Math.round(getDifferenceFromBaseDate()) * 0.5;
+        return (screenWidth - SPOT_NAME_WIDTH) * Math.round(getDifferenceFromBaseDate()) * (1.0
+                / getDaysShown());
     }
 
     public double getOffsetY() {
@@ -376,6 +388,10 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
 
     public void preparePopup(String text) {
         popupText = text;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
     }
 
     @Override
@@ -411,6 +427,20 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     // Date Calculations
+    public double getLocationOfDate(LocalDateTime date) {
+        return ((date.toEpochSecond(ZoneOffset.UTC) - currDay.toEpochSecond(ZoneOffset.UTC)) / 60)
+                * getWidthPerMinute() + SPOT_NAME_WIDTH;
+
+    }
+
+    public double getDaysBetweenEndpoints() {
+        if (hardStartDateBound != null && hardEndDateBound != null) {
+            return (hardEndDateBound.toEpochSecond(ZoneOffset.UTC) -
+                    hardStartDateBound.toEpochSecond(ZoneOffset.UTC) + 0.0) / SECONDS_PER_DAY;
+        }
+        return 0;
+    }
+
     public double getDifferenceFromBaseDate() {
         return (currDay.toEpochSecond(ZoneOffset.UTC) - baseDate.toEpochSecond(ZoneOffset.UTC)) / (SECONDS_PER_DAY
                 + 0.0);
@@ -578,6 +608,15 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         isDragging = true;
 
         PostMouseDownEvent consumed = PostMouseDownEvent.IGNORE;
+        if (null != toolBox) {
+            consumed = toolBox.onMouseDown(e, localMouseX, localMouseY);
+            if (PostMouseDownEvent.REMOVE_FOCUS == consumed) {
+                draw();
+                return;
+            } else {
+                toolBox = null;
+            }
+        }
         for (D drawable : CommonUtils.flatten(getVisibleItems())) {
             LocalDateTime mouseTime = getMouseLocalDateTime();
             double drawablePos = drawable.getGlobalY();
@@ -648,6 +687,13 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
             }
 
         } else {
+            if (null != toolBox) {
+                if (toolBox.onMouseMove(e, localMouseX, localMouseY)) {
+                    draw();
+                    return;
+                }
+                ;
+            }
             for (D drawable : CommonUtils.flatten(getVisibleItems())) {
                 LocalDateTime mouseTime = getMouseLocalDateTime();
                 double drawablePos = drawable.getGlobalY();
@@ -861,13 +907,13 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
 
     // View defer
     public void update() {
-        double oldPos = scrollBarPos;
         if (null != hardStartDateBound && null != hardEndDateBound) {
             int daysBetween = (int) ((hardEndDateBound.toEpochSecond(ZoneOffset.UTC) - hardStartDateBound.toEpochSecond(
                     ZoneOffset.UTC)) / (60 * 60 * 24));
             scrollBarLength = (int) Math.round((daysBetween + 0.0) / getDaysShown());
             scrollBarHandleLength = daysShown;
-            scrollBarPos = oldPos * scrollBarLength;
+            scrollBarPos = (currDay.toEpochSecond(ZoneOffset.UTC) -
+                    getViewStartDate().toEpochSecond(ZoneOffset.UTC) + 0.0) / (SECONDS_PER_DAY * daysBetween);
         } else {
             scrollBarPos = 0;
             scrollBarLength = 0;
