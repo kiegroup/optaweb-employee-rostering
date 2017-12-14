@@ -31,6 +31,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.RangeSlider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayViewPresenter.*;
@@ -134,6 +135,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             long secondsBetween = presenter.getHardEndDateBound().toEpochSecond(ZoneOffset.UTC) - presenter
                     .getHardStartDateBound()
                     .toEpochSecond(ZoneOffset.UTC);
+            presenter.setToolBox(null);
             presenter.setDate(presenter.getHardStartDateBound().plusSeconds(Math.round(secondsBetween * pos)));
         });
 
@@ -171,6 +173,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     public void draw() {
+        presenter.setPage(pager.getPage());
         CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) canvas.getContext("2d");
         g.clearRect(0, 0, presenter.getScreenWidth(), presenter.getScreenHeight());
         //updateScrollBar();
@@ -178,6 +181,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         drawTimes(g);
         drawSpots(g);
         drawSpotToCreate(g);
+        drawToolBox(g);
         drawPopup(g);
     }
 
@@ -256,6 +260,12 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + presenter.getGroupHeight() * pos, presenter.getScreenWidth(),
                     HEADER_HEIGHT + presenter.getGroupHeight() * pos,
                     2);
+        }
+    }
+
+    private void drawToolBox(CanvasRenderingContext2D g) {
+        if (presenter.getToolBox() != null) {
+            presenter.getToolBox().draw(g);
         }
     }
 

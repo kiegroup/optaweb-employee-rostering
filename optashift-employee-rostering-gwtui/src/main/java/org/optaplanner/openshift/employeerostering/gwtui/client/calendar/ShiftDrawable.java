@@ -24,7 +24,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     LocalDateTime endTime;
     String color;
     int index;
-    boolean isMouseOver, isMoving;
+    boolean isMouseOver, isMoving, dragged;
     TwoDayViewPresenter<SpotId, ShiftData, ShiftDrawable> view;
     ShiftData id;
     Long minsOffset;
@@ -37,6 +37,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
         this.color = ColorUtils.getColor(view.getGroupIndex(data.getGroupId()));
         this.index = index;
         this.isMouseOver = false;
+        this.dragged = false;
         this.id = data;
     }
 
@@ -64,9 +65,6 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
         g.fillText(spot.getTitle(), x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
                 y + (view.getGroupHeight() + textSize[1]) * 0.5);
-
-        CanvasUtils.setFillColor(g, "#FF0000");
-        g.fillRect(x, y, 30, 30);
 
         CanvasUtils.setFillColor(g, "#000000");
         g.fillRect(x + duration * view.getWidthPerMinute() - 30, y + view.getGroupHeight() - 30, 30, 30);
@@ -97,10 +95,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
         double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
         double duration = end - start;
 
-        if (x - getGlobalX() < 30 && y - getGlobalY() < 30) {
-            view.getCalendar().removeShift(id);
-            return PostMouseDownEvent.REMOVE_FOCUS;
-        } else if (x - getGlobalX() - duration * view.getWidthPerMinute() + 30 > 0 && y - getGlobalY() - view
+        if (x - getGlobalX() - duration * view.getWidthPerMinute() + 30 > 0 && y - getGlobalY() - view
                 .getGroupHeight() + 30 > 0) {
             isMoving = false;
             return PostMouseDownEvent.CAPTURE_DRAG;
@@ -115,6 +110,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     @Override
     public boolean onMouseDrag(MouseEvent e, double x, double y) {
         view.preparePopup(this.toString());
+        dragged = true;
         if (isMoving) {
             long mins = (endTime.toEpochSecond(ZoneOffset.UTC) - startTime.toEpochSecond(ZoneOffset.UTC)) / 60;
             startTime = view.roundLocalDateTime(view.getMouseLocalDateTime().plusMinutes(minsOffset));
@@ -130,11 +126,17 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
     @Override
     public boolean onMouseUp(MouseEvent e, double x, double y) {
-        ShiftData shift = new ShiftData(new SpotData(new Shift(spot.getSpot().getTenantId(), spot.getSpot(),
-                new TimeSlot(spot.getSpot().getTenantId(), startTime, endTime))));
-        view.getCalendar().removeShift(id);
-        view.getCalendar().addShift(shift);
+        if (dragged) {
+            ShiftData shift = new ShiftData(new SpotData(new Shift(spot.getSpot().getTenantId(), spot.getSpot(),
+                    new TimeSlot(spot.getSpot().getTenantId(), startTime, endTime))));
+            view.getCalendar().removeShift(id);
+            view.getCalendar().addShift(shift);
+        } else {
+            view.setToolBox(new ShiftToolbox(this, view, -ShiftToolbox.WIDTH, -view.getGroupHeight()
+                    - ShiftToolbox.HEIGHT));
+        }
         minsOffset = null;
+        dragged = false;
         return true;
     }
 
