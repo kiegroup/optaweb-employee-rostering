@@ -597,6 +597,8 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         } else {
             selectedSpot = mouseOverDrawable.getGroupId();
             selectedIndex = (long) mouseOverDrawable.getIndex();
+            overSpot = selectedSpot;
+            cursorIndex.put(overSpot, selectedIndex.intValue());
         }
 
         draw();
