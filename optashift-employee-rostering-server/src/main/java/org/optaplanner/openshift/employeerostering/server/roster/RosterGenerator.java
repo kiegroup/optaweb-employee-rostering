@@ -99,14 +99,14 @@ public class RosterGenerator {
     public void setUpGeneratedData() {
         tenantNameGenerator.predictMaximumSizeAndReset(10);
         generateRoster(10, 7, false);
-        generateRoster(10, 28, false);
-        generateRoster(20, 28, false);
-        generateRoster(40, 28 * 2, false);
-        generateRoster(80, 28 * 4, false);
-        generateRoster(10, 28, true);
-        generateRoster(20, 28, true);
-        generateRoster(40, 28 * 2, true);
-        generateRoster(80, 28 * 4, true);
+        generateRoster(10, 7 * 4, false);
+        generateRoster(20, 7 * 4, false);
+        generateRoster(40, 7 * 2, false);
+        generateRoster(80, 7 * 4, false);
+        generateRoster(10, 7 * 4, true);
+        generateRoster(20, 7 * 4, true);
+        generateRoster(40, 7 * 2, true);
+        generateRoster(80, 7 * 4, true);
     }
 
     @Transactional
