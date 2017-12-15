@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.common.client.dom.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import elemental2.dom.HTMLCanvasElement;
 import org.gwtbootstrap3.client.ui.html.Div;
@@ -97,6 +98,8 @@ public class TemplateEditor implements IsElement {
                                         end))))))
                 .asTwoDayView((v, d, i) -> new ShiftDrawable(v, d, i));
         calendar.setHardStartDateBound(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
+        Window.addResizeHandler((e) -> calendar.setViewSize(e.getWidth() - container.getAbsoluteLeft(),
+                e.getHeight() - container.getAbsoluteTop() - saveButton.getOffsetHeight()));
     }
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {
@@ -113,6 +116,8 @@ public class TemplateEditor implements IsElement {
     }
 
     public void refresh() {
+        calendar.setViewSize(Window.getClientWidth() - container.getAbsoluteLeft(),
+                Window.getClientHeight() - container.getAbsoluteTop() - saveButton.getOffsetHeight());
         calendar.refresh();
     }
 

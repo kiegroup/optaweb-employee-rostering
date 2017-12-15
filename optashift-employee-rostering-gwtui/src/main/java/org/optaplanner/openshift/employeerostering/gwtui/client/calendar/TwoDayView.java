@@ -93,20 +93,20 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         canvas.addEventListener("mousemove", (e) -> {
             presenter.onMouseMove((MouseEvent) e);
         });
-
-        Window.addResizeHandler((e) -> {
-            canvas.width = e.getWidth() - canvas.offsetLeft - H_PAD;
-            canvas.height = e.getHeight() - canvas.offsetTop - 100;
-            presenter.update();
-            presenter.updateBounds(canvas.width, canvas.height);
-        });
         initPanels();
     }
 
-    public void updateBounds() {
-        canvas.width = Window.getClientWidth() - canvas.offsetLeft - H_PAD;
-        canvas.height = Window.getClientHeight() - canvas.offsetTop - 100;
-        presenter.updateBounds(canvas.width, canvas.height);
+    public void setViewSize(double screenWidth, double screenHeight) {
+        canvas.width = screenWidth - daysShownRangeSlider.getOffsetWidth() - canvas.offsetLeft;
+        canvas.height = screenHeight - bottomPanel.getOffsetHeight() - canvas.offsetTop;
+    }
+
+    public double getScreenWidth() {
+        return canvas.width;
+    }
+
+    public double getScreenHeight() {
+        return canvas.height;
     }
 
     public static <G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> TwoDayView<G, I, D>
@@ -175,7 +175,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     public void draw() {
         presenter.setPage(pager.getPage());
         CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) canvas.getContext("2d");
-        g.clearRect(0, 0, presenter.getScreenWidth(), presenter.getScreenHeight());
+        g.clearRect(0, 0, getScreenWidth(), getScreenHeight());
         //updateScrollBar();
 
         drawTimes(g);
@@ -244,10 +244,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         g.restore();
 
         CanvasUtils.setFillColor(g, "#FFFFFF");
-        g.fillRect(0, HEADER_HEIGHT, SPOT_NAME_WIDTH, presenter.getScreenHeight() - HEADER_HEIGHT);
+        g.fillRect(0, HEADER_HEIGHT, SPOT_NAME_WIDTH, getScreenHeight() - HEADER_HEIGHT);
         CanvasUtils.setFillColor(g, "#000000");
         CanvasUtils.drawLine(g, SPOT_NAME_WIDTH, HEADER_HEIGHT,
-                SPOT_NAME_WIDTH, presenter.getScreenHeight(), 2);
+                SPOT_NAME_WIDTH, getScreenHeight(), 2);
 
         double textHeight = CanvasUtils.getTextHeight(g, minSize);
         g.font = CanvasUtils.getFont(minSize);
@@ -258,7 +258,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             g.fillText(spot.getTitle(), 0, HEADER_HEIGHT + presenter.getGroupHeight() * pos + textHeight + (presenter
                     .getGroupHeight() - textHeight)
                     / 2);
-            CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + presenter.getGroupHeight() * pos, presenter.getScreenWidth(),
+            CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + presenter.getGroupHeight() * pos, getScreenWidth(),
                     HEADER_HEIGHT + presenter.getGroupHeight() * pos,
                     2);
         }
@@ -356,9 +356,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getWidthPerMinute() - drawOffset, 0,
                     SPOT_NAME_WIDTH
                             + (24 * x) * 60
-                                    * presenter.getWidthPerMinute() - drawOffset, presenter.getScreenHeight(), 2);
+                                    * presenter.getWidthPerMinute() - drawOffset, getScreenHeight(), 2);
         }
-        for (int x = 0; x < (presenter.getScreenWidth() / 2 * (presenter.getWidthPerMinute() * presenter
+        for (int x = 0; x < (getScreenWidth() / 2 * (presenter.getWidthPerMinute() * presenter
                 .getDisplayMinuteGradality())); x++) {
             if (x % 2 == 0) {
                 CanvasUtils.setFillColor(g, BACKGROUND_1);
@@ -376,24 +376,24 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                     - drawOffset,
                     HEADER_HEIGHT,
                     SPOT_NAME_WIDTH + x * presenter.getWidthPerMinute() * presenter.getDisplayMinuteGradality()
-                            - drawOffset, presenter.getScreenHeight(), 1);
+                            - drawOffset, getScreenHeight(), 1);
         }
 
         CanvasUtils.setFillColor(g, "#FFFFFF");
         g.fillRect(0, 0, SPOT_NAME_WIDTH, HEADER_HEIGHT);
         CanvasUtils.setFillColor(g, "#000000");
         g.fillText(week, 0, HEADER_HEIGHT / 2);
-        CanvasUtils.drawLine(g, SPOT_NAME_WIDTH, 0, SPOT_NAME_WIDTH, presenter.getScreenHeight(), 2);
+        CanvasUtils.drawLine(g, SPOT_NAME_WIDTH, 0, SPOT_NAME_WIDTH, getScreenHeight(), 2);
     }
 
     public void updateScrollBars() {
         double oldPos = (startDateControlScrollbar.getHorizontalScrollPosition() + 0.0) / startDateControlScrollbar
                 .getMaximumHorizontalScrollPosition();
-        startDateControlScrollbar.setWidth(Math.round(presenter.getScreenWidth()) + "px");
-        daysShownRangeSliderContainer.setHeight(Math.round(presenter.getScreenHeight()) + "px");
-        daysShownRangeSlider.setAttribute("style", "height:" + Math.round(presenter.getScreenHeight()) + "px;");
+        startDateControlScrollbar.setWidth(Math.round(canvas.width) + "px");
+        daysShownRangeSliderContainer.setHeight(Math.round(canvas.height) + "px");
+        daysShownRangeSlider.setAttribute("style", "height:" + Math.round(canvas.height) + "px;");
 
-        startDateControlScrollbar.setScrollWidth((int) Math.round(presenter.getScreenWidth() * presenter
+        startDateControlScrollbar.setScrollWidth((int) Math.round(canvas.width * presenter
                 .getScrollBarLength()));
         startDateControlScrollbar.setHorizontalScrollPosition((int) Math.round(oldPos * startDateControlScrollbar
                 .getMaximumHorizontalScrollPosition()));

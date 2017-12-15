@@ -55,4 +55,8 @@ public interface CalendarPresenter<G extends HasTitle, I extends HasTimeslot<G>>
     int getDisplayMinuteGradality();
 
     void setDisplayMinuteGradality(int displayMinuteGradality);
+
+    void setViewSize(double screenWidth, double screenHeight);
+
+    void setScreenHeight(double screenHeight);
 }
