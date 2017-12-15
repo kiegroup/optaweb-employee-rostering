@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -23,6 +24,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
@@ -107,6 +109,11 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
 
                                     List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
                                     List<Spot> spots = spotRosterView.getSpotList();
+                                    HashSet<SpotData> remaining = new HashSet<>(calendar.getShifts());
+                                    remaining.removeIf((s) -> !calendar.getVisibleGroups().contains(s.getGroupId())
+                                            || !TimeSlotUtils.doTimeslotsIntersect(s.getStartTime(), s
+                                                    .getEndTime(),
+                                                    calendar.getViewStartDate(), calendar.getViewEndDate()));
 
                                     for (TimeSlot timeslot : timeslots) {
                                         for (Spot spot : spots) {
@@ -118,13 +125,22 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                                         .stream().forEach((sv) -> {
                                                             Shift shift = new Shift(sv, spot, timeslot);
                                                             shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
-                                                            if (!SpotData.update(shift)) {
-                                                                calendar.addShift(new SpotData(shift));
+                                                            SpotData oldShift = SpotData.update(shift);
+                                                            if (null == oldShift) {
+                                                                SpotData data = new SpotData(shift);
+                                                                calendar.addShift(data);
+                                                                remaining.remove(data);
+                                                            } else {
+                                                                remaining.remove(oldShift);
                                                             }
                                                         });
                                             }
                                         }
                                     }
+                                    remaining.forEach((s) -> {
+                                        calendar.removeShift(s);
+                                        SpotData.remove(s.getShift());
+                                    });
                                     after.execute();
                                 }
                             });

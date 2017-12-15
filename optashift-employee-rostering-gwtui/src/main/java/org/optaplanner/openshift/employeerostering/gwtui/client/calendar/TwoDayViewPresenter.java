@@ -472,14 +472,17 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
 
     @Override
     public void addShift(I shift) {
-        //TODO: Make this better
+        // TODO: Make better
         setShifts(calendar.getShifts());
     }
 
     @Override
     public void removeShift(I shift) {
-        //TODO: Make this better
-        setShifts(calendar.getShifts());
+        D drawable = shiftDrawables.stream()
+                .filter((d) -> d.getGroupId().equals(shift.getGroupId()) &&
+                        d.getStartTime().equals(shift.getStartTime()) &&
+                        d.getEndTime().equals(shift.getEndTime())).findAny().get();
+        timeslotTable.getRowOf(drawable).remove(drawable);
     }
 
     @Override
