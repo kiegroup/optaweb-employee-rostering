@@ -151,7 +151,6 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         scrollBarLength = 1;
         scrollBarHandleLength = 1;
         view = TwoDayView.create(calendar.getBeanManager(), this);
-        view.updateBounds();
     }
 
     // Getter/Setters
@@ -169,7 +168,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         currDay = date;//LocalDateTime.of(date.toLocalDate(), LocalTime.MIDNIGHT);
         timeslotTable.setStartDate(getViewStartDate());
         timeslotTable.setEndDate(getViewEndDate());
-        update();
+        draw();
     }
 
     @Override
@@ -183,7 +182,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         if (getViewStartDate().isBefore(hardStartDateBound)) {
             setDate(hardStartDateBound);
         }
-        update();
+        draw();
     }
 
     @Override
@@ -197,7 +196,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         if (getViewEndDate().isAfter(hardEndDateBound)) {
             setDate(hardEndDateBound.minusDays(daysShown));
         }
-        update();
+        draw();
     }
 
     public int getDaysShown() {
@@ -210,7 +209,8 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         }
         this.daysShown = daysShown;
         setToolBox(null);
-        update();
+        calendar.setViewSize(screenWidth, screenHeight);
+        draw();
     }
 
     public int getEditMinuteGradality() {
@@ -363,12 +363,12 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     public double getOffsetX() {
-        return (screenWidth - SPOT_NAME_WIDTH) * Math.round(getDifferenceFromBaseDate()) * (1.0
+        return (view.getScreenWidth() - SPOT_NAME_WIDTH) * Math.round(getDifferenceFromBaseDate()) * (1.0
                 / getDaysShown());
     }
 
     public double getOffsetY() {
-        return (screenHeight - HEADER_HEIGHT - spotHeight) * page;
+        return (view.getScreenHeight() - HEADER_HEIGHT - spotHeight) * page;
     }
 
     public Integer getCursorIndex(G spot) {
@@ -401,6 +401,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         }
         this.page = page;
         setToolBox(null);
+        draw();
     }
 
     @Override
@@ -556,7 +557,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         dataProvider.setList(getItems());
         dataProvider.flush();
         view.updatePager();
-        update();
+        draw();
     }
 
     // Mouse Handling
@@ -816,7 +817,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         visibleDirty = true;
         rangeStart = start;
         rangeEnd = start + length;
-        update();
+        draw();
     }
 
     @Override
@@ -827,7 +828,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         visibleDirty = true;
         rangeStart = range.getStart();
         rangeEnd = range.getStart() + range.getLength();
-        update();
+        draw();
     }
 
     @Override
@@ -890,7 +891,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     @Override
     public void setVisibleRangeAndClearData(Range range, boolean forceRangeChangeEvent) {
         setVisibleRange(range);
-        update();
+        draw();
     }
 
     private class Registration<T> implements HandlerRegistration {
@@ -914,7 +915,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     // View defer
-    public void update() {
+    public void draw() {
         if (null != hardStartDateBound && null != hardEndDateBound) {
             int daysBetween = (int) ((hardEndDateBound.toEpochSecond(ZoneOffset.UTC) - hardStartDateBound.toEpochSecond(
                     ZoneOffset.UTC)) / (60 * 60 * 24));
@@ -928,20 +929,17 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
             scrollBarHandleLength = 0;
         }
         view.updateScrollBars();
-        view.updateBounds();
+        view.setViewSize(screenWidth, screenHeight);
         view.draw();
     }
 
-    public void updateBounds(double screenWidth, double screenHeight) {
-        widthPerMinute = (screenWidth - SPOT_NAME_WIDTH) / (daysShown * (SECONDS_PER_DAY / SECONDS_PER_MINUTE));
-        spotHeight = (screenHeight - HEADER_HEIGHT) / (totalDisplayedSpotSlots + 1);
+    public void setViewSize(double screenWidth, double screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
-    }
-
-    @Override
-    public void draw() {
-        update();
+        view.setViewSize(screenWidth, screenHeight);
+        widthPerMinute = (view.getScreenWidth() - SPOT_NAME_WIDTH) / (daysShown * (SECONDS_PER_DAY
+                / SECONDS_PER_MINUTE));
+        spotHeight = (view.getScreenHeight() - HEADER_HEIGHT) / (totalDisplayedSpotSlots + 1);
     }
 
     @Override

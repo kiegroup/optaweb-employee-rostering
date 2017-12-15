@@ -182,6 +182,10 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         view.setDisplayMinuteGradality(displayMinuteGradality);
     }
 
+    public void setViewSize(double screenWidth, double screenHeight) {
+        view.setViewSize(screenWidth, screenHeight);
+    }
+
     public <T> T getInstanceOf(Class<T> clazz) {
         return beanManager.lookupBean(clazz).newInstance();
     }
@@ -260,6 +264,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
                 Div tmp = new Div();
                 tmp.getElement().appendChild((com.google.gwt.dom.client.Element) view.getElement());
                 container.add(tmp);
+                calendar.setViewSize(container.getOffsetWidth(), container.getOffsetHeight());
                 return calendar;
             } else {
                 throw new IllegalStateException("You must set all of "
