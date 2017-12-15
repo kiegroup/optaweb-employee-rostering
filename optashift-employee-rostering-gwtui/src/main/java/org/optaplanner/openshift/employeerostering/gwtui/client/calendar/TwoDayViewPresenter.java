@@ -598,7 +598,9 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
                     * editMinuteGradality))) * editMinuteGradality;
             LocalDateTime to = LocalDateTime.ofEpochSecond(60 * toMins, 0, ZoneOffset.UTC).plusSeconds(
                     currDay.toEpochSecond(ZoneOffset.UTC) - baseDate.toEpochSecond(ZoneOffset.UTC));
-            if (to.isBefore(from)) {
+            if (to.equals(from)) {
+                return;
+            } else if (to.isBefore(from)) {
                 LocalDateTime tmp = to;
                 to = from;
                 from = tmp;
@@ -629,9 +631,9 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         }
         for (D drawable : CommonUtils.flatten(getVisibleItems())) {
             LocalDateTime mouseTime = getMouseLocalDateTime();
-            double drawablePos = drawable.getGlobalY();
+            double drawablePos = getLocationOfGroupSlot(drawable.getGroupId(), drawable.getIndex());
 
-            if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
+            if (localMouseY >= drawablePos && localMouseY <= drawablePos + getGroupHeight()) {
                 if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
                     mouseOverDrawable = drawable;
                     consumed = drawable.onMouseDown(e, mouseX, mouseY);
@@ -672,6 +674,8 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         }
 
         isDragging = false;
+        cursorIndex.put(overSpot, groupEndPos.get(overSpot));
+        overSpot = null;
         selectedSpot = null;
         selectedIndex = 0L;
 
@@ -705,9 +709,9 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
             }
             for (D drawable : CommonUtils.flatten(getVisibleItems())) {
                 LocalDateTime mouseTime = getMouseLocalDateTime();
-                double drawablePos = drawable.getGlobalY();
+                double drawablePos = getLocationOfGroupSlot(drawable.getGroupId(), drawable.getIndex());
 
-                if (mouseY >= drawablePos && mouseY <= drawablePos + getGroupHeight()) {
+                if (localMouseY >= drawablePos && localMouseY <= drawablePos + getGroupHeight()) {
                     if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
                         if (drawable != mouseOverDrawable) {
                             if (null != mouseOverDrawable) {

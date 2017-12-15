@@ -19,8 +19,9 @@ public class ShiftToolbox extends AbstractDrawable {
 
     public ShiftToolbox(ShiftDrawable parent, TwoDayViewPresenter<SpotId, ShiftData, ShiftDrawable> presenter, double x,
             double y) {
-        this.x = x + presenter.getLocationOfDate(parent.getStartTime());
-        this.y = y + presenter.getLocationOfGroupSlot(parent.getGroupId(), parent.getIndex());
+        this.x = Math.max(TwoDayViewPresenter.SPOT_NAME_WIDTH, x + presenter.getLocationOfDate(parent.getStartTime()));
+        this.y = Math.max(TwoDayViewPresenter.HEADER_HEIGHT, y + presenter.getLocationOfGroupSlot(parent.getGroupId(),
+                parent.getIndex()));
         this.presenter = presenter;
         this.drawable = parent;
         onRemove = false;
