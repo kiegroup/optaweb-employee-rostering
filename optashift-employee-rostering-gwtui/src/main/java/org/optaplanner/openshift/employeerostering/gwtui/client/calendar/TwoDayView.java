@@ -218,7 +218,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                 for (D drawable : group) {
                     if (groupId.equals(presenter.getSelectedSpot()) && drawable.getIndex() >= presenter.getCursorIndex(
                             groupId)
-                            && drawable != presenter.getMouseOverDrawable()) {
+                            && drawable != presenter.getMouseOverDrawable() && presenter.getGlobalMouseX() != presenter
+                                    .getDragStartX()) {
                         drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + (index + 1) * presenter
                                 .getGroupHeight());
                     } else {

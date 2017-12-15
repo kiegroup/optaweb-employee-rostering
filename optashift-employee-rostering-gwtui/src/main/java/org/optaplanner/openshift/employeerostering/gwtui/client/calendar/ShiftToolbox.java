@@ -20,7 +20,7 @@ public class ShiftToolbox extends AbstractDrawable {
     public ShiftToolbox(ShiftDrawable parent, TwoDayViewPresenter<SpotId, ShiftData, ShiftDrawable> presenter, double x,
             double y) {
         this.x = x + presenter.getLocationOfDate(parent.getStartTime());
-        this.y = y + parent.getGlobalY();
+        this.y = y + presenter.getLocationOfGroupSlot(parent.getGroupId(), parent.getIndex());
         this.presenter = presenter;
         this.drawable = parent;
         onRemove = false;
@@ -58,7 +58,8 @@ public class ShiftToolbox extends AbstractDrawable {
         } else {
             if (localX > 10 && localY > 30 && localX < 40 && localY < 60) {
                 presenter.getCalendar().removeShift(drawable.id);
-                return PostMouseDownEvent.IGNORE;
+                presenter.setToolBox(null);
+                return PostMouseDownEvent.REMOVE_FOCUS;
             }
             return PostMouseDownEvent.REMOVE_FOCUS;
         }

@@ -209,6 +209,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
             return;
         }
         this.daysShown = daysShown;
+        setToolBox(null);
         update();
     }
 
@@ -325,6 +326,10 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     // Calculated fields getters
+    public double getLocationOfGroupSlot(G group, int slot) {
+        return HEADER_HEIGHT + (getGroupPos().get(group) + slot) * getGroupHeight() - getOffsetY();
+    }
+
     public LocalDateTime getViewStartDate() {
         return currDay;
     }
@@ -391,7 +396,11 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     public void setPage(int page) {
+        if (this.page == page) {
+            return;
+        }
         this.page = page;
+        setToolBox(null);
     }
 
     @Override
@@ -692,7 +701,6 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
                     draw();
                     return;
                 }
-                ;
             }
             for (D drawable : CommonUtils.flatten(getVisibleItems())) {
                 LocalDateTime mouseTime = getMouseLocalDateTime();

@@ -132,8 +132,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
             view.getCalendar().removeShift(id);
             view.getCalendar().addShift(shift);
         } else {
-            view.setToolBox(new ShiftToolbox(this, view, -ShiftToolbox.WIDTH, -view.getGroupHeight()
-                    - ShiftToolbox.HEIGHT));
+            view.setToolBox(new ShiftToolbox(this, view, -ShiftToolbox.WIDTH, 0));
         }
         minsOffset = null;
         dragged = false;
