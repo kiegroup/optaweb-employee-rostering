@@ -95,7 +95,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
         double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
         double duration = end - start;
 
-        if (x - getGlobalX() - duration * view.getWidthPerMinute() + 30 > 0 && y - getGlobalY() - view
+        if (view.getLocationOfDate(endTime) - x + TwoDayViewPresenter.SPOT_NAME_WIDTH < 30 && y - getGlobalY() - view
                 .getGroupHeight() + 30 > 0) {
             isMoving = false;
             return PostMouseDownEvent.CAPTURE_DRAG;
@@ -129,6 +129,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
         if (dragged) {
             ShiftData shift = new ShiftData(new SpotData(new Shift(spot.getSpot().getTenantId(), spot.getSpot(),
                     new TimeSlot(spot.getSpot().getTenantId(), startTime, endTime))));
+            shift.shift.getShift().setId(id.shift.getShift().getId());
             view.getCalendar().removeShift(id);
             view.getCalendar().addShift(shift);
         } else {

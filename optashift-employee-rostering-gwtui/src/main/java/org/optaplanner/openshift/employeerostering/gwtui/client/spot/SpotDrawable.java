@@ -108,7 +108,7 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
     @Override
     public PostMouseDownEvent onMouseDown(MouseEvent mouseEvent, double x, double y) {
         view.setToolBox(new SpotToolbox(this, view, -SpotToolbox.WIDTH, -SpotToolbox.HEIGHT));
-        return PostMouseDownEvent.REMOVE_FOCUS;
+        return PostMouseDownEvent.CAPTURE_DRAG;
     }
 
     @Override

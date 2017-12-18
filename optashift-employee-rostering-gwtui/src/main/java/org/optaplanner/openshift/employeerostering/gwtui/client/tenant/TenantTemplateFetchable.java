@@ -26,6 +26,7 @@ public class TenantTemplateFetchable implements Fetchable<Collection<ShiftData>>
     private Supplier<Integer> tenantIdSupplier;
     private Updatable<Collection<ShiftData>> updatable;
     Integer tenantId;
+    Long id;
 
     public TenantTemplateFetchable(Supplier<Integer> tenantIdSupplier) {
         this.tenantIdSupplier = tenantIdSupplier;
@@ -51,6 +52,7 @@ public class TenantTemplateFetchable implements Fetchable<Collection<ShiftData>>
 
                                         @Override
                                         public void onSuccess(ShiftTemplate template) {
+                                            id = 0L;
                                             List<ShiftData> out = new ArrayList<>();
                                             for (ShiftInfo shift : template.getShifts()) {
                                                 for (IdOrGroup spotId : shift.getSpots()) {
@@ -59,17 +61,23 @@ public class TenantTemplateFetchable implements Fetchable<Collection<ShiftData>>
                                                                 .equals(
                                                                         spotId.getItemId())).findAny().get()
                                                                 .getSpots()) {
-                                                            out.add(new ShiftData(new SpotData(new Shift(TENANT_ID,
+                                                            Shift newShift = new Shift(TENANT_ID,
                                                                     spot, new TimeSlot(tenantId, shift.getStartTime(),
                                                                             shift
-                                                                                    .getEndTime())))));
+                                                                                    .getEndTime()));
+                                                            newShift.setId(id);
+                                                            id++;
+                                                            out.add(new ShiftData(new SpotData(newShift)));
                                                         }
                                                     } else {
                                                         Spot spot = spotList.stream().filter((s) -> s.getId().equals(
                                                                 spotId.getItemId())).findAny().get();
-                                                        out.add(new ShiftData(new SpotData(new Shift(TENANT_ID,
+                                                        Shift newShift = new Shift(TENANT_ID,
                                                                 spot, new TimeSlot(tenantId, shift.getStartTime(), shift
-                                                                        .getEndTime())))));
+                                                                        .getEndTime()));
+                                                        newShift.setId(id);
+                                                        id++;
+                                                        out.add(new ShiftData(new SpotData(newShift)));
                                                     }
 
                                                 }
@@ -93,6 +101,12 @@ public class TenantTemplateFetchable implements Fetchable<Collection<ShiftData>>
     @Override
     public void setUpdatable(Updatable<Collection<ShiftData>> listener) {
         updatable = listener;
+    }
+
+    public Long getFreshId() {
+        Long out = id;
+        id++;
+        return out;
     }
 
 }
