@@ -4,7 +4,7 @@ import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.AbstractDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawable.PostMouseDownEvent;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayViewPresenter;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayViewPresenter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils.Glyphs;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;

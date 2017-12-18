@@ -22,7 +22,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;

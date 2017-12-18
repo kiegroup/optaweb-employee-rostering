@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Panel;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayViewPresenter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantFetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.DataProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
