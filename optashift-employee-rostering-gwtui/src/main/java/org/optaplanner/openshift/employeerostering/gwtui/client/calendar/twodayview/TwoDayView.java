@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
+package org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -27,6 +27,9 @@ import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.DateDisplay;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.HasTitle;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.RangeSlider;
@@ -34,7 +37,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTi
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TwoDayViewPresenter.*;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayViewPresenter.*;
 
 @Templated
 public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> implements
@@ -107,6 +110,14 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
     public double getScreenHeight() {
         return canvas.height;
+    }
+
+    public double getMouseX(MouseEvent e) {
+        return CanvasUtils.getCanvasX(getCanvas(), e);
+    }
+
+    public double getMouseY(MouseEvent e) {
+        return CanvasUtils.getCanvasY(getCanvas(), e);
     }
 
     public static <G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> TwoDayView<G, I, D>
@@ -196,17 +207,21 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         //}
 
         g.save();
-        g.translate(-presenter.getDifferenceFromBaseDate() * (60 * 24) * presenter.getWidthPerMinute(), 0);
+        g.translate(-presenter.getState().getDifferenceFromBaseDate() * (60 * 24) * presenter.getState()
+                .getWidthPerMinute(), 0);
         int index = 0;
         Iterable<Collection<D>> toDraw = presenter.getVisibleItems();
         Set<G> drawnSpots = new HashSet<>();
         HashMap<G, Integer> spotIndex = new HashMap<>();
-        int groupIndex = presenter.getGroupIndex(presenter.getGroupPos().keySet().stream().filter((group) -> presenter
-                .getGroupEndPos().get(
-                        group) >= presenter.getVisibleRange().getStart()).min((a, b) -> presenter.getGroupEndPos().get(
-                                a) - presenter.getGroupEndPos().get(b)).orElseGet(() -> presenter
-                                        .getGroups().get(
-                                                0)));
+        int groupIndex = presenter.getState().getGroupIndex(presenter.getState().getGroupPos().keySet().stream().filter(
+                (group) -> presenter.getState()
+                        .getGroupEndPos().get(
+                                group) >= presenter.getVisibleRange().getStart()).min((a, b) -> presenter.getState()
+                                        .getGroupEndPos().get(
+                                                a) - presenter.getState().getGroupEndPos().get(b)).orElseGet(
+                                                        () -> presenter
+                                                                .getGroups().get(
+                                                                        0)));
 
         spotIndex.put(presenter.getGroups().get(groupIndex), index);
         drawnSpots.add(presenter.getGroups().get(groupIndex));
@@ -220,17 +235,18 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                             groupId)
                             && drawable != presenter.getMouseOverDrawable() && presenter.getGlobalMouseX() != presenter
                                     .getDragStartX()) {
-                        drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + (index + 1) * presenter
+                        drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + (index + 1) * presenter.getState()
                                 .getGroupHeight());
                     } else {
-                        drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + index * presenter.getGroupHeight());
+                        drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + index * presenter.getState()
+                                .getGroupHeight());
                     }
                 }
                 index++;
             } else {
                 index++;
                 if (groupIndex < presenter.getGroups().size() && presenter.getVisibleRange().getStart()
-                        + index > presenter.getGroupEndPos().getOrDefault(presenter
+                        + index > presenter.getState().getGroupEndPos().getOrDefault(presenter
                                 .getGroups().get(groupIndex),
                                 presenter.getVisibleRange().getStart() + index)) {
                     groupIndex++;
@@ -255,11 +271,12 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         for (G spot : presenter.getGroups().stream().filter((s) -> drawnSpots.contains(s)).collect(Collectors
                 .toList())) {
             int pos = spotIndex.get(spot);
-            g.fillText(spot.getTitle(), 0, HEADER_HEIGHT + presenter.getGroupHeight() * pos + textHeight + (presenter
-                    .getGroupHeight() - textHeight)
-                    / 2);
-            CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + presenter.getGroupHeight() * pos, getScreenWidth(),
-                    HEADER_HEIGHT + presenter.getGroupHeight() * pos,
+            g.fillText(spot.getTitle(), 0, HEADER_HEIGHT + presenter.getState().getGroupHeight() * pos + textHeight
+                    + (presenter.getState()
+                            .getGroupHeight() - textHeight)
+                            / 2);
+            CanvasUtils.drawLine(g, 0, HEADER_HEIGHT + presenter.getState().getGroupHeight() * pos, getScreenWidth(),
+                    HEADER_HEIGHT + presenter.getState().getGroupHeight() * pos,
                     2);
         }
     }
@@ -293,14 +310,15 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     private void drawSpotToCreate(CanvasRenderingContext2D g) {
         if (presenter.isCreating()) {
             CanvasUtils.setFillColor(g, "#00FF00");
-            long fromMins = Math.round((presenter.getDragStartX() - SPOT_NAME_WIDTH - presenter.getOffsetX())
-                    / (presenter.getWidthPerMinute()
+            long fromMins = Math.round((presenter.getDragStartX() - SPOT_NAME_WIDTH - presenter.getState().getOffsetX())
+                    / (presenter.getState().getWidthPerMinute()
                             * presenter.getEditMinuteGradality())) * presenter.getEditMinuteGradality();
             LocalDateTime from = LocalDateTime.ofEpochSecond(60 * fromMins, 0, ZoneOffset.UTC).plusSeconds(
-                    presenter.getViewStartDate().toEpochSecond(ZoneOffset.UTC) - presenter.getBaseDate().toEpochSecond(
-                            ZoneOffset.UTC));
-            long toMins = Math.max(0, Math.round((presenter.getGlobalMouseX() - SPOT_NAME_WIDTH - presenter
-                    .getOffsetX()) / (presenter
+                    presenter.getViewStartDate().toEpochSecond(ZoneOffset.UTC) - presenter.getState().getBaseDate()
+                            .toEpochSecond(
+                                    ZoneOffset.UTC));
+            long toMins = Math.max(0, Math.round((presenter.getGlobalMouseX() - SPOT_NAME_WIDTH - presenter.getState()
+                    .getOffsetX()) / (presenter.getState()
                             .getWidthPerMinute()
                             * presenter.getEditMinuteGradality()))) * presenter.getEditMinuteGradality();
             LocalDateTime to = LocalDateTime.ofEpochSecond(60 * toMins, 0, ZoneOffset.UTC).plusSeconds(
@@ -322,60 +340,71 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             timeslot.append(':');
             timeslot.append(CommonUtils.pad(to.getMinute() + "", 2));
             presenter.preparePopup(timeslot.toString());
-            g.fillRect(presenter.getDragStartX() - presenter.getOffsetX(), presenter.getGroupContainer().get(presenter
-                    .getSelectedSpot()).getGlobalY()
-                    + presenter
+            g.fillRect(presenter.getDragStartX() - presenter.getState().getOffsetX(), presenter.getState()
+                    .getGroupContainer().get(presenter
+                            .getSelectedSpot()).getGlobalY()
+                    + presenter.getState()
                             .getGroupHeight()
-                            * presenter.getSelectedIndex() - presenter.getOffsetY(), (toMins - fromMins) * presenter
-                                    .getWidthPerMinute(),
-                    presenter.getGroupHeight());
+                            * presenter.getSelectedIndex() - presenter.getState().getOffsetY(), (toMins - fromMins)
+                                    * presenter.getState()
+                                            .getWidthPerMinute(),
+                    presenter.getState().getGroupHeight());
         }
     }
 
     private void drawTimes(CanvasRenderingContext2D g) {
         CanvasUtils.setFillColor(g, "#000000");
-        String week = presenter.getDateFormat().format(presenter.getViewStartDate(), WEEK_START, presenter
+        String week = presenter.getConfig().getDateFormat().format(presenter.getViewStartDate(), WEEK_START, presenter
+                .getConfig()
                 .getTranslator());
         int textSize = CanvasUtils.fitTextToBox(g, week, SPOT_NAME_WIDTH, HEADER_HEIGHT / 2);
         for (String day : WEEKDAYS) {
-            textSize = Math.min(textSize, CanvasUtils.fitTextToBox(g, day, 24 * 60 * presenter.getWidthPerMinute(),
+            textSize = Math.min(textSize, CanvasUtils.fitTextToBox(g, day, 24 * 60 * presenter.getState()
+                    .getWidthPerMinute(),
                     HEADER_HEIGHT / 2));
         }
         g.font = CanvasUtils.getFont(textSize);
-        int offset = (presenter.getDateFormat() != DateDisplay.WEEKS_FROM_EPOCH) ? 0 : LocalDateTime.ofEpochSecond(0, 0,
-                ZoneOffset.UTC).getDayOfWeek().getValue();
+        int offset = (presenter.getConfig().getDateFormat() != DateDisplay.WEEKS_FROM_EPOCH) ? 0 : LocalDateTime
+                .ofEpochSecond(0, 0,
+                        ZoneOffset.UTC).getDayOfWeek().getValue();
 
-        double drawOffset = presenter.getWidthPerMinute() * 24 * ((presenter.getViewStartDate().toEpochSecond(
-                ZoneOffset.UTC) -
+        double drawOffset = presenter.getState().getWidthPerMinute() * 24 * ((presenter.getViewStartDate()
+                .toEpochSecond(
+                        ZoneOffset.UTC) -
                 presenter.getViewStartDate().toLocalDate().atTime(0, 0).toEpochSecond(ZoneOffset.UTC)) / (60 * 24.0));
         for (int x = 0; x < presenter.getDaysShown() + 1; x++) {
             g.fillText(WEEKDAYS[(int) (Math.abs((WEEK_START + x + presenter.getViewStartDate().getDayOfWeek().getValue()
                     - 1 + offset))
                     % 7)],
-                    SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getWidthPerMinute() - drawOffset, HEADER_HEIGHT / 2);
-            CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getWidthPerMinute() - drawOffset, 0,
+                    SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute() - drawOffset,
+                    HEADER_HEIGHT / 2);
+            CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute()
+                    - drawOffset, 0,
                     SPOT_NAME_WIDTH
                             + (24 * x) * 60
-                                    * presenter.getWidthPerMinute() - drawOffset, getScreenHeight(), 2);
+                                    * presenter.getState().getWidthPerMinute() - drawOffset, getScreenHeight(), 2);
         }
-        for (int x = 0; x < (getScreenWidth() / 2 * (presenter.getWidthPerMinute() * presenter
+        for (int x = 0; x < (getScreenWidth() / 2 * (presenter.getState().getWidthPerMinute() * presenter
                 .getDisplayMinuteGradality())); x++) {
             if (x % 2 == 0) {
                 CanvasUtils.setFillColor(g, BACKGROUND_1);
             } else {
                 CanvasUtils.setFillColor(g, BACKGROUND_2);
             }
-            g.fillRect(SPOT_NAME_WIDTH + x * presenter.getWidthPerMinute() * presenter.getDisplayMinuteGradality()
+            g.fillRect(SPOT_NAME_WIDTH + x * presenter.getState().getWidthPerMinute() * presenter
+                    .getDisplayMinuteGradality()
                     - drawOffset, HEADER_HEIGHT,
                     SPOT_NAME_WIDTH
                             + (x + 1)
-                                    * presenter.getWidthPerMinute() * presenter.getDisplayMinuteGradality(), presenter
-                                            .getScreenHeight() - HEADER_HEIGHT);
-            CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + x * presenter.getWidthPerMinute() * presenter
+                                    * presenter.getState().getWidthPerMinute() * presenter.getDisplayMinuteGradality(),
+                    presenter.getState()
+                            .getScreenHeight() - HEADER_HEIGHT);
+            CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + x * presenter.getState().getWidthPerMinute() * presenter
                     .getDisplayMinuteGradality()
                     - drawOffset,
                     HEADER_HEIGHT,
-                    SPOT_NAME_WIDTH + x * presenter.getWidthPerMinute() * presenter.getDisplayMinuteGradality()
+                    SPOT_NAME_WIDTH + x * presenter.getState().getWidthPerMinute() * presenter
+                            .getDisplayMinuteGradality()
                             - drawOffset, getScreenHeight(), 1);
         }
 
@@ -393,7 +422,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         daysShownRangeSliderContainer.setHeight(Math.round(canvas.height) + "px");
         daysShownRangeSlider.setAttribute("style", "height:" + Math.round(canvas.height) + "px;");
 
-        startDateControlScrollbar.setScrollWidth((int) Math.round(canvas.width * presenter
+        startDateControlScrollbar.setScrollWidth((int) Math.round(canvas.width * presenter.getState()
                 .getScrollBarLength()));
         startDateControlScrollbar.setHorizontalScrollPosition((int) Math.round(oldPos * startDateControlScrollbar
                 .getMaximumHorizontalScrollPosition()));

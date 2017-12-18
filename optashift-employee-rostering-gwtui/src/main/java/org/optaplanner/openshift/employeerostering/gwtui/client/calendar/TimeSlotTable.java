@@ -17,6 +17,7 @@ public class TimeSlotTable<T extends TimeRowDrawable<G>, G extends HasTitle> {
     Map<Integer, Collection<T>> visableItems;
     Map<Integer, Collection<T>> allItems;
     LocalDateTime startDate, endDate;
+    Integer maxRow;
 
     public TimeSlotTable(Collection<T> timeslots, Map<G, Integer> groupIndex, LocalDateTime startDate,
             LocalDateTime endDate) {
@@ -25,6 +26,7 @@ public class TimeSlotTable<T extends TimeRowDrawable<G>, G extends HasTitle> {
         this.groupIndex = groupIndex;
 
         this.timeslots = timeslots;
+        maxRow = 1;
 
         allItems = new HashMap<>();
         visableItems = new HashMap<>();
@@ -51,6 +53,7 @@ public class TimeSlotTable<T extends TimeRowDrawable<G>, G extends HasTitle> {
                         if (null == v) {
                             v = new HashSet<>();
                             v.add(timeslot);
+                            maxRow = Math.max(i + 1, maxRow);
                             return v;
                         } else {
                             v.add(timeslot);
@@ -58,6 +61,10 @@ public class TimeSlotTable<T extends TimeRowDrawable<G>, G extends HasTitle> {
                         }
                     });
         }
+    }
+
+    public int getNumberOfRows() {
+        return maxRow;
     }
 
     public Integer getRowIndexOf(T timeslot) {
