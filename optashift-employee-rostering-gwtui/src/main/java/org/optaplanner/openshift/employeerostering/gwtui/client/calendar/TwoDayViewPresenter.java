@@ -363,8 +363,8 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     public double getOffsetX() {
-        return (view.getScreenWidth() - SPOT_NAME_WIDTH) * Math.round(getDifferenceFromBaseDate()) * (1.0
-                / getDaysShown());
+        return getLocationOfDate(baseDate.plusSeconds(currDay.toEpochSecond(ZoneOffset.UTC) - baseDate.toEpochSecond(
+                ZoneOffset.UTC)));
     }
 
     public double getOffsetY() {
@@ -459,8 +459,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     public LocalDateTime roundLocalDateTime(LocalDateTime toRound) {
         long fromMins = Math.round(toRound.toEpochSecond(ZoneOffset.UTC) / (60.0 * editMinuteGradality))
                 * editMinuteGradality;
-        return LocalDateTime.ofEpochSecond(60 * fromMins, 0, ZoneOffset.UTC).plusDays(Math.round(
-                getDifferenceFromBaseDate()));
+        return LocalDateTime.ofEpochSecond(60 * fromMins, 0, ZoneOffset.UTC);
     }
 
     // Shift Calculations
@@ -478,11 +477,8 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
 
     @Override
     public void removeShift(I shift) {
-        D drawable = shiftDrawables.stream()
-                .filter((d) -> d.getGroupId().equals(shift.getGroupId()) &&
-                        d.getStartTime().equals(shift.getStartTime()) &&
-                        d.getEndTime().equals(shift.getEndTime())).findAny().get();
-        timeslotTable.getRowOf(drawable).remove(drawable);
+        // TODO: Make better
+        setShifts(calendar.getShifts());
     }
 
     @Override
@@ -626,6 +622,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         if (null != toolBox) {
             consumed = toolBox.onMouseDown(e, localMouseX, localMouseY);
             if (PostMouseDownEvent.REMOVE_FOCUS == consumed) {
+                isDragging = false;
                 draw();
                 return;
             } else {
@@ -648,6 +645,8 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
             handleMouseDown(mouseX, mouseY);
         } else if (consumed == PostMouseDownEvent.REMOVE_FOCUS) {
             isDragging = false;
+            mouseOverDrawable.onMouseExit(e, mouseX, mouseY);
+            mouseOverDrawable = null;
         } else {
             selectedSpot = mouseOverDrawable.getGroupId();
             selectedIndex = (long) mouseOverDrawable.getIndex();

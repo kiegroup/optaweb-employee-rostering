@@ -80,22 +80,29 @@ public class TemplateEditor implements IsElement {
 
     private ConfigurationEditor configurationEditor;
 
+    private TenantTemplateFetchable templateFetchable;
+
     public TemplateEditor() {
     }
 
     @PostConstruct
     protected void initWidget() {
+        templateFetchable = new TenantTemplateFetchable(() -> getTenantId());
         calendar = new Calendar.Builder<SpotId, ShiftData, ShiftDrawable>(container, tenantId, CONSTANTS)
-                .fetchingDataFrom(new TenantTemplateFetchable(() -> getTenantId()))
+                .fetchingDataFrom(templateFetchable)
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
                 .displayWeekAs(DateDisplay.WEEKS_FROM_EPOCH)
                 .withBeanManager(beanManager)
-                .creatingDataInstancesWith((c, name, start, end) -> c
-                        .addShift(new ShiftData(new SpotData(new Shift(tenantId,
-                                name.getSpot(),
-                                new TimeSlot(tenantId,
-                                        start,
-                                        end))))))
+                .creatingDataInstancesWith((c, name, start, end) -> {
+                    Shift newShift = new Shift(tenantId,
+                            name.getSpot(),
+                            new TimeSlot(tenantId,
+                                    start,
+                                    end));
+                    newShift.setId(templateFetchable.getFreshId());
+                    c
+                            .addShift(new ShiftData(new SpotData(newShift)));
+                })
                 .asTwoDayView((v, d, i) -> new ShiftDrawable(v, d, i));
         calendar.setHardStartDateBound(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
         Window.addResizeHandler((e) -> calendar.setViewSize(e.getWidth() - container.getAbsoluteLeft(),
