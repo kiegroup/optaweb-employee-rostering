@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 
-public class TimeSlotTable<T extends TimeRowDrawable<G>, G extends HasTitle> {
+public class TimeSlotTableView<T extends TimeRowDrawable<G>, G extends HasTitle> {
 
     Collection<T> timeslots;
     Map<G, Integer> groupIndex;
@@ -19,7 +19,7 @@ public class TimeSlotTable<T extends TimeRowDrawable<G>, G extends HasTitle> {
     LocalDateTime startDate, endDate;
     Integer maxRow;
 
-    public TimeSlotTable(Collection<T> timeslots, Map<G, Integer> groupIndex, LocalDateTime startDate,
+    public TimeSlotTableView(Collection<T> timeslots, Map<G, Integer> groupIndex, LocalDateTime startDate,
             LocalDateTime endDate) {
         this.startDate = startDate;
         this.endDate = endDate;

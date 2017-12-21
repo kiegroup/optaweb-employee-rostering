@@ -38,7 +38,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Positio
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawableProvider;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeSlotTable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeSlotTableView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawable.PostMouseDownEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
