@@ -1,0 +1,10 @@
+[[plannerIntroduction]]
+= OptaShift Employee Rostering Introduction
+:doctype: book
+:imagesdir: ..
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+
+include::WhatIsOptaShift/WhatIsOptaShift-section.adoc[leveloffset=+1]
