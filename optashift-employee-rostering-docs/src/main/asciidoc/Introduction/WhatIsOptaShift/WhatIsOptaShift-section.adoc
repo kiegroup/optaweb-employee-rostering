@@ -1,0 +1,9 @@
+[[whatIsOptaShift]]
+= What is OptaShift Employee Rostering?
+:imagesdir: ../..
+
+Every organization faces planning problems: providing products or services with a
+limited set of _constrained_ resources (employees, assets, time and money). One such
+planning problem is employee shift rostering: assigning shifts to employees who are able
+to perform the shift. OptaShift is a web application that solves employee shift rostering
+problems using https://www.optaplanner.org[OptaPlanner].
