@@ -126,7 +126,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
                 presenter.setToolBox(null);
             }
         }
-        for (D drawable : CommonUtils.flatten(presenter.getVisibleItems())) {
+        for (D drawable : CommonUtils.flatten(presenter.getPager().getVisibleItems())) {
             LocalDateTime mouseTime = getMouseLocalDateTime();
             double drawablePos = presenter.getState().getLocationOfGroupSlot(drawable.getGroupId(), drawable
                     .getIndex());
@@ -205,7 +205,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
                     return;
                 }
             }
-            for (D drawable : CommonUtils.flatten(presenter.getVisibleItems())) {
+            for (D drawable : CommonUtils.flatten(presenter.getPager().getVisibleItems())) {
                 LocalDateTime mouseTime = getMouseLocalDateTime();
                 double drawablePos = presenter.getState().getLocationOfGroupSlot(drawable.getGroupId(), drawable
                         .getIndex());

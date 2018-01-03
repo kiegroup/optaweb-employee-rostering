@@ -6,30 +6,30 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class TimeSlotTable<T> {
 
     /**
-     * List of interval start and end points, in sorted order
-     * (a < b if a.getPosition() < b.getPosition(), with start points
-     * before end points in ties)
+     * List of interval start points, in sorted order
      */
-    List<BoundaryPoint> intervalPoints;
+    List<BoundaryPoint> startPoints;
 
     /**
-     * Maps an end point to an interval
+     * List of interval end points, in sorted order
      */
-    List<UUID> pairs;
+    List<BoundaryPoint> endPoints;
 
     /**
      * Holds data belonging to an interval
      */
-    Map<UUID, T> intervalData;
+    Map<UUID, TimeSlot<T>> intervalData;
 
     public TimeSlotTable() {
-        intervalPoints = new ArrayList<>();
-        pairs = new ArrayList<>();
+        startPoints = new ArrayList<>();
+        endPoints = new ArrayList<>();
         intervalData = new HashMap<>();
     }
 
@@ -37,6 +37,7 @@ public class TimeSlotTable<T> {
         if (index < 0) {
             return -(index + 1);
         }
+        List<BoundaryPoint> intervalPoints = (o.isStartPoint()) ? startPoints : endPoints;
 
         while (index > 0 && intervalPoints.get(index - 1).equals(o)) {
             index--;
@@ -49,112 +50,147 @@ public class TimeSlotTable<T> {
             return -(index + 1);
         }
 
+        List<BoundaryPoint> intervalPoints = (o.isStartPoint()) ? startPoints : endPoints;
         while (index < intervalPoints.size() - 1 && intervalPoints.get(index + 1).equals(o)) {
             index++;
         }
         return index;
     }
 
-    public void add(long start, long end, T data) {
-        BoundaryPoint startPoint = new BoundaryPoint(start, true);
-        BoundaryPoint endPoint = new BoundaryPoint(end, false);
-
+    public UUID add(long start, long end, T data) {
         UUID uuid = UUID.randomUUID();
-        int insertionPoint = getFirstIndexOf(Collections.binarySearch(intervalPoints, startPoint), startPoint);
-        intervalPoints.add(insertionPoint, startPoint);
-        pairs.add(insertionPoint, uuid);
-        insertionPoint = getLastIndexOf(Collections.binarySearch(intervalPoints, endPoint), endPoint);
-        intervalPoints.add(insertionPoint, endPoint);
-        pairs.add(insertionPoint, uuid);
-        intervalData.put(uuid, data);
+        BoundaryPoint startPoint = new BoundaryPoint(start, true, uuid);
+        BoundaryPoint endPoint = new BoundaryPoint(end, false, uuid);
+
+        int insertionPoint = getFirstIndexOf(Collections.binarySearch(startPoints, startPoint), startPoint);
+        startPoints.add(insertionPoint, startPoint);
+        insertionPoint = getLastIndexOf(Collections.binarySearch(endPoints, endPoint), endPoint);
+        endPoints.add(insertionPoint, endPoint);
+
+        intervalData.put(uuid, new TimeSlot<T>(startPoint, endPoint, data));
+        return uuid;
     }
 
-    public void remove(long start, long end) {
-        BoundaryPoint startPoint = new BoundaryPoint(start, true);
-        BoundaryPoint endPoint = new BoundaryPoint(end, false);
+    public void remove(TimeSlot<T> timeSlot) {
+        BoundaryPoint startPoint = timeSlot.getStartPoint();
+        BoundaryPoint endPoint = timeSlot.getEndPoint();
 
-        int startIndex = getLastIndexOf(Collections.binarySearch(intervalPoints, startPoint), startPoint);
-        final int endIndex = getLastIndexOf(Collections.binarySearch(intervalPoints, endPoint), endPoint);
+        int startIndex = getLastIndexOf(Collections.binarySearch(startPoints, startPoint), startPoint);
+        int endIndex = getLastIndexOf(Collections.binarySearch(endPoints, endPoint), endPoint);
+
+        while (!startPoints.get(startIndex).getUUID().equals(startPoint.getUUID())) {
+            startIndex--;
+        }
+
+        while (!endPoints.get(endIndex).getUUID().equals(endPoint.getUUID())) {
+            endIndex--;
+        }
+
+        intervalData.remove(timeSlot.getUUID());
+        startPoints.remove(startIndex);
+        endPoints.remove(endIndex);
+    }
+
+    public void remove(UUID uuid) {
+        if (!intervalData.keySet().contains(uuid)) {
+            StringBuilder errorMsg = new StringBuilder("UUID \"" + uuid + "\" was not found:\nUUIDS: {");
+            intervalData.keySet().forEach((e) -> errorMsg.append(e.toString() + ";"));
+            errorMsg.append("}");
+            throw new RuntimeException(errorMsg.toString());
+        }
+        remove(intervalData.get(uuid));
+    }
+
+    public UUID remove(long start, long end) {
+        BoundaryPoint startPoint = new BoundaryPoint(start, true, null);
+        BoundaryPoint endPoint = new BoundaryPoint(end, false, null);
+
+        int startIndex = getLastIndexOf(Collections.binarySearch(startPoints, startPoint), startPoint);
+        final int endIndex = getLastIndexOf(Collections.binarySearch(endPoints, endPoint), endPoint);
 
         int pairIndex = endIndex;
 
-        UUID uuid = pairs.get(startIndex);
+        UUID uuid = startPoints.get(startIndex).getUUID();
 
         // Linearly searches the end points for one with the same UUID as the start point,
         // If none can be found, the next start point is checked
-        for (; pairs.get(startIndex) != pairs.get(pairIndex); startIndex--) {
-            uuid = pairs.get(startIndex);
+        while (!startPoints.get(startIndex).getUUID().equals(endPoints.get(pairIndex).getUUID())) {
+            uuid = startPoints.get(startIndex).getUUID();
             boolean found = false;
-            for (pairIndex = endIndex - 1; intervalPoints.get(pairIndex).equals(endPoint); pairIndex--) {
-                if (pairs.get(pairIndex).equals(uuid)) {
+            while (pairIndex >= 0 && endPoints.get(pairIndex).equals(endPoint)) {
+                if (endPoints.get(pairIndex).getUUID().equals(uuid)) {
                     found = true;
                     break;
                 }
+                pairIndex--;
             }
             if (found) {
                 break;
             }
+            pairIndex = endIndex;
+            startIndex--;
 
         }
 
+        uuid = startPoints.get(startIndex).getUUID();
         intervalData.remove(uuid);
-        intervalPoints.remove(startIndex);
-        intervalPoints.remove(pairIndex - 1);
-        pairs.remove(startIndex);
-        pairs.remove(pairIndex - 1);
-    }
+        startPoints.remove(startIndex);
+        endPoints.remove(pairIndex);
 
-    public Iterable<TimeSlot<T>> getTimeSlots() {
-        return new Iterable<TimeSlot<T>>() {
-
-            @Override
-            public Iterator<TimeSlot<T>> iterator() {
-                return new TimeSlotIterator<T>(intervalPoints, pairs, intervalData);
-            }
-        };
-    }
-
-    public List<TimeSlot<T>> getTimeSlotsAsList() {
-        List<TimeSlot<T>> out = new ArrayList<>(intervalData.size());
-        for (TimeSlot<T> t : getTimeSlots()) {
-            out.add(t);
-        }
-        return out;
+        return uuid;
     }
 
     public List<List<TimeSlot<T>>> getTimeSlotsAsGrid() {
-        List<List<TimeSlot<T>>> grid = new ArrayList<>();
-        for (TimeSlot<T> t : getTimeSlots()) {
-            if (t.getSlot() >= grid.size()) {
-                for (int i = grid.size(); i <= t.getSlot(); i++) {
-                    grid.add(new ArrayList<>());
-                }
-            }
-            grid.get(t.getSlot()).add(t);
-        }
-        return grid;
+        return new TimeSlotIterator<T>(startPoints, intervalData).getTimeSlotsAsGrid();
+    }
+
+    public List<List<TimeSlot<T>>> getTimeSlotsAsGrid(long start, long end) {
+        BoundaryPoint startPoint = new BoundaryPoint(end, true, null);
+        BoundaryPoint endPoint = new BoundaryPoint(start, false, null);
+        int indexOfFirstEndPointAfterStart = getFirstIndexOf(Collections.binarySearch(endPoints, endPoint), endPoint);
+        int indexOfLastStartPointBeforeEnd = getLastIndexOf(Collections.binarySearch(startPoints, startPoint),
+                startPoint);
+
+        Set<UUID> endPointsAfterStartUUID = endPoints.subList(indexOfFirstEndPointAfterStart, endPoints.size())
+                .stream().map((e) -> e.getUUID()).collect(Collectors.toSet());
+        List<BoundaryPoint> startPointsBeforeEnd = startPoints.subList(0, indexOfLastStartPointBeforeEnd).stream()
+                .filter((s) -> endPointsAfterStartUUID.contains(s.getUUID())).collect(Collectors.toList());
+        return new TimeSlotIterator<T>(startPointsBeforeEnd, intervalData).getTimeSlotsAsGrid();
     }
 
     private static final class TimeSlotIterator<T> implements Iterator<TimeSlot<T>> {
 
-        List<BoundaryPoint> intervalPoints;
-        List<UUID> pairs;
-        Map<UUID, T> intervalData;
+        List<BoundaryPoint> startPoints;
+        Map<UUID, TimeSlot<T>> intervalData;
 
         int index;
-        Map<UUID, BoundaryPoint> startPoints;
+        int nextDepth;
+
         List<TimeSlot<T>> prev;
         TimeSlot<T> next;
 
-        public TimeSlotIterator(List<BoundaryPoint> intervalPoints, List<UUID> pairs, Map<UUID, T> intervalData) {
-            this.intervalPoints = intervalPoints;
-            this.pairs = pairs;
+        public TimeSlotIterator(List<BoundaryPoint> startPoints, Map<UUID, TimeSlot<T>> intervalData) {
+            this.startPoints = startPoints;
             this.intervalData = intervalData;
 
             index = 0;
-            startPoints = new HashMap<>();
+            nextDepth = 0;
             prev = new ArrayList<>();
             next();
+        }
+
+        public List<List<TimeSlot<T>>> getTimeSlotsAsGrid() {
+            List<List<TimeSlot<T>>> out = new ArrayList<>();
+            while (hasNext()) {
+                int depth = nextDepth;
+                while (out.size() <= depth) {
+                    out.add(new ArrayList<>());
+                }
+
+                TimeSlot<T> timeSlot = next();
+                out.get(depth).add(timeSlot);
+            }
+            return out;
         }
 
         @Override
@@ -165,22 +201,20 @@ public class TimeSlotTable<T> {
         @Override
         public TimeSlot<T> next() {
             TimeSlot<T> out = next;
-            if (intervalPoints.size() > index) {
-                while (intervalPoints.get(index).isStartPoint()) {
-                    startPoints.put(pairs.get(index), intervalPoints.get(index));
-                    index++;
-                }
-                BoundaryPoint startPoint = startPoints.remove(pairs.get(index));
+            if (index < startPoints.size()) {
+                BoundaryPoint startPoint = startPoints.get(index);
+                next = intervalData.get(startPoint.getUUID());
+                BoundaryPoint endPoint = next.getEndPoint();
+
                 int depth;
 
                 for (depth = 0; depth < prev.size() &&
                         startPoint.getPosition() < prev.get(depth).getEndPoint().getPosition() &&
-                        intervalPoints.get(index).getPosition() > prev.get(depth).getStartPoint()
+                        endPoint.getPosition() > prev.get(depth).getStartPoint()
                                 .getPosition(); depth++) {
                 }
 
-                next = new TimeSlot<>(startPoint, intervalPoints.get(index), depth, intervalData.get(pairs
-                        .get(index)));
+                nextDepth = depth;
                 if (prev.size() <= depth) {
                     prev.add(next);
                 } else {
@@ -198,13 +232,11 @@ public class TimeSlotTable<T> {
 
         final BoundaryPoint startPoint;
         final BoundaryPoint endPoint;
-        final int slot;
         final T data;
 
-        public TimeSlot(BoundaryPoint start, BoundaryPoint end, int slot, T data) {
+        public TimeSlot(BoundaryPoint start, BoundaryPoint end, T data) {
             this.startPoint = start;
             this.endPoint = end;
-            this.slot = slot;
             this.data = data;
         }
 
@@ -220,8 +252,8 @@ public class TimeSlotTable<T> {
             return endPoint.getPosition() - startPoint.getPosition();
         }
 
-        public int getSlot() {
-            return slot;
+        public UUID getUUID() {
+            return startPoint.getUUID();
         }
 
         public T getData() {
@@ -230,13 +262,7 @@ public class TimeSlotTable<T> {
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + endPoint.hashCode();
-            result = prime * result + slot;
-            result = prime * result + startPoint.hashCode();
-            result = prime * result + ((null != data) ? data.hashCode() : 0);
-            return result;
+            return getUUID().hashCode();
         }
 
         @Override
@@ -249,15 +275,7 @@ public class TimeSlotTable<T> {
                 return false;
             TimeSlot other = (TimeSlot) obj;
 
-            if (null == data) {
-                if (null != other.data) {
-                    return false;
-                }
-            } else if (!data.equals(other.data)) {
-                return false;
-            }
-
-            return startPoint.equals(other.startPoint) && endPoint.equals(other.endPoint) && slot == other.slot;
+            return this.getUUID().equals(other.getUUID());
         }
 
     }
@@ -266,10 +284,12 @@ public class TimeSlotTable<T> {
 
         final long position;
         final boolean isStartOfBoundary;
+        final UUID uuid;
 
-        public BoundaryPoint(long pos, boolean isStart) {
+        public BoundaryPoint(long pos, boolean isStart, UUID uuid) {
             this.position = pos;
             this.isStartOfBoundary = isStart;
+            this.uuid = uuid;
         }
 
         public boolean isStartPoint() {
@@ -282,6 +302,10 @@ public class TimeSlotTable<T> {
 
         public long getPosition() {
             return position;
+        }
+
+        public UUID getUUID() {
+            return uuid;
         }
 
         @Override

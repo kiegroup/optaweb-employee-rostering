@@ -9,4 +9,6 @@ public interface TimeRowDrawable<G extends HasTitle> extends Drawable, HasTimesl
 
     int getIndex();
 
+    void setIndex(int index);
+
 }

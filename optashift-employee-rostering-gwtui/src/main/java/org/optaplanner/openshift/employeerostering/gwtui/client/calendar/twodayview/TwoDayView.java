@@ -147,7 +147,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                     .getHardStartDateBound()
                     .toEpochSecond(ZoneOffset.UTC);
             presenter.setToolBox(null);
-            presenter.setDate(presenter.getHardStartDateBound().plusSeconds(Math.round(secondsBetween * pos)));
+            presenter.getCalendar().setDate(presenter.getHardStartDateBound().plusSeconds(Math.round(secondsBetween
+                    * pos)));
         });
 
         daysShownRangeSlider = RangeSlider.create();
@@ -159,7 +160,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         daysShownRangeSlider.setClassName(CssResources.INSTANCE.calendar().verticalSlider());
         daysShownRangeSlider.setValue(Integer.toString(presenter.getDaysShown()));
         Event.setEventListener(daysShownRangeSlider, (e) -> {
-            presenter.setDaysShown(Integer
+            presenter.getCalendar().setDaysShown(Integer
                     .parseInt(daysShownRangeSlider.getValue()));
         });
         //Work around for there not being a Event.ONINPUT
@@ -174,7 +175,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
         bottomPanel.add(bottomWidgets);
 
-        pager.setDisplay(presenter);
+        pager.setDisplay(presenter.getPager());
         pager.setPageSize(presenter.getTotalDisplayedSpotSlots());
         pagination.clear();
     }
@@ -205,23 +206,12 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         //for (G spot : groups) {
         //    minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot.getTitle(), SPOT_NAME_WIDTH, presenter.getGroupHeight()));
         //}
-
-        g.save();
-        g.translate(-presenter.getState().getDifferenceFromBaseDate() * (60 * 24) * presenter.getState()
-                .getWidthPerMinute(), 0);
         int index = 0;
-        Iterable<Collection<D>> toDraw = presenter.getVisibleItems();
+        Iterable<Collection<D>> toDraw = presenter.getPager().getVisibleItems();
         Set<G> drawnSpots = new HashSet<>();
         HashMap<G, Integer> spotIndex = new HashMap<>();
-        int groupIndex = presenter.getState().getGroupIndex(presenter.getState().getGroupPos().keySet().stream().filter(
-                (group) -> presenter.getState()
-                        .getGroupEndPos().get(
-                                group) >= presenter.getVisibleRange().getStart()).min((a, b) -> presenter.getState()
-                                        .getGroupEndPos().get(
-                                                a) - presenter.getState().getGroupEndPos().get(b)).orElseGet(
-                                                        () -> presenter
-                                                                .getGroups().get(
-                                                                        0)));
+        int startGroupIndex = presenter.getState().getGroupIndex(presenter.getPager().getFirstVisibleGroup());
+        int groupIndex = startGroupIndex;
 
         spotIndex.put(presenter.getGroups().get(groupIndex), index);
         drawnSpots.add(presenter.getGroups().get(groupIndex));
@@ -231,24 +221,25 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                 G groupId = group.iterator().next().getGroupId();
 
                 for (D drawable : group) {
+                    double xPos = presenter.getLocationOfDate(drawable.getStartTime());
                     if (groupId.equals(presenter.getSelectedSpot()) && drawable.getIndex() >= presenter.getCursorIndex(
                             groupId)
                             && drawable != presenter.getMouseOverDrawable() && presenter.getGlobalMouseX() != presenter
                                     .getDragStartX()) {
-                        drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + (index + 1) * presenter.getState()
+                        drawable.doDrawAt(g, xPos, HEADER_HEIGHT + (index + 1) * presenter.getState()
                                 .getGroupHeight());
                     } else {
-                        drawable.doDrawAt(g, drawable.getGlobalX(), HEADER_HEIGHT + index * presenter.getState()
+                        drawable.doDrawAt(g, xPos, HEADER_HEIGHT + index * presenter.getState()
                                 .getGroupHeight());
                     }
                 }
                 index++;
             } else {
                 index++;
-                if (groupIndex < presenter.getGroups().size() && presenter.getVisibleRange().getStart()
+                if (groupIndex < presenter.getGroups().size() && presenter.getPager().getVisibleRange().getStart()
                         + index > presenter.getState().getGroupEndPos().getOrDefault(presenter
                                 .getGroups().get(groupIndex),
-                                presenter.getVisibleRange().getStart() + index)) {
+                                presenter.getPager().getVisibleRange().getStart() + index)) {
                     groupIndex++;
                     if (groupIndex < presenter.getGroups().size()) {
                         spotIndex.put(presenter.getGroups().get(groupIndex), index);
@@ -257,7 +248,6 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                 }
             }
         }
-        g.restore();
 
         CanvasUtils.setFillColor(g, "#FFFFFF");
         g.fillRect(0, HEADER_HEIGHT, SPOT_NAME_WIDTH, getScreenHeight() - HEADER_HEIGHT);
@@ -268,9 +258,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         double textHeight = CanvasUtils.getTextHeight(g, minSize);
         g.font = CanvasUtils.getFont(minSize);
 
-        for (G spot : presenter.getGroups().stream().filter((s) -> drawnSpots.contains(s)).collect(Collectors
-                .toList())) {
-            int pos = spotIndex.get(spot);
+        for (G spot : presenter.getGroups().subList(startGroupIndex, Math.min(presenter.getGroups().size(), groupIndex
+                + 1))) {
+            int pos = presenter.getState().getGroupPos().get(spot) - presenter.getPager().getVisibleRange().getStart();
             g.fillText(spot.getTitle(), 0, HEADER_HEIGHT + presenter.getState().getGroupHeight() * pos + textHeight
                     + (presenter.getState()
                             .getGroupHeight() - textHeight)

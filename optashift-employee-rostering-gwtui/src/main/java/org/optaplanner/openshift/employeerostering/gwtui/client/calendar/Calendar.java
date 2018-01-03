@@ -157,27 +157,27 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         view.setHardEndDateBound(hardEndDateBound);
     }
 
-    int getDaysShown() {
+    public int getDaysShown() {
         return view.getDaysShown();
     }
 
-    void setDaysShown(int daysShown) {
+    public void setDaysShown(int daysShown) {
         view.setDaysShown(daysShown);
     }
 
-    int getEditMinuteGradality() {
+    public int getEditMinuteGradality() {
         return view.getEditMinuteGradality();
     }
 
-    void setEditMinuteGradality(int editMinuteGradality) {
+    public void setEditMinuteGradality(int editMinuteGradality) {
         view.setEditMinuteGradality(editMinuteGradality);
     }
 
-    int getDisplayMinuteGradality() {
+    public int getDisplayMinuteGradality() {
         return view.getDisplayMinuteGradality();
     }
 
-    void setDisplayMinuteGradality(int displayMinuteGradality) {
+    public void setDisplayMinuteGradality(int displayMinuteGradality) {
         view.setDisplayMinuteGradality(displayMinuteGradality);
     }
 
