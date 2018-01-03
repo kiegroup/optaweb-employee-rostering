@@ -131,8 +131,8 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
             ShiftData shift = new ShiftData(new SpotData(new Shift(spot.getSpot().getTenantId(), spot.getSpot(),
                     new TimeSlot(spot.getSpot().getTenantId(), startTime, endTime))));
             shift.shift.getShift().setId(id.shift.getShift().getId());
-            view.getCalendar().removeShift(id);
-            view.getCalendar().addShift(shift);
+            view.removeDrawable(id, this);
+            view.addShift(shift);
         } else {
             view.setToolBox(new ShiftToolbox(this, view, -ShiftToolbox.WIDTH, 0));
         }
@@ -191,6 +191,25 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
         return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
                 CssResources.INSTANCE.calendar().spotShiftView(),
                 "background-color");
+    }
+
+    @Override
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ShiftDrawable) {
+            ShiftDrawable other = (ShiftDrawable) o;
+            return this.id.equals(other.id);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id.hashCode();
     }
 
 }

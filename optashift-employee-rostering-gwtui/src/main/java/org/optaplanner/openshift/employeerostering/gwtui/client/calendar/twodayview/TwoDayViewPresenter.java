@@ -1,28 +1,18 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview;
 
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.HasRows;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.RangeChangeEvent;
-import com.google.gwt.view.client.RowCountChangeEvent;
 import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.RangeChangeEvent.Handler;
 import elemental2.dom.MouseEvent;
@@ -32,26 +22,14 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calenda
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.CalendarPresenter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.DateDisplay;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawable;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.DynamicContainer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.HasTitle;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Position;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawableProvider;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeSlotTableView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawable.PostMouseDownEvent;
-import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
-import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.Value;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 
 public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> implements
         CalendarPresenter<G,
-                I>, HasRows, HasData<
-                        Collection<D>> {
+                I> {
 
     public static final int SECONDS_PER_MINUTE = 60;
     public static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60;
@@ -96,6 +74,10 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
 
     public TwoDayViewConfig<G, I, D> getConfig() {
         return config;
+    }
+
+    public TwoDayViewPager<G, I, D> getPager() {
+        return pager;
     }
 
     public TwoDayView<G, I, D> getView() {
@@ -249,101 +231,6 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     // HasRows/HasData methods
-    @Override
-    public void fireEvent(GwtEvent<?> event) {
-        pager.fireEvent(event);
-    }
-
-    @Override
-    public HandlerRegistration addRangeChangeHandler(Handler handler) {
-        return pager.addRangeChangeHandler(handler);
-    }
-
-    @Override
-    public HandlerRegistration addRowCountChangeHandler(
-            com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
-        return pager.addRowCountChangeHandler(handler);
-    }
-
-    @Override
-    public int getRowCount() {
-        return pager.getRowCount();
-    }
-
-    @Override
-    public Range getVisibleRange() {
-        return pager.getVisibleRange();
-    }
-
-    @Override
-    public boolean isRowCountExact() {
-        return pager.isRowCountExact();
-    }
-
-    @Override
-    public void setRowCount(int count) {
-        pager.setRowCount(count);
-    }
-
-    @Override
-    public void setRowCount(int count, boolean isExact) {
-        pager.setRowCount(count, isExact);
-    }
-
-    @Override
-    public void setVisibleRange(int start, int length) {
-        pager.setVisibleRange(start, length);
-    }
-
-    @Override
-    public void setVisibleRange(Range range) {
-        pager.setVisibleRange(range);
-    }
-
-    @Override
-    public HandlerRegistration addCellPreviewHandler(com.google.gwt.view.client.CellPreviewEvent.Handler<Collection<
-            D>> handler) {
-        return pager.addCellPreviewHandler(handler);
-    }
-
-    @Override
-    public SelectionModel<? super Collection<D>> getSelectionModel() {
-        return pager.getSelectionModel();
-    }
-
-    @Override
-    public Collection<D> getVisibleItem(int indexOnPage) {
-        return pager.getVisibleItem(indexOnPage);
-    }
-
-    @Override
-    public int getVisibleItemCount() {
-        return pager.getVisibleItemCount();
-    }
-
-    @Override
-    public Iterable<Collection<D>> getVisibleItems() {
-        return pager.getVisibleItems();
-    }
-
-    public List<Collection<D>> getItems() {
-        return pager.getItems();
-    }
-
-    @Override
-    public void setRowData(int start, List<? extends Collection<D>> values) {
-        pager.setRowData(start, values);
-    }
-
-    @Override
-    public void setSelectionModel(SelectionModel<? super Collection<D>> selectionModel) {
-        pager.setSelectionModel(selectionModel);
-    }
-
-    @Override
-    public void setVisibleRangeAndClearData(Range range, boolean forceRangeChangeEvent) {
-        pager.setVisibleRangeAndClearData(range, forceRangeChangeEvent);
-    }
 
     // View defer
     public void draw() {
@@ -422,6 +309,11 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     @Override
     public void removeShift(I shift) {
         state.removeShift(shift);
+    }
+
+    public void removeDrawable(I shift, D drawable) {
+        calendar.getShifts().remove(shift);
+        state.removeDrawable(drawable);
     }
 
     @Override

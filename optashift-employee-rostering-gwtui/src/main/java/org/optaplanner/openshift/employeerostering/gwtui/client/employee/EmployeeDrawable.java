@@ -190,4 +190,9 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
         }
     }
 
+    @Override
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
 }

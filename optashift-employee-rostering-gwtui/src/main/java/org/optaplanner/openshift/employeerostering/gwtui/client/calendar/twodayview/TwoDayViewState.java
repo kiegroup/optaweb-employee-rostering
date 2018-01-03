@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.DynamicContainer;
@@ -17,27 +16,21 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.HasTitl
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Position;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeSlotTableView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.Value;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotTable;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 
 public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> {
 
     private TwoDayViewPresenter<G, I, D> presenter;
 
     private List<G> groups = new ArrayList<>();
-    private Collection<I> shifts;
-    private Collection<D> shiftDrawables;
+    private Map<G, Integer> groupIndexOf;
 
     private boolean visibleDirty, allDirty;
 
-    private Map<G, TimeSlotTable<I>> timeSlotTables;
     private Map<G, List<List<TimeSlotTable.TimeSlot<I>>>> groupShifts;
-    private TimeSlotTableView<D, G> timeSlotTableView;
+    private TimeSlotTableView<G, I, D> timeSlotTableView;
 
     private double screenWidth, screenHeight;
     private double widthPerMinute, spotHeight;
@@ -50,9 +43,6 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
     private int scrollBarLength;
     private int scrollBarHandleLength;
 
-    private HashMap<G, Integer> groupPos = new HashMap<>();
-    private HashMap<G, Integer> groupIndexOf = new HashMap<>();
-    private HashMap<G, Integer> groupEndPos = new HashMap<>();
     private HashMap<G, DynamicContainer> groupContainer = new HashMap<>();
     private HashMap<G, DynamicContainer> groupAddPlane = new HashMap<>();
 
@@ -60,22 +50,20 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
         this.presenter = presenter;
         baseDate = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
         currDay = baseDate;
-        shiftDrawables = new ArrayList<>();
         visibleDirty = true;
         allDirty = true;
         screenWidth = 1;
         screenHeight = 1;
-        timeSlotTables = new HashMap<>();
         groupShifts = new HashMap<>();
-        timeSlotTableView = new TimeSlotTableView<D, G>(shiftDrawables, groupPos, getViewStartDate(), getViewEndDate());
         scrollBarPos = 0;
         scrollBarLength = 1;
         scrollBarHandleLength = 1;
+        groupIndexOf = new HashMap<>();
     }
 
     public void setDate(LocalDateTime date) {
         visibleDirty = true;
-        currDay = date;//LocalDateTime.of(date.toLocalDate(), LocalTime.MIDNIGHT);
+        currDay = date;
         timeSlotTableView.setStartDate(getViewStartDate());
         timeSlotTableView.setEndDate(getViewEndDate());
         presenter.draw();
@@ -86,9 +74,13 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
     }
 
     public void setGroups(List<G> groups) {
+        groupIndexOf.clear();
         this.groups = groups.stream().sorted((a, b) -> CommonUtils.stringWithIntCompareTo(a.getTitle(), b.getTitle()))
                 .collect(Collectors
                         .toList());
+        for (int i = 0; i < this.groups.size(); i++) {
+            groupIndexOf.put(this.groups.get(i), i);
+        }
     }
 
     public double getScrollBarPos() {
@@ -119,7 +111,11 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
         return baseDate;
     }
 
-    public TimeSlotTableView<D, G> getTimeSlotTable() {
+    public TimeSlotTableView<G, I, D> getTimeSlotTable() {
+        if (null == timeSlotTableView) {
+            timeSlotTableView = new TimeSlotTableView<>(presenter, groups, Collections.emptyList(), getViewStartDate(),
+                    getViewEndDate(), presenter.getConfig().getDrawableProvider());
+        }
         return timeSlotTableView;
     }
 
@@ -148,7 +144,7 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
     }
 
     public double getLocationOfGroupSlot(G group, int slot) {
-        return TwoDayViewPresenter.HEADER_HEIGHT + (groupPos.get(group) + slot) * getGroupHeight() - getOffsetY();
+        return TwoDayViewPresenter.HEADER_HEIGHT + (getGroupPos().get(group) + slot) * getGroupHeight() - getOffsetY();
     }
 
     public boolean isDirty() {
@@ -188,8 +184,9 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
     }
 
     public double getOffsetX() {
-        return getLocationOfDate(baseDate.plusSeconds(currDay.toEpochSecond(ZoneOffset.UTC) - baseDate.toEpochSecond(
-                ZoneOffset.UTC)));
+        return getLocationOfDate(baseDate.plusSeconds(currDay.toEpochSecond(
+                ZoneOffset.UTC) - baseDate.toEpochSecond(
+                        ZoneOffset.UTC)));
     }
 
     public double getOffsetY() {
@@ -197,12 +194,12 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
                 .getPage();
     }
 
-    public HashMap<G, Integer> getGroupPos() {
-        return groupPos;
+    public Map<G, Integer> getGroupPos() {
+        return timeSlotTableView.getGroupStartPos();
     }
 
-    public HashMap<G, Integer> getGroupEndPos() {
-        return groupEndPos;
+    public Map<G, Integer> getGroupEndPos() {
+        return timeSlotTableView.getGroupEndPos();
     }
 
     public HashMap<G, DynamicContainer> getGroupContainer() {
@@ -242,86 +239,56 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
         return LocalDateTime.ofEpochSecond(60 * fromMins, 0, ZoneOffset.UTC);
     }
 
-    private List<HasTimeslot<G>> getShiftsDuring(I time, Collection<? extends HasTimeslot<G>> shifts) {
-        return shifts.stream().filter((shift) -> TimeSlotUtils.doTimeslotsIntersect(time.getStartTime(), time
-                .getEndTime(), shift
-                        .getStartTime(), shift.getEndTime())).collect(Collectors.toList());
-    }
-
     public void addShift(I shift) {
-        // TODO: Make better
-        setShifts(presenter.getCalendar().getShifts());
+        timeSlotTableView.addTimeSlot(shift);
     }
 
     public void removeShift(I shift) {
-        // TODO: Make better
-        setShifts(presenter.getCalendar().getShifts());
+        timeSlotTableView.removeTimeSlot(shift);
     }
 
-    private void repairShifts(G group) {
-
+    public void removeDrawable(D drawable) {
+        timeSlotTableView.removeTimeSlot(drawable);
     }
 
     public void setShifts(Collection<I> shifts) {
-        this.shifts = shifts;
-        shiftDrawables = new ArrayList<>();
         totalSpotSlots = 0;
-        groupPos.clear();
-        groupEndPos.clear();
         groupContainer.clear();
         groupAddPlane.clear();
-        groupIndexOf.clear();
-        timeSlotTables.clear();
         groupShifts.clear();
         presenter.getCursorMap().clear();
         allDirty = true;
         visibleDirty = true;
         presenter.setMouseOverDrawable(null);
+        List<TimeSlotTable<I>> timeSlotTables = new ArrayList<>(groups.size());
 
-        HashMap<G, String> colorMap = new HashMap<>();
-        int groupIndex = 0;
         for (G group : groups) {
-            groupIndexOf.put(group, groupIndex);
-            groupPos.put(group, totalSpotSlots);
             final long spotStartPos = totalSpotSlots;
             groupContainer.put(group, new DynamicContainer(() -> new Position(TwoDayViewPresenter.SPOT_NAME_WIDTH,
                     TwoDayViewPresenter.HEADER_HEIGHT
                             + spotStartPos * getGroupHeight())));
-            colorMap.put(group, ColorUtils.getColor(colorMap.size()));
 
             TimeSlotTable<I> timeSlotTable = new TimeSlotTable<>();
             for (I shift : shifts.stream().filter((s) -> s.getGroupId().equals(group)).collect(Collectors.toList())) {
                 timeSlotTable.add(shift.getStartTime().toEpochSecond(ZoneOffset.UTC),
                         shift.getEndTime().toEpochSecond(ZoneOffset.UTC), shift);
             }
-
-            List<List<TimeSlotTable.TimeSlot<I>>> grid = timeSlotTable.getTimeSlotsAsGrid();
-            timeSlotTables.put(group, timeSlotTable);
-            groupShifts.put(group, grid);
-
-            totalSpotSlots += groupShifts.get(group).size() + 1;
-            final int spotEndPos = totalSpotSlots;
-            groupEndPos.put(group, spotEndPos - 1);
-            groupAddPlane.put(group, new DynamicContainer(() -> new Position(TwoDayViewPresenter.SPOT_NAME_WIDTH,
-                    TwoDayViewPresenter.HEADER_HEIGHT
-                            + getGroupHeight() * (spotEndPos - 1))));
-
-            for (int index = 0; index < grid.size(); index++) {
-                for (TimeSlotTable.TimeSlot<I> shift : grid.get(index)) {
-                    D drawable = presenter.getConfig().getDrawableProvider().createDrawable(presenter, shift.getData(),
-                            index);
-                    drawable.setParent(groupContainer.get(group));
-                    shiftDrawables.add(drawable);
-                }
-
-            }
-            groupIndex++;
+            timeSlotTables.add(timeSlotTable);
+            groupContainer.put(group, new DynamicContainer(() -> {
+                return new Position(TwoDayViewPresenter.SPOT_NAME_WIDTH, TwoDayViewPresenter.HEADER_HEIGHT
+                        + getGroupPos().get(group) * presenter.getGroupHeight());
+            }));
+            groupAddPlane.put(group, new DynamicContainer(() -> {
+                return new Position(TwoDayViewPresenter.SPOT_NAME_WIDTH, (getGroupEndPos().get(group) + 1) * presenter
+                        .getGroupHeight());
+            }));
         }
 
-        timeSlotTableView = new TimeSlotTableView<D, G>(shiftDrawables, groupPos, getViewStartDate(), getViewEndDate());
+        timeSlotTableView = new TimeSlotTableView<>(presenter, groups, timeSlotTables, getViewStartDate(),
+                getViewEndDate(), presenter.getConfig().getDrawableProvider());
 
         for (G spot : groups) {
-            presenter.getCursorMap().put(spot, groupEndPos.get(spot));
+            presenter.getCursorMap().put(spot, getGroupEndPos().get(spot));
         }
 
         presenter.getView().updatePager();

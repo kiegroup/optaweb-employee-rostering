@@ -167,4 +167,9 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
                 "background-color");
     }
 
+    @Override
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
 }
