@@ -113,7 +113,7 @@ public class TemplateEditor implements IsElement {
         tenantId = tenant.getId();
         calendar.setTenantId(tenantId);
         calendar.setHardEndDateBound(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).plusWeeks(tenant
-                .getConfiguration().getView().getTemplateDuration()));
+                .getConfiguration().getTemplateDuration()));
         //TODO: Also handle week start date
         refresh();
     }

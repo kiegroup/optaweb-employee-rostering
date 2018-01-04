@@ -144,9 +144,12 @@ public class RosterGenerator {
                 .createNamedQuery("EmployeeAvailability.findAll", EmployeeAvailability.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
+        
+        Tenant tenant = entityManager.find(Tenant.class, tenantId);
 
         return new Roster((long) tenantId, tenantId,
-                skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, shiftList);
+                skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, 
+                tenant.getConfiguration(), shiftList);
     }
 
     private List<ShiftInfo> generateShiftTemplate(Integer tenantId, List<Spot> spots, List<

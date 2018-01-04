@@ -24,6 +24,7 @@ import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
+import org.optaplanner.core.api.domain.solution.drools.ProblemFactProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
@@ -33,6 +34,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 @PlanningSolution
 public class Roster extends AbstractPersistable {
@@ -48,7 +50,10 @@ public class Roster extends AbstractPersistable {
     private List<TimeSlot> timeSlotList;
     @ProblemFactCollectionProperty
     private List<EmployeeAvailability> employeeAvailabilityList;
-
+    
+    @ProblemFactProperty
+    private TenantConfiguration tenantConfiguration;
+    
     @PlanningEntityCollectionProperty
     private List<Shift> shiftList;
 
@@ -60,13 +65,14 @@ public class Roster extends AbstractPersistable {
     }
 
     public Roster(Long id, Integer tenantId, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList, List<TimeSlot> timeSlotList,
-            List<EmployeeAvailability> employeeAvailabilityList, List<Shift> shiftList) {
+            List<EmployeeAvailability> employeeAvailabilityList, TenantConfiguration tenantConfiguration, List<Shift> shiftList) {
         super(id, tenantId);
         this.skillList = skillList;
         this.spotList = spotList;
         this.employeeList = employeeList;
         this.timeSlotList = timeSlotList;
         this.employeeAvailabilityList = employeeAvailabilityList;
+        this.tenantConfiguration = tenantConfiguration;
         this.shiftList = shiftList;
     }
 
@@ -112,6 +118,14 @@ public class Roster extends AbstractPersistable {
 
     public void setEmployeeAvailabilityList(List<EmployeeAvailability> employeeAvailabilityList) {
         this.employeeAvailabilityList = employeeAvailabilityList;
+    }
+    
+    public TenantConfiguration getTenantConfiguration() {
+    	return tenantConfiguration;
+    }
+    
+    public void setTenantConfiguration(TenantConfiguration tenantConfiguration) {
+    	this.tenantConfiguration = tenantConfiguration;
     }
 
     public List<Shift> getShiftList() {

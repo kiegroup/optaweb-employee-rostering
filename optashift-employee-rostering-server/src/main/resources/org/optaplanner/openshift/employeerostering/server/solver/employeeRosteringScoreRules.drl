@@ -28,6 +28,7 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 global HardSoftScoreHolder scoreHolder;
 
@@ -92,6 +93,7 @@ end
 
 rule "Undesired time slot for an employee"
     when
+    	$tenantConfiguration : TenantConfiguration(undesiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNDESIRED,
                 $e : employee,
@@ -100,11 +102,12 @@ rule "Undesired time slot for an employee"
                 employee == $e,
                 timeSlot == $t)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -100);
+        scoreHolder.addSoftConstraintMatch(kcontext, -$tenantConfiguration.getUndesiredTimeSlotWeight());
 end
 
 rule "Desired time slot for an employee"
     when
+        $tenantConfiguration : TenantConfiguration(desiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.DESIRED,
                 $e : employee,
@@ -113,5 +116,5 @@ rule "Desired time slot for an employee"
                 employee == $e,
                 timeSlot == $t)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, +10);
+        scoreHolder.addSoftConstraintMatch(kcontext, +$tenantConfiguration.getDesiredTimeSlotWeight());
 end

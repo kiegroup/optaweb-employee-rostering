@@ -33,7 +33,7 @@ public interface TenantRestService {
 
     @POST
     @Path("/{id}/config/update")
-    Tenant updateTenantConfiguration(TenantConfigurationView tenantConfiguration);
+    Tenant updateTenantConfiguration(TenantConfiguration tenantConfiguration);
 
     /**
      * @param tenant never null

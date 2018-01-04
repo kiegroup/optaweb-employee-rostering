@@ -24,7 +24,7 @@ import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfigurationView;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestService;
 
 public class TenantRestServiceImpl extends AbstractRestServiceImpl implements TenantRestService {
@@ -36,7 +36,7 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
     @Transactional
     public List<Tenant> getTenantList() {
         return entityManager.createNamedQuery("Tenant.findAll", Tenant.class)
-                .getResultList();
+                            .getResultList();
     }
 
     @Override
@@ -55,9 +55,13 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
 
     @Override
     @Transactional
-    public Tenant updateTenantConfiguration(TenantConfigurationView tenantConfigurationView) {
-        Tenant tenant = entityManager.find(Tenant.class, tenantConfigurationView.getTenantId());
-        tenant.getConfiguration().setView(tenantConfigurationView);
+    public Tenant updateTenantConfiguration(TenantConfiguration tenantConfiguration) {
+        Tenant tenant = entityManager.find(Tenant.class, tenantConfiguration.getTenantId());
+        if (null == tenant) {
+            throw new IllegalStateException("There is no tenant with id (" +
+                                            tenantConfiguration.getTenantId() + ").");
+        }
+        tenant.setConfiguration(tenantConfiguration);
         return entityManager.merge(tenant);
     }
 
