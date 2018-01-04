@@ -221,9 +221,8 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         ShiftTemplate template = (null != old) ? old : new ShiftTemplate();
         template.setBaseDateType(new EnumOrCustom(tenantId, false, BaseDateDefinitions.WEEK_AFTER_START_DATE
                 .toString()));
-        long weeksInShifts = tenant.getConfiguration().getView().getTemplateDuration();
-
-        template.setRepeatType(new EnumOrCustom(tenantId, false, RepeatMode.WEEK.toString()));
+        long weeksInShifts = tenant.getConfiguration().getTemplateDuration();
+        template.setRepeatType(new EnumOrCustom(tenantId, true, "0:" + weeksInShifts + ":0:0"));
         template.setUniversalExceptions(Collections.emptyList());
         template.setShifts(shifts.stream().collect(Collectors.toList()));
         template.setTenantId(tenantId);

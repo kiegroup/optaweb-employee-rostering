@@ -17,7 +17,6 @@
 package org.optaplanner.openshift.employeerostering.shared.tenant;
 
 import java.io.Serializable;
-import java.time.DayOfWeek;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -25,7 +24,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
@@ -35,16 +33,14 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
-import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Tenant.findAll",
-                query = "select t from Tenant t" +
-                // Deliberately order by id instead of name to use generated order
-                        " order by t.id"),
+               @NamedQuery(name = "Tenant.findAll",
+                           query = "select t from Tenant t" +
+                                   // Deliberately order by id instead of name to use generated order
+                                   " order by t.id"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 public class Tenant implements Serializable {
@@ -57,7 +53,6 @@ public class Tenant implements Serializable {
     protected Long version;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
-    @JsonManagedReference
     private TenantConfiguration configuration;
 
     @NotNull
@@ -66,12 +61,12 @@ public class Tenant implements Serializable {
 
     @SuppressWarnings("unused")
     public Tenant() {
-        this.configuration = new TenantConfiguration(this, 1, DayOfWeek.MONDAY);
+        this.configuration = new TenantConfiguration();
     }
 
     public Tenant(String name) {
         this.name = name;
-        this.configuration = new TenantConfiguration(this, 1, DayOfWeek.MONDAY);
+        this.configuration = new TenantConfiguration();
     }
 
     public Tenant(String name, TenantConfiguration configuration) {
@@ -118,7 +113,7 @@ public class Tenant implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-        configuration.setTenant(this);
+        configuration.setTenantId(id);
     }
 
     public Long getVersion() {
@@ -143,6 +138,7 @@ public class Tenant implements Serializable {
 
     public void setConfiguration(TenantConfiguration configuration) {
         this.configuration = configuration;
+        configuration.setTenantId(id);
     }
 
 }

@@ -43,6 +43,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 
@@ -277,9 +278,12 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
+        
+        Tenant tenant = entityManager.find(Tenant.class, tenantId);
         // TODO fill in the score too - do we inject a ScoreDirectorFactory?
         return new Roster((long) tenantId, tenantId,
-                skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, shiftList);
+                skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, 
+                tenant.getConfiguration(), shiftList);
     }
 
     @Override

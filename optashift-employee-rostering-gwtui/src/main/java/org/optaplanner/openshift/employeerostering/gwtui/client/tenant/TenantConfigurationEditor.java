@@ -1,19 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.tenant;
 
-import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
-import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.ConfigurationEditor.Views;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeGroup;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfigurationView;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
-
 import java.time.DayOfWeek;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -25,11 +12,28 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Button;
+import org.gwtbootstrap3.client.ui.IntegerBox;
 import org.gwtbootstrap3.client.ui.ListBox;
+import org.gwtbootstrap3.client.ui.form.validator.DecimalMinValidator;
 import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.ConfigurationEditor.Views;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @Templated
 public class TenantConfigurationEditor implements IsElement {
+
+    @Inject
+    @DataField
+    private IntegerBox undesiredWeightInput;
+
+    @Inject
+    @DataField
+    private IntegerBox desiredWeightInput;
 
     @Inject
     @DataField
@@ -70,18 +74,22 @@ public class TenantConfigurationEditor implements IsElement {
         templateDurationIndexMap.put(2, 1);
         templateDuration.addItem("4 Weeks");
         templateDurationIndexMap.put(4, 2);
+
+        desiredWeightInput.setValidators(new DecimalMinValidator<Integer>(0));
+        undesiredWeightInput.setValidators(new DecimalMinValidator<Integer>(0));
     }
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {
         this.tenant = tenant;
-        weekStart.setSelectedIndex(tenant.getConfiguration().getView().getWeekStart().getValue() - 1);
-        templateDuration.setSelectedIndex(templateDurationIndexMap.get(tenant.getConfiguration().getView()
-                .getTemplateDuration()));
+        weekStart.setSelectedIndex(tenant.getConfiguration().getWeekStart().getValue() - 1);
+        templateDuration.setSelectedIndex(templateDurationIndexMap.get(tenant.getConfiguration()
+                                                                             .getTemplateDuration()));
+        desiredWeightInput.setValue(tenant.getConfiguration().getDesiredTimeSlotWeight());
+        undesiredWeightInput.setValue(tenant.getConfiguration().getUndesiredTimeSlotWeight());
         refresh();
     }
 
-    public void refresh() {
-    }
+    public void refresh() {}
 
     public void setConfigurationEditor(ConfigurationEditor configurationEditor) {
         this.configurationEditor = configurationEditor;
@@ -89,19 +97,20 @@ public class TenantConfigurationEditor implements IsElement {
 
     @EventHandler("updateConfig")
     private void onUpdateConfigClick(ClickEvent e) {
-        tenant.getConfiguration().getView().setTemplateDuration(templateDurationIndexMap.inverse().get(templateDuration
-                .getSelectedIndex()));
-        tenant.getConfiguration().getView().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
-        TenantRestServiceBuilder.updateTenantConfiguration(tenant.getConfiguration().getView(),
-                new FailureShownRestCallback<
-                        Tenant>() {
+        tenant.getConfiguration().setTemplateDuration(templateDurationIndexMap.inverse().get(templateDuration
+                                                                                                             .getSelectedIndex()));
+        tenant.getConfiguration().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
+        tenant.getConfiguration().setDesiredTimeSlotWeight(desiredWeightInput.getValue());
+        tenant.getConfiguration().setUndesiredTimeSlotWeight(undesiredWeightInput.getValue());
+        TenantRestServiceBuilder.updateTenantConfiguration(tenant.getConfiguration(),
+                                                           new FailureShownRestCallback<Tenant>() {
 
-                    @Override
-                    public void onSuccess(Tenant newConfig) {
-                        tenant.setConfiguration(newConfig.getConfiguration());
-                        tenantEvent.fire(newConfig);
-                    }
-                });
+                                                               @Override
+                                                               public void onSuccess(Tenant newConfig) {
+                                                                   tenant.setConfiguration(newConfig.getConfiguration());
+                                                                   tenantEvent.fire(newConfig);
+                                                               }
+                                                           });
     }
 
     @EventHandler("templateEditorButton")
