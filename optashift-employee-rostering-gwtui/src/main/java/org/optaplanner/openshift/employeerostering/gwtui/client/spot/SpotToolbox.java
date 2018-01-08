@@ -4,10 +4,12 @@ import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.AbstractDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawable.PostMouseDownEvent;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.HasTitle;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayViewPresenter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils.Glyphs;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotId;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
@@ -21,10 +23,11 @@ public class SpotToolbox extends AbstractDrawable {
     boolean onRemove;
     boolean onEdit;
     boolean onClone;
-    SpotDrawable drawable;
-    TwoDayViewPresenter<SpotId, ?, ?> presenter;
+    SpotDrawable<SpotData> drawable;
+    TwoDayViewPresenter<SpotId, SpotData, SpotDrawable<SpotData>> presenter;
 
-    public SpotToolbox(SpotDrawable parent, TwoDayViewPresenter<SpotId, ?, ?> view, double x,
+    public SpotToolbox(SpotDrawable<SpotData> parent, TwoDayViewPresenter<SpotId, SpotData, SpotDrawable<
+            SpotData>> view, double x,
             double y) {
         this.x = Math.max(TwoDayViewPresenter.SPOT_NAME_WIDTH, x + view.getLocationOfDate(parent.getStartTime()));
         this.y = Math.max(TwoDayViewPresenter.HEADER_HEIGHT, y + view.getLocationOfGroupSlot(parent.getGroupId(),
@@ -86,7 +89,7 @@ public class SpotToolbox extends AbstractDrawable {
 
                             @Override
                             public void onSuccess(Boolean removed) {
-                                presenter.getCalendar().forceUpdate();
+                                presenter.removeDrawable(drawable.getData(), drawable);
                             }
                         });
                 presenter.setToolBox(null);

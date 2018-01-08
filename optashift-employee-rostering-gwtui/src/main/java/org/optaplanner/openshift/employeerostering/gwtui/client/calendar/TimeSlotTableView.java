@@ -15,7 +15,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTi
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotTable;
 
-public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T extends TimeRowDrawable<G>> {
+public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T extends TimeRowDrawable<G, I>> {
 
     List<TimeSlotTable<I>> timeSlotTables;
     List<G> groups;
@@ -24,6 +24,7 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
 
     Map<UUID, T> uuidToDrawable;
     Map<T, UUID> drawableToUUID;
+    Map<I, UUID> shiftToUUID;
     Collection<T> timeSlots;
     Map<G, Integer> groupStartPos;
     Map<G, Integer> groupEndPos;
@@ -46,6 +47,7 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
 
         uuidToDrawable = new HashMap<>();
         drawableToUUID = new HashMap<>();
+        shiftToUUID = new HashMap<>();
 
         groupStartPos = new HashMap<>();
         groupEndPos = new HashMap<>();
@@ -68,6 +70,7 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
                     row.add(drawable);
                     timeSlots.add(drawable);
                     uuidToDrawable.put(t.getUUID(), drawable);
+                    shiftToUUID.put(t.getData(), t.getUUID());
                     drawableToUUID.put(drawable, t.getUUID());
                 }
                 allItems.add(row);
@@ -160,9 +163,25 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
         T drawable = provider.createDrawable(twoDayViewPresenter, shift, 0);
         uuidToDrawable.put(uuid, drawable);
         drawableToUUID.put(drawable, uuid);
+        shiftToUUID.put(shift, uuid);
         timeSlots.add(drawable);
         updateTimeSlotsFor(shift.getGroupId());
 
+    }
+
+    public void updateTimeSlot(I oldShift, I newShift) {
+        if (!oldShift.getGroupId().equals(newShift.getGroupId()) ||
+                !oldShift.getStartTime().equals(newShift.getStartTime()) ||
+                !oldShift.getEndTime().equals(newShift.getEndTime())) {
+            throw new RuntimeException("Old Shift does not exist in the same time slot as New Shift");
+        }
+
+        UUID uuid = shiftToUUID.get(oldShift);
+        timeSlotTables.get(groupIndex.get(oldShift.getGroupId()))
+                .update(uuid, newShift);
+        uuidToDrawable.get(uuid).updateData(newShift);
+        shiftToUUID.remove(oldShift);
+        shiftToUUID.put(newShift, uuid);
     }
 
     public void removeTimeSlot(I shift) {
@@ -173,6 +192,7 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
         uuidToDrawable.remove(uuid);
         drawableToUUID.remove(drawable);
         timeSlots.remove(drawable);
+        shiftToUUID.remove(shift);
         updateTimeSlotsFor(shift.getGroupId());
     }
 

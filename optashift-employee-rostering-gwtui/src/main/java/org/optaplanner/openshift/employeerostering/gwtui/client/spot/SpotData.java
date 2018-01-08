@@ -15,12 +15,9 @@ public class SpotData implements HasTimeslot<SpotId> {
     private Shift shift;
     private SpotId spotId;
 
-    private static Map<Long, SpotData> dataMap = new HashMap<>();
-
     public SpotData(Shift shift) {
         this.shift = shift;
         this.spotId = new SpotId(shift.getSpot());
-        dataMap.put(shift.getId(), this);
     }
 
     public Spot getSpot() {
@@ -52,25 +49,6 @@ public class SpotData implements HasTimeslot<SpotId> {
     @Override
     public SpotId getGroupId() {
         return spotId;
-    }
-
-    public static SpotData update(Shift shift) {
-        SpotData data = dataMap.get(shift.getId());
-        if (null != data) {
-            data.shift = shift;
-            data.spotId = new SpotId(shift.getSpot());
-            return data;
-        } else {
-            return null;
-        }
-    }
-
-    public static void remove(Shift shift) {
-        dataMap.remove(shift.getId());
-    }
-
-    public static void resetData() {
-        dataMap.clear();
     }
 
     @Override

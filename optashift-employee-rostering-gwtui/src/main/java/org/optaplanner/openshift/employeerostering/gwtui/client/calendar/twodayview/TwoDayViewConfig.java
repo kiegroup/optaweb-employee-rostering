@@ -9,7 +9,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRow
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawableProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
-public class TwoDayViewConfig<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> {
+public class TwoDayViewConfig<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>> {
 
     private TwoDayViewPresenter<G, I, D> presenter;
 

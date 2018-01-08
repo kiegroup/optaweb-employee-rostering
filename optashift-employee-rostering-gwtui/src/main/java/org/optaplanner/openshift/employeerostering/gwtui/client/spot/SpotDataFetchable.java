@@ -17,6 +17,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureSh
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.LoadingPopup;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
@@ -36,6 +37,7 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
     SpotRosterView last;
     Calendar<SpotId, SpotData> calendar;
     static final String LOADING_STRING = "Fetching Spot Roster";
+    boolean busy;
 
     public SpotDataFetchable(Provider<Integer> tenantIdProvider) {
         this(null, tenantIdProvider);
@@ -45,105 +47,98 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
         this.calendar = calendar;
         this.tenantIdProvider = tenantIdProvider;
         last = null;
+        busy = false;
     }
 
     @Override
     public void fetchData(Command after) {
-        Integer tenantId = tenantIdProvider.get();
-        if (null == last || null == calendar || !last.getTenantId().equals(tenantId)) {
-            LoadingPopup.setLoading(LOADING_STRING);
-            RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<
-                    SpotRosterView>() {
+        if (!busy) {
+            busy = true;
+            Integer tenantId = tenantIdProvider.get();
+            if (null == last || null == calendar || !last.getTenantId().equals(tenantId)) {
+                LoadingPopup.setLoading(LOADING_STRING);
+                RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<
+                        SpotRosterView>() {
 
-                @Override
-                public void onSuccess(SpotRosterView spotRosterView) {
-                    try {
-                        last = spotRosterView;
-                        Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap = spotRosterView
-                                .getTimeSlotIdToSpotIdToShiftViewListMap();
-                        Map<Long, Employee> employeeMap = spotRosterView.getEmployeeList().stream()
-                                .collect(Collectors.toMap(Employee::getId, Function.identity()));
+                    @Override
+                    public void onSuccess(SpotRosterView spotRosterView) {
+                        try {
+                            last = spotRosterView;
+                            Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap = spotRosterView
+                                    .getTimeSlotIdToSpotIdToShiftViewListMap();
+                            Map<Long, Employee> employeeMap = spotRosterView.getEmployeeList().stream()
+                                    .collect(Collectors.toMap(Employee::getId, Function.identity()));
 
-                        List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
-                        List<Spot> spots = spotRosterView.getSpotList();
-                        Collection<SpotData> out = new ArrayList<>();
+                            List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
+                            List<Spot> spots = spotRosterView.getSpotList();
+                            Collection<SpotData> out = new ArrayList<>();
 
-                        for (TimeSlot timeslot : timeslots) {
-                            for (Spot spot : spots) {
-                                if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot.getId(),
-                                        Collections.emptyMap()).get(spot
-                                                .getId())) {
-                                    timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())
-                                            .stream().forEach((sv) -> {
-                                                Shift shift = new Shift(sv, spot, timeslot);
-                                                shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
-                                                out.add(new SpotData(shift));
-                                            });
+                            for (TimeSlot timeslot : timeslots) {
+                                for (Spot spot : spots) {
+                                    if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot.getId(),
+                                            Collections.emptyMap()).get(spot
+                                                    .getId())) {
+                                        timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())
+                                                .stream().forEach((sv) -> {
+                                                    Shift shift = new Shift(sv, spot, timeslot);
+                                                    shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
+                                                    out.add(new SpotData(shift));
+                                                });
+                                    }
                                 }
                             }
+                            updatable.onUpdate(out);
+                            after.execute();
+                            calendar.setHardStartDateBound(spotRosterView.getStartDate().atTime(0, 0));
+                            calendar.setHardEndDateBound(spotRosterView.getEndDate().atTime(0, 0));
+                        } finally {
+                            LoadingPopup.clearLoading(LOADING_STRING);
                         }
-                        updatable.onUpdate(out);
-                        after.execute();
-                        calendar.setHardStartDateBound(spotRosterView.getStartDate().atTime(0, 0));
-                        calendar.setHardEndDateBound(spotRosterView.getEndDate().atTime(0, 0));
-                    } finally {
-                        LoadingPopup.clearLoading(LOADING_STRING);
                     }
-                }
-            });
-        } else {
-            RosterRestServiceBuilder.getSpotRosterViewFor(tenantId, calendar.getViewStartDate().toLocalDate()
-                    .toString(),
-                    calendar.getViewEndDate().toLocalDate().toString(), calendar.getVisibleGroups().stream()
-                            .map((g) -> g.getSpot()).collect(Collectors.toList()), new FailureShownRestCallback<
-                                    SpotRosterView>() {
+                });
+            } else {
+                RosterRestServiceBuilder.getSpotRosterViewFor(tenantId, calendar.getViewStartDate().minusDays(1)
+                        .toLocalDate()
+                        .toString(),
+                        calendar.getViewEndDate().plusDays(1).toLocalDate().toString(), calendar.getVisibleGroups()
+                                .stream()
+                                .map((g) -> g.getSpot()).collect(Collectors.toList()), new FailureShownRestCallback<
+                                        SpotRosterView>() {
 
-                                @Override
-                                public void onSuccess(SpotRosterView spotRosterView) {
-                                    last = spotRosterView;
-                                    Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap =
-                                            spotRosterView
-                                                    .getTimeSlotIdToSpotIdToShiftViewListMap();
-                                    Map<Long, Employee> employeeMap = spotRosterView.getEmployeeList().stream()
-                                            .collect(Collectors.toMap(Employee::getId, Function.identity()));
+                                    @Override
+                                    public void onSuccess(SpotRosterView spotRosterView) {
+                                        last = spotRosterView;
+                                        Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap =
+                                                spotRosterView
+                                                        .getTimeSlotIdToSpotIdToShiftViewListMap();
+                                        Map<Long, Employee> employeeMap = spotRosterView.getEmployeeList().stream()
+                                                .collect(Collectors.toMap(Employee::getId, Function.identity()));
 
-                                    List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
-                                    List<Spot> spots = spotRosterView.getSpotList();
-                                    HashSet<SpotData> remaining = new HashSet<>(calendar.getShifts());
-                                    remaining.removeIf((s) -> !calendar.getVisibleGroups().contains(s.getGroupId())
-                                            || !TimeSlotUtils.doTimeslotsIntersect(s.getStartTime(), s
-                                                    .getEndTime(),
-                                                    calendar.getViewStartDate(), calendar.getViewEndDate()));
+                                        List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
+                                        List<Spot> spots = spotRosterView.getSpotList();
 
-                                    for (TimeSlot timeslot : timeslots) {
-                                        for (Spot spot : spots) {
-                                            if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot
-                                                    .getId(), Collections.emptyMap()).get(
-                                                            spot.getId())) {
-                                                timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot
-                                                        .getId())
-                                                        .stream().forEach((sv) -> {
-                                                            Shift shift = new Shift(sv, spot, timeslot);
-                                                            shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
-                                                            SpotData oldShift = SpotData.update(shift);
-                                                            if (null == oldShift) {
-                                                                SpotData data = new SpotData(shift);
-                                                                calendar.addShift(data);
-                                                                remaining.remove(data);
-                                                            } else {
-                                                                remaining.remove(oldShift);
-                                                            }
-                                                        });
+                                        for (TimeSlot timeslot : timeslots) {
+                                            for (Spot spot : spots) {
+                                                if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot
+                                                        .getId(), Collections.emptyMap()).get(
+                                                                spot.getId())) {
+                                                    timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot
+                                                            .getId())
+                                                            .stream().forEach((sv) -> {
+                                                                Shift shift = new Shift(sv, spot, timeslot);
+                                                                shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
+                                                                SpotData newShift = new SpotData(shift);
+                                                                calendar.updateShift(newShift);
+                                                            });
+                                                }
                                             }
                                         }
+                                        after.execute();
                                     }
-                                    remaining.forEach((s) -> {
-                                        calendar.removeShift(s);
-                                        SpotData.remove(s.getShift());
-                                    });
-                                    after.execute();
-                                }
-                            });
+                                });
+
+            }
+            busy = false;
         }
 
     }

@@ -27,7 +27,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRow
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawableProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
-public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> implements
+public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>>
+        implements
         CalendarPresenter<G,
                 I> {
 
@@ -364,6 +365,11 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     @Override
     public void setDisplayMinuteGradality(int displayMinuteGradality) {
         config.setDisplayMinuteGradality(displayMinuteGradality);
+    }
+
+    @Override
+    public void updateShift(I oldShift, I newShift) {
+        state.updateShift(oldShift, newShift);
     }
 
 }

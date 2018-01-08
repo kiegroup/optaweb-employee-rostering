@@ -4,9 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import elemental2.dom.MouseEvent;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Panel;
@@ -18,16 +23,19 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.ConstantF
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.DataProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
 public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
 
     CalendarPresenter<G, I> view;
-    Collection<I> shifts;
+    Map<I, I> shifts;
     Integer tenantId;
     SyncBeanManager beanManager;
     Fetchable<Collection<I>> dataProvider;
     Fetchable<List<G>> groupProvider;
     DataProvider<G, I> instanceCreator;
+    Timer timer;
+    boolean didTenantChange;
 
     private Calendar(Integer tenantId, Fetchable<Collection<I>> dataProvider, Fetchable<List<G>> groupProvider,
             DataProvider<G,
@@ -35,11 +43,20 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         this.beanManager = beanManager;
         this.tenantId = tenantId;
 
-        shifts = new ArrayList<>();
+        shifts = new HashMap<>();
+        didTenantChange = true;
 
         setInstanceCreator(instanceCreator);
         setGroupProvider(groupProvider);
         setDataProvider(dataProvider);
+
+        timer = new Timer() {
+
+            @Override
+            public void run() {
+                forceUpdate();
+            }
+        };
 
         refresh();
 
@@ -59,7 +76,8 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
 
     public void setTenantId(Integer tenantId) {
         this.tenantId = tenantId;
-        groupProvider.fetchData(() -> dataProvider.fetchData(Fetchable.DO_NOTHING));
+        didTenantChange = true;
+        groupProvider.fetchData(() -> dataProvider.fetchData(() -> draw()));
     }
 
     public void draw() {
@@ -71,13 +89,12 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
     }
 
     public void forceUpdate() {
-        groupProvider.fetchData(() -> dataProvider.fetchData(() -> draw()));
+        dataProvider.fetchData(() -> draw());
     }
 
     public void setDate(LocalDateTime date) {
         view.setDate(date);
-        dataProvider.fetchData(() -> {
-        });
+        timer.schedule(1000);
     }
 
     public LocalDateTime getViewStartDate() {
@@ -89,7 +106,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
     }
 
     public Collection<I> getShifts() {
-        return shifts;
+        return shifts.keySet();
     }
 
     public Collection<G> getGroups() {
@@ -101,8 +118,21 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
     }
 
     public void addShift(I shift) {
-        shifts.add(shift);
+        shifts.put(shift, shift);
         getView().addShift(shift);
+    }
+
+    //returns original shift; add it if it doesn't exist
+    public I updateShift(I newShift) {
+        I oldShift = shifts.get(newShift);
+        if (oldShift != null) {
+            shifts.put(oldShift, newShift);
+            getView().updateShift(oldShift, newShift);
+            return oldShift;
+        } else {
+            addShift(newShift);
+            return null;
+        }
     }
 
     public void removeShift(I shift) {
@@ -115,9 +145,18 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
             dataProvider = new ConstantFetchable<>(Collections.emptyList());
         }
         this.dataProvider = dataProvider;
+        shifts.clear();
         dataProvider.setUpdatable((d) -> {
-            shifts = new ArrayList<>(d);
-            getView().setShifts(shifts);
+            groupProvider.fetchData(() -> {
+                if (didTenantChange) {
+                    shifts.clear();
+                    d.forEach((e) -> shifts.put(e, e));
+                    view.setShifts(getShifts());
+                    didTenantChange = false;
+                } else {
+                    d.forEach((e) -> updateShift(e));
+                }
+            });
         });
     }
 
@@ -126,7 +165,10 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
             groupProvider = new ConstantFetchable<>(Collections.emptyList());
         }
         this.groupProvider = groupProvider;
-        groupProvider.setUpdatable((groups) -> getView().setGroups(groups));
+        groupProvider.setUpdatable((groups) -> {
+            didTenantChange = true;
+            getView().setGroups(groups);
+        });
     }
 
     public void setInstanceCreator(DataProvider<G, I> instanceCreator) {
@@ -193,7 +235,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         return beanManager;
     }
 
-    public static class Builder<G extends HasTitle, T extends HasTimeslot<G>, D extends TimeRowDrawable<G>> {
+    public static class Builder<G extends HasTitle, T extends HasTimeslot<G>, D extends TimeRowDrawable<G, T>> {
 
         Panel container;
         Collection<T> shifts;

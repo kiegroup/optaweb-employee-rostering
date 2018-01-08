@@ -75,7 +75,7 @@ public class SpotShiftEditForm implements IsElement {
 
     public static SpotShiftEditForm create(SpotDrawable spotData) {
         spot = spotData;
-        return spotData.getCalendarView().getCalendar().getInstanceOf(SpotShiftEditForm.class);
+        return (SpotShiftEditForm) spotData.getCalendarView().getCalendar().getInstanceOf(SpotShiftEditForm.class);
     }
 
     @PostConstruct

@@ -87,10 +87,10 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        calendar = new Calendar.Builder<SpotId, SpotData, SpotDrawable>(container, tenantId, CONSTANTS)
+        calendar = new Calendar.Builder<SpotId, SpotData, SpotDrawable<SpotData>>(container, tenantId, CONSTANTS)
                 .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
                 .withBeanManager(beanManager)
-                .asTwoDayView((v, d, i) -> new SpotDrawable(v, d, i));
+                .asTwoDayView((v, d, i) -> new SpotDrawable<>(v, d, i));
         calendar.setDataProvider(new SpotDataFetchable(calendar, () -> getTenantId()));
         Window.addResizeHandler((e) -> calendar.setViewSize(e.getWidth() - container.getAbsoluteLeft(),
                 e.getHeight() - container.getAbsoluteTop()));

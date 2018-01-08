@@ -15,7 +15,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 
-public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawable<EmployeeId> {
+public class EmployeeDrawable<I extends EmployeeData> extends AbstractDrawable implements TimeRowDrawable<EmployeeId,
+        I> {
 
     TwoDayViewPresenter<EmployeeId, ?, ?> view;
     EmployeeData data;
@@ -193,6 +194,11 @@ public class EmployeeDrawable extends AbstractDrawable implements TimeRowDrawabl
     @Override
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    @Override
+    public void updateData(I newData) {
+        this.data = newData;
     }
 
 }
