@@ -11,14 +11,18 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import cern.colt.matrix.impl.DenseObjectMatrix1D;
 import com.google.gwt.user.cellview.client.SimplePager;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import elemental2.dom.CanvasRenderingContext2D;
+import elemental2.dom.CanvasRenderingContext2D.DrawImageImageUnionType;
 import elemental2.dom.HTMLCanvasElement;
+import elemental2.dom.Image;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.html.Div;
@@ -40,7 +44,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.Cs
 import static org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayViewPresenter.*;
 
 @Templated
-public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> implements
+public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>> implements
         IsElement {
 
     private static TwoDayViewPresenter presenterInstance;
@@ -76,6 +80,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     @DataField
     HTMLCanvasElement canvas;
 
+    @Inject
+    @DataField
+    HTMLCanvasElement buffer;
+
     public TwoDayView() {
         presenter = presenterInstance;
     }
@@ -96,12 +104,15 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         canvas.addEventListener("mousemove", (e) -> {
             presenter.onMouseMove((MouseEvent) e);
         });
+
         initPanels();
     }
 
     public void setViewSize(double screenWidth, double screenHeight) {
         canvas.width = screenWidth - daysShownRangeSlider.getOffsetWidth() - canvas.offsetLeft;
         canvas.height = screenHeight - bottomPanel.getOffsetHeight() - canvas.offsetTop;
+        buffer.width = canvas.width;
+        buffer.height = canvas.height;
     }
 
     public double getScreenWidth() {
@@ -120,7 +131,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         return CanvasUtils.getCanvasY(getCanvas(), e);
     }
 
-    public static <G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> TwoDayView<G, I, D>
+    public static <G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>> TwoDayView<G, I, D>
             create(SyncBeanManager beanManager, TwoDayViewPresenter<G, I,
                     D> presenter) {
         presenterInstance = presenter;
@@ -186,7 +197,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
 
     public void draw() {
         presenter.setPage(pager.getPage());
-        CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) canvas.getContext("2d");
+        CanvasRenderingContext2D g = (CanvasRenderingContext2D) (Object) buffer.getContext("2d");
         g.clearRect(0, 0, getScreenWidth(), getScreenHeight());
         //updateScrollBar();
 
@@ -195,6 +206,10 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         drawSpotToCreate(g);
         drawToolBox(g);
         drawPopup(g);
+
+        CanvasRenderingContext2D d = (CanvasRenderingContext2D) (Object) canvas.getContext("2d");
+        d.clearRect(0, 0, getScreenWidth(), getScreenHeight());
+        d.drawImage(buffer, 0, 0);
     }
 
     private void drawSpots(CanvasRenderingContext2D g) {

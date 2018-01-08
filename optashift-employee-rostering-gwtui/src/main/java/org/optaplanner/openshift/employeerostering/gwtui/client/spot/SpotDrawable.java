@@ -12,16 +12,17 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 
-public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<SpotId> {
+public class SpotDrawable<I extends SpotData> extends AbstractDrawable implements TimeRowDrawable<SpotId, I> {
 
-    TwoDayViewPresenter<SpotId, ?, ?> view;
+    TwoDayViewPresenter<SpotId, SpotData, SpotDrawable<SpotData>> view;
     SpotData data;
     int index;
     boolean isMouseOver;
 
-    public SpotDrawable(TwoDayViewPresenter<SpotId, ?, ?> view, SpotData data, int index) {
+    public SpotDrawable(TwoDayViewPresenter<SpotId, SpotData, SpotDrawable<SpotData>> view, SpotData data, int index) {
         this.view = view;
         this.data = data;
         this.index = index;
@@ -107,7 +108,7 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
 
     @Override
     public PostMouseDownEvent onMouseDown(MouseEvent mouseEvent, double x, double y) {
-        view.setToolBox(new SpotToolbox(this, view, -SpotToolbox.WIDTH, -SpotToolbox.HEIGHT));
+        view.setToolBox(new SpotToolbox((SpotDrawable<SpotData>) this, view, -SpotToolbox.WIDTH, -SpotToolbox.HEIGHT));
         return PostMouseDownEvent.CAPTURE_DRAG;
     }
 
@@ -170,6 +171,11 @@ public class SpotDrawable extends AbstractDrawable implements TimeRowDrawable<Sp
     @Override
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    @Override
+    public void updateData(I newData) {
+        this.data = newData;
     }
 
 }

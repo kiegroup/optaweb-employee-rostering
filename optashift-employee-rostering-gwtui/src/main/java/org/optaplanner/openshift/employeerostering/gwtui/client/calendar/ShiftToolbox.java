@@ -59,7 +59,7 @@ public class ShiftToolbox extends AbstractDrawable {
             return PostMouseDownEvent.IGNORE;
         } else {
             if (localX > 10 && localY > 30 && localX < 40 && localY < 60) {
-                presenter.getCalendar().removeShift(drawable.id);
+                presenter.removeDrawable(drawable.id, drawable);
                 presenter.setToolBox(null);
                 return PostMouseDownEvent.REMOVE_FOCUS;
             }

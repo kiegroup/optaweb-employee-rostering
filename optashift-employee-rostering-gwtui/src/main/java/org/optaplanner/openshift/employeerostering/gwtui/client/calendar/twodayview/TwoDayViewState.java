@@ -20,7 +20,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotTable;
 
-public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> {
+public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>> {
 
     private TwoDayViewPresenter<G, I, D> presenter;
 
@@ -241,6 +241,10 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
 
     public void addShift(I shift) {
         timeSlotTableView.addTimeSlot(shift);
+    }
+
+    public void updateShift(I oldShift, I newShift) {
+        timeSlotTableView.updateTimeSlot(oldShift, newShift);
     }
 
     public void removeShift(I shift) {

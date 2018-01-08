@@ -76,7 +76,8 @@ public class EmployeeShiftEditForm implements IsElement {
 
     public static EmployeeShiftEditForm create(EmployeeDrawable employeeData) {
         employee = employeeData;
-        return employeeData.getCalendarView().getCalendar().getInstanceOf(EmployeeShiftEditForm.class);
+        return (EmployeeShiftEditForm) employeeData.getCalendarView().getCalendar().getInstanceOf(
+                EmployeeShiftEditForm.class);
     }
 
     @PostConstruct

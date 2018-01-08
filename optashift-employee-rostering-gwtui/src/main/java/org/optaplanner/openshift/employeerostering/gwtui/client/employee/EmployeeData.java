@@ -19,7 +19,6 @@ public class EmployeeData implements HasTimeslot<EmployeeId> {
     Shift shift;
     EmployeeId employeeId;
     private EmployeeAvailabilityView availabilityView;
-    private static Map<Identity, EmployeeData> dataMap = new HashMap<>();
 
     public EmployeeData(Shift shift, EmployeeAvailabilityView availabilityView) {
         this.id = new Identity(shift.getEmployee(), shift.getTimeSlot().getStartDateTime(), shift.getTimeSlot()
@@ -27,7 +26,6 @@ public class EmployeeData implements HasTimeslot<EmployeeId> {
         this.shift = shift;
         this.availabilityView = availabilityView;
         this.employeeId = new EmployeeId(shift.getEmployee());
-        dataMap.put(id, this);
     }
 
     public Employee getEmployee() {
@@ -67,24 +65,6 @@ public class EmployeeData implements HasTimeslot<EmployeeId> {
     @Override
     public EmployeeId getGroupId() {
         return employeeId;
-    }
-
-    public static boolean update(Shift shift, EmployeeAvailabilityView availabilityView) {
-        Identity id = new Identity(shift.getEmployee(), shift.getTimeSlot().getStartDateTime(), shift.getTimeSlot()
-                .getEndDateTime());
-        EmployeeData data = dataMap.get(id);
-        if (null != data) {
-            data.shift = shift;
-            data.availabilityView = availabilityView;
-            data.employeeId = new EmployeeId(shift.getEmployee());
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static void resetData() {
-        dataMap.clear();
     }
 
     @Override

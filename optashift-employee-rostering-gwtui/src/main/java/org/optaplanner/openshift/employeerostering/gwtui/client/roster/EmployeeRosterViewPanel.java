@@ -100,10 +100,11 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     }
 
     private void initTable() {
-        calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable>(container, tenantId, CONSTANTS)
-                .fetchingGroupsFrom(new EmployeeNameFetchable(() -> getTenantId()))
-                .withBeanManager(beanManager)
-                .asTwoDayView((v, d, i) -> new EmployeeDrawable(v, d, i));
+        calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable<EmployeeData>>(container, tenantId,
+                CONSTANTS)
+                        .fetchingGroupsFrom(new EmployeeNameFetchable(() -> getTenantId()))
+                        .withBeanManager(beanManager)
+                        .asTwoDayView((v, d, i) -> new EmployeeDrawable<>(v, d, i));
 
         calendar.setDataProvider(new EmployeeDataFetchable(calendar, () -> getTenantId()));
         Window.addResizeHandler((e) -> calendar.setViewSize(e.getWidth() - container.getAbsoluteLeft(),

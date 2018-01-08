@@ -23,7 +23,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.ShiftDr
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
-public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> implements
+public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>> implements
         HasRows, HasData<
                 Collection<D>> {
 
@@ -52,6 +52,7 @@ public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D ext
         }
         this.page = page;
         presenter.setToolBox(null);
+        presenter.getCalendar().forceUpdate();
         presenter.draw();
     }
 
@@ -148,7 +149,7 @@ public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D ext
         presenter.getState().setVisibleDirty(true);
         rangeStart = start;
         rangeEnd = start + length;
-        presenter.getCalendar().forceUpdate();
+        presenter.draw();
     }
 
     public void setVisibleRange(Range range) {
@@ -158,7 +159,7 @@ public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D ext
         presenter.getState().setVisibleDirty(true);
         rangeStart = range.getStart();
         rangeEnd = range.getStart() + range.getLength();
-        presenter.getCalendar().forceUpdate();
+        presenter.draw();
     }
 
     public HandlerRegistration addCellPreviewHandler(com.google.gwt.view.client.CellPreviewEvent.Handler<Collection<

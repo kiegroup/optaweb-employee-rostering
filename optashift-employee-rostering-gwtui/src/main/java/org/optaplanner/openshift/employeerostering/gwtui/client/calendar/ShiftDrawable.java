@@ -18,7 +18,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotId;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
-public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<SpotId> {
+public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<SpotId, ShiftData> {
 
     SpotId spot;
     LocalDateTime startTime;
@@ -210,6 +210,11 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     @Override
     public int hashCode() {
         return this.id.hashCode();
+    }
+
+    @Override
+    public void updateData(ShiftData newData) {
+        this.id = newData;
     }
 
 }

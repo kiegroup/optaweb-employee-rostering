@@ -13,7 +13,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
-public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G>> {
+public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>> {
 
     private TwoDayViewPresenter<G, I, D> presenter;
 

@@ -26,6 +26,8 @@ public interface CalendarPresenter<G extends HasTitle, I extends HasTimeslot<G>>
 
     void addShift(I shift);
 
+    void updateShift(I oldShift, I newShift);
+
     void removeShift(I shift);
 
     void setShifts(Collection<I> shifts);

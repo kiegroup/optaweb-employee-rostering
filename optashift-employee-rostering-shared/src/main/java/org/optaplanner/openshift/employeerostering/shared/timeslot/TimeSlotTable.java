@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -69,6 +70,20 @@ public class TimeSlotTable<T> {
 
         intervalData.put(uuid, new TimeSlot<T>(startPoint, endPoint, data));
         return uuid;
+    }
+
+    public UUID get(T data) {
+        for (Entry<UUID, TimeSlot<T>> e : intervalData.entrySet()) {
+            if (e.getValue().getData().equals(data)) {
+                return e.getKey();
+            }
+        }
+        return null;
+    }
+
+    public void update(UUID uuid, T newData) {
+        TimeSlot<T> orig = intervalData.get(uuid);
+        intervalData.put(uuid, new TimeSlot<>(orig.getStartPoint(), orig.getEndPoint(), newData));
     }
 
     public void remove(TimeSlot<T> timeSlot) {
