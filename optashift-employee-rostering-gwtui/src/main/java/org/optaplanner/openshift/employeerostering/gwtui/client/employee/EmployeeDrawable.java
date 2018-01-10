@@ -68,14 +68,15 @@ public class EmployeeDrawable<I extends EmployeeData> extends AbstractDrawable i
         int fontSize = CanvasUtils.fitTextToBox(g, spot + pad, duration * view.getWidthPerMinute() * 0.75, view
                 .getGroupHeight() * 0.75);
         g.font = CanvasUtils.getFont(fontSize);
-        double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, spot, 12);
+        double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, spot, fontSize);
 
         g.fillText(spot, x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
-                y + (view.getGroupHeight() + textSize[1]) * 0.5);
+                y + (view.getGroupHeight() + textSize[1] * 0.375) * 0.5);
 
         if (data.isLocked()) {
             CanvasUtils.drawGlyph(g, CanvasUtils.Glyphs.LOCK, fontSize, x +
-                    (duration * view.getWidthPerMinute() + textSize[0]) * 0.5, y + (view.getGroupHeight() + textSize[1])
+                    (duration * view.getWidthPerMinute() + textSize[0]) * 0.5, y + (view.getGroupHeight() + textSize[1]
+                            * 0.375)
                             * 0.5);
         }
     }

@@ -40,7 +40,7 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
     private LocalDateTime currDay;
 
     private double scrollBarPos;
-    private int scrollBarLength;
+    private double scrollBarLength;
     private int scrollBarHandleLength;
 
     private HashMap<G, DynamicContainer> groupContainer = new HashMap<>();
@@ -87,7 +87,7 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
         return scrollBarPos;
     }
 
-    public int getScrollBarLength() {
+    public double getScrollBarLength() {
         return scrollBarLength;
     }
 
@@ -99,7 +99,7 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
         scrollBarPos = pos;
     }
 
-    public void setScrollBarLength(int length) {
+    public void setScrollBarLength(double length) {
         scrollBarLength = length;
     }
 

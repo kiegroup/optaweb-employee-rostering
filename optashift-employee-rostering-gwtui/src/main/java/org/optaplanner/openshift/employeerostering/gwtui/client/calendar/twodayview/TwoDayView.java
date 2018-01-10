@@ -6,23 +6,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import cern.colt.matrix.impl.DenseObjectMatrix1D;
 import com.google.gwt.user.cellview.client.SimplePager;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.NativeHorizontalScrollbar;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import elemental2.dom.CanvasRenderingContext2D;
-import elemental2.dom.CanvasRenderingContext2D.DrawImageImageUnionType;
 import elemental2.dom.HTMLCanvasElement;
-import elemental2.dom.Image;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.html.Div;
@@ -38,7 +31,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.RangeSlider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayViewPresenter.*;
@@ -217,10 +209,11 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             return;
         }
 
-        int minSize = 12;//Integer.MAX_VALUE;
-        //for (G spot : groups) {
-        //    minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot.getTitle(), SPOT_NAME_WIDTH, presenter.getGroupHeight()));
-        //}
+        int minSize = Integer.MAX_VALUE;
+        for (G spot : presenter.getVisibleGroups()) {
+            minSize = Math.min(minSize, CanvasUtils.fitTextToBox(g, spot.getTitle(), SPOT_NAME_WIDTH, presenter
+                    .getGroupHeight()));
+        }
         int index = 0;
         Iterable<Collection<D>> toDraw = presenter.getPager().getVisibleItems();
         Set<G> drawnSpots = new HashSet<>();
@@ -362,10 +355,12 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         String week = presenter.getConfig().getDateFormat().format(presenter.getViewStartDate(), WEEK_START, presenter
                 .getConfig()
                 .getTranslator());
-        int textSize = CanvasUtils.fitTextToBox(g, week, SPOT_NAME_WIDTH, HEADER_HEIGHT / 2);
+        int whitespacePadding = 10;
+        int textSize = CanvasUtils.fitTextToBox(g, week, SPOT_NAME_WIDTH - whitespacePadding, HEADER_HEIGHT / 2);
+
         for (String day : WEEKDAYS) {
             textSize = Math.min(textSize, CanvasUtils.fitTextToBox(g, day, 24 * 60 * presenter.getState()
-                    .getWidthPerMinute(),
+                    .getWidthPerMinute() - whitespacePadding,
                     HEADER_HEIGHT / 2));
         }
         g.font = CanvasUtils.getFont(textSize);
@@ -381,7 +376,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
             g.fillText(WEEKDAYS[(int) (Math.abs((WEEK_START + x + presenter.getViewStartDate().getDayOfWeek().getValue()
                     - 1 + offset))
                     % 7)],
-                    SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute() - drawOffset,
+                    SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute() - drawOffset
+                            + whitespacePadding,
                     HEADER_HEIGHT / 2);
             CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute()
                     - drawOffset, 0,
