@@ -239,7 +239,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
             int daysBetween = (int) ((getHardEndDateBound().toEpochSecond(ZoneOffset.UTC) - getHardStartDateBound()
                     .toEpochSecond(
                             ZoneOffset.UTC)) / (60 * 60 * 24));
-            state.setScrollBarLength((int) Math.round((daysBetween + 0.0) / getDaysShown()));
+            state.setScrollBarLength((daysBetween + 0.0) / getDaysShown());
             state.setScrollBarHandleLength(config.getDaysShown());
             state.setScrollBarPos((state.getViewStartDate().toEpochSecond(ZoneOffset.UTC) -
                     state.getViewStartDate().toEpochSecond(ZoneOffset.UTC) + 0.0) / (SECONDS_PER_DAY * daysBetween));

@@ -68,14 +68,15 @@ public class SpotDrawable<I extends SpotData> extends AbstractDrawable implement
         int fontSize = CanvasUtils.fitTextToBox(g, employee + pad, duration * view.getWidthPerMinute() * 0.75, view
                 .getGroupHeight() * 0.75);
         g.font = CanvasUtils.getFont(fontSize);
-        double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, employee, 12);
+        double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, employee, fontSize);
 
         g.fillText(employee, x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
-                y + (view.getGroupHeight() + textSize[1]) * 0.5);
+                y + (view.getGroupHeight() + textSize[1] * 0.375) * 0.5);
 
         if (data.isLocked()) {
             CanvasUtils.drawGlyph(g, CanvasUtils.Glyphs.LOCK, fontSize, x +
-                    (duration * view.getWidthPerMinute() + textSize[0]) * 0.5, y + (view.getGroupHeight() + textSize[1])
+                    (duration * view.getWidthPerMinute() + textSize[0]) * 0.5, y + (view.getGroupHeight() + textSize[1]
+                            * 0.375)
                             * 0.5);
         }
     }

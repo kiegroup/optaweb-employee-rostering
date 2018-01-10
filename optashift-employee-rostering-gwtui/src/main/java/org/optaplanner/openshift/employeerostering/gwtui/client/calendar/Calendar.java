@@ -152,6 +152,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
                     shifts.clear();
                     d.forEach((e) -> shifts.put(e, e));
                     view.setShifts(getShifts());
+                    view.setDate(view.getHardStartDateBound());
                     didTenantChange = false;
                 } else {
                     d.forEach((e) -> updateShift(e));
