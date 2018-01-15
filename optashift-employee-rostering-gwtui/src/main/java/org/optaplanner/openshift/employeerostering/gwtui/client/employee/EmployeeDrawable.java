@@ -7,16 +7,19 @@ import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.AbstractDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayViewPresenter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.TimeoutRestCaller;
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 
-public class EmployeeDrawable<I extends EmployeeData> extends AbstractDrawable implements TimeRowDrawable<EmployeeId,
-        I> {
+public class EmployeeDrawable<I extends EmployeeData> extends AbstractDrawable implements TimeRowDrawable<EmployeeId, I> {
 
     TwoDayViewPresenter<EmployeeId, ?, ?> view;
     EmployeeData data;
@@ -41,12 +44,12 @@ public class EmployeeDrawable<I extends EmployeeData> extends AbstractDrawable i
     public double getLocalY() {
         Integer cursorIndex = view.getCursorIndex(getGroupId());
         return (null != cursorIndex && cursorIndex > index) ? index * view.getGroupHeight() : (index + 1) * view
-                .getGroupHeight();
+                                                                                                                .getGroupHeight();
     }
 
     @Override
     public void doDrawAt(CanvasRenderingContext2D g, double x, double y) {
-        String color = (isMouseOver) ? ColorUtils.brighten(getFillColor()) : getFillColor();
+        String color = getFillColor();
         CanvasUtils.setFillColor(g, color);
 
         double start = getStartTime().toEpochSecond(ZoneOffset.UTC) / 60;
@@ -66,18 +69,16 @@ public class EmployeeDrawable<I extends EmployeeData> extends AbstractDrawable i
         String pad = (data.isLocked()) ? "BB" : "";
 
         int fontSize = CanvasUtils.fitTextToBox(g, spot + pad, duration * view.getWidthPerMinute() * 0.75, view
-                .getGroupHeight() * 0.75);
+                                                                                                               .getGroupHeight() * 0.75);
         g.font = CanvasUtils.getFont(fontSize);
         double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, spot, fontSize);
 
         g.fillText(spot, x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
-                y + (view.getGroupHeight() + textSize[1] * 0.375) * 0.5);
+                   y + (view.getGroupHeight() + textSize[1] * 0.375) * 0.5);
 
         if (data.isLocked()) {
             CanvasUtils.drawGlyph(g, CanvasUtils.Glyphs.LOCK, fontSize, x +
-                    (duration * view.getWidthPerMinute() + textSize[0]) * 0.5, y + (view.getGroupHeight() + textSize[1]
-                            * 0.375)
-                            * 0.5);
+                                                                        (duration * view.getWidthPerMinute() + textSize[0]) * 0.5, y + (view.getGroupHeight() + textSize[1] * 0.375) * 0.5);
         }
     }
 
@@ -89,8 +90,60 @@ public class EmployeeDrawable<I extends EmployeeData> extends AbstractDrawable i
 
     @Override
     public PostMouseDownEvent onMouseDown(MouseEvent mouseEvent, double x, double y) {
-        EmployeeShiftEditForm.create(this);
-        return PostMouseDownEvent.REMOVE_FOCUS;
+        if (mouseEvent.shiftKey) {
+            EmployeeShiftEditForm.create(this);
+            return PostMouseDownEvent.REMOVE_FOCUS;
+        } else {
+            final EmployeeAvailabilityView availability = data.getAvailability();
+            final EmployeeData data = this.data;
+
+            if (null == availability) {//Indifferent
+                final EmployeeAvailabilityView newAvailability = new EmployeeAvailabilityView(data.getShift()
+                                                                                                  .getTenantId(), data.getEmployee(), data.getShift().getTimeSlot(),
+                                                                                              EmployeeAvailabilityState.UNAVAILABLE);
+                TimeoutRestCaller.call(this, () -> EmployeeRestServiceBuilder.addEmployeeAvailability(data.getShift().getTenantId(),
+                                                                                                      newAvailability, new FailureShownRestCallback<Long>() {
+
+                                                                                                          @Override
+                                                                                                          public void onSuccess(Long id) {
+                                                                                                              getCalendarView().getCalendar().forceUpdate();
+                                                                                                          }
+                                                                                                      }));
+                getData().setAvailability(newAvailability);
+                return PostMouseDownEvent.IGNORE;
+            } else {
+                switch (availability.getState()) {
+                    case DESIRED:
+                        TimeoutRestCaller.call(this, () -> EmployeeRestServiceBuilder.removeEmployeeAvailability(data.getAvailability()
+                                                                                                                     .getTenantId(),
+                                                                                                                 data.getAvailability().getId(), new FailureShownRestCallback<Boolean>() {
+
+                                                                                                                     @Override
+                                                                                                                     public void onSuccess(Boolean result) {
+                                                                                                                         getCalendarView().getCalendar().forceUpdate();
+                                                                                                                     }
+                                                                                                                 }));
+                        getData().setAvailability(null);
+                        return PostMouseDownEvent.IGNORE;
+                    case UNAVAILABLE:
+                        availability.setState(EmployeeAvailabilityState.UNDESIRED);
+                        break;
+                    case UNDESIRED:
+                        availability.setState(EmployeeAvailabilityState.DESIRED);
+                        break;
+                }
+            }
+            TimeoutRestCaller.call(this, () -> EmployeeRestServiceBuilder
+                                                                         .updateEmployeeAvailability(availability.getTenantId(),
+                                                                                                     availability, new FailureShownRestCallback<Void>() {
+
+                                                                                                         @Override
+                                                                                                         public void onSuccess(Void result) {
+                                                                                                             view.getCalendar().forceUpdate();
+                                                                                                         }
+                                                                                                     }));
+            return PostMouseDownEvent.IGNORE;
+        }
     }
 
     @Override
@@ -168,27 +221,27 @@ public class EmployeeDrawable<I extends EmployeeData> extends AbstractDrawable i
     private String getFillColor() {
         if (null == data.getAvailability()) {
             return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
-                    CssResources.INSTANCE.calendar().employeeShiftViewIndifferent(),
-                    "background-color");
+                                            CssResources.INSTANCE.calendar().employeeShiftViewIndifferent(),
+                                            "background-color");
         }
 
         switch (data.getAvailability().getState()) {
             case UNDESIRED:
                 return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
-                        CssResources.INSTANCE.calendar().employeeShiftViewUndesired(),
-                        "background-color");
+                                                CssResources.INSTANCE.calendar().employeeShiftViewUndesired(),
+                                                "background-color");
             case DESIRED:
                 return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
-                        CssResources.INSTANCE.calendar().employeeShiftViewDesired(),
-                        "background-color");
+                                                CssResources.INSTANCE.calendar().employeeShiftViewDesired(),
+                                                "background-color");
             case UNAVAILABLE:
                 return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
-                        CssResources.INSTANCE.calendar().employeeShiftViewUnavailable(),
-                        "background-color");
+                                                CssResources.INSTANCE.calendar().employeeShiftViewUnavailable(),
+                                                "background-color");
             default:
                 return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
-                        CssResources.INSTANCE.calendar().employeeShiftViewIndifferent(),
-                        "background-color");
+                                                CssResources.INSTANCE.calendar().employeeShiftViewIndifferent(),
+                                                "background-color");
         }
     }
 
