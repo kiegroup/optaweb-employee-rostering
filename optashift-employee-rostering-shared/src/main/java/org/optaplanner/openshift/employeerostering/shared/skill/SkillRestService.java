@@ -11,13 +11,11 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
-
-import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
-
-import io.swagger.annotations.Api;
 
 @Api(tags = {"Skill"})
 @Path("/tenant/{tenantId}/skill")
@@ -41,9 +39,9 @@ public interface SkillRestService {
      */
     @ApiOperation("Get a skill by id")
     @GET
-    @Path("/{id}")
+    @Path("/{id : \\d+}")
     Skill getSkill(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) @PathParam("id") Long id);
+                   @ApiParam(required = true) @PathParam("id") Long id);
 
     /**
      * @param skill never null
@@ -53,7 +51,7 @@ public interface SkillRestService {
     @POST
     @Path("/add")
     Skill addSkill(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(value = "with no id", required = true) Skill skill);
+                   @ApiParam(value = "with no id", required = true) Skill skill);
 
     /**
      * @param skill never null
@@ -61,9 +59,9 @@ public interface SkillRestService {
      */
     @ApiOperation("Update a skill")
     @POST
-    @Path("/update/{id}")
+    @Path("/update")
     Skill updateSkill(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) Skill skill);
+                      @ApiParam(required = true) Skill skill);
 
     /**
      * @param id never null
@@ -71,8 +69,8 @@ public interface SkillRestService {
      */
     @ApiOperation("Delete a skill")
     @DELETE
-    @Path("/{id}")
+    @Path("/{id : \\d+}")
     Boolean removeSkill(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) @PathParam("id") Long id);
+                        @ApiParam(required = true) @PathParam("id") Long id);
 
 }
