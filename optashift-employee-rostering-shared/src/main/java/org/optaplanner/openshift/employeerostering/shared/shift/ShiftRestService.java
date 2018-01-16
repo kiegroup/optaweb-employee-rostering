@@ -15,9 +15,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
-
 import io.swagger.annotations.Api;
-
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
@@ -36,7 +34,7 @@ public interface ShiftRestService {
      * @return never null, the id
      */
     @GET
-    @Path("/{id}")
+    @Path("/{id : \\d+}")
     ShiftView getShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
     @GET
@@ -59,9 +57,9 @@ public interface ShiftRestService {
     void updateShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
 
     @PUT
-    @Path("/template/create")
-    void createTemplate(@PathParam("tenantId") Integer tenantId, Collection<
-            ShiftInfo> shifts);
+    @Path("/template/update")
+    // TODO: Rename this updateTemplate
+    void createTemplate(@PathParam("tenantId") Integer tenantId, Collection<ShiftInfo> shifts);
 
     @GET
     @Path("/template")
@@ -70,15 +68,15 @@ public interface ShiftRestService {
     @PUT
     @Path("/add/fromTemplate")
     List<Long> addShiftsFromTemplate(@PathParam("tenantId") Integer tenantId,
-            @QueryParam("startDate") String startDateString, @QueryParam("endDate") String endDateString)
-            throws Exception;
+                                     @QueryParam("startDate") String startDateString,
+                                     @QueryParam("endDate") String endDateString) throws Exception;
 
     /**
      * @param id never null
      * @return return true if the shift was removed, false otherwise
      */
     @DELETE
-    @Path("/{id}")
+    @Path("/{id : \\d+}")
     Boolean removeShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
 }

@@ -6,20 +6,19 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
-import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
-
-import io.swagger.annotations.Api;
-
-@Api( tags = {"Spot"})
+@Api(tags = {"Spot"})
 @Path("/tenant/{tenantId}/spot")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -41,9 +40,9 @@ public interface SpotRestService {
      */
     @ApiOperation("Get a spot by id")
     @GET
-    @Path("/{id}")
+    @Path("/{id : \\d+}")
     Spot getSpot(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) @PathParam("id") Long id);
+                 @ApiParam(required = true) @PathParam("id") Long id);
 
     /**
      * @param spot never null
@@ -53,7 +52,7 @@ public interface SpotRestService {
     @POST
     @Path("/add")
     Spot addSpot(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(value = "with no id", required = true) Spot spot);
+                 @ApiParam(value = "with no id", required = true) Spot spot);
 
     /**
      * @param spot never null
@@ -61,9 +60,9 @@ public interface SpotRestService {
      */
     @ApiOperation("Update a spot")
     @POST
-    @Path("/update/{id}")
+    @Path("/update")
     Spot updateSpot(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) Spot spot);
+                    @ApiParam(required = true) Spot spot);
 
     /**
      * @param id never null
@@ -71,39 +70,39 @@ public interface SpotRestService {
      */
     @ApiOperation("Delete a spot")
     @DELETE
-    @Path("/{id}")
+    @Path("/{id : \\d+}")
     Boolean removeSpot(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) @PathParam("id") Long id);
+                       @ApiParam(required = true) @PathParam("id") Long id);
 
     // ************************************************************************
     // SpotGroup
     // ************************************************************************
 
     @GET
-    @Path("/groups/")
-    List<SpotGroup> getSpotGroups(@PathParam("tenantId") Integer tenantId);
+    @Path("/groups")
+    List<SpotGroup> getSpotGroups(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
 
     @GET
-    @Path("/groups/{id}")
-    SpotGroup getSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+    @Path("/groups/{id : \\d+}")
+    SpotGroup getSpotGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id);
 
     @GET
     @Path("/groups/find/{name}")
-    SpotGroup findSpotGroupByName(@PathParam("tenantId") Integer tenantId, @PathParam("name") String name);
+    SpotGroup findSpotGroupByName(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("name") String name);
+
+    @PUT
+    @Path("/groups/add")
+    Long createSpotGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) SpotGroup spotGroup);
+
+    @PUT
+    @Path("/groups/{id : \\d+}/add")
+    void addSpotToSpotGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id, Spot spot);
 
     @POST
-    @Path("/groups/create")
-    Long createSpotGroup(@PathParam("tenantId") Integer tenantId, SpotGroup spotGroup);
-
-    @POST
-    @Path("/groups/{id}/add")
-    void addSpotToSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Spot spot);
-
-    @POST
-    @Path("/groups/{id}/remove")
+    @Path("/groups/{id : \\d+}/remove")
     void removeSpotFromSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Spot spot);
 
-    @POST
-    @Path("/groups/delete/{id}")
-    Boolean deleteSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+    @DELETE
+    @Path("/groups/{id : \\d+}")
+    Boolean deleteSpotGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id);
 }

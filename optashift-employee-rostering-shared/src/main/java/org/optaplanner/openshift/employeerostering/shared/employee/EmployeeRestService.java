@@ -12,16 +12,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 
-import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
-
-import io.swagger.annotations.Api;
-
-@Api(tags= {"Employee"})
+@Api(tags = {"Employee"})
 @Path("/tenant/{tenantId}/employee")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -43,9 +41,9 @@ public interface EmployeeRestService {
      */
     @ApiOperation("Get an employee by id")
     @GET
-    @Path("/{id}")
+    @Path("/{id : \\d+}")
     Employee getEmployee(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) @PathParam("id") Long id);
+                         @ApiParam(required = true) @PathParam("id") Long id);
 
     /**
      * @param employee never null
@@ -55,17 +53,17 @@ public interface EmployeeRestService {
     @POST
     @Path("/add")
     Employee addEmployee(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(value = "with no id", required = true) Employee employee);
-    
+                         @ApiParam(value = "with no id", required = true) Employee employee);
+
     /**
      * @param employee never null
      * @return never null, with an updated {@link AbstractPersistable#getVersion()}
      */
     @ApiOperation("Update an employee")
     @POST
-    @Path("/update/{id}")
+    @Path("/update")
     Employee updateEmployee(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) Employee employee);
+                            @ApiParam(required = true) Employee employee);
 
     /**
      * @param id never null
@@ -73,9 +71,9 @@ public interface EmployeeRestService {
      */
     @ApiOperation("Delete an employee")
     @DELETE
-    @Path("/{id}")
+    @Path("/{id : \\d+}")
     Boolean removeEmployee(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) @PathParam("id") Long id);
+                           @ApiParam(required = true) @PathParam("id") Long id);
 
     // ************************************************************************
     // EmployeeAvailability
@@ -88,7 +86,7 @@ public interface EmployeeRestService {
     @POST
     @Path("/availability/add")
     Long addEmployeeAvailability(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(value = "with no id", required = true) EmployeeAvailabilityView employeeAvailability);
+                                 @ApiParam(value = "with no id", required = true) EmployeeAvailabilityView employeeAvailability);
 
     /**
      * @param employeeAvailability never null
@@ -96,50 +94,51 @@ public interface EmployeeRestService {
     @PUT
     @Path("/availability/update")
     void updateEmployeeAvailability(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) EmployeeAvailabilityView employeeAvailability);
+                                    @ApiParam(required = true) EmployeeAvailabilityView employeeAvailability);
 
     /**
      * @param id never null
      * @return never null, the id
      */
     @DELETE
-    @Path("/availability/{id}")
+    @Path("/availability/{id : \\d+}")
     Boolean removeEmployeeAvailability(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-            @ApiParam(required = true) @PathParam("id") Long id);
+                                       @ApiParam(required = true) @PathParam("id") Long id);
 
     // ************************************************************************
     // EmployeeGroup
     // ************************************************************************
 
     @GET
-    @Path("/groups/")
-    List<EmployeeGroup> getEmployeeGroups(@PathParam("tenantId") Integer tenantId);
+    @Path("/groups")
+    List<EmployeeGroup> getEmployeeGroups(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
 
     @GET
-    @Path("/groups/{id}")
-    EmployeeGroup getEmployeeGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+    @Path("/groups/{id : \\d+}")
+    EmployeeGroup getEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id);
 
     @GET
     @Path("/groups/find/{name}")
-    EmployeeGroup findEmployeeGroupByName(@PathParam("tenantId") Integer tenantId, @PathParam("name") String name);
+    EmployeeGroup findEmployeeGroupByName(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("name") String name);
 
     @POST
     @Path("/groups/create")
-    Long createEmployeeGroup(@PathParam("tenantId") Integer tenantId, EmployeeGroup employeeGroup);
+    Long createEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, EmployeeGroup employeeGroup);
 
     @POST
-    @Path("/groups/{id}/add")
-    void addEmployeeToEmployeeGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id,
-            Employee employee);
+    @Path("/groups/{id : \\d+}/add")
+    void addEmployeeToEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                    @ApiParam(required = true) @PathParam("id") Long id,
+                                    @ApiParam(required = true) Employee employee);
 
     @POST
-    @Path("/groups/{id}/remove")
-    void removeEmployeeFromEmployeeGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id,
-            Employee employee);
+    @Path("/groups/{id : \\d+}/remove")
+    void removeEmployeeFromEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                         @ApiParam(required = true) @PathParam("id") Long id,
+                                         @ApiParam(required = true) Employee employee);
 
     @POST
-    @Path("/groups/delete/{id}")
-    Boolean deleteEmployeeGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
-
+    @Path("/groups/delete/{id : \\d+}")
+    Boolean deleteEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id);
 
 }
