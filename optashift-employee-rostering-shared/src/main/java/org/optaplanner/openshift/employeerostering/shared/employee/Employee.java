@@ -17,12 +17,11 @@
 package org.optaplanner.openshift.employeerostering.shared.employee;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -37,15 +36,16 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Employee.findAll",
-                query = "select distinct e from Employee e left join fetch e.skillProficiencyList sp left join fetch sp.skill s" +
-                        " where e.tenantId = :tenantId" +
-                        " order by e.name, s.name"),
+               @NamedQuery(name = "Employee.findAll",
+                           query = "select distinct e from Employee e left join fetch e.skillProficiencyList sp left join fetch sp.skill s" +
+                                   " where e.tenantId = :tenantId" +
+                                   " order by e.name, s.name"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Employee extends AbstractPersistable {
 
-    @NotNull @Size(min = 1, max = 120)
+    @NotNull
+    @Size(min = 1, max = 120)
     private String name;
     @JsonManagedReference
     @NotNull
@@ -53,8 +53,7 @@ public class Employee extends AbstractPersistable {
     private List<EmployeeSkillProficiency> skillProficiencyList;
 
     @SuppressWarnings("unused")
-    public Employee() {
-    }
+    public Employee() {}
 
     public Employee(Integer tenantId, String name) {
         super(tenantId);
@@ -64,7 +63,11 @@ public class Employee extends AbstractPersistable {
 
     public boolean hasSkill(Skill skill) {
         return skillProficiencyList.stream()
-                .anyMatch(skillProficiency -> skillProficiency.getSkill().equals(skill));
+                                   .anyMatch(skillProficiency -> skillProficiency.getSkill().equals(skill));
+    }
+
+    public boolean hasSkills(Collection<Skill> skills) {
+        return skills.stream().allMatch((s) -> hasSkill(s));
     }
 
     @Override

@@ -40,7 +40,7 @@ rule "Required skill for a shift"
     when
         Shift(
                 employee != null,
-                !getEmployee().hasSkill(getSpot().getRequiredSkill()))
+                !getEmployee().hasSkills(getSpot().getRequiredSkills()))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -100);
 end
