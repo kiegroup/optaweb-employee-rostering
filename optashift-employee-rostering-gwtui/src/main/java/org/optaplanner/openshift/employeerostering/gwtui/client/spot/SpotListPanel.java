@@ -1,21 +1,16 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
@@ -24,6 +19,9 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
+import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
+import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
+import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -31,14 +29,16 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_actions;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_delete;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_edit;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_name;
 
 @Templated
 public class SpotListPanel implements IsElement {
@@ -54,8 +54,7 @@ public class SpotListPanel implements IsElement {
     private TextBox spotNameTextBox;
     @Inject
     @DataField
-    private ListBox requiredSkillListBox;
-    private List<Skill> requiredSkillListBoxValues;
+    private SingleValueTagsInput<Skill> requiredSkillsTagsInput;
     @Inject
     @DataField
     private Button addButton;
@@ -88,6 +87,9 @@ public class SpotListPanel implements IsElement {
     @PostConstruct
     protected void initWidget() {
         initTable();
+        requiredSkillsTagsInput.setItemValue(Skill::getName);
+        requiredSkillsTagsInput.setItemText(Skill::getName);
+        requiredSkillsTagsInput.reconfigure();
     }
 
     public void onAnyTenantEvent(@Observes Tenant tenant) {
@@ -113,9 +115,15 @@ public class SpotListPanel implements IsElement {
 
             @Override
             public void onSuccess(List<Skill> skillList) {
-                requiredSkillListBoxValues = skillList;
-                requiredSkillListBox.clear();
-                skillList.forEach(skill -> requiredSkillListBox.addItem(skill.getName()));
+                requiredSkillsTagsInput.removeAll();
+                requiredSkillsTagsInput.setDatasets((Dataset<Skill>) new CollectionDataset<Skill>(skillList) {
+
+                    @Override
+                    public String getValue(Skill skill) {
+                        return (skill == null) ? "" : skill.getName();
+                    }
+                });
+                requiredSkillsTagsInput.reconfigure();
             }
         });
     }
@@ -128,20 +136,21 @@ public class SpotListPanel implements IsElement {
                 return spot.getName();
             }
         },
-                CONSTANTS.format(General_name));
+                        CONSTANTS.format(General_name));
         table.addColumn(new TextColumn<Spot>() {
 
             @Override
             public String getValue(Spot spot) {
-                Skill requiredSkill = spot.getRequiredSkill();
-                if (requiredSkill == null) {
+                List<Skill> requiredSkills = spot.getRequiredSkills();
+                if (requiredSkills == null) {
                     return "";
                 }
-                return requiredSkill.getName();
+                return requiredSkills.stream().reduce("", (a, s) -> (a.isEmpty()) ? s.getName() : a + "," + s.getName(),
+                                                      (a, s) -> (a.isEmpty()) ? s : a + "," + s);
             }
         }, "Required skill");
         Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER,
-                ButtonSize.SMALL)) {
+                                                                                    ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Spot spot) {
@@ -158,7 +167,7 @@ public class SpotListPanel implements IsElement {
             });
         });
         Column<Spot, String> editColumn = new Column<Spot, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT,
-                ButtonSize.SMALL)) {
+                                                                                  ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Spot spot) {
@@ -166,7 +175,14 @@ public class SpotListPanel implements IsElement {
             }
         };
         editColumn.setFieldUpdater((index, spot, value) -> {
-            SpotEditForm.create(beanManager, this, spot, requiredSkillListBoxValues);
+            final SpotListPanel panel = this;
+            SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
+
+                @Override
+                public void onSuccess(List<Skill> skillList) {
+                    SpotEditForm.create(beanManager, panel, spot, skillList);
+                }
+            });
         });
         table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
         table.addColumn(editColumn);
@@ -201,17 +217,16 @@ public class SpotListPanel implements IsElement {
         String spotName = spotNameTextBox.getValue();
         spotNameTextBox.setValue("");
         spotNameTextBox.setFocus(true);
-        int requiredSkillIndex = requiredSkillListBox.getSelectedIndex();
-        Skill requiredSkill = requiredSkillIndex < 0 ? null : requiredSkillListBoxValues.get(requiredSkillIndex);
+        List<Skill> skillList = requiredSkillsTagsInput.getItems();
 
-        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, requiredSkill),
-                new FailureShownRestCallback<Spot>() {
+        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, skillList),
+                                       new FailureShownRestCallback<Spot>() {
 
-                    @Override
-                    public void onSuccess(Spot spot) {
-                        refreshTable();
-                    }
-                });
+                                           @Override
+                                           public void onSuccess(Spot spot) {
+                                               refreshTable();
+                                           }
+                                       });
     }
 
 }

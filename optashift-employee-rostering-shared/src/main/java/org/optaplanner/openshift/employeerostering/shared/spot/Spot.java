@@ -16,9 +16,11 @@
 
 package org.optaplanner.openshift.employeerostering.shared.spot;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -31,28 +33,28 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Spot.findAll",
-                query = "select distinct s from Spot s left join fetch s.requiredSkill" +
-                        " where s.tenantId = :tenantId" +
-                        " order by s.name"),
+               @NamedQuery(name = "Spot.findAll",
+                           query = "select distinct s from Spot s left join fetch s.requiredSkills" +
+                                   " where s.tenantId = :tenantId" +
+                                   " order by s.name"),
 })
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}), @UniqueConstraint(columnNames = {"id"})})
 public class Spot extends AbstractPersistable {
 
-    @NotNull @Size(min = 1, max = 120)
+    @NotNull
+    @Size(min = 1, max = 120)
     private String name;
     @NotNull
-    @ManyToOne
-    private Skill requiredSkill;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<Skill> requiredSkills;
 
     @SuppressWarnings("unused")
-    public Spot() {
-    }
+    public Spot() {}
 
-    public Spot(Integer tenantId, String name, Skill requiredSkill) {
+    public Spot(Integer tenantId, String name, List<Skill> requiredSkills) {
         super(tenantId);
         this.name = name;
-        this.requiredSkill = requiredSkill;
+        this.requiredSkills = requiredSkills;
     }
 
     @Override
@@ -72,12 +74,12 @@ public class Spot extends AbstractPersistable {
         this.name = name;
     }
 
-    public Skill getRequiredSkill() {
-        return requiredSkill;
+    public List<Skill> getRequiredSkills() {
+        return requiredSkills;
     }
 
-    public void setRequiredSkill(Skill requiredSkill) {
-        this.requiredSkill = requiredSkill;
+    public void setRequiredSkills(List<Skill> requiredSkills) {
+        this.requiredSkills = requiredSkills;
     }
 
 }

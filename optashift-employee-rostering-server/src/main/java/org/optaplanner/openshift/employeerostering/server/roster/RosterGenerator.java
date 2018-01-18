@@ -57,24 +57,24 @@ public class RosterGenerator {
     private final StringDataGenerator spotNameGenerator = StringDataGenerator.buildAssemblyLineNames();
 
     private final StringDataGenerator skillNameGenerator = new StringDataGenerator()
-            .addPart(
-                    "Mechanical",
-                    "Electrical",
-                    "Safety",
-                    "Transportation",
-                    "Operational",
-                    "Physics",
-                    "Monitoring",
-                    "ICT")
-            .addPart(
-                    "bachelor",
-                    "engineer",
-                    "instructor",
-                    "coordinator",
-                    "manager",
-                    "expert",
-                    "inspector",
-                    "analyst");
+                                                                                    .addPart(
+                                                                                             "Mechanical",
+                                                                                             "Electrical",
+                                                                                             "Safety",
+                                                                                             "Transportation",
+                                                                                             "Operational",
+                                                                                             "Physics",
+                                                                                             "Monitoring",
+                                                                                             "ICT")
+                                                                                    .addPart(
+                                                                                             "bachelor",
+                                                                                             "engineer",
+                                                                                             "instructor",
+                                                                                             "coordinator",
+                                                                                             "manager",
+                                                                                             "expert",
+                                                                                             "inspector",
+                                                                                             "analyst");
 
     private Random random = new Random(37);
 
@@ -124,7 +124,7 @@ public class RosterGenerator {
         for (int i = 0; i < timeSlotListSize; i += 7) {
             try {
                 shiftRestService.addShiftsFromTemplate(tenantId, previousEndDateTime.toString(), previousEndDateTime
-                        .plusDays(7).toString());
+                                                                                                                    .plusDays(7).toString());
                 previousEndDateTime = previousEndDateTime.plusWeeks(1);
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -133,27 +133,26 @@ public class RosterGenerator {
         }
 
         List<TimeSlot> timeSlotList = entityManager.createNamedQuery("TimeSlot.findAll", TimeSlot.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList();
+                                                   .setParameter("tenantId", tenantId)
+                                                   .getResultList();
 
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList();
+                                             .setParameter("tenantId", tenantId)
+                                             .getResultList();
 
         List<EmployeeAvailability> employeeAvailabilityList = entityManager
-                .createNamedQuery("EmployeeAvailability.findAll", EmployeeAvailability.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList();
-        
+                                                                           .createNamedQuery("EmployeeAvailability.findAll", EmployeeAvailability.class)
+                                                                           .setParameter("tenantId", tenantId)
+                                                                           .getResultList();
+
         Tenant tenant = entityManager.find(Tenant.class, tenantId);
 
         return new Roster((long) tenantId, tenantId,
-                skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList, 
-                tenant.getConfiguration(), shiftList);
+                          skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList,
+                          tenant.getConfiguration(), shiftList);
     }
 
-    private List<ShiftInfo> generateShiftTemplate(Integer tenantId, List<Spot> spots, List<
-            Employee> employees) {
+    private List<ShiftInfo> generateShiftTemplate(Integer tenantId, List<Spot> spots, List<Employee> employees) {
         LocalDateTime startTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).plusHours(6);
         List<ShiftInfo> out = new ArrayList<ShiftInfo>(7);
         for (int i = 0; i < 7 * 3; i++) {
@@ -173,7 +172,7 @@ public class RosterGenerator {
                 employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNAVAILABLE);
                 shiftAvailability.add(employeeTimeslot);
             }
-            
+
             for (Employee employee : extractRandomSubList(employees, 0.3)) {
                 employeeTimeslot = new EmployeeTimeSlotInfo();
                 employeeTimeslot.setTenantId(tenantId);
@@ -181,7 +180,7 @@ public class RosterGenerator {
                 employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNDESIRED);
                 shiftAvailability.add(employeeTimeslot);
             }
-            
+
             for (Employee employee : extractRandomSubList(employees, 0.1)) {
                 employeeTimeslot = new EmployeeTimeSlotInfo();
                 employeeTimeslot.setTenantId(tenantId);
@@ -212,8 +211,7 @@ public class RosterGenerator {
     }
 
     private Integer createTenant(int spotListSize, int employeeListSize) {
-        Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue()
-                + " (" + employeeListSize + " employees, " + spotListSize + "spots)");
+        Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue() + " (" + employeeListSize + " employees, " + spotListSize + "spots)");
         entityManager.persist(tenant);
         return tenant.getId();
     }
@@ -235,7 +233,7 @@ public class RosterGenerator {
         spotNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = spotNameGenerator.generateNextValue();
-            Spot spot = new Spot(tenantId, name, skillList.get(random.nextInt(skillList.size())));
+            Spot spot = new Spot(tenantId, name, extractRandomSubList(skillList, 1.0));
             entityManager.persist(spot);
             spotList.add(spot);
         }
@@ -249,9 +247,9 @@ public class RosterGenerator {
             String name = employeeNameGenerator.generateNextValue();
             Employee employee = new Employee(tenantId, name);
             employee.setSkillProficiencyList(
-                    extractRandomSubList(generalSkillList, 1.0).stream()
-                            .map(skill -> new EmployeeSkillProficiency(tenantId, employee, skill))
-                            .collect(Collectors.toCollection(ArrayList::new)));
+                                             extractRandomSubList(generalSkillList, 1.0).stream()
+                                                                                        .map(skill -> new EmployeeSkillProficiency(tenantId, employee, skill))
+                                                                                        .collect(Collectors.toCollection(ArrayList::new)));
             entityManager.persist(employee);
             employeeList.add(employee);
         }

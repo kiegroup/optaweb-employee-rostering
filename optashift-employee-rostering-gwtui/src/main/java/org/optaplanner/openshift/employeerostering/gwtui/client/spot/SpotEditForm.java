@@ -6,34 +6,22 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.HeadingElement;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import org.gwtbootstrap3.client.ui.CheckBox;
-import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.TextBox;
-import org.gwtbootstrap3.client.ui.gwt.FlowPanel;
-import org.gwtbootstrap3.client.ui.html.Div;
+import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
+import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
+import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
-import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
-import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
-import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
@@ -47,7 +35,7 @@ public class SpotEditForm implements IsElement {
 
     @Inject
     @DataField
-    ListBox requiredSkill;
+    private SingleValueTagsInput<Skill> requiredSkills;
 
     @Inject
     @DataField
@@ -74,8 +62,7 @@ public class SpotEditForm implements IsElement {
 
     private FormPopup popup;
 
-    public static SpotEditForm create(SyncBeanManager beanManager, SpotListPanel spotPanel, Spot spotData, List<
-            Skill> skillData) {
+    public static SpotEditForm create(SyncBeanManager beanManager, SpotListPanel spotPanel, Spot spotData, List<Skill> skillData) {
         panel = spotPanel;
         spot = spotData;
         skills = skillData;
@@ -85,10 +72,21 @@ public class SpotEditForm implements IsElement {
     @PostConstruct
     protected void initWidget() {
         spotName.setValue(spot.getName());
-        skills.forEach((s) -> requiredSkill.addItem(s.getName()));
-        requiredSkill.setItemSelected(skills.indexOf(spot.getRequiredSkill()), true);
+        requiredSkills.removeAll();
+        CollectionDataset<Skill> data = new CollectionDataset<Skill>(skills) {
+
+            @Override
+            public String getValue(Skill skill) {
+                return (skill == null) ? "" : skill.getName();
+            }
+        };
+        requiredSkills.setDatasets((Dataset<Skill>) data);
+        requiredSkills.setItemValue(Skill::getName);
+        requiredSkills.setItemText(Skill::getName);
+        requiredSkills.reconfigure();
+        requiredSkills.add(spot.getRequiredSkills());
         title.setInnerSafeHtml(new SafeHtmlBuilder().appendEscaped(spot.getName())
-                .toSafeHtml());
+                                                    .toSafeHtml());
         popup = FormPopup.getFormPopup(this);
         popup.center();
     }
@@ -106,8 +104,7 @@ public class SpotEditForm implements IsElement {
     @EventHandler("saveButton")
     public void save(ClickEvent click) {
         spot.setName(spotName.getValue());
-        int requiredSkillIndex = requiredSkill.getSelectedIndex();
-        spot.setRequiredSkill(requiredSkillIndex < 0 ? null : skills.get(requiredSkillIndex));
+        spot.setRequiredSkills(requiredSkills.getItems());
         popup.hide();
         SpotRestServiceBuilder.updateSpot(spot.getTenantId(), spot, new FailureShownRestCallback<Spot>() {
 
