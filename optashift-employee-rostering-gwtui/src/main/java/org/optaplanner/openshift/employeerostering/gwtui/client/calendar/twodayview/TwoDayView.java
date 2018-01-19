@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.HTMLCanvasElement;
 import elemental2.dom.MouseEvent;
+import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
@@ -50,11 +51,16 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     private static final String LINE_COLOR = "#000000";
 
     private NativeHorizontalScrollbar startDateControlScrollbar;
+
     private RangeSlider daysShownRangeSlider;
     private Span daysShownRangeSliderContainer;
+    private Button zoomIn;
+    private Button zoomOut;
 
     private Pagination pagination;
     private SimplePager pager;
+
+    private static final int ZOOM_BAR_PAD = 30;
 
     @Inject
     @DataField
@@ -101,8 +107,8 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
     }
 
     public void setViewSize(double screenWidth, double screenHeight) {
-        canvas.width = screenWidth - daysShownRangeSlider.getOffsetWidth() - canvas.offsetLeft;
-        canvas.height = screenHeight - bottomPanel.getOffsetHeight() - canvas.offsetTop;
+        canvas.width = screenWidth - canvas.offsetLeft;
+        canvas.height = screenHeight - zoomIn.getOffsetHeight() - canvas.offsetTop;
         buffer.width = canvas.width;
         buffer.height = canvas.height;
     }
@@ -158,7 +164,6 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         daysShownRangeSlider.setMin("1");
         daysShownRangeSlider.setMax("7");
         daysShownRangeSlider.setStep("1");
-        daysShownRangeSlider.setAttribute("orient", "vertical");
         CssResources.INSTANCE.calendar().ensureInjected();
         daysShownRangeSlider.setClassName(CssResources.INSTANCE.calendar().verticalSlider());
         daysShownRangeSlider.setValue(Integer.toString(presenter.getDaysShown()));
@@ -170,7 +175,41 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         Event.sinkEvents(daysShownRangeSlider, ~0);
         daysShownRangeSliderContainer = new Span();
         daysShownRangeSliderContainer.getElement().appendChild(daysShownRangeSlider);
-        sidePanel.add(daysShownRangeSliderContainer);
+
+        zoomIn = new Button();
+        zoomOut = new Button();
+
+        zoomIn.addClickHandler((e) -> {
+            daysShownRangeSlider.setValue("" + (Integer.parseInt(daysShownRangeSlider
+                    .getValue()) - 1));
+            presenter.getCalendar().setDaysShown(Integer
+                    .parseInt(daysShownRangeSlider.getValue()));
+        });
+        zoomOut.addClickHandler((e) -> {
+            daysShownRangeSlider.setValue("" + (Integer.parseInt(daysShownRangeSlider
+                    .getValue()) + 1));
+            presenter.getCalendar().setDaysShown(Integer.parseInt(daysShownRangeSlider.getValue()));
+        });
+
+        zoomIn.setStylePrimaryName(CssResources.INSTANCE.calendar().sliderButton());
+        Span zoomInIcon = new Span();
+        zoomInIcon.getElement().setAttribute("class", "glyphicon glyphicon-zoom-in");
+        zoomIn.add(zoomInIcon);
+
+        zoomOut.setStylePrimaryName(CssResources.INSTANCE.calendar().sliderButton());
+        Span zoomOutIcon = new Span();
+        zoomOutIcon.getElement().setAttribute("class", "glyphicon glyphicon-zoom-out");
+        zoomOut.add(zoomOutIcon);
+
+        topPanel.add(zoomIn);
+        topPanel.add(daysShownRangeSliderContainer);
+        topPanel.add(zoomOut);
+
+        Button test = new Button();
+        test.getElement().setAttribute("style", "background: transparent;" +
+                " border: none !important;" +
+                " font-size:0; height:" + ZOOM_BAR_PAD + "px;");
+        topPanel.add(test);
 
         bottomWidgets.add(startDateControlScrollbar);
 
@@ -420,8 +459,15 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         double oldPos = (startDateControlScrollbar.getHorizontalScrollPosition() + 0.0) / startDateControlScrollbar
                 .getMaximumHorizontalScrollPosition();
         startDateControlScrollbar.setWidth(Math.round(canvas.width) + "px");
-        daysShownRangeSliderContainer.setHeight(Math.round(canvas.height) + "px");
-        daysShownRangeSlider.setAttribute("style", "height:" + Math.round(canvas.height) + "px;");
+        daysShownRangeSliderContainer.setWidth(CommonUtils.roundToNearestMultipleOf(canvas.width / 4, 10) + "px");
+
+        double sideBarLength = canvas.width * 0.25 - zoomIn.getOffsetWidth() - zoomOut.getOffsetWidth();
+        zoomIn.getElement().setAttribute("style", "left: " + CommonUtils.roundToNearestMultipleOf(0.75 * canvas.width
+                - zoomIn.getOffsetWidth(), 1) + "px");
+        daysShownRangeSlider.setAttribute("style", "width:" + CommonUtils.roundToNearestMultipleOf(sideBarLength, 10)
+                + "px; left:" + CommonUtils.roundToNearestMultipleOf(0.75 * canvas.width, 1) + "px");
+        zoomOut.getElement().setAttribute("style", "left: " + CommonUtils.roundToNearestMultipleOf(0.75 * canvas.width
+                + sideBarLength, 1) + "px");
 
         startDateControlScrollbar.setScrollWidth((int) Math.round(canvas.width * presenter.getState()
                 .getScrollBarLength()));
