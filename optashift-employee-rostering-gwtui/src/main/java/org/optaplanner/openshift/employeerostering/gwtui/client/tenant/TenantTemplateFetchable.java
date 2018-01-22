@@ -54,8 +54,8 @@ public class TenantTemplateFetchable implements Fetchable<Collection<ShiftData>>
                                         public void onSuccess(ShiftTemplate template) {
                                             id = 0L;
                                             List<ShiftData> out = new ArrayList<>();
-                                            for (ShiftInfo shift : template.getShifts()) {
-                                                for (IdOrGroup spotId : shift.getSpots()) {
+                                            for (ShiftInfo shift : template.getShiftList()) {
+                                                for (IdOrGroup spotId : shift.getSpotList()) {
                                                     if (spotId.getIsGroup()) {
                                                         for (Spot spot : spotGroupList.stream().filter((g) -> g.getId()
                                                                 .equals(

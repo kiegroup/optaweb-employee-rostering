@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -163,11 +165,11 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     public Integer getCursorIndex(G spot) {
-        return mouseHandler.getCursorIndex().get(spot);
+        return mouseHandler.getCursorIndexMap().get(spot);
     }
 
-    public HashMap<G, Integer> getCursorMap() {
-        return mouseHandler.getCursorIndex();
+    public Map<G, Integer> getCursorIndexMap() {
+        return mouseHandler.getCursorIndexMap();
     }
 
     public void preparePopup(String text) {
@@ -179,8 +181,8 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     @Override
-    public Collection<G> getVisibleGroups() {
-        return pager.getVisibleGroups();
+    public Set<G> getVisibleGroupSet() {
+        return pager.getVisibleGroupSet();
     }
 
     public int getTotalDisplayedSpotSlots() {
@@ -313,7 +315,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     public void removeDrawable(I shift, D drawable) {
-        calendar.getShifts().remove(shift);
+        calendar.getShiftSet().remove(shift);
         state.removeDrawable(drawable);
     }
 
@@ -323,13 +325,13 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     }
 
     @Override
-    public List<G> getGroups() {
-        return state.getGroups();
+    public List<G> getGroupList() {
+        return state.getGroupList();
     }
 
     @Override
-    public void setGroups(List<G> groups) {
-        state.setGroups(groups);
+    public void setGroupList(List<G> groupList) {
+        state.setGroupList(groupList);
     }
 
     @Override

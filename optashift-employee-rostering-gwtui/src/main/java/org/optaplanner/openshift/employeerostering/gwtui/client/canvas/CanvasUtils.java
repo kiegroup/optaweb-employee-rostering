@@ -95,9 +95,9 @@ public class CanvasUtils {
             textSize--;
             g.font = getFont(textSize);
 
-            List<String> splitWords = splitWord(g, words[0], width);
-            lines.addAll(splitWords.subList(0, splitWords.size() - 1));
-            line.append(splitWords.get(splitWords.size() - 1));
+            List<String> splitWordList = splitWord(g, words[0], width);
+            lines.addAll(splitWordList.subList(0, splitWordList.size() - 1));
+            line.append(splitWordList.get(splitWordList.size() - 1));
 
             for (int i = 1; i < words.length; i++) {
                 if (g.measureText(line.toString() + " " + words[i]).width < width) {
@@ -107,17 +107,17 @@ public class CanvasUtils {
                     line.setLength(0);
                     if (getTextHeight(g, textSize) * lines.size() > height) {
                         lines.clear();
-                        splitWords = splitWord(g, words[0], width);
-                        lines.addAll(splitWords.subList(0, splitWords.size() - 1));
-                        line.append(splitWords.get(splitWords.size() - 1));
+                        splitWordList = splitWord(g, words[0], width);
+                        lines.addAll(splitWordList.subList(0, splitWordList.size() - 1));
+                        line.append(splitWordList.get(splitWordList.size() - 1));
                         textSize--;
                         g.font = getFont(textSize);
                         i = 0;
                         continue;
                     } else {
-                        splitWords = splitWord(g, words[i], width);
-                        lines.addAll(splitWords.subList(0, splitWords.size() - 1));
-                        line.append(splitWords.get(splitWords.size() - 1));
+                        splitWordList = splitWord(g, words[i], width);
+                        lines.addAll(splitWordList.subList(0, splitWordList.size() - 1));
+                        line.append(splitWordList.get(splitWordList.size() - 1));
                     }
                 }
             }

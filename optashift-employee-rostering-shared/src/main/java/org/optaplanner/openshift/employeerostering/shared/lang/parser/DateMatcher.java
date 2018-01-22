@@ -24,16 +24,16 @@ import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
  */
 public class DateMatcher<T> {
 
-    List<DatePredicate> predicates;
+    List<DatePredicate> predicateList;
     T replacement;
 
     private DateMatcher(T replacement) {
-        predicates = new ArrayList<>();
+        predicateList = new ArrayList<>();
         this.replacement = replacement;
     }
 
     private void add(DatePredicate p) {
-        predicates.add(p);
+        predicateList.add(p);
     }
 
     public T getReplacement() {
@@ -41,7 +41,7 @@ public class DateMatcher<T> {
     }
 
     public boolean test(LocalDateTime date) {
-        return predicates.stream().allMatch((p) -> p.test(date));
+        return predicateList.stream().allMatch((p) -> p.test(date));
     }
 
     /**

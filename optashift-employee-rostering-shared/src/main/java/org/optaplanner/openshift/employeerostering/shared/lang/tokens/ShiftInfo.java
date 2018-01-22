@@ -22,9 +22,9 @@ import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateTimeS
  * Properties:<br>
  * {@link ShiftInfo#startTime} <br>
  * {@link ShiftInfo#endTime} <br>
- * {@link ShiftInfo#spots} <br>
- * {@link ShiftInfo#employees} <br>
- * {@link ShiftInfo#exceptions} (Nullable) <br>
+ * {@link ShiftInfo#spotList} <br>
+ * {@link ShiftInfo#employeeList} <br>
+ * {@link ShiftInfo#exceptionList} (Nullable) <br>
  */
 @Entity
 public class ShiftInfo extends AbstractPersistable {
@@ -62,7 +62,7 @@ public class ShiftInfo extends AbstractPersistable {
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name = "orderIndex")
-    List<IdOrGroup> spots;
+    List<IdOrGroup> spotList;
 
     /**
      * List of employees/employee groups and their availability. If an employee appear multiple
@@ -71,21 +71,21 @@ public class ShiftInfo extends AbstractPersistable {
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name = "orderIndex")
-    List<EmployeeTimeSlotInfo> employees;
+    List<EmployeeTimeSlotInfo> employeeList;
 
     /**
      * List of conditions that causes this Shift not to be generated, potentially causing another
-     * one to be generated instead. These are evalulated before {@link ShiftTemplate#universalExceptions}.
+     * one to be generated instead. These are evalulated before {@link ShiftTemplate#universalExceptionList}.
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name = "orderIndex")
-    List<ShiftConditional> exceptions;
+    List<ShiftConditional> exceptionList;
 
     public ShiftInfo() {
     }
 
     public ShiftInfo(Integer tenantId, ShiftInfo src) {
-        this(tenantId, src.startTime, src.endTime, src.spots, src.employees, src.exceptions);
+        this(tenantId, src.startTime, src.endTime, src.spotList, src.employeeList, src.exceptionList);
     }
 
     public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
@@ -93,8 +93,8 @@ public class ShiftInfo extends AbstractPersistable {
         super(tenantId);
         this.startTime = startTime;
         this.endTime = endTime;
-        this.spots = spots;
-        this.employees = employees;
+        this.spotList = spots;
+        this.employeeList = employees;
     }
 
     public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
@@ -102,9 +102,9 @@ public class ShiftInfo extends AbstractPersistable {
         super(tenantId);
         this.startTime = startTime;
         this.endTime = endTime;
-        this.spots = spots;
-        this.employees = employees;
-        this.exceptions = exceptions;
+        this.spotList = spots;
+        this.employeeList = employees;
+        this.exceptionList = exceptions;
     }
 
     /**
@@ -124,54 +124,54 @@ public class ShiftInfo extends AbstractPersistable {
     }
 
     /**
-     * Getter for {@link ShiftInfo#spots}
-     * @return Value of {@link ShiftInfo#spots}
+     * Getter for {@link ShiftInfo#spotList}
+     * @return Value of {@link ShiftInfo#spotList}
      */
-    public List<IdOrGroup> getSpots() {
-        return spots;
+    public List<IdOrGroup> getSpotList() {
+        return spotList;
     }
 
     /**
-     * Setter for {@link ShiftInfo#spots}
+     * Setter for {@link ShiftInfo#spotList}
      * 
-     * @param spots Value to set {@link ShiftInfo#spots} to
+     * @param spots Value to set {@link ShiftInfo#spotList} to
      */
-    public void setSpots(List<IdOrGroup> spots) {
-        this.spots = spots;
+    public void setSpotList(List<IdOrGroup> spotList) {
+        this.spotList = spotList;
     }
 
     /**
-     * Getter for {@link ShiftInfo#employees}
-     * @return Value of {@link ShiftInfo#employees}
+     * Getter for {@link ShiftInfo#employeeList}
+     * @return Value of {@link ShiftInfo#employeeList}
      */
-    public List<EmployeeTimeSlotInfo> getEmployees() {
-        return employees;
+    public List<EmployeeTimeSlotInfo> getEmployeeList() {
+        return employeeList;
     }
 
     /**
-     * Setter for {@link ShiftInfo#employees}
+     * Setter for {@link ShiftInfo#employeeList}
      * 
-     * @param employees Value to set {@link ShiftInfo#employees} to
+     * @param employeeList Value to set {@link ShiftInfo#employeeList} to
      */
-    public void setEmployees(List<EmployeeTimeSlotInfo> employees) {
-        this.employees = employees;
+    public void setEmployeeList(List<EmployeeTimeSlotInfo> employeeList) {
+        this.employeeList = employeeList;
     }
 
     /**
-     * Getter for {@link ShiftInfo#exceptions}
-     * @return Value of {@link ShiftInfo#exceptions}
+     * Getter for {@link ShiftInfo#exceptionList}
+     * @return Value of {@link ShiftInfo#exceptionList}
      */
-    public List<ShiftConditional> getExceptions() {
-        return exceptions;
+    public List<ShiftConditional> getExceptionList() {
+        return exceptionList;
     }
 
     /**
-     * Setter for {@link ShiftInfo#exceptions}
+     * Setter for {@link ShiftInfo#exceptionList}
      * 
-     * @param exceptions Value to set {@link ShiftInfo#exceptions} to
+     * @param exceptionList Value to set {@link ShiftInfo#exceptionList} to
      */
-    public void setExceptions(List<ShiftConditional> exceptions) {
-        this.exceptions = exceptions;
+    public void setExceptionList(List<ShiftConditional> exceptionList) {
+        this.exceptionList = exceptionList;
     }
 
     /**

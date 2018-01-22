@@ -58,7 +58,7 @@ public class TenantConfigurationEditor implements IsElement {
     @Any
     private Event<Tenant> tenantEvent;
 
-    BiMap<Integer, Integer> templateDurationIndexMap;
+    BiMap<Integer, Integer> templateDurationIndexBiMap;
 
     @PostConstruct
     protected void initWidget() {
@@ -67,13 +67,13 @@ public class TenantConfigurationEditor implements IsElement {
         }
 
         // TODO: Make this more maintainable
-        templateDurationIndexMap = HashBiMap.create();
+        templateDurationIndexBiMap = HashBiMap.create();
         templateDuration.addItem("1 Week");
-        templateDurationIndexMap.put(1, 0);
+        templateDurationIndexBiMap.put(1, 0);
         templateDuration.addItem("2 Weeks");
-        templateDurationIndexMap.put(2, 1);
+        templateDurationIndexBiMap.put(2, 1);
         templateDuration.addItem("4 Weeks");
-        templateDurationIndexMap.put(4, 2);
+        templateDurationIndexBiMap.put(4, 2);
 
         desiredWeightInput.setValidators(new DecimalMinValidator<Integer>(0));
         undesiredWeightInput.setValidators(new DecimalMinValidator<Integer>(0));
@@ -82,7 +82,7 @@ public class TenantConfigurationEditor implements IsElement {
     public void onAnyTenantEvent(@Observes Tenant tenant) {
         this.tenant = tenant;
         weekStart.setSelectedIndex(tenant.getConfiguration().getWeekStart().getValue() - 1);
-        templateDuration.setSelectedIndex(templateDurationIndexMap.get(tenant.getConfiguration()
+        templateDuration.setSelectedIndex(templateDurationIndexBiMap.get(tenant.getConfiguration()
                                                                              .getTemplateDuration()));
         desiredWeightInput.setValue(tenant.getConfiguration().getDesiredTimeSlotWeight());
         undesiredWeightInput.setValue(tenant.getConfiguration().getUndesiredTimeSlotWeight());
@@ -97,7 +97,7 @@ public class TenantConfigurationEditor implements IsElement {
 
     @EventHandler("updateConfig")
     private void onUpdateConfigClick(ClickEvent e) {
-        tenant.getConfiguration().setTemplateDuration(templateDurationIndexMap.inverse().get(templateDuration
+        tenant.getConfiguration().setTemplateDuration(templateDurationIndexBiMap.inverse().get(templateDuration
                                                                                                              .getSelectedIndex()));
         tenant.getConfiguration().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
         tenant.getConfiguration().setDesiredTimeSlotWeight(desiredWeightInput.getValue());

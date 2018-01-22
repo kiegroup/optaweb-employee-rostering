@@ -19,8 +19,8 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
  * Properties:<br>
  * {@link ShiftTemplate#baseDateType} <br>
  * {@link ShiftTemplate#repeatType} <br>
- * {@link ShiftTemplate#universalExceptions} <br>
- * {@link ShiftTemplate#shifts} <br>
+ * {@link ShiftTemplate#universalExceptionList} <br>
+ * {@link ShiftTemplate#shiftList} <br>
  */
 @Entity
 @NamedQueries({
@@ -46,19 +46,19 @@ public class ShiftTemplate extends AbstractPersistable {
     /**
      * List of exceptions that apply to all shifts. It is strongly recommend to leave
      * {@link ShiftConditional#shift} null for each member of the list, as that shift will be created for all
-     * shifts that match the exception. {@link ShiftTemplate#universalExceptions} are evaluated after
-     * {@link ShiftInfo#exceptions}. 
+     * shifts that match the exception. {@link ShiftTemplate#universalExceptionList} are evaluated after
+     * {@link ShiftInfo#exceptionList}. 
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name = "orderIndex")
-    List<ShiftConditional> universalExceptions;
+    List<ShiftConditional> universalExceptionList;
 
     /**
      * List of shifts to generate
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name = "orderIndex")
-    List<ShiftInfo> shifts;
+    List<ShiftInfo> shiftList;
 
     public ShiftTemplate() {
 
@@ -70,8 +70,8 @@ public class ShiftTemplate extends AbstractPersistable {
         super(tenantId);
         this.baseDateType = baseDateType;
         this.repeatType = repeatType;
-        this.universalExceptions = universalExceptions;
-        this.shifts = shifts;
+        this.universalExceptionList = universalExceptions;
+        this.shiftList = shifts;
     }
 
     /**
@@ -109,37 +109,37 @@ public class ShiftTemplate extends AbstractPersistable {
     }
 
     /**
-     * Getter for {@link ShiftTemplate#universalExceptions}
-     * @return Value of {@link ShiftTemplate#universalExceptions}
+     * Getter for {@link ShiftTemplate#universalExceptionList}
+     * @return Value of {@link ShiftTemplate#universalExceptionList}
      */
-    public List<ShiftConditional> getUniversalExceptions() {
-        return universalExceptions;
+    public List<ShiftConditional> getUniversalExceptionList() {
+        return universalExceptionList;
     }
 
     /**
-     * Setter for {@link ShiftTemplate#universalExceptions}
+     * Setter for {@link ShiftTemplate#universalExceptionList}
      * 
-     * @param universalExceptions Value to set {@link ShiftTemplate#universalExceptions} to
+     * @param universalExceptionList Value to set {@link ShiftTemplate#universalExceptionList} to
      */
-    public void setUniversalExceptions(List<ShiftConditional> universalExceptions) {
-        this.universalExceptions = universalExceptions;
+    public void setUniversalExceptionList(List<ShiftConditional> universalExceptionList) {
+        this.universalExceptionList = universalExceptionList;
     }
 
     /**
-     * Getter for {@link ShiftTemplate#shifts}
-     * @return Value of {@link ShiftTemplate#shifts}
+     * Getter for {@link ShiftTemplate#shiftList}
+     * @return Value of {@link ShiftTemplate#shiftList}
      */
-    public List<ShiftInfo> getShifts() {
-        return shifts;
+    public List<ShiftInfo> getShiftList() {
+        return shiftList;
     }
 
     /**
-     * Setter for {@link ShiftTemplate#shifts}
+     * Setter for {@link ShiftTemplate#shiftList}
      * 
-     * @param shifts Value to set {@link ShiftTemplate#shifts} to
+     * @param shiftList Value to set {@link ShiftTemplate#shiftList} to
      */
-    public void setShifts(List<ShiftInfo> shifts) {
-        this.shifts = shifts;
+    public void setShiftList(List<ShiftInfo> shiftList) {
+        this.shiftList = shiftList;
     }
 
 }

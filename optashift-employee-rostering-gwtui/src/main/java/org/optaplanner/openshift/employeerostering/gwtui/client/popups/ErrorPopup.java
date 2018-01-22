@@ -19,7 +19,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.resources.images
 
 public class ErrorPopup extends PopupPanel {
 
-    final static Queue<String> queuedErrors = new LinkedList<String>();
+    final static Queue<String> errorQueue = new LinkedList<String>();
 
     private HandlerRegistration windowResizeHandler;
 
@@ -57,8 +57,8 @@ public class ErrorPopup extends PopupPanel {
         button.addClickHandler((e) -> {
             ErrorPopup.this.hide();
             ErrorPopup.this.windowResizeHandler.removeHandler();
-            queuedErrors.poll();
-            if (!queuedErrors.isEmpty()) {
+            errorQueue.poll();
+            if (!errorQueue.isEmpty()) {
                 Timer timer = new Timer() {
 
                     @Override
@@ -76,14 +76,14 @@ public class ErrorPopup extends PopupPanel {
     }
 
     public static void show(String msg) {
-        queuedErrors.add(msg);
-        if (1 == queuedErrors.size()) {
+        errorQueue.add(msg);
+        if (1 == errorQueue.size()) {
             showNextQueueError();
         }
     }
 
     private static void showNextQueueError() {
-        final ErrorPopup popup = new ErrorPopup(queuedErrors.peek());
+        final ErrorPopup popup = new ErrorPopup(errorQueue.peek());
         popup.center();
     }
 }

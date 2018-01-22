@@ -139,13 +139,13 @@ public class TemplateEditor implements IsElement {
 
     @EventHandler("saveButton")
     private void onSaveButtonClick(ClickEvent e) {
-        Collection<ShiftData> shifts = calendar.getShifts();
+        Collection<ShiftData> shifts = calendar.getShiftSet();
         EmployeeRestServiceBuilder.findEmployeeGroupByName(tenantId, "ALL", new FailureShownRestCallback<
                 EmployeeGroup>() {
 
             @Override
             public void onSuccess(EmployeeGroup allEmployees) {
-                shifts.forEach((s) -> s.setEmployees(Arrays.asList(new EmployeeTimeSlotInfo(tenantId, new IdOrGroup(
+                shifts.forEach((s) -> s.setEmployeeList(Arrays.asList(new EmployeeTimeSlotInfo(tenantId, new IdOrGroup(
                         tenantId, true,
                         allEmployees.getId()), EmployeeAvailabilityState.DESIRED))));
                 List<ShiftInfo> shiftInfos = new ArrayList<>();

@@ -83,7 +83,7 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
 
     protected void validateTenantIdParameter(Integer tenantId, Employee employee) {
         super.validateTenantIdParameter(tenantId, employee);
-        for (EmployeeSkillProficiency skillProficiency : employee.getSkillProficiencyList()) {
+        for (EmployeeSkillProficiency skillProficiency : employee.getSkillProficiencySet()) {
             if (!Objects.equals(skillProficiency.getTenantId(), tenantId)) {
                 throw new IllegalStateException("The tenantId (" + tenantId
                         + ") does not match the skillProficiency (" + skillProficiency

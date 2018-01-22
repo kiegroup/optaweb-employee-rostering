@@ -32,12 +32,12 @@ public enum RepeatMode {
      */
     NONE(0, 0, 0, 0);
 
-    public long days, weeks, months, years;
+    public long daysUntilRepeat, weeksUntilRepeat, monthsUntilRepeat, yearsUntilRepeat;
 
     RepeatMode(long days, long weeks, long months, long years) {
-        this.days = days;
-        this.weeks = weeks;
-        this.months = months;
-        this.years = years;
+        this.daysUntilRepeat = days;
+        this.weeksUntilRepeat = weeks;
+        this.monthsUntilRepeat = months;
+        this.yearsUntilRepeat = years;
     }
 }

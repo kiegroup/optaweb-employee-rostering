@@ -4,6 +4,7 @@ import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
+import java.util.Map;
 
 import elemental2.dom.MouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.HasTitle;
@@ -17,7 +18,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
 
     private TwoDayViewPresenter<G, I, D> presenter;
 
-    private HashMap<G, Integer> cursorIndex = new HashMap<>();
+    private HashMap<G, Integer> cursorIndexMap = new HashMap<>();
     private G selectedSpot;
     private Long selectedIndex;
     private G overSpot;
@@ -50,24 +51,24 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
 
     private void handleMouseDown(double eventX, double eventY) {
         double offsetX = presenter.getState().getOffsetX();
-        for (G spot : presenter.getState().getGroupAddPlane().keySet()) {
-            if (presenter.getState().getGroupContainer().get(spot).getGlobalX() < mouseX - offsetX && presenter
-                    .getState().getGroupContainer()
+        for (G spot : presenter.getState().getGroupAddPlaneMap().keySet()) {
+            if (presenter.getState().getGroupContainerMap().get(spot).getGlobalX() < mouseX - offsetX && presenter
+                    .getState().getGroupContainerMap()
                     .get(spot)
-                    .getGlobalY() < mouseY && mouseY < presenter.getState().getGroupAddPlane().get(spot).getGlobalY()
+                    .getGlobalY() < mouseY && mouseY < presenter.getState().getGroupAddPlaneMap().get(spot).getGlobalY()
                             + presenter.getState()
                                     .getGroupHeight()) {
-                int index = (int) Math.floor((mouseY - presenter.getState().getGroupContainer().get(spot).getGlobalY())
+                int index = (int) Math.floor((mouseY - presenter.getState().getGroupContainerMap().get(spot).getGlobalY())
                         / presenter.getState()
                                 .getGroupHeight());
                 if (null != overSpot) {
-                    cursorIndex.put(overSpot, presenter.getState().getGroupEndPos().get(overSpot));
+                    cursorIndexMap.put(overSpot, presenter.getState().getGroupEndPosMap().get(overSpot));
                 }
                 selectedSpot = spot;
                 overSpot = spot;
-                cursorIndex.put(overSpot, index);
+                cursorIndexMap.put(overSpot, index);
                 isCreating = true;
-                selectedIndex = (long) Math.floor((mouseY - presenter.getState().getGroupContainer().get(spot)
+                selectedIndex = (long) Math.floor((mouseY - presenter.getState().getGroupContainerMap().get(spot)
                         .getGlobalY())
                         / presenter.getState().getGroupHeight());
                 break;
@@ -149,7 +150,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
             selectedSpot = mouseOverDrawable.getGroupId();
             selectedIndex = (long) mouseOverDrawable.getIndex();
             overSpot = selectedSpot;
-            cursorIndex.put(overSpot, selectedIndex.intValue());
+            cursorIndexMap.put(overSpot, selectedIndex.intValue());
         }
 
         presenter.draw();
@@ -173,7 +174,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
         }
 
         isDragging = false;
-        cursorIndex.put(overSpot, presenter.getState().getGroupEndPos().get(overSpot));
+        cursorIndexMap.put(overSpot, presenter.getState().getGroupEndPosMap().get(overSpot));
         overSpot = null;
         selectedSpot = null;
         selectedIndex = 0L;
@@ -269,8 +270,8 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
         return isCreating;
     }
 
-    public HashMap<G, Integer> getCursorIndex() {
-        return cursorIndex;
+    public Map<G, Integer> getCursorIndexMap() {
+        return cursorIndexMap;
     }
 
     public G getSelectedSpot() {

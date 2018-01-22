@@ -79,9 +79,9 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     @EventHandler("planNextPeriod")
     public void plan(ClickEvent e) {
         ShiftRestServiceBuilder.addShiftsFromTemplate(tenantId,
-                calendar.getShifts().stream().max((a, b) -> a.getStartTime().compareTo(b
+                calendar.getShiftSet().stream().max((a, b) -> a.getStartTime().compareTo(b
                         .getStartTime())).get().getEndTime().toString(),
-                calendar.getShifts().stream().max((a, b) -> a.getStartTime().compareTo(b
+                calendar.getShiftSet().stream().max((a, b) -> a.getStartTime().compareTo(b
                         .getStartTime())).get().getEndTime().plusWeeks(2).toString(),
                 new FailureShownRestCallback<List<Long>>() {
 

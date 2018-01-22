@@ -1,6 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.popups;
 
 import java.util.HashSet;
+import java.util.Set;
 
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -21,7 +22,7 @@ public class LoadingPopup extends PopupPanel {
     private static LoadingPopup INSTANCE;
 
     Span text;
-    HashSet<String> itemsLoading;
+    Set<String> itemLoadingSet;
     private HandlerRegistration windowResizeHandler;
 
     public LoadingPopup() {
@@ -41,7 +42,7 @@ public class LoadingPopup extends PopupPanel {
 
         text = new Span();
         text.setHTML("Loading...");
-        itemsLoading = new HashSet<>();
+        itemLoadingSet = new HashSet<>();
 
         horizontalSubpanel.add(text);
 
@@ -52,7 +53,7 @@ public class LoadingPopup extends PopupPanel {
         if (null == INSTANCE) {
             INSTANCE = new LoadingPopup();
         }
-        if (INSTANCE.itemsLoading.isEmpty()) {
+        if (INSTANCE.itemLoadingSet.isEmpty()) {
             INSTANCE.setPopupPositionAndShow((w, h) -> {
                 INSTANCE.setPopupPosition(Window.getClientWidth() / 4, Window.getClientHeight() / 4);
                 INSTANCE.windowResizeHandler = Window.addResizeHandler((e) -> {
@@ -60,12 +61,12 @@ public class LoadingPopup extends PopupPanel {
                 });
             });
         }
-        INSTANCE.itemsLoading.add(item);
+        INSTANCE.itemLoadingSet.add(item);
     }
 
     public static void clearLoading(String item) {
-        INSTANCE.itemsLoading.remove(item);
-        if (INSTANCE.itemsLoading.isEmpty()) {
+        INSTANCE.itemLoadingSet.remove(item);
+        if (INSTANCE.itemLoadingSet.isEmpty()) {
             INSTANCE.hide();
             INSTANCE.removeFromParent();
             INSTANCE.windowResizeHandler.removeHandler();
@@ -73,6 +74,6 @@ public class LoadingPopup extends PopupPanel {
     }
 
     public static boolean isLoading() {
-        return !INSTANCE.itemsLoading.isEmpty();
+        return !INSTANCE.itemLoadingSet.isEmpty();
     }
 }

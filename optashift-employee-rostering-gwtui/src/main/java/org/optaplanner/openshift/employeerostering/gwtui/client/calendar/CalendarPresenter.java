@@ -3,6 +3,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import elemental2.dom.MouseEvent;
 import org.jboss.errai.ui.client.local.api.IsElement;
@@ -32,11 +33,11 @@ public interface CalendarPresenter<G extends HasTitle, I extends HasTimeslot<G>>
 
     void setShifts(Collection<I> shifts);
 
-    Collection<G> getVisibleGroups();
+    Set<G> getVisibleGroupSet();
 
-    Collection<G> getGroups();
+    List<G> getGroupList();
 
-    void setGroups(List<G> groups);
+    void setGroupList(List<G> groupList);
 
     void draw();
 

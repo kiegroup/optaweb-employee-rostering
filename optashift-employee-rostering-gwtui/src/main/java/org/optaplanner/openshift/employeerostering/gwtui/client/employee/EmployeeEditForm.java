@@ -105,10 +105,10 @@ public class EmployeeEditForm implements IsElement {
         employeeSkills.setItemValue(Skill::getName);
         employeeSkills.setItemText(Skill::getName);
         employeeSkills.reconfigure();
-        employeeSkills.add(employee.getSkillProficiencyList().stream()
+        employeeSkills.add(employee.getSkillProficiencySet().stream()
                 .map((p) -> p.getSkill())
                 .collect(Collectors.toList()));
-        employee.getSkillProficiencyList().stream().map((p) -> p.getSkill())
+        employee.getSkillProficiencySet().stream().map((p) -> p.getSkill())
                 .forEach((s) -> employeeSkills.add(s));
 
         title.setInnerSafeHtml(new SafeHtmlBuilder().appendEscaped(employee.getName())
@@ -130,7 +130,7 @@ public class EmployeeEditForm implements IsElement {
     @EventHandler("saveButton")
     public void save(ClickEvent click) {
         employee.setName(employeeName.getValue());
-        Map<Skill, EmployeeSkillProficiency> proficiencyMap = employee.getSkillProficiencyList().stream()
+        Map<Skill, EmployeeSkillProficiency> proficiencyMap = employee.getSkillProficiencySet().stream()
                 .collect(Collectors.toMap(EmployeeSkillProficiency::getSkill, Function.identity()));
         List<Skill> skillList = employeeSkills.getItems();
         for (Skill skill : skillList) {
@@ -139,11 +139,11 @@ public class EmployeeEditForm implements IsElement {
             } else {
                 EmployeeSkillProficiency proficiency = new EmployeeSkillProficiency(employee.getTenantId(), employee,
                         skill);
-                employee.getSkillProficiencyList().add(proficiency);
+                employee.getSkillProficiencySet().add(proficiency);
             }
         }
         for (EmployeeSkillProficiency proficiency : proficiencyMap.values()) {
-            employee.getSkillProficiencyList().remove(proficiency);
+            employee.getSkillProficiencySet().remove(proficiency);
         }
         popup.hide();
         EmployeeRestServiceBuilder.updateEmployee(employee.getTenantId(), employee, new FailureShownRestCallback<

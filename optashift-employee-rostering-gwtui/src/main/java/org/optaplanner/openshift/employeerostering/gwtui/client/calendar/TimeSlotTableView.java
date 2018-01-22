@@ -17,21 +17,22 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotTable
 
 public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T extends TimeRowDrawable<G, I>> {
 
-    List<TimeSlotTable<I>> timeSlotTables;
-    List<G> groups;
+    List<TimeSlotTable<I>> timeSlotTableList;
+    List<G> groupList;
     TimeRowDrawableProvider<G, I, T> provider;
     TwoDayViewPresenter<G, I, T> twoDayViewPresenter;
 
-    Map<UUID, T> uuidToDrawable;
-    Map<T, UUID> drawableToUUID;
-    Map<I, UUID> shiftToUUID;
+    // TODO: Combine uuidToDrawableMap and drawableToUUIDMap into a BiMap
+    Map<UUID, T> uuidToDrawableMap;
+    Map<T, UUID> drawableToUUIDMap;
+    Map<I, UUID> shiftToUUIDMap;
     Collection<T> timeSlots;
-    Map<G, Integer> groupStartPos;
-    Map<G, Integer> groupEndPos;
-    Map<G, Integer> groupIndex;
+    Map<G, Integer> groupStartPosMap;
+    Map<G, Integer> groupEndPosMap;
+    Map<G, Integer> groupIndexMap;
 
-    List<List<T>> visibleItems;
-    List<List<T>> allItems;
+    List<List<T>> visibleItemList;
+    List<List<T>> allItemList;
     LocalDateTime startDate, endDate;
     Integer maxRow;
 
@@ -41,26 +42,26 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
         this.twoDayViewPresenter = twoDayViewPresenter;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.groups = groups;
+        this.groupList = groups;
         this.provider = provider;
-        this.timeSlotTables = timeSlotTables;
+        this.timeSlotTableList = timeSlotTables;
 
-        uuidToDrawable = new HashMap<>();
-        drawableToUUID = new HashMap<>();
-        shiftToUUID = new HashMap<>();
+        uuidToDrawableMap = new HashMap<>();
+        drawableToUUIDMap = new HashMap<>();
+        shiftToUUIDMap = new HashMap<>();
 
-        groupStartPos = new HashMap<>();
-        groupEndPos = new HashMap<>();
-        groupIndex = new HashMap<>();
+        groupStartPosMap = new HashMap<>();
+        groupEndPosMap = new HashMap<>();
+        groupIndexMap = new HashMap<>();
 
-        visibleItems = new ArrayList<>();
-        allItems = new ArrayList<>();
+        visibleItemList = new ArrayList<>();
+        allItemList = new ArrayList<>();
         timeSlots = new HashSet<>();
 
         int startOffset = 0;
         for (int i = 0; i < groups.size(); i++) {
-            groupStartPos.put(groups.get(i), startOffset);
-            groupIndex.put(groups.get(i), i);
+            groupStartPosMap.put(groups.get(i), startOffset);
+            groupIndexMap.put(groups.get(i), i);
 
             List<List<TimeSlotTable.TimeSlot<I>>> timeSlotGrid = timeSlotTables.get(i).getTimeSlotsAsGrid();
             for (int y = 0; y < timeSlotGrid.size(); y++) {
@@ -69,51 +70,51 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
                     T drawable = provider.createDrawable(twoDayViewPresenter, t.getData(), y);
                     row.add(drawable);
                     timeSlots.add(drawable);
-                    uuidToDrawable.put(t.getUUID(), drawable);
-                    shiftToUUID.put(t.getData(), t.getUUID());
-                    drawableToUUID.put(drawable, t.getUUID());
+                    uuidToDrawableMap.put(t.getUUID(), drawable);
+                    shiftToUUIDMap.put(t.getData(), t.getUUID());
+                    drawableToUUIDMap.put(drawable, t.getUUID());
                 }
-                allItems.add(row);
-                visibleItems.add(new ArrayList<>());
+                allItemList.add(row);
+                visibleItemList.add(new ArrayList<>());
             }
             startOffset += timeSlotGrid.size() + 1;
-            allItems.add(new ArrayList<>());
-            visibleItems.add(new ArrayList<>());
-            groupEndPos.put(groups.get(i), startOffset - 1);
+            allItemList.add(new ArrayList<>());
+            visibleItemList.add(new ArrayList<>());
+            groupEndPosMap.put(groups.get(i), startOffset - 1);
         }
         maxRow = startOffset;
         updateVisibleTimeSlots();
     }
 
     private void updateTimeSlotsFor(G group) {
-        int startPos = groupStartPos.get(group);
-        int endPos = groupEndPos.get(group);
-        int index = groupIndex.get(group);
-        allItems.subList(startPos, endPos + 1).clear();
-        visibleItems.subList(startPos, endPos + 1).clear();
+        int startPos = groupStartPosMap.get(group);
+        int endPos = groupEndPosMap.get(group);
+        int index = groupIndexMap.get(group);
+        allItemList.subList(startPos, endPos + 1).clear();
+        visibleItemList.subList(startPos, endPos + 1).clear();
 
-        List<List<TimeSlotTable.TimeSlot<I>>> timeSlotGrid = timeSlotTables.get(index).getTimeSlotsAsGrid();
+        List<List<TimeSlotTable.TimeSlot<I>>> timeSlotGrid = timeSlotTableList.get(index).getTimeSlotsAsGrid();
         for (int y = 0; y < timeSlotGrid.size(); y++) {
             List<T> row = new ArrayList<>();
             for (TimeSlotTable.TimeSlot<I> t : timeSlotGrid.get(y)) {
-                T drawable = uuidToDrawable.get(t.getUUID());
+                T drawable = uuidToDrawableMap.get(t.getUUID());
                 drawable.setIndex(y);
                 row.add(drawable);
             }
-            allItems.add(y + startPos, row);
-            visibleItems.add(y + startPos, new ArrayList<>());
+            allItemList.add(y + startPos, row);
+            visibleItemList.add(y + startPos, new ArrayList<>());
         }
-        allItems.add(timeSlotGrid.size() + startPos, new ArrayList<>());
-        visibleItems.add(timeSlotGrid.size() + startPos, new ArrayList<>());
+        allItemList.add(timeSlotGrid.size() + startPos, new ArrayList<>());
+        visibleItemList.add(timeSlotGrid.size() + startPos, new ArrayList<>());
         int newEndPos = startPos + timeSlotGrid.size();
 
         if (endPos != newEndPos) {
-            groupEndPos.put(group, newEndPos);
+            groupEndPosMap.put(group, newEndPos);
             final int diff = newEndPos - endPos;
-            for (int i = index + 1; i < groups.size(); i++) {
-                G myGroup = groups.get(i);
-                groupStartPos.compute(myGroup, (g, pos) -> pos + diff);
-                groupEndPos.compute(myGroup, (g, pos) -> pos + diff);
+            for (int i = index + 1; i < groupList.size(); i++) {
+                G myGroup = groupList.get(i);
+                groupStartPosMap.compute(myGroup, (g, pos) -> pos + diff);
+                groupEndPosMap.compute(myGroup, (g, pos) -> pos + diff);
             }
             maxRow += diff;
         }
@@ -123,33 +124,33 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
     }
 
     private void updateVisibleTimeSlotsForGroup(G group) {
-        int startPos = groupStartPos.get(group);
-        int endPos = groupEndPos.get(group);
-        int index = groupIndex.get(group);
+        int startPos = groupStartPosMap.get(group);
+        int endPos = groupEndPosMap.get(group);
+        int index = groupIndexMap.get(group);
 
-        visibleItems.subList(startPos, endPos).forEach((v) -> v.clear());
-        List<List<TimeSlotTable.TimeSlot<I>>> timeSlotGrid = timeSlotTables.get(index)
+        visibleItemList.subList(startPos, endPos).forEach((v) -> v.clear());
+        List<List<TimeSlotTable.TimeSlot<I>>> timeSlotGrid = timeSlotTableList.get(index)
                 .getTimeSlotsAsGrid(startDate.toEpochSecond(ZoneOffset.UTC),
                         endDate.toEpochSecond(ZoneOffset.UTC));
         for (int y = 0; y < timeSlotGrid.size(); y++) {
             for (TimeSlotTable.TimeSlot<I> t : timeSlotGrid.get(y)) {
-                T drawable = uuidToDrawable.get(t.getUUID());
-                visibleItems.get(getRowIndexOf(drawable)).add(drawable);
+                T drawable = uuidToDrawableMap.get(t.getUUID());
+                visibleItemList.get(getRowIndexOf(drawable)).add(drawable);
             }
         }
         twoDayViewPresenter.getState().setVisibleDirty(true);
     }
 
     private void updateVisibleTimeSlots() {
-        visibleItems.forEach((v) -> v.clear());
-        for (int i = 0; i < groups.size(); i++) {
-            List<List<TimeSlotTable.TimeSlot<I>>> timeSlotGrid = timeSlotTables.get(i)
+        visibleItemList.forEach((v) -> v.clear());
+        for (int i = 0; i < groupList.size(); i++) {
+            List<List<TimeSlotTable.TimeSlot<I>>> timeSlotGrid = timeSlotTableList.get(i)
                     .getTimeSlotsAsGrid(startDate.toEpochSecond(ZoneOffset.UTC),
                             endDate.toEpochSecond(ZoneOffset.UTC));
             for (int y = 0; y < timeSlotGrid.size(); y++) {
                 for (TimeSlotTable.TimeSlot<I> t : timeSlotGrid.get(y)) {
-                    T drawable = uuidToDrawable.get(t.getUUID());
-                    visibleItems.get(getRowIndexOf(drawable)).add(drawable);
+                    T drawable = uuidToDrawableMap.get(t.getUUID());
+                    visibleItemList.get(getRowIndexOf(drawable)).add(drawable);
                 }
             }
         }
@@ -157,13 +158,13 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
     }
 
     public void addTimeSlot(I shift) {
-        UUID uuid = timeSlotTables.get(groupIndex.get(shift.getGroupId()))
+        UUID uuid = timeSlotTableList.get(groupIndexMap.get(shift.getGroupId()))
                 .add(shift.getStartTime().toEpochSecond(ZoneOffset.UTC),
                         shift.getEndTime().toEpochSecond(ZoneOffset.UTC), shift);
         T drawable = provider.createDrawable(twoDayViewPresenter, shift, 0);
-        uuidToDrawable.put(uuid, drawable);
-        drawableToUUID.put(drawable, uuid);
-        shiftToUUID.put(shift, uuid);
+        uuidToDrawableMap.put(uuid, drawable);
+        drawableToUUIDMap.put(drawable, uuid);
+        shiftToUUIDMap.put(shift, uuid);
         timeSlots.add(drawable);
         updateTimeSlotsFor(shift.getGroupId());
 
@@ -176,32 +177,32 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
             throw new RuntimeException("Old Shift does not exist in the same time slot as New Shift");
         }
 
-        UUID uuid = shiftToUUID.get(oldShift);
-        timeSlotTables.get(groupIndex.get(oldShift.getGroupId()))
+        UUID uuid = shiftToUUIDMap.get(oldShift);
+        timeSlotTableList.get(groupIndexMap.get(oldShift.getGroupId()))
                 .update(uuid, newShift);
-        uuidToDrawable.get(uuid).updateData(newShift);
-        shiftToUUID.remove(oldShift);
-        shiftToUUID.put(newShift, uuid);
+        uuidToDrawableMap.get(uuid).updateData(newShift);
+        shiftToUUIDMap.remove(oldShift);
+        shiftToUUIDMap.put(newShift, uuid);
     }
 
     public void removeTimeSlot(I shift) {
-        UUID uuid = timeSlotTables.get(groupIndex.get(shift.getGroupId()))
+        UUID uuid = timeSlotTableList.get(groupIndexMap.get(shift.getGroupId()))
                 .remove(shift.getStartTime().toEpochSecond(ZoneOffset.UTC),
                         shift.getEndTime().toEpochSecond(ZoneOffset.UTC));
-        T drawable = uuidToDrawable.get(uuid);
-        uuidToDrawable.remove(uuid);
-        drawableToUUID.remove(drawable);
+        T drawable = uuidToDrawableMap.get(uuid);
+        uuidToDrawableMap.remove(uuid);
+        drawableToUUIDMap.remove(drawable);
         timeSlots.remove(drawable);
-        shiftToUUID.remove(shift);
+        shiftToUUIDMap.remove(shift);
         updateTimeSlotsFor(shift.getGroupId());
     }
 
     public void removeTimeSlot(T drawable) {
-        UUID uuid = drawableToUUID.get(drawable);
-        timeSlotTables.get(groupIndex.get(drawable.getGroupId()))
+        UUID uuid = drawableToUUIDMap.get(drawable);
+        timeSlotTableList.get(groupIndexMap.get(drawable.getGroupId()))
                 .remove(uuid);
-        uuidToDrawable.remove(uuid);
-        drawableToUUID.remove(drawable);
+        uuidToDrawableMap.remove(uuid);
+        drawableToUUIDMap.remove(drawable);
         timeSlots.remove(drawable);
         updateTimeSlotsFor(drawable.getGroupId());
         twoDayViewPresenter.getState().setAllDirty(true);
@@ -213,19 +214,19 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
     }
 
     public Integer getRowIndexOf(T timeslot) {
-        return timeslot.getIndex() + groupStartPos.get(timeslot.getGroupId());
+        return timeslot.getIndex() + groupStartPosMap.get(timeslot.getGroupId());
     }
 
     public Collection<T> getRowOf(T timeslot) {
-        return visibleItems.get(getRowIndexOf(timeslot));
+        return visibleItemList.get(getRowIndexOf(timeslot));
     }
 
     public Collection<T> getVisibleRow(int index) {
-        return visibleItems.get(index);
+        return visibleItemList.get(index);
     }
 
     public Collection<T> getRow(int index) {
-        return allItems.get(index);
+        return allItemList.get(index);
     }
 
     public void setStartDate(LocalDateTime startDate) {
@@ -242,16 +243,16 @@ public class TimeSlotTableView<G extends HasTitle, I extends HasTimeslot<G>, T e
         return timeSlots;
     }
 
-    public Map<G, Integer> getGroupStartPos() {
-        return groupStartPos;
+    public Map<G, Integer> getGroupStartPosMap() {
+        return groupStartPosMap;
     }
 
-    public Map<G, Integer> getGroupEndPos() {
-        return groupEndPos;
+    public Map<G, Integer> getGroupEndPosMap() {
+        return groupEndPosMap;
     }
 
-    public Map<G, Integer> getGroupIndex() {
-        return groupIndex;
+    public Map<G, Integer> getGroupIndexMap() {
+        return groupIndexMap;
     }
 
 }
