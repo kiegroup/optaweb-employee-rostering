@@ -18,7 +18,9 @@ package org.optaplanner.openshift.employeerostering.shared.employee;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -36,10 +38,11 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "Employee.findAll",
-                           query = "select distinct e from Employee e left join fetch e.skillProficiencyList sp left join fetch sp.skill s" +
-                                   " where e.tenantId = :tenantId" +
-                                   " order by e.name, s.name"),
+        @NamedQuery(name = "Employee.findAll",
+                query = "select distinct e from Employee e left join fetch e.skillProficiencySet sp left join fetch sp.skill s"
+                        +
+                        " where e.tenantId = :tenantId" +
+                        " order by e.name, s.name"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Employee extends AbstractPersistable {
@@ -50,20 +53,21 @@ public class Employee extends AbstractPersistable {
     @JsonManagedReference
     @NotNull
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EmployeeSkillProficiency> skillProficiencyList;
+    private Set<EmployeeSkillProficiency> skillProficiencySet;
 
     @SuppressWarnings("unused")
-    public Employee() {}
+    public Employee() {
+    }
 
     public Employee(Integer tenantId, String name) {
         super(tenantId);
         this.name = name;
-        skillProficiencyList = new ArrayList<>(2);
+        skillProficiencySet = new HashSet<>(2);
     }
 
     public boolean hasSkill(Skill skill) {
-        return skillProficiencyList.stream()
-                                   .anyMatch(skillProficiency -> skillProficiency.getSkill().equals(skill));
+        return skillProficiencySet.stream()
+                .anyMatch(skillProficiency -> skillProficiency.getSkill().equals(skill));
     }
 
     public boolean hasSkills(Collection<Skill> skills) {
@@ -87,12 +91,12 @@ public class Employee extends AbstractPersistable {
         this.name = name;
     }
 
-    public List<EmployeeSkillProficiency> getSkillProficiencyList() {
-        return skillProficiencyList;
+    public Set<EmployeeSkillProficiency> getSkillProficiencySet() {
+        return skillProficiencySet;
     }
 
-    public void setSkillProficiencyList(List<EmployeeSkillProficiency> skillProficiencyList) {
-        this.skillProficiencyList = skillProficiencyList;
+    public void setSkillProficiencySet(Set<EmployeeSkillProficiency> skillProficiencySet) {
+        this.skillProficiencySet = skillProficiencySet;
     }
 
 }

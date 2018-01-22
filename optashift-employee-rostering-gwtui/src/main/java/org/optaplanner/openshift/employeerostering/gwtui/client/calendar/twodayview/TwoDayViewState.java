@@ -24,12 +24,12 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
 
     private TwoDayViewPresenter<G, I, D> presenter;
 
-    private List<G> groups = new ArrayList<>();
-    private Map<G, Integer> groupIndexOf;
+    private List<G> groupList = new ArrayList<>();
+    private Map<G, Integer> groupIndexMap;
 
     private boolean visibleDirty, allDirty;
 
-    private Map<G, List<List<TimeSlotTable.TimeSlot<I>>>> groupShifts;
+    private Map<G, List<List<TimeSlotTable.TimeSlot<I>>>> groupShiftMap;
     private TimeSlotTableView<G, I, D> timeSlotTableView;
 
     private double screenWidth, screenHeight;
@@ -43,8 +43,8 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
     private double scrollBarLength;
     private int scrollBarHandleLength;
 
-    private HashMap<G, DynamicContainer> groupContainer = new HashMap<>();
-    private HashMap<G, DynamicContainer> groupAddPlane = new HashMap<>();
+    private Map<G, DynamicContainer> groupContainerMap = new HashMap<>();
+    private Map<G, DynamicContainer> groupAddPlaneMap = new HashMap<>();
 
     public TwoDayViewState(TwoDayViewPresenter<G, I, D> presenter) {
         this.presenter = presenter;
@@ -54,11 +54,11 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
         allDirty = true;
         screenWidth = 1;
         screenHeight = 1;
-        groupShifts = new HashMap<>();
+        groupShiftMap = new HashMap<>();
         scrollBarPos = 0;
         scrollBarLength = 1;
         scrollBarHandleLength = 1;
-        groupIndexOf = new HashMap<>();
+        groupIndexMap = new HashMap<>();
     }
 
     public void setDate(LocalDateTime date) {
@@ -69,17 +69,18 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
         presenter.draw();
     }
 
-    public List<G> getGroups() {
-        return Collections.unmodifiableList(groups);
+    public List<G> getGroupList() {
+        return Collections.unmodifiableList(groupList);
     }
 
-    public void setGroups(List<G> groups) {
-        groupIndexOf.clear();
-        this.groups = groups.stream().sorted((a, b) -> CommonUtils.stringWithIntCompareTo(a.getTitle(), b.getTitle()))
+    public void setGroupList(List<G> groupList) {
+        groupIndexMap.clear();
+        this.groupList = groupList.stream().sorted((a, b) -> CommonUtils.stringWithIntCompareTo(a.getTitle(), b
+                .getTitle()))
                 .collect(Collectors
                         .toList());
-        for (int i = 0; i < this.groups.size(); i++) {
-            groupIndexOf.put(this.groups.get(i), i);
+        for (int i = 0; i < this.groupList.size(); i++) {
+            groupIndexMap.put(this.groupList.get(i), i);
         }
     }
 
@@ -113,7 +114,8 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
 
     public TimeSlotTableView<G, I, D> getTimeSlotTable() {
         if (null == timeSlotTableView) {
-            timeSlotTableView = new TimeSlotTableView<>(presenter, groups, Collections.emptyList(), getViewStartDate(),
+            timeSlotTableView = new TimeSlotTableView<>(presenter, groupList, Collections.emptyList(),
+                    getViewStartDate(),
                     getViewEndDate(), presenter.getConfig().getDrawableProvider());
         }
         return timeSlotTableView;
@@ -144,7 +146,8 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
     }
 
     public double getLocationOfGroupSlot(G group, int slot) {
-        return TwoDayViewPresenter.HEADER_HEIGHT + (getGroupPos().get(group) + slot) * getGroupHeight() - getOffsetY();
+        return TwoDayViewPresenter.HEADER_HEIGHT + (getGroupPosMap().get(group) + slot) * getGroupHeight()
+                - getOffsetY();
     }
 
     public boolean isDirty() {
@@ -180,7 +183,7 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
     }
 
     public int getGroupIndex(G groupId) {
-        return groupIndexOf.get(groupId);
+        return groupIndexMap.get(groupId);
     }
 
     public double getOffsetX() {
@@ -194,20 +197,20 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
                 .getPage();
     }
 
-    public Map<G, Integer> getGroupPos() {
-        return timeSlotTableView.getGroupStartPos();
+    public Map<G, Integer> getGroupPosMap() {
+        return timeSlotTableView.getGroupStartPosMap();
     }
 
-    public Map<G, Integer> getGroupEndPos() {
-        return timeSlotTableView.getGroupEndPos();
+    public Map<G, Integer> getGroupEndPosMap() {
+        return timeSlotTableView.getGroupEndPosMap();
     }
 
-    public HashMap<G, DynamicContainer> getGroupContainer() {
-        return groupContainer;
+    public Map<G, DynamicContainer> getGroupContainerMap() {
+        return groupContainerMap;
     }
 
-    public HashMap<G, DynamicContainer> getGroupAddPlane() {
-        return groupAddPlane;
+    public Map<G, DynamicContainer> getGroupAddPlaneMap() {
+        return groupAddPlaneMap;
     }
 
     public double getLocationOfDate(LocalDateTime date) {
@@ -257,18 +260,18 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
 
     public void setShifts(Collection<I> shifts) {
         totalSpotSlots = 0;
-        groupContainer.clear();
-        groupAddPlane.clear();
-        groupShifts.clear();
-        presenter.getCursorMap().clear();
+        groupContainerMap.clear();
+        groupAddPlaneMap.clear();
+        groupShiftMap.clear();
+        presenter.getCursorIndexMap().clear();
         allDirty = true;
         visibleDirty = true;
         presenter.setMouseOverDrawable(null);
-        List<TimeSlotTable<I>> timeSlotTables = new ArrayList<>(groups.size());
+        List<TimeSlotTable<I>> timeSlotTables = new ArrayList<>(groupList.size());
 
-        for (G group : groups) {
+        for (G group : groupList) {
             final long spotStartPos = totalSpotSlots;
-            groupContainer.put(group, new DynamicContainer(() -> new Position(TwoDayViewPresenter.SPOT_NAME_WIDTH,
+            groupContainerMap.put(group, new DynamicContainer(() -> new Position(TwoDayViewPresenter.SPOT_NAME_WIDTH,
                     TwoDayViewPresenter.HEADER_HEIGHT
                             + spotStartPos * getGroupHeight())));
 
@@ -278,21 +281,22 @@ public class TwoDayViewState<G extends HasTitle, I extends HasTimeslot<G>, D ext
                         shift.getEndTime().toEpochSecond(ZoneOffset.UTC), shift);
             }
             timeSlotTables.add(timeSlotTable);
-            groupContainer.put(group, new DynamicContainer(() -> {
+            groupContainerMap.put(group, new DynamicContainer(() -> {
                 return new Position(TwoDayViewPresenter.SPOT_NAME_WIDTH, TwoDayViewPresenter.HEADER_HEIGHT
-                        + getGroupPos().get(group) * presenter.getGroupHeight());
+                        + getGroupPosMap().get(group) * presenter.getGroupHeight());
             }));
-            groupAddPlane.put(group, new DynamicContainer(() -> {
-                return new Position(TwoDayViewPresenter.SPOT_NAME_WIDTH, (getGroupEndPos().get(group) + 1) * presenter
-                        .getGroupHeight());
+            groupAddPlaneMap.put(group, new DynamicContainer(() -> {
+                return new Position(TwoDayViewPresenter.SPOT_NAME_WIDTH, (getGroupEndPosMap().get(group) + 1)
+                        * presenter
+                                .getGroupHeight());
             }));
         }
 
-        timeSlotTableView = new TimeSlotTableView<>(presenter, groups, timeSlotTables, getViewStartDate(),
+        timeSlotTableView = new TimeSlotTableView<>(presenter, groupList, timeSlotTables, getViewStartDate(),
                 getViewEndDate(), presenter.getConfig().getDrawableProvider());
 
-        for (G spot : groups) {
-            presenter.getCursorMap().put(spot, getGroupEndPos().get(spot));
+        for (G spot : groupList) {
+            presenter.getCursorIndexMap().put(spot, getGroupEndPosMap().get(spot));
         }
 
         presenter.getView().updatePager();

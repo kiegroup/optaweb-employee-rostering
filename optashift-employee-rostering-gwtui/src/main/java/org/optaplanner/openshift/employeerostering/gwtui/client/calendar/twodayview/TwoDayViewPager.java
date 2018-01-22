@@ -29,12 +29,12 @@ public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D ext
 
     private TwoDayViewPresenter<G, I, D> presenter;
 
-    private Collection<Handler> rangeHandlers = new ArrayList<>();
-    private Collection<com.google.gwt.view.client.RowCountChangeEvent.Handler> rowCountHandlers = new ArrayList<>();
+    private Set<Handler> rangeHandlerSet = new HashSet<>();
+    private Set<com.google.gwt.view.client.RowCountChangeEvent.Handler> rowCountHandlerSet = new HashSet<>();
     private SelectionModel<? super Collection<D>> selectionModel;
 
-    private List<Collection<D>> cachedVisibleItems;
-    private List<Collection<D>> allItems;
+    private List<Collection<D>> cachedVisibleItemList;
+    private List<Collection<D>> allItemList;
     private int page, rangeStart, rangeEnd;
 
     public TwoDayViewPager(TwoDayViewPresenter<G, I, D> presenter) {
@@ -58,36 +58,36 @@ public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D ext
 
     public G getFirstVisibleGroup() {
         int i;
-        for (i = 0; i < presenter.getGroups().size() - 1; i++) {
-            G group = presenter.getGroups().get(i);
-            int startPos = presenter.getState().getGroupPos().get(group);
-            int endPos = presenter.getState().getGroupEndPos().get(group);
+        for (i = 0; i < presenter.getGroupList().size() - 1; i++) {
+            G group = presenter.getGroupList().get(i);
+            int startPos = presenter.getState().getGroupPosMap().get(group);
+            int endPos = presenter.getState().getGroupEndPosMap().get(group);
             if (rangeStart <= startPos && endPos <= rangeEnd) {
                 return group;
             }
         }
-        return presenter.getGroups().get(i);
+        return presenter.getGroupList().get(i);
     }
 
-    public Collection<G> getVisibleGroups() {
+    public Set<G> getVisibleGroupSet() {
         int index = 0;
         Set<G> drawnSpots = new HashSet<>();
         int groupIndex = presenter.getState().getGroupIndex(getFirstVisibleGroup());
 
-        drawnSpots.add(presenter.getState().getGroups().get(groupIndex));
+        drawnSpots.add(presenter.getState().getGroupList().get(groupIndex));
 
         for (Collection<D> group : getVisibleItems()) {
             if (!group.isEmpty()) {
                 index++;
             } else {
                 index++;
-                if (groupIndex < presenter.getState().getGroups().size() && rangeStart + index > presenter.getState()
-                        .getGroupEndPos()
-                        .getOrDefault(presenter.getState().getGroups().get(groupIndex),
+                if (groupIndex < presenter.getState().getGroupList().size() && rangeStart + index > presenter.getState()
+                        .getGroupEndPosMap()
+                        .getOrDefault(presenter.getState().getGroupList().get(groupIndex),
                                 rangeStart + index)) {
                     groupIndex++;
-                    if (groupIndex < presenter.getState().getGroups().size()) {
-                        drawnSpots.add(presenter.getState().getGroups().get(groupIndex));
+                    if (groupIndex < presenter.getState().getGroupList().size()) {
+                        drawnSpots.add(presenter.getState().getGroupList().get(groupIndex));
                     }
                 }
             }
@@ -102,28 +102,28 @@ public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D ext
 
     public void fireEvent(GwtEvent<?> event) {
         if (event.getAssociatedType().equals(RowCountChangeEvent.getType())) {
-            rowCountHandlers.forEach((h) -> h.onRowCountChange((RowCountChangeEvent) event));
+            rowCountHandlerSet.forEach((h) -> h.onRowCountChange((RowCountChangeEvent) event));
         } else if (event.getAssociatedType().equals(RangeChangeEvent.getType())) {
-            rangeHandlers.forEach((h) -> h.onRangeChange((RangeChangeEvent) event));
+            rangeHandlerSet.forEach((h) -> h.onRangeChange((RangeChangeEvent) event));
         }
     }
 
     public HandlerRegistration addRangeChangeHandler(Handler handler) {
-        rangeHandlers.add(handler);
-        return new Registration<>(handler, rangeHandlers);
+        rangeHandlerSet.add(handler);
+        return new Registration<>(handler, rangeHandlerSet);
     }
 
     public HandlerRegistration addRowCountChangeHandler(
             com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
-        rowCountHandlers.add(handler);
-        return new Registration<>(handler, rowCountHandlers);
+        rowCountHandlerSet.add(handler);
+        return new Registration<>(handler, rowCountHandlerSet);
     }
 
     public int getRowCount() {
         if (presenter.getState().isAllDirty()) {
-            getItems();
+            getItemList();
         }
-        return allItems.size();
+        return allItemList.size();
     }
 
     public Range getVisibleRange() {
@@ -175,19 +175,19 @@ public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D ext
         if (presenter.getState().isDirty()) {
             getVisibleItems();
         }
-        return cachedVisibleItems.get(indexOnPage);
+        return cachedVisibleItemList.get(indexOnPage);
     }
 
     public int getVisibleItemCount() {
         if (presenter.getState().isDirty()) {
             getVisibleItems();
         }
-        return cachedVisibleItems.size();
+        return cachedVisibleItemList.size();
     }
 
     public Iterable<Collection<D>> getVisibleItems() {
         if (presenter.getState().isDirty()) {
-            cachedVisibleItems = IntStream.range(rangeStart, Math.min(presenter.getState().getTimeSlotTable()
+            cachedVisibleItemList = IntStream.range(rangeStart, Math.min(presenter.getState().getTimeSlotTable()
                     .getNumberOfRows(), rangeEnd)).mapToObj((k) -> presenter.getState()
                             .getTimeSlotTable()
                             .getVisibleRow(k))
@@ -195,18 +195,18 @@ public class TwoDayViewPager<G extends HasTitle, I extends HasTimeslot<G>, D ext
                             Collectors.toList());
             presenter.getState().setVisibleDirty(false);
         }
-        return cachedVisibleItems;
+        return cachedVisibleItemList;
     }
 
-    public List<Collection<D>> getItems() {
+    public List<Collection<D>> getItemList() {
         if (presenter.getState().isAllDirty()) {
-            allItems = IntStream.range(0, presenter.getState().getTimeSlotTable().getNumberOfRows()).mapToObj((
+            allItemList = IntStream.range(0, presenter.getState().getTimeSlotTable().getNumberOfRows()).mapToObj((
                     k) -> presenter.getState()
                             .getTimeSlotTable().getRow(k)).collect(Collectors
                                     .toList());
             presenter.getState().setAllDirty(false);
         }
-        return allItems;
+        return allItemList;
     }
 
     public void setRowData(int start, List<? extends Collection<D>> values) {

@@ -78,7 +78,7 @@ public class MenuPanel implements IsElement {
     @Inject
     @DataField
     private ListBox tenantListBox;
-    private List<Tenant> tenantListBoxValues;
+    private List<Tenant> tenantListBoxValueList;
     @Inject
     @Any
     private Event<Tenant> tenantEvent;
@@ -101,7 +101,7 @@ public class MenuPanel implements IsElement {
 
             @Override
             public void onSuccess(List<Tenant> tenantList) {
-                tenantListBoxValues = tenantList;
+                tenantListBoxValueList = tenantList;
                 tenantListBox.clear();
                 tenantList.forEach(tenant -> tenantListBox.addItem(tenant.getName()));
                 if (tenantId == null) {
@@ -176,7 +176,7 @@ public class MenuPanel implements IsElement {
     @EventHandler("tenantListBox")
     public void selectTenant(ClickEvent e) {
         int tenantIndex = tenantListBox.getSelectedIndex();
-        Tenant tenant = tenantIndex < 0 ? null : tenantListBoxValues.get(tenantIndex);
+        Tenant tenant = tenantIndex < 0 ? null : tenantListBoxValueList.get(tenantIndex);
         tenantId = tenant.getId();
         tenantEvent.fire(tenant);
     }

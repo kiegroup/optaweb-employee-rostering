@@ -3,6 +3,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -148,11 +149,11 @@ public class EmployeeListPanel implements IsElement {
 
             @Override
             public String getValue(Employee employee) {
-                List<EmployeeSkillProficiency> skillProficiencyList = employee.getSkillProficiencyList();
-                if (skillProficiencyList == null) {
+                Set<EmployeeSkillProficiency> skillProficiencySet = employee.getSkillProficiencySet();
+                if (skillProficiencySet == null) {
                     return "";
                 }
-                return skillProficiencyList.stream().map(skillProficiency -> skillProficiency.getSkill().getName())
+                return skillProficiencySet.stream().map(skillProficiency -> skillProficiency.getSkill().getName())
                         .collect(Collectors.joining(", "));
             }
         }, CONSTANTS.format(General_skills));
@@ -228,7 +229,7 @@ public class EmployeeListPanel implements IsElement {
         List<Skill> skillList = skillsTagsInput.getItems();
         Employee employee = new Employee(tenantId, employeeName);
         for (Skill skill : skillList) {
-            employee.getSkillProficiencyList().add(new EmployeeSkillProficiency(tenantId, employee, skill));
+            employee.getSkillProficiencySet().add(new EmployeeSkillProficiency(tenantId, employee, skill));
         }
         EmployeeRestServiceBuilder.addEmployee(tenantId, employee, new FailureShownRestCallback<Employee>() {
 

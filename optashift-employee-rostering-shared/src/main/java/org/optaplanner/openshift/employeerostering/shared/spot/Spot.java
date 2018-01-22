@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.shared.spot;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,12 +34,13 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "Spot.findAll",
-                           query = "select distinct s from Spot s left join fetch s.requiredSkills" +
-                                   " where s.tenantId = :tenantId" +
-                                   " order by s.name"),
+        @NamedQuery(name = "Spot.findAll",
+                query = "select distinct s from Spot s left join fetch s.requiredSkillSet" +
+                        " where s.tenantId = :tenantId" +
+                        " order by s.name"),
 })
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}), @UniqueConstraint(columnNames = {"id"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}), @UniqueConstraint(columnNames = {
+        "id"})})
 public class Spot extends AbstractPersistable {
 
     @NotNull
@@ -46,15 +48,16 @@ public class Spot extends AbstractPersistable {
     private String name;
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
-    private List<Skill> requiredSkills;
+    private Set<Skill> requiredSkillSet;
 
     @SuppressWarnings("unused")
-    public Spot() {}
+    public Spot() {
+    }
 
-    public Spot(Integer tenantId, String name, List<Skill> requiredSkills) {
+    public Spot(Integer tenantId, String name, Set<Skill> requiredSkillSet) {
         super(tenantId);
         this.name = name;
-        this.requiredSkills = requiredSkills;
+        this.requiredSkillSet = requiredSkillSet;
     }
 
     @Override
@@ -74,12 +77,12 @@ public class Spot extends AbstractPersistable {
         this.name = name;
     }
 
-    public List<Skill> getRequiredSkills() {
-        return requiredSkills;
+    public Set<Skill> getRequiredSkillSet() {
+        return requiredSkillSet;
     }
 
-    public void setRequiredSkills(List<Skill> requiredSkills) {
-        this.requiredSkills = requiredSkills;
+    public void setRequiredSkillSet(Set<Skill> requiredSkillSet) {
+        this.requiredSkillSet = requiredSkillSet;
     }
 
 }

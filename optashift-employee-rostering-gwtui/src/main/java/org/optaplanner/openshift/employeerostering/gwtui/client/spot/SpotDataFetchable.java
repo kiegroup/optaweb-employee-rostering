@@ -100,7 +100,7 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                 RosterRestServiceBuilder.getSpotRosterViewFor(tenantId, calendar.getViewStartDate().minusDays(1)
                         .toLocalDate()
                         .toString(),
-                        calendar.getViewEndDate().plusDays(1).toLocalDate().toString(), calendar.getVisibleGroups()
+                        calendar.getViewEndDate().plusDays(1).toLocalDate().toString(), calendar.getVisibleGroupSet()
                                 .stream()
                                 .map((g) -> g.getSpot()).collect(Collectors.toList()), new FailureShownRestCallback<
                                         SpotRosterView>() {

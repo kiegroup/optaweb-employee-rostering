@@ -149,9 +149,9 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
                     startDate,
                     endDate,
                     template);
-            List<Shift> shifts = parserOutput.getShiftsOut();
+            List<Shift> shifts = parserOutput.getShiftOutputList();
 
-            List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOut();
+            List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOutputList();
 
             HashMap<String, TimeSlot> timeSlotMap = new HashMap<>();
             List<Long> out = new ArrayList<Long>();
@@ -223,8 +223,8 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
                 .toString()));
         long weeksInShifts = tenant.getConfiguration().getTemplateDuration();
         template.setRepeatType(new EnumOrCustom(tenantId, true, "0:" + weeksInShifts + ":0:0"));
-        template.setUniversalExceptions(Collections.emptyList());
-        template.setShifts(shifts.stream().collect(Collectors.toList()));
+        template.setUniversalExceptionList(Collections.emptyList());
+        template.setShiftList(shifts.stream().collect(Collectors.toList()));
         template.setTenantId(tenantId);
 
         entityManager.merge(template);

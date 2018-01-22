@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -189,7 +190,7 @@ public class RosterGenerator {
                 shiftAvailability.add(employeeTimeslot);
             }
 
-            shift.setEmployees(shiftAvailability);
+            shift.setEmployeeList(shiftAvailability);
 
             //Generate spots using the timeslot
             List<IdOrGroup> shiftSpots = new ArrayList<>();
@@ -202,7 +203,7 @@ public class RosterGenerator {
                 }
                 shiftSpots.add(new IdOrGroup(tenantId, false, spot.getId()));
             }
-            shift.setSpots(shiftSpots);
+            shift.setSpotList(shiftSpots);
             out.add(shift);
 
             startTime = startTime.plusHours(8);
@@ -233,7 +234,7 @@ public class RosterGenerator {
         spotNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = spotNameGenerator.generateNextValue();
-            Spot spot = new Spot(tenantId, name, extractRandomSubList(skillList, 1.0));
+            Spot spot = new Spot(tenantId, name, new HashSet<>(extractRandomSubList(skillList, 1.0)));
             entityManager.persist(spot);
             spotList.add(spot);
         }
@@ -246,10 +247,10 @@ public class RosterGenerator {
         for (int i = 0; i < size; i++) {
             String name = employeeNameGenerator.generateNextValue();
             Employee employee = new Employee(tenantId, name);
-            employee.setSkillProficiencyList(
+            employee.setSkillProficiencySet(
                                              extractRandomSubList(generalSkillList, 1.0).stream()
                                                                                         .map(skill -> new EmployeeSkillProficiency(tenantId, employee, skill))
-                                                                                        .collect(Collectors.toCollection(ArrayList::new)));
+                            .collect(Collectors.toCollection(HashSet::new)));
             entityManager.persist(employee);
             employeeList.add(employee);
         }

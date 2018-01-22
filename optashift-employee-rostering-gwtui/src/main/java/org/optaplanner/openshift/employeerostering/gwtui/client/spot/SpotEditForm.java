@@ -1,6 +1,8 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -58,14 +60,15 @@ public class SpotEditForm implements IsElement {
 
     private static Spot spot;
     private static SpotListPanel panel;
-    private static List<Skill> skills;
+    private static List<Skill> skillList;
 
     private FormPopup popup;
 
-    public static SpotEditForm create(SyncBeanManager beanManager, SpotListPanel spotPanel, Spot spotData, List<Skill> skillData) {
+    public static SpotEditForm create(SyncBeanManager beanManager, SpotListPanel spotPanel, Spot spotData, List<
+            Skill> skillData) {
         panel = spotPanel;
         spot = spotData;
-        skills = skillData;
+        skillList = skillData;
         return beanManager.lookupBean(SpotEditForm.class).newInstance();
     }
 
@@ -73,7 +76,7 @@ public class SpotEditForm implements IsElement {
     protected void initWidget() {
         spotName.setValue(spot.getName());
         requiredSkills.removeAll();
-        CollectionDataset<Skill> data = new CollectionDataset<Skill>(skills) {
+        CollectionDataset<Skill> data = new CollectionDataset<Skill>(skillList) {
 
             @Override
             public String getValue(Skill skill) {
@@ -84,9 +87,9 @@ public class SpotEditForm implements IsElement {
         requiredSkills.setItemValue(Skill::getName);
         requiredSkills.setItemText(Skill::getName);
         requiredSkills.reconfigure();
-        requiredSkills.add(spot.getRequiredSkills());
+        requiredSkills.add(spot.getRequiredSkillSet().stream().collect(Collectors.toList()));
         title.setInnerSafeHtml(new SafeHtmlBuilder().appendEscaped(spot.getName())
-                                                    .toSafeHtml());
+                .toSafeHtml());
         popup = FormPopup.getFormPopup(this);
         popup.center();
     }
@@ -104,7 +107,7 @@ public class SpotEditForm implements IsElement {
     @EventHandler("saveButton")
     public void save(ClickEvent click) {
         spot.setName(spotName.getValue());
-        spot.setRequiredSkills(requiredSkills.getItems());
+        spot.setRequiredSkillSet(new HashSet<>(requiredSkills.getItems()));
         popup.hide();
         SpotRestServiceBuilder.updateSpot(spot.getTenantId(), spot, new FailureShownRestCallback<Spot>() {
 

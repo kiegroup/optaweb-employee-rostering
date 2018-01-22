@@ -16,7 +16,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
  * Properties:<br>
  * {@link EmployeeTimeSlotInfo#employeeId} <br>
  * {@link EmployeeTimeSlotInfo#defaultAvailability} (Nullable) <br>
- * {@link EmployeeTimeSlotInfo#availabilityConditions} (Nullable) <br>
+ * {@link EmployeeTimeSlotInfo#availabilityConditionList} (Nullable) <br>
  */
 @Entity
 public class EmployeeTimeSlotInfo extends AbstractPersistable {
@@ -30,7 +30,7 @@ public class EmployeeTimeSlotInfo extends AbstractPersistable {
 
     /**
      * The {@link EmployeeAvailabilityState} this group have if
-     * none of the conditions in {@link EmployeeTimeSlotInfo#availabilityConditions}
+     * none of the conditions in {@link EmployeeTimeSlotInfo#availabilityConditionList}
      * apply.
      */
     EmployeeAvailabilityState defaultAvailability;
@@ -40,7 +40,7 @@ public class EmployeeTimeSlotInfo extends AbstractPersistable {
      * instead of {@link EmployeeTimeSlotInfo#defaultAvailability}.
      */
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    List<EmployeeConditional> availabilityConditions;
+    List<EmployeeConditional> availabilityConditionList;
 
     public EmployeeTimeSlotInfo() {
 
@@ -55,7 +55,7 @@ public class EmployeeTimeSlotInfo extends AbstractPersistable {
     public EmployeeTimeSlotInfo(Integer tenantId, IdOrGroup id, EmployeeAvailabilityState availability, List<
             EmployeeConditional> availabilityConditions) {
         this(tenantId, id, availability);
-        this.availabilityConditions = availabilityConditions;
+        this.availabilityConditionList = availabilityConditions;
     }
 
     /**
@@ -93,19 +93,19 @@ public class EmployeeTimeSlotInfo extends AbstractPersistable {
     }
 
     /**
-     * Getter for {@link EmployeeTimeSlotInfo#availabilityConditions}
-     * @return Value of {@link EmployeeTimeSlotInfo#availabilityConditions}
+     * Getter for {@link EmployeeTimeSlotInfo#availabilityConditionList}
+     * @return Value of {@link EmployeeTimeSlotInfo#availabilityConditionList}
      */
-    public List<EmployeeConditional> getAvailabilityConditions() {
-        return availabilityConditions;
+    public List<EmployeeConditional> getAvailabilityConditionList() {
+        return availabilityConditionList;
     }
 
     /**
-     * Setter for {@link EmployeeTimeSlotInfo#availabilityConditions}
+     * Setter for {@link EmployeeTimeSlotInfo#availabilityConditionList}
      * 
-     * @param availabilityConditions Value to set {@link EmployeeTimeSlotInfo#availabilityConditions} to
+     * @param availabilityConditionList Value to set {@link EmployeeTimeSlotInfo#availabilityConditionList} to
      */
-    public void setAvailabilityConditions(List<EmployeeConditional> availabilityConditions) {
-        this.availabilityConditions = availabilityConditions;
+    public void setAvailabilityConditionList(List<EmployeeConditional> availabilityConditionList) {
+        this.availabilityConditionList = availabilityConditionList;
     }
 }

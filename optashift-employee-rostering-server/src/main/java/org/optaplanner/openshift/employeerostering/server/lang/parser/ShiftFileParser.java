@@ -30,8 +30,8 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 //CUP maven plugins seems out of date; the format file is simple enough to code by hand
 public class ShiftFileParser {
     
-    public static ParserOut parse(Integer tenantId, List<Spot> spots,
-            List<Employee> employees, Map<Long, List<Spot>> spotGroupMap,
+    public static ParserOut parse(Integer tenantId, List<Spot> spotList,
+            List<Employee> employeeList, Map<Long, List<Spot>> spotGroupMap,
             Map<Long, List<Employee>> employeeGroupMap,
             LocalDateTime start, LocalDateTime end,
             ShiftTemplate template) throws ParserException {
@@ -95,13 +95,13 @@ public class ShiftFileParser {
             state.repeatYears = 0;
         }
         else {
-            state.repeatDays = dateMode.days;
-            state.repeatWeeks = dateMode.weeks;
-            state.repeatMonths = dateMode.months;
-            state.repeatYears = dateMode.years;
+            state.repeatDays = dateMode.daysUntilRepeat;
+            state.repeatWeeks = dateMode.weeksUntilRepeat;
+            state.repeatMonths = dateMode.monthsUntilRepeat;
+            state.repeatYears = dateMode.yearsUntilRepeat;
         }
 
-        state.universalExceptions = template.getUniversalExceptions().stream()
+        state.universalExceptionList = template.getUniversalExceptionList().stream()
                 .map((e) -> {
                     try {
                         return DateMatcher.getDateMatcher(e);
@@ -110,31 +110,31 @@ public class ShiftFileParser {
                     }
                 }).collect(Collectors.toList());
         
-        if (state.universalExceptions.contains(null)) {
+        if (state.universalExceptionList.contains(null)) {
             throw new ParserException("Badly formatted date exception string");
         }
 
-        state.shiftsOut = new ArrayList<>();
-        state.employeeAvailabilityOut = new ArrayList<>();
-        state.spotMap = spots.stream()
+        state.shiftOutputList = new ArrayList<>();
+        state.employeeAvailabilityOutputList = new ArrayList<>();
+        state.spotMap = spotList.stream()
                 .collect(Collectors.toMap(Spot::getId, Function.identity()));
-        state.employeeMap = employees.stream()
+        state.employeeMap = employeeList.stream()
                 .collect(Collectors.toMap(Employee::getId, Function.identity()));
         state.spotGroupMap = spotGroupMap;
         state.employeeGroupMap = employeeGroupMap;
         
-        addShiftsFrom(state, template.getShifts());
+        addShiftsFrom(state, template.getShiftList());
         ParserOut out = new ParserOut();
-        out.shiftsOut = state.shiftsOut;
-        out.employeeAvailabilityOut = state.employeeAvailabilityOut;
+        out.shiftOutputList = state.shiftOutputList;
+        out.employeeAvailabilityOutputList = state.employeeAvailabilityOutputList;
 
         return out;
     }
     
-    private static void addShiftsFrom(ParserState state, List<ShiftInfo> shifts)
+    private static void addShiftsFrom(ParserState state, List<ShiftInfo> shiftList)
             throws ParserException {
-        for (ShiftInfo shiftInfo : shifts) {
-            List<DateMatcher<ShiftInfo>> exceptions = (null != shiftInfo.getExceptions()) ? shiftInfo.getExceptions()
+        for (ShiftInfo shiftInfo : shiftList) {
+            List<DateMatcher<ShiftInfo>> exceptions = (null != shiftInfo.getExceptionList()) ? shiftInfo.getExceptionList()
                     .stream()
                     .map((e) -> {
                         try {
@@ -176,7 +176,7 @@ public class ShiftFileParser {
                         state.repeatDays = oldRepeatDays;
                     }
                 } else {
-                    shiftException = state.universalExceptions.stream().filter((dm) -> dm.test(clone)).findFirst();
+                    shiftException = state.universalExceptionList.stream().filter((dm) -> dm.test(clone)).findFirst();
                     if (shiftException.isPresent()) {
                         DateMatcher<ShiftInfo> dateMatcher = shiftException.get();
                         if (null != dateMatcher.getReplacement()) {
@@ -197,10 +197,10 @@ public class ShiftFileParser {
     private static void addShift(ParserState state, ShiftInfo shiftInfo, LocalDateTime startDate, LocalDateTime endDate)
             throws ParserException {
         TimeSlot timeslot = new TimeSlot(state.tenantId, startDate, endDate);
-        for (IdOrGroup id : shiftInfo.getSpots()) {
+        for (IdOrGroup id : shiftInfo.getSpotList()) {
             if (id.getIsGroup()) {
                 for (Spot spot : state.spotGroupMap.get(id.getItemId())) {
-                    state.shiftsOut.add(new Shift(state.tenantId, spot, timeslot));
+                    state.shiftOutputList.add(new Shift(state.tenantId, spot, timeslot));
                 }
             }
             else {
@@ -208,13 +208,13 @@ public class ShiftFileParser {
                 if (null == spot) {
                     throw new ParserException("spot is null! id: " + id.getItemId());
                 }
-                state.shiftsOut.add(new Shift(state.tenantId, spot, timeslot));
+                state.shiftOutputList.add(new Shift(state.tenantId, spot, timeslot));
             }
         }
         
-        for (EmployeeTimeSlotInfo employeeInfo : shiftInfo.getEmployees()) {
-            List<DateMatcher<EmployeeAvailabilityState>> exceptions = (null != employeeInfo.getAvailabilityConditions())
-                    ? employeeInfo.getAvailabilityConditions().stream()
+        for (EmployeeTimeSlotInfo employeeInfo : shiftInfo.getEmployeeList()) {
+            List<DateMatcher<EmployeeAvailabilityState>> exceptions = (null != employeeInfo.getAvailabilityConditionList())
+                    ? employeeInfo.getAvailabilityConditionList().stream()
                     .map((e) -> {
                         try {
                             return DateMatcher.getDateMatcher(e);
@@ -238,13 +238,13 @@ public class ShiftFileParser {
                     EmployeeAvailability employeeAvailability = new EmployeeAvailability(state.tenantId,
                             employee, timeslot);
                     employeeAvailability.setState(employeeState);
-                    state.employeeAvailabilityOut.add(employeeAvailability);
+                    state.employeeAvailabilityOutputList.add(employeeAvailability);
                 }
             } else {
                 EmployeeAvailability employeeAvailability = new EmployeeAvailability(state.tenantId,
                         state.employeeMap.get(employeeInfo.getEmployeeId().getItemId()), timeslot);
                 employeeAvailability.setState(employeeState);
-                state.employeeAvailabilityOut.add(employeeAvailability);
+                state.employeeAvailabilityOutputList.add(employeeAvailability);
             }
 
         }
@@ -253,9 +253,9 @@ public class ShiftFileParser {
     private static class ParserState {
 
         Integer tenantId;
-        List<Shift> shiftsOut;
-        List<EmployeeAvailability> employeeAvailabilityOut;
-        List<DateMatcher<ShiftInfo>> universalExceptions;
+        List<Shift> shiftOutputList;
+        List<EmployeeAvailability> employeeAvailabilityOutputList;
+        List<DateMatcher<ShiftInfo>> universalExceptionList;
         Map<Long, Spot> spotMap;
         Map<Long, Employee> employeeMap;
         Map<Long, List<Spot>> spotGroupMap;
@@ -268,15 +268,15 @@ public class ShiftFileParser {
 
     public static class ParserOut {
 
-        List<Shift> shiftsOut;
-        List<EmployeeAvailability> employeeAvailabilityOut;
+        List<Shift> shiftOutputList;
+        List<EmployeeAvailability> employeeAvailabilityOutputList;
 
-        public List<Shift> getShiftsOut() {
-            return shiftsOut;
+        public List<Shift> getShiftOutputList() {
+            return shiftOutputList;
         }
 
-        public List<EmployeeAvailability> getEmployeeAvailabilityOut() {
-            return employeeAvailabilityOut;
+        public List<EmployeeAvailability> getEmployeeAvailabilityOutputList() {
+            return employeeAvailabilityOutputList;
         }
     }
 }

@@ -116,7 +116,7 @@ public class EmployeeDataFetchable implements Fetchable<Collection<EmployeeData>
             } else {
                 RosterRestServiceBuilder.getEmployeeRosterViewFor(tenantId, calendar.getViewStartDate().toLocalDate()
                         .toString(),
-                        calendar.getViewEndDate().toLocalDate().toString(), calendar.getVisibleGroups().stream()
+                        calendar.getViewEndDate().toLocalDate().toString(), calendar.getVisibleGroupSet().stream()
                                 .map((g) -> g.getEmployee()).collect(Collectors.toList()),
                         new FailureShownRestCallback<
                                 EmployeeRosterView>() {

@@ -1,6 +1,8 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -136,21 +138,22 @@ public class SpotListPanel implements IsElement {
                 return spot.getName();
             }
         },
-                        CONSTANTS.format(General_name));
+                CONSTANTS.format(General_name));
         table.addColumn(new TextColumn<Spot>() {
 
             @Override
             public String getValue(Spot spot) {
-                List<Skill> requiredSkills = spot.getRequiredSkills();
-                if (requiredSkills == null) {
+                Set<Skill> requiredSkillSet = spot.getRequiredSkillSet();
+                if (requiredSkillSet == null) {
                     return "";
                 }
-                return requiredSkills.stream().reduce("", (a, s) -> (a.isEmpty()) ? s.getName() : a + "," + s.getName(),
-                                                      (a, s) -> (a.isEmpty()) ? s : a + "," + s);
+                return requiredSkillSet.stream().reduce("", (a, s) -> (a.isEmpty()) ? s.getName() : a + "," + s
+                        .getName(),
+                        (a, s) -> (a.isEmpty()) ? s : a + "," + s);
             }
         }, "Required skill");
         Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER,
-                                                                                    ButtonSize.SMALL)) {
+                ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Spot spot) {
@@ -167,7 +170,7 @@ public class SpotListPanel implements IsElement {
             });
         });
         Column<Spot, String> editColumn = new Column<Spot, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT,
-                                                                                  ButtonSize.SMALL)) {
+                ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Spot spot) {
@@ -217,16 +220,16 @@ public class SpotListPanel implements IsElement {
         String spotName = spotNameTextBox.getValue();
         spotNameTextBox.setValue("");
         spotNameTextBox.setFocus(true);
-        List<Skill> skillList = requiredSkillsTagsInput.getItems();
+        Set<Skill> skillSet = new HashSet<>(requiredSkillsTagsInput.getItems());
 
-        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, skillList),
-                                       new FailureShownRestCallback<Spot>() {
+        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, skillSet),
+                new FailureShownRestCallback<Spot>() {
 
-                                           @Override
-                                           public void onSuccess(Spot spot) {
-                                               refreshTable();
-                                           }
-                                       });
+                    @Override
+                    public void onSuccess(Spot spot) {
+                        refreshTable();
+                    }
+                });
     }
 
 }
