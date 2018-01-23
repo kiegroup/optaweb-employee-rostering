@@ -2,16 +2,20 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.ConstraintViolation;
 
+import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.HeadingElement;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Button;
@@ -33,6 +37,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
@@ -49,12 +54,11 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestS
 public class EmployeeEditForm implements IsElement {
 
     @Inject
-    @DataField
-    private TextBox employeeName;
+    private EmployeeSubform employeeSubform;
 
     @Inject
     @DataField
-    private SingleValueTagsInput<Skill> employeeSkills;
+    private Div employeeSubformDiv;
 
     @Inject
     @DataField
@@ -92,23 +96,9 @@ public class EmployeeEditForm implements IsElement {
 
     @PostConstruct
     protected void initWidget() {
-        employeeName.setValue(employee.getName());
-        employeeSkills.removeAll();
-        CollectionDataset<Skill> data = new CollectionDataset<Skill>(skills) {
-
-            @Override
-            public String getValue(Skill skill) {
-                return (skill == null) ? "" : skill.getName();
-            }
-        };
-        employeeSkills.setDatasets((Dataset<Skill>) data);
-        employeeSkills.setItemValue(Skill::getName);
-        employeeSkills.setItemText(Skill::getName);
-        employeeSkills.reconfigure();
-        employeeSkills.add(employee.getSkillProficiencySet().stream()
-                .collect(Collectors.toList()));
-        employee.getSkillProficiencySet().stream()
-                .forEach((s) -> employeeSkills.add(s));
+        employeeSubformDiv.getElement().appendChild(Element.as((Node) (employeeSubform.getElement()
+                .getParentNode().getFirstChild())));
+        employeeSubform.setEmployeeModel(new EmployeeModel(employee));
 
         title.setInnerSafeHtml(new SafeHtmlBuilder().appendEscaped(employee.getName())
                 .toSafeHtml());
@@ -128,16 +118,25 @@ public class EmployeeEditForm implements IsElement {
 
     @EventHandler("saveButton")
     public void save(ClickEvent click) {
-        employee.setName(employeeName.getValue());
-        employee.setSkillProficiencySet(employeeSkills.getItems().stream().collect(Collectors.toSet()));
-
-        popup.hide();
-        EmployeeRestServiceBuilder.updateEmployee(employee.getTenantId(), employee, new FailureShownRestCallback<
-                Employee>() {
+        employeeSubform.submit(new Callback<EmployeeModel, Set<ConstraintViolation<EmployeeModel>>>() {
 
             @Override
-            public void onSuccess(Employee employee) {
-                panel.refresh();
+            public void onFailure(Set<ConstraintViolation<EmployeeModel>> validationErrorSet) {
+                popup.hide();
+                ErrorPopup.show(CommonUtils.delimitCollection(validationErrorSet, (e) -> e.getMessage(), "\n"));
+            }
+
+            @Override
+            public void onSuccess(EmployeeModel employee) {
+                popup.hide();
+                EmployeeRestServiceBuilder.updateEmployee(employee.getTenantId(), employee,
+                        new FailureShownRestCallback<Employee>() {
+
+                            @Override
+                            public void onSuccess(Employee employee) {
+                                panel.refresh();
+                            }
+                        });
             }
         });
 
