@@ -413,19 +413,7 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                 .toEpochSecond(
                         ZoneOffset.UTC) -
                 presenter.getViewStartDate().toLocalDate().atTime(0, 0).toEpochSecond(ZoneOffset.UTC)) / (60 * 24.0));
-        for (int x = 0; x < presenter.getDaysShown() + 1; x++) {
-            g.fillText(WEEKDAYS[(int) (Math.abs((WEEK_START + x + presenter.getViewStartDate().getDayOfWeek().getValue()
-                    - 1 + offset))
-                    % 7)],
-                    SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute() - drawOffset
-                            + whitespacePadding,
-                    HEADER_HEIGHT / 2);
-            CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute()
-                    - drawOffset, 0,
-                    SPOT_NAME_WIDTH
-                            + (24 * x) * 60
-                                    * presenter.getState().getWidthPerMinute() - drawOffset, getScreenHeight(), 2);
-        }
+
         for (int x = 0; x < (getScreenWidth() / 2 * (presenter.getState().getWidthPerMinute() * presenter
                 .getDisplayMinuteGradality())); x++) {
             if (x % 2 == 0) {
@@ -448,6 +436,21 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
                     SPOT_NAME_WIDTH + x * presenter.getState().getWidthPerMinute() * presenter
                             .getDisplayMinuteGradality()
                             - drawOffset, getScreenHeight(), 1);
+        }
+
+        CanvasUtils.setFillColor(g, "#000000");
+        for (int x = 0; x < presenter.getDaysShown() + 1; x++) {
+            g.fillText(WEEKDAYS[(int) (Math.abs((WEEK_START + x + presenter.getViewStartDate().getDayOfWeek().getValue()
+                    - 1 + offset)) % 7)],
+                    SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute() - drawOffset
+                            + whitespacePadding,
+                    HEADER_HEIGHT / 2);
+            int lineWidth = ((int) (Math.abs((WEEK_START + x + presenter.getViewStartDate().getDayOfWeek().getValue()
+                    - 1 + offset)) % 7) == WEEK_START) ? 4 : 2;
+            CanvasUtils.drawLine(g, SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute()
+                    - drawOffset, 0,
+                    SPOT_NAME_WIDTH + (24 * x) * 60 * presenter.getState().getWidthPerMinute() - drawOffset,
+                    getScreenHeight(), lineWidth);
         }
 
         CanvasUtils.setFillColor(g, "#FFFFFF");
