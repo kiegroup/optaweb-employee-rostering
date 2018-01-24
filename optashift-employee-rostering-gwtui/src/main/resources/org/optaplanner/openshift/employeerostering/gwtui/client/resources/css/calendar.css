@@ -43,6 +43,7 @@
 input[type=range].verticalSlider {
   -webkit-appearance: none;
   margin: 6.8px 0;
+  direction: rtl;
 }
 input[type=range].verticalSlider:focus {
   outline: none;

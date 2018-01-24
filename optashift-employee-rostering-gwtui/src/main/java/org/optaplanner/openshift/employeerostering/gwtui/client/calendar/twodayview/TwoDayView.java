@@ -201,9 +201,9 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         zoomOutIcon.getElement().setAttribute("class", "glyphicon glyphicon-zoom-out");
         zoomOut.add(zoomOutIcon);
 
-        topPanel.add(zoomIn);
-        topPanel.add(daysShownRangeSliderContainer);
         topPanel.add(zoomOut);
+        topPanel.add(daysShownRangeSliderContainer);
+        topPanel.add(zoomIn);
 
         Button test = new Button();
         test.getElement().setAttribute("style", "background: transparent;" +
@@ -464,11 +464,11 @@ public class TwoDayView<G extends HasTitle, I extends HasTimeslot<G>, D extends 
         daysShownRangeSliderContainer.setWidth(CommonUtils.roundToNearestMultipleOf(canvas.width / 4, 10) + "px");
 
         double sideBarLength = canvas.width * 0.25 - zoomIn.getOffsetWidth() - zoomOut.getOffsetWidth();
-        zoomIn.getElement().setAttribute("style", "left: " + CommonUtils.roundToNearestMultipleOf(0.75 * canvas.width
-                - zoomIn.getOffsetWidth(), 1) + "px");
+        zoomOut.getElement().setAttribute("style", "left: " + CommonUtils.roundToNearestMultipleOf(0.75 * canvas.width
+                - zoomOut.getOffsetWidth(), 1) + "px");
         daysShownRangeSlider.setAttribute("style", "width:" + CommonUtils.roundToNearestMultipleOf(sideBarLength, 10)
                 + "px; left:" + CommonUtils.roundToNearestMultipleOf(0.75 * canvas.width, 1) + "px");
-        zoomOut.getElement().setAttribute("style", "left: " + CommonUtils.roundToNearestMultipleOf(0.75 * canvas.width
+        zoomIn.getElement().setAttribute("style", "left: " + CommonUtils.roundToNearestMultipleOf(0.75 * canvas.width
                 + sideBarLength, 1) + "px");
 
         startDateControlScrollbar.setScrollWidth((int) Math.round(canvas.width * presenter.getState()
