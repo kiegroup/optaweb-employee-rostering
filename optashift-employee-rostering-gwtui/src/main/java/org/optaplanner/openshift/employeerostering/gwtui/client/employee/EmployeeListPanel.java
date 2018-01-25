@@ -149,11 +149,11 @@ public class EmployeeListPanel implements IsElement {
 
             @Override
             public String getValue(Employee employee) {
-                Set<EmployeeSkillProficiency> skillProficiencySet = employee.getSkillProficiencySet();
+                Set<Skill> skillProficiencySet = employee.getSkillProficiencySet();
                 if (skillProficiencySet == null) {
                     return "";
                 }
-                return skillProficiencySet.stream().map(skillProficiency -> skillProficiency.getSkill().getName())
+                return skillProficiencySet.stream().map(skillProficiency -> skillProficiency.getName())
                         .collect(Collectors.joining(", "));
             }
         }, CONSTANTS.format(General_skills));
@@ -228,9 +228,7 @@ public class EmployeeListPanel implements IsElement {
         employeeNameTextBox.setFocus(true);
         List<Skill> skillList = skillsTagsInput.getItems();
         Employee employee = new Employee(tenantId, employeeName);
-        for (Skill skill : skillList) {
-            employee.getSkillProficiencySet().add(new EmployeeSkillProficiency(tenantId, employee, skill));
-        }
+        employee.setSkillProficiencySet(skillList.stream().collect(Collectors.toSet()));
         EmployeeRestServiceBuilder.addEmployee(tenantId, employee, new FailureShownRestCallback<Employee>() {
 
             @Override

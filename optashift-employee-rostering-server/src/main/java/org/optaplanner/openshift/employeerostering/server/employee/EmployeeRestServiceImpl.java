@@ -28,8 +28,8 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeGroup;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements EmployeeRestService {
@@ -83,11 +83,11 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
 
     protected void validateTenantIdParameter(Integer tenantId, Employee employee) {
         super.validateTenantIdParameter(tenantId, employee);
-        for (EmployeeSkillProficiency skillProficiency : employee.getSkillProficiencySet()) {
-            if (!Objects.equals(skillProficiency.getTenantId(), tenantId)) {
+        for (Skill skill : employee.getSkillProficiencySet()) {
+            if (!Objects.equals(skill.getTenantId(), tenantId)) {
                 throw new IllegalStateException("The tenantId (" + tenantId
-                        + ") does not match the skillProficiency (" + skillProficiency
-                        + ")'s tenantId (" + skillProficiency.getTenantId() + ").");
+                        + ") does not match the skillProficiency (" + skill
+                        + ")'s tenantId (" + skill.getTenantId() + ").");
             }
         }
     }
