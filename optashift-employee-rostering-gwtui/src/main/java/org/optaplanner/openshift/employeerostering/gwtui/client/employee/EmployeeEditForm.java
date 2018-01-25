@@ -7,6 +7,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.ConstraintViolation;
@@ -54,11 +55,12 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestS
 public class EmployeeEditForm implements IsElement {
 
     @Inject
-    private EmployeeSubform employeeSubform;
-
-    @Inject
     @DataField
-    private Div employeeSubformDiv;
+    private EmployeeSubform modalEmployeeSubform;
+
+    //@Inject
+    //@DataField
+    //private Div employeeSubformDiv;
 
     @Inject
     @DataField
@@ -79,29 +81,31 @@ public class EmployeeEditForm implements IsElement {
     @Inject
     private TranslationService CONSTANTS;
 
-    private static Employee employee;
-    private static EmployeeListPanel panel;
-    private static List<Skill> skills;
-
     private FormPopup popup;
 
-    public static EmployeeEditForm create(SyncBeanManager beanManager, EmployeeListPanel employeePanel,
-            Employee employeeData, List<
-                    Skill> skillData) {
-        panel = employeePanel;
-        employee = employeeData;
-        skills = skillData;
-        return beanManager.lookupBean(EmployeeEditForm.class).newInstance();
-    }
+    private List<Skill> skillList;
 
-    @PostConstruct
-    protected void initWidget() {
-        employeeSubformDiv.getElement().appendChild(Element.as((Node) (employeeSubform.getElement()
-                .getParentNode().getFirstChild())));
-        employeeSubform.setEmployeeModel(new EmployeeModel(employee));
+    private EmployeeListPanel caller;
 
+    public EmployeeEditForm setEmployee(Employee employee) {
+        modalEmployeeSubform.setEmployeeModel(new Employee(employee));
         title.setInnerSafeHtml(new SafeHtmlBuilder().appendEscaped(employee.getName())
                 .toSafeHtml());
+        return this;
+    }
+
+    public EmployeeEditForm setSkillList(List<Skill> skills) {
+        this.skillList = skills;
+        modalEmployeeSubform.setSkillList(skills);
+        return this;
+    }
+
+    public EmployeeEditForm setCaller(EmployeeListPanel caller) {
+        this.caller = caller;
+        return this;
+    }
+
+    public void show() {
         popup = FormPopup.getFormPopup(this);
         popup.center();
     }
@@ -118,23 +122,22 @@ public class EmployeeEditForm implements IsElement {
 
     @EventHandler("saveButton")
     public void save(ClickEvent click) {
-        employeeSubform.submit(new Callback<EmployeeModel, Set<ConstraintViolation<EmployeeModel>>>() {
+        modalEmployeeSubform.submit(new Callback<Employee, Set<ConstraintViolation<Employee>>>() {
 
             @Override
-            public void onFailure(Set<ConstraintViolation<EmployeeModel>> validationErrorSet) {
+            public void onFailure(Set<ConstraintViolation<Employee>> validationErrorSet) {
                 popup.hide();
                 ErrorPopup.show(CommonUtils.delimitCollection(validationErrorSet, (e) -> e.getMessage(), "\n"));
             }
 
             @Override
-            public void onSuccess(EmployeeModel employee) {
+            public void onSuccess(Employee employee) {
                 popup.hide();
                 EmployeeRestServiceBuilder.updateEmployee(employee.getTenantId(), employee,
                         new FailureShownRestCallback<Employee>() {
 
                             @Override
                             public void onSuccess(Employee employee) {
-                                panel.refresh();
                             }
                         });
             }

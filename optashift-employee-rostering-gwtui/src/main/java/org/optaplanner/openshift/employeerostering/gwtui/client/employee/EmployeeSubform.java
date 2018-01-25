@@ -9,18 +9,22 @@ import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
 import javax.validation.Validator;
 
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.user.client.TakesValue;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.TextBox;
 import elemental2.dom.HTMLElement;
 import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
 import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
 import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
+import org.jboss.errai.common.client.dom.Node;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.jboss.errai.databinding.client.api.StateSync;
 import org.jboss.errai.ui.client.local.api.IsElement;
@@ -36,14 +40,14 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 @Templated
-public class EmployeeSubform implements IsElement, TakesValue<EmployeeModel> {
+public class EmployeeSubform implements TakesValue<Employee> {
 
     @Inject
     Validator validator;
 
     @Inject
     @AutoBound
-    private DataBinder<EmployeeModel> employeeModelDataBinder;
+    private DataBinder<Employee> employeeModelDataBinder;
 
     @Inject
     @Bound(property = "name")
@@ -63,7 +67,7 @@ public class EmployeeSubform implements IsElement, TakesValue<EmployeeModel> {
         skillProficiencyList.reconfigure();
     }
 
-    public Set<ConstraintViolation<EmployeeModel>> validate() {
+    public Set<ConstraintViolation<Employee>> validate() {
         return validator.validate(employeeModelDataBinder.getWorkingModel());
     }
 
@@ -71,8 +75,8 @@ public class EmployeeSubform implements IsElement, TakesValue<EmployeeModel> {
         employeeNameTextBox.setValue("");
     }
 
-    public void submit(Callback<EmployeeModel, Set<ConstraintViolation<EmployeeModel>>> callback) {
-        Set<ConstraintViolation<EmployeeModel>> validationErrorSet = validate();
+    public void submit(Callback<Employee, Set<ConstraintViolation<Employee>>> callback) {
+        Set<ConstraintViolation<Employee>> validationErrorSet = validate();
         if (validationErrorSet.isEmpty()) {
             callback.onSuccess(employeeModelDataBinder.getModel());
         } else {
@@ -99,27 +103,27 @@ public class EmployeeSubform implements IsElement, TakesValue<EmployeeModel> {
 
     @Inject
     @ModelSetter
-    public void setEmployeeModel(EmployeeModel employeeModel) {
+    public void setEmployeeModel(Employee employeeModel) {
         employeeModelDataBinder.setModel(employeeModel);
     }
 
     @Override
-    public void setValue(EmployeeModel value) {
+    public void setValue(Employee value) {
         setEmployeeModel(value);
     }
 
     @Override
-    public EmployeeModel getValue() {
+    public Employee getValue() {
         return employeeModelDataBinder.getModel();
     }
 
     public static class SingleValueTagsInputExtension extends SingleValueTagsInput<Skill> implements HasText {
 
         SkillConvertor skillConvertor = new SkillConvertor();
-        DataBinder<EmployeeModel> dataBinder;
+        DataBinder<Employee> dataBinder;
         boolean shouldFire = true;
 
-        public void init(DataBinder<EmployeeModel> dataBinder) {
+        public void init(DataBinder<Employee> dataBinder) {
             this.dataBinder = dataBinder;
             this.addValueChangeHandler((e) -> {
                 if (shouldFire) {

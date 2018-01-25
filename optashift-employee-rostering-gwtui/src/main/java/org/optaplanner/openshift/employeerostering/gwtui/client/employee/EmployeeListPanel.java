@@ -8,7 +8,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
@@ -59,6 +61,7 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.resources
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_name;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_skills;
 
+@Dependent
 @Templated
 public class EmployeeListPanel implements IsElement,
                                           Page {
@@ -68,15 +71,23 @@ public class EmployeeListPanel implements IsElement,
     private Button refreshButton;
 
     @Inject
+    @DataField
     private EmployeeSubform employeeSubform;
 
-    @Inject
-    @DataField
-    private Div employeeSubformDiv;
+    //@Inject
+    //@DataField
+    //private EmployeeSubform employeeSubform1;
+
+    //@Inject
+    //@DataField
+    //private Div employeeSubformDiv;
 
     @Inject
     @DataField
     private Button addButton;
+
+    @Inject
+    private Instance<EmployeeEditForm> editForm;
 
     // TODO use DataGrid instead
     @DataField
@@ -108,8 +119,6 @@ public class EmployeeListPanel implements IsElement,
 
     @PostConstruct
     protected void initWidget() {
-        employeeSubformDiv.getElement().appendChild(Element.as((Node) (employeeSubform.getElement()
-                .getParentNode().getFirstChild())));
         initTable();
     }
 
@@ -191,9 +200,18 @@ public class EmployeeListPanel implements IsElement,
         };
         editColumn.setFieldUpdater((index, employee, value) -> {
             EmployeeListPanel employeeListPanel = this;
-            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
-                EmployeeEditForm.create(beanManager, employeeListPanel, employee, skillList);
-            }));
+            SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
+
+                @Override
+                public void onSuccess(List<Skill> skillList) {
+                    editForm
+                            .get()
+                            .setEmployee(employee)
+                            .setSkillList(skillList)
+                            .setCaller(employeeListPanel)
+                            .show();
+                }
+            });
         });
         table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
         table.addColumn(editColumn);
