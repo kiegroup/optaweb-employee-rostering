@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.user.client.ui.Panel;
 import org.gwtbootstrap3.client.ui.html.Div;
@@ -30,7 +31,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
     boolean didTenantChange;
 
     private Calendar(Integer tenantId, Fetchable<Collection<I>> dataProvider, Fetchable<List<G>> groupProvider,
-                     DataProvider<G, I> instanceCreator, SyncBeanManager beanManager) {
+            DataProvider<G, I> instanceCreator, SyncBeanManager beanManager) {
         this.beanManager = beanManager;
         this.tenantId = tenantId;
 
@@ -68,7 +69,8 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         view.draw();
     }
 
-    public void refresh() {}
+    public void refresh() {
+    }
 
     public void forceUpdate() {
         dataProvider.fetchData(() -> draw());
@@ -276,10 +278,10 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
         public Calendar<G, T> asTwoDayView(TimeRowDrawableProvider<G, T, D> drawableProvider) {
             if (null != beanManager) {
                 Calendar<G, T> calendar = new Calendar<>(tenantId,
-                                                         dataProvider,
-                                                         groupProvider, instanceCreator, beanManager);
+                        dataProvider,
+                        groupProvider, instanceCreator, beanManager);
                 TwoDayViewPresenter<G, T, D> view = new TwoDayViewPresenter<G, T, D>(calendar,
-                                                                                     drawableProvider, dateDisplay, translator);
+                        drawableProvider, dateDisplay, translator);
                 calendar.setView(view);
 
                 if (null != startAt) {
