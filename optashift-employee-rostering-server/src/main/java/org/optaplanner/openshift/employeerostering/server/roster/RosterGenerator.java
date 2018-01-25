@@ -37,7 +37,6 @@ import org.optaplanner.openshift.employeerostering.server.common.generator.Strin
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EmployeeTimeSlotInfo;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
@@ -249,7 +248,6 @@ public class RosterGenerator {
             Employee employee = new Employee(tenantId, name);
             employee.setSkillProficiencySet(
                                              extractRandomSubList(generalSkillList, 1.0).stream()
-                                                                                        .map(skill -> new EmployeeSkillProficiency(tenantId, employee, skill))
                             .collect(Collectors.toCollection(HashSet::new)));
             entityManager.persist(employee);
             employeeList.add(employee);

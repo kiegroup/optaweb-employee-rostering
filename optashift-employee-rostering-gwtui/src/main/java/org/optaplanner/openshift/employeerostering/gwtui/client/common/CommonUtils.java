@@ -104,6 +104,17 @@ public class CommonUtils {
         return (int) (Math.round(Math.round(toRound) * (1.0 / num)) * num);
     }
 
+    public static <T> String delimitCollection(Collection<T> toDelimit, OneWayMapping<T, String> mapper,
+            String delimiter) {
+        StringBuilder out = new StringBuilder();
+        if (null == toDelimit) {
+            return "";
+        }
+        toDelimit.stream().forEach((item) -> out.append(mapper.map(item)).append(delimiter));
+        out.delete(out.length() - delimiter.length(), out.length());
+        return out.toString();
+    }
+
     public static <T> Iterable<T> flatten(Iterable<? extends Iterable<T>> collection) {
         return new Iterable<T>() {
 
@@ -112,6 +123,11 @@ public class CommonUtils {
                 return new FlattenIterator<>(collection);
             }
         };
+    }
+
+    public static interface OneWayMapping<F, T> {
+
+        T map(F from);
     }
 
     private static class FlattenIterator<T> implements Iterator<T> {
