@@ -45,7 +45,7 @@ public class SpotDrawable<I extends SpotData> extends AbstractDrawable implement
 
     @Override
     public void doDrawAt(CanvasRenderingContext2D g, double x, double y) {
-        String color = (isMouseOver) ? ColorUtils.brighten(getFillColor()) : getFillColor();
+        String color = (data.getRulesMatched().isEmpty()) ? getFillColor() : "#000000";
         CanvasUtils.setFillColor(g, color);
 
         double start = getStartTime().toEpochSecond(ZoneOffset.UTC) / 60;

@@ -2,7 +2,11 @@ package org.optaplanner.openshift.employeerostering.shared.roster.view;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -13,6 +17,8 @@ import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSeria
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
 
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.constraint.ConstraintMatch;
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -35,6 +41,8 @@ public class AbstractRosterView implements Serializable {
     protected List<TimeSlot> timeSlotList;
 
     private HardSoftScore score = null;
+
+    private Map<Object, Set<String>> indictmentMap = new HashMap<>();
 
     @Override
     public String toString() {
@@ -107,6 +115,14 @@ public class AbstractRosterView implements Serializable {
 
     public void setScore(HardSoftScore score) {
         this.score = score;
+    }
+
+    public Map<Object, Set<String>> getIndictmentMap() {
+        return indictmentMap;
+    }
+
+    public void setIndictmentMap(Map<Object, Set<String>> indictmentMap) {
+        this.indictmentMap = indictmentMap;
     }
 
 }

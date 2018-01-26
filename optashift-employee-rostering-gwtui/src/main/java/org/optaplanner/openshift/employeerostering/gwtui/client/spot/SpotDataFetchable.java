@@ -7,12 +7,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Provider;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
@@ -84,7 +86,8 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                                 .stream().forEach((sv) -> {
                                                     Shift shift = new Shift(sv, spot, timeslot);
                                                     shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
-                                                    out.add(new SpotData(shift));
+                                                    out.add(new SpotData(shift, spotRosterView.getIndictmentMap()
+                                                            .getOrDefault(shift, new HashSet<>())));
                                                 });
                                     }
                                 }
@@ -120,6 +123,11 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                         List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
                                         List<Spot> spots = spotRosterView.getSpotList();
 
+                                        Set<String> classNames = spotRosterView.getIndictmentMap().keySet().stream()
+                                                .map((o) -> o.toString()).collect(Collectors.toSet());
+
+                                        ErrorPopup.show(CommonUtils.delimitCollection(classNames, (s) -> s, "\n"));
+
                                         for (TimeSlot timeslot : timeslots) {
                                             for (Spot spot : spots) {
                                                 if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot
@@ -130,7 +138,9 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                                             .stream().forEach((sv) -> {
                                                                 Shift shift = new Shift(sv, spot, timeslot);
                                                                 shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
-                                                                SpotData newShift = new SpotData(shift);
+                                                                SpotData newShift = new SpotData(shift, spotRosterView
+                                                                        .getIndictmentMap()
+                                                                        .getOrDefault(shift, new HashSet<>()));
                                                                 calendar.updateShift(newShift);
                                                             });
                                                 }

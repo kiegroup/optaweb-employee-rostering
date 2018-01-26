@@ -141,6 +141,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         Roster roster = solverManager.getRoster(tenantId);
         if (null != roster) {
             spotRosterView.setScore(roster.getScore());
+            spotRosterView.setIndictmentMap(roster.getIndictmentMap());
         }
         return spotRosterView;
     }
@@ -251,6 +252,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         Roster roster = solverManager.getRoster(tenantId);
         if (null != roster) {
             employeeRosterView.setScore(roster.getScore());
+            employeeRosterView.setIndictmentMap(roster.getIndictmentMap());
         }
         return employeeRosterView;
     }

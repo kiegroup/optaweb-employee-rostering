@@ -16,6 +16,9 @@
 
 package org.optaplanner.openshift.employeerostering.server.solver;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -27,6 +30,7 @@ import javax.inject.Inject;
 
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.slf4j.Logger;
@@ -103,10 +107,20 @@ public class WannabeSolverManager {
             }
         });
     }
-
+    
     public Roster getRoster(Integer tenantId) {
         if (tenantIdToSolverMap.containsKey(tenantId)) {
-            return tenantIdToSolverMap.get(tenantId).getBestSolution();
+            Roster out = tenantIdToSolverMap.get(tenantId).getBestSolution();
+            ScoreDirector<Roster> scoreDirector = tenantIdToSolverMap.get(tenantId).getScoreDirectorFactory()
+                    .buildScoreDirector();
+            scoreDirector.setWorkingSolution(out);
+            Map<Object, Set<String>> indictmentMap = new HashMap<>();
+            scoreDirector.getIndictmentMap().forEach((k, v) -> {
+                throw new IllegalStateException(k.getClass().getName());
+            }/*indictmentMap.put(k, v.getConstraintMatchSet().stream()
+             .map((c) -> c.getConstraintName()).collect(Collectors.toSet()))*/);
+            out.setIndictmentMap(indictmentMap);
+            return out;
         }
         return null;
     }
