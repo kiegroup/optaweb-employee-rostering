@@ -92,6 +92,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel {
                 .withBeanManager(beanManager)
                 .asTwoDayView((v, d, i) -> new SpotDrawable<>(v, d, i));
         calendar.setDataProvider(new SpotDataFetchable(calendar, () -> getTenantId()));
+        calendar.addObserver(this);
         Window.addResizeHandler((e) -> calendar.setViewSize(e.getWidth() - container.getAbsoluteLeft(),
                 e.getHeight() - container.getAbsoluteTop()));
     }

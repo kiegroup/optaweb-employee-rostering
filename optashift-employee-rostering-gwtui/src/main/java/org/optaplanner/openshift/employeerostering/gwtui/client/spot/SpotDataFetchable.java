@@ -19,6 +19,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetch
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.LoadingPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.roster.RosterUpdateEvent;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -62,6 +63,7 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
 
                     @Override
                     public void onSuccess(SpotRosterView spotRosterView) {
+                        calendar.notifyObservers(new RosterUpdateEvent(spotRosterView));
                         try {
                             last = spotRosterView;
                             Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap = spotRosterView
@@ -107,6 +109,7 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
 
                                     @Override
                                     public void onSuccess(SpotRosterView spotRosterView) {
+                                        calendar.notifyObservers(new RosterUpdateEvent(spotRosterView));
                                         last = spotRosterView;
                                         Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap =
                                                 spotRosterView

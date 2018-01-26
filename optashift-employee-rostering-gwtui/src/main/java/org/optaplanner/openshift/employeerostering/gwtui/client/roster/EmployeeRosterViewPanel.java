@@ -107,6 +107,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
                         .asTwoDayView((v, d, i) -> new EmployeeDrawable<>(v, d, i));
 
         calendar.setDataProvider(new EmployeeDataFetchable(calendar, () -> getTenantId()));
+        calendar.addObserver(this);
         Window.addResizeHandler((e) -> calendar.setViewSize(e.getWidth() - container.getAbsoluteLeft(),
                 e.getHeight() - container.getAbsoluteTop()));
     }
