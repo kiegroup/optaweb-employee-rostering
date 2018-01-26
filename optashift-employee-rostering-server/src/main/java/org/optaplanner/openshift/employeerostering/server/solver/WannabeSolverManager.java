@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.server.solver;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
@@ -101,6 +102,13 @@ public class WannabeSolverManager {
                 logger.error("Error solving for tenantId (" + tenantId + ").", e);
             }
         });
+    }
+
+    public Roster getRoster(Integer tenantId) {
+        if (tenantIdToSolverMap.containsKey(tenantId)) {
+            return tenantIdToSolverMap.get(tenantId).getBestSolution();
+        }
+        return null;
     }
 
 }

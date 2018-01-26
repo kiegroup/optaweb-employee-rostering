@@ -137,6 +137,11 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             }
         }
         spotRosterView.setTimeSlotIdToSpotIdToShiftViewListMap(timeSlotIdMap);
+
+        Roster roster = solverManager.getRoster(tenantId);
+        if (null != roster) {
+            spotRosterView.setScore(roster.getScore());
+        }
         return spotRosterView;
     }
 
@@ -243,6 +248,10 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             }
         }
         employeeRosterView.setTimeSlotIdToEmployeeIdToAvailabilityViewMap(timeSlotIdToEmployeeIdToAvailabilityViewMap);
+        Roster roster = solverManager.getRoster(tenantId);
+        if (null != roster) {
+            employeeRosterView.setScore(roster.getScore());
+        }
         return employeeRosterView;
     }
 

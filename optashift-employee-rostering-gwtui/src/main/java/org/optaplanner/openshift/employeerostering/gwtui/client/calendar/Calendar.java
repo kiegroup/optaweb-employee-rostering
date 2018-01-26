@@ -18,8 +18,9 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.TimeoutRe
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.DataProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetchable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
+import org.optaplanner.openshift.employeerostering.gwtui.client.roster.Observable;
 
-public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> {
+public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> extends Observable {
 
     CalendarPresenter<G, I> view;
     Map<I, I> shiftMap;

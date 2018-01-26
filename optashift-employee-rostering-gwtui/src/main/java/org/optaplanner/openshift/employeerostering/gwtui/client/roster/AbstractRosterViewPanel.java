@@ -14,7 +14,9 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
@@ -35,6 +37,9 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
     @Inject
     @DataField
     protected Span solveStatus;
+    @Inject
+    @DataField
+    protected Span rosterScore;
 
     protected static Observable solverObservable = new Observable();
 
@@ -102,7 +107,19 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
                         .appendHtmlConstant(CONSTANTS.format(AbstractRosterViewPanel_solvingFor, event
                                 .getSecondsRemaining()))
                         .toSafeHtml().asString());
+            } else if (arg instanceof RosterUpdateEvent) {
+                RosterUpdateEvent event = (RosterUpdateEvent) arg;
+                HardSoftScore score = event.getRoster().getScore();
+                if (null != score) {
+
+                    rosterScore.setHTML(new SafeHtmlBuilder()
+                            .appendEscaped("Hard Score: ").append(score.getHardScore())
+                            .appendEscaped(", Soft Score: ").append(score.getSoftScore())
+                            .toSafeHtml().asString());
+                }
             }
+        } else {
+            solverObservable.notifyObservers(arg);
         }
     }
 
