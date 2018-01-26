@@ -24,6 +24,7 @@ import elemental2.dom.HTMLElement;
 import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
 import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
 import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
+import org.jboss.errai.common.client.dom.Element;
 import org.jboss.errai.common.client.dom.Node;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.jboss.errai.databinding.client.api.StateSync;
@@ -36,9 +37,11 @@ import org.jboss.errai.ui.shared.api.annotations.ModelSetter;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.SkillConvertor;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
+@Dependent
 @Templated
 public class EmployeeSubform implements TakesValue<Employee> {
 
@@ -102,7 +105,6 @@ public class EmployeeSubform implements TakesValue<Employee> {
     }
 
     @Inject
-    @ModelSetter
     public void setEmployeeModel(Employee employeeModel) {
         employeeModelDataBinder.setModel(employeeModel);
     }

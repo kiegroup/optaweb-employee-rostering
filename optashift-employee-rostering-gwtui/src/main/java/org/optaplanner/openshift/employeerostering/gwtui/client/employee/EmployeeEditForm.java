@@ -138,6 +138,7 @@ public class EmployeeEditForm implements IsElement {
 
                             @Override
                             public void onSuccess(Employee employee) {
+                                caller.refresh();
                             }
                         });
             }
