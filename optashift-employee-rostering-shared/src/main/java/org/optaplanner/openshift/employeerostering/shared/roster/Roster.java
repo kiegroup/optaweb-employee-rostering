@@ -69,7 +69,7 @@ public class Roster extends AbstractPersistable {
     @PlanningScore
     private HardSoftScore score = null;
 
-    private Map<Object, Set<String>> indictmentMap;
+    private Map<Shift, Set<String>> indictmentMap;
 
     @SuppressWarnings("unused")
     public Roster() {
@@ -157,11 +157,11 @@ public class Roster extends AbstractPersistable {
         this.score = score;
     }
 
-    public Map<Object, Set<String>> getIndictmentMap() {
+    public Map<Shift, Set<String>> getIndictmentMap() {
         return indictmentMap;
     }
 
-    public void setIndictmentMap(Map<Object, Set<String>> indictmentMap) {
+    public void setIndictmentMap(Map<Shift, Set<String>> indictmentMap) {
         this.indictmentMap = indictmentMap;
     }
 

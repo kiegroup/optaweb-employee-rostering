@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -33,6 +34,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,11 +116,13 @@ public class WannabeSolverManager {
             ScoreDirector<Roster> scoreDirector = tenantIdToSolverMap.get(tenantId).getScoreDirectorFactory()
                     .buildScoreDirector();
             scoreDirector.setWorkingSolution(out);
-            Map<Object, Set<String>> indictmentMap = new HashMap<>();
+            Map<Shift, Set<String>> indictmentMap = new HashMap<>();
             scoreDirector.getIndictmentMap().forEach((k, v) -> {
-                throw new IllegalStateException(k.getClass().getName());
-            }/*indictmentMap.put(k, v.getConstraintMatchSet().stream()
-             .map((c) -> c.getConstraintName()).collect(Collectors.toSet()))*/);
+                if (k instanceof Shift) {
+                indictmentMap.put((Shift) k, v.getConstraintMatchSet().stream()
+             .map((c) -> c.getConstraintName()).collect(Collectors.toSet()));
+                }
+             });
             out.setIndictmentMap(indictmentMap);
             return out;
         }

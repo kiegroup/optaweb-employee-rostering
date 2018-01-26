@@ -123,11 +123,6 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                         List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
                                         List<Spot> spots = spotRosterView.getSpotList();
 
-                                        Set<String> classNames = spotRosterView.getIndictmentMap().keySet().stream()
-                                                .map((o) -> o.toString()).collect(Collectors.toSet());
-
-                                        ErrorPopup.show(CommonUtils.delimitCollection(classNames, (s) -> s, "\n"));
-
                                         for (TimeSlot timeslot : timeslots) {
                                             for (Spot spot : spots) {
                                                 if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot

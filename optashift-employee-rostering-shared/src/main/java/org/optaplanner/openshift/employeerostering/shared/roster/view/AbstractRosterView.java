@@ -12,13 +12,17 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
+import com.fasterxml.jackson.databind.deser.std.MapDeserializer;
+import com.fasterxml.jackson.databind.ser.std.MapSerializer;
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSerializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ShiftKeyDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ShiftKeyFieldDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ShiftKeyFieldSerializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ShiftKeySerializer;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
 
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.api.score.constraint.ConstraintMatch;
-import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -42,7 +46,7 @@ public class AbstractRosterView implements Serializable {
 
     private HardSoftScore score = null;
 
-    private Map<Object, Set<String>> indictmentMap = new HashMap<>();
+    private Map<Shift, Set<String>> indictmentMap = new HashMap<>();
 
     @Override
     public String toString() {
@@ -117,11 +121,13 @@ public class AbstractRosterView implements Serializable {
         this.score = score;
     }
 
-    public Map<Object, Set<String>> getIndictmentMap() {
+    @JsonSerialize(keyUsing = ShiftKeyFieldSerializer.class)
+    @JsonDeserialize(keyUsing = ShiftKeyFieldDeserializer.class)
+    public Map<Shift, Set<String>> getIndictmentMap() {
         return indictmentMap;
     }
 
-    public void setIndictmentMap(Map<Object, Set<String>> indictmentMap) {
+    public void setIndictmentMap(Map<Shift, Set<String>> indictmentMap) {
         this.indictmentMap = indictmentMap;
     }
 
