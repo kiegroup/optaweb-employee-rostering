@@ -22,17 +22,45 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.roster.Observabl
 
 public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> extends Observable {
 
+    // TODO: Javadocs for Builder + self evident methods
+    /**
+     * Presents/Draws the shifts handled by this calendar.
+     */
     CalendarPresenter<G, I> view;
+
+    /**
+     * The set of shifts being handled by this calendar (it a map so
+     * we can receive the old value of a shift via the shift id and use that
+     * when updating the shift).
+     */
     Map<I, I> shiftMap;
     Integer tenantId;
+
+    // TODO: Can we remove this by injecting Instance<T> into the necessary classes?
+    /**
+     * Constructs Errai beans.
+     */
     SyncBeanManager beanManager;
+
+    /**
+     * Fetches shifts.
+     */
     Fetchable<Collection<I>> dataProvider;
+
+    /**
+     * Fetches groups.
+     */
     Fetchable<List<G>> groupProvider;
+
+    /**
+     * Creates an instance of shift given start date, end date and group.
+     */
     DataProvider<G, I> instanceCreator;
+
     boolean didTenantChange;
 
     private Calendar(Integer tenantId, Fetchable<Collection<I>> dataProvider, Fetchable<List<G>> groupProvider,
-            DataProvider<G, I> instanceCreator, SyncBeanManager beanManager) {
+                     DataProvider<G, I> instanceCreator, SyncBeanManager beanManager) {
         this.beanManager = beanManager;
         this.tenantId = tenantId;
 
@@ -70,9 +98,12 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> extends Obse
         view.draw();
     }
 
-    public void refresh() {
-    }
+    // TODO: Remove me!
+    public void refresh() {}
 
+    /**
+     * Fetch changes to {@link Calendar#shiftMap}.
+     */
     public void forceUpdate() {
         dataProvider.fetchData(() -> draw());
     }
@@ -221,6 +252,13 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> extends Obse
         return beanManager;
     }
 
+    /**
+     * Contructs a Calendar.
+     *
+     * @param <G> Type of group.
+     * @param <T> Type of shift.
+     * @param <D> Draws shifts.
+     */
     public static class Builder<G extends HasTitle, T extends HasTimeslot<G>, D extends TimeRowDrawable<G, T>> {
 
         Panel container;
@@ -279,10 +317,10 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> extends Obse
         public Calendar<G, T> asTwoDayView(TimeRowDrawableProvider<G, T, D> drawableProvider) {
             if (null != beanManager) {
                 Calendar<G, T> calendar = new Calendar<>(tenantId,
-                        dataProvider,
-                        groupProvider, instanceCreator, beanManager);
+                                                         dataProvider,
+                                                         groupProvider, instanceCreator, beanManager);
                 TwoDayViewPresenter<G, T, D> view = new TwoDayViewPresenter<G, T, D>(calendar,
-                        drawableProvider, dateDisplay, translator);
+                                                                                     drawableProvider, dateDisplay, translator);
                 calendar.setView(view);
 
                 if (null != startAt) {

@@ -3,10 +3,25 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 import elemental2.dom.CanvasRenderingContext2D;
 import elemental2.dom.MouseEvent;
 
+/**
+ * Implements most of {@link Drawable} methods, requiring only
+ * {@link AbstractDrawable#doDraw}, {@link Drawable#getLocalX()} and
+ * {@link Drawable#getLocalY()} to be defined. Defines
+ * {@link Drawable#draw(CanvasRenderingContext2D)} to first shift the view
+ * by its parent global position so it can just use its local position in
+ * {@link AbstractDrawable#doDraw}.
+ */
 public abstract class AbstractDrawable implements Drawable {
 
+    /**
+     * Parent of the Drawable.
+     */
     Drawable parent;
 
+    /**
+     * The draw methods for subclasses of this class
+     * @param g Where to draw to.
+     */
     public abstract void doDraw(CanvasRenderingContext2D g);
 
     @Override
@@ -14,8 +29,8 @@ public abstract class AbstractDrawable implements Drawable {
         g.save();
         double tx, ty;
         if (null != parent) {
-            tx = parent.getLocalX();
-            ty = parent.getLocalY();
+            tx = parent.getGlobalX();
+            ty = parent.getGlobalY();
         } else {
             tx = 0;
             ty = 0;
