@@ -19,12 +19,14 @@ package org.optaplanner.openshift.employeerostering.shared.shift.view;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class ShiftView extends AbstractPersistable {
 
+    private Long rotationEmployeeId;
     @NotNull
     private Long spotId;
     @NotNull
@@ -35,13 +37,17 @@ public class ShiftView extends AbstractPersistable {
     private Long employeeId = null;
 
     @SuppressWarnings("unused")
-    public ShiftView() {
-    }
+    public ShiftView() {}
 
     public ShiftView(Integer tenantId, Spot spot, TimeSlot timeSlot) {
+        this(tenantId, spot, timeSlot, null);
+    }
+
+    public ShiftView(Integer tenantId, Spot spot, TimeSlot timeSlot, Employee rotationEmployee) {
         super(tenantId);
         this.spotId = spot.getId();
         this.timeSlotId = timeSlot.getId();
+        this.rotationEmployeeId = (rotationEmployee == null) ? null : rotationEmployee.getId();
     }
 
     public ShiftView(Shift shift) {
@@ -49,6 +55,7 @@ public class ShiftView extends AbstractPersistable {
         this.spotId = shift.getSpot().getId();
         this.timeSlotId = shift.getTimeSlot().getId();
         this.lockedByUser = shift.isLockedByUser();
+        this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
     }
 
@@ -91,6 +98,14 @@ public class ShiftView extends AbstractPersistable {
 
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
+    }
+
+    public Long getRotationEmployeeId() {
+        return rotationEmployeeId;
+    }
+
+    public void setRotationEmployeeId(Long rotationEmployeeId) {
+        this.rotationEmployeeId = rotationEmployeeId;
     }
 
 }

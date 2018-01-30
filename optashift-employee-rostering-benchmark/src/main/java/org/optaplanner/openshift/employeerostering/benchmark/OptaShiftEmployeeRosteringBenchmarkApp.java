@@ -27,13 +27,14 @@ public class OptaShiftEmployeeRosteringBenchmarkApp {
     }
 
     private static List<Roster> generateRosters() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("optashift-employee-rostering-persistence-unit");
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(
+                "optashift-employee-rostering-persistence-unit");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         RosterGenerator rosterGenerator = new RosterGenerator(entityManager);
 
         List<Roster> rosterList = new ArrayList<>();
-        rosterList.add(rosterGenerator.generateRoster(10, 7, false));
-        rosterList.add(rosterGenerator.generateRoster(80, (28 * 4), false));
+        rosterList.add(rosterGenerator.generateRoster(10, 7, false, false));
+        rosterList.add(rosterGenerator.generateRoster(80, (28 * 4), false, true));
 
         entityManager.close();
         entityManagerFactory.close();

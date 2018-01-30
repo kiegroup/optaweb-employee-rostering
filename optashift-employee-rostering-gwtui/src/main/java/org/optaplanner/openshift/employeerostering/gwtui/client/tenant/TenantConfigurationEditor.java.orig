@@ -19,7 +19,6 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.ConfigurationEditor.Views;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @Templated
@@ -80,12 +79,23 @@ public class TenantConfigurationEditor implements IsElement {
         rotationEmployeeMatchWeightInput.setValidators(new DecimalMinValidator<Integer>(0));
     }
 
+<<<<<<< HEAD
     public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
         weekStart.setSelectedIndex(tenantStore.getCurrentTenant().getConfiguration().getWeekStart().getValue() - 1);
         templateDuration.setSelectedIndex(templateDurationIndexBiMap.get(tenantStore.getCurrentTenant().getConfiguration()
                                                                                     .getTemplateDuration()));
         desiredWeightInput.setValue(tenantStore.getCurrentTenant().getConfiguration().getDesiredTimeSlotWeight());
         undesiredWeightInput.setValue(tenantStore.getCurrentTenant().getConfiguration().getUndesiredTimeSlotWeight());
+=======
+    public void onAnyTenantEvent(@Observes Tenant tenant) {
+        this.tenant = tenant;
+        weekStart.setSelectedIndex(tenant.getConfiguration().getWeekStart().getValue() - 1);
+        templateDuration.setSelectedIndex(templateDurationIndexBiMap.get(tenant.getConfiguration()
+                                                                             .getTemplateDuration()));
+        desiredWeightInput.setValue(tenant.getConfiguration().getDesiredTimeSlotWeight());
+        undesiredWeightInput.setValue(tenant.getConfiguration().getUndesiredTimeSlotWeight());
+        rotationEmployeeMatchWeightInput.setValue(tenant.getConfiguration().getRotationEmployeeMatchWeight());
+>>>>>>> PLANNER-943: Added support for assigning default employees to shifts
         refresh();
     }
 
@@ -97,17 +107,34 @@ public class TenantConfigurationEditor implements IsElement {
 
     @EventHandler("updateConfig")
     private void onUpdateConfigClick(ClickEvent e) {
+<<<<<<< HEAD
         tenantStore.getCurrentTenant().getConfiguration().setTemplateDuration(templateDurationIndexBiMap.inverse().get(templateDuration
-                                                                                                             .getSelectedIndex()));
+                                                                                                                                       .getSelectedIndex()));
         tenantStore.getCurrentTenant().getConfiguration().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
         tenantStore.getCurrentTenant().getConfiguration().setDesiredTimeSlotWeight(desiredWeightInput.getValue());
         tenantStore.getCurrentTenant().getConfiguration().setUndesiredTimeSlotWeight(undesiredWeightInput.getValue());
-        tenantStore.getCurrentTenant().getConfiguration().setRotationEmployeeMatchWeight(rotationEmployeeMatchWeightInput.getValue());
         TenantRestServiceBuilder.updateTenantConfiguration(tenantStore.getCurrentTenant().getConfiguration(),
                                                            FailureShownRestCallback.onSuccess(i -> {
                                                                tenantStore.updateTenant(i);
                                                                tenantStore.setCurrentTenant(i);
                                                            }));
+=======
+        tenant.getConfiguration().setTemplateDuration(templateDurationIndexBiMap.inverse().get(templateDuration
+                                                                                                             .getSelectedIndex()));
+        tenant.getConfiguration().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
+        tenant.getConfiguration().setDesiredTimeSlotWeight(desiredWeightInput.getValue());
+        tenant.getConfiguration().setUndesiredTimeSlotWeight(undesiredWeightInput.getValue());
+        tenant.getConfiguration().setRotationEmployeeMatchWeight(rotationEmployeeMatchWeightInput.getValue());
+        TenantRestServiceBuilder.updateTenantConfiguration(tenant.getConfiguration(),
+                                                           new FailureShownRestCallback<Tenant>() {
+
+                                                               @Override
+                                                               public void onSuccess(Tenant newConfig) {
+                                                                   tenant.setConfiguration(newConfig.getConfiguration());
+                                                                   tenantEvent.fire(newConfig);
+                                                               }
+                                                           });
+>>>>>>> PLANNER-943: Added support for assigning default employees to shifts
     }
 
     @EventHandler("templateEditorButton")
