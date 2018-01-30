@@ -81,6 +81,10 @@ Or this command to delete the OpenShift Online application and project:
 
 == Development
 
+=== Code formatter
+
+Both IntelliJ and Eclipse formatters are available here: https://github.com/kiegroup/droolsjbpm-build-bootstrap/tree/master/ide-configuration
+
 === Building from source
 
 ```
@@ -94,41 +98,31 @@ To reproduce locally, add it explicitly (the `provision.sh` script already does 
 mvn clean package -P openshift
 ```
 
-=== IntelliJ IDEA run configurations
+=== IntelliJ IDEA 2017.3 (and above)
 
-. https://youtrack.jetbrains.com/issue/IDEA-171158[IntelliJ does not support the new GWT plugin yet]
-. Create a new JBoss run configuration to a local WildFly instance:
-.. In the _Before launch_ list, remove `Make project`
-.. In the _Before launch_ list, add `Run Maven goal` on the root pom with arguments `clean install -Dgwt.draftCompile`
-.. In the _Deployment_ tab, in _Deploy at startup_, add `optashift-employee-rostering-webapp:war exploded`.
+. https://youtrack.jetbrains.com/issue/IDEA-171158[IntelliJ 2017.3 now supports the new GWT plugin]
+. `TODO: Test and document`
 
 
-=== GWT Super Dev Mode from the command line
+=== IntelliJ IDEA 2017.2 (and below) + CLI
+
+The steps below make sure that the GWT Codeserver will recompile the application after files under `src/main/resources` are saved.
+
+. Import the maven project by choosing the root `pom.xml` file and selecting `Open as project`
+. Install the `Save Actions` plugin
+. Restart IntelliJ (required after installing the plugin)
+. Under `Other settings`, go to the `Save Actions` submenu and check either the first or the second options in the `General` section
+. Check the `Compile file` option in the `Build actions` section
+
+After configuring the `Save Actions` plugin, you should be able to start Wildfly and deploy the application from the CLI. Note that if you need to restart the GWT Code Server, it's not mandatory to restart Wildfly.
 
 ```
 mvn -N wildfly:start wildfly:deploy
 mvn gwt:codeserver
 ```
 
-To stop the wildfly server, use `mvn -N wildfly:shutdown`.
+To stop the Wildfly server, use `mvn -N wildfly:shutdown`.
 
-. Download http://wildfly.org/downloads/[WildFly]
-.. Unzip it into `local/appserver/` in the project root.
-The `local` directory is ignored by Git.
-.. Create a symlink:
-+
-```
-cd local/appserver/
-ln -s wildfly-10.1.0.Final/ wildfly
-```
-. Run super dev mode in the root project:
-+
-```
-mvn gwt:devmode
-```
-+
-If you unzipped WildFly to a different directory, use:
-+
-```
-mvn gwt:devmode -Dwildfly.home=/.../wildfly
-```
+=== Eclipse
+. `TODO: Document`
+
