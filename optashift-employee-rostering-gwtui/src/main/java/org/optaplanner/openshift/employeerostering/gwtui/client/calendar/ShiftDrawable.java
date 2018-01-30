@@ -1,6 +1,5 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.calendar;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -11,7 +10,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.CanvasUti
 import org.optaplanner.openshift.employeerostering.gwtui.client.canvas.ColorUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.css.CssParser;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotId;
@@ -56,16 +54,18 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
         double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
         double duration = end - start;
 
+        String title = (null == id.getRotationEmployee()) ? "No Preference" : id.getRotationEmployee().getName();
         CanvasUtils.drawCurvedRect(g, x, y, duration * view.getWidthPerMinute(), view.getGroupHeight());
 
         CanvasUtils.setFillColor(g, ColorUtils.getTextColor(color));
-        int fontSize = CanvasUtils.fitTextToBox(g, spot.getTitle(), duration * view.getWidthPerMinute() * 0.75, view
-                .getGroupHeight() * 0.75);
+        int fontSize = CanvasUtils.fitTextToBox(g, title, duration * view.getWidthPerMinute() * 0.75, view
+                                                                                                          .getGroupHeight() * 0.75);
         g.font = CanvasUtils.getFont(fontSize);
-        double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, spot.getTitle(), fontSize);
 
-        g.fillText(spot.getTitle(), x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
-                y + (view.getGroupHeight() + textSize[1] * 0.375) * 0.5);
+        double[] textSize = CanvasUtils.getPreferredBoxSizeForText(g, title, fontSize);
+
+        g.fillText(title, x + (duration * view.getWidthPerMinute() - textSize[0]) * 0.5,
+                   y + (view.getGroupHeight() + textSize[1] * 0.375) * 0.5);
 
         CanvasUtils.setFillColor(g, "#000000");
         g.fillRect(x + duration * view.getWidthPerMinute() - 30, y + view.getGroupHeight() - 30, 30, 30);
@@ -81,7 +81,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     public double getLocalY() {
         Integer cursorIndex = view.getCursorIndex(spot);
         return (null != cursorIndex && cursorIndex > index) ? index * view.getGroupHeight() : (index + 1) * view
-                .getGroupHeight();
+                                                                                                                .getGroupHeight();
     }
 
     @Override
@@ -92,19 +92,24 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
     @Override
     public PostMouseDownEvent onMouseDown(MouseEvent e, double x, double y) {
-        double start = startTime.toEpochSecond(ZoneOffset.UTC) / 60;
-        double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
-        double duration = end - start;
-
-        if (view.getLocationOfDate(endTime) - x + TwoDayViewPresenter.SPOT_NAME_WIDTH < 30 && y - getGlobalY() - view
-                .getGroupHeight() + 30 > 0) {
-            isMoving = false;
-            return PostMouseDownEvent.CAPTURE_DRAG;
+        if (e.shiftKey) {
+            TemplateShiftEditForm.create(view.getCalendar().getBeanManager(), this);
+            return PostMouseDownEvent.REMOVE_FOCUS;
         } else {
-            isMoving = true;
-            minsOffset = (startTime.toEpochSecond(
-                    ZoneOffset.UTC) - view.getMouseLocalDateTime().toEpochSecond(ZoneOffset.UTC)) / 60;
-            return PostMouseDownEvent.CAPTURE_DRAG;
+            double start = startTime.toEpochSecond(ZoneOffset.UTC) / 60;
+            double end = endTime.toEpochSecond(ZoneOffset.UTC) / 60;
+            double duration = end - start;
+
+            if (view.getLocationOfDate(endTime) - x + TwoDayViewPresenter.SPOT_NAME_WIDTH < 30 && y - getGlobalY() - view
+                                                                                                                         .getGroupHeight() + 30 > 0) {
+                isMoving = false;
+                return PostMouseDownEvent.CAPTURE_DRAG;
+            } else {
+                isMoving = true;
+                minsOffset = (startTime.toEpochSecond(
+                                                      ZoneOffset.UTC) - view.getMouseLocalDateTime().toEpochSecond(ZoneOffset.UTC)) / 60;
+                return PostMouseDownEvent.CAPTURE_DRAG;
+            }
         }
     }
 
@@ -129,7 +134,7 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     public boolean onMouseUp(MouseEvent e, double x, double y) {
         if (dragged) {
             ShiftData shift = new ShiftData(new SpotData(new Shift(spot.getSpot().getTenantId(), spot.getSpot(),
-                    new TimeSlot(spot.getSpot().getTenantId(), startTime, endTime))));
+                                                                   new TimeSlot(spot.getSpot().getTenantId(), startTime, endTime))));
             shift.shift.getShift().setId(id.shift.getShift().getId());
             view.removeDrawable(id, this);
             view.addShift(shift);
@@ -164,6 +169,8 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
         out.append(CommonUtils.pad(endTime.getHour() + "", 2));
         out.append(':');
         out.append(CommonUtils.pad(endTime.getMinute() + "", 2));
+        out.append(' ');
+        out.append((null == id.getRotationEmployee()) ? "No Preference" : id.getRotationEmployee().getName());
         return out.toString();
     }
 
@@ -189,8 +196,8 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
 
     private String getFillColor() {
         return CssParser.getCssProperty(CssResources.INSTANCE.calendar(),
-                CssResources.INSTANCE.calendar().spotShiftView(),
-                "background-color");
+                                        CssResources.INSTANCE.calendar().spotShiftView(),
+                                        "background-color");
     }
 
     @Override
@@ -210,6 +217,10 @@ public class ShiftDrawable extends AbstractDrawable implements TimeRowDrawable<S
     @Override
     public int hashCode() {
         return this.id.hashCode();
+    }
+
+    public ShiftData getData() {
+        return id;
     }
 
     @Override

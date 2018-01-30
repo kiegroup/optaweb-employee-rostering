@@ -41,7 +41,6 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestS
 import org.optaplanner.openshift.employeerostering.shared.lang.parser.ParserException;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.BaseDateDefinitions;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EnumOrCustom;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.RepeatMode;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -93,7 +92,19 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         validateTenantIdParameter(tenantId, spot);
         TimeSlot timeSlot = entityManager.find(TimeSlot.class, shiftView.getTimeSlotId());
         validateTenantIdParameter(tenantId, timeSlot);
-        Shift shift = new Shift(shiftView, spot, timeSlot);
+
+        Long rotationEmployeeId = shiftView.getRotationEmployeeId();
+        Employee rotationEmployee = null;
+        if (rotationEmployeeId != null) {
+            rotationEmployee = entityManager.find(Employee.class, rotationEmployeeId);
+            if (rotationEmployee == null) {
+                throw new IllegalArgumentException("ShiftView (" + shiftView
+                        + ") has an non-existing employeeId (" + rotationEmployeeId + ").");
+            }
+            validateTenantIdParameter(tenantId, rotationEmployee);
+        }
+
+        Shift shift = new Shift(shiftView, spot, timeSlot, rotationEmployee);
         shift.setLockedByUser(shiftView.isLockedByUser());
         Long employeeId = shiftView.getEmployeeId();
         if (employeeId != null) {
@@ -163,6 +174,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
                 }
                 TimeSlot timeSlot = timeSlotMap.get(shift.getTimeSlot().toString());
                 Shift newShift = new Shift(tenantId, shift.getSpot(), timeSlot);
+                newShift.setRotationEmployee(shift.getRotationEmployee());
                 entityManager.persist(newShift);
                 out.add(newShift.getId());
             }

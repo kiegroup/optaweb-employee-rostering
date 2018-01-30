@@ -18,6 +18,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotGroup;
+import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
@@ -55,6 +56,7 @@ public class TenantTemplateFetchable implements Fetchable<Collection<ShiftData>>
                                             id = 0L;
                                             List<ShiftData> out = new ArrayList<>();
                                             for (ShiftInfo shift : template.getShiftList()) {
+                                                int i = 0;
                                                 for (IdOrGroup spotId : shift.getSpotList()) {
                                                     if (spotId.getIsGroup()) {
                                                         for (Spot spot : spotGroupList.stream().filter((g) -> g.getId()
@@ -66,6 +68,8 @@ public class TenantTemplateFetchable implements Fetchable<Collection<ShiftData>>
                                                                             shift
                                                                                     .getEndTime()));
                                                             newShift.setId(id);
+                                                            newShift.setRotationEmployee(shift.getRotationEmployeeList()
+                                                                    .get(i).getEmployee());
                                                             id++;
                                                             out.add(new ShiftData(new SpotData(newShift)));
                                                         }
@@ -76,10 +80,12 @@ public class TenantTemplateFetchable implements Fetchable<Collection<ShiftData>>
                                                                 spot, new TimeSlot(tenantId, shift.getStartTime(), shift
                                                                         .getEndTime()));
                                                         newShift.setId(id);
+                                                        newShift.setRotationEmployee(shift.getRotationEmployeeList()
+                                                                .get(i).getEmployee());
                                                         id++;
                                                         out.add(new ShiftData(new SpotData(newShift)));
                                                     }
-
+                                                    i++;
                                                 }
                                             }
                                             updatable.onUpdate(out);

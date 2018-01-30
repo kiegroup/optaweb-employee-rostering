@@ -1,6 +1,7 @@
 package org.optaplanner.openshift.employeerostering.shared.lang.tokens;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -81,11 +82,21 @@ public class ShiftInfo extends AbstractPersistable {
     @OrderColumn(name = "orderIndex")
     List<ShiftConditional> exceptionList;
 
+    /**
+     * List of preferred employee for a spot. Must have same length as the number
+     * of non-group entries in {@link ShiftInfo#spots}.
+     * Entries can be null.
+     */
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderColumn(name = "orderIndex")
+    List<OptionalEmployee> rotationEmployeeList;
+
     public ShiftInfo() {
     }
 
     public ShiftInfo(Integer tenantId, ShiftInfo src) {
-        this(tenantId, src.startTime, src.endTime, src.spotList, src.employeeList, src.exceptionList);
+        this(tenantId, src.startTime, src.endTime, src.spotList, src.employeeList, src.exceptionList,
+                src.rotationEmployeeList);
     }
 
     public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
@@ -95,16 +106,34 @@ public class ShiftInfo extends AbstractPersistable {
         this.endTime = endTime;
         this.spotList = spots;
         this.employeeList = employees;
+        this.rotationEmployeeList = new ArrayList<>(spots.size());
+        for (int i = 0; i < this.rotationEmployeeList.size(); i++) {
+            this.rotationEmployeeList.set(i, new OptionalEmployee(tenantId, null));
+        }
     }
 
     public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
             EmployeeTimeSlotInfo> employees, List<ShiftConditional> exceptions) {
+        this(tenantId, startTime, endTime, spots, employees, exceptions, null);
+    }
+
+    public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
+            EmployeeTimeSlotInfo> employees, List<ShiftConditional> exceptions,
+            List<OptionalEmployee> rotationEmployees) {
         super(tenantId);
         this.startTime = startTime;
         this.endTime = endTime;
         this.spotList = spots;
         this.employeeList = employees;
         this.exceptionList = exceptions;
+        if (rotationEmployees != null) {
+            this.rotationEmployeeList = rotationEmployees;
+        } else {
+            this.rotationEmployeeList = new ArrayList<>(spots.size());
+            for (int i = 0; i < this.rotationEmployeeList.size(); i++) {
+                this.rotationEmployeeList.set(i, new OptionalEmployee(tenantId, null));
+            }
+        }
     }
 
     /**
@@ -190,6 +219,14 @@ public class ShiftInfo extends AbstractPersistable {
      */
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public List<OptionalEmployee> getRotationEmployeeList() {
+        return rotationEmployeeList;
+    }
+
+    public void setRotationEmployeeList(List<OptionalEmployee> rotationEmployeeList) {
+        this.rotationEmployeeList = rotationEmployeeList;
     }
 
 }

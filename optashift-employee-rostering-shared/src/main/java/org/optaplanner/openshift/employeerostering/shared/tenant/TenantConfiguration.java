@@ -10,10 +10,13 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 @Entity
 public class TenantConfiguration extends AbstractPersistable {
 
+    // TODO: Is 999 a reasonable max for the weights?
     @NotNull
     private Integer undesiredTimeSlotWeight = 100;
     @NotNull
     private Integer desiredTimeSlotWeight = 10;
+    @NotNull
+    private Integer rotationEmployeeMatchWeight = 500;
     @NotNull
     private Integer templateDuration = 1;
     @NotNull
@@ -25,12 +28,14 @@ public class TenantConfiguration extends AbstractPersistable {
     }
 
     public TenantConfiguration(Integer tenantId, Integer templateDuration, DayOfWeek weekStart,
-                               Integer undesiredTimeSlotWeight, Integer desiredTimeSlotWeight) {
+                               Integer undesiredTimeSlotWeight, Integer desiredTimeSlotWeight,
+                               Integer rotationEmployeeMatchWeight) {
         super(tenantId);
         this.templateDuration = templateDuration;
         this.weekStart = weekStart;
         this.undesiredTimeSlotWeight = undesiredTimeSlotWeight;
         this.desiredTimeSlotWeight = desiredTimeSlotWeight;
+        this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
     }
 
     public Integer getUndesiredTimeSlotWeight() {
@@ -47,6 +52,14 @@ public class TenantConfiguration extends AbstractPersistable {
 
     public void setDesiredTimeSlotWeight(Integer desiredTimeSlotWeight) {
         this.desiredTimeSlotWeight = desiredTimeSlotWeight;
+    }
+
+    public Integer getRotationEmployeeMatchWeight() {
+        return rotationEmployeeMatchWeight;
+    }
+
+    public void setRotationEmployeeMatchWeight(Integer rotationEmployeeMatchWeight) {
+        this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
     }
 
     public Integer getTemplateDuration() {
