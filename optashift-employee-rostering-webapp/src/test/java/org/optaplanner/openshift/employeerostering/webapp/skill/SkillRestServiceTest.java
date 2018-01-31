@@ -134,4 +134,5 @@ public class SkillRestServiceTest extends AbstractClientArquillianTest {
         numOfTestRun++;
         return numOfTestRun - 1;
     }
+
 }
