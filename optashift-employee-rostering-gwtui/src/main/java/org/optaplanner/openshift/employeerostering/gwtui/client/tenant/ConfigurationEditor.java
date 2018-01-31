@@ -4,17 +4,17 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.dom.client.Node;
+import elemental2.promise.Promise;
 import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 
 @Templated
-public class ConfigurationEditor implements IsElement {
-
-    private Integer tenantId = null;
+public class ConfigurationEditor implements IsElement,
+                                            Page {
 
     @Inject
     TenantConfigurationEditor tenantConfigurationEditor;
@@ -28,19 +28,28 @@ public class ConfigurationEditor implements IsElement {
     @DataField
     private Div content;
 
+    @Inject
+    private TenantStore tenantStore;
+
     public ConfigurationEditor() {
     }
 
     @PostConstruct
-    protected void initWidget() {
+    public void initWidget() {
         templateEditor.setConfigurationEditor(this);
         tenantConfigurationEditor.setConfigurationEditor(this);
         content.removeChild(content.getLastChild());
         content.appendChild(templateEditor.getElement());
     }
 
-    public void onAnyTenantEvent(@Observes Tenant tenant) {
-        tenantId = tenant.getId();
+    @Override
+    public Promise<Void> beforeOpen() {
+        //FIXME: For some reason it's not enough to simply call `refresh()`, but it works fine when firing a TenantChange event.
+        tenantStore.setCurrentTenant(tenantStore.getCurrentTenant());
+        return PromiseUtils.resolve(); //FIXME: Make it resolve only after the page is assembled
+    }
+
+    public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
         refresh();
     }
 
@@ -60,7 +69,6 @@ public class ConfigurationEditor implements IsElement {
                 break;
             default:
                 break;
-
         }
     }
 
@@ -68,5 +76,4 @@ public class ConfigurationEditor implements IsElement {
         TEMPLATE_EDITOR,
         TENANT_CONFIGURATION_EDITOR;
     }
-
 }

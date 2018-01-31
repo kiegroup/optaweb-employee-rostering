@@ -3,12 +3,10 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.roster;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.gwtbootstrap3.client.ui.Button;
-import org.gwtbootstrap3.client.ui.html.Div;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -16,17 +14,14 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
 
 public abstract class AbstractRosterViewPanel implements Observer, IsElement {
 
     protected static final int REFRESH_RATE = 2000;
-
-    protected Integer tenantId = null;
 
     @Inject
     @DataField
@@ -50,6 +45,9 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
     @Inject
     private TranslationService CONSTANTS;
 
+    @Inject
+    private TenantStore tenantStore;
+
     protected void init() {
         buttonContent = new Span();
         buttonImage = new Span();
@@ -66,8 +64,7 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
         solverObservable.addObserver(this);
     }
 
-    public void onAnyTenantEvent(@Observes Tenant tenant) {
-        tenantId = tenant.getId();
+    public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenantChange) {
         refresh();
     }
 
@@ -127,18 +124,18 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
 
     @EventHandler("solveButton")
     public void solve(ClickEvent e) {
-        if (tenantId == null) {
-            throw new IllegalStateException("The tenantId (" + tenantId + ") cannot be null at this time.");
+        if (getTenantId() == null) {
+            throw new IllegalStateException("The tenantId (" + getTenantId() + ") cannot be null at this time.");
         }
         if (isSolving) {
-            RosterRestServiceBuilder.terminateRosterEarly(tenantId, new FailureShownRestCallback<Void>() {
+            RosterRestServiceBuilder.terminateRosterEarly(getTenantId(), new FailureShownRestCallback<Void>() {
 
                 public void onSuccess(Void t) {
                     solverObservable.notifyObservers(new TerminateSolvingEvent());
                 }
             });
         } else {
-            RosterRestServiceBuilder.solveRoster(tenantId, new FailureShownRestCallback<Void>() {
+            RosterRestServiceBuilder.solveRoster(getTenantId(), new FailureShownRestCallback<Void>() {
 
                 public void onSuccess(Void t) {
                     solverObservable.notifyObservers(new StartSolvingEvent());
@@ -211,5 +208,9 @@ public abstract class AbstractRosterViewPanel implements Observer, IsElement {
             }
         }
 
+    }
+
+    public Integer getTenantId() {
+        return tenantStore.getCurrentTenantId();
     }
 }

@@ -1,11 +1,9 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -15,12 +13,8 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment.HorizontalAlignmentConstant;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PopupPanel;
+import elemental2.promise.Promise;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
@@ -30,7 +24,6 @@ import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
 import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
-import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -38,21 +31,23 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
-import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
-import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
-import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
+import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_actions;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_delete;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_edit;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_name;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_skills;
 
 @Templated
-public class EmployeeListPanel implements IsElement {
-
-    private Integer tenantId = null;
+public class EmployeeListPanel implements IsElement,
+                                          Page {
 
     @Inject
     @DataField
@@ -78,6 +73,9 @@ public class EmployeeListPanel implements IsElement {
     private ListDataProvider<Employee> dataProvider = new ListDataProvider<>();
 
     @Inject
+    private TenantStore tenantStore;
+
+    @Inject
     private SyncBeanManager beanManager;
     @Inject
     private TranslationService CONSTANTS;
@@ -101,8 +99,12 @@ public class EmployeeListPanel implements IsElement {
         skillsTagsInput.reconfigure();
     }
 
-    public void onAnyTenantEvent(@Observes Tenant tenant) {
-        tenantId = tenant.getId();
+    @Override
+    public Promise<Void> beforeOpen() {
+        return refresh();
+    }
+
+    public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
         refresh();
     }
 
@@ -111,21 +113,20 @@ public class EmployeeListPanel implements IsElement {
         refresh();
     }
 
-    public void refresh() {
-        refreshSkillsTagsInput();
-        refreshTable();
+    public Promise<Void> refresh() {
+        return refreshSkillsTagsInput().then(i -> refreshTable());
     }
 
-    private void refreshSkillsTagsInput() {
-        if (tenantId == null) {
-            return;
-        }
-        SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
+    private Promise<Void> refreshSkillsTagsInput() {
 
-            @Override
-            public void onSuccess(List<Skill> skillList) {
+        if (tenantStore.getCurrentTenantId() == null) {
+            return PromiseUtils.resolve();
+        }
+
+        return new Promise<>((res, rej) -> {
+            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
                 skillsTagsInput.removeAll();
-                skillsTagsInput.setDatasets((Dataset<Skill>) new CollectionDataset<Skill>(skillList) {
+                skillsTagsInput.setDatasets(new CollectionDataset<Skill>(skillList) {
 
                     @Override
                     public String getValue(Skill skill) {
@@ -133,7 +134,8 @@ public class EmployeeListPanel implements IsElement {
                     }
                 });
                 skillsTagsInput.reconfigure();
-            }
+                res.onInvoke(PromiseUtils.resolve());
+            }));
         });
     }
 
@@ -158,7 +160,7 @@ public class EmployeeListPanel implements IsElement {
             }
         }, CONSTANTS.format(General_skills));
         Column<Employee, String> deleteColumn = new Column<Employee, String>(new ButtonCell(IconType.REMOVE,
-                ButtonType.DANGER, ButtonSize.SMALL)) {
+                                                                                            ButtonType.DANGER, ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Employee employee) {
@@ -166,17 +168,12 @@ public class EmployeeListPanel implements IsElement {
             }
         };
         deleteColumn.setFieldUpdater((index, employee, value) -> {
-            EmployeeRestServiceBuilder.removeEmployee(tenantId, employee.getId(), new FailureShownRestCallback<
-                    Boolean>() {
-
-                @Override
-                public void onSuccess(Boolean removed) {
-                    refreshTable();
-                }
-            });
+            EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), employee.getId(), FailureShownRestCallback.onSuccess(i -> {
+                refreshTable();
+            }));
         });
         Column<Employee, String> editColumn = new Column<Employee, String>(new ButtonCell(IconType.EDIT,
-                ButtonType.DEFAULT, ButtonSize.SMALL)) {
+                                                                                          ButtonType.DEFAULT, ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Employee employee) {
@@ -185,13 +182,9 @@ public class EmployeeListPanel implements IsElement {
         };
         editColumn.setFieldUpdater((index, employee, value) -> {
             EmployeeListPanel employeeListPanel = this;
-            SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
-
-                @Override
-                public void onSuccess(List<Skill> skillList) {
-                    EmployeeEditForm.create(beanManager, employeeListPanel, employee, skillList);
-                }
-            });
+            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
+                EmployeeEditForm.create(beanManager, employeeListPanel, employee, skillList);
+            }));
         });
         table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
         table.addColumn(editColumn);
@@ -203,39 +196,33 @@ public class EmployeeListPanel implements IsElement {
         dataProvider.addDataDisplay(table);
     }
 
-    private void refreshTable() {
-        if (tenantId == null) {
-            return;
+    private Promise<Void> refreshTable() {
+        if (tenantStore.getCurrentTenantId() == null) {
+            return PromiseUtils.resolve();
         }
-        EmployeeRestServiceBuilder.getEmployeeList(tenantId, new FailureShownRestCallback<List<Employee>>() {
-
-            @Override
-            public void onSuccess(List<Employee> employeeList) {
+        return new Promise<>((res, rej) -> {
+            EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employeeList -> {
                 dataProvider.setList(employeeList);
                 dataProvider.flush();
                 pagination.rebuild(pager);
-            }
+                res.onInvoke(PromiseUtils.resolve());
+            }));
         });
     }
 
     @EventHandler("addButton")
     public void add(ClickEvent e) {
-        if (tenantId == null) {
-            throw new IllegalStateException("The tenantId (" + tenantId + ") can not be null at this time.");
+        if (tenantStore.getCurrentTenantId() == null) {
+            throw new IllegalStateException("The tenantStore.getTenantId() (" + tenantStore.getCurrentTenantId() + ") can not be null at this time.");
         }
         String employeeName = employeeNameTextBox.getValue();
         employeeNameTextBox.setValue("");
         employeeNameTextBox.setFocus(true);
         List<Skill> skillList = skillsTagsInput.getItems();
-        Employee employee = new Employee(tenantId, employeeName);
+        Employee employee = new Employee(tenantStore.getCurrentTenantId(), employeeName);
         employee.setSkillProficiencySet(skillList.stream().collect(Collectors.toSet()));
-        EmployeeRestServiceBuilder.addEmployee(tenantId, employee, new FailureShownRestCallback<Employee>() {
-
-            @Override
-            public void onSuccess(Employee employee) {
-                refreshTable();
-            }
-        });
+        EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee, FailureShownRestCallback.onSuccess(i -> {
+            refreshTable();
+        }));
     }
-
 }

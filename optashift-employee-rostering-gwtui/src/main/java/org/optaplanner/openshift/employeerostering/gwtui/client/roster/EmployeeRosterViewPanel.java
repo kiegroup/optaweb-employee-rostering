@@ -22,6 +22,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.view.client.ListDataProvider;
 import elemental2.dom.HTMLCanvasElement;
+import elemental2.promise.Promise;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.gwtbootstrap3.client.ui.html.Div;
@@ -38,7 +39,9 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.employee.Employe
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeDrawable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeId;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeNameFetchable;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -53,7 +56,7 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.*;
 
 @Templated
-public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
+public class EmployeeRosterViewPanel extends AbstractRosterViewPanel implements Page {
 
     @Inject
     @DataField
@@ -78,7 +81,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
 
     @EventHandler("planNextPeriod")
     public void plan(ClickEvent e) {
-        ShiftRestServiceBuilder.addShiftsFromTemplate(tenantId,
+        ShiftRestServiceBuilder.addShiftsFromTemplate(getTenantId(),
                 calendar.getShiftSet().stream().max((a, b) -> a.getStartTime().compareTo(b
                         .getStartTime())).get().getEndTime().toString(),
                 calendar.getShiftSet().stream().max((a, b) -> a.getStartTime().compareTo(b
@@ -99,8 +102,14 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
         initTable();
     }
 
+    @Override
+    public Promise<Void> beforeOpen() {
+        refresh();
+        return PromiseUtils.resolve(); //FIXME: Make it resolve only after the page is assembled
+    }
+
     private void initTable() {
-        calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable<EmployeeData>>(container, tenantId,
+        calendar = new Calendar.Builder<EmployeeId, EmployeeData, EmployeeDrawable<EmployeeData>>(container, getTenantId(),
                 CONSTANTS)
                         .fetchingGroupsFrom(new EmployeeNameFetchable(() -> getTenantId()))
                         .withBeanManager(beanManager)
@@ -116,11 +125,11 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
     protected void refreshTable() {
         calendar.setViewSize(Window.getClientWidth() - container.getAbsoluteLeft(),
                 Window.getClientHeight() - container.getAbsoluteTop());
-        if (tenantId == null) {
+        if (getTenantId() == null) {
             return;
         }
         if (!isDateSet) {
-            RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantId, new FailureShownRestCallback<
+            RosterRestServiceBuilder.getCurrentEmployeeRosterView(getTenantId(), new FailureShownRestCallback<
                     EmployeeRosterView>() {
 
                 @Override
@@ -132,10 +141,6 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel {
             });
         }
         calendar.forceUpdate();
-    }
-
-    private Integer getTenantId() {
-        return tenantId;
     }
 
 }

@@ -3,9 +3,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.tenant;
 import java.time.DayOfWeek;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
 import com.google.common.collect.BiMap;
@@ -21,7 +19,6 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.ConfigurationEditor.Views;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @Templated
@@ -51,14 +48,12 @@ public class TenantConfigurationEditor implements IsElement {
     @DataField
     private Button templateEditorButton;
 
-    private Tenant tenant;
     private ConfigurationEditor configurationEditor;
 
-    @Inject
-    @Any
-    private Event<Tenant> tenantEvent;
-
     BiMap<Integer, Integer> templateDurationIndexBiMap;
+
+    @Inject
+    private TenantStore tenantStore;
 
     @PostConstruct
     protected void initWidget() {
@@ -79,13 +74,12 @@ public class TenantConfigurationEditor implements IsElement {
         undesiredWeightInput.setValidators(new DecimalMinValidator<Integer>(0));
     }
 
-    public void onAnyTenantEvent(@Observes Tenant tenant) {
-        this.tenant = tenant;
-        weekStart.setSelectedIndex(tenant.getConfiguration().getWeekStart().getValue() - 1);
-        templateDuration.setSelectedIndex(templateDurationIndexBiMap.get(tenant.getConfiguration()
+    public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
+        weekStart.setSelectedIndex(tenantStore.getCurrentTenant().getConfiguration().getWeekStart().getValue() - 1);
+        templateDuration.setSelectedIndex(templateDurationIndexBiMap.get(tenantStore.getCurrentTenant().getConfiguration()
                                                                              .getTemplateDuration()));
-        desiredWeightInput.setValue(tenant.getConfiguration().getDesiredTimeSlotWeight());
-        undesiredWeightInput.setValue(tenant.getConfiguration().getUndesiredTimeSlotWeight());
+        desiredWeightInput.setValue(tenantStore.getCurrentTenant().getConfiguration().getDesiredTimeSlotWeight());
+        undesiredWeightInput.setValue(tenantStore.getCurrentTenant().getConfiguration().getUndesiredTimeSlotWeight());
         refresh();
     }
 
@@ -97,20 +91,15 @@ public class TenantConfigurationEditor implements IsElement {
 
     @EventHandler("updateConfig")
     private void onUpdateConfigClick(ClickEvent e) {
-        tenant.getConfiguration().setTemplateDuration(templateDurationIndexBiMap.inverse().get(templateDuration
+        tenantStore.getCurrentTenant().getConfiguration().setTemplateDuration(templateDurationIndexBiMap.inverse().get(templateDuration
                                                                                                              .getSelectedIndex()));
-        tenant.getConfiguration().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
-        tenant.getConfiguration().setDesiredTimeSlotWeight(desiredWeightInput.getValue());
-        tenant.getConfiguration().setUndesiredTimeSlotWeight(undesiredWeightInput.getValue());
-        TenantRestServiceBuilder.updateTenantConfiguration(tenant.getConfiguration(),
-                                                           new FailureShownRestCallback<Tenant>() {
-
-                                                               @Override
-                                                               public void onSuccess(Tenant newConfig) {
-                                                                   tenant.setConfiguration(newConfig.getConfiguration());
-                                                                   tenantEvent.fire(newConfig);
-                                                               }
-                                                           });
+        tenantStore.getCurrentTenant().getConfiguration().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
+        tenantStore.getCurrentTenant().getConfiguration().setDesiredTimeSlotWeight(desiredWeightInput.getValue());
+        tenantStore.getCurrentTenant().getConfiguration().setUndesiredTimeSlotWeight(undesiredWeightInput.getValue());
+        TenantRestServiceBuilder.updateTenantConfiguration(tenantStore.getCurrentTenant().getConfiguration(),
+                                                           FailureShownRestCallback.onSuccess(i -> {
+                                                               tenantStore.setCurrentTenant(tenantStore.getCurrentTenant());
+                                                           }));
     }
 
     @EventHandler("templateEditorButton")

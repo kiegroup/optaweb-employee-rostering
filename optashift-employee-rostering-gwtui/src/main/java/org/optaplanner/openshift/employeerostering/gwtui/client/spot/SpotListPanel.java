@@ -1,7 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -14,6 +13,7 @@ import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.view.client.ListDataProvider;
+import elemental2.promise.Promise;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.Pagination;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
@@ -23,7 +23,6 @@ import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
 import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
-import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -31,11 +30,13 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_actions;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_delete;
@@ -43,9 +44,8 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.resources
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_name;
 
 @Templated
-public class SpotListPanel implements IsElement {
-
-    private Integer tenantId = null;
+public class SpotListPanel implements IsElement,
+                                      Page {
 
     @Inject
     @DataField
@@ -71,6 +71,9 @@ public class SpotListPanel implements IsElement {
     private ListDataProvider<Spot> dataProvider = new ListDataProvider<>();
 
     @Inject
+    private TenantStore tenantStore;
+
+    @Inject
     private SyncBeanManager beanManager;
     @Inject
     private TranslationService CONSTANTS;
@@ -94,8 +97,12 @@ public class SpotListPanel implements IsElement {
         requiredSkillsTagsInput.reconfigure();
     }
 
-    public void onAnyTenantEvent(@Observes Tenant tenant) {
-        tenantId = tenant.getId();
+    @Override
+    public Promise<Void> beforeOpen() {
+        return refresh();
+    }
+
+    public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
         refresh();
     }
 
@@ -104,21 +111,20 @@ public class SpotListPanel implements IsElement {
         refresh();
     }
 
-    public void refresh() {
-        refreshRequiredSkillListBox();
-        refreshTable();
+    public Promise<Void> refresh() {
+        return refreshRequiredSkillListBox().then(i -> refreshTable());
     }
 
-    private void refreshRequiredSkillListBox() {
-        if (tenantId == null) {
-            return;
-        }
-        SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
+    private Promise<Void> refreshRequiredSkillListBox() {
 
-            @Override
-            public void onSuccess(List<Skill> skillList) {
+        if (tenantStore.getCurrentTenantId() == null) {
+            return PromiseUtils.resolve();
+        }
+
+        return new Promise<>((res, rej) -> {
+            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
                 requiredSkillsTagsInput.removeAll();
-                requiredSkillsTagsInput.setDatasets((Dataset<Skill>) new CollectionDataset<Skill>(skillList) {
+                requiredSkillsTagsInput.setDatasets(new CollectionDataset<Skill>(skillList) {
 
                     @Override
                     public String getValue(Skill skill) {
@@ -126,19 +132,20 @@ public class SpotListPanel implements IsElement {
                     }
                 });
                 requiredSkillsTagsInput.reconfigure();
-            }
+                res.onInvoke(PromiseUtils.resolve());
+            }));
         });
     }
 
     private void initTable() {
         table.addColumn(new TextColumn<Spot>() {
 
-            @Override
-            public String getValue(Spot spot) {
-                return spot.getName();
-            }
-        },
-                CONSTANTS.format(General_name));
+                            @Override
+                            public String getValue(Spot spot) {
+                                return spot.getName();
+                            }
+                        },
+                        CONSTANTS.format(General_name));
         table.addColumn(new TextColumn<Spot>() {
 
             @Override
@@ -148,12 +155,12 @@ public class SpotListPanel implements IsElement {
                     return "";
                 }
                 return requiredSkillSet.stream().reduce("", (a, s) -> (a.isEmpty()) ? s.getName() : a + "," + s
-                        .getName(),
-                        (a, s) -> (a.isEmpty()) ? s : a + "," + s);
+                                                                .getName(),
+                                                        (a, s) -> (a.isEmpty()) ? s : a + "," + s);
             }
         }, "Required skill");
         Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER,
-                ButtonSize.SMALL)) {
+                                                                                    ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Spot spot) {
@@ -161,16 +168,12 @@ public class SpotListPanel implements IsElement {
             }
         };
         deleteColumn.setFieldUpdater((index, spot, value) -> {
-            SpotRestServiceBuilder.removeSpot(tenantId, spot.getId(), new FailureShownRestCallback<Boolean>() {
-
-                @Override
-                public void onSuccess(Boolean removed) {
-                    refreshTable();
-                }
-            });
+            SpotRestServiceBuilder.removeSpot(tenantStore.getCurrentTenantId(), spot.getId(), FailureShownRestCallback.onSuccess(i -> {
+                refreshTable();
+            }));
         });
         Column<Spot, String> editColumn = new Column<Spot, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT,
-                ButtonSize.SMALL)) {
+                                                                                  ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Spot spot) {
@@ -179,13 +182,9 @@ public class SpotListPanel implements IsElement {
         };
         editColumn.setFieldUpdater((index, spot, value) -> {
             final SpotListPanel panel = this;
-            SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
-
-                @Override
-                public void onSuccess(List<Skill> skillList) {
-                    SpotEditForm.create(beanManager, panel, spot, skillList);
-                }
-            });
+            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
+                SpotEditForm.create(beanManager, panel, spot, skillList);
+            }));
         });
         table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
         table.addColumn(editColumn);
@@ -197,39 +196,34 @@ public class SpotListPanel implements IsElement {
         dataProvider.addDataDisplay(table);
     }
 
-    private void refreshTable() {
-        if (tenantId == null) {
-            return;
+    private Promise<Void> refreshTable() {
+        if (tenantStore.getCurrentTenantId() == null) {
+            return PromiseUtils.resolve();
         }
-        SpotRestServiceBuilder.getSpotList(tenantId, new FailureShownRestCallback<List<Spot>>() {
 
-            @Override
-            public void onSuccess(List<Spot> spotList) {
+        return new Promise<>((resolve, reject) -> {
+            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spotList -> {
                 dataProvider.setList(spotList);
                 dataProvider.flush();
                 pagination.rebuild(pager);
-            }
+                resolve.onInvoke(PromiseUtils.resolve());
+            }));
         });
     }
 
     @EventHandler("addButton")
     public void add(ClickEvent e) {
-        if (tenantId == null) {
-            throw new IllegalStateException("The tenantId (" + tenantId + ") can not be null at this time.");
+        if (tenantStore.getCurrentTenantId() == null) {
+            throw new IllegalStateException("The tenantId (" + tenantStore.getCurrentTenantId() + ") can not be null at this time.");
         }
         String spotName = spotNameTextBox.getValue();
         spotNameTextBox.setValue("");
         spotNameTextBox.setFocus(true);
         Set<Skill> skillSet = new HashSet<>(requiredSkillsTagsInput.getItems());
 
-        SpotRestServiceBuilder.addSpot(tenantId, new Spot(tenantId, spotName, skillSet),
-                new FailureShownRestCallback<Spot>() {
-
-                    @Override
-                    public void onSuccess(Spot spot) {
-                        refreshTable();
-                    }
-                });
+        SpotRestServiceBuilder.addSpot(tenantStore.getCurrentTenantId(), new Spot(tenantStore.getCurrentTenantId(), spotName, skillSet),
+                                       FailureShownRestCallback.onSuccess(i -> {
+                                           refreshTable();
+                                       }));
     }
-
 }
