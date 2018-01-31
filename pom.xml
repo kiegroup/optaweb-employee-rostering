@@ -66,6 +66,7 @@
     <version.org.wildfly.wildfly-dist>10.1.0.Final</version.org.wildfly.wildfly-dist>
     <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
     <version.net.ltgt.gwt.maven.gwt-maven-plugin>1.0-rc-7</version.net.ltgt.gwt.maven.gwt-maven-plugin>
+    <version.io.swagger>1.5.15</version.io.swagger>
   </properties>
 
   <modules>
@@ -191,7 +192,18 @@
         <groupId>org.gwtbootstrap3</groupId>
         <artifactId>gwtbootstrap3-extras</artifactId>
         <version>${version.org.gwtbootstrap3}</version>
-      </dependency>   
+      </dependency>
+      <!-- Swagger -->
+      <dependency>
+      	<groupId>io.swagger</groupId>
+      	<artifactId>swagger-jaxrs</artifactId>
+      	<version>${version.io.swagger}</version>
+      </dependency>
+      <dependency>
+      	<groupId>io.swagger</groupId>
+      	<artifactId>swagger-annotations</artifactId>
+      	<version>${version.io.swagger}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 

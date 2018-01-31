@@ -13,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
+@Api(tags = { "Tenant" })
 @Path("/tenant")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
