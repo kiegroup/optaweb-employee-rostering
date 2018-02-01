@@ -46,7 +46,6 @@
     <dependency>
       <groupId>io.swagger</groupId>
       <artifactId>swagger-jaxrs</artifactId>
-      <scope>compile</scope>
     </dependency>
     
     <!-- Logging -->

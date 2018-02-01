@@ -22,12 +22,14 @@ import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
-@Api(tags = { "Shift" })
+@Api(tags = {"Shift"})
 @Path("/tenant/{tenantId}/shift")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @GenRestBuilder
 public interface ShiftRestService {
+
+    // TODO clean up the order, method names and annotations in this file to be consistent with SpotRestService and EmployeeRestService
 
     /**
      * @param id never null
