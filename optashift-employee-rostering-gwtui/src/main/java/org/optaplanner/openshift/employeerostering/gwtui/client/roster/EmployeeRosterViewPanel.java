@@ -103,7 +103,7 @@ public class EmployeeRosterViewPanel extends AbstractRosterViewPanel implements 
     }
 
     @Override
-    public Promise<Void> beforeOpen() {
+    public Promise<Void> onOpen() {
         refresh();
         return PromiseUtils.resolve(); //FIXME: Make it resolve only after the page is assembled
     }

@@ -16,16 +16,22 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.header;
 
+import java.util.Arrays;
+
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
+import jsinterop.base.Js;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
@@ -66,31 +72,51 @@ public class MenuView implements IsElement {
 
     @EventHandler("skills")
     public void skills(final ClickEvent e) {
-        pageChangeEvent.fire(new PageChange(SKILLS));
+        goTo(SKILLS, e);
     }
 
     @EventHandler("spots")
     public void spots(final ClickEvent e) {
-        pageChangeEvent.fire(new PageChange(SPOTS));
+        goTo(SPOTS, e);
     }
 
     @EventHandler("employees")
     public void employees(final ClickEvent e) {
-        pageChangeEvent.fire(new PageChange(EMPLOYEES));
+        goTo(EMPLOYEES, e);
     }
 
     @EventHandler("rotations")
     public void rotations(final ClickEvent e) {
-        pageChangeEvent.fire(new PageChange(ROTATIONS));
+        goTo(ROTATIONS, e);
     }
 
     @EventHandler("spot-roster")
     public void spotRoster(final ClickEvent e) {
-        pageChangeEvent.fire(new PageChange(SPOT_ROSTER));
+        goTo(SPOT_ROSTER, e);
     }
 
     @EventHandler("employee-roster")
     public void employeeRoster(final ClickEvent e) {
-        pageChangeEvent.fire(new PageChange(EMPLOYEE_ROSTER));
+        goTo(EMPLOYEE_ROSTER, e);
+    }
+
+    private void goTo(final Pages.Id pageId,
+                      final ClickEvent event) {
+
+        pageChangeEvent.fire(new PageChange(pageId));
+        handleActiveLink(Js.cast(event.getNativeEvent()));
+    }
+
+    private void handleActiveLink(final MouseEvent event) {
+        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster);
+        setActive(Js.cast(event.target));
+    }
+
+    private void setActive(final HTMLElement element) {
+        ((HTMLElement) element.parentNode).classList.add("active");
+    }
+
+    private void setInactive(final HTMLElement... elements) {
+        Arrays.asList(elements).forEach(e -> ((HTMLElement) e.parentNode).classList.remove("active"));
     }
 }

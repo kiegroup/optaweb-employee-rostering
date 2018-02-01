@@ -29,7 +29,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtil
 public class NavigationController {
 
     @Inject
-    private AppView view;
+    private AppView appView;
 
     @Inject
     private Pages pages;
@@ -38,7 +38,7 @@ public class NavigationController {
         final Page page = pages.get(pageChange.getPageId());
 
         page.beforeOpen().then(i -> {
-            view.goTo(page);
+            appView.goTo(page);
             return page.onOpen();
         }).then(i -> {
             pageChange.afterPageOpen.run();
@@ -47,7 +47,7 @@ public class NavigationController {
     }
 
     public HTMLElement getAppElement() {
-        return view.getElement();
+        return appView.getElement();
     }
 
     public static class PageChange {

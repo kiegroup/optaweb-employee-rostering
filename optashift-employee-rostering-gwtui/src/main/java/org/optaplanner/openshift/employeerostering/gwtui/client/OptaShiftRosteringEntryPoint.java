@@ -35,10 +35,11 @@ public class OptaShiftRosteringEntryPoint {
 
     @PostConstruct
     public void onModuleLoad() {
-        tenantStore.init(); //FIXME: Shouldn't this call be made by the Container since it's annotated with @PostConstruct?
+        tenantStore.init(); //FIXME: Shouldn't this call be made by the Container once it's annotated with @PostConstruct?
     }
 
     public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
+        //FIXME: We should probably have a better 'home page' then the skills table, but since it's the lightest one to load, that was the chosen one
         pageChangeEvent.fire(new PageChange(SKILLS, () -> {
             DomGlobal.document.getElementById("initial-loading-message").remove();
             DomGlobal.document.body.appendChild(navigationController.getAppElement());

@@ -23,6 +23,7 @@ import jsinterop.base.Js;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.footer.FooterView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.header.HeaderView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 
@@ -36,6 +37,10 @@ public class AppView implements IsElement {
     @Inject
     @DataField("content")
     private HTMLDivElement content;
+
+    @Inject
+    @DataField("footer")
+    private FooterView footer;
 
     public void goTo(final Page page) {
         content.innerHTML = "";

@@ -55,7 +55,7 @@ public class SpotRosterViewPanel extends AbstractRosterViewPanel implements Page
     }
 
     @Override
-    public Promise<Void> beforeOpen() {
+    public Promise<Void> onOpen() {
         refresh();
         return PromiseUtils.resolve(); //FIXME: Make it resolve only after the page is assembled
     }

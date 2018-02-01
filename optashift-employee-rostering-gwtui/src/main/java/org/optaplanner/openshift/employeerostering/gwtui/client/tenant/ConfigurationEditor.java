@@ -43,7 +43,7 @@ public class ConfigurationEditor implements IsElement,
     }
 
     @Override
-    public Promise<Void> beforeOpen() {
+    public Promise<Void> onOpen() {
         //FIXME: For some reason it's not enough to simply call `refresh()`, but it works fine when firing a TenantChange event.
         tenantStore.setCurrentTenant(tenantStore.getCurrentTenant());
         return PromiseUtils.resolve(); //FIXME: Make it resolve only after the page is assembled
