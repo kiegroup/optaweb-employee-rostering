@@ -9,8 +9,19 @@
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>SwaggerBootstrap</servlet-name>
+    <servlet-class>org.optaplanner.openshift.employeerostering.web.SwaggerBootstrapServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  
   <context-param>
     <param-name>resteasy.provider</param-name>
-    <param-value>package org.optaplanner.openshift.employeerostering.server.common.exception.OptashiftExceptionMapper</param-value>
+    <param-value>
+      io.swagger.jaxrs.listing.ApiListingResource,
+      io.swagger.jaxrs.listing.SwaggerSerializers,
+      package org.optaplanner.openshift.employeerostering.server.common.exception.OptashiftExceptionMapper
+    </param-value>
+    
   </context-param>
 </web-app>

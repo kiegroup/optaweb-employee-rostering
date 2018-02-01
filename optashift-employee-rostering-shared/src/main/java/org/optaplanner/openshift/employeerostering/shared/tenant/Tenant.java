@@ -33,6 +33,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import io.swagger.annotations.ApiModel;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 @Entity

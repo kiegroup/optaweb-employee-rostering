@@ -13,13 +13,6 @@
   <packaging>war</packaging>
 
   <name>Employee Rostering as a Service Webapp</name>
-  
-  <properties>
-      <arquillian.version.resteasy>3.0.19.Final</arquillian.version.resteasy>
-      <arquillian.version.resteasy.jackson2-provider>3.0.16.Final</arquillian.version.resteasy.jackson2-provider>
-      <arquillian.version.jackson>2.7.4</arquillian.version.jackson>
-      <arquillian.version.jackson-jaxrs>2.8.8</arquillian.version.jackson-jaxrs>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -28,127 +21,98 @@
     </dependency>
     <dependency>
       <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>optashift-employee-rostering-gwtui</artifactId>
-      <type>war</type>
-      <scope>runtime</scope>
+      <artifactId>optashift-employee-rostering-server</artifactId>
     </dependency>
     <dependency>
       <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>optashift-employee-rostering-server</artifactId>
+      <artifactId>optashift-employee-rostering-gwtui</artifactId>
+      <type>war</type>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <scope>provided</scope>
     </dependency>
+    
+    <!-- Swagger -->
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-jaxrs</artifactId>
+    </dependency>
+    
     <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    
-     <!-- Testing -->
+
+    <!-- Testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.jboss.arquillian.junit</groupId>
       <artifactId>arquillian-junit-container</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.wildfly.arquillian</groupId>
-      <artifactId>wildfly-arquillian-container-managed</artifactId>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-depchain</artifactId>
       <type>pom</type>
       <scope>test</scope>
     </dependency>
-
-
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
+      <groupId>org.wildfly.arquillian</groupId>
+      <artifactId>wildfly-arquillian-container-managed</artifactId>
+      <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <!-- TODO Workaround to fix wildfly-arquillian-container-managed https://issues.jboss.org/browse/WFLY-9747 -->
+      <groupId>org.wildfly.security</groupId>
+      <artifactId>wildfly-elytron</artifactId>
+      <version>1.1.0.Final</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <!-- TODO Workaround to fix wildfly-arquillian-container-managed -->
+      <groupId>dom4j</groupId>
+      <artifactId>dom4j</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-client</artifactId>
-      <version>${arquillian.version.resteasy}</version>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
       <artifactId>resteasy-jaxrs</artifactId>
-      <version>${arquillian.version.resteasy}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+        <exclusion>
+          <!-- Collides with 'com.google.code.findbugs:annotations' brought in by
+               optaplanner-core via 'org.reflections:reflections'. -->
+          <groupId>net.jcip</groupId>
+          <artifactId>jcip-annotations</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <!-- TODO Bridge because resteasy-jaxrs needs commons-logging -->
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jaxb-provider</artifactId>
-      <version>${arquillian.version.resteasy}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.resteasy</groupId>
-      <artifactId>resteasy-jackson2-provider</artifactId>
-      <version>${arquillian.version.resteasy.jackson2-provider}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${arquillian.version.jackson}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${arquillian.version.jackson}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.jaxrs</groupId>
-      <artifactId>jackson-jaxrs-base</artifactId>
-      <version>${arquillian.version.jackson-jaxrs}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.fasterxml.jackson.module</groupId>
-      <artifactId>jackson-module-jaxb-annotations</artifactId>
-      <version>${arquillian.version.jackson}</version>
+      <artifactId>resteasy-jackson-provider</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
