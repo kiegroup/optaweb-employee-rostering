@@ -1,11 +1,14 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.optaplanner.core.api.score.constraint.ConstraintMatch;
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -16,18 +19,18 @@ public class SpotData implements HasTimeslot<SpotId> {
 
     private Shift shift;
     private SpotId spotId;
-    private Set<String> rulesMatched;
+    private Indictment indictment;
 
     public SpotData(Shift shift) {
         this.shift = shift;
         this.spotId = new SpotId(shift.getSpot());
-        this.rulesMatched = new HashSet<>();
+        this.indictment = null;
     }
 
-    public SpotData(Shift shift, Set<String> rulesMatched) {
+    public SpotData(Shift shift, Indictment indictment) {
         this.shift = shift;
         this.spotId = new SpotId(shift.getSpot());
-        this.rulesMatched = rulesMatched;
+        this.indictment = indictment;
     }
 
     public Spot getSpot() {
@@ -46,8 +49,12 @@ public class SpotData implements HasTimeslot<SpotId> {
         return shift;
     }
 
-    public Set<String> getRulesMatched() {
-        return rulesMatched;
+    public Indictment getIndictment() {
+        return indictment;
+    }
+
+    public Set<ConstraintMatch> getRulesMatched() {
+        return (null != indictment) ? indictment.getConstraintMatchSet() : Collections.emptySet();
     }
 
     @Override

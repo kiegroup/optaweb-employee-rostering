@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 
 import com.github.nmorel.gwtjackson.client.AbstractConfiguration;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.constraint.ConstraintMatch;
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.HardSoftScoreJsonDeserializer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.HardSoftScoreJsonSerializer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.LocalDateJsonDeserializer;
@@ -24,6 +26,8 @@ public class OptaShiftRosteringGwtJacksonConfiguration extends AbstractConfigura
                 LocalDateTimeJsonDeserializer.class);
         type(HardSoftScore.class).serializer(HardSoftScoreJsonSerializer.class).deserializer(
                 HardSoftScoreJsonDeserializer.class);
+        addMixInAnnotations(Indictment.class, IndictmentMixin.class);
+        addMixInAnnotations(ConstraintMatch.class, ConstraintMatchMixin.class);
         key(Shift.class).serializer(ShiftKeySerializer.class).deserializer(ShiftKeyDeserializer.class);
     }
 

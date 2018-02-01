@@ -18,10 +18,8 @@ package org.optaplanner.openshift.employeerostering.server.solver;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -29,6 +27,7 @@ import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
@@ -116,11 +115,10 @@ public class WannabeSolverManager {
             ScoreDirector<Roster> scoreDirector = tenantIdToSolverMap.get(tenantId).getScoreDirectorFactory()
                     .buildScoreDirector();
             scoreDirector.setWorkingSolution(out);
-            Map<Shift, Set<String>> indictmentMap = new HashMap<>();
+            Map<Shift, Indictment> indictmentMap = new HashMap<>();
             scoreDirector.getIndictmentMap().forEach((k, v) -> {
                 if (k instanceof Shift) {
-                indictmentMap.put((Shift) k, v.getConstraintMatchSet().stream()
-             .map((c) -> c.getConstraintName()).collect(Collectors.toSet()));
+                    indictmentMap.put((Shift) k, v);
                 }
              });
             out.setIndictmentMap(indictmentMap);

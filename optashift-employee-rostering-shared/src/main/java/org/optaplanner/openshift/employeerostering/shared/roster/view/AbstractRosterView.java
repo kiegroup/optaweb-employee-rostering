@@ -23,6 +23,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
 
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -46,7 +47,7 @@ public class AbstractRosterView implements Serializable {
 
     private HardSoftScore score = null;
 
-    private Map<Shift, Set<String>> indictmentMap = new HashMap<>();
+    private Map<Shift, Indictment> indictmentMap = new HashMap<>();
 
     @Override
     public String toString() {
@@ -123,11 +124,11 @@ public class AbstractRosterView implements Serializable {
 
     @JsonSerialize(keyUsing = ShiftKeyFieldSerializer.class)
     @JsonDeserialize(keyUsing = ShiftKeyFieldDeserializer.class)
-    public Map<Shift, Set<String>> getIndictmentMap() {
+    public Map<Shift, Indictment> getIndictmentMap() {
         return indictmentMap;
     }
 
-    public void setIndictmentMap(Map<Shift, Set<String>> indictmentMap) {
+    public void setIndictmentMap(Map<Shift, Indictment> indictmentMap) {
         this.indictmentMap = indictmentMap;
     }
 

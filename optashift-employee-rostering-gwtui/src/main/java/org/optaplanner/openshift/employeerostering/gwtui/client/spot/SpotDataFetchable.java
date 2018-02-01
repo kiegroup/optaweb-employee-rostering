@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Provider;
 
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Calendar;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
@@ -87,7 +88,7 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                                     Shift shift = new Shift(sv, spot, timeslot);
                                                     shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
                                                     out.add(new SpotData(shift, spotRosterView.getIndictmentMap()
-                                                            .getOrDefault(shift, new HashSet<>())));
+                                                            .get(shift)));
                                                 });
                                     }
                                 }
@@ -135,7 +136,7 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                                                 shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
                                                                 SpotData newShift = new SpotData(shift, spotRosterView
                                                                         .getIndictmentMap()
-                                                                        .getOrDefault(shift, new HashSet<>()));
+                                                                        .get(shift));
                                                                 calendar.updateShift(newShift);
                                                             });
                                                 }
