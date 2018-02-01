@@ -44,6 +44,6 @@ public class AppView implements IsElement {
 
     public void goTo(final Page page) {
         content.innerHTML = "";
-        content.appendChild(Js.cast(page.getElement())); //FIXME: Remove Js casting after Page implements Elemental2's IsElement
+        content.appendChild(page.getElement());
     }
 }

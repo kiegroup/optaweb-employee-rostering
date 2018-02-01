@@ -20,7 +20,6 @@ import elemental2.promise.Promise;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 
-//FIXME: Change to Elemental2 IsElement
 public interface Page extends IsElement {
 
     default Promise<Void> beforeOpen() {
