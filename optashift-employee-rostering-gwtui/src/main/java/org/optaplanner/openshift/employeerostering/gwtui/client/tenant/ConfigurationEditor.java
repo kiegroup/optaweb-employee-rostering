@@ -36,7 +36,7 @@ public class ConfigurationEditor implements IsElement,
     }
 
     @PostConstruct
-    public void initWidget() {
+    protected void initWidget() {
         templateEditor.setConfigurationEditor(this);
         tenantConfigurationEditor.setConfigurationEditor(this);
         content.removeChild(content.lastChild);

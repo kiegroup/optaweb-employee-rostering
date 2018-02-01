@@ -69,27 +69,28 @@ public class Pages {
     @Inject
     private ManagedInstance<EmployeeRosterViewPanel> employeeRosterPage;
 
-    private final Map<Id, LazyInit<? extends Page>> pagesBySupplier = new HashMap<>();
+    private final Map<Id, LazyInit<? extends Page>> mapping = new HashMap<>();
 
     @PostConstruct
     public void init() {
-        pagesBySupplier.put(SKILLS, lazyInit(skillsPage));
-        pagesBySupplier.put(SPOTS, lazyInit(spotsPage));
-        pagesBySupplier.put(EMPLOYEES, lazyInit(employeesPage));
-        pagesBySupplier.put(ROTATIONS, lazyInit(rotationsPage));
-        pagesBySupplier.put(SPOT_ROSTER, lazyInit(spotRosterPage));
-        pagesBySupplier.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
+        mapping.put(SKILLS, lazyInit(skillsPage));
+        mapping.put(SPOTS, lazyInit(spotsPage));
+        mapping.put(EMPLOYEES, lazyInit(employeesPage));
+        mapping.put(ROTATIONS, lazyInit(rotationsPage));
+        mapping.put(SPOT_ROSTER, lazyInit(spotRosterPage));
+        mapping.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
     }
 
     public Page get(final Id id) {
-        return Optional.ofNullable(pagesBySupplier.get(id)).map(s -> s.get()).orElseThrow(() -> new RuntimeException("Unmapped page " + id));
+        //FIXME: Improve error handling?
+        return Optional.ofNullable(mapping.get(id)).map(s -> s.get()).orElseThrow(() -> new RuntimeException("Unmapped page " + id));
     }
 
     private <T> LazyInit<T> lazyInit(final ManagedInstance<T> managedInstance) {
         return new LazyInit<>(managedInstance);
     }
 
-    public static class LazyInit<T> {
+    private static class LazyInit<T> {
 
         private final ManagedInstance<T> managedInstance;
 
