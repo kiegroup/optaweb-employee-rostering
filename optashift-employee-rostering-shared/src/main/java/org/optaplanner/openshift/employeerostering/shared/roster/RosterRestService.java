@@ -48,7 +48,7 @@ public interface RosterRestService {
     //TODO: find out if there a way to pass lists in GET requests
     @ApiOperation("Get a spot roster view between 2 dates for a subset of the spots")
     @POST
-    @Path("/spotRosterView/for") // TODO rename to forSpots and send only the spot id's
+    @Path("/spotRosterView/for") // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
     SpotRosterView getSpotRosterViewFor(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
             @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
             @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString,
@@ -72,7 +72,7 @@ public interface RosterRestService {
 
     @ApiOperation("Get an employee roster view between 2 dates for a subset of the employees")
     @POST
-    @Path("/employeeRosterView/for") // TODO rename to forEmployees and send only the employee id's
+    @Path("/employeeRosterView/for") // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
     EmployeeRosterView getEmployeeRosterViewFor(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
             @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
             @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString,

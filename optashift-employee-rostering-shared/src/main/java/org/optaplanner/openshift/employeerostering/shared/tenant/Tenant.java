@@ -36,7 +36,6 @@ import javax.validation.constraints.Size;
 import io.swagger.annotations.ApiModel;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
-@ApiModel("Tenant foo")
 @Entity
 @NamedQueries({
                @NamedQuery(name = "Tenant.findAll",
