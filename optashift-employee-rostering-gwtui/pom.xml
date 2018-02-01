@@ -14,10 +14,6 @@
 
   <name>Employee Rostering as a Service GWT UI</name>
 
-  <properties>
-    <version.org.webjars.bower.org.patternfly>3.18.1</version.org.webjars.bower.org.patternfly>
-  </properties>
-
   <dependencies>
     <!-- gwt-dev must be first so the correct JDT ECJ version is on GWT's compiler's classpath -->
     <dependency>

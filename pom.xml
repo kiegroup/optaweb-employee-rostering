@@ -66,6 +66,7 @@
     <version.org.wildfly.wildfly-dist>10.1.0.Final</version.org.wildfly.wildfly-dist>
     <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
     <version.net.ltgt.gwt.maven.gwt-maven-plugin>1.0-rc-7</version.net.ltgt.gwt.maven.gwt-maven-plugin>
+    <version.org.webjars.bower.org.patternfly>3.18.1</version.org.webjars.bower.org.patternfly>
   </properties>
 
   <modules>
