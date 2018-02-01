@@ -4,9 +4,10 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import elemental2.dom.HTMLDivElement;
 import elemental2.promise.Promise;
 import org.jboss.errai.common.client.dom.Div;
-import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
@@ -26,7 +27,7 @@ public class ConfigurationEditor implements IsElement,
 
     @Inject
     @DataField
-    private Div content;
+    private HTMLDivElement content;
 
     @Inject
     private TenantStore tenantStore;
@@ -38,7 +39,7 @@ public class ConfigurationEditor implements IsElement,
     public void initWidget() {
         templateEditor.setConfigurationEditor(this);
         tenantConfigurationEditor.setConfigurationEditor(this);
-        content.removeChild(content.getLastChild());
+        content.removeChild(content.lastChild);
         content.appendChild(templateEditor.getElement());
     }
 
@@ -60,11 +61,11 @@ public class ConfigurationEditor implements IsElement,
     public void switchView(Views view) {
         switch (view) {
             case TEMPLATE_EDITOR:
-                content.removeChild(content.getLastChild());
+                content.removeChild(content.lastChild);
                 content.appendChild(templateEditor.getElement());
                 break;
             case TENANT_CONFIGURATION_EDITOR:
-                content.removeChild(content.getLastChild());
+                content.removeChild(content.lastChild);
                 content.appendChild(tenantConfigurationEditor.getElement());
                 break;
             default:
