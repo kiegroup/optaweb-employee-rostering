@@ -9,32 +9,67 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRow
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawableProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
+/**
+ * Configuration for the {@link TwoDayView}. Contains variables that can be modified
+ * by external classes.
+ *
+ * @param <G> Type of the group.
+ * @param <I> Type of the shift.
+ * @param <D> {@link TimeRowDrawable} used for drawing shifts.
+ */
 public class TwoDayViewConfig<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>> {
 
     private TwoDayViewPresenter<G, I, D> presenter;
 
+    /**
+     * Hard start date bound; no dates before this bound shall be shown.
+     */
     private LocalDateTime hardStartDateBound;
+
+    /**
+     * Hard end date bound; no dates after this bound shall be shown.
+     */
     private LocalDateTime hardEndDateBound;
 
+    /**
+     * Provider of {@link TimeRowDrawable}.
+     */
     private TimeRowDrawableProvider<G, I, D> drawableProvider;
+
+    /**
+     * How to format the date.
+     */
     private DateDisplay dateFormat;
+
+    /**
+     * Translator of text.
+     */
     private TranslationService translator;
 
-    private int daysShown;
-    private int editMinuteGradality;
-    private int displayMinuteGradality;
+    /**
+     * How many days to show in the view.
+     */
+    private int daysShown = 5;
+
+    /**
+     * The smallest length a shift can be. 
+     */
+    private int editMinuteGradality = 30;
+
+    /**
+     * The minutes between successive stripe bars.
+     */
+    private int displayMinuteGradality = 60 * 3;
 
     public TwoDayViewConfig(TwoDayViewPresenter<G, I, D> presenter, TranslationService translator,
-            DateDisplay dateFormat, TimeRowDrawableProvider<G, I, D> drawableProvider) {
+                            DateDisplay dateFormat, TimeRowDrawableProvider<G, I, D> drawableProvider) {
         this.presenter = presenter;
         this.translator = translator;
         this.dateFormat = dateFormat;
         this.drawableProvider = drawableProvider;
-        daysShown = 5;
-        editMinuteGradality = 30;
-        displayMinuteGradality = 60 * 3;
     }
 
+    // TODO: Generate javadoc for getters/setters
     public LocalDateTime getHardStartDateBound() {
         return hardStartDateBound;
     }
@@ -82,7 +117,7 @@ public class TwoDayViewConfig<G extends HasTitle, I extends HasTimeslot<G>, D ex
         this.daysShown = daysShown;
         presenter.setToolBox(null);
         presenter.getCalendar().setViewSize(presenter.getState().getScreenWidth(), presenter.getState()
-                .getScreenHeight());
+                                                                                            .getScreenHeight());
         presenter.draw();
     }
 

@@ -7,26 +7,73 @@ import java.util.HashMap;
 import java.util.Map;
 
 import elemental2.dom.MouseEvent;
+import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawable.PostMouseDownEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.HasTitle;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawable;
-import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.Drawable.PostMouseDownEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
+/**
+ * Handler of {@link TwoDayView} mouse events.
+ *
+ * @param <G> Type of the group.
+ * @param <I> Type of the shift.
+ * @param <D> {@link TimeRowDrawable} used for drawing shifts.
+ */
 public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>> {
 
     private TwoDayViewPresenter<G, I, D> presenter;
 
-    private HashMap<G, Integer> cursorIndexMap = new HashMap<>();
+    /**
+     * The row the mouse is over in the group. Defaults to the number of rows in
+     * the group if the mouse is not over the group.
+     */
+    private Map<G, Integer> cursorIndexMap = new HashMap<>();
+
+    /**
+     * The group the user has clicked on.
+     */
     private G selectedSpot;
+
+    /**
+     * Shortcut for {@link TwoDayViewMouseHandler#cursorIndexMap}.get(selectedSpot).
+     */
     private Long selectedIndex;
-    private G overSpot;
+
+    /**
+     * The {@link TimeRowDrawable} the mouse is over.
+     */
     private D mouseOverDrawable;
 
-    private double mouseX, mouseY;
-    private double localMouseX, localMouseY;
-    private double dragStartX, dragStartY;
+    /**
+     * Global mouse x (x position taking into account horizontal scroll).
+     */
+    private double mouseX;
+
+    /**
+     * Global mouse y (y position taking into account the current page).
+     */
+    private double mouseY;
+
+    /**
+     * Local mouse x (x position on the view).
+     */
+    private double localMouseX;
+
+    /**
+     * Local mouse y (y position on the view).
+     */
+    private double localMouseY;
+
+    /**
+     * Global mouse x of drag start.
+     */
+    private double dragStartX;
+
+    /**
+     * Global mouse y of drag start.
+     */
+    private double dragStartY;
 
     private boolean isDragging, isCreating;
 
@@ -36,66 +83,75 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
         isCreating = false;
         selectedSpot = null;
         selectedIndex = null;
-        overSpot = null;
         mouseOverDrawable = null;
     }
 
+    /**
+     * Returns the {@link LocalDateTime} the mouse is over.
+     * @return The {@link LocalDateTime} the mouse is over.
+     */
     public LocalDateTime getMouseLocalDateTime() {
         try {
-            return presenter.getState().getViewStartDate().plusMinutes(Math.round((localMouseX
-                    - TwoDayViewPresenter.SPOT_NAME_WIDTH) / presenter.getState().getWidthPerMinute()));
+            return presenter.getState().getViewStartDate().plusMinutes(Math.round((localMouseX - TwoDayViewPresenter.SPOT_NAME_WIDTH) / presenter.getState().getWidthPerMinute()));
         } catch (DateTimeException e) {
             return presenter.getState().getBaseDate();
         }
     }
 
+    /**
+     * Handles an mouse down event that wasn't handled by a {@link TimeRowDrawable}.
+     * (Creates a spot)
+     * @param eventX Global mouse x
+     * @param eventY Global mouse y
+     */
     private void handleMouseDown(double eventX, double eventY) {
         double offsetX = presenter.getState().getOffsetX();
         for (G spot : presenter.getState().getGroupAddPlaneMap().keySet()) {
             if (presenter.getState().getGroupContainerMap().get(spot).getGlobalX() < mouseX - offsetX && presenter
-                    .getState().getGroupContainerMap()
-                    .get(spot)
-                    .getGlobalY() < mouseY && mouseY < presenter.getState().getGroupAddPlaneMap().get(spot).getGlobalY()
-                            + presenter.getState()
-                                    .getGroupHeight()) {
-                int index = (int) Math.floor((mouseY - presenter.getState().getGroupContainerMap().get(spot).getGlobalY())
-                        / presenter.getState()
-                                .getGroupHeight());
-                if (null != overSpot) {
-                    cursorIndexMap.put(overSpot, presenter.getState().getGroupEndPosMap().get(overSpot));
+                                                                                                                  .getState().getGroupContainerMap()
+                                                                                                                  .get(spot)
+                                                                                                                  .getGlobalY() < mouseY && mouseY < presenter.getState().getGroupAddPlaneMap().get(spot).getGlobalY() +
+                                                                                                                                                     presenter.getState()
+                                                                                                                                                              .getGroupHeight()) {
+
+                int index = (int) Math.floor((mouseY - presenter.getState().getGroupContainerMap().get(spot).getGlobalY()) / presenter.getState()
+                                                                                                                                      .getGroupHeight());
+                if (null != selectedSpot) {
+                    cursorIndexMap.put(selectedSpot, presenter.getState().getGroupEndPosMap().get(selectedSpot));
                 }
                 selectedSpot = spot;
-                overSpot = spot;
-                cursorIndexMap.put(overSpot, index);
+                cursorIndexMap.put(selectedSpot, index);
                 isCreating = true;
-                selectedIndex = (long) Math.floor((mouseY - presenter.getState().getGroupContainerMap().get(spot)
-                        .getGlobalY())
-                        / presenter.getState().getGroupHeight());
+                selectedIndex = (long) index;
                 break;
             }
         }
     }
 
+    /**
+     * Handles an mouse down event that wasn't handled by a {@link TimeRowDrawable}.
+     * (Creates a spot)
+     * @param eventX Global mouse x
+     * @param eventY Global mouse y
+     */
     private void handleMouseUp(double eventX, double eventY) {
         if (null != selectedSpot) {
             long fromMins = Math.round((dragStartX - TwoDayViewPresenter.SPOT_NAME_WIDTH - presenter.getState()
-                    .getOffsetX())
-                    / (presenter.getState().getWidthPerMinute()
-                            * presenter.getConfig().getEditMinuteGradality())) * presenter.getConfig()
-                                    .getEditMinuteGradality();
+                                                                                                    .getOffsetX()) / (presenter.getState().getWidthPerMinute() * presenter.getConfig().getEditMinuteGradality())) *
+                            presenter.getConfig()
+                                     .getEditMinuteGradality();
             LocalDateTime from = LocalDateTime.ofEpochSecond(60 * fromMins, 0, ZoneOffset.UTC).plusSeconds(
-                    presenter.getState().getViewStartDate().toEpochSecond(ZoneOffset.UTC) - presenter.getState()
-                            .getBaseDate().toEpochSecond(
-                                    ZoneOffset.UTC));
+                                                                                                           presenter.getState().getViewStartDate().toEpochSecond(ZoneOffset.UTC) - presenter.getState()
+                                                                                                                                                                                            .getBaseDate().toEpochSecond(
+                                                                                                                                                                                                                         ZoneOffset.UTC));
             long toMins = Math.max(0, Math.round((mouseX - TwoDayViewPresenter.SPOT_NAME_WIDTH - presenter.getState()
-                    .getOffsetX())
-                    / (presenter.getState().getWidthPerMinute()
-                            * presenter.getConfig().getEditMinuteGradality()))) * presenter.getConfig()
-                                    .getEditMinuteGradality();
+                                                                                                          .getOffsetX()) / (presenter.getState().getWidthPerMinute() * presenter.getConfig().getEditMinuteGradality()))) *
+                          presenter.getConfig()
+                                   .getEditMinuteGradality();
             LocalDateTime to = LocalDateTime.ofEpochSecond(60 * toMins, 0, ZoneOffset.UTC).plusSeconds(
-                    presenter.getState().getViewStartDate().toEpochSecond(ZoneOffset.UTC) - presenter.getState()
-                            .getBaseDate().toEpochSecond(
-                                    ZoneOffset.UTC));
+                                                                                                       presenter.getState().getViewStartDate().toEpochSecond(ZoneOffset.UTC) - presenter.getState()
+                                                                                                                                                                                        .getBaseDate().toEpochSecond(
+                                                                                                                                                                                                                     ZoneOffset.UTC));
             if (to.equals(from)) {
                 return;
             } else if (to.isBefore(from)) {
@@ -107,6 +163,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
         }
     }
 
+    // TODO: Javadoc on getters/setters and methods who names tell it all
     public void onMouseDown(MouseEvent e) {
         localMouseX = presenter.getView().getMouseX(e);
         localMouseY = presenter.getView().getMouseY(e);
@@ -130,7 +187,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
         for (D drawable : CommonUtils.flatten(presenter.getPager().getVisibleItems())) {
             LocalDateTime mouseTime = getMouseLocalDateTime();
             double drawablePos = presenter.getState().getLocationOfGroupSlot(drawable.getGroupId(), drawable
-                    .getIndex());
+                                                                                                            .getIndex());
 
             if (localMouseY >= drawablePos && localMouseY <= drawablePos + presenter.getState().getGroupHeight()) {
                 if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
@@ -149,8 +206,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
         } else {
             selectedSpot = mouseOverDrawable.getGroupId();
             selectedIndex = (long) mouseOverDrawable.getIndex();
-            overSpot = selectedSpot;
-            cursorIndexMap.put(overSpot, selectedIndex.intValue());
+            cursorIndexMap.put(selectedSpot, selectedIndex.intValue());
         }
 
         presenter.draw();
@@ -174,8 +230,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
         }
 
         isDragging = false;
-        cursorIndexMap.put(overSpot, presenter.getState().getGroupEndPosMap().get(overSpot));
-        overSpot = null;
+        cursorIndexMap.put(selectedSpot, presenter.getState().getGroupEndPosMap().get(selectedSpot));
         selectedSpot = null;
         selectedIndex = 0L;
 
@@ -209,7 +264,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
             for (D drawable : CommonUtils.flatten(presenter.getPager().getVisibleItems())) {
                 LocalDateTime mouseTime = getMouseLocalDateTime();
                 double drawablePos = presenter.getState().getLocationOfGroupSlot(drawable.getGroupId(), drawable
-                        .getIndex());
+                                                                                                                .getIndex());
 
                 if (localMouseY >= drawablePos && localMouseY <= drawablePos + presenter.getState().getGroupHeight()) {
                     if (mouseTime.isBefore(drawable.getEndTime()) && mouseTime.isAfter(drawable.getStartTime())) {
@@ -235,8 +290,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
         presenter.draw();
     }
 
-    private void onMouseDrag(double x, double y) {
-    }
+    private void onMouseDrag(double x, double y) {}
 
     public double getGlobalMouseX() {
         return mouseX;
@@ -283,7 +337,7 @@ public class TwoDayViewMouseHandler<G extends HasTitle, I extends HasTimeslot<G>
     }
 
     public G getOverSpot() {
-        return overSpot;
+        return selectedSpot;
     }
 
     public D getMouseOverDrawable() {

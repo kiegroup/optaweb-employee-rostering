@@ -3,20 +3,11 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twoday
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.LocaleInfo;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.HasRows;
-import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.SelectionModel;
-import com.google.gwt.view.client.RangeChangeEvent.Handler;
 import elemental2.dom.MouseEvent;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -29,10 +20,19 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRow
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.TimeRowDrawableProvider;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
+/**
+ * Enables communication between {@link TwoDayView}, {@link TwoDayViewConfig},
+ * {@link TwoDayViewMouseHandler} and {@link TwoDayViewState}. Also passes draw and
+ * resize events to {@link TwoDayView}.
+ *
+ * @param <G> Type of the group.
+ * @param <I> Type of the shift.
+ * @param <D> {@link TimeRowDrawable} used for drawing shifts.
+ */
+@SuppressWarnings("deprecation")
 public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D extends TimeRowDrawable<G, I>>
-        implements
-        CalendarPresenter<G,
-                I> {
+                                implements
+                                CalendarPresenter<G, I> {
 
     public static final int SECONDS_PER_MINUTE = 60;
     public static final int SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60;
@@ -51,13 +51,16 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     private TwoDayViewState<G, I, D> state;
     private TwoDayViewConfig<G, I, D> config;
 
+    /**
+     * Number of rows per page
+     */
+    // TODO: Move into TwoDayViewConfig
     private int totalDisplayedSpotSlots;
 
     private String popupText;
     private Drawable toolBox;
 
-    public TwoDayViewPresenter(Calendar<G, I> calendar, TimeRowDrawableProvider<G, I,
-            D> drawableProvider, DateDisplay dateDisplay, TranslationService translator) {
+    public TwoDayViewPresenter(Calendar<G, I> calendar, TimeRowDrawableProvider<G, I, D> drawableProvider, DateDisplay dateDisplay, TranslationService translator) {
         this.calendar = calendar;
         config = new TwoDayViewConfig<>(this, translator, dateDisplay, drawableProvider);
         state = new TwoDayViewState<>(this);
@@ -239,12 +242,12 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     public void draw() {
         if (null != getHardStartDateBound() && null != getHardEndDateBound()) {
             int daysBetween = (int) ((getHardEndDateBound().toEpochSecond(ZoneOffset.UTC) - getHardStartDateBound()
-                    .toEpochSecond(
-                            ZoneOffset.UTC)) / (60 * 60 * 24));
+                                                                                                                   .toEpochSecond(
+                                                                                                                                  ZoneOffset.UTC)) / (60 * 60 * 24));
             state.setScrollBarLength((daysBetween + 0.0) / getDaysShown());
             state.setScrollBarHandleLength(config.getDaysShown());
             state.setScrollBarPos((state.getViewStartDate().toEpochSecond(ZoneOffset.UTC) -
-                    state.getViewStartDate().toEpochSecond(ZoneOffset.UTC) + 0.0) / (SECONDS_PER_DAY * daysBetween));
+                                   state.getViewStartDate().toEpochSecond(ZoneOffset.UTC) + 0.0) / (SECONDS_PER_DAY * daysBetween));
         } else {
             state.setScrollBarPos(0);
             state.setScrollBarLength(0);
@@ -259,8 +262,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         state.setScreenWidth(screenWidth);
         state.setScreenHeight(screenHeight);
         view.setViewSize(screenWidth, screenHeight);
-        state.setWidthPerMinute((view.getScreenWidth() - SPOT_NAME_WIDTH) / (config.getDaysShown() * (SECONDS_PER_DAY
-                / SECONDS_PER_MINUTE)));
+        state.setWidthPerMinute((view.getScreenWidth() - SPOT_NAME_WIDTH) / (config.getDaysShown() * (SECONDS_PER_DAY / SECONDS_PER_MINUTE)));
         state.setGroupHeight((view.getScreenHeight() - HEADER_HEIGHT) / (totalDisplayedSpotSlots + 1));
     }
 
@@ -332,11 +334,6 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
     @Override
     public void setGroupList(List<G> groupList) {
         state.setGroupList(groupList);
-    }
-
-    @Override
-    public void setScreenHeight(double screenHeight) {
-        state.setScreenHeight(screenHeight);
     }
 
     @Override
