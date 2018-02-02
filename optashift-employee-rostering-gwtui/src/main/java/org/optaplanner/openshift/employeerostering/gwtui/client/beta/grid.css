@@ -1,0 +1,180 @@
+html, body {
+    height: 100%;
+    background-color: #e1e1e1;
+    font-family: Helvetica, serif;
+}
+
+body {
+    margin-top: 50px;
+}
+
+div {
+    box-sizing: border-box;
+}
+
+/* GRID */
+
+.viewport > .grid-container {
+    z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.viewport > .grid-container > .grid {
+    margin: 5px 5px 5px 5px;
+}
+
+.viewport > .grid-container > .grid div {
+    background: transparent;
+    border-style: solid;
+    border-color: #ddd;
+    float: left;
+}
+
+.viewport.vertical > .grid-container > .grid div:last-child {
+    height: 0 !important;
+}
+
+.viewport.vertical > .grid-container > .grid div {
+    border-width: 1px 0 0 0;
+}
+
+.viewport.horizontal > .grid-container > .grid div:last-child {
+    width: 0 !important;
+}
+
+.viewport.horizontal > .grid-container > .grid div {
+    border-width: 0 0 0 1px;
+}
+
+/* VIEWPORT */
+
+.viewport-frame {
+    user-select: none;
+    overflow: hidden;
+    position: relative;
+    padding: 5px;
+    background-color: #eaeaea;
+}
+
+.viewport-frame > .viewport {
+    min-width: 100%;
+    min-height: 100%;
+    text-align: left;
+    white-space: nowrap;
+    position: relative;
+}
+
+.viewport-frame > .viewport > .lane {
+    background-color: #f9f9f9;
+    padding: 5px 0 0 5px;
+    height: 100%;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+
+    /*border-top: 1px solid #aaa;*/
+    /*border-bottom: 1px solid #aaa;*/
+    /*border-left: 5px solid #f9f9f9;*/
+    /*margin-left: -5px !important;*/
+}
+
+.viewport-frame > .viewport > .lane > .sub-lane {
+    z-index: 2;
+    position: relative;
+}
+
+.viewport-frame > .viewport > .lane > .sub-lane:last-child {
+    border: 0 !important;
+}
+
+.viewport-frame > .viewport > .lane > .sub-lane > .blob {
+    position: absolute !important;
+    z-index: 10;
+    font-size: 0.8em;
+    white-space: nowrap;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: rgba(118, 133, 160, 0.2);
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.viewport-frame > .viewport > .lane > .sub-lane > .blob:hover {
+    background-color: rgba(118, 133, 160, 0.4);
+    cursor: -webkit-grab;
+}
+
+.viewport-frame > .viewport > .lane > .sub-lane > .blob:active {
+    background-color: rgba(118, 133, 160, 0.4);
+    cursor: -webkit-grabbing;
+}
+
+/* VIEWPORT - VERTICAL */
+
+.viewport-frame > .viewport.vertical {
+    height: 130%;
+}
+
+.viewport-frame > .viewport.vertical > .lane {
+    display: inline-block;
+    margin: 0 0 0 2px;
+}
+
+.viewport-frame > .viewport.vertical > .lane > .sub-lane {
+    display: inline-block;
+    width: 85px;
+    height: 100%;
+    border-right: 1px dashed #dfdfdf;
+}
+
+.viewport-frame > .viewport.vertical > .lane > .sub-lane > .blob {
+    width: 80px;
+    height: 120px;
+    border-top: 1px solid rgba(118, 133, 160, 0.1);
+    border-right: 1px solid rgba(118, 133, 160, 0.2);
+    border-bottom: 1px solid rgba(118, 133, 160, 0.1);
+    border-left: 1px solid rgba(118, 133, 160, 0.2);
+}
+
+.viewport-frame > .viewport.vertical > .lane > .sub-lane > .blob.double {
+    height: 240px;
+}
+
+.viewport-frame > .viewport.vertical > .lane > .sub-lane > .blob.half {
+    height: 60px;
+}
+
+/* VIEWPORT - HORIZONTAL */
+
+.viewport-frame > .viewport.horizontal {
+    width: 130%;
+}
+
+.viewport-frame > .viewport.horizontal > .lane {
+    margin: 0 0 5px 0;
+}
+
+.viewport-frame > .viewport.horizontal > .lane > .sub-lane {
+    height: 35px;
+    border-bottom: 1px dashed #dfdfdf;
+}
+
+.viewport-frame > .viewport.horizontal > .lane > .sub-lane > .blob {
+    width: 120px;
+    height: 30px;
+    border-left: 1px solid rgba(118, 133, 160, 0.1);
+    border-bottom: 1px solid rgba(118, 133, 160, 0.2);
+    border-right: 1px solid rgba(118, 133, 160, 0.1);
+    border-top: 1px solid rgba(118, 133, 160, 0.2);
+}
+
+.viewport-frame > .viewport.horizontal > .lane > .sub-lane > .blob.double {
+    width: 240px;
+}
+
+.viewport-frame > .viewport.horizontal > .lane > .sub-lane > .blob.half {
+    width: 60px;
+}

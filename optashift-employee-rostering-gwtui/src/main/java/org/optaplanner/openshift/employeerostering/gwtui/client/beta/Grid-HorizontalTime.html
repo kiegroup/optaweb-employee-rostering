@@ -1,0 +1,237 @@
+<!--
+  ~ Copyright 2018 Red Hat, Inc. and/or its affiliates.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!doctype html>
+<html>
+<head>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+    <title>GRID - Horizontal</title>
+
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" href="grid.css">
+
+</head>
+
+<body>
+
+<style>
+
+    .viewport-frame {
+        width: 1444px;
+        height: 964px;
+    }
+
+</style>
+
+<center>
+    <div class="viewport-frame">
+
+        <div class="viewport horizontal">
+            <div class="grid-container"></div>
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob half">Morning</div>
+                    <div class="blob">Evening</div>
+                    <div class="blob double">Night</div>
+                </div>
+                <div class="sub-lane">
+                    <div class="blob">Overlaping</div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+
+            <div class="lane">
+                <div class="sub-lane">
+                    <div class="blob"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</center>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<script>
+
+    HANDLES = {
+        grid: {
+            orientation: "x",
+            pixel: {
+                width: 60,
+                height: 30
+            }
+        },
+
+        scale: function (coordinate) {
+            return Math.floor(coordinate - (coordinate % HANDLES.grid.pixel.width));
+        },
+
+        positionNewBlob: function($blob, point) {
+            $blob.css({"left": HANDLES.scale(point.x) + "px"});
+        }
+    };
+
+    function drawGrid($container, size) {
+
+        var $parent = $('<div />', {
+            class: 'grid',
+            width: $container.width(),
+            height: $container.height()
+        }).appendTo('.grid-container');
+
+        for (var i = 0; i < $container.width(); i += size) {
+            $('<div />', {
+                width: size,
+                height: "100%"
+            }).appendTo($parent);
+        }
+    }
+
+    drawGrid($(".viewport"), HANDLES.grid.pixel.width);
+
+</script>
+
+<script src="grid.js"></script>
+
+</body>
+</html>
