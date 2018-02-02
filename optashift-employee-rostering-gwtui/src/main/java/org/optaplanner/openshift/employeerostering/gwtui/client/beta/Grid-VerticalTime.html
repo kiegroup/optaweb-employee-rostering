@@ -135,32 +135,30 @@
             }
         },
 
-        scale: function (coordinate) {
-            return Math.floor(coordinate - (coordinate % HANDLES.grid.pixel.height));
+        relevantMeasurement: function () {
+            return HANDLES.grid.pixel.height;
         },
 
-        positionNewBlob: function($blob, point) {
-            $blob.css({"top": HANDLES.scale(point.y) + "px"});
+        relevantSize: function ($element) {
+            return $element.height()
+        },
+
+        defaultBlobSize: 5,
+
+        decorateNewBlob: function ($blob, point) {
+            $blob.css({
+                "top": scale(point.y) + "px",
+                "height": HANDLES.grid.pixel.height * HANDLES.defaultBlobSize + "px"
+            });
+        },
+
+        decorateGridDiv: function ($gridDiv) {
+            $gridDiv.css({
+                width: "100%",
+                height: HANDLES.relevantMeasurement()
+            });
         }
     };
-
-    function drawGrid($container, size) {
-
-        var $parent = $('<div />', {
-            class: 'grid',
-            width: $container.width(),
-            height: $container.height()
-        }).appendTo('.grid-container');
-
-        for (var i = 0; i < $container.height(); i += size) {
-            $('<div />', {
-                width: "100%",
-                height: size
-            }).appendTo($parent);
-        }
-    }
-
-    drawGrid($(".viewport"), HANDLES.grid.pixel.height);
 
 </script>
 

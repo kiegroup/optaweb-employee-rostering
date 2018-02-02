@@ -1,3 +1,22 @@
+function scale(coordinate) {
+    return Math.floor(coordinate - (coordinate % HANDLES.relevantMeasurement()));
+}
+
+function drawGrid($viewport) {
+
+    var $parent = $('<div />', {
+        class: 'grid',
+        width: $viewport.width(),
+        height: $viewport.height()
+    }).appendTo('.grid-container');
+
+    for (var i = 0; i < HANDLES.relevantSize($viewport); i += HANDLES.relevantMeasurement()) {
+        var $gridDiv = $('<div />');
+        HANDLES.decorateGridDiv($gridDiv);
+        $gridDiv.appendTo($parent);
+    }
+}
+
 function bindBlobEvents($blob) {
 
     $blob.draggable({
@@ -31,13 +50,8 @@ function bindSubLaneEvents($subLane) {
             e.target.remove();
         }
 
-        e.stopPropagation();
-    });
-
-    $subLane.on("click", function (e) {
-
         // Add sub-lane (SHIFT + CLICK)
-        if (e.shiftKey) {
+        else if (e.shiftKey) {
             addSubLaneTo($(e.target).parent());
         }
 
@@ -59,7 +73,7 @@ function addSubLaneTo($target) {
 function addBlobTo($target, point) {
     var $blob = $('<div />', {class: 'blob'});
     $blob.appendTo($target);
-    HANDLES.positionNewBlob($blob, point);
+    HANDLES.decorateNewBlob($blob, point);
     bindBlobEvents($blob);
 }
 
@@ -70,3 +84,5 @@ $(".sub-lane").each(function () {
 $(".blob").each(function () {
     bindBlobEvents($(this));
 });
+
+drawGrid($('.viewport'));
