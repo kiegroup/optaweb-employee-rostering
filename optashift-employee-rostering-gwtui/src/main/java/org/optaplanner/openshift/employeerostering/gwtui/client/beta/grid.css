@@ -1,6 +1,6 @@
 html, body {
     height: 100%;
-    background-color: #e1e1e1;
+    background-color: #f9f9f9;
     font-family: Helvetica, serif;
 }
 
@@ -70,6 +70,8 @@ div {
     background-color: #f9f9f9;
     padding: 5px 0 0 5px;
     height: 100%;
+
+
     border: 1px solid #aaa;
     border-radius: 3px;
 
@@ -99,7 +101,7 @@ div {
     text-overflow: ellipsis;
     background-color: rgba(118, 133, 160, 0.2);
     padding: 5px;
-    border-radius: 3px;
+    border-radius: 8px;
 }
 
 .viewport-frame > .viewport > .lane > .sub-lane > .blob:hover {

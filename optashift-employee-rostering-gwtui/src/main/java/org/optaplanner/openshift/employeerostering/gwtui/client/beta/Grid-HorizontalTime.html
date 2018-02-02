@@ -202,32 +202,30 @@
             }
         },
 
-        scale: function (coordinate) {
-            return Math.floor(coordinate - (coordinate % HANDLES.grid.pixel.width));
+        relevantMeasurement: function () {
+            return HANDLES.grid.pixel.width;
         },
 
-        positionNewBlob: function($blob, point) {
-            $blob.css({"left": HANDLES.scale(point.x) + "px"});
+        relevantSize: function ($element) {
+            return $element.width()
+        },
+
+        defaultBlobSize: 4,
+
+        decorateNewBlob: function ($blob, point) {
+            $blob.css({
+                "left": scale(point.x) + "px",
+                "width": HANDLES.grid.pixel.width * HANDLES.defaultBlobSize + "px"
+            });
+        },
+
+        decorateGridDiv: function ($gridDiv) {
+            $gridDiv.css({
+                width: HANDLES.relevantMeasurement(),
+                height: "100%"
+            });
         }
     };
-
-    function drawGrid($container, size) {
-
-        var $parent = $('<div />', {
-            class: 'grid',
-            width: $container.width(),
-            height: $container.height()
-        }).appendTo('.grid-container');
-
-        for (var i = 0; i < $container.width(); i += size) {
-            $('<div />', {
-                width: size,
-                height: "100%"
-            }).appendTo($parent);
-        }
-    }
-
-    drawGrid($(".viewport"), HANDLES.grid.pixel.width);
 
 </script>
 
