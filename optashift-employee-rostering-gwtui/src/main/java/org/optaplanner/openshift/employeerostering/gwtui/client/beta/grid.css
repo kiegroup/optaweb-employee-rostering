@@ -200,15 +200,25 @@ div {
 
 .blob > .actions > .close {
     position: absolute;
-    left: 0;
-    top: 18px;
+    left: 29px;
+    bottom: 15px;
+    opacity: 0.6;
+}
+
+.blob > .actions > .close:hover {
+    opacity: 1;
+}
+
+.blob > .actions > .close:before {
+    content: "\00d7"
 }
 
 .blob > .actions > .lock {
     position: absolute;
     left: 0;
-    top: 38px;
+    top: 20px;
     filter: brightness(0);
+    font-size: 0.6em;
 }
 
 .blob > .actions > .lock.locked {
@@ -223,22 +233,21 @@ div {
     content: "🔓"
 }
 
-.blob > .actions > .close:before {
-    content: "\00d7"
+.blob > .actions > .resize {
+    position: absolute;
+    bottom: 0;
+    left: 23px;
+    letter-spacing: -2px;
+    font-size: 0.75em;
+    opacity: 0.6;
 }
 
 .blob > .actions > .resize:hover {
     background-color: transparent;
     cursor: ns-resize;
+    opacity: 1;
 }
 
 .blob > .actions > .resize:before {
-    content: "\22ef"
-}
-
-.blob > .actions > .resize {
-    position: absolute;
-    text-align: center;
-    bottom: -5px;
-    left: 27px;
+    content: "===="
 }
