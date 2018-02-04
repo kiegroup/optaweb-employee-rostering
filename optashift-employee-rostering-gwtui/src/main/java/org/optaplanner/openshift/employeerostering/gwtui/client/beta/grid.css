@@ -12,6 +12,10 @@ div {
     box-sizing: border-box;
 }
 
+.hide {
+    display: none;
+}
+
 /* GRID */
 
 .viewport > .grid-container {
@@ -71,7 +75,6 @@ div {
     padding: 5px 0 0 5px;
     height: 100%;
 
-
     border: 1px solid #aaa;
     border-radius: 3px;
 
@@ -106,12 +109,10 @@ div {
 
 .viewport-frame > .viewport > .lane > .sub-lane > .blob:hover {
     background-color: rgba(118, 133, 160, 0.4);
-    cursor: -webkit-grab;
 }
 
 .viewport-frame > .viewport > .lane > .sub-lane > .blob:active {
     background-color: rgba(118, 133, 160, 0.4);
-    cursor: -webkit-grabbing;
 }
 
 /* VIEWPORT - VERTICAL */
@@ -179,4 +180,65 @@ div {
 
 .viewport-frame > .viewport.horizontal > .lane > .sub-lane > .blob.half {
     width: 60px;
+}
+
+/* CUSTOM BLOB */
+
+.blob > .actions {
+    font-size: 16px;
+}
+
+.blob > .actions > div {
+    padding: 2px 5px 2px 5px;
+    margin: 2px 0 2px 0;
+    border-radius: 2px;
+}
+
+.blob > .actions > div:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.blob > .actions > .close {
+    position: absolute;
+    left: 0;
+    top: 18px;
+}
+
+.blob > .actions > .lock {
+    position: absolute;
+    left: 0;
+    top: 38px;
+    filter: brightness(0);
+}
+
+.blob > .actions > .lock.locked {
+    display: block !important;
+}
+
+.blob > .actions > .lock.locked:before {
+    content: "🔒"
+}
+
+.blob > .actions > .lock.unlocked:before {;
+    content: "🔓"
+}
+
+.blob > .actions > .close:before {
+    content: "\00d7"
+}
+
+.blob > .actions > .resize:hover {
+    background-color: transparent;
+    cursor: ns-resize;
+}
+
+.blob > .actions > .resize:before {
+    content: "\22ef"
+}
+
+.blob > .actions > .resize {
+    position: absolute;
+    text-align: center;
+    bottom: -5px;
+    left: 27px;
 }
