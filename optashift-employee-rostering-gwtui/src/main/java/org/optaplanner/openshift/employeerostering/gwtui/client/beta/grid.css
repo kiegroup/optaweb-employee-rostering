@@ -13,7 +13,7 @@ div {
 }
 
 .hide {
-    display: none;
+    display: none !important;
 }
 
 /* GRID */
@@ -182,58 +182,64 @@ div {
     width: 60px;
 }
 
-/* CUSTOM BLOB */
+/* CUSTOM BLOB - VERTICAL */
 
-.blob > .actions {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions {
     font-size: 16px;
 }
 
-.blob > .actions > div {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > div {
     padding: 2px 5px 2px 5px;
     margin: 2px 0 2px 0;
     border-radius: 2px;
 }
 
-.blob > .actions > div:hover {
+.viewport.vertical > .lane > .sub-lane > .blob:hover > .actions > div,
+.viewport.vertical > .lane > .sub-lane > .blob:active > .actions > div {
+    display: block !important;
+}
+
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > div:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.blob > .actions > .close {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .close {
     position: absolute;
     left: 29px;
     bottom: 15px;
     opacity: 0.6;
 }
 
-.blob > .actions > .close:hover {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .close:hover {
     opacity: 1;
 }
 
-.blob > .actions > .close:before {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .close:before {
     content: "\00d7"
 }
 
-.blob > .actions > .lock {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .lock {
     position: absolute;
-    left: 0;
-    top: 20px;
+    padding: 0 5px 0 3px;
+    left: 3px;
+    top: 23px;
     filter: brightness(0);
     font-size: 0.6em;
 }
 
-.blob > .actions > .lock.locked {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .lock.locked {
     display: block !important;
 }
 
-.blob > .actions > .lock.locked:before {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .lock.locked:before {
     content: "🔒"
 }
 
-.blob > .actions > .lock.unlocked:before {;
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .lock.unlocked:before {;
     content: "🔓"
 }
 
-.blob > .actions > .resize {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .resize {
     position: absolute;
     bottom: 0;
     left: 23px;
@@ -242,12 +248,90 @@ div {
     opacity: 0.6;
 }
 
-.blob > .actions > .resize:hover {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .resize:hover {
     background-color: transparent;
     cursor: ns-resize;
     opacity: 1;
 }
 
-.blob > .actions > .resize:before {
+.viewport.vertical > .lane > .sub-lane > .blob > .actions > .resize:before {
     content: "===="
+}
+
+/* CUSTOM BLOB - HORIZONTAL */
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions {
+    font-size: 16px;
+    display: inline-flex;
+    justify-content: left;
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > div {
+    padding: 2px 5px 2px 5px;
+    margin: 2px 0 2px 0;
+    border-radius: 2px;
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob:hover > .actions > div,
+.viewport.horizontal > .lane > .sub-lane > .blob:active > .actions > div {
+    display: block !important;
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > div:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .close {
+    opacity: 0.6;
+    vertical-align: text-top;
+    padding: 0 4px 0 2px;
+    margin: 0 0 0 5px;
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .close:hover {
+    opacity: 1;
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .close:before {
+    content: "\00d7"
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock {
+    /*float: left;*/
+    filter: brightness(0);
+    vertical-align: text-top;
+    padding: 0 4px 0 2px;
+    margin: 0 0 0 5px;
+    font-size: 0.7em;
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock.locked {
+    display: block !important;
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock.locked:before {
+    content: "🔒"
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock.unlocked:before {;
+    content: "🔓"
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .resize {
+    position: absolute;
+    top: 0;
+    right: 0;
+    letter-spacing: -2px;
+    font-size: 1.2em;
+    opacity: 0.4;
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .resize:hover {
+    background-color: transparent;
+    cursor: ew-resize;
+    opacity: 1;
+}
+
+.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .resize:before {
+    content: "||"
 }
