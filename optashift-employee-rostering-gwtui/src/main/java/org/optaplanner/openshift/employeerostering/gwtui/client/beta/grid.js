@@ -17,17 +17,21 @@ function drawGrid($viewport) {
     }
 }
 
-function toggleDraggablity($blob, $lock) {
+function toggleDraggablity($blob, $resize, $lock) {
     if ($lock.hasClass("locked")) {
         $blob.draggable('disable');
+        $resize.draggable('disable');
     } else {
         $blob.draggable('enable');
+        $resize.draggable('enable');
     }
 }
 
 function bindBlobEvents($blob) {
 
     $blob.draggable({
+        addClasses: false,
+        cancel: '.blob div',
         containment: $blob.parent(), //That's the sub-lane
         axis: HANDLES.grid.orientation,
         grid: [HANDLES.grid.pixel.width, HANDLES.grid.pixel.height],
@@ -39,41 +43,45 @@ function bindBlobEvents($blob) {
     var $actions = $('<div />', {class: 'actions'});
     $actions.appendTo($blob);
 
+    var $resize = $('<div />', {class: 'resize hide'});
+    $resize.appendTo($actions);
+    $resize.draggable({
+        containment: $blob.parent(), //That's the sub-lane
+        axis: HANDLES.grid.orientation,
+        grid: [HANDLES.grid.pixel.width, HANDLES.grid.pixel.height],
+        drag: function (e, ui) {
+            var newHeight = scale(ui.offset.top - parseInt($blob.css('top')) - HANDLES.pixelSize());
+            if (newHeight >= HANDLES.pixelSize()) {
+                $blob.css({"height": newHeight});
+            }
+        }
+    });
+
     var $close = $('<div />', {class: 'close hide'});
     $close.appendTo($actions);
-    $close.on("click", function (e) {
+    $close.click(function (e) {
+        $resize.draggable('disable');
+        $resize.draggable("destroy");
+        $blob.draggable('disable');
+        $blob.draggable("destroy");
         $blob.remove();
-        e.stopPropagation();
     });
 
     var $lock = $('<div />', {class: 'lock unlocked hide'});
     $lock.appendTo($actions);
-    $lock.on("click", function (e) {
+    $lock.click(function (e) {
         $lock.toggleClass('locked');
         $lock.toggleClass('unlocked');
-        e.stopPropagation();
-        toggleDraggablity($blob, $lock);
+        toggleDraggablity($blob, $resize, $lock);
     });
 
-    toggleDraggablity($blob, $lock);
-
-    var $resize = $('<div />', {class: 'resize hide'});
-    $resize.appendTo($actions);
-
-    $blob.on("mouseup", function (e) {
-
-        // Remove blob (MIDDLE-CLICK)
-        if (e.button === 1) {
-            e.target.remove();
-        }
-
-        e.stopPropagation();
-    });
+    toggleDraggablity($blob, $resize, $lock);
 
     $blob.hover(function (e) {
         $blob.children(".actions").children().toggleClass("hide");
     }, function (e) {
         $blob.children(".actions").children().toggleClass("hide");
+
     });
 
     return $blob;
@@ -81,10 +89,14 @@ function bindBlobEvents($blob) {
 
 function bindSubLaneEvents($subLane) {
 
-    $subLane.on("mouseup", function (e) {
+    $subLane.on("click", function (e) {
 
-        // Delete sub-lane (SHIFT + MIDDLE-CLICK)
-        if (e.shiftKey && e.button === 1) {
+        if (e.target !== e.currentTarget) {
+            return false;
+        }
+
+        // Delete sub-lane (SHIFT + MIDDLE-CLICK or SHIFT + ALT + CLICK)
+        if (e.shiftKey && e.button === 1 || e.shiftKey && e.altKey) {
             e.target.remove();
         }
 
@@ -93,12 +105,10 @@ function bindSubLaneEvents($subLane) {
             addSubLaneTo($(e.target).parent());
         }
 
-        // Add blob (CLICK)
-        else {
+        // Add blob (ALT + CLICK)
+        else if (e.altKey) {
             addBlobTo($(e.target), {x: e.offsetX, y: e.offsetY});
         }
-
-        e.stopPropagation();
     });
 }
 
