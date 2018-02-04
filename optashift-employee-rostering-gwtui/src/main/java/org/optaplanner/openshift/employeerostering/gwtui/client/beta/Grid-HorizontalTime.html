@@ -202,11 +202,11 @@
             }
         },
 
-        relevantMeasurement: function () {
+        pixelSize: function () {
             return HANDLES.grid.pixel.width;
         },
 
-        relevantSize: function ($element) {
+        gridSize: function ($element) {
             return $element.width()
         },
 
@@ -221,7 +221,7 @@
 
         decorateGridDiv: function ($gridDiv) {
             $gridDiv.css({
-                width: HANDLES.relevantMeasurement(),
+                width: HANDLES.pixelSize(),
                 height: "100%"
             });
         }

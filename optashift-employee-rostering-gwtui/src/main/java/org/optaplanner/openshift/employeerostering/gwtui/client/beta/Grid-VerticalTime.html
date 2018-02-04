@@ -70,19 +70,20 @@
                     <div class="blob"></div>
                 </div>
                 <div class="sub-lane">
-                    <div class="blob"></div>
+                    <div class="blob">Morning</div>
                 </div>
             </div>
 
             <div class="lane">
                 <div class="sub-lane">
-                    <div class="blob"></div>
+                    <div class="blob">Morning Fun</div>
                 </div>
             </div>
 
             <div class="lane">
                 <div class="sub-lane">
-                    <div class="blob"></div>
+                    <div class="blob">
+                    </div>
                 </div>
             </div>
 
@@ -135,11 +136,11 @@
             }
         },
 
-        relevantMeasurement: function () {
+        pixelSize: function () {
             return HANDLES.grid.pixel.height;
         },
 
-        relevantSize: function ($element) {
+        gridSize: function ($element) {
             return $element.height()
         },
 
@@ -155,7 +156,7 @@
         decorateGridDiv: function ($gridDiv) {
             $gridDiv.css({
                 width: "100%",
-                height: HANDLES.relevantMeasurement()
+                height: HANDLES.pixelSize()
             });
         }
     };

@@ -1,5 +1,5 @@
 function scale(coordinate) {
-    return Math.floor(coordinate - (coordinate % HANDLES.relevantMeasurement()));
+    return Math.floor(coordinate - (coordinate % HANDLES.pixelSize()));
 }
 
 function drawGrid($viewport) {
@@ -10,10 +10,18 @@ function drawGrid($viewport) {
         height: $viewport.height()
     }).appendTo('.grid-container');
 
-    for (var i = 0; i < HANDLES.relevantSize($viewport); i += HANDLES.relevantMeasurement()) {
+    for (var i = 0; i < HANDLES.gridSize($viewport); i += HANDLES.pixelSize()) {
         var $gridDiv = $('<div />');
         HANDLES.decorateGridDiv($gridDiv);
         $gridDiv.appendTo($parent);
+    }
+}
+
+function toggleDraggablity($blob, $lock) {
+    if ($lock.hasClass("locked")) {
+        $blob.draggable('disable');
+    } else {
+        $blob.draggable('enable');
     }
 }
 
@@ -28,6 +36,30 @@ function bindBlobEvents($blob) {
         scrollSensitivity: 50
     });
 
+    var $actions = $('<div />', {class: 'actions'});
+    $actions.appendTo($blob);
+
+    var $close = $('<div />', {class: 'close hide'});
+    $close.appendTo($actions);
+    $close.on("click", function (e) {
+        $blob.remove();
+        e.stopPropagation();
+    });
+
+    var $lock = $('<div />', {class: 'lock unlocked hide'});
+    $lock.appendTo($actions);
+    $lock.on("click", function (e) {
+        $lock.toggleClass('locked');
+        $lock.toggleClass('unlocked');
+        e.stopPropagation();
+        toggleDraggablity($blob, $lock);
+    });
+
+    toggleDraggablity($blob, $lock);
+
+    var $resize = $('<div />', {class: 'resize hide'});
+    $resize.appendTo($actions);
+
     $blob.on("mouseup", function (e) {
 
         // Remove blob (MIDDLE-CLICK)
@@ -36,6 +68,12 @@ function bindBlobEvents($blob) {
         }
 
         e.stopPropagation();
+    });
+
+    $blob.hover(function (e) {
+        $blob.children(".actions").children().toggleClass("hide");
+    }, function (e) {
+        $blob.children(".actions").children().toggleClass("hide");
     });
 
     return $blob;
