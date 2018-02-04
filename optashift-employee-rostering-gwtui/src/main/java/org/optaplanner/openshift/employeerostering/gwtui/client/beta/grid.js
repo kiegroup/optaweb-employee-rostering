@@ -45,27 +45,7 @@ function bindBlobEvents($blob) {
 
     var $resize = $('<div />', {class: 'resize hide'});
     $resize.appendTo($actions);
-    $resize.draggable({
-        containment: $blob.parent(), //That's the sub-lane
-        axis: HANDLES.grid.orientation,
-        grid: [HANDLES.grid.pixel.width, HANDLES.grid.pixel.height],
-        drag: function (e, ui) {
-            var newHeight = scale(ui.offset.top - parseInt($blob.css('top')) - HANDLES.pixelSize());
-            if (newHeight >= HANDLES.pixelSize()) {
-                $blob.css({"height": newHeight});
-            }
-        }
-    });
-
-    var $close = $('<div />', {class: 'close hide'});
-    $close.appendTo($actions);
-    $close.click(function (e) {
-        $resize.draggable('disable');
-        $resize.draggable("destroy");
-        $blob.draggable('disable');
-        $blob.draggable("destroy");
-        $blob.remove();
-    });
+    HANDLES.decorateResizeHandle($blob, $resize);
 
     var $lock = $('<div />', {class: 'lock unlocked hide'});
     $lock.appendTo($actions);
@@ -77,11 +57,14 @@ function bindBlobEvents($blob) {
 
     toggleDraggablity($blob, $resize, $lock);
 
-    $blob.hover(function (e) {
-        $blob.children(".actions").children().toggleClass("hide");
-    }, function (e) {
-        $blob.children(".actions").children().toggleClass("hide");
-
+    var $close = $('<div />', {class: 'close hide'});
+    $close.appendTo($actions);
+    $close.click(function (e) {
+        $resize.draggable('disable');
+        $resize.draggable("destroy");
+        $blob.draggable('disable');
+        $blob.draggable("destroy");
+        $blob.remove();
     });
 
     return $blob;

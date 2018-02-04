@@ -224,6 +224,20 @@
                 width: HANDLES.pixelSize(),
                 height: "100%"
             });
+        },
+
+        decorateResizeHandle: function ($blob, $resize) {
+            $resize.draggable({
+                containment: $blob.parent(), //That's the sub-lane
+                axis: HANDLES.grid.orientation,
+                grid: [HANDLES.grid.pixel.width, HANDLES.grid.pixel.height],
+                drag: function (e, ui) {
+                    var newWidth = scale(ui.offset.left - parseInt($blob.css('left')));
+                    if (newWidth >= HANDLES.pixelSize()) {
+                        $blob.css({"width": newWidth});
+                    }
+                }
+            });
         }
     };
 
