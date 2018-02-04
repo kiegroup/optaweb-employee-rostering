@@ -206,7 +206,7 @@ div {
 .viewport.vertical > .lane > .sub-lane > .blob > .actions > .close {
     position: absolute;
     left: 29px;
-    bottom: 15px;
+    bottom: 5px;
     opacity: 0.6;
 }
 
@@ -237,25 +237,6 @@ div {
 
 .viewport.vertical > .lane > .sub-lane > .blob > .actions > .lock.unlocked:before {;
     content: "🔓"
-}
-
-.viewport.vertical > .lane > .sub-lane > .blob > .actions > .resize {
-    position: absolute;
-    bottom: 0;
-    left: 23px;
-    letter-spacing: -2px;
-    font-size: 0.75em;
-    opacity: 0.6;
-}
-
-.viewport.vertical > .lane > .sub-lane > .blob > .actions > .resize:hover {
-    background-color: transparent;
-    cursor: ns-resize;
-    opacity: 1;
-}
-
-.viewport.vertical > .lane > .sub-lane > .blob > .actions > .resize:before {
-    content: "===="
 }
 
 /* CUSTOM BLOB - HORIZONTAL */
@@ -297,7 +278,6 @@ div {
 }
 
 .viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock {
-    /*float: left;*/
     filter: brightness(0);
     vertical-align: text-top;
     padding: 0 4px 0 2px;
@@ -315,23 +295,4 @@ div {
 
 .viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock.unlocked:before {;
     content: "🔓"
-}
-
-.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .resize {
-    position: absolute;
-    top: 0;
-    right: 0;
-    letter-spacing: -2px;
-    font-size: 1.2em;
-    opacity: 0.4;
-}
-
-.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .resize:hover {
-    background-color: transparent;
-    cursor: ew-resize;
-    opacity: 1;
-}
-
-.viewport.horizontal > .lane > .sub-lane > .blob > .actions > .resize:before {
-    content: "||"
 }

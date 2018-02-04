@@ -136,6 +136,8 @@
             }
         },
 
+        defaultBlobSize: 5,
+
         pixelSize: function () {
             return HANDLES.grid.pixel.height;
         },
@@ -143,8 +145,6 @@
         gridSize: function ($element) {
             return $element.height()
         },
-
-        defaultBlobSize: 5,
 
         decorateNewBlob: function ($blob, point) {
             $blob.css({
@@ -160,16 +160,12 @@
             });
         },
 
-        decorateResizeHandle: function ($blob, $resize) {
-            $resize.draggable({
-                containment: $blob.parent(), //That's the sub-lane
-                axis: HANDLES.grid.orientation,
-                grid: [HANDLES.grid.pixel.width, HANDLES.grid.pixel.height],
-                drag: function (e, ui) {
-                    var newHeight = scale(ui.offset.top - parseInt($blob.css('top')) - HANDLES.pixelSize());
-                    if (newHeight >= HANDLES.pixelSize()) {
-                        $blob.css({"height": newHeight});
-                    }
+        decorateResizeHandle: function ($blob) {
+            $blob.resizable({
+                handles: "s",
+                minHeight: HANDLES.pixelSize(),
+                resize: function (e, ui) {
+                    ui.size.height = scale(ui.size.height + HANDLES.pixelSize());
                 }
             });
         }

@@ -202,6 +202,8 @@
             }
         },
 
+        defaultBlobSize: 4,
+
         pixelSize: function () {
             return HANDLES.grid.pixel.width;
         },
@@ -209,8 +211,6 @@
         gridSize: function ($element) {
             return $element.width()
         },
-
-        defaultBlobSize: 4,
 
         decorateNewBlob: function ($blob, point) {
             $blob.css({
@@ -226,16 +226,12 @@
             });
         },
 
-        decorateResizeHandle: function ($blob, $resize) {
-            $resize.draggable({
-                containment: $blob.parent(), //That's the sub-lane
-                axis: HANDLES.grid.orientation,
-                grid: [HANDLES.grid.pixel.width, HANDLES.grid.pixel.height],
-                drag: function (e, ui) {
-                    var newWidth = scale(ui.offset.left - parseInt($blob.css('left')));
-                    if (newWidth >= HANDLES.pixelSize()) {
-                        $blob.css({"width": newWidth});
-                    }
+        decorateResizeHandle: function ($blob) {
+            $blob.resizable({
+                handles: "e",
+                minHeight: HANDLES.pixelSize(),
+                resize: function (e, ui) {
+                    ui.size.width = scale(ui.size.width + HANDLES.pixelSize());
                 }
             });
         }
