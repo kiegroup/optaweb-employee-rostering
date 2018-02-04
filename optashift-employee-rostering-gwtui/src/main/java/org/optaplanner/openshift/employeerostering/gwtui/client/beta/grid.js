@@ -17,13 +17,13 @@ function drawGrid($viewport) {
     }
 }
 
-function toggleDraggablity($blob, $resize, $lock) {
+function toggleDraggablity($blob, $lock) {
     if ($lock.hasClass("locked")) {
         $blob.draggable('disable');
-        $resize.draggable('disable');
+        $blob.resizable('disable');
     } else {
+        $blob.resizable('enable');
         $blob.draggable('enable');
-        $resize.draggable('enable');
     }
 }
 
@@ -43,25 +43,23 @@ function bindBlobEvents($blob) {
     var $actions = $('<div />', {class: 'actions'});
     $actions.appendTo($blob);
 
-    var $resize = $('<div />', {class: 'resize hide'});
-    $resize.appendTo($actions);
-    HANDLES.decorateResizeHandle($blob, $resize);
+    HANDLES.decorateResizeHandle($blob);
 
     var $lock = $('<div />', {class: 'lock unlocked hide'});
     $lock.appendTo($actions);
     $lock.click(function (e) {
         $lock.toggleClass('locked');
         $lock.toggleClass('unlocked');
-        toggleDraggablity($blob, $resize, $lock);
+        toggleDraggablity($blob, $lock);
     });
 
-    toggleDraggablity($blob, $resize, $lock);
+    toggleDraggablity($blob, $lock);
 
     var $close = $('<div />', {class: 'close hide'});
     $close.appendTo($actions);
     $close.click(function (e) {
-        $resize.draggable('disable');
-        $resize.draggable("destroy");
+        $blob.resizable('disable');
+        $blob.resizable('destroy');
         $blob.draggable('disable');
         $blob.draggable("destroy");
         $blob.remove();
