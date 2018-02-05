@@ -20,7 +20,7 @@
       <!-- Rename PDf file name -->
       <source>${project.build.directory}/generated-docs/pdf/index.pdf</source>
       <outputDirectory>pdf/</outputDirectory>
-      <destName>optaplanner-docs.pdf</destName>
+      <destName>optashift-employee-rostering-docs.pdf</destName>
     </file>
   </files>
   

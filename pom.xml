@@ -86,6 +86,7 @@
     <module>optashift-employee-rostering-webapp</module>
     <module>optashift-employee-rostering-benchmark</module>
     <module>optashift-employee-rostering-docs</module>
+    <module>optashift-employee-rostering-distribution</module>
   </modules>
 
   <dependencyManagement>
@@ -117,6 +118,18 @@
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
         <artifactId>optashift-employee-rostering-server</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner.openshift</groupId>
+        <artifactId>optashift-employee-rostering-webapp</artifactId>
+        <type>war</type>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner.openshift</groupId>
+        <artifactId>optashift-employee-rostering-docs</artifactId>
+        <type>zip</type>
         <version>${project.version}</version>
       </dependency>
 
