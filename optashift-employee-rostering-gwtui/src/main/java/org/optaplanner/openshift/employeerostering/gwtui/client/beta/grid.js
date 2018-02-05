@@ -90,10 +90,10 @@ function bindSubLaneEvents($subLane) {
 
         // Delete sub-lane (SHIFT + MIDDLE-CLICK or SHIFT + ALT + CLICK)
         if (e.shiftKey && e.button === 1 || e.shiftKey && e.altKey) {
-            if (!$target.parent().hasChildren) {
-                $target.parent().remove();
-            } else {
-                $target.remove();
+            var parent = e.target.parentNode;
+            $target.remove();
+            if (parent.childElementCount === 0) {
+                parent.remove();
             }
         }
 
