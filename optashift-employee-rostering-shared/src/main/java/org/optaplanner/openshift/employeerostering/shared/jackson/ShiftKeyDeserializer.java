@@ -13,7 +13,7 @@ public class ShiftKeyDeserializer extends KeyDeserializer {
     @Override
     protected Object doDeserialize(String key, JsonDeserializationContext ctx) {
         Shift out = new Shift();
-        out.setId(Long.parseLong(key));
+        out.setId(Long.parseLong(key.substring(1)));
         return out;
     }
 }

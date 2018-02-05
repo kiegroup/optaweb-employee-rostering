@@ -1,7 +1,6 @@
 package org.optaplanner.openshift.employeerostering.server.common;
 
 import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.optaplanner.core.api.score.constraint.ConstraintMatch;
@@ -9,7 +8,7 @@ import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.shared.jackson.ConstraintMatchMixin;
 import org.optaplanner.openshift.employeerostering.shared.jackson.IndictmentMixin;
 
-@Provider
+//@Provider
 public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper> {
 
     private final ObjectMapper mapper;

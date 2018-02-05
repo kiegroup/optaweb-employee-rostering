@@ -13,7 +13,7 @@ public class ShiftKeyFieldDeserializer extends KeyDeserializer {
     @Override
     public Object deserializeKey(String key, DeserializationContext ctxt) throws IOException, JsonProcessingException {
         Shift out = new Shift();
-        out.setId(Long.parseLong(key));
+        out.setId(Long.parseLong(key.substring(1)));
         return out;
     }
 }

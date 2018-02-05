@@ -14,6 +14,6 @@ public class ShiftKeySerializer extends KeySerializer<Shift> {
 
     @Override
     protected String doSerialize(Shift value, JsonSerializationContext ctx) {
-        return value.getId().toString();
+        return "S" + value.getId().toString();
     }
 }

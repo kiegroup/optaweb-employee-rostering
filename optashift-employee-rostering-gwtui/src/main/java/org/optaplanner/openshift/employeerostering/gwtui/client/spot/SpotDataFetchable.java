@@ -32,6 +32,7 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.roster.IndictmentMap;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 
 public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
@@ -59,56 +60,67 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
         if (!busy) {
             busy = true;
             Integer tenantId = tenantIdProvider.get();
-            if (null == last || null == calendar || !last.getTenantId().equals(tenantId)) {
-                LoadingPopup.setLoading(LOADING_STRING);
-                RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<
-                        SpotRosterView>() {
+            RosterRestServiceBuilder.getIndictmentMap(tenantId, new FailureShownRestCallback<IndictmentMap>() {
 
-                    @Override
-                    public void onSuccess(SpotRosterView spotRosterView) {
-                        calendar.notifyObservers(new RosterUpdateEvent(spotRosterView));
-                        try {
-                            last = spotRosterView;
-                            Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap = spotRosterView
-                                    .getTimeSlotIdToSpotIdToShiftViewListMap();
-                            Map<Long, Employee> employeeMap = spotRosterView.getEmployeeList().stream()
-                                    .collect(Collectors.toMap(Employee::getId, Function.identity()));
+                @Override
+                public void onSuccess(IndictmentMap indictments) {
+                    Map<Shift, Object> indictmentMap = indictments.getIndictmentMap();
+                    indictmentMap.forEach((k, v) -> ErrorPopup.show(k.toString() + ":" + v.toString()));
+                    if (null == last || null == calendar || !last.getTenantId().equals(tenantId)) {
+                        LoadingPopup.setLoading(LOADING_STRING);
+                        RosterRestServiceBuilder.getCurrentSpotRosterView(tenantId, new FailureShownRestCallback<
+                                SpotRosterView>() {
 
-                            List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
-                            List<Spot> spots = spotRosterView.getSpotList();
-                            Collection<SpotData> out = new ArrayList<>();
+                            @Override
+                            public void onSuccess(SpotRosterView spotRosterView) {
+                                calendar.notifyObservers(new RosterUpdateEvent(spotRosterView));
+                                try {
+                                    last = spotRosterView;
+                                    Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap =
+                                            spotRosterView
+                                                    .getTimeSlotIdToSpotIdToShiftViewListMap();
+                                    Map<Long, Employee> employeeMap = spotRosterView.getEmployeeList().stream()
+                                            .collect(Collectors.toMap(Employee::getId, Function.identity()));
 
-                            for (TimeSlot timeslot : timeslots) {
-                                for (Spot spot : spots) {
-                                    if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot.getId(),
-                                            Collections.emptyMap()).get(spot
-                                                    .getId())) {
-                                        timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())
-                                                .stream().forEach((sv) -> {
-                                                    Shift shift = new Shift(sv, spot, timeslot);
-                                                    shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
-                                                    out.add(new SpotData(shift, spotRosterView.getIndictmentMap()
-                                                            .get(shift)));
-                                                });
+                                    List<TimeSlot> timeslots = spotRosterView.getTimeSlotList();
+                                    List<Spot> spots = spotRosterView.getSpotList();
+                                    Collection<SpotData> out = new ArrayList<>();
+
+                                    for (TimeSlot timeslot : timeslots) {
+                                        for (Spot spot : spots) {
+                                            if (null != timeSlotIdToSpotIdToShiftViewListMap.getOrDefault(timeslot
+                                                    .getId(),
+                                                    Collections.emptyMap()).get(spot
+                                                            .getId())) {
+                                                timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot
+                                                        .getId())
+                                                        .stream().forEach((sv) -> {
+                                                            Shift shift = new Shift(sv, spot, timeslot);
+                                                            shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
+                                                            out.add(new SpotData(shift, (Indictment) indictmentMap
+                                                                    .get(shift)));
+                                                        });
+                                            }
+                                        }
                                     }
+                                    updatable.onUpdate(out);
+                                    after.execute();
+                                    calendar.setHardStartDateBound(spotRosterView.getStartDate().atTime(0, 0));
+                                    calendar.setHardEndDateBound(spotRosterView.getEndDate().atTime(0, 0));
+                                } finally {
+                                    LoadingPopup.clearLoading(LOADING_STRING);
                                 }
                             }
-                            updatable.onUpdate(out);
-                            after.execute();
-                            calendar.setHardStartDateBound(spotRosterView.getStartDate().atTime(0, 0));
-                            calendar.setHardEndDateBound(spotRosterView.getEndDate().atTime(0, 0));
-                        } finally {
-                            LoadingPopup.clearLoading(LOADING_STRING);
-                        }
-                    }
-                });
-            } else {
-                RosterRestServiceBuilder.getSpotRosterViewFor(tenantId, calendar.getViewStartDate().minusDays(1)
-                        .toLocalDate()
-                        .toString(),
-                        calendar.getViewEndDate().plusDays(1).toLocalDate().toString(), calendar.getVisibleGroupSet()
-                                .stream()
-                                .map((g) -> g.getSpot()).collect(Collectors.toList()), new FailureShownRestCallback<
+                        });
+                    } else {
+                        RosterRestServiceBuilder.getSpotRosterViewFor(tenantId, calendar.getViewStartDate().minusDays(1)
+                                .toLocalDate()
+                                .toString(),
+                                calendar.getViewEndDate().plusDays(1).toLocalDate().toString(), calendar
+                                        .getVisibleGroupSet()
+                                        .stream()
+                                        .map((g) -> g.getSpot()).collect(Collectors.toList()),
+                                new FailureShownRestCallback<
                                         SpotRosterView>() {
 
                                     @Override
@@ -134,9 +146,9 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                                             .stream().forEach((sv) -> {
                                                                 Shift shift = new Shift(sv, spot, timeslot);
                                                                 shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
-                                                                SpotData newShift = new SpotData(shift, spotRosterView
-                                                                        .getIndictmentMap()
-                                                                        .get(shift));
+                                                                SpotData newShift = new SpotData(shift,
+                                                                        (Indictment) indictmentMap
+                                                                                .get(shift));
                                                                 calendar.updateShift(newShift);
                                                             });
                                                 }
@@ -146,7 +158,11 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                     }
                                 });
 
-            }
+                    }
+                }
+
+            });
+
             busy = false;
         }
 

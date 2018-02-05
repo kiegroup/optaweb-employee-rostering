@@ -47,8 +47,6 @@ public class AbstractRosterView implements Serializable {
 
     private HardSoftScore score = null;
 
-    private Map<Shift, Indictment> indictmentMap = new HashMap<>();
-
     @Override
     public String toString() {
         return startDate + " to " + endDate;
@@ -120,16 +118,6 @@ public class AbstractRosterView implements Serializable {
 
     public void setScore(HardSoftScore score) {
         this.score = score;
-    }
-
-    @JsonSerialize(keyUsing = ShiftKeyFieldSerializer.class)
-    @JsonDeserialize(keyUsing = ShiftKeyFieldDeserializer.class)
-    public Map<Shift, Indictment> getIndictmentMap() {
-        return indictmentMap;
-    }
-
-    public void setIndictmentMap(Map<Shift, Indictment> indictmentMap) {
-        this.indictmentMap = indictmentMap;
     }
 
 }

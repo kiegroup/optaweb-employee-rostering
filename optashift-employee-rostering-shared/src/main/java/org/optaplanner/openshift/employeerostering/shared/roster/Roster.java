@@ -69,8 +69,6 @@ public class Roster extends AbstractPersistable {
     @PlanningScore
     private HardSoftScore score = null;
 
-    private Map<Shift, Indictment> indictmentMap;
-
     @SuppressWarnings("unused")
     public Roster() {
     }
@@ -155,14 +153,6 @@ public class Roster extends AbstractPersistable {
 
     public void setScore(HardSoftScore score) {
         this.score = score;
-    }
-
-    public Map<Shift, Indictment> getIndictmentMap() {
-        return indictmentMap;
-    }
-
-    public void setIndictmentMap(Map<Shift, Indictment> indictmentMap) {
-        this.indictmentMap = indictmentMap;
     }
 
 }

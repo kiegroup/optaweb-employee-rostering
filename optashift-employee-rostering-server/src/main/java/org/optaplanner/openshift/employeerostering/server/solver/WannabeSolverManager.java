@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.server.solver;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -111,20 +112,27 @@ public class WannabeSolverManager {
     
     public Roster getRoster(Integer tenantId) {
         if (tenantIdToSolverMap.containsKey(tenantId)) {
-            Roster out = tenantIdToSolverMap.get(tenantId).getBestSolution();
+            return tenantIdToSolverMap.get(tenantId).getBestSolution();
+        }
+        return null;
+    }
+    
+
+    public Map<Shift, Indictment> getIndictmentMap(Integer tenantId) {
+        if (tenantIdToSolverMap.containsKey(tenantId)) {
+            Roster roster = tenantIdToSolverMap.get(tenantId).getBestSolution();
             ScoreDirector<Roster> scoreDirector = tenantIdToSolverMap.get(tenantId).getScoreDirectorFactory()
                     .buildScoreDirector();
-            scoreDirector.setWorkingSolution(out);
+            scoreDirector.setWorkingSolution(roster);
             Map<Shift, Indictment> indictmentMap = new HashMap<>();
             scoreDirector.getIndictmentMap().forEach((k, v) -> {
                 if (k instanceof Shift) {
                     indictmentMap.put((Shift) k, v);
                 }
              });
-            out.setIndictmentMap(indictmentMap);
-            return out;
+            return indictmentMap;
         }
-        return null;
+        return Collections.emptyMap();
     }
 
 }

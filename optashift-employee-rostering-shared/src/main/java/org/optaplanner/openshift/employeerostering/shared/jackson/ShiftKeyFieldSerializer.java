@@ -15,7 +15,7 @@ public class ShiftKeyFieldSerializer extends JsonSerializer<Shift> {
     @Override
     public void serialize(Shift value, JsonGenerator gen, SerializerProvider serializers) throws IOException,
             JsonProcessingException {
-        gen.writeFieldName(value.getId().toString());
+        gen.writeFieldName("S" + value.getId().toString());
 
     }
 }
