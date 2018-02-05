@@ -54,19 +54,9 @@
 
     HANDLES = {
 
-        grid: {
-            orientation: "y",
-            pixel: {
-                width: 60,
-                height: 30
-            }
-        },
-
+        orientation: "y",
         defaultBlobSize: 5,
-
-        pixelSize: function () {
-            return HANDLES.grid.pixel.height;
-        },
+        pixelSize: 30,
 
         size: function ($element) {
             return $element.height()
@@ -74,24 +64,24 @@
 
         decorateNewBlob: function ($blob, blob) {
             $blob.css({
-                "top": scale(blob.position * HANDLES.pixelSize()) + "px",
-                "height": blob.size * HANDLES.pixelSize() + "px"
+                "top": scale(blob.position * HANDLES.pixelSize) + "px",
+                "height": blob.size * HANDLES.pixelSize + "px"
             });
         },
 
         decorateGridDiv: function ($gridDiv) {
             $gridDiv.css({
                 width: "100%",
-                height: HANDLES.pixelSize()
+                height: HANDLES.pixelSize
             });
         },
 
         configureResizability: function ($blob) {
             $blob.resizable({
                 handles: "s",
-                minHeight: HANDLES.pixelSize(),
+                minHeight: HANDLES.pixelSize,
                 resize: function (e, ui) {
-                    ui.size.height = scale(ui.size.height + HANDLES.pixelSize());
+                    ui.size.height = scale(ui.size.height + HANDLES.pixelSize);
                 }
             });
         }
