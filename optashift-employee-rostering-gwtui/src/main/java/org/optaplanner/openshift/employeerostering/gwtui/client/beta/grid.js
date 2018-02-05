@@ -1,5 +1,5 @@
 function scale(coordinate) {
-    return Math.floor(coordinate - (coordinate % HANDLES.pixelSize()));
+    return Math.floor(coordinate - (coordinate % HANDLES.pixelSize));
 }
 
 function drawGrid($viewport) {
@@ -17,7 +17,7 @@ function drawGrid($viewport) {
         }
     });
 
-    for (var i = 0; i < HANDLES.size($viewport); i += HANDLES.pixelSize()) {
+    for (var i = 0; i < HANDLES.size($viewport); i += HANDLES.pixelSize) {
         var $gridDiv = $('<div />');
         HANDLES.decorateGridDiv($gridDiv);
         $gridDiv.appendTo($gridContainer);
@@ -45,8 +45,8 @@ function bindBlobEvents($blob) {
         addClasses: false,
         cancel: '.blob div',
         containment: $blob.parent(), //That's the sub-lane
-        axis: HANDLES.grid.orientation,
-        grid: [HANDLES.grid.pixel.width, HANDLES.grid.pixel.height],
+        axis: HANDLES.orientation,
+        grid: [HANDLES.pixelSize, HANDLES.pixelSize],
         scroll: true,
         scrollSpeed: 10,
         scrollSensitivity: 50
@@ -104,11 +104,11 @@ function bindSubLaneEvents($subLane) {
 
         // Add blob (ALT + CLICK)
         else if (e.altKey) {
-            var offset = HANDLES.grid.orientation === "y" ? e.offsetY : e.offsetX;
+            var offset = HANDLES.orientation === "y" ? e.offsetY : e.offsetX;
             addBlobTo($target, {
                 label: "New",
                 size: HANDLES.defaultBlobSize,
-                position: offset / HANDLES.pixelSize(),
+                position: offset / HANDLES.pixelSize,
                 locked: false
             });
         }

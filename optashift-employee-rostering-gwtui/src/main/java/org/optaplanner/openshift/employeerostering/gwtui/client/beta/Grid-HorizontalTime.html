@@ -33,7 +33,7 @@
 
     .viewport-frame {
         width: 1244px;
-        height: 400px;
+        height: 600px;
     }
 
 </style>
@@ -53,19 +53,9 @@
 <script>
 
     HANDLES = {
-        grid: {
-            orientation: "x",
-            pixel: {
-                width: 60,
-                height: 30
-            }
-        },
-
+        orientation: "x",
         defaultBlobSize: 4,
-
-        pixelSize: function () {
-            return HANDLES.grid.pixel.width;
-        },
+        pixelSize: 30,
 
         size: function ($element) {
             return $element.width()
@@ -73,14 +63,14 @@
 
         decorateNewBlob: function ($blob, blob) {
             $blob.css({
-                "left": scale(blob.position * HANDLES.pixelSize()) + "px",
-                "width": blob.size * HANDLES.pixelSize() + "px"
+                "left": scale(blob.position * HANDLES.pixelSize) + "px",
+                "width": blob.size * HANDLES.pixelSize + "px"
             });
         },
 
         decorateGridDiv: function ($gridDiv) {
             $gridDiv.css({
-                width: HANDLES.pixelSize(),
+                width: HANDLES.pixelSize,
                 height: "100%"
             });
         },
@@ -88,9 +78,9 @@
         configureResizability: function ($blob) {
             $blob.resizable({
                 handles: "e",
-                minHeight: HANDLES.pixelSize(),
+                minHeight: HANDLES.pixelSize,
                 resize: function (e, ui) {
-                    ui.size.width = scale(ui.size.width + HANDLES.pixelSize());
+                    ui.size.width = scale(ui.size.width + HANDLES.pixelSize);
                 }
             });
         }
