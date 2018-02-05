@@ -32,91 +32,17 @@
 <style>
 
     .viewport-frame {
-        width: 1417px;
-        height: 964px;
+        width: 1217px;
+        height: 564px;
     }
 
 </style>
 
 <center>
     <div class="viewport-frame">
-
         <div class="viewport vertical">
-            <div class="lane">
-                <div class="sub-lane">
-                    <div class="blob half">Morning</div>
-                    <div class="blob">Evening</div>
-                    <div class="blob double">Night</div>
-                </div>
-                <div class="sub-lane">
-                    <div class="blob">Overlaping</div>
-                </div>
-            </div>
-
-            <div class="lane">
-                <div class="sub-lane">
-                    <div class="blob"></div>
-                </div>
-            </div>
-
-            <div class="lane">
-                <div class="sub-lane">
-                    <div class="blob"></div>
-                </div>
-            </div>
-
-            <div class="lane">
-                <div class="sub-lane">
-                    <div class="blob"></div>
-                </div>
-                <div class="sub-lane">
-                    <div class="blob">Morning</div>
-                </div>
-            </div>
-
-            <div class="lane">
-                <div class="sub-lane">
-                    <div class="blob">Morning Work</div>
-                </div>
-            </div>
-
-            <div class="lane">
-                <div class="sub-lane">
-                    <div class="blob">
-                    </div>
-                </div>
-            </div>
-
-            <div class="lane">
-                <div class="sub-lane">
-                    <div class="blob"></div>
-                </div>
-            </div>
-
-            <div class="lane">
-                <div class="sub-lane">
-                    <div class="blob"></div>
-                </div>
-                <div class="sub-lane">
-                    <div class="blob"></div>
-                </div>
-            </div>
-
-            <div class="lane">
-                <div class="sub-lane">
-                    <div class="blob"></div>
-                </div>
-                <div class="sub-lane">
-                    <div class="blob"></div>
-                </div>
-                <div class="sub-lane">
-                    <div class="blob"></div>
-                </div>
-            </div>
-
             <div class="grid-container"></div>
         </div>
-
     </div>
 </center>
 
@@ -142,14 +68,14 @@
             return HANDLES.grid.pixel.height;
         },
 
-        gridSize: function ($element) {
+        size: function ($element) {
             return $element.height()
         },
 
-        decorateNewBlob: function ($blob, point) {
+        decorateNewBlob: function ($blob, blob) {
             $blob.css({
-                "top": scale(point.y) + "px",
-                "height": HANDLES.grid.pixel.height * HANDLES.defaultBlobSize + "px"
+                "top": scale(blob.position * HANDLES.pixelSize()) + "px",
+                "height": blob.size * HANDLES.pixelSize() + "px"
             });
         },
 
@@ -160,7 +86,7 @@
             });
         },
 
-        decorateResizeHandle: function ($blob) {
+        configureResizability: function ($blob) {
             $blob.resizable({
                 handles: "s",
                 minHeight: HANDLES.pixelSize(),
@@ -173,6 +99,7 @@
 
 </script>
 
+<script src="data.js"></script>
 <script src="grid.js"></script>
 
 </body>
