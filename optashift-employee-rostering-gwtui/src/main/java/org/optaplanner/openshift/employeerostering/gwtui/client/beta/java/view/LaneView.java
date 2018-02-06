@@ -18,7 +18,9 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view;
 
 import javax.inject.Inject;
 
+import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
@@ -28,6 +30,10 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.L
 
 @Templated
 public class LaneView implements ListElementView<Lane> {
+
+    @Inject
+    @DataField("title")
+    public HTMLDivElement title;
 
     @Inject
     private ListView<SubLane> subLanes;
@@ -40,8 +46,11 @@ public class LaneView implements ListElementView<Lane> {
     private Viewport viewport;
 
     @Override
-    public ListElementView<Lane> setup(Lane lane, ListView<Lane> list) {
-        subLanes.init(getElement(), lane.getSubLanes(), () -> subLaneViewInstances.get().withViewport(viewport));
+    public ListElementView<Lane> setup(final Lane lane,
+                                       final ListView<Lane> list) {
+
+        title.textContent = lane.getTitle();
+        subLanes.init(getElement(), lane.getSubLanes(), () -> subLaneViewInstances.get().withViewport(viewport).withParent(lane, list));
         this.lane = lane;
         return this;
     }

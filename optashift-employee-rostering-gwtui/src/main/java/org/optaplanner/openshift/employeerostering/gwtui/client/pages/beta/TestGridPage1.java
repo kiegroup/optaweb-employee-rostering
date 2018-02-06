@@ -63,7 +63,7 @@ public class TestGridPage1 implements Page {
             }
 
             @Override
-            public void drawGridLines(final IsElement container) {
+            public void drawGridLinesAt(final IsElement container) {
                 gridLines.draw(container, this);
             }
 

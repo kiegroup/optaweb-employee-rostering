@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import jsinterop.base.Js;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -31,6 +30,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
@@ -46,11 +46,13 @@ public class SubLaneView implements ListElementView<SubLane> {
     @Inject
     private ListView<Blob> blobs;
 
+    private SubLane subLane;
     private ListView<SubLane> list;
 
-    private SubLane subLane;
-
     private Viewport viewport;
+
+    private Lane parentLane;
+    private ListView<Lane> parentList;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -73,17 +75,15 @@ public class SubLaneView implements ListElementView<SubLane> {
 
         // Remove SubLane (SHIFT + ALT + CLICK)
         if (e.shiftKey && e.altKey) {
-            final HTMLElement target = Js.cast(e.target);
-            final HTMLElement parent = Js.cast(target.parentNode);
             list.remove(subLane);
-            if (parent.childElementCount == 0) {
-                parent.remove(); //FIXME: Leaves structure behind
+            if (list.isEmpty()) {
+                parentList.remove(parentLane);
             }
         }
 
         // Add SubLane (SHIFT + CLICK)
         else if (e.shiftKey) {
-            list.add(new SubLane(new ArrayList<>()));
+            list.addAfter(subLane, new SubLane(new ArrayList<>()));
         }
 
         // Add Blob (ALT + CLICK)
@@ -95,6 +95,14 @@ public class SubLaneView implements ListElementView<SubLane> {
 
     public SubLaneView withViewport(final Viewport viewport) {
         this.viewport = viewport;
+        return this;
+    }
+
+    public ListElementView<SubLane> withParent(final Lane parentLane,
+                                               final ListView<Lane> parentList) {
+
+        this.parentLane = parentLane;
+        this.parentList = parentList;
         return this;
     }
 }

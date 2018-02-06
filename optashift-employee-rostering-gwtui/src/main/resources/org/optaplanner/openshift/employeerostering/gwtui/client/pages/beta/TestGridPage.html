@@ -26,42 +26,6 @@
             display: none !important;
         }
 
-        /* GRID */
-
-        .viewport > .grid-container {
-            z-index: 1;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .viewport > .grid-container > .grid {
-            margin: 5px 5px 5px 5px;
-        }
-
-        .viewport > .grid-container > .grid div {
-            background: transparent;
-            border-style: solid;
-            border-color: #ddd;
-            float: left;
-        }
-
-        .viewport.vertical > .grid-container > .grid div:last-child {
-            height: 0 !important;
-        }
-
-        .viewport.vertical > .grid-container > .grid div {
-            border-width: 1px 0 0 0;
-        }
-
-        .viewport.horizontal > .grid-container > .grid div:last-child {
-            width: 0 !important;
-        }
-
-        .viewport.horizontal > .grid-container > .grid div {
-            border-width: 0 0 0 1px;
-        }
-
         /* VIEWPORT */
 
         .viewport-frame {
@@ -69,7 +33,7 @@
             overflow: scroll;
             position: relative;
             padding: 5px;
-            background-color: #eaeaea;
+            background-color: #ededed;
         }
 
         .viewport-frame > .viewport {
@@ -82,19 +46,12 @@
 
         .viewport-frame > .viewport > .lane {
             background-color: #f9f9f9;
-            padding: 5px 0 0 5px;
-
             border: 1px solid #aaa;
             border-radius: 3px;
-
-            /*border-top: 1px solid #aaa;*/
-            /*border-bottom: 1px solid #aaa;*/
-            /*border-left: 5px solid #f9f9f9;*/
-            /*margin-left: -5px !important;*/
         }
 
         .viewport-frame > .viewport > .lane > .sub-lane {
-            z-index: 2;
+            margin: 5px 0 0 5px;
             position: relative;
         }
 
@@ -133,7 +90,15 @@
         .viewport-frame > .viewport.vertical > .lane {
             display: inline-block;
             height: 100%;
-            margin: 0 0 0 2px;
+            margin: 24px 0 0 2px;
+        }
+
+        .viewport-frame > .viewport.vertical > .lane > .title {
+            max-height: 22px;
+            display: inline;
+            position: absolute;
+            padding: 0 0 0 5px;
+            top: 4px;
         }
 
         .viewport-frame > .viewport.vertical > .lane > .sub-lane {
@@ -167,7 +132,16 @@
         }
 
         .viewport-frame > .viewport.horizontal > .lane {
-            margin: 0 0 5px 0;
+            position: relative;
+            margin: 24px 0 5px 0;
+        }
+
+        .viewport-frame > .viewport.horizontal > .lane > .title {
+            max-height: 22px;
+            display: inline;
+            position: absolute;
+            top: -21px;
+            padding: 0 0 0 5px;
         }
 
         .viewport-frame > .viewport.horizontal > .lane > .sub-lane {
@@ -307,35 +281,48 @@
             content: "🔓"
         }
 
-        .viewport > .grid-line {
+        /* GRID LINES */
+
+        .viewport > .grid-line,
+        .viewport > .lane > .grid-line {
             box-sizing: border-box;
             position: absolute;
+            z-index: 5;
         }
 
-        .viewport > .grid-line.weak {
+        .viewport > .grid-line.weak,
+        .viewport > .lane > .grid-line.weak {
             border-style: dashed;
             border-color: #cecece;
         }
 
-        .viewport > .grid-line.strong {
+        .viewport > .grid-line.strong,
+        .viewport > .lane > .grid-line.strong {
             border-style: solid;
             border-color: rgba(0, 0, 0, 0.25);
             box-shadow: 0 0 24px 3px rgba(0, 0, 0, 0.07);
         }
 
-        .viewport.vertical > .grid-line {
+        .viewport.vertical > .grid-line,
+        .viewport.vertical > .lane > .grid-line {
             width: 100%;
             left: 0;
             height: 0;
             border-width: 1px 0 0 0;
         }
 
-        .viewport.horizontal > .grid-line {
+        .viewport.horizontal > .grid-line,
+        .viewport.horizontal > .lane > .grid-line  {
             height: 100%;
             top: 0;
             width: 0;
             border-width: 0 0 0 1px;
+            opacity: 0.6;
         }
+
+        /* DEV */
+
+
     </style>
 
     <div data-field="viewport-frame" class="viewport-frame">

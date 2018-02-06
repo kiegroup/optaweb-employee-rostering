@@ -33,26 +33,29 @@ public class TestLanes {
     private static final int DAYS = 7;
 
     public List<Lane> getAll() {
+        return Arrays.asList(
+                emergencyRoom(),
+                instanceCare(),
+                emergencyRoom(),
+                instanceCare(),
+                emergencyRoom(),
+                instanceCare(),
+                emergencyRoom(),
+                instanceCare());
+    }
 
-        final Lane emergencyRoom = new Lane("Emergency Room", Arrays.asList(
+    private Lane emergencyRoom() {
+        return new Lane("Emergency Room", Arrays.asList(
                 new SubLane(repeatFor(DAYS, 4, 0, 0, "Early", "Late", "Night")),
                 new SubLane(repeatFor(DAYS, 4, 8, 2, "Day"))
         ));
+    }
 
-        final Lane intenseCare = new Lane("Intense Care", Arrays.asList(
+    private Lane instanceCare() {
+        return new Lane("Intense Care", Arrays.asList(
                 new SubLane(repeatFor(DAYS, 4, 0, 0, "Early", "Late", "Night")),
                 new SubLane(repeatFor(DAYS, 4, 4, 2, "Day", "Afternoon"))
         ));
-
-        return Arrays.asList(
-                emergencyRoom,
-                intenseCare,
-                emergencyRoom,
-                intenseCare,
-                emergencyRoom,
-                intenseCare,
-                emergencyRoom,
-                intenseCare);
     }
 
     private List<Blob> repeatFor(final int times,

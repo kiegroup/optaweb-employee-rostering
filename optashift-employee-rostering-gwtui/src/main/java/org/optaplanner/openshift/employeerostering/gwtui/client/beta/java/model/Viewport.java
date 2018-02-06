@@ -37,11 +37,15 @@ public abstract class Viewport {
 
     public Scale scale;
 
-    public abstract void drawGridLines(final IsElement container);
+    public abstract void drawGridLinesAt(final IsElement container);
 
     public abstract Blob newBlob(final Integer position);
 
     public abstract BlobView<?> newBlobView();
+
+    public Integer getSize(final IsElement element) {
+        return orientation.getSize(element) / pixelSize;
+    }
 
     public Integer scale(final Integer value) {
         return value * pixelSize;
@@ -66,6 +70,12 @@ public abstract class Viewport {
             void scale(final IsElement element, final Integer size, final Viewport viewport, final Integer offset) {
                 element.getElement().style.height = HeightUnionType.of(viewport.scale(size) + offset + "px");
             }
+
+            @Override
+            public Integer getSize(final IsElement element) {
+                final String size = element.getElement().style.height.asString();
+                return size.isEmpty() ? 0 : Integer.parseInt(size.substring(0, size.length() - 2));
+            }
         },
         HORIZONTAL {
             @Override
@@ -77,11 +87,18 @@ public abstract class Viewport {
             void scale(final IsElement element, final Integer size, final Viewport viewport, final Integer offset) {
                 element.getElement().style.width = WidthUnionType.of(viewport.scale(size) + offset + "px");
             }
+
+            @Override
+            public Integer getSize(final IsElement element) {
+                final String size = element.getElement().style.width.asString();
+                return size.isEmpty() ? 0 : Integer.parseInt(size.substring(0, size.length() - 2));
+            }
         };
 
         abstract void position(final IsElement element, final Integer position, final Viewport viewport, final Integer offset);
 
         abstract void scale(final IsElement element, final Integer size, final Viewport viewport, final Integer offset);
 
+        public abstract Integer getSize(final IsElement element);
     }
 }
