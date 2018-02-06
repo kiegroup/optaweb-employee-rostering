@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view;
+package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
+public class GridLine {
 
-public interface BlobView<T extends Blob> extends ListElementView<T> {
+    private final Integer index;
+    private final GridLineView.Strength strength;
 
-    BlobView<T> withViewport(final Viewport viewport);
+    public GridLine(final Integer index,
+                    final GridLineView.Strength strength) {
+
+        this.index = index;
+        this.strength = strength;
+    }
+
+    public GridLineView.Strength getStrength() {
+        return strength;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
 }

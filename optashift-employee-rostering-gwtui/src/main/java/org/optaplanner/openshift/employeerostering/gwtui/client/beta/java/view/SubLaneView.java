@@ -28,11 +28,11 @@ import jsinterop.base.Js;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
 
@@ -53,11 +53,12 @@ public class SubLaneView implements ListElementView<SubLane> {
     private Viewport viewport;
 
     @Override
+    @SuppressWarnings("unchecked")
     public ListElementView<SubLane> setup(final SubLane subLane,
                                           final ListView<SubLane> list) {
 
         this.list = list;
-        blobs.init(getElement(), subLane.getBlobs(), () -> viewport.newBlobView().withViewport(viewport));
+        blobs.init(getElement(), subLane.getBlobs(), () -> (BlobView) viewport.newBlobView().withViewport(viewport)); //FIXME: Generics issue
         this.subLane = subLane;
         return this;
     }
@@ -88,7 +89,7 @@ public class SubLaneView implements ListElementView<SubLane> {
         // Add Blob (ALT + CLICK)
         else if (e.altKey) {
             final double position = viewport.orientation.equals(VERTICAL) ? e.offsetY : e.offsetX;
-            blobs.add(viewport.newBlob(new Double(position).intValue()));
+            blobs.add(viewport.newBlob(new Double(position / viewport.pixelSize).intValue()));
         }
     }
 

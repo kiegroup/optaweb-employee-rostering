@@ -19,11 +19,11 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
+import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.GridLines;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlob;
@@ -45,7 +45,7 @@ public class TestGridPage1 implements Page {
     private TestLanes testLanes;
 
     @Inject
-    private GridLines gridLines;
+    private DefaultGridLines gridLines;
 
     @Inject
     private ManagedInstance<TestBlobView> blobViews;
@@ -55,25 +55,25 @@ public class TestGridPage1 implements Page {
         viewportView.setViewport(new Viewport() {
 
             {
-                sizeInPixels = 84;
-                pixelSize = 8;
-                defaultBlobSize = 4;
-                lanes = testLanes.getAll();
                 orientation = VERTICAL;
+                sizeInPixels = 84;
+                pixelSize = 12;
+                defaultNewBlobSizeInPixels = 4;
+                lanes = testLanes.getAll();
             }
 
             @Override
-            public void drawGridAt(final HTMLElement container) {
-                gridLines.draw(this, container);
+            public void drawGridLines(final IsElement container) {
+                gridLines.draw(container, this);
             }
 
             @Override
             public Blob newBlob(final Integer position) {
-                return new TestBlob("New", defaultBlobSize, position / pixelSize, false);
+                return new TestBlob("New", defaultNewBlobSizeInPixels, position, false);
             }
 
             @Override
-            public BlobView newBlobView() {
+            public BlobView<?> newBlobView() {
                 return blobViews.get();
             }
         });

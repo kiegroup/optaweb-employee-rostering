@@ -19,11 +19,11 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import elemental2.dom.HTMLElement;
+import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.GridLines;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlob;
@@ -32,7 +32,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.B
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.HORIZONTAL;
 
 @Templated("TestGridPage.html")
 public class TestGridPage2 implements Page {
@@ -45,7 +45,7 @@ public class TestGridPage2 implements Page {
     private TestLanes testLanes;
 
     @Inject
-    private GridLines gridLines;
+    private DefaultGridLines gridLines;
 
     @Inject
     private ManagedInstance<TestBlobView> blobViews;
@@ -55,25 +55,25 @@ public class TestGridPage2 implements Page {
         viewportView.setViewport(new Viewport() {
 
             {
-                sizeInPixels = 84;
-                pixelSize = 12;
+                orientation = HORIZONTAL;
+                sizeInPixels = 180;
+                pixelSize = 15;
+                defaultNewBlobSizeInPixels = 2;
                 lanes = testLanes.getAll();
-                orientation = VERTICAL;
-                defaultBlobSize = 4;
             }
 
             @Override
-            public void drawGridAt(final HTMLElement container) {
-                gridLines.draw(this, container);
+            public void drawGridLines(final IsElement container) {
+                gridLines.draw(container, this);
             }
 
             @Override
             public Blob newBlob(final Integer position) {
-                return new TestBlob("New", defaultBlobSize, position / pixelSize, false);
+                return new TestBlob("New", defaultNewBlobSizeInPixels, position, false);
             }
 
             @Override
-            public BlobView newBlobView() {
+            public BlobView<?> newBlobView() {
                 return blobViews.get();
             }
         });

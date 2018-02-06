@@ -16,14 +16,22 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid;
 
-import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
 @Templated
-public class VerticalGridLine implements IsElement {
+public class GridLineView implements ListElementView<GridLine> {
 
-    public VerticalGridLine withStrength(final Strength strength) {
-        switch (strength) {
+    private static final Integer OFFSET = 6; // in screen pixels;
+
+    private Viewport viewport;
+
+    @Override
+    public ListElementView<GridLine> setup(final GridLine gridLine,
+                                           final ListView<GridLine> list) {
+        switch (gridLine.getStrength()) {
             case WEAK:
                 getElement().classList.add("weak");
                 break;
@@ -31,11 +39,13 @@ public class VerticalGridLine implements IsElement {
                 getElement().classList.add("strong");
                 break;
         }
+
+        viewport.position(this, gridLine.getIndex(), OFFSET);
         return this;
     }
 
-    public VerticalGridLine withPosition(final Integer position) {
-        getElement().style.top = position + "px";
+    public ListElementView<GridLine> withViewport(final Viewport viewport) {
+        this.viewport = viewport;
         return this;
     }
 

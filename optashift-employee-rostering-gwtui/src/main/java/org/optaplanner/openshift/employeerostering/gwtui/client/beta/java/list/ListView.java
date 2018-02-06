@@ -26,45 +26,45 @@ import elemental2.dom.HTMLElement;
 
 import static java.util.Collections.singletonList;
 
-public class ListView<Y> {
+public class ListView<T> {
 
-    private Supplier<ListElementView<Y>> viewSupplier;
+    private Supplier<ListElementView<T>> viewSupplier;
     private HTMLElement container;
 
-    private List<Y> objects;
-    private Map<Y, ListElementView<Y>> views;
+    private List<T> objects;
+    private Map<T, ListElementView<T>> views;
 
     public void init(final HTMLElement container,
-                     final List<Y> lanes,
-                     final Supplier<ListElementView<Y>> viewFactory) {
+                     final List<T> objects,
+                     final Supplier<ListElementView<T>> viewFactory) {
 
         this.container = container;
         this.viewSupplier = viewFactory;
         this.objects = new ArrayList<>();
         this.views = new HashMap<>();
-        addAll(lanes);
+        addAll(objects);
     }
 
-    public void addAll(final List<Y> newObjects) {
-        for (final Y obj : newObjects) {
+    public void addAll(final List<T> objs) {
+        for (final T obj : objs) {
             objects.add(obj);
-            final ListElementView<Y> elementView = viewSupplier.get().setup(obj, this);
+            final ListElementView<T> elementView = viewSupplier.get().setup(obj, this);
             views.put(obj, elementView);
             container.appendChild(elementView.getElement());
         }
     }
 
-    public void add(final Y newObject) {
+    public void add(final T newObject) {
         addAll(singletonList(newObject));
     }
 
-    public void remove(final Y object) {
-        final ListElementView<Y> view = views.remove(object);
+    public void remove(final T object) {
+        final ListElementView<T> view = views.remove(object);
         container.removeChild(view.getElement());
         objects.remove(object);
     }
 
-    public List<Y> getObjects() {
+    public List<T> getObjects() {
         return objects;
     }
 }
