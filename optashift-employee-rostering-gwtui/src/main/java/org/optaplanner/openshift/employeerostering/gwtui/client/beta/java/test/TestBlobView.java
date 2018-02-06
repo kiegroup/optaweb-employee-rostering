@@ -20,8 +20,11 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
+import jsinterop.base.Js;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -29,22 +32,26 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.L
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
+
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
 
 @Templated
 public class TestBlobView implements BlobView<TestBlob> {
+
+    @Inject
+    @DataField("blob")
+    private HTMLDivElement root;
 
     @Inject
     @Named("span")
     @DataField("label")
     private HTMLElement label;
 
-    @Inject
-    @DataField("close")
-    private HTMLDivElement close;
-
     private TestBlob blob;
     private ListView<TestBlob> list;
     private Viewport viewport;
+    private SubLaneView subLaneView;
 
     @Override
     public ListElementView<TestBlob> setup(final TestBlob blob,
@@ -56,17 +63,93 @@ public class TestBlobView implements BlobView<TestBlob> {
         label.textContent = blob.getLabel();
         viewport.scale(this, blob.getSize(), 0);
         viewport.position(this, blob.getPosition(), 0);
+
+        makeDraggable(getElement(),
+                      subLaneView.getElement(),
+                      viewport.pixelSize,
+                      viewport.orientation.equals(VERTICAL) ? "y" : "x");
+
+        makeResizable(getElement(),
+                      viewport.pixelSize,
+                      viewport.orientation.equals(VERTICAL) ? "s" : "e");
+
         return this;
     }
 
-    @EventHandler("close")
-    public void onCloseClicked(final ClickEvent e) {
-        list.remove(blob);
+    private native void makeResizable(final HTMLElement blob,
+                                      final int pixelSize,
+                                      final String orientation) /*-{
+
+        var $blob = $wnd.jQuery(blob);
+        $blob.resizable({
+            handles: orientation,
+            minHeight: pixelSize,
+            resize: function (e, ui) {
+                var coordinate = ui.size.height + 2 * pixelSize;
+                ui.size.height = Math.floor(coordinate - (coordinate % pixelSize));
+            }
+        });
+    }-*/;
+
+    private native void makeDraggable(final HTMLElement blob,
+                                      final HTMLElement subLane,
+                                      final int pixelSize,
+                                      final String orientation) /*-{
+
+        var that = this;
+        var $blob = $wnd.jQuery(blob);
+        var $subLane = $wnd.jQuery(subLane);
+
+        $blob.draggable({
+            addClasses: false,
+            cancel: '.blob div',
+            containment: $subLane,
+            axis: orientation,
+            grid: [pixelSize, pixelSize],
+            drag: function (e, ui) {
+                that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlobView::onDrag(II)(ui.position.top, ui.position.left);
+            },
+            scroll: true,
+            scrollSpeed: 10,
+            scrollSensitivity: 50
+        });
+    }-*/;
+
+    public boolean onDrag(final int top, final int left) {
+
+        final Integer newPosition = (viewport.orientation.equals(VERTICAL) ? top : left) / viewport.pixelSize;
+        final Integer originalPosition = blob.getPosition();
+
+        if (!newPosition.equals(originalPosition)) {
+            blob.setPosition(newPosition);
+            if (!subLaneView.hasSpaceFor(blob)) {
+                DomGlobal.console.info("Collision!"); //TODO: Restrict movement if a collision occurs.
+                blob.setPosition(originalPosition);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @EventHandler("blob")
+    public void onBlobClicked(final ClickEvent event) {
+        final MouseEvent e = Js.cast(event.getNativeEvent());
+
+        if (e.altKey) {
+            list.remove(blob);
+        }
     }
 
     @Override
     public BlobView<TestBlob> withViewport(final Viewport viewport) {
         this.viewport = viewport;
+        return this;
+    }
+
+    @Override
+    public BlobView<TestBlob> withSubLaneView(final SubLaneView subLaneView) {
+        this.subLaneView = subLaneView;
         return this;
     }
 }

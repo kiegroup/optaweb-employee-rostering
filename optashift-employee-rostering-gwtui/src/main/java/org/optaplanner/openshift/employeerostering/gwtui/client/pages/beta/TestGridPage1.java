@@ -69,7 +69,7 @@ public class TestGridPage1 implements Page {
 
             @Override
             public Blob newBlob(final Integer position) {
-                return new TestBlob("New", defaultNewBlobSizeInPixels, position, false);
+                return new TestBlob("New", defaultNewBlobSizeInPixels, position);
             }
 
             @Override

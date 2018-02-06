@@ -43,10 +43,8 @@ public class ListView<T> {
         addAll(objects);
     }
 
-    public void addAll(final List<T> objs) {
-        for (final T obj : objs) {
-            add(obj);
-        }
+    public void addAll(final List<T> objects) {
+        objects.forEach(this::add);
     }
 
     public void addAfter(final T obj, final T newObject) {
@@ -55,7 +53,7 @@ public class ListView<T> {
 
         int next = objects.indexOf(obj) + 1;
 
-        if (next < 0 || next >= objects.size()) {
+        if (next <= 0 || next >= objects.size()) {
             container.appendChild(elementView.getElement());
             objects.add(newObject);
         } else {

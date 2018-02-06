@@ -20,20 +20,17 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 
 public class TestBlob implements Blob {
 
-    private final Integer size;
-    private final Integer position;
-    private final String label;
-    private final boolean locked;
+    private Integer size;
+    private Integer position;
+    private String label;
 
     public TestBlob(final String label,
                     final Integer size,
-                    final Integer position,
-                    final boolean locked) {
+                    final Integer position) {
 
         this.size = size;
         this.position = position;
         this.label = label;
-        this.locked = locked;
     }
 
     @Override
@@ -51,7 +48,18 @@ public class TestBlob implements Blob {
         return label;
     }
 
-    public boolean isLocked() {
-        return locked;
+    @Override
+    public void setLabel(final String label) {
+        this.label = label;
+    }
+
+    @Override
+    public void setPosition(final Integer position) {
+        this.position = position;
+    }
+
+    @Override
+    public void setSize(final Integer size) {
+        this.size = size;
     }
 }

@@ -60,7 +60,12 @@ public class SubLaneView implements ListElementView<SubLane> {
                                           final ListView<SubLane> list) {
 
         this.list = list;
-        blobs.init(getElement(), subLane.getBlobs(), () -> (BlobView) viewport.newBlobView().withViewport(viewport)); //FIXME: Generics issue
+
+        //FIXME: Generics issue
+        blobs.init(getElement(), subLane.getBlobs(), () -> (BlobView) viewport.newBlobView()
+                .withViewport(viewport)
+                .withSubLaneView(this));
+
         this.subLane = subLane;
         return this;
     }
@@ -88,9 +93,20 @@ public class SubLaneView implements ListElementView<SubLane> {
 
         // Add Blob (ALT + CLICK)
         else if (e.altKey) {
-            final double position = viewport.orientation.equals(VERTICAL) ? e.offsetY : e.offsetX;
-            blobs.add(viewport.newBlob(new Double(position / viewport.pixelSize).intValue()));
+            final double offset = viewport.orientation.equals(VERTICAL) ? e.offsetY : e.offsetX;
+            final int position = new Double(offset / viewport.pixelSize).intValue();
+
+            final Blob newBlob = viewport.newBlob(position);
+            if (hasSpaceFor(newBlob)) {
+                blobs.add(newBlob);
+            }
         }
+    }
+
+    public boolean hasSpaceFor(final Blob blob) {
+        return blobs.getObjects().stream()
+                .filter(b -> !blob.equals(b))
+                .noneMatch(b -> b.collidesWith(blob));
     }
 
     public SubLaneView withViewport(final Viewport viewport) {

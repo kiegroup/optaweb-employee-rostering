@@ -77,7 +77,7 @@ public class ViewportView implements IsElement {
                 break;
         }
 
-        viewport.scale(this, viewport.sizeInPixels, 12);
+        viewport.scale(this, viewport.sizeInPixels, 30);
 
         // One grid system per viewport
         if (viewport.orientation.equals(Viewport.Orientation.VERTICAL)) {
