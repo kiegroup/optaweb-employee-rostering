@@ -66,7 +66,7 @@
 
         .viewport-frame {
             user-select: none;
-            overflow: hidden;
+            overflow: scroll;
             position: relative;
             padding: 5px;
             background-color: #eaeaea;
@@ -83,7 +83,6 @@
         .viewport-frame > .viewport > .lane {
             background-color: #f9f9f9;
             padding: 5px 0 0 5px;
-            height: 100%;
 
             border: 1px solid #aaa;
             border-radius: 3px;
@@ -133,6 +132,7 @@
 
         .viewport-frame > .viewport.vertical > .lane {
             display: inline-block;
+            height: 100%;
             margin: 0 0 0 2px;
         }
 
@@ -307,29 +307,39 @@
             content: "🔓"
         }
 
-        .grid-line {
+        .viewport > .grid-line {
             box-sizing: border-box;
             position: absolute;
-            width: 100%;
-            height: 0;
         }
 
-        .grid-line.weak {
-            border-width: 1px 0 0 0;
+        .viewport > .grid-line.weak {
             border-style: dashed;
             border-color: #cecece;
         }
 
-        .grid-line.strong {
-            border-width: 1px 0 0 0;
+        .viewport > .grid-line.strong {
             border-style: solid;
             border-color: rgba(0, 0, 0, 0.25);
             box-shadow: 0 0 24px 3px rgba(0, 0, 0, 0.07);
         }
+
+        .viewport.vertical > .grid-line {
+            width: 100%;
+            left: 0;
+            height: 0;
+            border-width: 1px 0 0 0;
+        }
+
+        .viewport.horizontal > .grid-line {
+            height: 100%;
+            top: 0;
+            width: 0;
+            border-width: 0 0 0 1px;
+        }
     </style>
 
     <div data-field="viewport-frame" class="viewport-frame">
-        <div data-field="viewport" class="viewport vertical"></div>
+        <div data-field="viewport" class="viewport"></div>
     </div>
 
 </div>

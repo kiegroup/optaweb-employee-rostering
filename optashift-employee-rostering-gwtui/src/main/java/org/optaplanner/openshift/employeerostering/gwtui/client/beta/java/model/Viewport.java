@@ -18,7 +18,9 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model
 
 import java.util.List;
 
-import elemental2.dom.HTMLElement;
+import elemental2.dom.CSSProperties.HeightUnionType;
+import elemental2.dom.CSSProperties.WidthUnionType;
+import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
 
 public abstract class Viewport {
@@ -29,20 +31,57 @@ public abstract class Viewport {
 
     public Integer pixelSize;
 
-    public Integer defaultBlobSize;
+    public Integer defaultNewBlobSizeInPixels;
 
     public Orientation orientation;
 
     public Scale scale;
 
-    public abstract void drawGridAt(HTMLElement container);
+    public abstract void drawGridLines(final IsElement container);
 
     public abstract Blob newBlob(final Integer position);
 
-    public abstract BlobView newBlobView();
+    public abstract BlobView<?> newBlobView();
+
+    public Integer scale(final Integer value) {
+        return value * pixelSize;
+    }
+
+    public void scale(final IsElement element, final Integer value, final Integer offset) {
+        orientation.scale(element, value, this, offset);
+    }
+
+    public void position(final IsElement element, final Integer value, final Integer offset) {
+        orientation.position(element, value, this, offset);
+    }
 
     public enum Orientation {
-        VERTICAL,
-        HORIZONTAL
+        VERTICAL {
+            @Override
+            void position(final IsElement element, final Integer position, final Viewport viewport, Integer offset) {
+                element.getElement().style.top = viewport.scale(position) + offset + "px";
+            }
+
+            @Override
+            void scale(final IsElement element, final Integer size, final Viewport viewport, final Integer offset) {
+                element.getElement().style.height = HeightUnionType.of(viewport.scale(size) + offset + "px");
+            }
+        },
+        HORIZONTAL {
+            @Override
+            void position(final IsElement element, final Integer position, final Viewport viewport, final Integer offset) {
+                element.getElement().style.left = viewport.scale(position) + offset + "px";
+            }
+
+            @Override
+            void scale(final IsElement element, final Integer size, final Viewport viewport, final Integer offset) {
+                element.getElement().style.width = WidthUnionType.of(viewport.scale(size) + offset + "px");
+            }
+        };
+
+        abstract void position(final IsElement element, final Integer position, final Viewport viewport, final Integer offset);
+
+        abstract void scale(final IsElement element, final Integer size, final Viewport viewport, final Integer offset);
+
     }
 }

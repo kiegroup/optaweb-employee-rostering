@@ -22,7 +22,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
-import elemental2.dom.CSSProperties.HeightUnionType;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.MouseEvent;
 import jsinterop.base.Js;
@@ -31,10 +30,10 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 
 @Templated("ViewportView.html")
 public class ViewportView implements IsElement {
@@ -68,8 +67,19 @@ public class ViewportView implements IsElement {
     }
 
     public void setViewport(final Viewport viewport) {
-        getElement().style.height = HeightUnionType.of(viewport.sizeInPixels * viewport.pixelSize + 12 + "px");
+
+        switch (viewport.orientation) {
+            case VERTICAL:
+                getElement().classList.add("vertical");
+                break;
+            case HORIZONTAL:
+                getElement().classList.add("horizontal");
+                break;
+        }
+
+        viewport.scale(this, viewport.sizeInPixels, 12);
+        viewport.drawGridLines(this);
+
         lanes.init(getElement(), viewport.lanes, () -> laneViewInstances.get().withViewport(viewport));
-        viewport.drawGridAt(getElement());
     }
 }

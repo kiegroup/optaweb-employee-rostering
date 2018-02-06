@@ -66,8 +66,8 @@ public class TestLanes {
         final List<Blob> ret = new ArrayList<>();
 
         for (int i = 0; i < times; i++) {
-            for (int j = 0; j < labels.length; j++) {
-                ret.add(new TestBlob(labels[j], size, currentPosition, false));
+            for (String label : labels) {
+                ret.add(new TestBlob(label, size, currentPosition, false));
                 currentPosition += size;
             }
             currentPosition += positionIncrement;
