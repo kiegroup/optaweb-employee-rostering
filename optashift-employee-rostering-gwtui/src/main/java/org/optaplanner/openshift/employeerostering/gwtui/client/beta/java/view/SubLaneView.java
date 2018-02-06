@@ -31,8 +31,8 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list.ListElementView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
 
@@ -44,9 +44,9 @@ public class SubLaneView implements ListElementView<SubLane> {
     public HTMLDivElement root;
 
     @Inject
-    private ListView<Blob, BlobView<Blob>> blobs;
+    private ListView<Blob> blobs;
 
-    private ListView<SubLane, ?> list;
+    private ListView<SubLane> list;
 
     private SubLane subLane;
 
@@ -54,7 +54,7 @@ public class SubLaneView implements ListElementView<SubLane> {
 
     @Override
     public ListElementView<SubLane> setup(final SubLane subLane,
-                                          final ListView<SubLane, ?> list) {
+                                          final ListView<SubLane> list) {
 
         this.list = list;
         blobs.init(getElement(), subLane.getBlobs(), () -> viewport.newBlobView().withViewport(viewport));

@@ -18,9 +18,9 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
 
-public interface BlobView<T extends Blob> extends ListElementView<T> {
+public interface BlobView extends ListElementView<Blob> {
 
     BlobView withViewport(final Viewport viewport);
 

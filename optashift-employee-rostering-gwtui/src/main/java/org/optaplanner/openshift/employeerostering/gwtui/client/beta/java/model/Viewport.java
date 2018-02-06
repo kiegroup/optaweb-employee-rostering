@@ -39,7 +39,7 @@ public abstract class Viewport {
 
     public abstract Blob newBlob(final Integer position);
 
-    public abstract BlobView newBlobView(); //FIXME: Killing generics
+    public abstract BlobView newBlobView();
 
     public enum Orientation {
         VERTICAL,

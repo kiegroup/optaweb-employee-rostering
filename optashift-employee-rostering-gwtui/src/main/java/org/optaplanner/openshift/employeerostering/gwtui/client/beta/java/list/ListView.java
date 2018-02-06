@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list;
+package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,13 +23,12 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import elemental2.dom.HTMLElement;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 
 import static java.util.Collections.singletonList;
 
-public class ListView<Y, T extends ListElementView<Y>> {
+public class ListView<Y> {
 
-    private Supplier<T> managedInstances;
+    private Supplier<ListElementView<Y>> viewSupplier;
     private HTMLElement container;
 
     private List<Y> objects;
@@ -37,10 +36,10 @@ public class ListView<Y, T extends ListElementView<Y>> {
 
     public void init(final HTMLElement container,
                      final List<Y> lanes,
-                     final Supplier<T> viewFactory) {
+                     final Supplier<ListElementView<Y>> viewFactory) {
 
         this.container = container;
-        this.managedInstances = viewFactory;
+        this.viewSupplier = viewFactory;
         this.objects = new ArrayList<>();
         this.views = new HashMap<>();
         addAll(lanes);
@@ -49,7 +48,7 @@ public class ListView<Y, T extends ListElementView<Y>> {
     public void addAll(final List<Y> newObjects) {
         for (final Y obj : newObjects) {
             objects.add(obj);
-            final ListElementView<Y> elementView = managedInstances.get().setup(obj, this);
+            final ListElementView<Y> elementView = viewSupplier.get().setup(obj, this);
             views.put(obj, elementView);
             container.appendChild(elementView.getElement());
         }

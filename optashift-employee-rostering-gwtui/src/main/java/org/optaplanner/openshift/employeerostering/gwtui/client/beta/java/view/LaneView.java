@@ -23,14 +23,14 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list.ListElementView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 
 @Templated
 public class LaneView implements ListElementView<Lane> {
 
     @Inject
-    private ListView<SubLane, SubLaneView> subLanes;
+    private ListView<SubLane> subLanes;
 
     @Inject
     private ManagedInstance<SubLaneView> subLaneViewInstances;
@@ -40,7 +40,7 @@ public class LaneView implements ListElementView<Lane> {
     private Viewport viewport;
 
     @Override
-    public LaneView setup(final Lane lane, final ListView<Lane, ?> list) {
+    public ListElementView<Lane> setup(Lane lane, ListView<Lane> list) {
         subLanes.init(getElement(), lane.getSubLanes(), () -> subLaneViewInstances.get().withViewport(viewport));
         this.lane = lane;
         return this;

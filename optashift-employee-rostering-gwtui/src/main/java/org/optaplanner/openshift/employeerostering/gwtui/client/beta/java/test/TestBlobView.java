@@ -25,15 +25,16 @@ import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list.ListElementView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 
 import static elemental2.dom.CSSProperties.HeightUnionType;
 
 @Templated
-public class TestBlobView implements BlobView<TestBlob> {
+public class TestBlobView implements BlobView {
 
     @Inject
     @Named("span")
@@ -44,13 +45,13 @@ public class TestBlobView implements BlobView<TestBlob> {
     @DataField("close")
     private HTMLDivElement close;
 
-    private TestBlob blob;
-    private ListView<TestBlob, ?> list;
+    private Blob blob;
+    private ListView<Blob> list;
     private Viewport viewport;
 
     @Override
-    public ListElementView<TestBlob> setup(final TestBlob blob,
-                                           final ListView<TestBlob, ?> list) {
+    public ListElementView<Blob> setup(final Blob blob,
+                                       final ListView<Blob> list) {
 
         this.blob = blob;
         this.list = list;
