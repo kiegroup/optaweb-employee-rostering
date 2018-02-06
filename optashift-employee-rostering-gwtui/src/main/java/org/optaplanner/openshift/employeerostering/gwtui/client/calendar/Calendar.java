@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Panel;
+import jsinterop.base.Js;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -289,7 +290,7 @@ public class Calendar<G extends HasTitle, I extends HasTimeslot<G>> extends Obse
                     view.setDate(startAt);
                 }
                 Div tmp = new Div();
-                tmp.getElement().appendChild((com.google.gwt.dom.client.Element) view.getElement());
+                tmp.getElement().appendChild(Js.cast(view.getElement()));
                 container.add(tmp);
                 calendar.setViewSize(container.getOffsetWidth(), container.getOffsetHeight());
                 return calendar;

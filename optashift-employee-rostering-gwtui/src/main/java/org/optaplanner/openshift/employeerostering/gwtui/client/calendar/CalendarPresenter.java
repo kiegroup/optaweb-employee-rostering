@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import elemental2.dom.MouseEvent;
-import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTimeslot;
 
 public interface CalendarPresenter<G extends HasTitle, I extends HasTimeslot<G>> extends IsElement {

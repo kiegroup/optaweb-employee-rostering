@@ -3,8 +3,9 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.popups;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.PopupPanel;
+import jsinterop.base.Js;
 import org.gwtbootstrap3.client.ui.html.Div;
-import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 
 public class FormPopup extends PopupPanel {
@@ -19,7 +20,7 @@ public class FormPopup extends PopupPanel {
         setGlassEnabled(true);
 
         Div container = new Div();
-        container.getElement().appendChild(Element.as((JavaScriptObject) content.getElement()));
+        container.getElement().appendChild(Js.cast(content.getElement()));
         setWidget(container);
 
         formPopup = this;
