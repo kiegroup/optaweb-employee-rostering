@@ -39,6 +39,8 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pag
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.TEST_GRID_1;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.TEST_GRID_2;
 
 @Templated
 public class MenuView implements IsElement {
@@ -66,6 +68,14 @@ public class MenuView implements IsElement {
     @Inject
     @DataField("employee-roster")
     private HTMLAnchorElement employeeRoster;
+
+    @Inject
+    @DataField("test-grid-1")
+    private HTMLAnchorElement testGrid1;
+
+    @Inject
+    @DataField("test-grid-2")
+    private HTMLAnchorElement testGrid2;
 
     @Inject
     private Event<PageChange> pageChangeEvent;
@@ -100,6 +110,16 @@ public class MenuView implements IsElement {
         goTo(EMPLOYEE_ROSTER, e);
     }
 
+    @EventHandler("test-grid-1")
+    public void testGrid1(final ClickEvent e) {
+        goTo(TEST_GRID_1, e);
+    }
+
+    @EventHandler("test-grid-2")
+    public void testGrid2(final ClickEvent e) {
+        goTo(TEST_GRID_2, e);
+    }
+
     private void goTo(final Pages.Id pageId,
                       final ClickEvent event) {
 
@@ -108,7 +128,7 @@ public class MenuView implements IsElement {
     }
 
     private void handleActiveLink(final MouseEvent event) {
-        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster);
+        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster, testGrid1, testGrid2);
         setActive(Js.cast(event.target));
     }
 

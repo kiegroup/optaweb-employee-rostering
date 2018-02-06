@@ -26,6 +26,8 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.TestGridPage1;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.TestGridPage2;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.EmployeeRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
@@ -38,12 +40,16 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pag
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.TEST_GRID_1;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.TEST_GRID_2;
 
 @Dependent
 public class Pages {
 
     public enum Id {
         SKILLS,
+        TEST_GRID_1,
+        TEST_GRID_2,
         SPOTS,
         EMPLOYEES,
         ROTATIONS,
@@ -69,6 +75,12 @@ public class Pages {
     @Inject
     private ManagedInstance<EmployeeRosterViewPanel> employeeRosterPage;
 
+    @Inject
+    private ManagedInstance<TestGridPage1> testGridPage1;
+
+    @Inject
+    private ManagedInstance<TestGridPage2> testGridPage2;
+
     private final Map<Id, LazyInit<? extends Page>> mapping = new HashMap<>();
 
     @PostConstruct
@@ -79,6 +91,8 @@ public class Pages {
         mapping.put(ROTATIONS, lazyInit(rotationsPage));
         mapping.put(SPOT_ROSTER, lazyInit(spotRosterPage));
         mapping.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
+        mapping.put(TEST_GRID_1, lazyInit(testGridPage1));
+        mapping.put(TEST_GRID_2, lazyInit(testGridPage2));
     }
 
     public Page get(final Id id) {
