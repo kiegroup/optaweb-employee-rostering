@@ -79,14 +79,21 @@ public class TestBlobView implements BlobView<TestBlob> {
     private native void makeResizable(final HTMLElement blob,
                                       final int pixelSize,
                                       final String orientation) /*-{
-
+        var that = this;
         var $blob = $wnd.jQuery(blob);
+
         $blob.resizable({
             handles: orientation,
-            minHeight: pixelSize,
+            minHeight: 0,
             resize: function (e, ui) {
-                var coordinate = ui.size.height + 2 * pixelSize;
-                ui.size.height = Math.floor(coordinate - (coordinate % pixelSize));
+                if (orientation === 's') {
+                    var coordinateY = ui.size.height + 2 * pixelSize;
+                    ui.size.height = Math.floor(coordinateY - (coordinateY % pixelSize));
+                } else if (orientation === 'e') {
+                    var coordinateX = ui.size.width + 2 * pixelSize;
+                    ui.size.width = Math.floor(coordinateX - (coordinateX % pixelSize));
+                }
+                that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlobView::onResize(II)(ui.size.height, ui.size.width);
             }
         });
     }-*/;
@@ -115,6 +122,22 @@ public class TestBlobView implements BlobView<TestBlob> {
         });
     }-*/;
 
+    public boolean onResize(final int height, final int width) {
+        final Integer newSize = (viewport.orientation.equals(VERTICAL) ? height : width) / viewport.pixelSize;
+        final Integer originalSize = blob.getSize();
+
+        if (!newSize.equals(originalSize)) {
+            blob.setSize(newSize);
+            if (!subLaneView.hasSpaceFor(blob)) {
+                DomGlobal.console.info("Collision!"); //TODO: Restrict resizing if a collision occurs.
+                blob.setSize(originalSize);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public boolean onDrag(final int top, final int left) {
 
         final Integer newPosition = (viewport.orientation.equals(VERTICAL) ? top : left) / viewport.pixelSize;
@@ -123,7 +146,7 @@ public class TestBlobView implements BlobView<TestBlob> {
         if (!newPosition.equals(originalPosition)) {
             blob.setPosition(newPosition);
             if (!subLaneView.hasSpaceFor(blob)) {
-                DomGlobal.console.info("Collision!"); //TODO: Restrict movement if a collision occurs.
+                DomGlobal.console.info("Collision!"); //TODO: Restrict dragging if a collision occurs.
                 blob.setPosition(originalPosition);
                 return false;
             }
