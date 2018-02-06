@@ -24,8 +24,6 @@ import java.util.function.Supplier;
 
 import elemental2.dom.HTMLElement;
 
-import static java.util.Collections.singletonList;
-
 public class ListView<T> {
 
     private Supplier<ListElementView<T>> viewSupplier;
@@ -47,15 +45,27 @@ public class ListView<T> {
 
     public void addAll(final List<T> objs) {
         for (final T obj : objs) {
-            objects.add(obj);
-            final ListElementView<T> elementView = viewSupplier.get().setup(obj, this);
-            views.put(obj, elementView);
-            container.appendChild(elementView.getElement());
+            add(obj);
         }
     }
 
-    public void add(final T newObject) {
-        addAll(singletonList(newObject));
+    public void addAfter(final T obj, final T newObject) {
+        final ListElementView<T> elementView = viewSupplier.get().setup(newObject, this);
+        views.put(newObject, elementView);
+
+        int next = objects.indexOf(obj) + 1;
+
+        if (next < 0 || next >= objects.size()) {
+            container.appendChild(elementView.getElement());
+            objects.add(newObject);
+        } else {
+            container.insertBefore(elementView.getElement(), views.get(objects.get(next)).getElement());
+            objects.add(next, newObject);
+        }
+    }
+
+    public void add(final T obj) {
+        addAfter(null, obj);
     }
 
     public void remove(final T object) {
@@ -66,5 +76,9 @@ public class ListView<T> {
 
     public List<T> getObjects() {
         return objects;
+    }
+
+    public boolean isEmpty() {
+        return objects.isEmpty();
     }
 }

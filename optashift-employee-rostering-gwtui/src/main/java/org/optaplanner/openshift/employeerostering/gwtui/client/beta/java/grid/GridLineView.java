@@ -24,7 +24,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 @Templated
 public class GridLineView implements ListElementView<GridLine> {
 
-    private static final Integer OFFSET = 6; // in screen pixels;
+    private static final Integer OFFSET_Y = 30; // in screen pixels;
+    private static final Integer OFFSET_X = 4; // in screen pixels; change to 6 if lines are not inside lanes
 
     private Viewport viewport;
 
@@ -40,7 +41,7 @@ public class GridLineView implements ListElementView<GridLine> {
                 break;
         }
 
-        viewport.position(this, gridLine.getIndex(), OFFSET);
+        viewport.position(this, gridLine.getIndex(), viewport.orientation.equals(Viewport.Orientation.VERTICAL) ? OFFSET_Y : OFFSET_X);
         return this;
     }
 

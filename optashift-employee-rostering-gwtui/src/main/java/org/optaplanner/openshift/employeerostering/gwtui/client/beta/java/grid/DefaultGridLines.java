@@ -45,7 +45,7 @@ public class DefaultGridLines {
     public void draw(final IsElement container, final Viewport viewport) {
 
         final List<GridLine> list = new ArrayList<>();
-
+        
         for (int i = 1; i < viewport.sizeInPixels; i++) {
             if (i % STRONG_LINE_INTERVAL == 0) {
                 list.add(new GridLine(i, STRONG));

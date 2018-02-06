@@ -32,4 +32,8 @@ public class Lane {
     public List<SubLane> getSubLanes() {
         return subLanes;
     }
+
+    public String getTitle() {
+        return title;
+    }
 }
