@@ -70,7 +70,7 @@ public class TestLanes {
 
         for (int i = 0; i < times; i++) {
             for (String label : labels) {
-                ret.add(new TestBlob(label, size, currentPosition, false));
+                ret.add(new TestBlob(label + i, size, currentPosition));
                 currentPosition += size;
             }
             currentPosition += positionIncrement;

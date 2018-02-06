@@ -23,4 +23,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 public interface BlobView<T extends Blob> extends ListElementView<T> {
 
     BlobView<T> withViewport(final Viewport viewport);
+
+    BlobView<T> withSubLaneView(final SubLaneView subLaneView);
 }
