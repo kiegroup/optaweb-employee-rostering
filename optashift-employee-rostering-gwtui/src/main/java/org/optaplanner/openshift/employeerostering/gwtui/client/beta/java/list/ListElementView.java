@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list;
+package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 
 public interface ListElementView<T> extends IsElement {
 
-    ListElementView<T> setup(final T t, final ListView<T, ?> list);
+    ListElementView<T> setup(final T t, final ListView<T> list);
 }

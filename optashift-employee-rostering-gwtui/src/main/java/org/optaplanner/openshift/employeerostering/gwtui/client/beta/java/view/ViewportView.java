@@ -34,7 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 
 @Templated("ViewportView.html")
 public class ViewportView implements IsElement {
@@ -47,9 +47,7 @@ public class ViewportView implements IsElement {
     private ManagedInstance<LaneView> laneViewInstances;
 
     @Inject
-    private ListView<Lane, LaneView> lanes;
-
-    private Viewport viewport;
+    private ListView<Lane> lanes;
 
     @EventHandler("viewport")
     public void onClick(final ClickEvent event) {
@@ -70,7 +68,6 @@ public class ViewportView implements IsElement {
     }
 
     public void setViewport(final Viewport viewport) {
-        this.viewport = viewport;
         getElement().style.height = HeightUnionType.of(viewport.sizeInPixels * viewport.pixelSize + 12 + "px");
         lanes.init(getElement(), viewport.lanes, () -> laneViewInstances.get().withViewport(viewport));
         viewport.drawGridAt(getElement());
