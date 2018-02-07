@@ -31,16 +31,6 @@
  */
 package java.time;
 
-import static java.time.LocalTime.HOURS_PER_DAY;
-import static java.time.LocalTime.MICROS_PER_DAY;
-import static java.time.LocalTime.MILLIS_PER_DAY;
-import static java.time.LocalTime.MINUTES_PER_DAY;
-import static java.time.LocalTime.NANOS_PER_DAY;
-import static java.time.LocalTime.NANOS_PER_HOUR;
-import static java.time.LocalTime.NANOS_PER_MINUTE;
-import static java.time.LocalTime.NANOS_PER_SECOND;
-import static java.time.LocalTime.SECONDS_PER_DAY;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -58,6 +48,16 @@ import java.time.jdk8.DefaultInterfaceChronoLocalDateTime;
 import java.time.jdk8.Jdk7Methods;
 import java.time.jdk8.Jdk8Methods;
 import java.time.zone.ZoneRules;
+
+import static java.time.LocalTime.HOURS_PER_DAY;
+import static java.time.LocalTime.MICROS_PER_DAY;
+import static java.time.LocalTime.MILLIS_PER_DAY;
+import static java.time.LocalTime.MINUTES_PER_DAY;
+import static java.time.LocalTime.NANOS_PER_DAY;
+import static java.time.LocalTime.NANOS_PER_HOUR;
+import static java.time.LocalTime.NANOS_PER_MINUTE;
+import static java.time.LocalTime.NANOS_PER_SECOND;
+import static java.time.LocalTime.SECONDS_PER_DAY;
 
 /**
  * A date-time without a time-zone in the ISO-8601 calendar system, such as {@code 2007-12-03T10:15:30}.

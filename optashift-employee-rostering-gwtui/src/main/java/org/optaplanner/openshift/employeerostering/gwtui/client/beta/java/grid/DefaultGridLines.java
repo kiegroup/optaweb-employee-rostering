@@ -32,7 +32,7 @@ public class DefaultGridLines {
 
         final HTMLElement targetElement = target.getElement();
 
-        targetElement.style.backgroundPosition = "4px 4px, 4px 4px";
+        targetElement.style.backgroundPosition = "5px 5px, 5px 5px";
 
         targetElement.style.backgroundImage =
                 "linear-gradient(" + getRotation(viewport) + "deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px)," +
