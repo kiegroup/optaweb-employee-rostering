@@ -28,12 +28,14 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.TestGridPage1;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.TestGridPage2;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.DomainGridDemo;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.EmployeeRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.ConfigurationEditor;
 
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.DOMAIN_GRID_DEMO;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
@@ -50,6 +52,7 @@ public class Pages {
         SKILLS,
         TEST_GRID_1,
         TEST_GRID_2,
+        DOMAIN_GRID_DEMO,
         SPOTS,
         EMPLOYEES,
         ROTATIONS,
@@ -81,6 +84,9 @@ public class Pages {
     @Inject
     private ManagedInstance<TestGridPage2> testGridPage2;
 
+    @Inject
+    private ManagedInstance<DomainGridDemo> testGridPage3;
+
     private final Map<Id, LazyInit<? extends Page>> mapping = new HashMap<>();
 
     @PostConstruct
@@ -93,6 +99,7 @@ public class Pages {
         mapping.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
         mapping.put(TEST_GRID_1, lazyInit(testGridPage1));
         mapping.put(TEST_GRID_2, lazyInit(testGridPage2));
+        mapping.put(DOMAIN_GRID_DEMO, lazyInit(testGridPage3));
     }
 
     public Page get(final Id id) {

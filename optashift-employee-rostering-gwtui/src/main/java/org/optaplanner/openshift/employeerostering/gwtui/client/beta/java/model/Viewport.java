@@ -37,7 +37,7 @@ public abstract class Viewport {
 
     public Orientation orientation;
 
-    public LinearScale scaleInGridPixels;
+    public LinearScale domainScaleInGridPixels; //FIXME: Generics issue
 
     public abstract void drawGridLinesAt(final IsElement container);
 

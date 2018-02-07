@@ -60,7 +60,18 @@ public class TestGridPage1 implements Page {
                 sizeInGridPixels = 84;
                 gridPixelSizeInScreenPixels = 12;
                 defaultNewBlobSizeInGridPixels = 4;
-                scaleInGridPixels = new LinearScale(1);
+                domainScaleInGridPixels = new LinearScale<Long>() {
+
+                    @Override
+                    public Long to(final Long value) {
+                        return value;
+                    }
+
+                    @Override
+                    public Long from(final Long value) {
+                        return value;
+                    }
+                };
                 lanes = testLanes.getAll();
             }
 

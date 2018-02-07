@@ -16,6 +16,11 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -23,56 +28,51 @@ import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.ShiftBlob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.ShiftBlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.PositiveMinutesScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.HORIZONTAL;
 
 @Templated("TestGridPage.html")
-public class TestGridPage2 implements Page {
+public class DomainGridDemo implements Page {
 
     @Inject
     @DataField("viewport")
     private ViewportView viewportView;
 
     @Inject
-    private TestLanes testLanes;
-
-    @Inject
     private DefaultGridLines gridLines;
 
     @Inject
-    private ManagedInstance<TestBlobView> blobViews;
+    private ManagedInstance<ShiftBlobView> blobViews;
 
     @PostConstruct
     public void init() {
+
+        final LocalDateTime start = LocalDateTime.of(2018, 2, 7, 0, 0);
+        final LocalDateTime end = start.plusWeeks(1);
+
         viewportView.setViewport(new Viewport() {
 
             {
                 orientation = HORIZONTAL;
-                gridPixelSizeInScreenPixels = 15;
+                gridPixelSizeInScreenPixels = 8;
                 sizeInGridPixels = 180;
-                defaultNewBlobSizeInGridPixels = 2;
-                domainScaleInGridPixels = new LinearScale<Long>() {
-
-                    @Override
-                    public Long to(final Long value) {
-                        return value;
-                    }
-
-                    @Override
-                    public Long from(final Long value) {
-                        return value;
-                    }
-                };
-                lanes = testLanes.getAll();
+                defaultNewBlobSizeInGridPixels = 8;
+                domainScaleInGridPixels = new PositiveMinutesScale(start, end);
+                lanes = new ArrayList<>(Collections.singletonList(new Lane("Lane", new ArrayList<>(Collections.singletonList(new SubLane(new ArrayList<>()))))));
             }
 
             @Override
@@ -82,7 +82,11 @@ public class TestGridPage2 implements Page {
 
             @Override
             public Blob newBlob(final Integer position) {
-                return new TestBlob("New", defaultNewBlobSizeInGridPixels, position);
+
+                return new ShiftBlob(new Shift(
+                        1,
+                        new Spot(1, "Emergency Room", new HashSet<>()),
+                        new TimeSlot(1, start, end)));
             }
 
             @Override
