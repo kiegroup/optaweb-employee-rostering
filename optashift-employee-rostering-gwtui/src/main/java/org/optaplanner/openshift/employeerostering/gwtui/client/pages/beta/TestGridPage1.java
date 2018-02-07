@@ -25,6 +25,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlobView;
@@ -60,6 +61,7 @@ public class TestGridPage1 implements Page {
                 pixelSize = 12;
                 defaultNewBlobSizeInPixels = 4;
                 lanes = testLanes.getAll();
+                scale = new LinearScale(1);
             }
 
             @Override

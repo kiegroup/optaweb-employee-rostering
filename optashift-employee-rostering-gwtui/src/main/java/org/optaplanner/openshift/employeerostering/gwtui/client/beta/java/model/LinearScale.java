@@ -16,6 +16,19 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model;
 
-public interface Scale {
+public class LinearScale {
 
+    private final Integer factor;
+
+    public LinearScale(final Integer factor) {
+        this.factor = factor;
+    }
+
+    public Integer in(final Integer unscaled) {
+        return unscaled / factor;
+    }
+
+    public Integer out(final Integer scaled) {
+        return scaled * factor;
+    }
 }
