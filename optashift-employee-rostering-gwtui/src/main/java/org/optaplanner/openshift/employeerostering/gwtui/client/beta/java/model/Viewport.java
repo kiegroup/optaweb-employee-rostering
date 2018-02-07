@@ -35,7 +35,7 @@ public abstract class Viewport {
 
     public Orientation orientation;
 
-    public Scale scale;
+    public LinearScale scale;
 
     public abstract void drawGridLinesAt(final IsElement container);
 

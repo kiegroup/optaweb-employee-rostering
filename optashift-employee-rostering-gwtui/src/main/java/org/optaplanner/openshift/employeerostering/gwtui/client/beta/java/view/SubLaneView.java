@@ -17,6 +17,8 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -97,15 +99,16 @@ public class SubLaneView implements ListElementView<SubLane> {
             final int position = new Double(offset / viewport.pixelSize).intValue();
 
             final Blob newBlob = viewport.newBlob(position);
-            if (hasSpaceFor(newBlob)) {
+            if (hasSpaceForIgnoring(newBlob)) {
                 blobs.add(newBlob);
             }
         }
     }
 
-    public boolean hasSpaceFor(final Blob blob) {
-        return blobs.getObjects().stream()
-                .filter(b -> !blob.equals(b))
+    public boolean hasSpaceForIgnoring(final Blob blob, final Blob... ignoredBlobs) {
+        final List<Blob> ignored = Arrays.asList(ignoredBlobs);
+        return this.blobs.getObjects().stream()
+                .filter(b -> !ignored.contains(b))
                 .noneMatch(b -> b.collidesWith(blob));
     }
 
