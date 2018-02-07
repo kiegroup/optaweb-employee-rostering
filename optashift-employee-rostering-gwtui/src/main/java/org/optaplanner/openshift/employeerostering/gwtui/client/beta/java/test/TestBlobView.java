@@ -67,8 +67,8 @@ public class TestBlobView implements BlobView<TestBlob> {
         this.list = list;
 
         updateLabel();
-        viewport.scale(this, blob.getSize(), 0);
-        viewport.position(this, blob.getPosition(), 0);
+        viewport.setSizeInScreenPixels(this, blob.getSize(), 0);
+        viewport.setPositionInScreenPixels(this, blob.getPosition(), 0);
 
         draggability.onDrag(this::onDrag);
         draggability.applyFor(this, subLaneView, viewport, blob);

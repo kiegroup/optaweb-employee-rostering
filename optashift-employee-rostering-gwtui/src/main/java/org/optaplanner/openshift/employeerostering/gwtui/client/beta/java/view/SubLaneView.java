@@ -95,8 +95,8 @@ public class SubLaneView implements ListElementView<SubLane> {
 
         // Add Blob (ALT + CLICK)
         else if (e.altKey) {
-            final double offset = viewport.orientation.equals(VERTICAL) ? e.offsetY : e.offsetX;
-            final int position = new Double(offset / viewport.pixelSize).intValue();
+            final double offset = viewport.orient(e.offsetY, e.offsetX);
+            final int position = viewport.toGridPixels(new Double(offset).intValue());
 
             final Blob newBlob = viewport.newBlob(position);
             if (hasSpaceForIgnoring(newBlob)) {

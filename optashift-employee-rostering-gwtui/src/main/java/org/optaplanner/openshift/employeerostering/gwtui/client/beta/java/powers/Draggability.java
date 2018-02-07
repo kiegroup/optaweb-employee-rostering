@@ -25,8 +25,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
-
 public class Draggability {
 
     private Blob blob;
@@ -45,8 +43,8 @@ public class Draggability {
 
         makeDraggable(blobView.getElement(),
                       subLaneView.getElement(),
-                      viewport.pixelSize,
-                      viewport.orientation.equals(VERTICAL) ? "y" : "x");
+                      viewport.gridPixelSizeInScreenPixels,
+                      viewport.orient("y", "x"));
     }
 
     private native void makeDraggable(final HTMLElement blob,
@@ -72,11 +70,12 @@ public class Draggability {
     }-*/;
 
     private boolean onDrag(final int top, final int left) {
-        final Integer newPosition = (viewport.orientation.equals(VERTICAL) ? top : left) / viewport.pixelSize;
+        final Integer newPosition = viewport.toGridPixels(viewport.orient(top, left));
         final Integer originalPosition = blob.getPosition();
 
         if (!newPosition.equals(originalPosition)) {
-            if (!subLaneView.hasSpaceForIgnoring(Outline.of(newPosition, blob.getSize()), blob)) {
+            final Blob outline = Outline.of(newPosition, blob.getSize());
+            if (!subLaneView.hasSpaceForIgnoring(outline, blob)) {
                 DomGlobal.console.info("Collision!"); //TODO: Restrict dragging if a collision occurs.
                 return false;
             } else {
