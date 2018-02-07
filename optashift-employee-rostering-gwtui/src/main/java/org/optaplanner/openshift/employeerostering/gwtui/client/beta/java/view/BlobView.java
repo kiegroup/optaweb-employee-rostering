@@ -20,9 +20,9 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.L
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
-public interface BlobView<T extends Blob> extends ListElementView<T> {
+public interface BlobView<Y, T extends Blob<Y>> extends ListElementView<T> {
 
-    BlobView<T> withViewport(final Viewport viewport);
+    BlobView<Y, T> withViewport(final Viewport<Y> viewport);
 
-    BlobView<T> withSubLaneView(final SubLaneView subLaneView);
+    BlobView<Y, T> withSubLaneView(final SubLaneView<Y> subLaneView);
 }

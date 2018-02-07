@@ -18,6 +18,8 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model
 
 public interface LinearScale<T> {
 
+    //FIXME: Find better names
+
     Long to(final T value);
 
     T from(final Long value);

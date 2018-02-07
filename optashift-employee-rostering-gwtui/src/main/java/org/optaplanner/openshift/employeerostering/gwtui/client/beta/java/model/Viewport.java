@@ -25,90 +25,90 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.B
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
 
-public abstract class Viewport {
+public abstract class Viewport<T> {
 
-    public List<Lane> lanes;
+    public List<Lane<T>> lanes;
 
-    public Integer sizeInGridPixels;
+    public Long sizeInGridPixels;
 
-    public Integer gridPixelSizeInScreenPixels;
+    public Long gridPixelSizeInScreenPixels;
 
-    public Integer defaultNewBlobSizeInGridPixels;
+    public Long defaultNewBlobSizeInGridPixels;
 
     public Orientation orientation;
 
-    public LinearScale domainScaleInGridPixels; //FIXME: Generics issue
+    public LinearScale<T> scale;
 
     public abstract void drawGridLinesAt(final IsElement container);
 
-    public abstract Blob newBlob(final Integer position);
+    public abstract Blob<T> newBlob(final Long position);
 
-    public abstract BlobView<?> newBlobView();
+    public abstract BlobView<T, ?> newBlobView();
 
-    public <T> T orient(final T verticalOption, final T horizontalOption) {
+    public <Y> Y orient(final Y verticalOption, final Y horizontalOption) {
         return orientation.equals(VERTICAL) ? verticalOption : horizontalOption;
     }
 
-    public Integer getSizeInGridPixels(final IsElement element) {
+    public Long getSizeInGridPixels(final IsElement element) {
         return toGridPixels(orientation.getSize(element));
     }
 
-    public Integer toGridPixels(final Integer screenPixels) {
+    public Long toGridPixels(final Long screenPixels) {
         return screenPixels / gridPixelSizeInScreenPixels;
     }
 
-    public Integer toScreenPixels(final Integer gridPixels) {
+    public Long toScreenPixels(final Long gridPixels) {
         return gridPixels * gridPixelSizeInScreenPixels;
     }
 
-    public void setSizeInScreenPixels(final IsElement element, final Integer sizeInGridPixels, final Integer offsetInScreenPixels) {
+    public void setSizeInScreenPixels(final IsElement element, final Long sizeInGridPixels, final Long offsetInScreenPixels) {
         orientation.scale(element, sizeInGridPixels, this, offsetInScreenPixels);
     }
 
-    public void setPositionInScreenPixels(final IsElement element, final Integer positionInGridPixels, final Integer offsetInScreenPixels) {
+    public void setPositionInScreenPixels(final IsElement element, final Long positionInGridPixels, final Long offsetInScreenPixels) {
         orientation.position(element, positionInGridPixels, this, offsetInScreenPixels);
     }
 
     public enum Orientation {
         VERTICAL {
             @Override
-            void position(final IsElement element, final Integer positionInGridPixels, final Viewport viewport, Integer offsetInScreenPixels) {
+            void position(final IsElement element, final Long positionInGridPixels, final Viewport viewport, Long offsetInScreenPixels) {
                 element.getElement().style.top = viewport.toScreenPixels(positionInGridPixels) + offsetInScreenPixels + "px";
             }
 
             @Override
-            void scale(final IsElement element, final Integer sizeInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels) {
+            void scale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
                 element.getElement().style.height = HeightUnionType.of(viewport.toScreenPixels(sizeInGridPixels) + offsetInScreenPixels + "px");
             }
 
             @Override
-            public Integer getSize(final IsElement element) {
+            public Long getSize(final IsElement element) {
                 final String size = element.getElement().style.height.asString();
-                return size.isEmpty() ? 0 : Integer.parseInt(size.substring(0, size.length() - 2));
+                return size.isEmpty() ? 0 : Long.parseLong(size.substring(0, size.length() - 2));
             }
         },
         HORIZONTAL {
             @Override
-            void position(final IsElement element, final Integer positionInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels) {
+            void position(final IsElement element, final Long positionInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
                 element.getElement().style.left = viewport.toScreenPixels(positionInGridPixels) + offsetInScreenPixels + "px";
             }
 
             @Override
-            void scale(final IsElement element, final Integer sizeInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels) {
+            void scale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
                 element.getElement().style.width = WidthUnionType.of(viewport.toScreenPixels(sizeInGridPixels) + offsetInScreenPixels + "px");
             }
 
             @Override
-            public Integer getSize(final IsElement element) {
+            public Long getSize(final IsElement element) {
                 final String size = element.getElement().style.width.asString();
-                return size.isEmpty() ? 0 : Integer.parseInt(size.substring(0, size.length() - 2));
+                return size.isEmpty() ? 0 : Long.parseLong(size.substring(0, size.length() - 2));
             }
         };
 
-        abstract void position(final IsElement element, final Integer positionInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels);
+        abstract void position(final IsElement element, final Long positionInGridPixels, final Viewport viewport, final Long offsetInScreenPixels);
 
-        abstract void scale(final IsElement element, final Integer sizeInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels);
+        abstract void scale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels);
 
-        public abstract Integer getSize(final IsElement element);
+        public abstract Long getSize(final IsElement element);
     }
 }

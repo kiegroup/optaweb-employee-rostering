@@ -36,17 +36,19 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
 @Templated("ViewportView.html")
-public class ViewportView implements IsElement {
+public class ViewportView<T> implements IsElement {
 
     @Inject
     @DataField("viewport")
     public HTMLDivElement root;
 
     @Inject
-    private ManagedInstance<LaneView> laneViewInstances;
+    private ManagedInstance<LaneView<T>> laneViewInstances;
 
     @Inject
-    private ListView<Lane> lanes;
+    private ListView<Lane<T>> lanes;
+
+    private Viewport<T> viewport;
 
     @EventHandler("viewport")
     public void onClick(final ClickEvent event) {
@@ -59,17 +61,18 @@ public class ViewportView implements IsElement {
 
         // Add Lane (SHIFT + CLICK)
         if (e.shiftKey) {
-            final List<SubLane> subLanes = new ArrayList<>();
-            final SubLane subLane = new SubLane(new ArrayList<>());
+            final List<SubLane<T>> subLanes = new ArrayList<>();
+            final SubLane<T> subLane = new SubLane<>(new ArrayList<>());
             subLanes.add(subLane);
-            lanes.add(new Lane("New", subLanes));
+            lanes.add(new Lane<>("New", subLanes));
         }
     }
 
-    public void setViewport(final Viewport viewport) {
+    public void setViewport(final Viewport<T> viewport) {
+        this.viewport = viewport;
         getElement().classList.add(viewport.orient("vertical", "horizontal"));
 
-        viewport.setSizeInScreenPixels(this, viewport.sizeInGridPixels, 12);
+        viewport.setSizeInScreenPixels(this, viewport.sizeInGridPixels, 12L);
 
         lanes.init(getElement(), viewport.lanes, () -> laneViewInstances.get()
                 .withViewport(viewport));

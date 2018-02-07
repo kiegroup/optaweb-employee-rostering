@@ -29,25 +29,25 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
 @Templated
-public class LaneView implements ListElementView<Lane> {
+public class LaneView<T> implements ListElementView<Lane<T>> {
 
     @Inject
     @DataField("title")
     public HTMLDivElement title;
 
     @Inject
-    private ListView<SubLane> subLanes;
+    private ListView<SubLane<T>> subLanes;
 
     @Inject
-    private ManagedInstance<SubLaneView> subLaneViewInstances;
+    private ManagedInstance<SubLaneView<T>> subLaneViewInstances;
 
-    private Lane lane;
+    private Lane<T> lane;
 
-    private Viewport viewport;
+    private Viewport<T> viewport;
 
     @Override
-    public ListElementView<Lane> setup(final Lane lane,
-                                       final ListView<Lane> list) {
+    public ListElementView<Lane<T>> setup(final Lane<T> lane,
+                                       final ListView<Lane<T>> list) {
 
         title.textContent = lane.getTitle();
         subLanes.init(getElement(), lane.getSubLanes(), () -> subLaneViewInstances.get()
@@ -59,7 +59,7 @@ public class LaneView implements ListElementView<Lane> {
         return this;
     }
 
-    public LaneView withViewport(final Viewport viewport) {
+    public LaneView<T> withViewport(final Viewport<T> viewport) {
         this.viewport = viewport;
         return this;
     }

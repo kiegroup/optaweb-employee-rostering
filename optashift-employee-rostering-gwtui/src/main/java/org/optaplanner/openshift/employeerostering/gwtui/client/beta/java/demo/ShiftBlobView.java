@@ -31,7 +31,6 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.Draggability;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.Resizability;
@@ -39,7 +38,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.B
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
 @Templated
-public class ShiftBlobView implements BlobView<ShiftBlob> {
+public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
 
     @Inject
     @DataField("blob")
@@ -51,14 +50,14 @@ public class ShiftBlobView implements BlobView<ShiftBlob> {
     private HTMLElement label;
 
     @Inject
-    private Draggability draggability;
+    private Draggability<LocalDateTime> draggability;
 
     @Inject
-    private Resizability resizability;
+    private Resizability<LocalDateTime> resizability;
 
     private ShiftBlob blob;
-    private Viewport viewport;
-    private SubLaneView subLaneView;
+    private Viewport<LocalDateTime> viewport;
+    private SubLaneView<LocalDateTime> subLaneView;
 
     private ListView<ShiftBlob> list;
 
@@ -66,14 +65,12 @@ public class ShiftBlobView implements BlobView<ShiftBlob> {
     public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
                                             final ListView<ShiftBlob> list) {
 
-        final LinearScale<LocalDateTime> scale = viewport.domainScaleInGridPixels;
-
         this.blob = blob;
         this.list = list;
 
         updateLabel();
-//        viewport.setSizeInScreenPixels(this, scale.from(blob.getSize()), 0);
-//        viewport.setPositionInScreenPixels(this, scale.to(blob.getPosition()), 0);
+        viewport.setPositionInScreenPixels(this, viewport.scale.to(blob.getPosition()), 0L);
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
 
         draggability.onDrag(this::onDrag);
         draggability.applyFor(this, subLaneView, viewport, blob);
@@ -84,16 +81,14 @@ public class ShiftBlobView implements BlobView<ShiftBlob> {
         return this;
     }
 
-    private boolean onResize(final int newSize) {
-        final LinearScale<LocalDateTime> scale = viewport.domainScaleInGridPixels;
-//        blob.setSize(scale.to(newSize));
+    private boolean onResize(final Long newSizeInGridPixels) {
+        blob.setSizeInGridPixels(newSizeInGridPixels);
         updateLabel();
         return true;
     }
 
-    private boolean onDrag(final int newPosition) {
-        final LinearScale<LocalDateTime> scale = viewport.domainScaleInGridPixels;
-//        blob.setPosition(scale.to(newPosition));
+    private boolean onDrag(final Long newPositionInGridPixels) {
+        blob.setPosition(viewport.scale.from(newPositionInGridPixels));
         updateLabel();
         return true;
     }
@@ -108,17 +103,17 @@ public class ShiftBlobView implements BlobView<ShiftBlob> {
     }
 
     private void updateLabel() {
-        label.textContent = blob.getLabel().charAt(0) + " [" + blob.getPosition() + ", " + blob.getSize() + "]";
+        label.textContent = blob.getLabel().charAt(0) + " [" + blob.getPosition() + ", " + blob.getSizeInGridPixels() + "]";
     }
 
     @Override
-    public BlobView<ShiftBlob> withViewport(final Viewport viewport) {
+    public BlobView<LocalDateTime, ShiftBlob> withViewport(final Viewport<LocalDateTime> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<ShiftBlob> withSubLaneView(final SubLaneView subLaneView) {
+    public BlobView<LocalDateTime, ShiftBlob> withSubLaneView(final SubLaneView<LocalDateTime> subLaneView) {
         this.subLaneView = subLaneView;
         return this;
     }

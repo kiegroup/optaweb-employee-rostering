@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model;
+package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-public class PositiveMinutesScale implements LinearScale<LocalDateTime> {
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+
+public class PositiveHoursScale implements LinearScale<LocalDateTime> {
 
     private final LocalDateTime start;
     private final LocalDateTime end;
 
-    public PositiveMinutesScale(final LocalDateTime start, final LocalDateTime end) {
+    public PositiveHoursScale(final LocalDateTime start, final LocalDateTime end) {
         this.start = start;
         this.end = end;
     }
@@ -43,25 +45,24 @@ public class PositiveMinutesScale implements LinearScale<LocalDateTime> {
             date = dateValue;
         }
 
-        return Duration.between(instantOf(start), instantOf(date)).getSeconds() / 60;
+        return Duration.between(instantOf(start), instantOf(date)).getSeconds() / 60 / 60;
     }
 
     @Override
     public LocalDateTime from(final Long value) {
-        if (value < 0) {
+        final LocalDateTime date = start.plusHours(value);
+
+        if (date.isBefore(start)) {
             return start;
-        }
-
-        final LocalDateTime dateValue = start.plusMinutes(value);
-        if (dateValue.isAfter(end)) {
+        } else if (date.isAfter(end)) {
             return end;
+        } else {
+            return date;
         }
-
-        return dateValue;
     }
 
     private Instant instantOf(final LocalDateTime value) {
-        return value.toInstant(ZoneOffset.UTC);
+        return value.toInstant(ZoneOffset.UTC); //FIXME: Configurable?
     }
 }
 

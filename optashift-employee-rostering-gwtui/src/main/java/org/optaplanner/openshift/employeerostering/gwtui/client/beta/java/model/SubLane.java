@@ -18,15 +18,15 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model
 
 import java.util.List;
 
-public class SubLane {
+public class SubLane<T> {
 
-    private final List<Blob> blobs;
+    private final List<Blob<T>> blobs;
 
-    public SubLane(final List<Blob> blobs) {
+    public SubLane(final List<Blob<T>> blobs) {
         this.blobs = blobs;
     }
 
-    public List<Blob> getBlobs() {
+    public List<Blob<T>> getBlobs() {
         return blobs;
     }
 }
