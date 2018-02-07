@@ -1,10 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -15,14 +12,10 @@ import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 
 import com.google.gwt.core.client.Callback;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.view.client.ListDataProvider;
 import elemental2.promise.Promise;
 import org.gwtbootstrap3.client.ui.Button;
@@ -32,10 +25,6 @@ import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
-import org.gwtbootstrap3.client.ui.html.Div;
-import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
-import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
-import org.gwtbootstrap3.extras.typeahead.client.base.Dataset;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -45,15 +34,13 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_actions;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_delete;
@@ -64,7 +51,7 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.resources
 @Dependent
 @Templated
 public class EmployeeListPanel implements IsElement,
-                                          Page {
+                               Page {
 
     @Inject
     @DataField
@@ -128,7 +115,7 @@ public class EmployeeListPanel implements IsElement,
     }
 
     public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
-        tenantId = tenant.getId();
+        Integer tenantId = tenantStore.getCurrentTenantId();
         employeeSubform.setTenantId(tenantId);
         refresh();
     }
@@ -147,7 +134,6 @@ public class EmployeeListPanel implements IsElement,
         if (tenantStore.getCurrentTenantId() == null) {
             return PromiseUtils.resolve();
         }
-        SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
 
         return new Promise<>((res, rej) -> {
             SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
@@ -174,7 +160,7 @@ public class EmployeeListPanel implements IsElement,
                     return "";
                 }
                 return skillProficiencySet.stream().map(skillProficiency -> skillProficiency.getName())
-                        .collect(Collectors.joining(", "));
+                                          .collect(Collectors.joining(", "));
             }
         }, CONSTANTS.format(General_skills));
         Column<Employee, String> deleteColumn = new Column<Employee, String>(new ButtonCell(IconType.REMOVE,
@@ -200,7 +186,7 @@ public class EmployeeListPanel implements IsElement,
         };
         editColumn.setFieldUpdater((index, employee, value) -> {
             EmployeeListPanel employeeListPanel = this;
-            SkillRestServiceBuilder.getSkillList(tenantId, new FailureShownRestCallback<List<Skill>>() {
+            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), new FailureShownRestCallback<List<Skill>>() {
 
                 @Override
                 public void onSuccess(List<Skill> skillList) {
@@ -242,16 +228,16 @@ public class EmployeeListPanel implements IsElement,
         if (tenantStore.getCurrentTenantId() == null) {
             throw new IllegalStateException("The tenantStore.getTenantId() (" + tenantStore.getCurrentTenantId() + ") can not be null at this time.");
         }
-        employeeSubform.submit(new Callback<EmployeeModel, Set<ConstraintViolation<EmployeeModel>>>() {
+        employeeSubform.submit(new Callback<Employee, Set<ConstraintViolation<Employee>>>() {
 
             @Override
-            public void onFailure(Set<ConstraintViolation<EmployeeModel>> validationErrorSet) {
+            public void onFailure(Set<ConstraintViolation<Employee>> validationErrorSet) {
                 ErrorPopup.show(CommonUtils.delimitCollection(validationErrorSet, (e) -> e.getMessage(), "\n"));
             }
 
             @Override
-            public void onSuccess(EmployeeModel employee) {
-                EmployeeRestServiceBuilder.addEmployee(tenantId, employee, new FailureShownRestCallback<Employee>() {
+            public void onSuccess(Employee employee) {
+                EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee, new FailureShownRestCallback<Employee>() {
 
                     @Override
                     public void onSuccess(Employee employee) {

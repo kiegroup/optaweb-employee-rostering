@@ -51,11 +51,6 @@
       <groupId>org.optaplanner.openshift</groupId>
       <artifactId>optashift-employee-rostering-shared</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.optaplanner.openshift</groupId>
-      <artifactId>optashift-employee-rostering-shared</artifactId>
-      <classifier>sources</classifier>
-    </dependency>
     <!-- GWT -->
     <dependency>
       <groupId>com.google.gwt</groupId>
