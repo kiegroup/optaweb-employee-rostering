@@ -18,18 +18,18 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model
 
 import java.util.List;
 
-public class Lane {
+public class Lane<T> {
 
     private final String title;
 
-    private final List<SubLane> subLanes;
+    private final List<SubLane<T>> subLanes;
 
-    public Lane(final String title, final List<SubLane> subLanes) {
+    public Lane(final String title, final List<SubLane<T>> subLanes) {
         this.title = title;
         this.subLanes = subLanes;
     }
 
-    public List<SubLane> getSubLanes() {
+    public List<SubLane<T>> getSubLanes() {
         return subLanes;
     }
 

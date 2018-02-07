@@ -25,10 +25,10 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 @Dependent
 public class DefaultGridLines {
 
-    private static final Integer WEAK_LINE_INTERVAL_IN_GRID_PIXELS = 2;
-    private static final Integer STRONG_LINE_INTERVAL_IN_GRID_PIXELS = 12;
+    private static final Long WEAK_LINE_INTERVAL_IN_GRID_PIXELS = 2L;
+    private static final Long STRONG_LINE_INTERVAL_IN_GRID_PIXELS = 12L;
 
-    public void draw(final IsElement target, final Viewport viewport) {
+    public void draw(final IsElement target, final Viewport<?> viewport) {
 
         final HTMLElement targetElement = target.getElement();
 
@@ -43,15 +43,15 @@ public class DefaultGridLines {
                         getHarshLinesInterval(viewport) + getHarshLinesInterval(viewport);
     }
 
-    private String getHarshLinesInterval(final Viewport viewport) {
+    private String getHarshLinesInterval(final Viewport<?> viewport) {
         return viewport.toScreenPixels(STRONG_LINE_INTERVAL_IN_GRID_PIXELS) + "px ";
     }
 
-    private String getSoftLinesInterval(final Viewport viewport) {
+    private String getSoftLinesInterval(final Viewport<?> viewport) {
         return viewport.toScreenPixels(WEAK_LINE_INTERVAL_IN_GRID_PIXELS) + "px ";
     }
 
-    private Integer getRotation(final Viewport viewport) {
+    private Integer getRotation(final Viewport<?> viewport) {
         return viewport.orient(0, 90);
     }
 }

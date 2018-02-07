@@ -16,31 +16,35 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model;
 
-public interface Blob {
+public interface Blob<T> {
 
-    String getLabel();
+    T getPosition();
 
-    Integer getSize();
+    void setPosition(final T position);
 
-    Integer getPosition();
+    Long getSizeInGridPixels();
 
-    default boolean collidesWith(final Blob other) {
+    void setSizeInGridPixels(final Long sizeInGridPixels);
 
-        final int x0 = getPosition();
-        final int x1 = getPosition() + getSize();
-        final int y0 = other.getPosition();
-        final int y1 = other.getPosition() + other.getSize();
-
-        final int intersectionLeft = y1 - x0;
-        final int intersectionRight = x1 - y0;
-
-        return intersectionLeft > 0 && intersectionLeft <= getSize() ||
-                intersectionRight > 0 && intersectionRight <= other.getSize();
+    default T getEndPosition(final LinearScale<T> scale) {
+        return scale.from(getEndPositionInGridPixels(scale));
     }
 
-    void setLabel(String label);
+    default Long getEndPositionInGridPixels(final LinearScale<T> scale) {
+        return scale.to(getPosition()) + getSizeInGridPixels();
+    }
 
-    void setPosition(Integer position);
+    default boolean collidesWith(final Blob<T> other, final LinearScale<T> scale) {
 
-    void setSize(Integer size);
+        final Long x0 = scale.to(getPosition());
+        final Long x1 = getEndPositionInGridPixels(scale);
+        final Long y0 = scale.to(other.getPosition());
+        final Long y1 = other.getEndPositionInGridPixels(scale);
+
+        final Long intersectionLeft = y1 - x0;
+        final Long intersectionRight = x1 - y0;
+
+        return intersectionLeft > 0 && intersectionLeft <= getSizeInGridPixels() ||
+                intersectionRight > 0 && intersectionRight <= other.getSizeInGridPixels();
+    }
 }

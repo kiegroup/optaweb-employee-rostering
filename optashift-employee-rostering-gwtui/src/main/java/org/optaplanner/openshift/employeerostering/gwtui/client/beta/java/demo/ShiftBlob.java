@@ -16,48 +16,53 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
-public class ShiftBlob implements Blob {
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
+
+public class ShiftBlob implements Blob<LocalDateTime> {
 
     private final Shift shift;
+    private final LinearScale<LocalDateTime> scale;
+    private Long sizeInGridPixels;
 
-    public ShiftBlob(final Shift shift) {
+    public ShiftBlob(final Shift shift, final LinearScale<LocalDateTime> scale) {
         this.shift = shift;
+        this.scale = scale;
+        this.sizeInGridPixels = scale.to(shift.getTimeSlot().getEndDateTime()) - scale.to(getPosition());
     }
 
     @Override
+    public Long getSizeInGridPixels() {
+        return sizeInGridPixels;
+    }
+
+    @Override
+    public LocalDateTime getPosition() {
+        return shift.getTimeSlot().getStartDateTime();
+    }
+
+    @Override
+    public void setPosition(final LocalDateTime start) {
+        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
+                                       start,
+                                       shift.getTimeSlot().getEndDateTime()));
+    }
+
+    @Override
+    public void setSizeInGridPixels(final Long sizeInGridPixels) {
+        this.sizeInGridPixels = sizeInGridPixels;
+        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
+                                       shift.getTimeSlot().getStartDateTime(),
+                                       getEndPosition(scale)));
+    }
+
     public String getLabel() {
-        return shift.getEmployee() == null ? "Unassigned" : shift.getEmployee().getName();
-    }
-
-    @Override
-    public Integer getSize() {
-        return 1 - getPosition(); // Minutes representing the ending time
-    }
-
-    @Override
-    public Integer getPosition() {
-        return 0; // Minutes representing starting time
-    }
-
-    @Override
-    public void setLabel(final String label) {
-        // no-op
-    }
-
-    @Override
-    public void setPosition(final Integer position) {
-//        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
-//                                       new LocalDateTime(), // get time from position
-//                                       shift.getTimeSlot().getEndDateTime()));
-    }
-
-    @Override
-    public void setSize(final Integer size) {
-//        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
-//                                       shift.getTimeSlot().getStartDateTime(),
-//                                       new LocalDateTime())); // get time from size
+        return Optional.ofNullable(shift.getEmployee()).map(Employee::getName).orElse("Unassigned");
     }
 }

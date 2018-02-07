@@ -18,15 +18,15 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 
-public class TestBlob implements Blob {
+public class TestBlob implements Blob<Long> {
 
-    private Integer size;
-    private Integer position;
+    private Long size;
+    private Long position;
     private String label;
 
     public TestBlob(final String label,
-                    final Integer size,
-                    final Integer position) {
+                    final Long size,
+                    final Long position) {
 
         this.size = size;
         this.position = position;
@@ -34,32 +34,30 @@ public class TestBlob implements Blob {
     }
 
     @Override
-    public Integer getSize() {
+    public Long getSizeInGridPixels() {
         return size;
     }
 
     @Override
-    public Integer getPosition() {
+    public Long getPosition() {
         return position;
     }
 
-    @Override
     public String getLabel() {
         return label;
     }
 
-    @Override
     public void setLabel(final String label) {
         this.label = label;
     }
 
     @Override
-    public void setPosition(final Integer position) {
+    public void setPosition(final Long position) {
         this.position = position;
     }
 
     @Override
-    public void setSize(final Integer size) {
-        this.size = size;
+    public void setSizeInGridPixels(final Long sizeInGridPixels) {
+        this.size = sizeInGridPixels;
     }
 }

@@ -25,24 +25,24 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
-public class Resizability {
+public class Resizability<T> {
 
-    private Blob blob;
-    private Viewport viewport;
-    private SubLaneView subLaneView;
-    private Function<Integer, Boolean> onResize;
+    private Blob<T> blob;
+    private Viewport<T> viewport;
+    private SubLaneView<T> subLaneView;
+    private Function<Long, Boolean> onResize;
 
     public void applyFor(final IsElement blobView,
-                         final SubLaneView subLaneView,
-                         final Viewport viewport,
-                         final Blob blob) {
+                         final SubLaneView<T> subLaneView,
+                         final Viewport<T> viewport,
+                         final Blob<T> blob) {
 
         this.subLaneView = subLaneView;
         this.viewport = viewport;
         this.blob = blob;
 
         makeResizable(blobView.getElement(),
-                      viewport.gridPixelSizeInScreenPixels,
+                      viewport.gridPixelSizeInScreenPixels.intValue(),
                       viewport.orient("s", "e"));
     }
 
@@ -71,23 +71,25 @@ public class Resizability {
     }-*/;
 
     private boolean onResize(final int height, final int width) {
-        final Integer newSize = viewport.toGridPixels(viewport.orient(height, width));
-        final Integer originalSize = blob.getSize();
+        final Long newSizeInGridPixels = viewport.toGridPixels(viewport.orient(height, width).longValue());
+        final Long originalSize = blob.getSizeInGridPixels();
 
-        if (!newSize.equals(originalSize)) {
-            final Blob outline = Outline.of(blob.getPosition(), newSize);
-            if (!subLaneView.hasSpaceForIgnoring(outline, blob)) {
+        if (!newSizeInGridPixels.equals(originalSize)) {
+            blob.setSizeInGridPixels(newSizeInGridPixels);
+            if (!subLaneView.hasSpaceForIgnoring(blob, blob)) {
+                blob.setSizeInGridPixels(originalSize);
                 DomGlobal.console.info("Collision!"); //TODO: Restrict resizing if a collision occurs.
                 return false;
             } else {
-                return onResize.apply(newSize);
+                blob.setSizeInGridPixels(originalSize);
+                return onResize.apply(newSizeInGridPixels);
             }
         }
 
         return false;
     }
 
-    public void onResize(final Function<Integer, Boolean> onResize) {
+    public void onResize(final Function<Long, Boolean> onResize) {
         this.onResize = onResize;
     }
 }

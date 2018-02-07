@@ -40,7 +40,7 @@ public class TestGridPage2 implements Page {
 
     @Inject
     @DataField("viewport")
-    private ViewportView viewportView;
+    private ViewportView<Long> viewportView;
 
     @Inject
     private TestLanes testLanes;
@@ -53,14 +53,14 @@ public class TestGridPage2 implements Page {
 
     @PostConstruct
     public void init() {
-        viewportView.setViewport(new Viewport() {
+        viewportView.setViewport(new Viewport<Long>() {
 
             {
                 orientation = HORIZONTAL;
-                gridPixelSizeInScreenPixels = 15;
-                sizeInGridPixels = 180;
-                defaultNewBlobSizeInGridPixels = 2;
-                domainScaleInGridPixels = new LinearScale<Long>() {
+                gridPixelSizeInScreenPixels = 15L;
+                sizeInGridPixels = 180L;
+                defaultNewBlobSizeInGridPixels = 2L;
+                scale = new LinearScale<Long>() {
 
                     @Override
                     public Long to(final Long value) {
@@ -81,12 +81,12 @@ public class TestGridPage2 implements Page {
             }
 
             @Override
-            public Blob newBlob(final Integer position) {
-                return new TestBlob("New", defaultNewBlobSizeInGridPixels, position);
+            public Blob<Long> newBlob(final Long positionInGridPixels) {
+                return new TestBlob("New", defaultNewBlobSizeInGridPixels, positionInGridPixels);
             }
 
             @Override
-            public BlobView<?> newBlobView() {
+            public BlobView<Long, ?> newBlobView() {
                 return blobViews.get();
             }
         });

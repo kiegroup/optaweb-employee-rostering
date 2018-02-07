@@ -22,20 +22,21 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
-public class Draggability {
+public class Draggability<T> {
 
-    private Blob blob;
-    private SubLaneView subLaneView;
-    private Viewport viewport;
-    private Function<Integer, Boolean> onDrag;
+    private Blob<T> blob;
+    private SubLaneView<T> subLaneView;
+    private Viewport<T> viewport;
+    private Function<Long, Boolean> onDrag;
 
     public void applyFor(final IsElement blobView,
-                         final SubLaneView subLaneView,
-                         final Viewport viewport,
-                         final Blob blob) {
+                         final SubLaneView<T> subLaneView,
+                         final Viewport<T> viewport,
+                         final Blob<T> blob) {
 
         this.blob = blob;
         this.subLaneView = subLaneView;
@@ -43,7 +44,7 @@ public class Draggability {
 
         makeDraggable(blobView.getElement(),
                       subLaneView.getElement(),
-                      viewport.gridPixelSizeInScreenPixels,
+                      viewport.gridPixelSizeInScreenPixels.intValue(),
                       viewport.orient("y", "x"));
     }
 
@@ -70,23 +71,26 @@ public class Draggability {
     }-*/;
 
     private boolean onDrag(final int top, final int left) {
-        final Integer newPosition = viewport.toGridPixels(viewport.orient(top, left));
-        final Integer originalPosition = blob.getPosition();
+        final Long newPositionInGridPixels = viewport.toGridPixels(viewport.orient(top, left).longValue());
+        final T originalPosition = blob.getPosition();
+        final LinearScale<T> scale = viewport.scale;
 
-        if (!newPosition.equals(originalPosition)) {
-            final Blob outline = Outline.of(newPosition, blob.getSize());
-            if (!subLaneView.hasSpaceForIgnoring(outline, blob)) {
+        if (!newPositionInGridPixels.equals(scale.to(originalPosition))) {
+            blob.setPosition(scale.from(newPositionInGridPixels));
+            if (!subLaneView.hasSpaceForIgnoring(blob, blob)) {
+                blob.setPosition(originalPosition);
                 DomGlobal.console.info("Collision!"); //TODO: Restrict dragging if a collision occurs.
                 return false;
             } else {
-                onDrag.apply(newPosition);
+                blob.setPosition(originalPosition);
+                onDrag.apply(newPositionInGridPixels);
             }
         }
 
         return false;
     }
 
-    public void onDrag(final Function<Integer, Boolean> onDrag) {
+    public void onDrag(final Function<Long, Boolean> onDrag) {
         this.onDrag = onDrag;
     }
 }

@@ -36,30 +36,28 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
-
 @Templated
-public class SubLaneView implements ListElementView<SubLane> {
+public class SubLaneView<T> implements ListElementView<SubLane<T>> {
 
     @Inject
     @DataField("sub-lane")
     public HTMLDivElement root;
 
     @Inject
-    private ListView<Blob> blobs;
+    private ListView<Blob<T>> blobs;
 
-    private SubLane subLane;
-    private ListView<SubLane> list;
+    private SubLane<T> subLane;
+    private ListView<SubLane<T>> list;
 
-    private Viewport viewport;
+    private Viewport<T> viewport;
 
-    private Lane parentLane;
-    private ListView<Lane> parentList;
+    private Lane<T> parentLane;
+    private ListView<Lane<T>> parentList;
 
     @Override
     @SuppressWarnings("unchecked")
-    public ListElementView<SubLane> setup(final SubLane subLane,
-                                          final ListView<SubLane> list) {
+    public ListElementView<SubLane<T>> setup(final SubLane<T> subLane,
+                                             final ListView<SubLane<T>> list) {
 
         this.list = list;
 
@@ -90,35 +88,36 @@ public class SubLaneView implements ListElementView<SubLane> {
 
         // Add SubLane (SHIFT + CLICK)
         else if (e.shiftKey) {
-            list.addAfter(subLane, new SubLane(new ArrayList<>()));
+            list.addAfter(subLane, new SubLane<>(new ArrayList<>()));
         }
 
         // Add Blob (ALT + CLICK)
         else if (e.altKey) {
             final double offset = viewport.orient(e.offsetY, e.offsetX);
-            final int position = viewport.toGridPixels(new Double(offset).intValue());
+            final Long position = viewport.toGridPixels(new Double(offset).longValue());
 
-            final Blob newBlob = viewport.newBlob(position);
+            final Blob<T> newBlob = viewport.newBlob(position);
             if (hasSpaceForIgnoring(newBlob)) {
                 blobs.add(newBlob);
             }
         }
     }
 
-    public boolean hasSpaceForIgnoring(final Blob blob, final Blob... ignoredBlobs) {
+    @SafeVarargs
+    public final boolean hasSpaceForIgnoring(final Blob<T> blob, final Blob<T>... ignoredBlobs) {
         final List<Blob> ignored = Arrays.asList(ignoredBlobs);
         return this.blobs.getObjects().stream()
                 .filter(b -> !ignored.contains(b))
-                .noneMatch(b -> b.collidesWith(blob));
+                .noneMatch(b -> b.collidesWith(blob, viewport.scale));
     }
 
-    public SubLaneView withViewport(final Viewport viewport) {
+    public SubLaneView<T> withViewport(final Viewport<T> viewport) {
         this.viewport = viewport;
         return this;
     }
 
-    public ListElementView<SubLane> withParent(final Lane parentLane,
-                                               final ListView<Lane> parentList) {
+    public ListElementView<SubLane<T>> withParent(final Lane<T> parentLane,
+                                                  final ListView<Lane<T>> parentList) {
 
         this.parentLane = parentLane;
         this.parentList = parentList;

@@ -32,7 +32,7 @@ public class TestLanes {
 
     private static final int DAYS = 7;
 
-    public List<Lane> getAll() {
+    public List<Lane<Long>> getAll() {
         return Arrays.asList(
                 emergencyRoom(),
                 instanceCare(),
@@ -44,33 +44,33 @@ public class TestLanes {
                 instanceCare());
     }
 
-    private Lane emergencyRoom() {
-        return new Lane("Emergency Room", Arrays.asList(
-                new SubLane(repeatFor(DAYS, 4, 0, 0, "Early", "Late", "Night")),
-                new SubLane(repeatFor(DAYS, 4, 8, 2, "Day"))
+    private Lane<Long> emergencyRoom() {
+        return new Lane<>("Emergency Room", Arrays.asList(
+                new SubLane<>(repeatFor(DAYS, 4, 0, 0, "Early", "Late", "Night")),
+                new SubLane<>(repeatFor(DAYS, 4, 8, 2, "Day"))
         ));
     }
 
-    private Lane instanceCare() {
-        return new Lane("Intense Care", Arrays.asList(
-                new SubLane(repeatFor(DAYS, 4, 0, 0, "Early", "Late", "Night")),
-                new SubLane(repeatFor(DAYS, 4, 4, 2, "Day", "Afternoon"))
+    private Lane<Long> instanceCare() {
+        return new Lane<>("Intense Care", Arrays.asList(
+                new SubLane<>(repeatFor(DAYS, 4, 0, 0, "Early", "Late", "Night")),
+                new SubLane<>(repeatFor(DAYS, 4, 4, 2, "Day", "Afternoon"))
         ));
     }
 
-    private List<Blob> repeatFor(final int times,
-                                 final int size,
-                                 final int positionIncrement,
-                                 final int initialPosition,
-                                 final String... labels) {
+    private List<Blob<Long>> repeatFor(final int times,
+                                       final int size,
+                                       final int positionIncrement,
+                                       final int initialPosition,
+                                       final String... labels) {
 
         int currentPosition = initialPosition;
 
-        final List<Blob> ret = new ArrayList<>();
+        final List<Blob<Long>> ret = new ArrayList<>();
 
         for (int i = 0; i < times; i++) {
             for (String label : labels) {
-                ret.add(new TestBlob(label + i, size, currentPosition));
+                ret.add(new TestBlob(label + i, (long) size, (long) currentPosition));
                 currentPosition += size;
             }
             currentPosition += positionIncrement;

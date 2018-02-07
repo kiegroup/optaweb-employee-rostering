@@ -33,7 +33,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.S
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.PositiveMinutesScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.PositiveHoursScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
@@ -43,14 +44,14 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.HORIZONTAL;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
 
 @Templated("TestGridPage.html")
 public class DomainGridDemo implements Page {
 
     @Inject
     @DataField("viewport")
-    private ViewportView viewportView;
+    private ViewportView<LocalDateTime> viewportView;
 
     @Inject
     private DefaultGridLines gridLines;
@@ -64,15 +65,15 @@ public class DomainGridDemo implements Page {
         final LocalDateTime start = LocalDateTime.of(2018, 2, 7, 0, 0);
         final LocalDateTime end = start.plusWeeks(1);
 
-        viewportView.setViewport(new Viewport() {
+        viewportView.setViewport(new Viewport<LocalDateTime>() {
 
             {
-                orientation = HORIZONTAL;
-                gridPixelSizeInScreenPixels = 8;
-                sizeInGridPixels = 180;
-                defaultNewBlobSizeInGridPixels = 8;
-                domainScaleInGridPixels = new PositiveMinutesScale(start, end);
-                lanes = new ArrayList<>(Collections.singletonList(new Lane("Lane", new ArrayList<>(Collections.singletonList(new SubLane(new ArrayList<>()))))));
+                orientation = VERTICAL;
+                gridPixelSizeInScreenPixels = 8L;
+                sizeInGridPixels = 168L;
+                defaultNewBlobSizeInGridPixels = 36L;
+                scale = new PositiveHoursScale(start, end);
+                lanes = new ArrayList<>(Collections.singletonList(new Lane<>("Lane", new ArrayList<>(Collections.singletonList(new SubLane<>(new ArrayList<>()))))));
             }
 
             @Override
@@ -81,16 +82,20 @@ public class DomainGridDemo implements Page {
             }
 
             @Override
-            public Blob newBlob(final Integer position) {
+            public Blob<LocalDateTime> newBlob(final Long positionInGridPixels) {
+                final LinearScale<LocalDateTime> scale = this.scale;
+
+                final LocalDateTime start = scale.from(positionInGridPixels);
+                final LocalDateTime end = scale.from(positionInGridPixels + defaultNewBlobSizeInGridPixels);
 
                 return new ShiftBlob(new Shift(
                         1,
                         new Spot(1, "Emergency Room", new HashSet<>()),
-                        new TimeSlot(1, start, end)));
+                        new TimeSlot(1, start, end)), scale);
             }
 
             @Override
-            public BlobView<?> newBlobView() {
+            public BlobView<LocalDateTime, ?> newBlobView() {
                 return blobViews.get();
             }
         });
