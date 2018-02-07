@@ -60,7 +60,7 @@ public class TestBlobView implements BlobView<TestBlob> {
         this.blob = blob;
         this.list = list;
 
-        label.textContent = blob.getLabel();
+        updateLabel();
         viewport.scale(this, blob.getSize(), 0);
         viewport.position(this, blob.getPosition(), 0);
 
@@ -116,9 +116,7 @@ public class TestBlobView implements BlobView<TestBlob> {
             drag: function (e, ui) {
                 that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlobView::onDrag(II)(ui.position.top, ui.position.left);
             },
-            scroll: true,
-            scrollSpeed: 10,
-            scrollSensitivity: 50
+            scroll: false
         });
     }-*/;
 
@@ -135,6 +133,7 @@ public class TestBlobView implements BlobView<TestBlob> {
             }
         }
 
+        updateLabel();
         return true;
     }
 
@@ -152,6 +151,7 @@ public class TestBlobView implements BlobView<TestBlob> {
             }
         }
 
+        updateLabel();
         return true;
     }
 
@@ -162,6 +162,10 @@ public class TestBlobView implements BlobView<TestBlob> {
         if (e.altKey) {
             list.remove(blob);
         }
+    }
+
+    private void updateLabel() {
+        label.textContent = blob.getLabel().charAt(0) + " [" + blob.getPosition() + ", " + blob.getSize() + "]";
     }
 
     @Override

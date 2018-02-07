@@ -77,21 +77,7 @@ public class ViewportView implements IsElement {
                 break;
         }
 
-        viewport.scale(this, viewport.sizeInPixels, 30);
-
-        // One grid system per viewport
-        if (viewport.orientation.equals(Viewport.Orientation.VERTICAL)) {
-            viewport.drawGridLinesAt(this);
-            lanes.init(getElement(), viewport.lanes, () -> laneViewInstances.get().withViewport(viewport));
-        }
-
-        // One grid system per lane
-        else {
-            lanes.init(getElement(), viewport.lanes, () -> {
-                final LaneView laneView = laneViewInstances.get().withViewport(viewport);
-                viewport.drawGridLinesAt(laneView);
-                return laneView;
-            });
-        }
+        viewport.scale(this, viewport.sizeInPixels, 12);
+        lanes.init(getElement(), viewport.lanes, () -> laneViewInstances.get().withViewport(viewport));
     }
 }
