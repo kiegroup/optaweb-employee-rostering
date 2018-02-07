@@ -57,11 +57,11 @@ public class TestGridPage1 implements Page {
 
             {
                 orientation = VERTICAL;
-                sizeInPixels = 84;
-                pixelSize = 12;
-                defaultNewBlobSizeInPixels = 4;
+                sizeInGridPixels = 84;
+                gridPixelSizeInScreenPixels = 12;
+                defaultNewBlobSizeInGridPixels = 4;
+                scaleInGridPixels = new LinearScale(1);
                 lanes = testLanes.getAll();
-                scale = new LinearScale(1);
             }
 
             @Override
@@ -71,7 +71,7 @@ public class TestGridPage1 implements Page {
 
             @Override
             public Blob newBlob(final Integer position) {
-                return new TestBlob("New", defaultNewBlobSizeInPixels, position);
+                return new TestBlob("New", defaultNewBlobSizeInGridPixels, position);
             }
 
             @Override

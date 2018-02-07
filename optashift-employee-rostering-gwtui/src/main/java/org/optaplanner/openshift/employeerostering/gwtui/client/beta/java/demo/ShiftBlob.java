@@ -16,11 +16,8 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo;
 
-import java.time.LocalDateTime;
-
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class ShiftBlob implements Blob {
 
@@ -52,15 +49,15 @@ public class ShiftBlob implements Blob {
 
     @Override
     public void setPosition(final Integer position) {
-        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
-                                       new LocalDateTime(), // get time from position
-                                       shift.getTimeSlot().getEndDateTime()));
+//        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
+//                                       new LocalDateTime(), // get time from position
+//                                       shift.getTimeSlot().getEndDateTime()));
     }
 
     @Override
     public void setSize(final Integer size) {
-        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
-                                       shift.getTimeSlot().getStartDateTime(),
-                                       new LocalDateTime())); // get time from size
+//        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
+//                                       shift.getTimeSlot().getStartDateTime(),
+//                                       new LocalDateTime())); // get time from size
     }
 }

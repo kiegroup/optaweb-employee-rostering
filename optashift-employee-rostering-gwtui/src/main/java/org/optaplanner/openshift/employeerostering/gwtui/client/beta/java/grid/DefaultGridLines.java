@@ -22,36 +22,36 @@ import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
-
 @Dependent
 public class DefaultGridLines {
 
-    private static final Integer WEAK_LINE_INTERVAL = 2;
-    private static final Integer STRONG_LINE_INTERVAL = 12;
+    private static final Integer WEAK_LINE_INTERVAL_IN_GRID_PIXELS = 2;
+    private static final Integer STRONG_LINE_INTERVAL_IN_GRID_PIXELS = 12;
 
-    public void draw(final IsElement container, final Viewport viewport) {
+    public void draw(final IsElement target, final Viewport viewport) {
 
-        HTMLElement element = container.getElement();
+        final HTMLElement targetElement = target.getElement();
 
-        element.style.backgroundImage =
-                "linear-gradient(" + rotation(viewport) + "rgba(0, 0, 0, 0.1) 1px, transparent 1px)," +
-                        " linear-gradient(" + rotation(viewport) + "rgba(0, 0, 0, 0.2) 1px, transparent 1px)";
+        targetElement.style.backgroundPosition = "4px 4px, 4px 4px";
 
-        element.style.backgroundPosition = "4px 4px, 4px 4px";
+        targetElement.style.backgroundImage =
+                "linear-gradient(" + getRotation(viewport) + "deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px)," +
+                        " linear-gradient(" + getRotation(viewport) + "deg, rgba(0, 0, 0, 0.2) 1px, transparent 1px)";
 
-        int weakLinesInterval = WEAK_LINE_INTERVAL * viewport.pixelSize;
-        int strongLinesInterval = STRONG_LINE_INTERVAL * viewport.pixelSize;
-
-        element.style.backgroundSize =
-                px(weakLinesInterval) + px(weakLinesInterval) + ", " + px(strongLinesInterval) + px(strongLinesInterval);
+        targetElement.style.backgroundSize =
+                getSoftLinesInterval(viewport) + getSoftLinesInterval(viewport) + ", " +
+                        getHarshLinesInterval(viewport) + getHarshLinesInterval(viewport);
     }
 
-    private String rotation(final Viewport viewport) {
-        return viewport.orientation.equals(VERTICAL) ? "" : "90deg, ";
+    private String getHarshLinesInterval(final Viewport viewport) {
+        return viewport.toScreenPixels(STRONG_LINE_INTERVAL_IN_GRID_PIXELS) + "px ";
     }
 
-    public String px(final Object object) {
-        return object + "px ";
+    private String getSoftLinesInterval(final Viewport viewport) {
+        return viewport.toScreenPixels(WEAK_LINE_INTERVAL_IN_GRID_PIXELS) + "px ";
+    }
+
+    private Integer getRotation(final Viewport viewport) {
+        return viewport.orient(0, 90);
     }
 }

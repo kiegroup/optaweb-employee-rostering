@@ -23,19 +23,21 @@ import elemental2.dom.CSSProperties.WidthUnionType;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
 
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
+
 public abstract class Viewport {
 
     public List<Lane> lanes;
 
-    public Integer sizeInPixels;
+    public Integer sizeInGridPixels;
 
-    public Integer pixelSize;
+    public Integer gridPixelSizeInScreenPixels;
 
-    public Integer defaultNewBlobSizeInPixels;
+    public Integer defaultNewBlobSizeInGridPixels;
 
     public Orientation orientation;
 
-    public LinearScale scale;
+    public LinearScale scaleInGridPixels;
 
     public abstract void drawGridLinesAt(final IsElement container);
 
@@ -43,32 +45,40 @@ public abstract class Viewport {
 
     public abstract BlobView<?> newBlobView();
 
-    public Integer getSize(final IsElement element) {
-        return orientation.getSize(element) / pixelSize;
+    public <T> T orient(final T verticalOption, final T horizontalOption) {
+        return orientation.equals(VERTICAL) ? verticalOption : horizontalOption;
     }
 
-    public Integer scale(final Integer value) {
-        return value * pixelSize;
+    public Integer getSizeInGridPixels(final IsElement element) {
+        return toGridPixels(orientation.getSize(element));
     }
 
-    public void scale(final IsElement element, final Integer value, final Integer offset) {
-        orientation.scale(element, value, this, offset);
+    public Integer toGridPixels(final Integer screenPixels) {
+        return screenPixels / gridPixelSizeInScreenPixels;
     }
 
-    public void position(final IsElement element, final Integer value, final Integer offset) {
-        orientation.position(element, value, this, offset);
+    public Integer toScreenPixels(final Integer gridPixels) {
+        return gridPixels * gridPixelSizeInScreenPixels;
+    }
+
+    public void setSizeInScreenPixels(final IsElement element, final Integer sizeInGridPixels, final Integer offsetInScreenPixels) {
+        orientation.scale(element, sizeInGridPixels, this, offsetInScreenPixels);
+    }
+
+    public void setPositionInScreenPixels(final IsElement element, final Integer positionInGridPixels, final Integer offsetInScreenPixels) {
+        orientation.position(element, positionInGridPixels, this, offsetInScreenPixels);
     }
 
     public enum Orientation {
         VERTICAL {
             @Override
-            void position(final IsElement element, final Integer position, final Viewport viewport, Integer offset) {
-                element.getElement().style.top = viewport.scale(position) + offset + "px";
+            void position(final IsElement element, final Integer positionInGridPixels, final Viewport viewport, Integer offsetInScreenPixels) {
+                element.getElement().style.top = viewport.toScreenPixels(positionInGridPixels) + offsetInScreenPixels + "px";
             }
 
             @Override
-            void scale(final IsElement element, final Integer size, final Viewport viewport, final Integer offset) {
-                element.getElement().style.height = HeightUnionType.of(viewport.scale(size) + offset + "px");
+            void scale(final IsElement element, final Integer sizeInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels) {
+                element.getElement().style.height = HeightUnionType.of(viewport.toScreenPixels(sizeInGridPixels) + offsetInScreenPixels + "px");
             }
 
             @Override
@@ -79,13 +89,13 @@ public abstract class Viewport {
         },
         HORIZONTAL {
             @Override
-            void position(final IsElement element, final Integer position, final Viewport viewport, final Integer offset) {
-                element.getElement().style.left = viewport.scale(position) + offset + "px";
+            void position(final IsElement element, final Integer positionInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels) {
+                element.getElement().style.left = viewport.toScreenPixels(positionInGridPixels) + offsetInScreenPixels + "px";
             }
 
             @Override
-            void scale(final IsElement element, final Integer size, final Viewport viewport, final Integer offset) {
-                element.getElement().style.width = WidthUnionType.of(viewport.scale(size) + offset + "px");
+            void scale(final IsElement element, final Integer sizeInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels) {
+                element.getElement().style.width = WidthUnionType.of(viewport.toScreenPixels(sizeInGridPixels) + offsetInScreenPixels + "px");
             }
 
             @Override
@@ -95,9 +105,9 @@ public abstract class Viewport {
             }
         };
 
-        abstract void position(final IsElement element, final Integer position, final Viewport viewport, final Integer offset);
+        abstract void position(final IsElement element, final Integer positionInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels);
 
-        abstract void scale(final IsElement element, final Integer size, final Viewport viewport, final Integer offset);
+        abstract void scale(final IsElement element, final Integer sizeInGridPixels, final Viewport viewport, final Integer offsetInScreenPixels);
 
         public abstract Integer getSize(final IsElement element);
     }

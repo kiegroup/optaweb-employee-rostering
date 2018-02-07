@@ -16,9 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -28,7 +25,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlob;
@@ -61,21 +57,21 @@ public class TestGridPage2 implements Page {
 
             {
                 orientation = HORIZONTAL;
-                sizeInPixels = 180;
-                pixelSize = 15;
-                defaultNewBlobSizeInPixels = 2;
+                gridPixelSizeInScreenPixels = 15;
+                sizeInGridPixels = 180;
+                defaultNewBlobSizeInGridPixels = 2;
+                scaleInGridPixels = new LinearScale(1);
                 lanes = testLanes.getAll();
-                scale = new LinearScale(1);
             }
 
             @Override
-            public void drawGridLinesAt(final IsElement container) {
-                gridLines.draw(container, this);
+            public void drawGridLinesAt(final IsElement target) {
+                gridLines.draw(target, this);
             }
 
             @Override
             public Blob newBlob(final Integer position) {
-                return new TestBlob("New", defaultNewBlobSizeInPixels, position);
+                return new TestBlob("New", defaultNewBlobSizeInGridPixels, position);
             }
 
             @Override

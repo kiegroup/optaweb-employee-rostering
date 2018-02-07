@@ -25,8 +25,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
-
 public class Resizability {
 
     private Blob blob;
@@ -44,8 +42,8 @@ public class Resizability {
         this.blob = blob;
 
         makeResizable(blobView.getElement(),
-                      viewport.pixelSize,
-                      viewport.orientation.equals(VERTICAL) ? "s" : "e");
+                      viewport.gridPixelSizeInScreenPixels,
+                      viewport.orient("s", "e"));
     }
 
     private native void makeResizable(final HTMLElement blob,
@@ -54,16 +52,18 @@ public class Resizability {
         var that = this;
         var $blob = $wnd.jQuery(blob);
 
+        var snapToGrid = function (coordinate) {
+            return Math.floor(coordinate - (coordinate % pixelSize))
+        };
+
         $blob.resizable({
             handles: orientation,
             minHeight: 0,
             resize: function (e, ui) {
                 if (orientation === 's') {
-                    var coordinateY = ui.size.height + 2 * pixelSize;
-                    ui.size.height = Math.floor(coordinateY - (coordinateY % pixelSize));
+                    ui.size.height = snapToGrid(ui.size.height + 2 * pixelSize);
                 } else if (orientation === 'e') {
-                    var coordinateX = ui.size.width + 2 * pixelSize;
-                    ui.size.width = Math.floor(coordinateX - (coordinateX % pixelSize));
+                    ui.size.width = snapToGrid(ui.size.width + 2 * pixelSize);
                 }
                 that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.Resizability::onResize(II)(ui.size.height, ui.size.width);
             }
@@ -71,11 +71,12 @@ public class Resizability {
     }-*/;
 
     private boolean onResize(final int height, final int width) {
-        final Integer newSize = (viewport.orientation.equals(VERTICAL) ? height : width) / viewport.pixelSize;
+        final Integer newSize = viewport.toGridPixels(viewport.orient(height, width));
         final Integer originalSize = blob.getSize();
 
         if (!newSize.equals(originalSize)) {
-            if (!subLaneView.hasSpaceForIgnoring(Outline.of(blob.getPosition(), newSize), blob)) {
+            final Blob outline = Outline.of(blob.getPosition(), newSize);
+            if (!subLaneView.hasSpaceForIgnoring(outline, blob)) {
                 DomGlobal.console.info("Collision!"); //TODO: Restrict resizing if a collision occurs.
                 return false;
             } else {
