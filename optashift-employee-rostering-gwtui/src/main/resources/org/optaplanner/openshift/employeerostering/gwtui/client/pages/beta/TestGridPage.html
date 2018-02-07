@@ -18,12 +18,8 @@
 
     <style>
 
-        div {
+        .viewport-frame div {
             box-sizing: border-box;
-        }
-
-        .hide {
-            display: none !important;
         }
 
         /* VIEWPORT */
@@ -117,14 +113,6 @@
             border-left: 1px solid rgba(118, 133, 160, 0.2);
         }
 
-        .viewport-frame > .viewport.vertical > .lane > .sub-lane > .blob.double {
-            height: 240px;
-        }
-
-        .viewport-frame > .viewport.vertical > .lane > .sub-lane > .blob.half {
-            height: 60px;
-        }
-
         /* VIEWPORT - HORIZONTAL */
 
         .viewport-frame > .viewport.horizontal {
@@ -158,14 +146,6 @@
             border-top: 1px solid rgba(118, 133, 160, 0.2);
         }
 
-        .viewport-frame > .viewport.horizontal > .lane > .sub-lane > .blob.double {
-            width: 240px;
-        }
-
-        .viewport-frame > .viewport.horizontal > .lane > .sub-lane > .blob.half {
-            width: 60px;
-        }
-
         /* CUSTOM BLOB - VERTICAL */
 
         .viewport.vertical > .lane > .sub-lane > .blob > .actions {
@@ -181,46 +161,6 @@
         .viewport.vertical > .lane > .sub-lane > .blob:hover > .actions > div,
         .viewport.vertical > .lane > .sub-lane > .blob:active > .actions > div {
             display: block !important;
-        }
-
-        .viewport.vertical > .lane > .sub-lane > .blob > .actions > div:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .viewport.vertical > .lane > .sub-lane > .blob > .actions > .close {
-            position: absolute;
-            left: 29px;
-            bottom: 5px;
-            opacity: 0.6;
-        }
-
-        .viewport.vertical > .lane > .sub-lane > .blob > .actions > .close:hover {
-            opacity: 1;
-        }
-
-        .viewport.vertical > .lane > .sub-lane > .blob > .actions > .close:before {
-            content: "\00d7"
-        }
-
-        .viewport.vertical > .lane > .sub-lane > .blob > .actions > .lock {
-            position: absolute;
-            padding: 0 5px 0 3px;
-            left: 3px;
-            top: 23px;
-            filter: brightness(0);
-            font-size: 0.6em;
-        }
-
-        .viewport.vertical > .lane > .sub-lane > .blob > .actions > .lock.locked {
-            display: block !important;
-        }
-
-        .viewport.vertical > .lane > .sub-lane > .blob > .actions > .lock.locked:before {
-            content: "🔒"
-        }
-
-        .viewport.vertical > .lane > .sub-lane > .blob > .actions > .lock.unlocked:before {;
-            content: "🔓"
         }
 
         /* CUSTOM BLOB - HORIZONTAL */
@@ -242,83 +182,6 @@
             display: block !important;
         }
 
-        .viewport.horizontal > .lane > .sub-lane > .blob > .actions > div:hover {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .viewport.horizontal > .lane > .sub-lane > .blob > .actions > .close {
-            opacity: 0.6;
-            vertical-align: text-top;
-            padding: 0 4px 0 2px;
-            margin: 0 0 0 5px;
-        }
-
-        .viewport.horizontal > .lane > .sub-lane > .blob > .actions > .close:hover {
-            opacity: 1;
-        }
-
-        .viewport.horizontal > .lane > .sub-lane > .blob > .actions > .close:before {
-            content: "\00d7"
-        }
-
-        .viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock {
-            filter: brightness(0);
-            vertical-align: text-top;
-            padding: 0 4px 0 2px;
-            margin: 0 0 0 5px;
-            font-size: 0.7em;
-        }
-
-        .viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock.locked {
-            display: block !important;
-        }
-
-        .viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock.locked:before {
-            content: "🔒"
-        }
-
-        .viewport.horizontal > .lane > .sub-lane > .blob > .actions > .lock.unlocked:before {;
-            content: "🔓"
-        }
-
-        /* GRID LINES */
-
-        .viewport > .grid-line,
-        .viewport > .lane > .grid-line {
-            box-sizing: border-box;
-            position: absolute;
-            z-index: 5;
-        }
-
-        .viewport > .grid-line.weak,
-        .viewport > .lane > .grid-line.weak {
-            border-style: dashed;
-            border-color: #cecece;
-        }
-
-        .viewport > .grid-line.strong,
-        .viewport > .lane > .grid-line.strong {
-            border-style: solid;
-            border-color: rgba(0, 0, 0, 0.25);
-            box-shadow: 0 0 24px 3px rgba(0, 0, 0, 0.07);
-        }
-
-        .viewport.vertical > .grid-line,
-        .viewport.vertical > .lane > .grid-line {
-            width: 100%;
-            left: 0;
-            height: 0;
-            border-width: 1px 0 0 0;
-        }
-
-        .viewport.horizontal > .grid-line,
-        .viewport.horizontal > .lane > .grid-line  {
-            height: 100%;
-            top: 0;
-            width: 0;
-            border-width: 0 0 0 1px;
-            opacity: 0.6;
-        }
 
         /* DEV */
 

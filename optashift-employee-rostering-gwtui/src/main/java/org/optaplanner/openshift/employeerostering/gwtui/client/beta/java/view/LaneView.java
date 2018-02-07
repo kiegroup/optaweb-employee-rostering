@@ -22,11 +22,11 @@ import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 
 @Templated
 public class LaneView implements ListElementView<Lane> {
@@ -50,8 +50,12 @@ public class LaneView implements ListElementView<Lane> {
                                        final ListView<Lane> list) {
 
         title.textContent = lane.getTitle();
-        subLanes.init(getElement(), lane.getSubLanes(), () -> subLaneViewInstances.get().withViewport(viewport).withParent(lane, list));
+        subLanes.init(getElement(), lane.getSubLanes(), () -> subLaneViewInstances.get()
+                .withViewport(viewport)
+                .withParent(lane, list));
+
         this.lane = lane;
+        viewport.drawGridLinesAt(this);
         return this;
     }
 

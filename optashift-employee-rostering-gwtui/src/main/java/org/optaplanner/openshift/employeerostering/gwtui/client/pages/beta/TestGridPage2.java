@@ -16,6 +16,9 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -25,6 +28,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlobView;

@@ -16,44 +16,42 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
+import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.GridLineView.Strength.STRONG;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.GridLineView.Strength.WEAK;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
 
 @Dependent
 public class DefaultGridLines {
 
-    @Inject
-    private ListView<GridLine> gridLines;
-
-    @Inject
-    private ManagedInstance<GridLineView> gridLineInstances;
-
-    private static final Integer WEAK_LINE_INTERVAL = 1;
+    private static final Integer WEAK_LINE_INTERVAL = 2;
     private static final Integer STRONG_LINE_INTERVAL = 12;
 
     public void draw(final IsElement container, final Viewport viewport) {
 
-        final List<GridLine> list = new ArrayList<>();
-        
-        for (int i = 1; i < viewport.sizeInPixels; i++) {
-            if (i % STRONG_LINE_INTERVAL == 0) {
-                list.add(new GridLine(i, STRONG));
-            } else if (i % WEAK_LINE_INTERVAL == 0) {
-                list.add(new GridLine(i, WEAK));
-            }
-        }
+        HTMLElement element = container.getElement();
 
-        gridLines.init(container.getElement(), list, () -> gridLineInstances.get().withViewport(viewport));
+        element.style.backgroundImage =
+                "linear-gradient(" + rotation(viewport) + "rgba(0, 0, 0, 0.1) 1px, transparent 1px)," +
+                        " linear-gradient(" + rotation(viewport) + "rgba(0, 0, 0, 0.2) 1px, transparent 1px)";
+
+        element.style.backgroundPosition = "4px 4px, 4px 4px";
+
+        int weakLinesInterval = WEAK_LINE_INTERVAL * viewport.pixelSize;
+        int strongLinesInterval = STRONG_LINE_INTERVAL * viewport.pixelSize;
+
+        element.style.backgroundSize =
+                px(weakLinesInterval) + px(weakLinesInterval) + ", " + px(strongLinesInterval) + px(strongLinesInterval);
+    }
+
+    private String rotation(final Viewport viewport) {
+        return viewport.orientation.equals(VERTICAL) ? "" : "90deg, ";
+    }
+
+    public String px(final Object object) {
+        return object + "px ";
     }
 }
