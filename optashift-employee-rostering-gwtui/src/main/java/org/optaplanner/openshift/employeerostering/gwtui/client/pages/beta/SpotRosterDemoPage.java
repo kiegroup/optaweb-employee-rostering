@@ -17,8 +17,11 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
@@ -39,13 +42,19 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.V
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation.VERTICAL;
+import static java.util.stream.Collectors.toMap;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation.HORIZONTAL;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 import static org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder.getCurrentSpotRosterView;
 
@@ -67,6 +76,14 @@ public class SpotRosterDemoPage implements Page {
 
     @Override
     public Promise<Void> beforeOpen() {
+        return refresh();
+    }
+
+    public void onTenantChanged(final @Observes TenantStore.TenantChange tenant) {
+        refresh();
+    }
+
+    public Promise<Void> refresh() {
         return fetchSpotRosterView().then(this::initViewportView);
     }
 
@@ -76,51 +93,65 @@ public class SpotRosterDemoPage implements Page {
         });
     }
 
-    private Promise<Void> initViewportView(SpotRosterView spotRosterView) {
-        viewportView.setViewport(new SpotRosterViewport(spotRosterView.getSpotList()));
+    private Promise<Void> initViewportView(final SpotRosterView spotRosterView) {
+
+        final Positive2HoursScale scale =
+                new Positive2HoursScale(spotRosterView.getStartDate().atTime(0, 0),
+                                        s -> spotRosterView.getEndDate().atTime(0, 0));
+
+        final List<Lane<LocalDateTime>> lanes =
+                buildRosterModel(spotRosterView)
+                        .entrySet()
+                        .stream()
+                        .map(e -> new SpotLane(scale, e.getKey(), e.getValue()))
+                        .collect(toList());
+
+        viewportView.setViewport(new Viewport<LocalDateTime>(12L, HORIZONTAL, lanes, scale) {
+
+            @Override
+            public void drawGridLinesAt(final IsElement target) {
+                gridLines.draw(target, this);
+            }
+
+            @Override
+            public Blob<LocalDateTime> newBlob(final Lane<LocalDateTime> lane,
+                                               final LocalDateTime start) {
+
+                // Casting is preferable to avoid over-use of generics in the Viewport class
+                final SpotLane spotLane = (SpotLane) lane;
+
+                final Shift newShift = new Shift(
+                        currentTenantId(),
+                        spotLane.getSpot(),
+                        new TimeSlot(currentTenantId(), start, start.plusHours(8L)));
+
+                return new ShiftBlob(newShift, scale);
+            }
+
+            @Override
+            public BlobView<LocalDateTime, ?> newBlobView() {
+                return blobViews.get();
+            }
+        });
+
         return PromiseUtils.resolve();
+    }
+
+    private Map<Spot, Map<ShiftView, List<TimeSlot>>> buildRosterModel(final SpotRosterView spotRosterView) {
+
+        final Map<Long, Spot> spotsById = spotRosterView.getSpotList().stream().collect(toMap(AbstractPersistable::getId, identity()));
+        final Map<Long, TimeSlot> timeSlotsById = spotRosterView.getTimeSlotList().stream().collect(toMap(AbstractPersistable::getId, identity()));
+
+        return spotRosterView.getTimeSlotIdToSpotIdToShiftViewListMap().values().stream()
+                .flatMap(s -> s.values().stream())
+                .flatMap(Collection::stream)
+                .collect(groupingBy((final ShiftView shiftView) -> spotsById.get(shiftView.getSpotId()),
+                                    groupingBy((final ShiftView shiftView) -> shiftView,
+                                               mapping((final ShiftView shiftView) -> timeSlotsById.get(shiftView.getTimeSlotId()),
+                                                       toList()))));
     }
 
     private Integer currentTenantId() {
         return tenantStore.getCurrentTenantId();
-    }
-
-
-
-
-    //FIXME: Make this class static
-    public class SpotRosterViewport extends Viewport<LocalDateTime> {
-
-        SpotRosterViewport(final List<Spot> spots) {
-            super(12L,
-                  VERTICAL,
-                  spots.stream().map(SpotLane::new).collect(toList()),
-                  new Positive2HoursScale(LocalDateTime.of(2018, 2, 7, 0, 0), start -> start.plusWeeks(1)));
-        }
-
-        @Override
-        public void drawGridLinesAt(final IsElement target) {
-            gridLines.draw(target, this);
-        }
-
-        @Override
-        public Blob<LocalDateTime> newBlob(final Lane<LocalDateTime> lane,
-                                           final LocalDateTime start) {
-
-            // Casting is preferable to avoid over-use of generics in the Viewport class
-            final SpotLane spotLane = (SpotLane) lane;
-
-            final Shift newShift = new Shift(
-                    currentTenantId(),
-                    spotLane.getSpot(),
-                    new TimeSlot(currentTenantId(), start, start.plusHours(8L)));
-
-            return new ShiftBlob(newShift, scale);
-        }
-
-        @Override
-        public BlobView<LocalDateTime, ?> newBlobView() {
-            return blobViews.get();
-        }
     }
 }
