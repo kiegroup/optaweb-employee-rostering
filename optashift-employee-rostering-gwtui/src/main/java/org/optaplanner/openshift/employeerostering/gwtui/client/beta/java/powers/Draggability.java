@@ -22,12 +22,13 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
 public class Draggability<T> {
 
+    private IsElement blobView;
     private Blob<T> blob;
     private SubLaneView<T> subLaneView;
     private Viewport<T> viewport;
@@ -38,6 +39,7 @@ public class Draggability<T> {
                          final Viewport<T> viewport,
                          final Blob<T> blob) {
 
+        this.blobView = blobView;
         this.blob = blob;
         this.subLaneView = subLaneView;
         this.viewport = viewport;
@@ -45,7 +47,7 @@ public class Draggability<T> {
         makeDraggable(blobView.getElement(),
                       subLaneView.getElement(),
                       viewport.gridPixelSizeInScreenPixels.intValue(),
-                      viewport.orient("y", "x"));
+                      viewport.decideBasedOnOrientation("y", "x"));
     }
 
     private native void makeDraggable(final HTMLElement blob,
@@ -71,14 +73,16 @@ public class Draggability<T> {
     }-*/;
 
     private boolean onDrag(final int top, final int left) {
-        final Long newPositionInGridPixels = viewport.toGridPixels(viewport.orient(top, left).longValue());
+        final Long newPositionInGridPixels = viewport.toGridPixels(viewport.decideBasedOnOrientation(top, left).longValue());
         final T originalPosition = blob.getPosition();
-        final LinearScale<T> scale = viewport.scale;
+        final FiniteLinearScale<T> scale = viewport.scale;
+        blobView.getElement().style.backgroundColor = "";
 
-        if (!newPositionInGridPixels.equals(scale.to(originalPosition))) {
-            blob.setPosition(scale.from(newPositionInGridPixels));
+        if (!newPositionInGridPixels.equals(scale.toGridPixels(originalPosition))) {
+            blob.setPosition(scale.toScaleUnits(newPositionInGridPixels));
             if (!subLaneView.hasSpaceForIgnoring(blob, blob)) {
                 blob.setPosition(originalPosition);
+                blobView.getElement().style.backgroundColor = "red";
                 DomGlobal.console.info("Collision!"); //TODO: Restrict dragging if a collision occurs.
                 return false;
             } else {

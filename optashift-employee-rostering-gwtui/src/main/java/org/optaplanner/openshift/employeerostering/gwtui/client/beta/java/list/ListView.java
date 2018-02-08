@@ -32,15 +32,26 @@ public class ListView<T> {
     private List<T> objects;
     private Map<T, ListElementView<T>> views;
 
+    private boolean init = false;
+
     public void init(final HTMLElement container,
                      final List<T> objects,
                      final Supplier<ListElementView<T>> viewFactory) {
 
+        reset();
+        this.init = true;
         this.container = container;
         this.viewSupplier = viewFactory;
         this.objects = new ArrayList<>();
         this.views = new HashMap<>();
         addAll(objects);
+    }
+
+    private void reset() {
+        if (init) {
+            // Has to be a copy because the remove method removes things from the objects list.
+            new ArrayList<>(objects).forEach(this::remove);
+        }
     }
 
     public void addAll(final List<T> objects) {

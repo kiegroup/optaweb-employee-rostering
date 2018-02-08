@@ -26,19 +26,19 @@ public interface Blob<T> {
 
     void setSizeInGridPixels(final Long sizeInGridPixels);
 
-    default T getEndPosition(final LinearScale<T> scale) {
-        return scale.from(getEndPositionInGridPixels(scale));
+    default T getEndPosition(final FiniteLinearScale<T> scale) {
+        return scale.toScaleUnits(getEndPositionInGridPixels(scale));
     }
 
-    default Long getEndPositionInGridPixels(final LinearScale<T> scale) {
-        return scale.to(getPosition()) + getSizeInGridPixels();
+    default Long getEndPositionInGridPixels(final FiniteLinearScale<T> scale) {
+        return scale.toGridPixels(getPosition()) + getSizeInGridPixels();
     }
 
-    default boolean collidesWith(final Blob<T> other, final LinearScale<T> scale) {
+    default boolean collidesWith(final Blob<T> other, final FiniteLinearScale<T> scale) {
 
-        final Long x0 = scale.to(getPosition());
+        final Long x0 = scale.toGridPixels(getPosition());
         final Long x1 = getEndPositionInGridPixels(scale);
-        final Long y0 = scale.to(other.getPosition());
+        final Long y0 = scale.toGridPixels(other.getPosition());
         final Long y1 = other.getEndPositionInGridPixels(scale);
 
         final Long intersectionLeft = y1 - x0;

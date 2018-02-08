@@ -16,11 +16,24 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model;
 
-public interface LinearScale<T> {
+public interface FiniteLinearScale<T> {
 
-    //FIXME: Find better names
+    default Long toGridPixels(final T valueInScaleUnits) {
+        return toGridPixelsWithFactor1(valueInScaleUnits) / factor();
+    }
 
-    Long to(final T value);
+    default T toScaleUnits(final Long valueInGridPixels) {
+        return fromGridPixelsWithFactor1(valueInGridPixels * factor());
+    }
 
-    T from(final Long value);
+    Long toGridPixelsWithFactor1(final T valueInScaleUnits);
+
+    T fromGridPixelsWithFactor1(final Long valueInGridPixels);
+
+    T getEnd();
+
+    /**
+     * @return How many scale units correspond to one grid pixel
+     */
+    Long factor();
 }

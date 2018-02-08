@@ -93,10 +93,11 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
 
         // Add Blob (ALT + CLICK)
         else if (e.altKey) {
-            final double offset = viewport.orient(e.offsetY, e.offsetX);
-            final Long position = viewport.toGridPixels(new Double(offset).longValue());
+            final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
+            final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
+            T positionInScaleUnits = viewport.scale.toScaleUnits(positionInGridPixels);
 
-            final Blob<T> newBlob = viewport.newBlob(position);
+            final Blob<T> newBlob = viewport.newBlob(parentLane, positionInScaleUnits);
             if (hasSpaceForIgnoring(newBlob)) {
                 blobs.add(newBlob);
             }
