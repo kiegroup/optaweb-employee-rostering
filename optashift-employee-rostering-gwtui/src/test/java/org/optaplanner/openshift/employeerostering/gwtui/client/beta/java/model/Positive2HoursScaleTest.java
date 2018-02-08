@@ -10,7 +10,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static java.time.temporal.ChronoUnit.YEARS;
 
-public class PositiveMinutesScaleTest {
+public class Positive2HoursScaleTest {
 
     @Test
     public void test() {
@@ -32,9 +32,9 @@ public class PositiveMinutesScaleTest {
         Assert.assertEquals(start, scale.toScaleUnits(-1000L));
         Assert.assertEquals(end, scale.toScaleUnits(10000000L));
 
-        // 3 Days and 3 Hours after
-        final LocalDateTime d = start.plus(3, DAYS).plus(3, HOURS);
-        Assert.assertEquals((Long) 37L, scale.toGridPixels(d));
-        //Assert.assertEquals(d, scale.toScaleUnits(37L)); FIXME: Change toGridPixels to return a Double
+        // 3 Days and 4 Hours after
+        final LocalDateTime d = start.plus(3, DAYS).plus(4, HOURS);
+        Assert.assertEquals((Long) 38L, scale.toGridPixels(d));
+        Assert.assertEquals(d, scale.toScaleUnits(38L));
     }
 }
