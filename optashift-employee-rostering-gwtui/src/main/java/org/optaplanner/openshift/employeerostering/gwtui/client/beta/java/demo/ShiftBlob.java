@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
@@ -28,13 +28,13 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 public class ShiftBlob implements Blob<LocalDateTime> {
 
     private final Shift shift;
-    private final LinearScale<LocalDateTime> scale;
+    private final FiniteLinearScale<LocalDateTime> scale;
     private Long sizeInGridPixels;
 
-    public ShiftBlob(final Shift shift, final LinearScale<LocalDateTime> scale) {
+    public ShiftBlob(final Shift shift, final FiniteLinearScale<LocalDateTime> scale) {
         this.shift = shift;
         this.scale = scale;
-        this.sizeInGridPixels = scale.to(shift.getTimeSlot().getEndDateTime()) - scale.to(getPosition());
+        this.sizeInGridPixels = scale.toGridPixels(shift.getTimeSlot().getEndDateTime()) - scale.toGridPixels(getPosition());
     }
 
     @Override

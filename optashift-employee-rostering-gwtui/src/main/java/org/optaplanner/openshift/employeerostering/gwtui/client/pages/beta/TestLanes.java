@@ -30,7 +30,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.T
 @Dependent
 public class TestLanes {
 
-    private static final int DAYS = 7;
+    private static final int DAYS = 90;
 
     public List<Lane<Long>> getAll() {
         return Arrays.asList(

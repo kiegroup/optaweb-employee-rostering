@@ -33,7 +33,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.DOMAIN_GRID_DEMO;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_DEMO;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
@@ -79,8 +79,8 @@ public class MenuView implements IsElement {
     private HTMLAnchorElement testGrid2;
 
     @Inject
-    @DataField("domain-grid-demo")
-    private HTMLAnchorElement domainGridDemo;
+    @DataField("spot-roster-demo")
+    private HTMLAnchorElement spotRosterDemo;
 
     @Inject
     private Event<PageChange> pageChangeEvent;
@@ -125,9 +125,9 @@ public class MenuView implements IsElement {
         goTo(TEST_GRID_2, e);
     }
 
-    @EventHandler("domain-grid-demo")
-    public void domainGriDdemo(final ClickEvent e) {
-        goTo(DOMAIN_GRID_DEMO, e);
+    @EventHandler("spot-roster-demo")
+    public void spotRosterDemo(final ClickEvent e) {
+        goTo(SPOT_ROSTER_DEMO, e);
     }
 
     private void goTo(final Pages.Id pageId,
@@ -138,7 +138,7 @@ public class MenuView implements IsElement {
     }
 
     private void handleActiveLink(final MouseEvent event) {
-        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster, testGrid1, testGrid2, domainGridDemo);
+        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster, testGrid1, testGrid2, spotRosterDemo);
         setActive(Js.cast(event.target));
     }
 

@@ -70,11 +70,11 @@ public class ViewportView<T> implements IsElement {
 
     public void setViewport(final Viewport<T> viewport) {
         this.viewport = viewport;
-        getElement().classList.add(viewport.orient("vertical", "horizontal"));
+        getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
 
-        viewport.setSizeInScreenPixels(this, viewport.sizeInGridPixels, 12L);
+        viewport.setSizeInScreenPixels(this, viewport.getSizeInGridPixels(), 12L);
 
-        lanes.init(getElement(), viewport.lanes, () -> laneViewInstances.get()
+        lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get()
                 .withViewport(viewport));
     }
 }

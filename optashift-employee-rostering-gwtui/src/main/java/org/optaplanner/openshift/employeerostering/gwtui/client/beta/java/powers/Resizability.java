@@ -29,6 +29,7 @@ public class Resizability<T> {
 
     private Blob<T> blob;
     private Viewport<T> viewport;
+    private IsElement blobView;
     private SubLaneView<T> subLaneView;
     private Function<Long, Boolean> onResize;
 
@@ -37,13 +38,14 @@ public class Resizability<T> {
                          final Viewport<T> viewport,
                          final Blob<T> blob) {
 
+        this.blobView = blobView;
         this.subLaneView = subLaneView;
         this.viewport = viewport;
         this.blob = blob;
 
         makeResizable(blobView.getElement(),
                       viewport.gridPixelSizeInScreenPixels.intValue(),
-                      viewport.orient("s", "e"));
+                      viewport.decideBasedOnOrientation("s", "e"));
     }
 
     private native void makeResizable(final HTMLElement blob,
@@ -71,13 +73,15 @@ public class Resizability<T> {
     }-*/;
 
     private boolean onResize(final int height, final int width) {
-        final Long newSizeInGridPixels = viewport.toGridPixels(viewport.orient(height, width).longValue());
+        final Long newSizeInGridPixels = viewport.toGridPixels(viewport.decideBasedOnOrientation(height, width).longValue());
         final Long originalSize = blob.getSizeInGridPixels();
+        blobView.getElement().style.backgroundColor = "";
 
         if (!newSizeInGridPixels.equals(originalSize)) {
             blob.setSizeInGridPixels(newSizeInGridPixels);
             if (!subLaneView.hasSpaceForIgnoring(blob, blob)) {
                 blob.setSizeInGridPixels(originalSize);
+                blobView.getElement().style.backgroundColor = "red";
                 DomGlobal.console.info("Collision!"); //TODO: Restrict resizing if a collision occurs.
                 return false;
             } else {

@@ -67,7 +67,7 @@ public class TestBlobView implements BlobView<Long, TestBlob> {
         this.list = list;
 
         updateLabel();
-        viewport.setPositionInScreenPixels(this, viewport.scale.to(blob.getPosition()), 0L);
+        viewport.setPositionInScreenPixels(this, viewport.scale.toGridPixels(blob.getPosition()), 0L);
         viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
 
         draggability.onDrag(this::onDrag);

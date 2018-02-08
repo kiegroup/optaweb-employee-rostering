@@ -52,6 +52,6 @@ public class DefaultGridLines {
     }
 
     private Integer getRotation(final Viewport<?> viewport) {
-        return viewport.orient(0, 90);
+        return viewport.decideBasedOnOrientation(0, 90);
     }
 }

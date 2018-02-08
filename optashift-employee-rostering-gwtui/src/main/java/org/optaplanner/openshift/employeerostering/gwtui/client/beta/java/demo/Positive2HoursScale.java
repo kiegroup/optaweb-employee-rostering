@@ -20,37 +20,39 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.function.Function;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 
-public class PositiveHoursScale implements LinearScale<LocalDateTime> {
+public class Positive2HoursScale implements FiniteLinearScale<LocalDateTime> {
 
     private final LocalDateTime start;
     private final LocalDateTime end;
 
-    public PositiveHoursScale(final LocalDateTime start, final LocalDateTime end) {
+    public Positive2HoursScale(final LocalDateTime start, final Function<LocalDateTime, LocalDateTime> end) {
         this.start = start;
-        this.end = end;
+        this.end = end.apply(start);
     }
 
     @Override
-    public Long to(final LocalDateTime dateValue) {
+    public Long toGridPixelsWithFactor1(final LocalDateTime valueInScaleUnits) {
         final LocalDateTime date;
 
-        if (dateValue.isBefore(start)) {
+        if (valueInScaleUnits.isBefore(start)) {
             date = start;
-        } else if (dateValue.isAfter(end)) {
+        } else if (valueInScaleUnits.isAfter(end)) {
             date = end;
         } else {
-            date = dateValue;
+            date = valueInScaleUnits;
         }
 
         return Duration.between(instantOf(start), instantOf(date)).getSeconds() / 60 / 60;
     }
 
     @Override
-    public LocalDateTime from(final Long value) {
-        final LocalDateTime date = start.plusHours(value);
+    public LocalDateTime fromGridPixelsWithFactor1(final Long valueInGridPixels) {
+
+        final LocalDateTime date = start.plusHours(valueInGridPixels);
 
         if (date.isBefore(start)) {
             return start;
@@ -59,6 +61,16 @@ public class PositiveHoursScale implements LinearScale<LocalDateTime> {
         } else {
             return date;
         }
+    }
+
+    @Override
+    public Long factor() {
+        return 2L;
+    }
+
+    @Override
+    public LocalDateTime getEnd() {
+        return end;
     }
 
     private Instant instantOf(final LocalDateTime value) {

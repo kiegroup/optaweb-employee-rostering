@@ -25,7 +25,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlobView;
@@ -33,7 +33,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.B
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation.VERTICAL;
 
 @Templated("TestGridPage.html")
 public class TestGridPage1 implements Page {
@@ -53,27 +53,10 @@ public class TestGridPage1 implements Page {
 
     @PostConstruct
     public void init() {
-        viewportView.setViewport(new Viewport<Long>() {
-
-            {
-                orientation = VERTICAL;
-                sizeInGridPixels = 84L;
-                gridPixelSizeInScreenPixels = 12L;
-                defaultNewBlobSizeInGridPixels = 4L;
-                scale = new LinearScale<Long>() {
-
-                    @Override
-                    public Long to(final Long value) {
-                        return value;
-                    }
-
-                    @Override
-                    public Long from(final Long value) {
-                        return value;
-                    }
-                };
-                lanes = testLanes.getAll();
-            }
+        viewportView.setViewport(new Viewport<Long>(12L,
+                                                    VERTICAL,
+                                                    testLanes.getAll(),
+                                                    new Finite1to1LinearScaleFrom0To(1080L)) {
 
             @Override
             public void drawGridLinesAt(final IsElement container) {
@@ -81,8 +64,8 @@ public class TestGridPage1 implements Page {
             }
 
             @Override
-            public Blob<Long> newBlob(final Long positionInGridPixels) {
-                return new TestBlob("New", defaultNewBlobSizeInGridPixels, positionInGridPixels);
+            public Blob<Long> newBlob(final Lane<Long> lane, final Long positionInScaleUnits) {
+                return new TestBlob("New", 4L, positionInScaleUnits);
             }
 
             @Override

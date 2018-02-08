@@ -18,34 +18,36 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model
 
 import java.util.List;
 
-import elemental2.dom.CSSProperties.HeightUnionType;
-import elemental2.dom.CSSProperties.WidthUnionType;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport.Orientation.VERTICAL;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation.VERTICAL;
 
 public abstract class Viewport<T> {
 
-    public List<Lane<T>> lanes;
+    public final Long gridPixelSizeInScreenPixels;
+    public final Orientation orientation;
+    public final List<Lane<T>> lanes;
+    public final FiniteLinearScale<T> scale;
 
-    public Long sizeInGridPixels;
+    protected Viewport(final Long gridPixelSizeInScreenPixels,
+                       final Orientation orientation,
+                       final List<Lane<T>> lanes,
+                       final FiniteLinearScale<T> scale) {
 
-    public Long gridPixelSizeInScreenPixels;
-
-    public Long defaultNewBlobSizeInGridPixels;
-
-    public Orientation orientation;
-
-    public LinearScale<T> scale;
+        this.gridPixelSizeInScreenPixels = gridPixelSizeInScreenPixels;
+        this.orientation = orientation;
+        this.lanes = lanes;
+        this.scale = scale;
+    }
 
     public abstract void drawGridLinesAt(final IsElement container);
 
-    public abstract Blob<T> newBlob(final Long position);
+    public abstract Blob<T> newBlob(final Lane<T> lane, final T positionInScaleUnits);
 
     public abstract BlobView<T, ?> newBlobView();
 
-    public <Y> Y orient(final Y verticalOption, final Y horizontalOption) {
+    public <Y> Y decideBasedOnOrientation(final Y verticalOption, final Y horizontalOption) {
         return orientation.equals(VERTICAL) ? verticalOption : horizontalOption;
     }
 
@@ -69,46 +71,11 @@ public abstract class Viewport<T> {
         orientation.position(element, positionInGridPixels, this, offsetInScreenPixels);
     }
 
-    public enum Orientation {
-        VERTICAL {
-            @Override
-            void position(final IsElement element, final Long positionInGridPixels, final Viewport viewport, Long offsetInScreenPixels) {
-                element.getElement().style.top = viewport.toScreenPixels(positionInGridPixels) + offsetInScreenPixels + "px";
-            }
+    public Long getSizeInGridPixels() {
+        return scale.toGridPixels(scale.getEnd());
+    }
 
-            @Override
-            void scale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
-                element.getElement().style.height = HeightUnionType.of(viewport.toScreenPixels(sizeInGridPixels) + offsetInScreenPixels + "px");
-            }
-
-            @Override
-            public Long getSize(final IsElement element) {
-                final String size = element.getElement().style.height.asString();
-                return size.isEmpty() ? 0 : Long.parseLong(size.substring(0, size.length() - 2));
-            }
-        },
-        HORIZONTAL {
-            @Override
-            void position(final IsElement element, final Long positionInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
-                element.getElement().style.left = viewport.toScreenPixels(positionInGridPixels) + offsetInScreenPixels + "px";
-            }
-
-            @Override
-            void scale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
-                element.getElement().style.width = WidthUnionType.of(viewport.toScreenPixels(sizeInGridPixels) + offsetInScreenPixels + "px");
-            }
-
-            @Override
-            public Long getSize(final IsElement element) {
-                final String size = element.getElement().style.width.asString();
-                return size.isEmpty() ? 0 : Long.parseLong(size.substring(0, size.length() - 2));
-            }
-        };
-
-        abstract void position(final IsElement element, final Long positionInGridPixels, final Viewport viewport, final Long offsetInScreenPixels);
-
-        abstract void scale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels);
-
-        public abstract Long getSize(final IsElement element);
+    public List<Lane<T>> getLanes() {
+        return lanes;
     }
 }
