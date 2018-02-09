@@ -77,7 +77,7 @@ public class TenantConfigurationEditor implements IsElement {
     public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
         weekStart.setSelectedIndex(tenantStore.getCurrentTenant().getConfiguration().getWeekStart().getValue() - 1);
         templateDuration.setSelectedIndex(templateDurationIndexBiMap.get(tenantStore.getCurrentTenant().getConfiguration()
-                                                                             .getTemplateDuration()));
+                                                                                    .getTemplateDuration()));
         desiredWeightInput.setValue(tenantStore.getCurrentTenant().getConfiguration().getDesiredTimeSlotWeight());
         undesiredWeightInput.setValue(tenantStore.getCurrentTenant().getConfiguration().getUndesiredTimeSlotWeight());
         refresh();
@@ -92,13 +92,14 @@ public class TenantConfigurationEditor implements IsElement {
     @EventHandler("updateConfig")
     private void onUpdateConfigClick(ClickEvent e) {
         tenantStore.getCurrentTenant().getConfiguration().setTemplateDuration(templateDurationIndexBiMap.inverse().get(templateDuration
-                                                                                                             .getSelectedIndex()));
+                                                                                                                                       .getSelectedIndex()));
         tenantStore.getCurrentTenant().getConfiguration().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
         tenantStore.getCurrentTenant().getConfiguration().setDesiredTimeSlotWeight(desiredWeightInput.getValue());
         tenantStore.getCurrentTenant().getConfiguration().setUndesiredTimeSlotWeight(undesiredWeightInput.getValue());
         TenantRestServiceBuilder.updateTenantConfiguration(tenantStore.getCurrentTenant().getConfiguration(),
                                                            FailureShownRestCallback.onSuccess(i -> {
-                                                               tenantStore.setCurrentTenant(tenantStore.getCurrentTenant());
+                                                               tenantStore.updateTenant(i);
+                                                               tenantStore.setCurrentTenant(i);
                                                            }));
     }
 
