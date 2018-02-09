@@ -23,13 +23,14 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore.TenantsReady;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @ApplicationScoped
 public class TenantStore {
 
-    private List<Tenant> tenants;
+    private List<Tenant> tenantList;
 
     private Tenant current;
 
@@ -42,7 +43,7 @@ public class TenantStore {
     // @PostConstruct
     public void init() {
         TenantRestServiceBuilder.getTenantList(FailureShownRestCallback.onSuccess(tenantList -> {
-            tenants = tenantList;
+            this.tenantList = tenantList;
             setCurrentTenant(tenantList.get(0));
             tenantsReadyEvent.fire(new TenantsReady());
         }));
@@ -57,8 +58,12 @@ public class TenantStore {
         return current.getId();
     }
 
-    public List<Tenant> getTenants() {
-        return tenants;
+    public List<Tenant> getTenantList() {
+        return tenantList;
+    }
+
+    public void updateTenant(Tenant updatedValue) {
+        tenantList.set(tenantList.indexOf(updatedValue), updatedValue);
     }
 
     public Tenant getCurrentTenant() {

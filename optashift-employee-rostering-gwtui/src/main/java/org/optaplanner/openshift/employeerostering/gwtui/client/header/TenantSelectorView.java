@@ -43,7 +43,7 @@ public class TenantSelectorView implements IsElement {
     private List<Tenant> tenants;
 
     public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
-        tenants = tenantStore.getTenants();
+        tenants = tenantStore.getTenantList();
         tenantSelect.clear();
         tenants.forEach(tenant -> tenantSelect.addItem(tenant.getName()));
     }
