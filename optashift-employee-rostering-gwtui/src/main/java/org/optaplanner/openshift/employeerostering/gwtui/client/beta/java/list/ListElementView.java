@@ -21,4 +21,8 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 public interface ListElementView<T> extends IsElement {
 
     ListElementView<T> setup(final T t, final ListView<T> list);
+
+    default void refresh() {
+        //no-op
+    }
 }

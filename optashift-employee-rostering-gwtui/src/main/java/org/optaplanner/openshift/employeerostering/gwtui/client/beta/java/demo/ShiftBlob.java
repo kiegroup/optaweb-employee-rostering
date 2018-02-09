@@ -23,7 +23,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class ShiftBlob implements Blob<LocalDateTime> {
 
@@ -31,8 +30,7 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     private final FiniteLinearScale<LocalDateTime> scale;
     private Long sizeInGridPixels;
 
-    public ShiftBlob(final Shift shift,
-                     final FiniteLinearScale<LocalDateTime> scale) {
+    public ShiftBlob(final FiniteLinearScale<LocalDateTime> scale, final Shift shift) {
 
         this.shift = shift;
         this.scale = scale;
@@ -51,20 +49,22 @@ public class ShiftBlob implements Blob<LocalDateTime> {
 
     @Override
     public void setPosition(final LocalDateTime start) {
-        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
-                                       start,
-                                       shift.getTimeSlot().getEndDateTime()));
+        shift.getTimeSlot().setStartDateTime(start);
     }
 
     @Override
     public void setSizeInGridPixels(final Long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
-        shift.setTimeSlot(new TimeSlot(shift.getTenantId(),
-                                       shift.getTimeSlot().getStartDateTime(),
-                                       getEndPosition(scale)));
+        shift.getTimeSlot().setEndDateTime(getEndPosition(scale));
     }
 
     public String getLabel() {
-        return Optional.ofNullable(shift.getEmployee()).map(Employee::getName).orElse("Unassigned");
+        return Optional.ofNullable(shift.getEmployee())
+                .map(Employee::getName)
+                .orElse("U" + " [" + getPosition() + " ~ " + getEndPosition(scale) + ", " + getSizeInGridPixels() + "]");
+    }
+
+    public Shift getShift() {
+        return shift;
     }
 }

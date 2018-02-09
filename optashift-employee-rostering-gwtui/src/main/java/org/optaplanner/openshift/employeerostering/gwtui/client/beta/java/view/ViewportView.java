@@ -16,9 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,10 +29,11 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
-@Templated("ViewportView.html")
+import static org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils.time;
+
+@Templated
 public class ViewportView<T> implements IsElement {
 
     @Inject
@@ -61,20 +59,21 @@ public class ViewportView<T> implements IsElement {
 
         // Add Lane (SHIFT + CLICK)
         if (e.shiftKey) {
-            final List<SubLane<T>> subLanes = new ArrayList<>();
-            final SubLane<T> subLane = new SubLane<>(new ArrayList<>());
-            subLanes.add(subLane);
-            lanes.add(new Lane<>("New", subLanes));
+            lanes.add(viewport.newLane());
         }
     }
 
     public void setViewport(final Viewport<T> viewport) {
+
         this.viewport = viewport;
+
         getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
 
         viewport.setSizeInScreenPixels(this, viewport.getSizeInGridPixels(), 12L);
 
-        lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get()
-                .withViewport(viewport));
+        time("Viewport assemble", () -> {
+            lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get()
+                    .withViewport(viewport));
+        });
     }
 }

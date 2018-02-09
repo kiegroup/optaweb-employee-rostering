@@ -46,7 +46,7 @@ public class Draggability<T> {
 
         makeDraggable(blobView.getElement(),
                       subLaneView.getElement(),
-                      viewport.gridPixelSizeInScreenPixels.intValue(),
+                      viewport.getGridPixelSizeInScreenPixels().intValue(),
                       viewport.decideBasedOnOrientation("y", "x"));
     }
 
@@ -75,7 +75,7 @@ public class Draggability<T> {
     private boolean onDrag(final int top, final int left) {
         final Long newPositionInGridPixels = viewport.toGridPixels(viewport.decideBasedOnOrientation(top, left).longValue());
         final T originalPosition = blob.getPosition();
-        final FiniteLinearScale<T> scale = viewport.scale;
+        final FiniteLinearScale<T> scale = viewport.getScale();
         blobView.getElement().style.backgroundColor = "";
 
         if (!newPositionInGridPixels.equals(scale.toGridPixels(originalPosition))) {
