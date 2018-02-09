@@ -51,7 +51,6 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation.HORIZONTAL;
@@ -106,7 +105,7 @@ public class SpotRosterDemoPage implements Page {
                         .map(e -> new SpotLane(scale, e.getKey(), e.getValue()))
                         .collect(toList());
 
-        viewportView.setViewport(new Viewport<LocalDateTime>(12L, HORIZONTAL, lanes, scale) {
+        viewportView.setViewport(new Viewport<LocalDateTime>(15L, HORIZONTAL, lanes, scale) {
 
             @Override
             public void drawGridLinesAt(final IsElement target) {
@@ -137,7 +136,7 @@ public class SpotRosterDemoPage implements Page {
         return PromiseUtils.resolve();
     }
 
-    private Map<Spot, Map<ShiftView, List<TimeSlot>>> buildRosterModel(final SpotRosterView spotRosterView) {
+    private Map<Spot, Map<ShiftView, TimeSlot>> buildRosterModel(final SpotRosterView spotRosterView) {
 
         final Map<Long, Spot> spotsById = spotRosterView.getSpotList().stream().collect(toMap(AbstractPersistable::getId, identity()));
         final Map<Long, TimeSlot> timeSlotsById = spotRosterView.getTimeSlotList().stream().collect(toMap(AbstractPersistable::getId, identity()));
@@ -145,10 +144,8 @@ public class SpotRosterDemoPage implements Page {
         return spotRosterView.getTimeSlotIdToSpotIdToShiftViewListMap().values().stream()
                 .flatMap(s -> s.values().stream())
                 .flatMap(Collection::stream)
-                .collect(groupingBy((final ShiftView shiftView) -> spotsById.get(shiftView.getSpotId()),
-                                    groupingBy((final ShiftView shiftView) -> shiftView,
-                                               mapping((final ShiftView shiftView) -> timeSlotsById.get(shiftView.getTimeSlotId()),
-                                                       toList()))));
+                .collect(groupingBy(shiftView -> spotsById.get(shiftView.getSpotId()),
+                                    toMap(shiftView -> shiftView, shiftView -> timeSlotsById.get(shiftView.getTimeSlotId()))));
     }
 
     private Integer currentTenantId() {

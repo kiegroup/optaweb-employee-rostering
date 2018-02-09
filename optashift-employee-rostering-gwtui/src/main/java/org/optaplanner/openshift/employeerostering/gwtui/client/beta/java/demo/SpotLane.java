@@ -20,10 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-import elemental2.dom.DomGlobal;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
@@ -43,20 +40,20 @@ public class SpotLane extends Lane<LocalDateTime> {
     // Changing the parameter name to 'spot' leads to an error, because it uses the field instead of the parameter.
     public SpotLane(final FiniteLinearScale<LocalDateTime> scale,
                     final Spot spotParam,
-                    final Map<ShiftView, List<TimeSlot>> shiftViewsParam) {
+                    final Map<ShiftView, TimeSlot> shiftViewsParam) {
 
         super(spotParam.getName(), buildSubLanes(scale, spotParam, shiftViewsParam));
         this.spot = spotParam;
     }
 
-    private static ArrayList<SubLane<LocalDateTime>> buildSubLanes(final FiniteLinearScale<LocalDateTime> scale, final Spot spotParam, final Map<ShiftView, List<TimeSlot>> shiftViewsParam) {
+    private static ArrayList<SubLane<LocalDateTime>> buildSubLanes(final FiniteLinearScale<LocalDateTime> scale, final Spot spot, final Map<ShiftView, TimeSlot> shiftViewsParam) {
 
         //FIXME: Handle overlapping blobs and discover why some TimeSlots are null
 
         final List<Blob<LocalDateTime>> blobs = shiftViewsParam.entrySet()
                 .stream()
-                .filter(s -> s.getValue().stream().noneMatch(Objects::isNull))
-                .map(s -> new ShiftBlob(new Shift(spotParam.getTenantId(), spotParam, s.getValue().get(0)), scale))
+                .filter(s -> s.getValue() != null)
+                .map(s -> new ShiftBlob(new Shift(s.getKey(), spot, s.getValue()), scale))
                 .collect(toList());
 
         return new ArrayList<>(singletonList(new SubLane<>(blobs)));
