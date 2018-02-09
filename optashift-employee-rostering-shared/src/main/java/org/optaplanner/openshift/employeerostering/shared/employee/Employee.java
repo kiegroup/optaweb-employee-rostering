@@ -36,9 +36,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.databinding.client.api.Bindable;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
+@Bindable
+@Portable
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Employee.findAll",
@@ -71,6 +75,13 @@ public class Employee extends AbstractPersistable {
         super(tenantId);
         this.name = name;
         skillProficiencySet = new HashSet<>(2);
+    }
+
+    public Employee(Employee employee) {
+        this(employee.getTenantId(), employee.getName());
+        setId(employee.getId());
+        setVersion(employee.getVersion());
+        skillProficiencySet.addAll(employee.getSkillProficiencySet());
     }
 
     public boolean hasSkill(Skill skill) {

@@ -42,9 +42,20 @@
       <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>
     <dependency>
-      <groupId>io.swagger</groupId>
-      <artifactId>swagger-annotations</artifactId>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-data-binding</artifactId>
+      <exclusions>
+          <exclusion>
+              <groupId>dom4j</groupId>
+              <artifactId>dom4j</artifactId>
+          </exclusion>
+      </exclusions>
     </dependency>
+
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-annotations</artifactId>
+     </dependency>
   </dependencies>
 
 </project>

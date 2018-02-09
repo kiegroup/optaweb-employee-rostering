@@ -2,16 +2,21 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.ConstraintViolation;
 
+import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.HeadingElement;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Button;
@@ -33,6 +38,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
@@ -50,11 +56,11 @@ public class EmployeeEditForm implements IsElement {
 
     @Inject
     @DataField
-    private TextBox employeeName;
+    private EmployeeSubform modalEmployeeSubform;
 
-    @Inject
-    @DataField
-    private SingleValueTagsInput<Skill> employeeSkills;
+    //@Inject
+    //@DataField
+    //private Div employeeSubformDiv;
 
     @Inject
     @DataField
@@ -75,43 +81,31 @@ public class EmployeeEditForm implements IsElement {
     @Inject
     private TranslationService CONSTANTS;
 
-    private static Employee employee;
-    private static EmployeeListPanel panel;
-    private static List<Skill> skills;
-
     private FormPopup popup;
 
-    public static EmployeeEditForm create(SyncBeanManager beanManager, EmployeeListPanel employeePanel,
-            Employee employeeData, List<
-                    Skill> skillData) {
-        panel = employeePanel;
-        employee = employeeData;
-        skills = skillData;
-        return beanManager.lookupBean(EmployeeEditForm.class).newInstance();
-    }
+    private List<Skill> skillList;
 
-    @PostConstruct
-    protected void initWidget() {
-        employeeName.setValue(employee.getName());
-        employeeSkills.removeAll();
-        CollectionDataset<Skill> data = new CollectionDataset<Skill>(skills) {
+    private EmployeeListPanel caller;
 
-            @Override
-            public String getValue(Skill skill) {
-                return (skill == null) ? "" : skill.getName();
-            }
-        };
-        employeeSkills.setDatasets((Dataset<Skill>) data);
-        employeeSkills.setItemValue(Skill::getName);
-        employeeSkills.setItemText(Skill::getName);
-        employeeSkills.reconfigure();
-        employeeSkills.add(employee.getSkillProficiencySet().stream()
-                .collect(Collectors.toList()));
-        employee.getSkillProficiencySet().stream()
-                .forEach((s) -> employeeSkills.add(s));
-
+    public EmployeeEditForm setEmployee(Employee employee) {
+        modalEmployeeSubform.setEmployeeModel(new Employee(employee));
         title.setInnerSafeHtml(new SafeHtmlBuilder().appendEscaped(employee.getName())
                 .toSafeHtml());
+        return this;
+    }
+
+    public EmployeeEditForm setSkillList(List<Skill> skills) {
+        this.skillList = skills;
+        modalEmployeeSubform.setSkillList(skills);
+        return this;
+    }
+
+    public EmployeeEditForm setCaller(EmployeeListPanel caller) {
+        this.caller = caller;
+        return this;
+    }
+
+    public void show() {
         popup = FormPopup.getFormPopup(this);
         popup.center();
     }
@@ -128,16 +122,25 @@ public class EmployeeEditForm implements IsElement {
 
     @EventHandler("saveButton")
     public void save(ClickEvent click) {
-        employee.setName(employeeName.getValue());
-        employee.setSkillProficiencySet(employeeSkills.getItems().stream().collect(Collectors.toSet()));
+        modalEmployeeSubform.submit(new Callback<Employee, Set<ConstraintViolation<Employee>>>() {
 
-        popup.hide();
-        EmployeeRestServiceBuilder.updateEmployee(employee.getTenantId(), employee, new FailureShownRestCallback<
-                Employee>() {
+            @Override
+            public void onFailure(Set<ConstraintViolation<Employee>> validationErrorSet) {
+                popup.hide();
+                ErrorPopup.show(CommonUtils.delimitCollection(validationErrorSet, (e) -> e.getMessage(), "\n"));
+            }
 
             @Override
             public void onSuccess(Employee employee) {
-                panel.refresh();
+                popup.hide();
+                EmployeeRestServiceBuilder.updateEmployee(employee.getTenantId(), employee,
+                        new FailureShownRestCallback<Employee>() {
+
+                            @Override
+                            public void onSuccess(Employee employee) {
+                                caller.refresh();
+                            }
+                        });
             }
         });
 
