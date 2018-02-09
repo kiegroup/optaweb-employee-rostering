@@ -23,6 +23,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore.TenantsReady;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 

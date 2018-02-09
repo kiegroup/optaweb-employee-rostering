@@ -30,4 +30,7 @@
   <!--<set-property name="locale" value="default"/>-->
   <!--<extend-property name="locale" values="en"/>-->
   <!--<set-property-fallback name="locale" value="en"/>-->
+  <set-property name="compiler.stackMode" value="emulated" />
+  <set-configuration-property name="compiler.emulatedStack.recordFileNames" value="true" />
+  <set-configuration-property name="compiler.emulatedStack.recordLineNumbers" value="true" />
 </module>
