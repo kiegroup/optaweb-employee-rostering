@@ -114,9 +114,9 @@ public class EmployeeDrawable<I extends EmployeeData> extends AbstractDrawable i
             } else {
                 switch (availability.getState()) {
                     case DESIRED:
-                        TimeoutRestCaller.call(this, () -> EmployeeRestServiceBuilder.removeEmployeeAvailability(data.getAvailability()
-                                                                                                                     .getTenantId(),
-                                                                                                                 data.getAvailability().getId(), new FailureShownRestCallback<Boolean>() {
+                        TimeoutRestCaller.call(this, () -> EmployeeRestServiceBuilder.removeEmployeeAvailability(availability
+                                                                                                                             .getTenantId(),
+                                                                                                                 availability.getId(), new FailureShownRestCallback<Boolean>() {
 
                                                                                                                      @Override
                                                                                                                      public void onSuccess(Boolean result) {
