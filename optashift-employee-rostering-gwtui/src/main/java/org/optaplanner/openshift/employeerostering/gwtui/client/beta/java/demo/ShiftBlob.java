@@ -31,7 +31,9 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     private final FiniteLinearScale<LocalDateTime> scale;
     private Long sizeInGridPixels;
 
-    public ShiftBlob(final Shift shift, final FiniteLinearScale<LocalDateTime> scale) {
+    public ShiftBlob(final Shift shift,
+                     final FiniteLinearScale<LocalDateTime> scale) {
+
         this.shift = shift;
         this.scale = scale;
         this.sizeInGridPixels = scale.toGridPixels(shift.getTimeSlot().getEndDateTime()) - scale.toGridPixels(getPosition());
