@@ -25,57 +25,47 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java
 
 public abstract class Viewport<T> {
 
-    public final Long gridPixelSizeInScreenPixels;
-    public final Orientation orientation;
-    public final List<Lane<T>> lanes;
-    public final FiniteLinearScale<T> scale;
-
-    protected Viewport(final Long gridPixelSizeInScreenPixels,
-                       final Orientation orientation,
-                       final List<Lane<T>> lanes,
-                       final FiniteLinearScale<T> scale) {
-
-        this.gridPixelSizeInScreenPixels = gridPixelSizeInScreenPixels;
-        this.orientation = orientation;
-        this.lanes = lanes;
-        this.scale = scale;
-    }
-
     public abstract void drawGridLinesAt(final IsElement container);
+
+    public abstract Lane<T> newLane();
 
     public abstract Blob<T> newBlob(final Lane<T> lane, final T positionInScaleUnits);
 
     public abstract BlobView<T, ?> newBlobView();
 
+    public abstract List<Lane<T>> getLanes();
+
+    public abstract Long getGridPixelSizeInScreenPixels();
+
+    public abstract Orientation getOrientation();
+
+    public abstract FiniteLinearScale<T> getScale();
+
     public <Y> Y decideBasedOnOrientation(final Y verticalOption, final Y horizontalOption) {
-        return orientation.equals(VERTICAL) ? verticalOption : horizontalOption;
+        return getOrientation().equals(VERTICAL) ? verticalOption : horizontalOption;
     }
 
     public Long getSizeInGridPixels(final IsElement element) {
-        return toGridPixels(orientation.getSize(element));
+        return toGridPixels(getOrientation().getSize(element));
     }
 
     public Long toGridPixels(final Long screenPixels) {
-        return screenPixels / gridPixelSizeInScreenPixels;
+        return screenPixels / getGridPixelSizeInScreenPixels();
     }
 
     public Long toScreenPixels(final Long gridPixels) {
-        return gridPixels * gridPixelSizeInScreenPixels;
+        return gridPixels * getGridPixelSizeInScreenPixels();
     }
 
     public void setSizeInScreenPixels(final IsElement element, final Long sizeInGridPixels, final Long offsetInScreenPixels) {
-        orientation.scale(element, sizeInGridPixels, this, offsetInScreenPixels);
+        getOrientation().scale(element, sizeInGridPixels, this, offsetInScreenPixels);
     }
 
     public void setPositionInScreenPixels(final IsElement element, final Long positionInGridPixels, final Long offsetInScreenPixels) {
-        orientation.position(element, positionInGridPixels, this, offsetInScreenPixels);
+        getOrientation().position(element, positionInGridPixels, this, offsetInScreenPixels);
     }
 
     public Long getSizeInGridPixels() {
-        return scale.toGridPixels(scale.getEnd());
-    }
-
-    public List<Lane<T>> getLanes() {
-        return lanes;
+        return getScale().toGridPixels(getScale().getEnd());
     }
 }

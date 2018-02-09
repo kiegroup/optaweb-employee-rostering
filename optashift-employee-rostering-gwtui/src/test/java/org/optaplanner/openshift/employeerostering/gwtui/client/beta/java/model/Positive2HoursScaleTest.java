@@ -18,7 +18,7 @@ public class Positive2HoursScaleTest {
         final LocalDateTime start = LocalDateTime.of(2018, 2, 7, 0, 0);
         final LocalDateTime end = start.plusDays(7);
 
-        final Positive2HoursScale scale = new Positive2HoursScale(start, s -> end);
+        final Positive2HoursScale scale = new Positive2HoursScale(start, end);
 
         // Boundaries
         Assert.assertEquals((Long) 0L, scale.toGridPixels(start));

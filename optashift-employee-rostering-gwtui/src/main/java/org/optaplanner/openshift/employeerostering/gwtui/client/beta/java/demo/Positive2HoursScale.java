@@ -20,7 +20,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.function.Function;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 
@@ -29,9 +28,9 @@ public class Positive2HoursScale implements FiniteLinearScale<LocalDateTime> {
     private final LocalDateTime start;
     private final LocalDateTime end;
 
-    public Positive2HoursScale(final LocalDateTime start, final Function<LocalDateTime, LocalDateTime> end) {
+    public Positive2HoursScale(final LocalDateTime start, final LocalDateTime end) {
         this.start = start;
-        this.end = end.apply(start);
+        this.end = end;
     }
 
     @Override

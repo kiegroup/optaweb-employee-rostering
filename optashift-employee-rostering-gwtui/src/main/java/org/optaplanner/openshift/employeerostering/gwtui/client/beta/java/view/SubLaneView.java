@@ -70,6 +70,11 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
         return this;
     }
 
+    @Override
+    public void refresh() {
+        blobs.getObjects().forEach(blobs::refresh);
+    }
+
     @EventHandler("sub-lane")
     public void onClick(final ClickEvent event) {
         final MouseEvent e = Js.cast(event.getNativeEvent());
@@ -95,7 +100,7 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
         else if (e.altKey) {
             final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
             final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
-            T positionInScaleUnits = viewport.scale.toScaleUnits(positionInGridPixels);
+            T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
 
             final Blob<T> newBlob = viewport.newBlob(parentLane, positionInScaleUnits);
             if (hasSpaceForIgnoring(newBlob)) {
@@ -105,11 +110,13 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
     }
 
     @SafeVarargs
-    public final boolean hasSpaceForIgnoring(final Blob<T> blob, final Blob<T>... ignoredBlobs) {
+    public final boolean hasSpaceForIgnoring(final Blob<T> blob,
+                                             final Blob<T>... ignoredBlobs) {
+
         final List<Blob> ignored = Arrays.asList(ignoredBlobs);
         return this.blobs.getObjects().stream()
                 .filter(b -> !ignored.contains(b))
-                .noneMatch(b -> b.collidesWith(blob, viewport.scale));
+                .noneMatch(b -> b.collidesWith(blob, viewport.getScale()));
     }
 
     public SubLaneView<T> withViewport(final Viewport<T> viewport) {

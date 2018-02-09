@@ -44,7 +44,7 @@ public class Resizability<T> {
         this.blob = blob;
 
         makeResizable(blobView.getElement(),
-                      viewport.gridPixelSizeInScreenPixels.intValue(),
+                      viewport.getGridPixelSizeInScreenPixels().intValue(),
                       viewport.decideBasedOnOrientation("s", "e"));
     }
 

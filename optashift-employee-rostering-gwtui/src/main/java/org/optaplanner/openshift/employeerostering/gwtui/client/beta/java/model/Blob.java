@@ -22,6 +22,7 @@ public interface Blob<T> {
 
     void setPosition(final T position);
 
+    //FIXME: Change it to getSizeInScaleUnits
     Long getSizeInGridPixels();
 
     void setSizeInGridPixels(final Long sizeInGridPixels);

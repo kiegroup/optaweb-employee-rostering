@@ -68,27 +68,38 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
         this.blob = blob;
         this.list = list;
 
-        updateLabel();
-        viewport.setPositionInScreenPixels(this, viewport.scale.toGridPixels(blob.getPosition()), 0L);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
-
         draggability.onDrag(this::onDrag);
         draggability.applyFor(this, subLaneView, viewport, blob);
 
         resizability.onResize(this::onResize);
         resizability.applyFor(this, subLaneView, viewport, blob);
 
+        refresh();
+
         return this;
+    }
+
+    @Override
+    public void refresh() {
+        updateLabel();
+        viewport.setPositionInScreenPixels(this, viewport.getScale().toGridPixels(blob.getPosition()), 0L);
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
     }
 
     private boolean onResize(final Long newSizeInGridPixels) {
         blob.setSizeInGridPixels(newSizeInGridPixels);
+        //TODO: Update Shift's time slot
+        //ShiftRestServiceBuilder.updateShift(blob.getShift().getTenantId(), new ShiftView(blob.getShift()));
+
         updateLabel();
         return true;
     }
 
     private boolean onDrag(final Long newPositionInGridPixels) {
-        blob.setPosition(viewport.scale.toScaleUnits(newPositionInGridPixels));
+        blob.setPosition(viewport.getScale().toScaleUnits(newPositionInGridPixels));
+        //TODO: Update Shift's time slot
+        //ShiftRestServiceBuilder.updateShift(blob.getShift().getTenantId(), new ShiftView(blob.getShift()));
+
         updateLabel();
         return true;
     }
@@ -103,7 +114,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     }
 
     private void updateLabel() {
-        label.textContent = blob.getLabel().charAt(0) + " [" + blob.getPosition() + " ~ " + blob.getEndPosition(viewport.scale) + ", " + blob.getSizeInGridPixels() + "]";
+        label.textContent = blob.getLabel();
     }
 
     @Override

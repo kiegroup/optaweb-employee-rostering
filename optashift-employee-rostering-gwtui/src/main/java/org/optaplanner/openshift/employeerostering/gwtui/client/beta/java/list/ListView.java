@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import elemental2.dom.HTMLElement;
@@ -58,23 +59,30 @@ public class ListView<T> {
         objects.forEach(this::add);
     }
 
-    public void addAfter(final T obj, final T newObject) {
-        final ListElementView<T> elementView = viewSupplier.get().setup(newObject, this);
-        views.put(newObject, elementView);
+    public void addAfter(final T object, final T newObject) {
+        final ListElementView<T> view = viewSupplier.get().setup(newObject, this);
+        views.put(newObject, view);
 
-        int next = objects.indexOf(obj) + 1;
+        int next = objects.indexOf(object) + 1;
 
         if (next <= 0 || next >= objects.size()) {
-            container.appendChild(elementView.getElement());
+            container.appendChild(view.getElement());
             objects.add(newObject);
         } else {
-            container.insertBefore(elementView.getElement(), views.get(objects.get(next)).getElement());
+            container.insertBefore(view.getElement(), views.get(objects.get(next)).getElement());
             objects.add(next, newObject);
         }
     }
 
-    public void add(final T obj) {
-        addAfter(null, obj);
+    public void refresh(final T object) {
+        Optional.ofNullable(views.get(object)).ifPresent(ListElementView::refresh);
+    }
+
+    public void add(final T newObject) {
+        final ListElementView<T> view = viewSupplier.get().setup(newObject, this);
+        views.put(newObject, view);
+        container.appendChild(view.getElement());
+        objects.add(newObject);
     }
 
     public void remove(final T object) {

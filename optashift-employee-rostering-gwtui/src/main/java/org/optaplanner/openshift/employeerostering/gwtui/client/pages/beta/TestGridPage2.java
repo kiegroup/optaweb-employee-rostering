@@ -16,6 +16,9 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -25,7 +28,10 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlobView;
@@ -46,21 +52,25 @@ public class TestGridPage2 implements Page {
     private TestLanes testLanes;
 
     @Inject
-    private DefaultGridLines gridLines;
-
-    @Inject
     private ManagedInstance<TestBlobView> blobViews;
 
     @PostConstruct
     public void init() {
-        viewportView.setViewport(new Viewport<Long>(15L,
-                                                    HORIZONTAL,
-                                                    testLanes.getAll(),
-                                                    new Finite1to1LinearScaleFrom0To(1200L)) {
+        viewportView.setViewport(new Viewport<Long>() {
+
+            private final List<Lane<Long>> lanes = testLanes.getAll();
 
             @Override
             public void drawGridLinesAt(final IsElement target) {
-                gridLines.draw(target, this);
+                new DefaultGridLines().draw(target, this);
+            }
+
+            @Override
+            public Lane<Long> newLane() {
+                final List<SubLane<Long>> subLanes = new ArrayList<>();
+                final SubLane<Long> subLane = new SubLane<>(new ArrayList<>());
+                subLanes.add(subLane);
+                return new Lane<>("New", subLanes);
             }
 
             @Override
@@ -71,6 +81,26 @@ public class TestGridPage2 implements Page {
             @Override
             public BlobView<Long, ?> newBlobView() {
                 return blobViews.get();
+            }
+
+            @Override
+            public List<Lane<Long>> getLanes() {
+                return lanes;
+            }
+
+            @Override
+            public Long getGridPixelSizeInScreenPixels() {
+                return 15L;
+            }
+
+            @Override
+            public Orientation getOrientation() {
+                return HORIZONTAL;
+            }
+
+            @Override
+            public FiniteLinearScale<Long> getScale() {
+                return new Finite1to1LinearScaleFrom0To(1200L);
             }
         });
     }
