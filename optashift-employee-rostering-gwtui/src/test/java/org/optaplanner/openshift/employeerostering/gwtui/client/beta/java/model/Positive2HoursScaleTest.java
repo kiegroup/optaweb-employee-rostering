@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.Positive2HoursScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster.Positive2HoursScale;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 import static java.time.temporal.ChronoUnit.HOURS;

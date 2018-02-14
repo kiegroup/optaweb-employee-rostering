@@ -60,19 +60,19 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
                                              final ListView<SubLane<T>> list) {
 
         this.list = list;
+        this.subLane = subLane;
 
         //FIXME: Generics issue
         blobs.init(getElement(), subLane.getBlobs(), () -> (BlobView) viewport.newBlobView()
                 .withViewport(viewport)
                 .withSubLaneView(this));
 
-        this.subLane = subLane;
         return this;
     }
 
     @Override
-    public void refresh() {
-        blobs.getObjects().forEach(blobs::refresh);
+    public void destroy() {
+        blobs.clear();
     }
 
     @EventHandler("sub-lane")

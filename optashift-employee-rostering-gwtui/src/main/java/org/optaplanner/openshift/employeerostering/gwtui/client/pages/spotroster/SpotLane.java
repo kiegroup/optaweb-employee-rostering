@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
 import java.time.LocalDateTime;
 import java.util.List;

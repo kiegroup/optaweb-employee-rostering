@@ -22,7 +22,11 @@ public interface ListElementView<T> extends IsElement {
 
     ListElementView<T> setup(final T t, final ListView<T> list);
 
-    default void refresh() {
+    default void destroy() {
+        //no-op
+    }
+
+    default void onDestroy(final Runnable onDestroy) {
         //no-op
     }
 }

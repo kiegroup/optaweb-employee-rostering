@@ -28,7 +28,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.TestGridPage1;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.TestGridPage2;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.SpotRosterDemoPage;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster.SpotRosterPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.EmployeeRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
@@ -85,7 +85,7 @@ public class Pages {
     private ManagedInstance<TestGridPage2> testGridPage2;
 
     @Inject
-    private ManagedInstance<SpotRosterDemoPage> spotRosterDemoPage;
+    private ManagedInstance<SpotRosterPage> spotRosterDemoPage;
 
     private final Map<Id, LazyInit<? extends Page>> mapping = new HashMap<>();
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -31,7 +31,6 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     private Long sizeInGridPixels;
 
     public ShiftBlob(final FiniteLinearScale<LocalDateTime> scale, final Shift shift) {
-
         this.shift = shift;
         this.scale = scale;
         this.sizeInGridPixels = scale.toGridPixels(shift.getTimeSlot().getEndDateTime()) - scale.toGridPixels(getPosition());

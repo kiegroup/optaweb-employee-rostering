@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo;
-
-import java.time.LocalDateTime;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,7 +36,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.B
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
 @Templated
-public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
+public class TestBlobView implements BlobView<Long, TestBlob> {
 
     @Inject
     @DataField("blob")
@@ -50,23 +48,27 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     private HTMLElement label;
 
     @Inject
-    private Draggability<LocalDateTime> draggability;
+    private Draggability<Long> draggability;
 
     @Inject
-    private Resizability<LocalDateTime> resizability;
+    private Resizability<Long> resizability;
 
-    private ShiftBlob blob;
-    private Viewport<LocalDateTime> viewport;
-    private SubLaneView<LocalDateTime> subLaneView;
+    private TestBlob blob;
+    private Viewport<Long> viewport;
+    private SubLaneView<Long> subLaneView;
 
-    private ListView<ShiftBlob> list;
+    private ListView<TestBlob> list;
 
     @Override
-    public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
-                                            final ListView<ShiftBlob> list) {
+    public ListElementView<TestBlob> setup(final TestBlob blob,
+                                           final ListView<TestBlob> list) {
 
         this.blob = blob;
         this.list = list;
+
+        updateLabel();
+        viewport.setPositionInScreenPixels(this, viewport.getScale().toGridPixels(blob.getPosition()), 0L);
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
 
         draggability.onDrag(this::onDrag);
         draggability.applyFor(this, subLaneView, viewport, blob);
@@ -74,32 +76,17 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
         resizability.onResize(this::onResize);
         resizability.applyFor(this, subLaneView, viewport, blob);
 
-        refresh();
-
         return this;
-    }
-
-    @Override
-    public void refresh() {
-        updateLabel();
-        viewport.setPositionInScreenPixels(this, viewport.getScale().toGridPixels(blob.getPosition()), 0L);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
     }
 
     private boolean onResize(final Long newSizeInGridPixels) {
         blob.setSizeInGridPixels(newSizeInGridPixels);
-        //TODO: Update Shift's time slot
-        //ShiftRestServiceBuilder.updateShift(blob.getShift().getTenantId(), new ShiftView(blob.getShift()));
-
         updateLabel();
         return true;
     }
 
     private boolean onDrag(final Long newPositionInGridPixels) {
-        blob.setPosition(viewport.getScale().toScaleUnits(newPositionInGridPixels));
-        //TODO: Update Shift's time slot
-        //ShiftRestServiceBuilder.updateShift(blob.getShift().getTenantId(), new ShiftView(blob.getShift()));
-
+        blob.setPosition(newPositionInGridPixels);
         updateLabel();
         return true;
     }
@@ -114,17 +101,17 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     }
 
     private void updateLabel() {
-        label.textContent = blob.getLabel();
+        label.textContent = blob.getLabel().charAt(0) + " [" + blob.getPosition() + ", " + blob.getSizeInGridPixels() + "]";
     }
 
     @Override
-    public BlobView<LocalDateTime, ShiftBlob> withViewport(final Viewport<LocalDateTime> viewport) {
+    public BlobView<Long, TestBlob> withViewport(final Viewport<Long> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<LocalDateTime, ShiftBlob> withSubLaneView(final SubLaneView<LocalDateTime> subLaneView) {
+    public BlobView<Long, TestBlob> withSubLaneView(final SubLaneView<Long> subLaneView) {
         this.subLaneView = subLaneView;
         return this;
     }

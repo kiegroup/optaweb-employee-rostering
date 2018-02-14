@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,12 +25,8 @@ import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.Positive2HoursScale;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.ShiftBlob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.ShiftBlobView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.SpotLane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementViewPool;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
@@ -54,7 +50,10 @@ import static java.util.stream.Collectors.toMap;
 public class SpotRosterViewportFactory {
 
     @Inject
-    private ManagedInstance<ShiftBlobView> blobViews;
+    private ListElementViewPool<ShiftBlobView> shiftBlobViewPool;
+
+    @Inject
+    private ManagedInstance<ShiftBlobView> shiftBlobViewInstances;
 
     @Inject
     private TenantStore tenantStore;
@@ -65,13 +64,15 @@ public class SpotRosterViewportFactory {
 
     public SpotRosterViewport getViewport(final SpotRosterView spotRosterView) {
 
+        shiftBlobViewPool.init(1500L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
+
         spotRosterModel = buildSpotRosterModel(spotRosterView);
 
         scale = new Positive2HoursScale(spotRosterView.getStartDate().atTime(0, 0),
                                         spotRosterView.getEndDate().atTime(0, 0));
 
         return new SpotRosterViewport(tenantStore.getCurrentTenantId(),
-                                      blobViews::get,
+                                      shiftBlobViewPool::get,
                                       scale,
                                       buildLanes(spotRosterView));
     }
