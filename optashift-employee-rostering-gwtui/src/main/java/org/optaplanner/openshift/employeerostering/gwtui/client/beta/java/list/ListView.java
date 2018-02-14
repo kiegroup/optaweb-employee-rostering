@@ -20,14 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import elemental2.dom.HTMLElement;
 
 public class ListView<T> {
 
-    private Supplier<ListElementView<T>> viewSupplier;
+    private Supplier<ListElementView<T>> viewFactory;
     private HTMLElement container;
 
     private List<T> objects;
@@ -42,7 +41,7 @@ public class ListView<T> {
         reset();
         this.init = true;
         this.container = container;
-        this.viewSupplier = viewFactory;
+        this.viewFactory = viewFactory;
         this.objects = new ArrayList<>();
         this.views = new HashMap<>();
         addAll(objects);
@@ -60,7 +59,7 @@ public class ListView<T> {
     }
 
     public void addAfter(final T object, final T newObject) {
-        final ListElementView<T> view = viewSupplier.get().setup(newObject, this);
+        final ListElementView<T> view = viewFactory.get().setup(newObject, this);
         views.put(newObject, view);
 
         int next = objects.indexOf(object) + 1;
@@ -74,12 +73,8 @@ public class ListView<T> {
         }
     }
 
-    public void refresh(final T object) {
-        Optional.ofNullable(views.get(object)).ifPresent(ListElementView::refresh);
-    }
-
     public void add(final T newObject) {
-        final ListElementView<T> view = viewSupplier.get().setup(newObject, this);
+        final ListElementView<T> view = viewFactory.get().setup(newObject, this);
         views.put(newObject, view);
         container.appendChild(view.getElement());
         objects.add(newObject);
@@ -87,8 +82,13 @@ public class ListView<T> {
 
     public void remove(final T object) {
         final ListElementView<T> view = views.remove(object);
+        view.destroy();
         container.removeChild(view.getElement());
         objects.remove(object);
+    }
+
+    public void clear() {
+        reset();
     }
 
     public List<T> getObjects() {

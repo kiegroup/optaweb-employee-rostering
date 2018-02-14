@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 

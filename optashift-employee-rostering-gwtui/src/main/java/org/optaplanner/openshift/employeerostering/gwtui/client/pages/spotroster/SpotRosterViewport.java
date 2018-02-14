@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,10 +23,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.jboss.errai.common.client.api.elemental2.IsElement;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.ShiftBlob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.ShiftBlobView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.demo.SpotLane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
@@ -44,7 +41,7 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java
 public class SpotRosterViewport extends Viewport<LocalDateTime> {
 
     private final Integer tenantId;
-    private final DefaultGridLines gridLines;
+    private final CssGridLines gridLines;
     private final Supplier<ShiftBlobView> blobViewSupplier;
     private final List<Lane<LocalDateTime>> lanes;
     private final FiniteLinearScale<LocalDateTime> scale;
@@ -58,7 +55,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
         this.lanes = lanes;
         this.tenantId = tenantId;
         this.blobViewSupplier = blobViewSupplier;
-        this.gridLines = new DefaultGridLines();
+        this.gridLines = new CssGridLines();
     }
 
     @Override

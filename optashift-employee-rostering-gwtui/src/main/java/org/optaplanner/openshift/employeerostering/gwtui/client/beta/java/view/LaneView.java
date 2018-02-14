@@ -57,15 +57,14 @@ public class LaneView<T> implements ListElementView<Lane<T>> {
 
         viewport.drawGridLinesAt(this);
 
-        refresh();
+        title.textContent = lane.getTitle();
 
         return this;
     }
 
     @Override
-    public void refresh() {
-        title.textContent = lane.getTitle();
-        subLanes.getObjects().forEach(subLanes::refresh);
+    public void destroy() {
+        subLanes.clear();
     }
 
     public LaneView<T> withViewport(final Viewport<T> viewport) {

@@ -26,15 +26,13 @@ import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.DefaultGridLines;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.test.TestBlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
@@ -62,7 +60,7 @@ public class TestGridPage2 implements Page {
 
             @Override
             public void drawGridLinesAt(final IsElement target) {
-                new DefaultGridLines().draw(target, this);
+                new CssGridLines().draw(target, this);
             }
 
             @Override

@@ -23,7 +23,7 @@ import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
 @Dependent
-public class DefaultGridLines {
+public class CssGridLines {
 
     private static final Long WEAK_LINE_INTERVAL_IN_GRID_PIXELS = 2L;
     private static final Long STRONG_LINE_INTERVAL_IN_GRID_PIXELS = 12L;
