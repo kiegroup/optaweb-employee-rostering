@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.cellview.client.Column;
@@ -30,8 +32,10 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -47,7 +51,7 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.resources
 
 @Templated
 public class EmployeeListPanel implements IsElement,
-                                          Page {
+        Page {
 
     @Inject
     @DataField
@@ -55,10 +59,11 @@ public class EmployeeListPanel implements IsElement,
 
     @Inject
     @DataField
-    private TextBox employeeNameTextBox;
+    private EmployeeSubform employeeSubform;
+
     @Inject
-    @DataField
-    private SingleValueTagsInput<Skill> skillsTagsInput;
+    private Instance<EmployeeEditForm> editForm;
+
     @Inject
     @DataField
     private Button addButton;
@@ -94,9 +99,6 @@ public class EmployeeListPanel implements IsElement,
     @PostConstruct
     protected void initWidget() {
         initTable();
-        skillsTagsInput.setItemValue(Skill::getName);
-        skillsTagsInput.setItemText(Skill::getName);
-        skillsTagsInput.reconfigure();
     }
 
     @Override
@@ -124,18 +126,11 @@ public class EmployeeListPanel implements IsElement,
         }
 
         return new Promise<>((res, rej) -> {
-            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
-                skillsTagsInput.removeAll();
-                skillsTagsInput.setDatasets(new CollectionDataset<Skill>(skillList) {
-
-                    @Override
-                    public String getValue(Skill skill) {
-                        return (skill == null) ? "" : skill.getName();
-                    }
-                });
-                skillsTagsInput.reconfigure();
-                res.onInvoke(PromiseUtils.resolve());
-            }));
+            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(
+                    skillList -> {
+                        employeeSubform.setSkillList(skillList);
+                        res.onInvoke(PromiseUtils.resolve());
+                    }));
         });
     }
 
@@ -160,7 +155,7 @@ public class EmployeeListPanel implements IsElement,
             }
         }, CONSTANTS.format(General_skills));
         Column<Employee, String> deleteColumn = new Column<Employee, String>(new ButtonCell(IconType.REMOVE,
-                                                                                            ButtonType.DANGER, ButtonSize.SMALL)) {
+                ButtonType.DANGER, ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Employee employee) {
@@ -168,12 +163,13 @@ public class EmployeeListPanel implements IsElement,
             }
         };
         deleteColumn.setFieldUpdater((index, employee, value) -> {
-            EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), employee.getId(), FailureShownRestCallback.onSuccess(i -> {
-                refreshTable();
-            }));
+            EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), employee.getId(),
+                    FailureShownRestCallback.onSuccess(i -> {
+                        refreshTable();
+                    }));
         });
         Column<Employee, String> editColumn = new Column<Employee, String>(new ButtonCell(IconType.EDIT,
-                                                                                          ButtonType.DEFAULT, ButtonSize.SMALL)) {
+                ButtonType.DEFAULT, ButtonSize.SMALL)) {
 
             @Override
             public String getValue(Employee employee) {
@@ -182,9 +178,10 @@ public class EmployeeListPanel implements IsElement,
         };
         editColumn.setFieldUpdater((index, employee, value) -> {
             EmployeeListPanel employeeListPanel = this;
-            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
-                EmployeeEditForm.create(beanManager, employeeListPanel, employee, skillList);
-            }));
+            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(
+                    skillList -> {
+                        editForm.get().withEmployee(employee).withSkillList(skillList).show().then(i -> refreshTable());
+                    }));
         });
         table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
         table.addColumn(editColumn);
@@ -201,28 +198,34 @@ public class EmployeeListPanel implements IsElement,
             return PromiseUtils.resolve();
         }
         return new Promise<>((res, rej) -> {
-            EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employeeList -> {
-                dataProvider.setList(employeeList);
-                dataProvider.flush();
-                pagination.rebuild(pager);
-                res.onInvoke(PromiseUtils.resolve());
-            }));
+            EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
+                    .onSuccess(employeeList -> {
+                        dataProvider.setList(employeeList);
+                        dataProvider.flush();
+                        pagination.rebuild(pager);
+                        res.onInvoke(PromiseUtils.resolve());
+                    }));
         });
     }
 
     @EventHandler("addButton")
     public void add(ClickEvent e) {
         if (tenantStore.getCurrentTenantId() == null) {
-            throw new IllegalStateException("The tenantStore.getTenantId() (" + tenantStore.getCurrentTenantId() + ") can not be null at this time.");
+            throw new IllegalStateException("The tenantStore.getTenantId() (" + tenantStore.getCurrentTenantId()
+                    + ") can not be null at this time.");
         }
-        String employeeName = employeeNameTextBox.getValue();
-        employeeNameTextBox.setValue("");
-        employeeNameTextBox.setFocus(true);
-        List<Skill> skillList = skillsTagsInput.getItems();
-        Employee employee = new Employee(tenantStore.getCurrentTenantId(), employeeName);
-        employee.setSkillProficiencySet(skillList.stream().collect(Collectors.toSet()));
-        EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee, FailureShownRestCallback.onSuccess(i -> {
-            refreshTable();
-        }));
+        employeeSubform.getIfValid().then((employee) -> {
+            EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee, FailureShownRestCallback
+                    .onSuccess(i -> {
+                        refreshTable();
+                    }));
+            return PromiseUtils.resolve();
+        }).catch_((error) -> {
+            ErrorPopup.show(CommonUtils.delimitCollection((Set<ConstraintViolation<Employee>>) error, (
+                    errorMsg) -> errorMsg
+                            .toString(), "\n"));
+            return PromiseUtils.resolve();
+        });
+
     }
 }
