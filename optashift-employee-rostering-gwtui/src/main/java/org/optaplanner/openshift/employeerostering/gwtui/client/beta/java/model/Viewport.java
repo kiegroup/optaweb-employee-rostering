@@ -25,7 +25,9 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java
 
 public abstract class Viewport<T> {
 
-    public abstract void drawGridLinesAt(final IsElement container);
+    public abstract void drawGridLinesAt(final IsElement target);
+
+    public abstract void drawTicksAt(final IsElement target);
 
     public abstract Lane<T> newLane();
 

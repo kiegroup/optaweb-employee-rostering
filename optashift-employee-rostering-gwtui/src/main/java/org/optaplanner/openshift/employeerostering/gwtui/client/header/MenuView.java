@@ -33,15 +33,14 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_DEMO;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS_DEMO;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.TEST_GRID_1;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.TEST_GRID_2;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_DEMO;
 
 @Templated
 public class MenuView implements IsElement {
@@ -71,16 +70,12 @@ public class MenuView implements IsElement {
     private HTMLAnchorElement employeeRoster;
 
     @Inject
-    @DataField("test-grid-1")
-    private HTMLAnchorElement testGrid1;
-
-    @Inject
-    @DataField("test-grid-2")
-    private HTMLAnchorElement testGrid2;
-
-    @Inject
     @DataField("spot-roster-demo")
     private HTMLAnchorElement spotRosterDemo;
+
+    @Inject
+    @DataField("rotations-demo")
+    private HTMLAnchorElement rotationsDemo;
 
     @Inject
     private Event<PageChange> pageChangeEvent;
@@ -115,19 +110,14 @@ public class MenuView implements IsElement {
         goTo(EMPLOYEE_ROSTER, e);
     }
 
-    @EventHandler("test-grid-1")
-    public void testGrid1(final ClickEvent e) {
-        goTo(TEST_GRID_1, e);
-    }
-
-    @EventHandler("test-grid-2")
-    public void testGrid2(final ClickEvent e) {
-        goTo(TEST_GRID_2, e);
-    }
-
     @EventHandler("spot-roster-demo")
     public void spotRosterDemo(final ClickEvent e) {
         goTo(SPOT_ROSTER_DEMO, e);
+    }
+
+    @EventHandler("rotations-demo")
+    public void rotationsDemo(final ClickEvent e) {
+        goTo(ROTATIONS_DEMO, e);
     }
 
     private void goTo(final Pages.Id pageId,
@@ -138,7 +128,7 @@ public class MenuView implements IsElement {
     }
 
     private void handleActiveLink(final MouseEvent event) {
-        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster, testGrid1, testGrid2, spotRosterDemo);
+        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster, rotationsDemo, spotRosterDemo);
         setActive(Js.cast(event.target));
     }
 

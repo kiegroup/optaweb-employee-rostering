@@ -16,19 +16,23 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid;
 
-import javax.enterprise.context.Dependent;
-
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
-@Dependent
 public class CssGridLines {
 
-    private static final Long WEAK_LINE_INTERVAL_IN_GRID_PIXELS = 2L;
-    private static final Long STRONG_LINE_INTERVAL_IN_GRID_PIXELS = 12L;
+    private final Long softLineStepInGridPixels;
+    private final Long strongLineStepInGridPixels;
 
-    public void draw(final IsElement target, final Viewport<?> viewport) {
+    CssGridLines(final Long softStep,
+                 final Long harshStep) {
+
+        softLineStepInGridPixels = softStep;
+        strongLineStepInGridPixels = harshStep;
+    }
+
+    public void drawAt(final IsElement target, final Viewport<?> viewport) {
 
         final HTMLElement targetElement = target.getElement();
 
@@ -44,11 +48,11 @@ public class CssGridLines {
     }
 
     private String getHarshLinesInterval(final Viewport<?> viewport) {
-        return viewport.toScreenPixels(STRONG_LINE_INTERVAL_IN_GRID_PIXELS) + "px ";
+        return viewport.toScreenPixels(strongLineStepInGridPixels) + "px ";
     }
 
     private String getSoftLinesInterval(final Viewport<?> viewport) {
-        return viewport.toScreenPixels(WEAK_LINE_INTERVAL_IN_GRID_PIXELS) + "px ";
+        return viewport.toScreenPixels(softLineStepInGridPixels) + "px ";
     }
 
     private Integer getRotation(final Viewport<?> viewport) {

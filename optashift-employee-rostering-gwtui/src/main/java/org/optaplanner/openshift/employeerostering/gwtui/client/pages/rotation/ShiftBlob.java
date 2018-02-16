@@ -14,35 +14,39 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 
-class Finite1to1LinearScaleFrom0To implements FiniteLinearScale<Long> {
+public class ShiftBlob implements Blob<Long> {
 
-    private Long end;
+    private Long start;
+    private Long size;
 
-    Finite1to1LinearScaleFrom0To(final Long end) {
-        this.end = end;
+    public ShiftBlob(final Long start,
+                     final Long size) {
+
+        this.start = start;
+        this.size = size;
     }
 
     @Override
-    public Long toGridPixelsWithFactor1(final Long valueInScaleUnits) {
-        return valueInScaleUnits;
+    public Long getPosition() {
+        return start;
     }
 
     @Override
-    public Long fromGridPixelsWithFactor1(final Long valueInGridPixels) {
-        return valueInGridPixels;
+    public void setPosition(final Long position) {
+        this.start = position;
     }
 
     @Override
-    public Long factor() {
-        return 1L;
+    public Long getSizeInGridPixels() {
+        return size;
     }
 
     @Override
-    public Long getEnd() {
-        return end;
+    public void setSizeInGridPixels(final Long sizeInGridPixels) {
+        size = sizeInGridPixels;
     }
 }

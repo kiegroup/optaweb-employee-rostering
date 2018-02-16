@@ -40,6 +40,7 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServi
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 import static org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder.getCurrentSpotRosterView;
 
 @Templated
@@ -95,7 +96,7 @@ public class SpotRosterPage implements Page {
 
     private Promise<Void> initViewportView(final SpotRosterView spotRosterView) {
         viewportView.setViewport(spotRosterViewportFactory.getViewport(spotRosterView));
-        return PromiseUtils.resolve();
+        return resolve();
     }
 
     private Promise<Void> solveRoster() {
@@ -108,7 +109,7 @@ public class SpotRosterPage implements Page {
     public void onSolveClicked(final ClickEvent ignore) {
         solveRoster().then(i -> {
             repeat(this::refresh, 30000, 1000);
-            return PromiseUtils.resolve();
+            return resolve();
         });
     }
 
