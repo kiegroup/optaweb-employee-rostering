@@ -110,7 +110,9 @@ public class CommonUtils {
         if (null == toDelimit) {
             return "";
         }
-        toDelimit.stream().forEach((item) -> out.append(mapper.map(item)).append(delimiter));
+        for (T item : toDelimit) {
+            out.append(mapper.map(item)).append(delimiter);
+        }
         out.delete(out.length() - delimiter.length(), out.length());
         return out.toString();
     }
@@ -123,11 +125,6 @@ public class CommonUtils {
                 return new FlattenIterator<>(collection);
             }
         };
-    }
-
-    public static interface OneWayMapping<F, T> {
-
-        T map(F from);
     }
 
     private static class FlattenIterator<T> implements Iterator<T> {

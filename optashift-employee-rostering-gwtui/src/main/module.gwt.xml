@@ -3,6 +3,7 @@
     "http://www.gwtproject.org/doctype/2.8.0/gwt-module.dtd">
 <module rename-to="gwtui">
   <source path="client"/>
+  <stylesheet src="kie.css" />
   <!-- TODO remove me once https://github.com/gwtproject/gwt/issues/611 has been fixed -->
   <super-source path="emulate" />
 
@@ -14,6 +15,7 @@
   <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
   <inherits name="com.google.gwt.resources.Resources" />
   <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
+  <inherits name="org.gwtbootstrap3.extras.select.Select"/>
   <inherits name="org.gwtbootstrap3.extras.tagsinput.TagsInput"/>
   <inherits name="org.gwtbootstrap3.extras.typeahead.Typeahead"/>
   <inherits name="org.jboss.errai.ioc.Container"/>
