@@ -1,6 +1,8 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -8,6 +10,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.SimplePager;
 import com.google.gwt.user.cellview.client.TextColumn;
@@ -23,16 +26,25 @@ import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.gwtbootstrap3.extras.tagsinput.client.ui.base.SingleValueTagsInput;
 import org.gwtbootstrap3.extras.typeahead.client.base.CollectionDataset;
+import org.jboss.errai.databinding.client.api.DataBinder;
+import org.jboss.errai.databinding.client.components.ListComponent;
+import org.jboss.errai.databinding.client.components.ListContainer;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInvalidation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.KiePager;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.KieSearchBar;
+import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeSubform;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -42,59 +54,45 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.resources
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_delete;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_edit;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_name;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants.General_skills;
 
 @Templated
 public class SpotListPanel implements IsElement,
-                                      Page {
+        Page {
 
     @Inject
     @DataField
     private Button refreshButton;
-
-    @Inject
-    @DataField
-    private TextBox spotNameTextBox;
-    @Inject
-    @DataField
-    private SingleValueTagsInput<Skill> requiredSkillsTagsInput;
     @Inject
     @DataField
     private Button addButton;
 
-    // TODO use DataGrid instead
+    @Inject
     @DataField
-    private CellTable<Spot> table;
-    @DataField
-    private Pagination pagination;
+    private KiePager<Spot> pager;
 
-    private SimplePager pager = new SimplePager();
-    private ListDataProvider<Spot> dataProvider = new ListDataProvider<>();
+    @Inject
+    @DataField
+    private KieSearchBar searchBar;
 
     @Inject
     private TenantStore tenantStore;
 
     @Inject
-    private SyncBeanManager beanManager;
-    @Inject
     private TranslationService CONSTANTS;
 
+    // TODO use DataGrid instead
+    @Inject
+    @DataField
+    @ListContainer("table")
+    private ListComponent<Spot, SpotSubform> table;
+
     public SpotListPanel() {
-        table = new CellTable<>(15);
-        table.setBordered(true);
-        table.setCondensed(true);
-        table.setStriped(true);
-        table.setHover(true);
-        table.setHeight("100%");
-        table.setWidth("100%");
-        pagination = new Pagination();
     }
 
     @PostConstruct
     protected void initWidget() {
         initTable();
-        requiredSkillsTagsInput.setItemValue(Skill::getName);
-        requiredSkillsTagsInput.setItemText(Skill::getName);
-        requiredSkillsTagsInput.reconfigure();
     }
 
     @Override
@@ -106,124 +104,39 @@ public class SpotListPanel implements IsElement,
         refresh();
     }
 
+    public void onAnyInvalidationEvent(@Observes DataInvalidation<Spot> spot) {
+        refresh();
+    }
+
     @EventHandler("refreshButton")
     public void refresh(ClickEvent e) {
         refresh();
     }
 
     public Promise<Void> refresh() {
-        return refreshRequiredSkillListBox().then(i -> refreshTable());
-    }
-
-    private Promise<Void> refreshRequiredSkillListBox() {
-
-        if (tenantStore.getCurrentTenantId() == null) {
-            return PromiseUtils.resolve();
-        }
-
-        return new Promise<>((res, rej) -> {
-            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
-                requiredSkillsTagsInput.removeAll();
-                requiredSkillsTagsInput.setDatasets(new CollectionDataset<Skill>(skillList) {
-
-                    @Override
-                    public String getValue(Skill skill) {
-                        return (skill == null) ? "" : skill.getName();
-                    }
-                });
-                requiredSkillsTagsInput.reconfigure();
-                res.onInvoke(PromiseUtils.resolve());
-            }));
-        });
+        return refreshTable();
     }
 
     private void initTable() {
-        table.addColumn(new TextColumn<Spot>() {
-
-                            @Override
-                            public String getValue(Spot spot) {
-                                return spot.getName();
-                            }
-                        },
-                        CONSTANTS.format(General_name));
-        table.addColumn(new TextColumn<Spot>() {
-
-            @Override
-            public String getValue(Spot spot) {
-                Set<Skill> requiredSkillSet = spot.getRequiredSkillSet();
-                if (requiredSkillSet == null) {
-                    return "";
-                }
-                return requiredSkillSet.stream().reduce("", (a, s) -> (a.isEmpty()) ? s.getName() : a + "," + s
-                                                                .getName(),
-                                                        (a, s) -> (a.isEmpty()) ? s : a + "," + s);
-            }
-        }, "Required skill");
-        Column<Spot, String> deleteColumn = new Column<Spot, String>(new ButtonCell(IconType.REMOVE, ButtonType.DANGER,
-                                                                                    ButtonSize.SMALL)) {
-
-            @Override
-            public String getValue(Spot spot) {
-                return CONSTANTS.format(General_delete);
-            }
-        };
-        deleteColumn.setFieldUpdater((index, spot, value) -> {
-            SpotRestServiceBuilder.removeSpot(tenantStore.getCurrentTenantId(), spot.getId(), FailureShownRestCallback.onSuccess(i -> {
-                refreshTable();
-            }));
-        });
-        Column<Spot, String> editColumn = new Column<Spot, String>(new ButtonCell(IconType.EDIT, ButtonType.DEFAULT,
-                                                                                  ButtonSize.SMALL)) {
-
-            @Override
-            public String getValue(Spot spot) {
-                return CONSTANTS.format(General_edit);
-            }
-        };
-        editColumn.setFieldUpdater((index, spot, value) -> {
-            final SpotListPanel panel = this;
-            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(skillList -> {
-                SpotEditForm.create(beanManager, panel, spot, skillList);
-            }));
-        });
-        table.addColumn(deleteColumn, CONSTANTS.format(General_actions));
-        table.addColumn(editColumn);
-
-        table.addRangeChangeHandler(event -> pagination.rebuild(pager));
-
-        pager.setDisplay(table);
-        pagination.clear();
-        dataProvider.addDataDisplay(table);
+        pager.setData(Collections.emptyList());
+        pager.setPresenter(table);
     }
 
     private Promise<Void> refreshTable() {
         if (tenantStore.getCurrentTenantId() == null) {
             return PromiseUtils.resolve();
         }
-
-        return new Promise<>((resolve, reject) -> {
-            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spotList -> {
-                dataProvider.setList(spotList);
-                dataProvider.flush();
-                pagination.rebuild(pager);
-                resolve.onInvoke(PromiseUtils.resolve());
-            }));
+        return new Promise<>((res, rej) -> {
+            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
+                    .onSuccess(newSpotList -> {
+                        pager.setData(newSpotList);
+                        res.onInvoke(PromiseUtils.resolve());
+                    }));
         });
     }
 
     @EventHandler("addButton")
     public void add(ClickEvent e) {
-        if (tenantStore.getCurrentTenantId() == null) {
-            throw new IllegalStateException("The tenantId (" + tenantStore.getCurrentTenantId() + ") can not be null at this time.");
-        }
-        String spotName = spotNameTextBox.getValue();
-        spotNameTextBox.setValue("");
-        spotNameTextBox.setFocus(true);
-        Set<Skill> skillSet = new HashSet<>(requiredSkillsTagsInput.getItems());
-
-        SpotRestServiceBuilder.addSpot(tenantStore.getCurrentTenantId(), new Spot(tenantStore.getCurrentTenantId(), spotName, skillSet),
-                                       FailureShownRestCallback.onSuccess(i -> {
-                                           refreshTable();
-                                       }));
+        SpotSubform.createNewRow(new Spot(tenantStore.getCurrentTenantId(), "", new HashSet<>()), table, pager);
     }
 }

@@ -37,7 +37,8 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Skill extends AbstractPersistable {
 
-    @NotNull @Size(min = 1, max = 120)
+    @NotNull
+    @Size(min = 1, max = 120)
     private String name;
 
     @SuppressWarnings("unused")
