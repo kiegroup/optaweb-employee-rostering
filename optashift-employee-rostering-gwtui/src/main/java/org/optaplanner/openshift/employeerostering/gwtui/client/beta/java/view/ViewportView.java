@@ -38,7 +38,11 @@ public class ViewportView<T> implements IsElement {
 
     @Inject
     @DataField("viewport")
-    public HTMLDivElement root;
+    private HTMLDivElement root;
+
+    @Inject
+    @DataField("ticks-lane")
+    private HTMLDivElement ticksLane;
 
     @Inject
     private ManagedInstance<LaneView<T>> laneViewInstances;
@@ -71,9 +75,10 @@ public class ViewportView<T> implements IsElement {
 
         viewport.setSizeInScreenPixels(this, viewport.getSizeInGridPixels(), 12L);
 
+        viewport.drawTicksAt(() -> ticksLane);
+
         time("Viewport assemble", () -> {
-            lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get()
-                    .withViewport(viewport));
+            lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get().withViewport(viewport));
         });
     }
 }

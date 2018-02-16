@@ -20,8 +20,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopu
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_DEMO;
 
 @EntryPoint

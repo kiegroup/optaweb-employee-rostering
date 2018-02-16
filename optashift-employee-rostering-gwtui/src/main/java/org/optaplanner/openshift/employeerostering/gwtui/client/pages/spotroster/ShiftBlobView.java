@@ -32,8 +32,6 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.Draggability;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.Resizability;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
@@ -49,11 +47,11 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     @DataField("label")
     private HTMLElement label;
 
-    @Inject
-    private Draggability<LocalDateTime> draggability;
-
-    @Inject
-    private Resizability<LocalDateTime> resizability;
+//    @Inject
+//    private Draggability<LocalDateTime> draggability;
+//
+//    @Inject
+//    private Resizability<LocalDateTime> resizability;
 
     private Viewport<LocalDateTime> viewport;
     private SubLaneView<LocalDateTime> subLaneView;
@@ -69,15 +67,17 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
         this.list = list;
         this.blob = blob;
 
-        draggability.onDrag(this::onDrag);
-        draggability.applyFor(this, subLaneView, viewport, blob);
-
-        resizability.onResize(this::onResize);
-        resizability.applyFor(this, subLaneView, viewport, blob);
-
         viewport.setPositionInScreenPixels(this, viewport.getScale().toGridPixels(blob.getPosition()), 0L);
         viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
         updateLabel();
+
+        // FIXME: Enable draggability and resizability after backend supports it.
+
+//        draggability.onDrag(this::onDrag);
+//        draggability.applyFor(this, subLaneView, viewport, blob);
+//
+//        resizability.onResize(this::onResize);
+//        resizability.applyFor(this, subLaneView, viewport, blob);
 
         return this;
     }

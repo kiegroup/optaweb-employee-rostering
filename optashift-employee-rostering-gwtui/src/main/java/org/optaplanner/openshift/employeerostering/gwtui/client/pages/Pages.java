@@ -26,8 +26,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.TestGridPage1;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta.TestGridPage2;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.RotationsPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster.SpotRosterPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.EmployeeRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRosterViewPanel;
@@ -35,24 +34,22 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListP
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.ConfigurationEditor;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_DEMO;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS_DEMO;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.TEST_GRID_1;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.TEST_GRID_2;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_DEMO;
 
 @Dependent
 public class Pages {
 
     public enum Id {
         SKILLS,
-        TEST_GRID_1,
-        TEST_GRID_2,
         SPOT_ROSTER_DEMO,
+        ROTATIONS_DEMO,
         SPOTS,
         EMPLOYEES,
         ROTATIONS,
@@ -79,13 +76,10 @@ public class Pages {
     private ManagedInstance<EmployeeRosterViewPanel> employeeRosterPage;
 
     @Inject
-    private ManagedInstance<TestGridPage1> testGridPage1;
-
-    @Inject
-    private ManagedInstance<TestGridPage2> testGridPage2;
-
-    @Inject
     private ManagedInstance<SpotRosterPage> spotRosterDemoPage;
+
+    @Inject
+    private ManagedInstance<RotationsPage> rotationsDemoPage;
 
     private final Map<Id, LazyInit<? extends Page>> mapping = new HashMap<>();
 
@@ -97,9 +91,8 @@ public class Pages {
         mapping.put(ROTATIONS, lazyInit(rotationsPage));
         mapping.put(SPOT_ROSTER, lazyInit(spotRosterPage));
         mapping.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
-        mapping.put(TEST_GRID_1, lazyInit(testGridPage1));
-        mapping.put(TEST_GRID_2, lazyInit(testGridPage2));
         mapping.put(SPOT_ROSTER_DEMO, lazyInit(spotRosterDemoPage));
+        mapping.put(ROTATIONS_DEMO, lazyInit(rotationsDemoPage));
     }
 
     public Page get(final Id id) {

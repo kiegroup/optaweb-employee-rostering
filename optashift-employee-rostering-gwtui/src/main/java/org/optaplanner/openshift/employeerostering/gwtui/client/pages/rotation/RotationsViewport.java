@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,35 +31,33 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation.HORIZONTAL;
 
-public class SpotRosterViewport extends Viewport<LocalDateTime> {
+public class RotationsViewport extends Viewport<Long> {
 
     private final Integer tenantId;
-    private final Supplier<ShiftBlobView> blobViewSupplier;
-    private final FiniteLinearScale<LocalDateTime> scale;
+    private final Supplier<ShiftBlobView> blobViewFactory;
+    private final FiniteLinearScale<Long> scale;
     private final CssGridLines gridLines;
-    private final Ticks<LocalDateTime> ticks;
-    private final List<Lane<LocalDateTime>> lanes;
+    private final Ticks<Long> ticks;
+    private final List<Lane<Long>> lanes;
 
-    public SpotRosterViewport(final Integer tenantId,
-                              final Supplier<ShiftBlobView> blobViewSupplier,
-                              final FiniteLinearScale<LocalDateTime> scale,
-                              final CssGridLines gridLines,
-                              final Ticks<LocalDateTime> ticks,
-                              final List<Lane<LocalDateTime>> lanes) {
+    public RotationsViewport(final Integer tenantId,
+                             final Supplier<ShiftBlobView> blobViewFactory,
+                             final FiniteLinearScale<Long> scale,
+                             final CssGridLines gridLines,
+                             final Ticks<Long> ticks,
+                             final List<Lane<Long>> lanes) {
 
         this.tenantId = tenantId;
-        this.blobViewSupplier = blobViewSupplier;
+        this.blobViewFactory = blobViewFactory;
         this.scale = scale;
-        this.gridLines = gridLines;
         this.ticks = ticks;
         this.lanes = lanes;
+        this.gridLines = gridLines;
     }
 
     @Override
@@ -70,12 +67,10 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
 
     @Override
     public void drawTicksAt(final IsElement target) {
-        ticks.drawAt(target, this, date -> {
-            final int hours = date.getHour();
+        ticks.drawAt(target, this, minutes -> {
+            final Long hours = (minutes / 60) % 24;
             if (hours == 0) {
-                final String lowerDayOfTheWeek = date.getDayOfWeek().toString().toLowerCase();
-                final String dayOfTheWeek = lowerDayOfTheWeek.substring(0, 1).toUpperCase() + lowerDayOfTheWeek.substring(1);
-                return dayOfTheWeek.substring(0, 3) + " " + date.getDayOfMonth();
+                return "Day " + (minutes / (24 * 60));
             } else {
                 return (hours < 10 ? "0" : "") + hours + ":00";
             }
@@ -83,39 +78,31 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     }
 
     @Override
-    public Lane<LocalDateTime> newLane() {
+    public Lane<Long> newLane() {
         return new SpotLane(new Spot(tenantId, "New spot", new HashSet<>()),
                             new ArrayList<>(singletonList(new SubLane<>(new ArrayList<>()))));
     }
 
     @Override
-    public Blob<LocalDateTime> newBlob(final Lane<LocalDateTime> lane, final LocalDateTime start) {
+    public Blob<Long> newBlob(final Lane<Long> lane,
+                              final Long positionInScaleUnits) {
 
-        // Casting is preferable to avoid over-use of generics in the Viewport class
-        final SpotLane spotLane = (SpotLane) lane;
-
-        final TimeSlot timeSlot = new TimeSlot(tenantId, start, start.plusHours(8L));
-        final Shift shift = new Shift(tenantId, spotLane.getSpot(), timeSlot);
-
-        //TODO: Create shift
-        // ShiftRestServiceBuilder.addShift(tenantId, new ShiftView(shift), onSuccess(shift::setId));
-
-        return new ShiftBlob(scale, shift);
+        return new ShiftBlob(positionInScaleUnits, 8L);
     }
 
     @Override
-    public BlobView<LocalDateTime, ?> newBlobView() {
-        return blobViewSupplier.get();
+    public BlobView<Long, ?> newBlobView() {
+        return blobViewFactory.get();
     }
 
     @Override
-    public List<Lane<LocalDateTime>> getLanes() {
+    public List<Lane<Long>> getLanes() {
         return lanes;
     }
 
     @Override
     public Long getGridPixelSizeInScreenPixels() {
-        return 20L;
+        return 10L;
     }
 
     @Override
@@ -124,7 +111,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     }
 
     @Override
-    public FiniteLinearScale<LocalDateTime> getScale() {
+    public FiniteLinearScale<Long> getScale() {
         return scale;
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.beta;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +36,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.B
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
 @Templated
-public class TestBlobView implements BlobView<Long, TestBlob> {
+public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
     @Inject
     @DataField("blob")
@@ -53,22 +53,21 @@ public class TestBlobView implements BlobView<Long, TestBlob> {
     @Inject
     private Resizability<Long> resizability;
 
-    private TestBlob blob;
     private Viewport<Long> viewport;
     private SubLaneView<Long> subLaneView;
+    private ListView<ShiftBlob> list;
 
-    private ListView<TestBlob> list;
+    private ShiftBlob blob;
 
     @Override
-    public ListElementView<TestBlob> setup(final TestBlob blob,
-                                           final ListView<TestBlob> list) {
+    public ListElementView<ShiftBlob> setup(final ShiftBlob blob, final ListView<ShiftBlob> list) {
 
         this.blob = blob;
         this.list = list;
 
+        viewport.setPositionInScreenPixels(this, viewport.getScale().toGridPixels(this.blob.getPosition()), 0L);
+        viewport.setSizeInScreenPixels(this, this.blob.getSizeInGridPixels(), 0L);
         updateLabel();
-        viewport.setPositionInScreenPixels(this, viewport.getScale().toGridPixels(blob.getPosition()), 0L);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
 
         draggability.onDrag(this::onDrag);
         draggability.applyFor(this, subLaneView, viewport, blob);
@@ -79,6 +78,12 @@ public class TestBlobView implements BlobView<Long, TestBlob> {
         return this;
     }
 
+    private void updateLabel() {
+        final String start = (blob.getPosition() / 60) % 24 + ":00";
+        final String end = (blob.getEndPosition(viewport.getScale()) / 60) % 24 + ":00";
+        label.textContent = start + " to " + end;
+    }
+
     private boolean onResize(final Long newSizeInGridPixels) {
         blob.setSizeInGridPixels(newSizeInGridPixels);
         updateLabel();
@@ -86,7 +91,7 @@ public class TestBlobView implements BlobView<Long, TestBlob> {
     }
 
     private boolean onDrag(final Long newPositionInGridPixels) {
-        blob.setPosition(newPositionInGridPixels);
+        blob.setPosition(viewport.getScale().toScaleUnits(newPositionInGridPixels));
         updateLabel();
         return true;
     }
@@ -100,18 +105,14 @@ public class TestBlobView implements BlobView<Long, TestBlob> {
         }
     }
 
-    private void updateLabel() {
-        label.textContent = blob.getLabel().charAt(0) + " [" + blob.getPosition() + ", " + blob.getSizeInGridPixels() + "]";
-    }
-
     @Override
-    public BlobView<Long, TestBlob> withViewport(final Viewport<Long> viewport) {
+    public BlobView<Long, ShiftBlob> withViewport(final Viewport<Long> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<Long, TestBlob> withSubLaneView(final SubLaneView<Long> subLaneView) {
+    public BlobView<Long, ShiftBlob> withSubLaneView(final SubLaneView<Long> subLaneView) {
         this.subLaneView = subLaneView;
         return this;
     }

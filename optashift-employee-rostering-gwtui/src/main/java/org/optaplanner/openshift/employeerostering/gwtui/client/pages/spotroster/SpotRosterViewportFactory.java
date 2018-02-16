@@ -26,6 +26,8 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.CssGridLinesFactory;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.TicksFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementViewPool;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
@@ -58,6 +60,12 @@ public class SpotRosterViewportFactory {
     @Inject
     private TenantStore tenantStore;
 
+    @Inject
+    private CssGridLinesFactory cssGridLinesFactory;
+
+    @Inject
+    private TicksFactory<LocalDateTime> ticksFactory;
+
     private Map<Spot, Map<ShiftView, TimeSlot>> spotRosterModel;
 
     private FiniteLinearScale<LocalDateTime> scale;
@@ -74,7 +82,10 @@ public class SpotRosterViewportFactory {
         return new SpotRosterViewport(tenantStore.getCurrentTenantId(),
                                       shiftBlobViewPool::get,
                                       scale,
-                                      buildLanes(spotRosterView));
+                                      cssGridLinesFactory.newWithSteps(2L, 12L),
+                                      ticksFactory.newTicks(scale, 2L, 12L),
+                                      buildLanes(spotRosterView)
+        );
     }
 
     private Map<Spot, Map<ShiftView, TimeSlot>> buildSpotRosterModel(final SpotRosterView spotRosterView) {
