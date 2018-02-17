@@ -21,13 +21,13 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 public class ShiftBlob implements Blob<Long> {
 
     private Long start;
-    private Long size;
+    private Long sizeInGridPixels;
 
-    public ShiftBlob(final Long start,
-                     final Long size) {
+    public ShiftBlob(final Long startingMinute,
+                     final Long sizeInGridPixels) {
 
-        this.start = start;
-        this.size = size;
+        this.start = startingMinute;
+        this.sizeInGridPixels = sizeInGridPixels;
     }
 
     @Override
@@ -42,11 +42,11 @@ public class ShiftBlob implements Blob<Long> {
 
     @Override
     public Long getSizeInGridPixels() {
-        return size;
+        return sizeInGridPixels;
     }
 
     @Override
     public void setSizeInGridPixels(final Long sizeInGridPixels) {
-        size = sizeInGridPixels;
+        this.sizeInGridPixels = sizeInGridPixels;
     }
 }

@@ -130,6 +130,20 @@
     opacity: 1;
 }
 
+.viewport-frame > .viewport.horizontal > .lane.ticks > .tick:hover::before {
+    height: 1000px;
+    display: block;
+    background-color: red;
+    z-index: 100;
+    left: 16px;
+    width: 1px;
+    position: absolute;
+    opacity: 1;
+    content: "";
+    transform: rotate(60deg) translateY(30px);
+    transform-origin: inherit;
+}
+
 .viewport-frame > .viewport.horizontal > .lane > .sub-lane {
     height: 35px;
     border-bottom: 1px dashed #dfdfdf;

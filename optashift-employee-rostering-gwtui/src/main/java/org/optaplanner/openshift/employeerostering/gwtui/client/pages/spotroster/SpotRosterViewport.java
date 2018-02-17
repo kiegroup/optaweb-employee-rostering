@@ -48,12 +48,12 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     private final Ticks<LocalDateTime> ticks;
     private final List<Lane<LocalDateTime>> lanes;
 
-    public SpotRosterViewport(final Integer tenantId,
-                              final Supplier<ShiftBlobView> blobViewSupplier,
-                              final FiniteLinearScale<LocalDateTime> scale,
-                              final CssGridLines gridLines,
-                              final Ticks<LocalDateTime> ticks,
-                              final List<Lane<LocalDateTime>> lanes) {
+    SpotRosterViewport(final Integer tenantId,
+                       final Supplier<ShiftBlobView> blobViewSupplier,
+                       final FiniteLinearScale<LocalDateTime> scale,
+                       final CssGridLines gridLines,
+                       final Ticks<LocalDateTime> ticks,
+                       final List<Lane<LocalDateTime>> lanes) {
 
         this.tenantId = tenantId;
         this.blobViewSupplier = blobViewSupplier;
@@ -70,6 +70,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
 
     @Override
     public void drawTicksAt(final IsElement target) {
+        //FIXME: Make it18n
         ticks.drawAt(target, this, date -> {
             final int hours = date.getHour();
             if (hours == 0) {
