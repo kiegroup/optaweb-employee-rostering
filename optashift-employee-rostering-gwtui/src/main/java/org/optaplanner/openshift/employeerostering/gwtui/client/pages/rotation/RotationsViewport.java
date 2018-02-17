@@ -45,12 +45,12 @@ public class RotationsViewport extends Viewport<Long> {
     private final Ticks<Long> ticks;
     private final List<Lane<Long>> lanes;
 
-    public RotationsViewport(final Integer tenantId,
-                             final Supplier<ShiftBlobView> blobViewFactory,
-                             final FiniteLinearScale<Long> scale,
-                             final CssGridLines gridLines,
-                             final Ticks<Long> ticks,
-                             final List<Lane<Long>> lanes) {
+    RotationsViewport(final Integer tenantId,
+                      final Supplier<ShiftBlobView> blobViewFactory,
+                      final FiniteLinearScale<Long> scale,
+                      final CssGridLines gridLines,
+                      final Ticks<Long> ticks,
+                      final List<Lane<Long>> lanes) {
 
         this.tenantId = tenantId;
         this.blobViewFactory = blobViewFactory;
@@ -67,6 +67,7 @@ public class RotationsViewport extends Viewport<Long> {
 
     @Override
     public void drawTicksAt(final IsElement target) {
+        //FIXME: Make it18n
         ticks.drawAt(target, this, minutes -> {
             final Long hours = (minutes / 60) % 24;
             if (hours == 0) {
