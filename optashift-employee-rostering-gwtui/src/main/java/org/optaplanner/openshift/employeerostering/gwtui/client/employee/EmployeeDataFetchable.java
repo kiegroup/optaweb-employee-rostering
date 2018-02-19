@@ -73,7 +73,6 @@ public class EmployeeDataFetchable implements Fetchable<Collection<EmployeeData>
                             List<TimeSlot> timeslots = employeeRosterView.getTimeSlotList();
                             List<Employee> employees = employeeRosterView.getEmployeeList();
                             Collection<EmployeeData> out = new ArrayList<>();
-
                             for (TimeSlot timeslot : timeslots) {
                                 for (Employee employee : employees) {
                                     if (null != timeSlotIdToEmployeeIdToShiftViewListMap.get(timeslot.getId()).get(
@@ -140,7 +139,6 @@ public class EmployeeDataFetchable implements Fetchable<Collection<EmployeeData>
 
                                 List<TimeSlot> timeslots = employeeRosterView.getTimeSlotList();
                                 List<Employee> employees = employeeRosterView.getEmployeeList();
-
                                 for (TimeSlot timeslot : timeslots) {
                                     for (Employee employee : employees) {
                                         if (null != timeSlotIdToEmployeeIdToShiftViewListMap.get(timeslot.getId()).get(

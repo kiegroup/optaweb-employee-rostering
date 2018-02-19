@@ -1,6 +1,8 @@
 package org.optaplanner.openshift.employeerostering.shared.roster;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -11,11 +13,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
+import org.optaplanner.core.api.score.constraint.Indictment;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
@@ -32,6 +37,9 @@ public interface RosterRestService {
     // ************************************************************************
     // SpotRosterView
     // ************************************************************************
+    @GET
+    @Path("/indictments")
+    IndictmentMap getIndictmentMap(@PathParam("tenantId") Integer tenantId);
 
     @ApiOperation("Get the current spot roster view")
     @GET

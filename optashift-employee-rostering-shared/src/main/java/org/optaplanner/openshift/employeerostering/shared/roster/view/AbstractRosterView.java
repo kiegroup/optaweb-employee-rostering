@@ -2,17 +2,28 @@ package org.optaplanner.openshift.employeerostering.shared.roster.view;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
+import com.fasterxml.jackson.databind.deser.std.MapDeserializer;
+import com.fasterxml.jackson.databind.ser.std.MapSerializer;
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSerializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ShiftKeyDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ShiftKeyFieldDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ShiftKeyFieldSerializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ShiftKeySerializer;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
 
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;

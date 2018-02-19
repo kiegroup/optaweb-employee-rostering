@@ -16,6 +16,9 @@
 
 package org.optaplanner.openshift.employeerostering.server.solver;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -25,10 +28,13 @@ import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,12 +109,30 @@ public class WannabeSolverManager {
             }
         });
     }
-
+    
     public Roster getRoster(Integer tenantId) {
         if (tenantIdToSolverMap.containsKey(tenantId)) {
             return tenantIdToSolverMap.get(tenantId).getBestSolution();
         }
         return null;
+    }
+    
+
+    public Map<Shift, Indictment> getIndictmentMap(Integer tenantId) {
+        if (tenantIdToSolverMap.containsKey(tenantId)) {
+            Roster roster = tenantIdToSolverMap.get(tenantId).getBestSolution();
+            ScoreDirector<Roster> scoreDirector = tenantIdToSolverMap.get(tenantId).getScoreDirectorFactory()
+                    .buildScoreDirector();
+            scoreDirector.setWorkingSolution(roster);
+            Map<Shift, Indictment> indictmentMap = new HashMap<>();
+            scoreDirector.getIndictmentMap().forEach((k, v) -> {
+                if (k instanceof Shift) {
+                    indictmentMap.put((Shift) k, v);
+                }
+             });
+            return indictmentMap;
+        }
+        return Collections.emptyMap();
     }
 
 }

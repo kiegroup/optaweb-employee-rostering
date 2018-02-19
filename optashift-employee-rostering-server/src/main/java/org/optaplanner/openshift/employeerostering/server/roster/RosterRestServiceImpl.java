@@ -35,6 +35,7 @@ import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverMa
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.roster.IndictmentMap;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
@@ -315,6 +316,11 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             attachedShift.setEmployee((shift.getEmployee() == null)
                     ? null : employeeIdMap.get(shift.getEmployee().getId()));
         }
+    }
+
+    @Override
+    public IndictmentMap getIndictmentMap(Integer tenantId) {
+        return new IndictmentMap(solverManager.getIndictmentMap(tenantId));
     }
 
 }
