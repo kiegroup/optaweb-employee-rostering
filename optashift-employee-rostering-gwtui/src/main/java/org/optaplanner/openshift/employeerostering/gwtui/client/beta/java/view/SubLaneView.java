@@ -116,7 +116,7 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
         final List<Blob> ignored = Arrays.asList(ignoredBlobs);
         return this.blobs.getObjects().stream()
                 .filter(b -> !ignored.contains(b))
-                .noneMatch(b -> b.collidesWith(blob, viewport.getScale()));
+                .noneMatch(b -> b.collidesWith(blob));
     }
 
     public SubLaneView<T> withViewport(final Viewport<T> viewport) {

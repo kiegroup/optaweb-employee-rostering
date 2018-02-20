@@ -67,7 +67,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
         this.list = list;
         this.blob = blob;
 
-        viewport.setPositionInScreenPixels(this, viewport.getScale().toGridPixels(blob.getPosition()), 0L);
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), 0L);
         viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
         updateLabel();
 
@@ -92,7 +92,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     }
 
     private boolean onDrag(final Long newPositionInGridPixels) {
-        blob.setPosition(viewport.getScale().toScaleUnits(newPositionInGridPixels));
+        blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(newPositionInGridPixels));
         //TODO: Update Shift's time slot
         //ShiftRestServiceBuilder.updateShift(blob.getShift().getTenantId(), new ShiftView(blob.getShift()));
 

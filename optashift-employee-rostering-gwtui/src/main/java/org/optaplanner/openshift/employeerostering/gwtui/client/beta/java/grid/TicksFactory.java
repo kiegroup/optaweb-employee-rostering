@@ -21,7 +21,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLDivElement;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 
 @Dependent
 public class TicksFactory<T> {
@@ -34,7 +34,7 @@ public class TicksFactory<T> {
         div.classList.add("tick");
     }
 
-    public Ticks<T> newTicks(final FiniteLinearScale<T> scale, final Long softStepSize, final Long harshStepSize) {
+    public Ticks<T> newTicks(final LinearScale<T> scale, final Long softStepSize, final Long harshStepSize) {
         return new Ticks<>(scale, softStepSize, harshStepSize, () -> (HTMLDivElement) div.cloneNode(false));
     }
 }

@@ -30,8 +30,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.C
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.TicksFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementViewPool;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
@@ -68,7 +68,7 @@ public class SpotRosterViewportFactory {
 
     private Map<Spot, Map<ShiftView, TimeSlot>> spotRosterModel;
 
-    private FiniteLinearScale<LocalDateTime> scale;
+    private LinearScale<LocalDateTime> scale;
 
     public SpotRosterViewport getViewport(final SpotRosterView spotRosterView) {
 
@@ -111,9 +111,9 @@ public class SpotRosterViewportFactory {
                 .collect(toList());
     }
 
-    private ArrayList<SubLane<LocalDateTime>> buildSubLanes(final Spot spot,
-                                                            final Map<ShiftView, TimeSlot> timeSlotsByShift,
-                                                            final Map<Long, Employee> employeesById) {
+    private List<SubLane<LocalDateTime>> buildSubLanes(final Spot spot,
+                                                       final Map<ShiftView, TimeSlot> timeSlotsByShift,
+                                                       final Map<Long, Employee> employeesById) {
 
         //FIXME: Handle overlapping blobs and discover why some TimeSlots are null
 

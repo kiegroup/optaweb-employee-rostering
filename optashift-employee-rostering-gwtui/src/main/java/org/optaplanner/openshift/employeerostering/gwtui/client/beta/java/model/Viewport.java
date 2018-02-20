@@ -41,7 +41,7 @@ public abstract class Viewport<T> {
 
     public abstract Orientation getOrientation();
 
-    public abstract FiniteLinearScale<T> getScale();
+    public abstract LinearScale<T> getScale();
 
     public <Y> Y decideBasedOnOrientation(final Y verticalOption, final Y horizontalOption) {
         return getOrientation().equals(VERTICAL) ? verticalOption : horizontalOption;
@@ -68,6 +68,6 @@ public abstract class Viewport<T> {
     }
 
     public Long getSizeInGridPixels() {
-        return getScale().toGridPixels(getScale().getEnd());
+        return getScale().getEndInGridPixels();
     }
 }

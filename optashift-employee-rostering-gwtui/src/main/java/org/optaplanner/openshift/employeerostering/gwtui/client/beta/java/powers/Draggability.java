@@ -22,7 +22,7 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
@@ -74,19 +74,19 @@ public class Draggability<T> {
 
     private boolean onDrag(final int top, final int left) {
         final Long newPositionInGridPixels = viewport.toGridPixels(viewport.decideBasedOnOrientation(top, left).longValue());
-        final T originalPosition = blob.getPosition();
-        final FiniteLinearScale<T> scale = viewport.getScale();
+        final T originalPosition = blob.getPositionInScaleUnits();
+        final LinearScale<T> scale = viewport.getScale();
         blobView.getElement().style.backgroundColor = "";
 
         if (!newPositionInGridPixels.equals(scale.toGridPixels(originalPosition))) {
-            blob.setPosition(scale.toScaleUnits(newPositionInGridPixels));
+            blob.setPositionInScaleUnits(scale.toScaleUnits(newPositionInGridPixels));
             if (!subLaneView.hasSpaceForIgnoring(blob, blob)) {
-                blob.setPosition(originalPosition);
+                blob.setPositionInScaleUnits(originalPosition);
                 blobView.getElement().style.backgroundColor = "red";
                 DomGlobal.console.info("Collision!"); //TODO: Restrict dragging if a collision occurs.
                 return false;
             } else {
-                blob.setPosition(originalPosition);
+                blob.setPositionInScaleUnits(originalPosition);
                 onDrag.apply(newPositionInGridPixels);
             }
         }

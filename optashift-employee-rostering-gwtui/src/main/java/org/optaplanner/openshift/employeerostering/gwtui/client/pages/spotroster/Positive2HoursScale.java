@@ -21,9 +21,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 
-public class Positive2HoursScale implements FiniteLinearScale<LocalDateTime> {
+public class Positive2HoursScale implements LinearScale<LocalDateTime> {
 
     private final LocalDateTime start;
     private final LocalDateTime end;
@@ -45,11 +45,13 @@ public class Positive2HoursScale implements FiniteLinearScale<LocalDateTime> {
             date = valueInScaleUnits;
         }
 
+
+        // .get(ChronoUnit.HOURS) does not work
         return Duration.between(instantOf(start), instantOf(date)).getSeconds() / 60 / 60;
     }
 
     @Override
-    public LocalDateTime fromGridPixelsWithFactor1(final Long valueInGridPixels) {
+    public LocalDateTime toScaleUnitsWithFactor1(final Long valueInGridPixels) {
 
         final LocalDateTime date = start.plusHours(valueInGridPixels);
 
@@ -63,13 +65,13 @@ public class Positive2HoursScale implements FiniteLinearScale<LocalDateTime> {
     }
 
     @Override
-    public Long factor() {
-        return 2L;
+    public LocalDateTime getEndInScaleUnits() {
+        return end;
     }
 
     @Override
-    public LocalDateTime getEnd() {
-        return end;
+    public Long factor() {
+        return 2L;
     }
 
     private Instant instantOf(final LocalDateTime value) {
