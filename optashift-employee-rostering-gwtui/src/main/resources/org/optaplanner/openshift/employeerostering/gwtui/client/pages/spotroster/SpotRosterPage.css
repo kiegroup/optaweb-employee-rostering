@@ -36,23 +36,25 @@
 .viewport-frame > .viewport > .lane > .sub-lane > .blob {
     position: absolute !important;
     z-index: 10;
-    font-size: 0.8em;
+    font-size: 0.75em;
+    color: black;
     white-space: nowrap;
     top: 0;
     left: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    background-color: rgba(118, 133, 160, 0.2);
+    background-color: rgba(35, 210, 179, 0.64);
     padding: 5px;
-    border-radius: 8px;
+    border-radius: 20px;
+    opacity: 0.8;
 }
 
 .viewport-frame > .viewport > .lane > .sub-lane > .blob:hover {
-    background-color: rgba(118, 133, 160, 0.8);
+    opacity: 1;
 }
 
 .viewport-frame > .viewport > .lane > .sub-lane > .blob:active {
-    background-color: rgba(118, 133, 160, 0.8);
+    opacity: 1;
 }
 
 /* VIEWPORT - VERTICAL */
@@ -133,13 +135,13 @@
 }
 
 .viewport-frame > .viewport.horizontal > .lane.ticks > .tick:hover {
-    color: #0376f4;
+    color: red;
 }
 
 .viewport-frame > .viewport.horizontal > .lane.ticks > .tick:hover::before {
     height: 1000px;
     display: block;
-    background-color: #0376f4;
+    background-color: red;
     z-index: 100;
     left: 16px;
     width: 1px;
@@ -151,13 +153,14 @@
 }
 
 .viewport-frame > .viewport.horizontal > .lane > .sub-lane {
-    height: 35px;
+    height: 45px;
     border-bottom: 1px dashed #dfdfdf;
 }
 
 .viewport-frame > .viewport.horizontal > .lane > .sub-lane > .blob {
     width: 120px;
-    height: 30px;
+    padding-top: 10px;
+    height: 40px;
     border-left: 1px solid rgba(118, 133, 160, 0.1);
     border-bottom: 1px solid rgba(118, 133, 160, 0.2);
     border-right: 1px solid rgba(118, 133, 160, 0.1);
