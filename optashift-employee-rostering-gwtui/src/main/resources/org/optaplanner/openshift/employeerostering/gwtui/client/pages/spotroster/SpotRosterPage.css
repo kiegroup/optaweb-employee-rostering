@@ -26,6 +26,7 @@
 .viewport-frame > .viewport > .lane > .sub-lane {
     margin: 5px 5px 0 5px;
     position: relative;
+    overflow: hidden;
 }
 
 .viewport-frame > .viewport > .lane > .sub-lane:last-child {
@@ -161,4 +162,12 @@
     border-bottom: 1px solid rgba(118, 133, 160, 0.2);
     border-right: 1px solid rgba(118, 133, 160, 0.1);
     border-top: 1px solid rgba(118, 133, 160, 0.2);
+}
+
+.ui-resizable-e {
+    width: 10px;
+}
+
+.ui-resizable-s {
+    height: 10px;
 }

@@ -22,6 +22,7 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.CollisionDetector;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
@@ -30,18 +31,19 @@ public class Draggability<T> {
 
     private IsElement blobView;
     private Blob<T> blob;
-    private SubLaneView<T> subLaneView;
+    private CollisionDetector<Blob<T>> collisionDetector;
     private Viewport<T> viewport;
     private Function<Long, Boolean> onDrag;
 
     public void applyFor(final IsElement blobView,
                          final SubLaneView<T> subLaneView,
+                         final CollisionDetector<Blob<T>> collisionDetector,
                          final Viewport<T> viewport,
                          final Blob<T> blob) {
 
         this.blobView = blobView;
         this.blob = blob;
-        this.subLaneView = subLaneView;
+        this.collisionDetector = collisionDetector;
         this.viewport = viewport;
 
         makeDraggable(blobView.getElement(),
@@ -80,7 +82,7 @@ public class Draggability<T> {
 
         if (!newPositionInGridPixels.equals(scale.toGridPixels(originalPosition))) {
             blob.setPositionInScaleUnits(scale.toScaleUnits(newPositionInGridPixels));
-            if (!subLaneView.hasSpaceForIgnoring(blob, blob)) {
+            if (collisionDetector.collides(blob)) {
                 blob.setPositionInScaleUnits(originalPosition);
                 blobView.getElement().style.backgroundColor = "red";
                 DomGlobal.console.info("Collision!"); //TODO: Restrict dragging if a collision occurs.

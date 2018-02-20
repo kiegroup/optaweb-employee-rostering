@@ -29,8 +29,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.C
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.TicksFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementViewPool;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
@@ -99,7 +99,7 @@ public class RotationViewportFactory {
                                  final Spot spot) {
 
         final List<Blob<Long>> blobs = shifts.stream()
-                .map(shift -> new ShiftBlob(shift, baseDate, scale))
+                .flatMap(shift -> new ShiftBlob(shift, baseDate, scale).toStream())
                 .collect(toList());
 
         return new SpotLane(spot, new ArrayList<>(singletonList(new SubLane<>(blobs))));

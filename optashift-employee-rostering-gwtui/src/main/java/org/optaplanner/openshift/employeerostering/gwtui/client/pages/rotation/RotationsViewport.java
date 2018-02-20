@@ -21,13 +21,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.Ticks;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
@@ -91,8 +92,8 @@ public class RotationsViewport extends Viewport<Long> {
     }
 
     @Override
-    public Blob<Long> newBlob(final Lane<Long> lane,
-                              final Long positionInScaleUnits) {
+    public Stream<Blob<Long>> newBlob(final Lane<Long> lane,
+                                      final Long positionInScaleUnits) {
 
         final SpotLane spotLane = (SpotLane) lane;
 
@@ -105,7 +106,7 @@ public class RotationsViewport extends Viewport<Long> {
                 tenantId, spotLane.getSpot(),
                 timeSlot);
 
-        return new ShiftBlob(newShift, baseDate, scale);
+        return new ShiftBlob(newShift, baseDate, scale).toStream();
     }
 
     @Override

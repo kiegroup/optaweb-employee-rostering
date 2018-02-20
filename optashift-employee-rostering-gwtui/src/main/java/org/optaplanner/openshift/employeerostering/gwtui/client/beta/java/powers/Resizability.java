@@ -22,6 +22,7 @@ import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.CollisionDetector;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
@@ -30,16 +31,17 @@ public class Resizability<T> {
     private Blob<T> blob;
     private Viewport<T> viewport;
     private IsElement blobView;
-    private SubLaneView<T> subLaneView;
+    private CollisionDetector<Blob<T>> collisionDetector;
     private Function<Long, Boolean> onResize;
 
     public void applyFor(final IsElement blobView,
                          final SubLaneView<T> subLaneView,
+                         final CollisionDetector<Blob<T>> collisionDetector,
                          final Viewport<T> viewport,
                          final Blob<T> blob) {
 
         this.blobView = blobView;
-        this.subLaneView = subLaneView;
+        this.collisionDetector = collisionDetector;
         this.viewport = viewport;
         this.blob = blob;
 
@@ -79,7 +81,7 @@ public class Resizability<T> {
 
         if (!newSizeInGridPixels.equals(originalSize)) {
             blob.setSizeInGridPixels(newSizeInGridPixels);
-            if (!subLaneView.hasSpaceForIgnoring(blob, blob)) {
+            if (collisionDetector.collides(blob)) {
                 blob.setSizeInGridPixels(originalSize);
                 blobView.getElement().style.backgroundColor = "red";
                 DomGlobal.console.info("Collision!"); //TODO: Restrict resizing if a collision occurs.

@@ -17,14 +17,25 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 
 public interface BlobWithTwin<T, Y extends BlobWithTwin<T, Y>> extends Blob<T> {
 
-    Y makeTwin();
+    Y getUpdatedTwin();
+
+    Y newTwin();
 
     Optional<Y> getTwin();
 
     void setTwin(final Y twin);
+
+    default Stream<Blob<T>> toStream() {
+        if (!getTwin().isPresent()) {
+            return Stream.of(this);
+        } else {
+            return Stream.of(this, getTwin().get());
+        }
+    }
 }
