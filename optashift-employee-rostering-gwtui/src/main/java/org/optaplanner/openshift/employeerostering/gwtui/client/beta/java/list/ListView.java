@@ -42,9 +42,9 @@ public class ListView<T> {
         this.init = true;
         this.container = container;
         this.viewFactory = viewFactory;
-        this.objects = new ArrayList<>();
+        this.objects = objects;
         this.views = new HashMap<>();
-        addAll(objects);
+        objects.forEach(this::addViewFor);
     }
 
     private void reset() {
@@ -52,10 +52,6 @@ public class ListView<T> {
             // Has to be a copy because the remove method removes things from the objects list.
             new ArrayList<>(objects).forEach(this::remove);
         }
-    }
-
-    public void addAll(final List<T> objects) {
-        objects.forEach(this::add);
     }
 
     public void addAfter(final T object, final T newObject) {
@@ -74,10 +70,14 @@ public class ListView<T> {
     }
 
     public void add(final T newObject) {
+        addViewFor(newObject);
+        objects.add(newObject);
+    }
+
+    private void addViewFor(final T newObject) {
         final ListElementView<T> view = viewFactory.get().setup(newObject, this);
         views.put(newObject, view);
         container.appendChild(view.getElement());
-        objects.add(newObject);
     }
 
     public void remove(final T object) {

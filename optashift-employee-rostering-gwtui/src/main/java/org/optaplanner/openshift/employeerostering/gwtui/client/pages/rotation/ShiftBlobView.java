@@ -30,13 +30,12 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularResizability;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState.COLLIDING;
 
@@ -59,7 +58,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     private CircularResizability<Long, ShiftBlob> resizability;
 
     private Viewport<Long> viewport;
-    private SubLaneView<Long> subLaneView;
+    private SubLane<Long> subLane;
     private ListView<ShiftBlob> list;
     private Runnable onDestroy;
 
@@ -74,21 +73,13 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
         refresh();
 
-        final CollisionDetector<ShiftBlob> collisionDetector =
-                (b, ignored) -> !subLaneView.hasSpaceForIgnoring(b, ignored);
-
-        draggability.applyFor(list, this, collisionDetector, viewport, blob);
+        draggability.applyFor(blob, list, subLane.getCollisionDetector(), viewport, this);
         draggability.onDrag(this::onDrag);
 
-        resizability.applyFor(list, this, collisionDetector, viewport, blob);
+        resizability.applyFor(blob, list, subLane.getCollisionDetector(), viewport, this);
         resizability.onResize(this::onResize);
 
         return this;
-    }
-
-    public interface CollisionDetector<T extends Blob<?>> {
-
-        boolean checkCollisionIgnoring(final T blob, final T ignored);
     }
 
     private void refresh() {
@@ -157,8 +148,8 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     }
 
     @Override
-    public BlobView<Long, ShiftBlob> withSubLaneView(final SubLaneView<Long> subLaneView) {
-        this.subLaneView = subLaneView;
+    public BlobView<Long, ShiftBlob> withSubLane(final SubLane<Long> subLane) {
+        this.subLane = subLane;
         return this;
     }
 
