@@ -27,7 +27,7 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.time.ZoneOffset.UTC;
 
-public class ShiftBlob implements BlobWithTwin<Long> {
+public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
 
     private final Shift shift;
     private final LinearScale<Long> scale;
@@ -42,7 +42,7 @@ public class ShiftBlob implements BlobWithTwin<Long> {
         this.shift = shift;
         this.scale = scale;
         this.baseDate = baseDate;
-        this.sizeInGridPixels = scale.toGridPixels(minutesAfterBaseDate(shift.getTimeSlot().getEndDateTime())) - scale.toGridPixels(getPositionInScaleUnits());
+        this.sizeInGridPixels = scale.toGridPixels(minutesAfterBaseDate(shift.getTimeSlot().getEndDateTime())) - getPositionInGridPixels();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ShiftBlob implements BlobWithTwin<Long> {
     }
 
     @Override
-    public BlobWithTwin<Long> makeTwin() {
+    public ShiftBlob makeTwin() {
 
         final TimeSlot timeSlot = new TimeSlot(
                 shift.getTimeSlot().getTenantId(),
@@ -96,13 +96,13 @@ public class ShiftBlob implements BlobWithTwin<Long> {
     }
 
     @Override
-    public Optional<BlobWithTwin<Long>> getTwin() {
+    public Optional<ShiftBlob> getTwin() {
         return Optional.ofNullable(twin);
     }
 
     @Override
-    public void setTwin(final BlobWithTwin<Long> twin) {
-        this.twin = (ShiftBlob) twin;
+    public void setTwin(final ShiftBlob twin) {
+        this.twin = twin;
     }
 
     @Override
