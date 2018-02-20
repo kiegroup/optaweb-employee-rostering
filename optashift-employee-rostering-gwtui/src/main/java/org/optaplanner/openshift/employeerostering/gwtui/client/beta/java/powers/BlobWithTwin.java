@@ -16,9 +16,15 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers;
 
+import java.util.Optional;
+
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 
-public interface HasTwin<T> {
+public interface BlobWithTwin<T> extends Blob<T> {
 
-    Blob<T> makeTwin();
+    BlobWithTwin<T> makeTwin();
+
+    Optional<BlobWithTwin<T>> getTwin();
+
+    void setTwin(final BlobWithTwin<T> twin);
 }

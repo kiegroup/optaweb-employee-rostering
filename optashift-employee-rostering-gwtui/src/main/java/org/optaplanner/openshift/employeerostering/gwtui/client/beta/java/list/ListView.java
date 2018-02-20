@@ -98,4 +98,14 @@ public class ListView<T> {
     public boolean isEmpty() {
         return objects.isEmpty();
     }
+
+    public ListElementView<T> getView(final T obj) {
+        return views.get(obj);
+    }
+
+    public void addIfNotPresent(final T obj) {
+        if (!objects.contains(obj)) {
+            add(obj);
+        }
+    }
 }

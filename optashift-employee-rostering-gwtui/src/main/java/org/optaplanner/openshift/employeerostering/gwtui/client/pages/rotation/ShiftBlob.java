@@ -16,28 +16,43 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Optional;
 
-public class ShiftBlob implements Blob<Long> {
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.BlobWithTwin;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
-    private Long start;
+import static java.time.ZoneOffset.UTC;
+
+public class ShiftBlob implements BlobWithTwin<Long> {
+
+    private final Shift shift;
+    private final LinearScale<Long> scale;
+    private final LocalDateTime baseDate;
     private Long sizeInGridPixels;
+    private ShiftBlob twin;
 
-    public ShiftBlob(final Long startingMinute,
-                     final Long sizeInGridPixels) {
+    ShiftBlob(final Shift shift,
+              final LocalDateTime baseDate,
+              final LinearScale<Long> scale) {
 
-        this.start = startingMinute;
-        this.sizeInGridPixels = sizeInGridPixels;
+        this.shift = shift;
+        this.scale = scale;
+        this.baseDate = baseDate;
+        this.sizeInGridPixels = scale.toGridPixels(minutesAfterBaseDate(shift.getTimeSlot().getEndDateTime())) - scale.toGridPixels(getPositionInScaleUnits());
     }
 
     @Override
-    public Long getPosition() {
-        return start;
+    public Long getPositionInScaleUnits() {
+        return minutesAfterBaseDate(shift.getTimeSlot().getStartDateTime());
     }
 
     @Override
-    public void setPosition(final Long position) {
-        this.start = position;
+    public void setPositionInScaleUnits(final Long positionInScaleUnits) {
+        shift.getTimeSlot().setStartDateTime(baseDate.plusMinutes(positionInScaleUnits));
     }
 
     @Override
@@ -48,5 +63,50 @@ public class ShiftBlob implements Blob<Long> {
     @Override
     public void setSizeInGridPixels(final Long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
+        shift.getTimeSlot().setEndDateTime(shift.getTimeSlot().getStartDateTime().plusMinutes(scale.toScaleUnits(sizeInGridPixels)));
+    }
+
+    private long minutesAfterBaseDate(final LocalDateTime startDateTime) {
+        return Duration.between(baseDate.toInstant(UTC), startDateTime.toInstant(UTC)).getSeconds() / 60;
+    }
+
+    @Override
+    public BlobWithTwin<Long> makeTwin() {
+
+        final TimeSlot timeSlot = new TimeSlot(
+                shift.getTimeSlot().getTenantId(),
+                shift.getTimeSlot().getStartDateTime(), //intentionally overwritten below
+                shift.getTimeSlot().getEndDateTime()); //intentionally overwritten below
+
+        final Shift shiftTwin = new Shift(
+                shift.getTenantId(),
+                shift.getSpot(),
+                timeSlot);
+
+        twin = new ShiftBlob(
+                shiftTwin,
+                baseDate,
+                scale);
+
+        twin.setTwin(this);
+        twin.setPositionInScaleUnits(getPositionInScaleUnits());
+        twin.setSizeInGridPixels(getSizeInGridPixels());
+
+        return twin;
+    }
+
+    @Override
+    public Optional<BlobWithTwin<Long>> getTwin() {
+        return Optional.ofNullable(twin);
+    }
+
+    @Override
+    public void setTwin(final BlobWithTwin<Long> twin) {
+        this.twin = (ShiftBlob) twin;
+    }
+
+    @Override
+    public LinearScale<Long> getScale() {
+        return scale;
     }
 }

@@ -32,6 +32,10 @@ public interface LinearScale<T> {
 
     T getEndInScaleUnits();
 
+    default Long getEndInGridPixels() {
+        return toGridPixels(getEndInScaleUnits());
+    }
+
     /**
      * @return How many scale units correspond to one grid pixel
      */

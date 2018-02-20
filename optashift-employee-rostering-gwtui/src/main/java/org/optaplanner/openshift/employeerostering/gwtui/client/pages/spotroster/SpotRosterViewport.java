@@ -26,7 +26,7 @@ import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.Ticks;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
@@ -43,14 +43,14 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
 
     private final Integer tenantId;
     private final Supplier<ShiftBlobView> blobViewSupplier;
-    private final FiniteLinearScale<LocalDateTime> scale;
+    private final LinearScale<LocalDateTime> scale;
     private final CssGridLines gridLines;
     private final Ticks<LocalDateTime> ticks;
     private final List<Lane<LocalDateTime>> lanes;
 
     SpotRosterViewport(final Integer tenantId,
                        final Supplier<ShiftBlobView> blobViewSupplier,
-                       final FiniteLinearScale<LocalDateTime> scale,
+                       final LinearScale<LocalDateTime> scale,
                        final CssGridLines gridLines,
                        final Ticks<LocalDateTime> ticks,
                        final List<Lane<LocalDateTime>> lanes) {
@@ -125,7 +125,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     }
 
     @Override
-    public FiniteLinearScale<LocalDateTime> getScale() {
+    public LinearScale<LocalDateTime> getScale() {
         return scale;
     }
 }

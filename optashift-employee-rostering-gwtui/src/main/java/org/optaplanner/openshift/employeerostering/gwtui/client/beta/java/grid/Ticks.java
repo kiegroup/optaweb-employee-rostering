@@ -21,17 +21,17 @@ import java.util.function.Supplier;
 
 import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
 public class Ticks<T> {
 
-    private final FiniteLinearScale<T> scale;
+    private final LinearScale<T> scale;
     private final Long softStepSize;
     private final Long harshStepSize;
     private final Supplier<HTMLDivElement> divFactory;
 
-    Ticks(final FiniteLinearScale<T> scale,
+    Ticks(final LinearScale<T> scale,
           final Long softStepSize,
           final Long harshStepSize,
           final Supplier<HTMLDivElement> divFactory) {
@@ -48,7 +48,7 @@ public class Ticks<T> {
 
         target.getElement().innerHTML = "";
 
-        for (Long i = 0L; i <= scale.toGridPixels(scale.getEnd()); i += softStepSize) {
+        for (Long i = 0L; i <= scale.getEndInGridPixels(); i += softStepSize) {
 
             final HTMLDivElement tick = divFactory.get();
             if (i % harshStepSize == 0) {

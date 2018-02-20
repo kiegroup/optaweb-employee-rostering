@@ -18,34 +18,42 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model
 
 public interface Blob<T> {
 
-    T getPosition();
+    T getPositionInScaleUnits();
 
-    void setPosition(final T position);
+    void setPositionInScaleUnits(final T position);
 
-    //FIXME: Change it to getSizeInScaleUnits
+    //FIXME: Change it to getSizeInScaleUnits?
     Long getSizeInGridPixels();
 
     void setSizeInGridPixels(final Long sizeInGridPixels);
 
-    default T getEndPosition(final FiniteLinearScale<T> scale) {
-        return scale.toScaleUnits(getEndPositionInGridPixels(scale));
+    LinearScale<T> getScale();
+
+    default Long getPositionInGridPixels() {
+        return getScale().toGridPixels(getPositionInScaleUnits());
     }
 
-    default Long getEndPositionInGridPixels(final FiniteLinearScale<T> scale) {
-        return scale.toGridPixels(getPosition()) + getSizeInGridPixels();
+    default T getEndPositionInScaleUnits() {
+        return getScale().toScaleUnits(getEndPositionInGridPixels());
     }
 
-    default boolean collidesWith(final Blob<T> other, final FiniteLinearScale<T> scale) {
+    default Long getEndPositionInGridPixels() {
+        return getScale().toGridPixels(getPositionInScaleUnits()) + getSizeInGridPixels();
+    }
 
-        final Long x0 = scale.toGridPixels(getPosition());
-        final Long x1 = getEndPositionInGridPixels(scale);
-        final Long y0 = scale.toGridPixels(other.getPosition());
-        final Long y1 = other.getEndPositionInGridPixels(scale);
+    default boolean collidesWith(final Blob<T> other) {
+
+        final Long x0 = getPositionInGridPixels();
+        final Long x1 = getEndPositionInGridPixels();
+        final Long y0 = other.getPositionInGridPixels();
+        final Long y1 = other.getEndPositionInGridPixels();
 
         final Long intersectionLeft = y1 - x0;
         final Long intersectionRight = x1 - y0;
 
-        return intersectionLeft > 0 && intersectionLeft <= getSizeInGridPixels() ||
-                intersectionRight > 0 && intersectionRight <= other.getSizeInGridPixels();
+        final boolean b1 = intersectionLeft > 0 && intersectionLeft <= getSizeInGridPixels();
+        final boolean b2 = intersectionRight > 0 && intersectionRight <= other.getSizeInGridPixels();
+
+        return b1 || b2;
     }
 }

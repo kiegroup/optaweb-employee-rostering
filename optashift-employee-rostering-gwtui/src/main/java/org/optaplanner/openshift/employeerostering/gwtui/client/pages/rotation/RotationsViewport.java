@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,13 +26,15 @@ import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.Ticks;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation.HORIZONTAL;
@@ -39,20 +42,23 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java
 public class RotationsViewport extends Viewport<Long> {
 
     private final Integer tenantId;
+    private final LocalDateTime baseDate;
     private final Supplier<ShiftBlobView> blobViewFactory;
-    private final FiniteLinearScale<Long> scale;
+    private final LinearScale<Long> scale;
     private final CssGridLines gridLines;
     private final Ticks<Long> ticks;
     private final List<Lane<Long>> lanes;
 
     RotationsViewport(final Integer tenantId,
+                      final LocalDateTime baseDate,
                       final Supplier<ShiftBlobView> blobViewFactory,
-                      final FiniteLinearScale<Long> scale,
+                      final LinearScale<Long> scale,
                       final CssGridLines gridLines,
                       final Ticks<Long> ticks,
                       final List<Lane<Long>> lanes) {
 
         this.tenantId = tenantId;
+        this.baseDate = baseDate;
         this.blobViewFactory = blobViewFactory;
         this.scale = scale;
         this.ticks = ticks;
@@ -71,7 +77,7 @@ public class RotationsViewport extends Viewport<Long> {
         ticks.drawAt(target, this, minutes -> {
             final Long hours = (minutes / 60) % 24;
             if (hours == 0) {
-                return "Day " + (minutes / (24 * 60));
+                return "Day " + (minutes % scale.getEndInScaleUnits()) / (24 * 60);
             } else {
                 return (hours < 10 ? "0" : "") + hours + ":00";
             }
@@ -88,7 +94,18 @@ public class RotationsViewport extends Viewport<Long> {
     public Blob<Long> newBlob(final Lane<Long> lane,
                               final Long positionInScaleUnits) {
 
-        return new ShiftBlob(positionInScaleUnits, 8L);
+        final SpotLane spotLane = (SpotLane) lane;
+
+        final TimeSlot timeSlot = new TimeSlot(
+                tenantId,
+                baseDate.plusMinutes(positionInScaleUnits),
+                baseDate.plusMinutes(positionInScaleUnits).plusHours(8L));
+
+        final Shift newShift = new Shift(
+                tenantId, spotLane.getSpot(),
+                timeSlot);
+
+        return new ShiftBlob(newShift, baseDate, scale);
     }
 
     @Override
@@ -112,7 +129,7 @@ public class RotationsViewport extends Viewport<Long> {
     }
 
     @Override
-    public FiniteLinearScale<Long> getScale() {
+    public LinearScale<Long> getScale() {
         return scale;
     }
 }

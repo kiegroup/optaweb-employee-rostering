@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
@@ -30,10 +31,13 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.Draggability;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability.DragState;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.Resizability;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
+
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability.DragState.COLLIDING;
 
 @Templated
 public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
@@ -48,7 +52,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     private HTMLElement label;
 
     @Inject
-    private Draggability<Long> draggability;
+    private CircularDraggability<Long> draggability;
 
     @Inject
     private Resizability<Long> resizability;
@@ -56,6 +60,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     private Viewport<Long> viewport;
     private SubLaneView<Long> subLaneView;
     private ListView<ShiftBlob> list;
+    private Runnable onDestroy;
 
     private ShiftBlob blob;
 
@@ -65,12 +70,10 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
         this.blob = blob;
         this.list = list;
 
-        viewport.setPositionInScreenPixels(this, viewport.getScale().toGridPixels(this.blob.getPosition()), 0L);
-        viewport.setSizeInScreenPixels(this, this.blob.getSizeInGridPixels(), 0L);
-        updateLabel();
+        refresh();
 
         draggability.onDrag(this::onDrag);
-        draggability.applyFor(this, subLaneView, viewport, blob);
+        draggability.applyFor((ListView) list, this, subLaneView, viewport, blob); //FIXME: Generics issue
 
         resizability.onResize(this::onResize);
         resizability.applyFor(this, subLaneView, viewport, blob);
@@ -78,9 +81,20 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
         return this;
     }
 
+    private void refresh() {
+        positionBlobOnGrid();
+        updateLabel();
+    }
+
+    private void positionBlobOnGrid() {
+        viewport.setPositionInScreenPixels(this, this.blob.getPositionInGridPixels(), 0L);
+        viewport.setSizeInScreenPixels(this, this.blob.getSizeInGridPixels(), 0L);
+    }
+
     private void updateLabel() {
-        final String start = (blob.getPosition() / 60) % 24 + ":00";
-        final String end = (blob.getEndPosition(viewport.getScale()) / 60) % 24 + ":00";
+        //FIXME: Bad labeling
+        final String start = (blob.getPositionInScaleUnits() / 60) % 24 + ":00";
+        final String end = (blob.getEndPositionInScaleUnits() / 60) % 24 + ":00";
         label.textContent = start + " to " + end;
     }
 
@@ -90,10 +104,20 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
         return true;
     }
 
-    private boolean onDrag(final Long newPositionInGridPixels) {
-        blob.setPosition(viewport.getScale().toScaleUnits(newPositionInGridPixels));
-        updateLabel();
-        return true;
+    private void onDrag(final Long newPositionInGridPixels,
+                        final DragState dragState) {
+
+        if (dragState.equals(COLLIDING)) {
+            DomGlobal.console.info("Colliding!");
+        }
+
+        refresh();
+
+        blob.getTwin()
+                .map(blob -> (ShiftBlob) blob)
+                .map(list::getView)
+                .map(view -> (ShiftBlobView) view)
+                .ifPresent(ShiftBlobView::refresh);
     }
 
     @EventHandler("blob")
@@ -102,6 +126,10 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
         if (e.altKey) {
             list.remove(blob);
+            blob.getTwin().ifPresent(twin -> {
+                list.remove((ShiftBlob) twin);
+                blob.setTwin(null);
+            });
         }
     }
 
@@ -115,5 +143,15 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     public BlobView<Long, ShiftBlob> withSubLaneView(final SubLaneView<Long> subLaneView) {
         this.subLaneView = subLaneView;
         return this;
+    }
+
+    @Override
+    public void onDestroy(final Runnable onDestroy) {
+        this.onDestroy = onDestroy;
+    }
+
+    @Override
+    public void destroy() {
+        onDestroy.run();
     }
 }

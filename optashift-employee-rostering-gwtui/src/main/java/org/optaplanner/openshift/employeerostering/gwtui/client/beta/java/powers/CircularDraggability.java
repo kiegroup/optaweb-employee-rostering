@@ -16,85 +16,131 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers;
 
-import java.util.function.Function;
+import java.util.function.BiConsumer;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
-public class Draggability<T> {
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability.DragState.COLLIDING;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability.DragState.NOT_COLLIDING;
 
+public class CircularDraggability<T> {
+
+    private ListView<Blob<T>> list;
     private IsElement blobView;
-    private Blob<T> blob;
+    private BlobWithTwin<T> blob;
     private SubLaneView<T> subLaneView;
     private Viewport<T> viewport;
-    private Function<Long, Boolean> onDrag;
+    private BiConsumer<Long, DragState> onDrag;
 
-    public void applyFor(final IsElement blobView,
+    public void applyFor(final ListView<Blob<T>> list,
+                         final IsElement blobView,
                          final SubLaneView<T> subLaneView,
                          final Viewport<T> viewport,
-                         final Blob<T> blob) {
+                         final BlobWithTwin<T> blob) {
 
+        this.list = list;
         this.blobView = blobView;
         this.blob = blob;
         this.subLaneView = subLaneView;
         this.viewport = viewport;
 
         makeDraggable(blobView.getElement(),
-                      subLaneView.getElement(),
                       viewport.getGridPixelSizeInScreenPixels().intValue(),
                       viewport.decideBasedOnOrientation("y", "x"));
     }
 
     private native void makeDraggable(final HTMLElement blob,
-                                      final HTMLElement subLane,
                                       final int pixelSize,
                                       final String orientation) /*-{
 
         var that = this;
         var $blob = $wnd.jQuery(blob);
-        var $subLane = $wnd.jQuery(subLane);
 
         $blob.draggable({
             addClasses: false,
             cancel: '.blob div',
-            containment: $subLane,
             axis: orientation,
             grid: [pixelSize, pixelSize],
+            stop: function (e, ui) {
+                that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability::onDragEnd(II)(ui.position.top, ui.position.left);
+            },
             drag: function (e, ui) {
-                that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.Draggability::onDrag(II)(ui.position.top, ui.position.left);
+                that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability::onDrag(II)(ui.position.top, ui.position.left);
             },
             scroll: false
         });
     }-*/;
 
+    private boolean onDragEnd(final int top, final int left) {
+
+        if (blob.getPositionInGridPixels() >= viewport.getSizeInGridPixels() || blob.getEndPositionInGridPixels() <= 0) {
+            blob.getTwin().ifPresent(twin -> twin.setTwin(null));
+            list.remove(blob);
+        }
+
+        return true;
+    }
+
     private boolean onDrag(final int top, final int left) {
         final Long newPositionInGridPixels = viewport.toGridPixels(viewport.decideBasedOnOrientation(top, left).longValue());
-        final T originalPosition = blob.getPosition();
-        final LinearScale<T> scale = viewport.getScale();
-        blobView.getElement().style.backgroundColor = "";
 
-        if (!newPositionInGridPixels.equals(scale.toGridPixels(originalPosition))) {
-            blob.setPosition(scale.toScaleUnits(newPositionInGridPixels));
-            if (!subLaneView.hasSpaceForIgnoring(blob, blob)) {
-                blob.setPosition(originalPosition);
-                blobView.getElement().style.backgroundColor = "red";
-                DomGlobal.console.info("Collision!"); //TODO: Restrict dragging if a collision occurs.
-                return false;
+        if (!newPositionInGridPixels.equals(blob.getPositionInGridPixels())) {
+
+            blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(newPositionInGridPixels));
+            createOrRemoveTwin(newPositionInGridPixels);
+
+            final boolean anyCollisionDetected =
+                    !subLaneView.hasSpaceForIgnoring(blob, blob) ||
+                            !blob.getTwin().map(twin -> subLaneView.hasSpaceForIgnoring(twin, twin)).orElse(true);
+
+            if (anyCollisionDetected) {
+                paintBlobsBackground("red");
+                onDrag.accept(newPositionInGridPixels, COLLIDING);
             } else {
-                blob.setPosition(originalPosition);
-                onDrag.apply(newPositionInGridPixels);
+                paintBlobsBackground("");
+                onDrag.accept(newPositionInGridPixels, NOT_COLLIDING);
             }
         }
 
         return false;
     }
 
-    public void onDrag(final Function<Long, Boolean> onDrag) {
+    private void createOrRemoveTwin(final Long newPositionInGridPixels) {
+
+        final boolean hasAnyPartOffTheGrid =
+                blob.getEndPositionInGridPixels() > viewport.getSizeInGridPixels() ||
+                        blob.getPositionInGridPixels() < 0;
+
+        if (hasAnyPartOffTheGrid) {
+            final BlobWithTwin<T> twin = blob.getTwin().orElseGet(blob::makeTwin);
+            final Long offset = (newPositionInGridPixels < 0 ? 1 : -1) * viewport.getSizeInGridPixels();
+            twin.setPositionInScaleUnits(viewport.getScale().toScaleUnits(newPositionInGridPixels + offset));
+            list.addIfNotPresent(twin);
+        } else {
+            blob.getTwin().ifPresent(twin -> {
+                list.remove(twin);
+                blob.setTwin(null);
+            });
+        }
+    }
+
+    //FIXME: This is a side-effect used in development only
+    private void paintBlobsBackground(final String backgroundColor) {
+        blobView.getElement().style.backgroundColor = backgroundColor;
+        blob.getTwin().map(list::getView).ifPresent(v -> v.getElement().style.backgroundColor = backgroundColor);
+    }
+
+    public void onDrag(final BiConsumer<Long, DragState> onDrag) {
         this.onDrag = onDrag;
+    }
+
+    public enum DragState {
+        COLLIDING,
+        NOT_COLLIDING;
     }
 }

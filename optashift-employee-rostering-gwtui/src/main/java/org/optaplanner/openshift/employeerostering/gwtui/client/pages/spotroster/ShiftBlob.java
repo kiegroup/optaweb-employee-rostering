@@ -20,20 +20,20 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
 public class ShiftBlob implements Blob<LocalDateTime> {
 
     private final Shift shift;
-    private final FiniteLinearScale<LocalDateTime> scale;
+    private final LinearScale<LocalDateTime> scale;
     private Long sizeInGridPixels;
 
-    public ShiftBlob(final FiniteLinearScale<LocalDateTime> scale, final Shift shift) {
+    ShiftBlob(final LinearScale<LocalDateTime> scale, final Shift shift) {
         this.shift = shift;
         this.scale = scale;
-        this.sizeInGridPixels = scale.toGridPixels(shift.getTimeSlot().getEndDateTime()) - scale.toGridPixels(getPosition());
+        this.sizeInGridPixels = scale.toGridPixels(shift.getTimeSlot().getEndDateTime()) - scale.toGridPixels(getPositionInScaleUnits());
     }
 
     @Override
@@ -42,28 +42,33 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime getPosition() {
+    public LocalDateTime getPositionInScaleUnits() {
         return shift.getTimeSlot().getStartDateTime();
     }
 
     @Override
-    public void setPosition(final LocalDateTime start) {
+    public void setPositionInScaleUnits(final LocalDateTime start) {
         shift.getTimeSlot().setStartDateTime(start);
     }
 
     @Override
     public void setSizeInGridPixels(final Long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
-        shift.getTimeSlot().setEndDateTime(getEndPosition(scale));
+        shift.getTimeSlot().setEndDateTime(getEndPositionInScaleUnits());
     }
 
     public String getLabel() {
         return Optional.ofNullable(shift.getEmployee())
                 .map(Employee::getName)
-                .orElse("U" + " [" + getPosition() + " ~ " + getEndPosition(scale) + ", " + getSizeInGridPixels() + "]");
+                .orElse("U" + " [" + getPositionInScaleUnits() + " ~ " + getEndPositionInScaleUnits() + ", " + getSizeInGridPixels() + "]");
     }
 
     public Shift getShift() {
         return shift;
+    }
+
+    @Override
+    public LinearScale<LocalDateTime> getScale() {
+        return scale;
     }
 }

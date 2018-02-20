@@ -71,13 +71,13 @@ public class ViewportView<T> implements IsElement {
 
         this.viewport = viewport;
 
-        getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
-
-        viewport.setSizeInScreenPixels(this, viewport.getSizeInGridPixels(), 12L);
-
-        viewport.drawTicksAt(() -> ticksLane);
-
         time("Viewport assemble", () -> {
+            getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
+
+            viewport.setSizeInScreenPixels(this, viewport.getSizeInGridPixels(), 12L);
+
+            viewport.drawTicksAt(() -> ticksLane);
+
             lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get().withViewport(viewport));
         });
     }

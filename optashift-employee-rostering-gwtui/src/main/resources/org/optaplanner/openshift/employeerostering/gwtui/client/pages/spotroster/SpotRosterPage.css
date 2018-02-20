@@ -24,7 +24,7 @@
 }
 
 .viewport-frame > .viewport > .lane > .sub-lane {
-    margin: 5px 0 0 5px;
+    margin: 5px 5px 0 5px;
     position: relative;
 }
 
@@ -47,11 +47,11 @@
 }
 
 .viewport-frame > .viewport > .lane > .sub-lane > .blob:hover {
-    background-color: rgba(118, 133, 160, 0.4);
+    background-color: rgba(118, 133, 160, 0.8);
 }
 
 .viewport-frame > .viewport > .lane > .sub-lane > .blob:active {
-    background-color: rgba(118, 133, 160, 0.4);
+    background-color: rgba(118, 133, 160, 0.8);
 }
 
 /* VIEWPORT - VERTICAL */
@@ -132,13 +132,13 @@
 }
 
 .viewport-frame > .viewport.horizontal > .lane.ticks > .tick:hover {
-    color: red;
+    color: #0376f4;
 }
 
 .viewport-frame > .viewport.horizontal > .lane.ticks > .tick:hover::before {
     height: 1000px;
     display: block;
-    background-color: red;
+    background-color: #0376f4;
     z-index: 100;
     left: 16px;
     width: 1px;
@@ -161,40 +161,4 @@
     border-bottom: 1px solid rgba(118, 133, 160, 0.2);
     border-right: 1px solid rgba(118, 133, 160, 0.1);
     border-top: 1px solid rgba(118, 133, 160, 0.2);
-}
-
-/* CUSTOM BLOB - VERTICAL */
-
-.viewport.vertical > .lane > .sub-lane > .blob > .actions {
-    font-size: 16px;
-}
-
-.viewport.vertical > .lane > .sub-lane > .blob > .actions > div {
-    padding: 2px 5px 2px 5px;
-    margin: 2px 0 2px 0;
-    border-radius: 2px;
-}
-
-.viewport.vertical > .lane > .sub-lane > .blob:hover > .actions > div,
-.viewport.vertical > .lane > .sub-lane > .blob:active > .actions > div {
-    display: block !important;
-}
-
-/* CUSTOM BLOB - HORIZONTAL */
-
-.viewport.horizontal > .lane > .sub-lane > .blob > .actions {
-    font-size: 16px;
-    display: inline-flex;
-    justify-content: left;
-}
-
-.viewport.horizontal > .lane > .sub-lane > .blob > .actions > div {
-    padding: 2px 5px 2px 5px;
-    margin: 2px 0 2px 0;
-    border-radius: 2px;
-}
-
-.viewport.horizontal > .lane > .sub-lane > .blob:hover > .actions > div,
-.viewport.horizontal > .lane > .sub-lane > .blob:active > .actions > div {
-    display: block !important;
 }
