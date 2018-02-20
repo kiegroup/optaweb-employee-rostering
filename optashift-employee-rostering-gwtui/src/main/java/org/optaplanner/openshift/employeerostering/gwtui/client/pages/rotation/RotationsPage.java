@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
@@ -63,8 +64,18 @@ public class RotationsPage implements Page {
     private Map<Long, Spot> spotsById;
     private Map<Long, SpotGroup> spotGroupsById;
 
+
+
     @Override
     public Promise<Void> beforeOpen() {
+        return refresh();
+    }
+
+    public void onTenantChanged(final @Observes TenantStore.TenantChange tenant) {
+        refresh();
+    }
+
+    public Promise<Void> refresh() {
         return fetchShiftsBySpot().then(shiftsBySpot -> {
             viewportView.setViewport(rotationViewportFactory.getViewport(shiftsBySpot));
             return resolve();

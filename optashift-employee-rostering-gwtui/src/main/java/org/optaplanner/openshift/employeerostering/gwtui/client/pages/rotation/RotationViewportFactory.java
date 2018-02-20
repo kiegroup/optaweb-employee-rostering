@@ -67,6 +67,7 @@ public class RotationViewportFactory {
         final Long durationTimeInMinutes = durationInWeeks * 7 * 24 * 60L;
         final LinearScale<Long> scale = new Positive60MinutesScale(durationTimeInMinutes);
 
+        //FIXME: Is there other way to get the baseDate?
         final LocalDateTime baseDate = shiftsBySpot.values().stream()
                 .flatMap(Collection::stream)
                 .map(s -> s.getTimeSlot().getStartDateTime())
