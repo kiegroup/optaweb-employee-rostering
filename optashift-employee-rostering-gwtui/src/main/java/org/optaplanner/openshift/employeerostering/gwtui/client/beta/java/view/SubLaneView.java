@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -33,6 +34,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
+
+import static java.util.stream.Collectors.toList;
 
 @Templated
 public class SubLaneView<T> implements ListElementView<SubLane<T>> {
@@ -100,9 +103,9 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
             final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
             final T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
 
-            final Blob<T> newBlob = viewport.newBlob(parentLane, positionInScaleUnits);
-            if (!subLane.getCollisionDetector().collides(newBlob)) {
-                blobs.add(newBlob);
+            final List<Blob<T>> newBlobs = viewport.newBlob(parentLane, positionInScaleUnits).collect(toList());
+            if (newBlobs.stream().noneMatch(subLane.getCollisionDetector()::collides)) {
+                newBlobs.forEach(blobs::add);
             }
         }
     }

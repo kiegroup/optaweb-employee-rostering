@@ -21,13 +21,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.Ticks;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
@@ -90,7 +91,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     }
 
     @Override
-    public Blob<LocalDateTime> newBlob(final Lane<LocalDateTime> lane, final LocalDateTime start) {
+    public Stream<Blob<LocalDateTime>> newBlob(final Lane<LocalDateTime> lane, final LocalDateTime start) {
 
         // Casting is preferable to avoid over-use of generics in the Viewport class
         final SpotLane spotLane = (SpotLane) lane;
@@ -101,7 +102,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
         //TODO: Create shift
         // ShiftRestServiceBuilder.addShift(tenantId, new ShiftView(shift), onSuccess(shift::setId));
 
-        return new ShiftBlob(scale, shift);
+        return Stream.of(new ShiftBlob(scale, shift));
     }
 
     @Override

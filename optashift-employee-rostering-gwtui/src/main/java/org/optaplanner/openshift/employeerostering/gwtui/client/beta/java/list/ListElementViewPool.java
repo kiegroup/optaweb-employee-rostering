@@ -28,13 +28,13 @@ public class ListElementViewPool<T extends ListElementView<?>> {
     private final Set<T> availableInstances = new HashSet<>();
 
     private Long maxSize;
-    private Supplier<T> instances;
+    private Supplier<T> factory;
 
     public void init(final Long maxSize,
                      final Supplier<T> factory) {
 
         this.maxSize = maxSize;
-        this.instances = factory;
+        this.factory = factory;
     }
 
     public T get() {
@@ -52,7 +52,7 @@ public class ListElementViewPool<T extends ListElementView<?>> {
         if (availableInstances.size() > 0) {
             return availableInstances.stream().findAny().get();
         } else {
-            return instances.get();
+            return factory.get();
         }
     }
 }

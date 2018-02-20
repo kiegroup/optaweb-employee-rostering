@@ -30,7 +30,7 @@ public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
     private Y blob;
     private ListView<Y> list;
     private Viewport<T> viewport;
-    private BlobChangeHandler<T, Y> changeHandler;
+    private CircularBlobChangeHandler<T, Y> changeHandler;
 
     public void applyFor(final Y blob,
                          final ListView<Y> list,
@@ -41,7 +41,7 @@ public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
         this.blob = blob;
         this.list = list;
         this.viewport = viewport;
-        this.changeHandler = new BlobChangeHandler<>(blob, list, collisionDetector, viewport);
+        this.changeHandler = new CircularBlobChangeHandler<>(blob, list, collisionDetector, viewport);
 
         makeDraggable(blobView.getElement(),
                       viewport.getGridPixelSizeInScreenPixels().intValue(),

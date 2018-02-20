@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
@@ -31,7 +32,7 @@ public abstract class Viewport<T> {
 
     public abstract Lane<T> newLane();
 
-    public abstract Blob<T> newBlob(final Lane<T> lane, final T positionInScaleUnits);
+    public abstract Stream<Blob<T>> newBlob(final Lane<T> lane, final T positionInScaleUnits);
 
     public abstract BlobView<T, ?> newBlobView();
 

@@ -42,7 +42,24 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
         this.shift = shift;
         this.scale = scale;
         this.baseDate = baseDate;
-        this.sizeInGridPixels = scale.toGridPixels(minutesAfterBaseDate(shift.getTimeSlot().getEndDateTime())) - getPositionInGridPixels();
+        this.sizeInGridPixels = getInitialSizeInGridPixels();
+        this.twin = getUpdatedTwin();
+    }
+
+    private ShiftBlob(final Shift shift,
+                      final LocalDateTime baseDate,
+                      final LinearScale<Long> scale,
+                      final ShiftBlob twin) {
+
+        this.shift = shift;
+        this.scale = scale;
+        this.baseDate = baseDate;
+        this.sizeInGridPixels = getInitialSizeInGridPixels();
+        this.twin = twin;
+    }
+
+    private long getInitialSizeInGridPixels() {
+        return scale.toGridPixels(minutesAfterBaseDate(shift.getTimeSlot().getEndDateTime())) - getPositionInGridPixels();
     }
 
     @Override
@@ -71,7 +88,26 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     }
 
     @Override
-    public ShiftBlob makeTwin() {
+    public ShiftBlob getUpdatedTwin() {
+
+        //FIXME: Maybe it's better to use the Viewport sizeInGridPixels instead of the end of the scale
+
+        final boolean hasAnyPartOffTheGrid =
+                getEndPositionInGridPixels() > scale.getEndInGridPixels() ||
+                        getPositionInGridPixels() < 0;
+
+        if (hasAnyPartOffTheGrid) {
+            final ShiftBlob twin = getTwin().orElseGet(this::newTwin);
+            final Long offset = (getPositionInGridPixels() < 0 ? 1 : -1) * scale.getEndInGridPixels();
+            twin.setPositionInScaleUnits(scale.toScaleUnits(getPositionInGridPixels() + offset));
+            twin.setSizeInGridPixels(sizeInGridPixels);
+            return twin;
+        } else {
+            return null;
+        }
+    }
+
+    public ShiftBlob newTwin() {
 
         final TimeSlot timeSlot = new TimeSlot(
                 shift.getTimeSlot().getTenantId(),
@@ -83,12 +119,12 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
                 shift.getSpot(),
                 timeSlot);
 
-        twin = new ShiftBlob(
+        final ShiftBlob twin = new ShiftBlob(
                 shiftTwin,
                 baseDate,
-                scale);
+                scale,
+                this);
 
-        twin.setTwin(this);
         twin.setPositionInScaleUnits(getPositionInScaleUnits());
         twin.setSizeInGridPixels(getSizeInGridPixels());
 

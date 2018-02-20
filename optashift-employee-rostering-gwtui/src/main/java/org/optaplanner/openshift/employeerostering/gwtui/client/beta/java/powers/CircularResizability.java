@@ -29,7 +29,7 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
 
     private Y blob;
     private Viewport<T> viewport;
-    private BlobChangeHandler<T, Y> changeHandler;
+    private CircularBlobChangeHandler<T, Y> changeHandler;
 
     public void applyFor(final Y blob,
                          final ListView<Y> list,
@@ -39,7 +39,7 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
 
         this.blob = blob;
         this.viewport = viewport;
-        this.changeHandler = new BlobChangeHandler<>(blob, list, collisionDetector, viewport);
+        this.changeHandler = new CircularBlobChangeHandler<>(blob, list, collisionDetector, viewport);
 
         makeResizable(blobView.getElement(),
                       viewport.getGridPixelSizeInScreenPixels().intValue(),

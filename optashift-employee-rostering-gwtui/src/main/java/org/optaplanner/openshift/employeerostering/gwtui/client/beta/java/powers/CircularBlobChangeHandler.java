@@ -26,7 +26,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState.COLLIDING;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState.NOT_COLLIDING;
 
-public class BlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
+public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
 
     private final Y blob;
     private final Viewport<T> viewport;
@@ -35,10 +35,10 @@ public class BlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
 
     private BiConsumer<Long, CollisionState> onChange;
 
-    BlobChangeHandler(final Y blob,
-                      final ListView<Y> list,
-                      final CollisionDetector<Blob<T>> collisionDetector,
-                      final Viewport<T> viewport) {
+    CircularBlobChangeHandler(final Y blob,
+                              final ListView<Y> list,
+                              final CollisionDetector<Blob<T>> collisionDetector,
+                              final Viewport<T> viewport) {
 
         this.blob = blob;
         this.viewport = viewport;
@@ -51,7 +51,9 @@ public class BlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
         blob.setSizeInGridPixels(newSizeInGridPixels);
         blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(newPositionInGridPixels));
 
-        createOrRemoveTwin(newPositionInGridPixels, newSizeInGridPixels);
+        blob.getTwin().ifPresent(list::remove);
+        blob.setTwin(blob.getUpdatedTwin());
+        blob.getTwin().ifPresent(list::add);
 
         final boolean anyCollisionDetected =
                 collisionDetector.collides(blob) ||
@@ -66,31 +68,10 @@ public class BlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
         }
     }
 
-    private void createOrRemoveTwin(final Long positionInGridPixels,
-                                    final Long sizeInGridPixels) {
-
-        final boolean hasAnyPartOffTheGrid =
-                blob.getEndPositionInGridPixels() > viewport.getSizeInGridPixels() ||
-                        blob.getPositionInGridPixels() < 0;
-
-        if (hasAnyPartOffTheGrid) {
-            final Y twin = blob.getTwin().orElseGet(blob::makeTwin);
-            final Long offset = (positionInGridPixels < 0 ? 1 : -1) * viewport.getSizeInGridPixels();
-            twin.setPositionInScaleUnits(viewport.getScale().toScaleUnits(positionInGridPixels + offset));
-            twin.setSizeInGridPixels(sizeInGridPixels);
-            list.addIfNotPresent(twin);
-        } else {
-            blob.getTwin().ifPresent(twin -> {
-                list.remove(twin);
-                blob.setTwin(null);
-            });
-        }
-    }
-
     //FIXME: This is a side-effect used in development only
     private void paintBlobsBackground(final String backgroundColor) {
         list.getView(blob).getElement().style.backgroundColor = backgroundColor;
-        blob.getTwin().map(list::getView).ifPresent(v -> v.getElement().style.backgroundColor = backgroundColor);
+        blob.getTwin().map(list::getView).ifPresent(view -> view.getElement().style.backgroundColor = backgroundColor);
     }
 
     public void onChange(final BiConsumer<Long, CollisionState> onChange) {

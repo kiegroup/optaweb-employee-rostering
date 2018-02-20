@@ -102,23 +102,23 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     private void onResize(final Long newSizeInGridPixels,
                           final CollisionState dragState) {
 
-        if (dragState.equals(COLLIDING)) {
-            DomGlobal.console.info("Colliding!");
-        }
-
         refresh();
         refreshTwinIfAny();
+
+        if (dragState.equals(COLLIDING)) {
+            DomGlobal.console.info("Collision!");
+        }
     }
 
     private void onDrag(final Long newPositionInGridPixels,
                         final CollisionState dragState) {
 
-        if (dragState.equals(COLLIDING)) {
-            DomGlobal.console.info("Colliding!");
-        }
-
         refresh();
         refreshTwinIfAny();
+
+        if (dragState.equals(COLLIDING)) {
+            DomGlobal.console.info("Collision!");
+        }
     }
 
     private void refreshTwinIfAny() {
@@ -133,11 +133,11 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
         final MouseEvent e = Js.cast(event.getNativeEvent());
 
         if (e.altKey) {
-            list.remove(blob);
             blob.getTwin().ifPresent(twin -> {
                 list.remove(twin);
                 blob.setTwin(null);
             });
+            list.remove(blob);
         }
     }
 
@@ -156,6 +156,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     @Override
     public void onDestroy(final Runnable onDestroy) {
         this.onDestroy = onDestroy;
+        getElement().style.backgroundColor = ""; //FIXME: Remove this after collision is properly handled
     }
 
     @Override
