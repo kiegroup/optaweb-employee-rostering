@@ -18,7 +18,8 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.FiniteLinearScale;
 
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class PositiveMinutesScale implements FiniteLinearScale<Long> {
 
@@ -34,18 +35,18 @@ public class PositiveMinutesScale implements FiniteLinearScale<Long> {
     }
 
     @Override
-    public Long fromGridPixelsWithFactor1(final Long valueInGridPixels) {
+    public Long toScaleUnitsWithFactor1(final Long valueInGridPixels) {
         return min(max(0, valueInGridPixels), end);
+    }
+
+    @Override
+    public Long getEndInScaleUnits() {
+        return end;
     }
 
     @Override
     public Long factor() {
         return 60L;
-    }
-
-    @Override
-    public Long getEnd() {
-        return end;
     }
 }
 
