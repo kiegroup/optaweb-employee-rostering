@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view;
+package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
+
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 
-public interface BlobView<Y, T extends Blob<Y>> extends ListElementView<T> {
+public class CollisionDetector<T extends Blob<?>> {
 
-    BlobView<Y, T> withViewport(final Viewport<Y> viewport);
+    private final Supplier<List<T>> list;
 
-    BlobView<Y, T> withSubLane(final SubLane<Y> subLaneView);
+    public CollisionDetector(final Supplier<List<T>> blobs) {
+        this.list = blobs;
+    }
+
+    public final boolean collides(final T blob) {
+        return list.get().stream()
+                .filter(b -> !b.equals(blob))
+                .anyMatch(b -> b.collidesWith(blob));
+    }
 }

@@ -31,9 +31,9 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
 @Templated
 public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
@@ -47,14 +47,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     @DataField("label")
     private HTMLElement label;
 
-//    @Inject
-//    private Draggability<LocalDateTime> draggability;
-//
-//    @Inject
-//    private Resizability<LocalDateTime> resizability;
-
     private Viewport<LocalDateTime> viewport;
-    private SubLaneView<LocalDateTime> subLaneView;
     private ListView<ShiftBlob> list;
     private Runnable onDestroy;
 
@@ -72,12 +65,6 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
         updateLabel();
 
         // FIXME: Enable draggability and resizability after backend supports it.
-
-//        draggability.onDrag(this::onDrag);
-//        draggability.applyFor(this, subLaneView, viewport, blob);
-//
-//        resizability.onResize(this::onResize);
-//        resizability.applyFor(this, subLaneView, viewport, blob);
 
         return this;
     }
@@ -120,8 +107,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     }
 
     @Override
-    public BlobView<LocalDateTime, ShiftBlob> withSubLaneView(final SubLaneView<LocalDateTime> subLaneView) {
-        this.subLaneView = subLaneView;
+    public BlobView<LocalDateTime, ShiftBlob> withSubLane(final SubLane<LocalDateTime> subLaneView) {
         return this;
     }
 

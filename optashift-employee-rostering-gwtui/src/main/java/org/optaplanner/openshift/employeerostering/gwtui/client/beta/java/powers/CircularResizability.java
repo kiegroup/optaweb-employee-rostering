@@ -21,24 +21,25 @@ import java.util.function.BiConsumer;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.CollisionDetector;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.ShiftBlobView;
 
 public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
 
     private Y blob;
     private Viewport<T> viewport;
-    private BlobChangeHandler<T, Y> handler;
+    private BlobChangeHandler<T, Y> changeHandler;
 
-    public void applyFor(final ListView<Y> list,
-                         final IsElement blobView,
-                         final ShiftBlobView.CollisionDetector<Y> collisionDetector,
+    public void applyFor(final Y blob,
+                         final ListView<Y> list,
+                         final CollisionDetector<Blob<T>> collisionDetector,
                          final Viewport<T> viewport,
-                         final Y blob) {
+                         final IsElement blobView) {
 
-        this.viewport = viewport;
         this.blob = blob;
-        this.handler = new BlobChangeHandler<>(blob, viewport, collisionDetector, list);
+        this.viewport = viewport;
+        this.changeHandler = new BlobChangeHandler<>(blob, list, collisionDetector, viewport);
 
         makeResizable(blobView.getElement(),
                       viewport.getGridPixelSizeInScreenPixels().intValue(),
@@ -74,13 +75,13 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
         final Long newSizeInGridPixels = viewport.toGridPixels(newSizeInScreenPixels);
 
         if (!newSizeInGridPixels.equals(blob.getSizeInGridPixels())) {
-            handler.handle(blob.getPositionInGridPixels(), newSizeInGridPixels);
+            changeHandler.handle(blob.getPositionInGridPixels(), newSizeInGridPixels);
         }
 
         return true;
     }
 
     public void onResize(final BiConsumer<Long, CollisionState> onResize) {
-        handler.onChange(onResize);
+        changeHandler.onChange(onResize);
     }
 }

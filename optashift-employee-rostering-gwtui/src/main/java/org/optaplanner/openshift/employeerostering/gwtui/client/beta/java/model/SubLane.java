@@ -22,11 +22,18 @@ public class SubLane<T> {
 
     private final List<Blob<T>> blobs;
 
+    private final CollisionDetector<Blob<T>> collisionDetector;
+
     public SubLane(final List<Blob<T>> blobs) {
         this.blobs = blobs;
+        this.collisionDetector = new CollisionDetector<>(this::getBlobs);
     }
 
     public List<Blob<T>> getBlobs() {
         return blobs;
+    }
+
+    public CollisionDetector<Blob<T>> getCollisionDetector() {
+        return collisionDetector;
     }
 }

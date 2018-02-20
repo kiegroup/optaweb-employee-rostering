@@ -41,7 +41,7 @@ public interface Blob<T> {
         return getScale().toGridPixels(getPositionInScaleUnits()) + getSizeInGridPixels();
     }
 
-    default boolean collidesWith(final Blob<T> other) {
+    default boolean collidesWith(final Blob<?> other) {
 
         final Long x0 = getPositionInGridPixels();
         final Long x1 = getEndPositionInGridPixels();

@@ -17,8 +17,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -65,7 +63,7 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
         //FIXME: Generics issue
         blobs.init(getElement(), subLane.getBlobs(), () -> (BlobView) viewport.newBlobView()
                 .withViewport(viewport)
-                .withSubLaneView(this));
+                .withSubLane(subLane));
 
         return this;
     }
@@ -100,23 +98,13 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
         else if (e.altKey) {
             final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
             final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
-            T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
+            final T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
 
             final Blob<T> newBlob = viewport.newBlob(parentLane, positionInScaleUnits);
-            if (hasSpaceForIgnoring(newBlob)) {
+            if (!subLane.getCollisionDetector().collides(newBlob)) {
                 blobs.add(newBlob);
             }
         }
-    }
-
-    @SafeVarargs
-    public final boolean hasSpaceForIgnoring(final Blob<T> blob,
-                                             final Blob<T>... ignoredBlobs) {
-
-        final List<Blob> ignored = Arrays.asList(ignoredBlobs);
-        return this.blobs.getObjects().stream()
-                .filter(b -> !ignored.contains(b))
-                .noneMatch(b -> b.collidesWith(blob));
     }
 
     public SubLaneView<T> withViewport(final Viewport<T> viewport) {

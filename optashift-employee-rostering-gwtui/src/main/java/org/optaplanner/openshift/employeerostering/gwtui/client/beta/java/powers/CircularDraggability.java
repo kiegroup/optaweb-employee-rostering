@@ -21,27 +21,27 @@ import java.util.function.BiConsumer;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.CollisionDetector;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.ShiftBlobView;
 
 public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
 
-    private ListView<Y> list;
     private Y blob;
+    private ListView<Y> list;
     private Viewport<T> viewport;
-    private BlobChangeHandler<T, Y> handler;
+    private BlobChangeHandler<T, Y> changeHandler;
 
-    public void applyFor(final ListView<Y> list,
-                         final IsElement blobView,
-                         final ShiftBlobView.CollisionDetector<Y> collisionDetector,
+    public void applyFor(final Y blob,
+                         final ListView<Y> list,
+                         final CollisionDetector<Blob<T>> collisionDetector,
                          final Viewport<T> viewport,
-                         final Y blob) {
+                         final IsElement blobView) {
 
-        this.list = list;
         this.blob = blob;
+        this.list = list;
         this.viewport = viewport;
-
-        this.handler = new BlobChangeHandler<>(blob, viewport, collisionDetector, list);
+        this.changeHandler = new BlobChangeHandler<>(blob, list, collisionDetector, viewport);
 
         makeDraggable(blobView.getElement(),
                       viewport.getGridPixelSizeInScreenPixels().intValue(),
@@ -89,13 +89,13 @@ public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
         final Long newPositionInGridPixels = viewport.toGridPixels(newPositionInScreenPixels);
 
         if (!newPositionInGridPixels.equals(blob.getPositionInGridPixels())) {
-            handler.handle(newPositionInGridPixels, blob.getSizeInGridPixels());
+            changeHandler.handle(newPositionInGridPixels, blob.getSizeInGridPixels());
         }
 
         return true;
     }
 
     public void onDrag(final BiConsumer<Long, CollisionState> onDrag) {
-        handler.onChange(onDrag);
+        changeHandler.onChange(onDrag);
     }
 }

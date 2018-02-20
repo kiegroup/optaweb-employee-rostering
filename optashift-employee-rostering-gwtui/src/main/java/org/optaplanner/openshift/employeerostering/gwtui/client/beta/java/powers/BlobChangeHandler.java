@@ -19,24 +19,26 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.power
 import java.util.function.BiConsumer;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.CollisionDetector;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.ShiftBlobView;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState.COLLIDING;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState.NOT_COLLIDING;
 
 public class BlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
 
-    private Y blob;
-    private Viewport<T> viewport;
+    private final Y blob;
+    private final Viewport<T> viewport;
+    private final CollisionDetector<Blob<T>> collisionDetector;
+    private final ListView<Y> list;
+
     private BiConsumer<Long, CollisionState> onChange;
-    private ShiftBlobView.CollisionDetector<Y> collisionDetector;
-    private ListView<Y> list;
 
     BlobChangeHandler(final Y blob,
-                      final Viewport<T> viewport,
-                      final ShiftBlobView.CollisionDetector<Y> collisionDetector,
-                      final ListView<Y> list) {
+                      final ListView<Y> list,
+                      final CollisionDetector<Blob<T>> collisionDetector,
+                      final Viewport<T> viewport) {
 
         this.blob = blob;
         this.viewport = viewport;
@@ -52,8 +54,8 @@ public class BlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
         createOrRemoveTwin(newPositionInGridPixels, newSizeInGridPixels);
 
         final boolean anyCollisionDetected =
-                collisionDetector.checkCollisionIgnoring(blob, blob) ||
-                        blob.getTwin().map(twin -> collisionDetector.checkCollisionIgnoring(twin, twin)).orElse(false);
+                collisionDetector.collides(blob) ||
+                        blob.getTwin().map(collisionDetector::collides).orElse(false);
 
         if (anyCollisionDetected) {
             paintBlobsBackground("red");
