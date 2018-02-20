@@ -30,14 +30,15 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability.DragState;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.Resizability;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularResizability;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.SubLaneView;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability.DragState.COLLIDING;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState.COLLIDING;
 
 @Templated
 public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
@@ -52,10 +53,10 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     private HTMLElement label;
 
     @Inject
-    private CircularDraggability<Long> draggability;
+    private CircularDraggability<Long, ShiftBlob> draggability;
 
     @Inject
-    private Resizability<Long> resizability;
+    private CircularResizability<Long, ShiftBlob> resizability;
 
     private Viewport<Long> viewport;
     private SubLaneView<Long> subLaneView;
@@ -65,20 +66,29 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     private ShiftBlob blob;
 
     @Override
-    public ListElementView<ShiftBlob> setup(final ShiftBlob blob, final ListView<ShiftBlob> list) {
+    public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
+                                            final ListView<ShiftBlob> list) {
 
         this.blob = blob;
         this.list = list;
 
         refresh();
 
-        draggability.onDrag(this::onDrag);
-        draggability.applyFor((ListView) list, this, subLaneView, viewport, blob); //FIXME: Generics issue
+        final CollisionDetector<ShiftBlob> collisionDetector =
+                (b, ignored) -> !subLaneView.hasSpaceForIgnoring(b, ignored);
 
+        draggability.applyFor(list, this, collisionDetector, viewport, blob);
+        draggability.onDrag(this::onDrag);
+
+        resizability.applyFor(list, this, collisionDetector, viewport, blob);
         resizability.onResize(this::onResize);
-        resizability.applyFor(this, subLaneView, viewport, blob);
 
         return this;
+    }
+
+    public interface CollisionDetector<T extends Blob<?>> {
+
+        boolean checkCollisionIgnoring(final T blob, final T ignored);
     }
 
     private void refresh() {
@@ -87,8 +97,8 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     }
 
     private void positionBlobOnGrid() {
-        viewport.setPositionInScreenPixels(this, this.blob.getPositionInGridPixels(), 0L);
-        viewport.setSizeInScreenPixels(this, this.blob.getSizeInGridPixels(), 0L);
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), 0L);
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
     }
 
     private void updateLabel() {
@@ -98,23 +108,30 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
         label.textContent = start + " to " + end;
     }
 
-    private boolean onResize(final Long newSizeInGridPixels) {
-        blob.setSizeInGridPixels(newSizeInGridPixels);
-        updateLabel();
-        return true;
-    }
-
-    private void onDrag(final Long newPositionInGridPixels,
-                        final DragState dragState) {
+    private void onResize(final Long newSizeInGridPixels,
+                          final CollisionState dragState) {
 
         if (dragState.equals(COLLIDING)) {
             DomGlobal.console.info("Colliding!");
         }
 
         refresh();
+        refreshTwinIfAny();
+    }
 
+    private void onDrag(final Long newPositionInGridPixels,
+                        final CollisionState dragState) {
+
+        if (dragState.equals(COLLIDING)) {
+            DomGlobal.console.info("Colliding!");
+        }
+
+        refresh();
+        refreshTwinIfAny();
+    }
+
+    private void refreshTwinIfAny() {
         blob.getTwin()
-                .map(blob -> (ShiftBlob) blob)
                 .map(list::getView)
                 .map(view -> (ShiftBlobView) view)
                 .ifPresent(ShiftBlobView::refresh);
@@ -127,7 +144,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
         if (e.altKey) {
             list.remove(blob);
             blob.getTwin().ifPresent(twin -> {
-                list.remove((ShiftBlob) twin);
+                list.remove(twin);
                 blob.setTwin(null);
             });
         }

@@ -24,9 +24,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.L
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.ShiftBlobView;
 
-public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
+public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
 
-    private ListView<Y> list;
     private Y blob;
     private Viewport<T> viewport;
     private BlobChangeHandler<T, Y> handler;
@@ -37,65 +36,51 @@ public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
                          final Viewport<T> viewport,
                          final Y blob) {
 
-        this.list = list;
-        this.blob = blob;
         this.viewport = viewport;
-
+        this.blob = blob;
         this.handler = new BlobChangeHandler<>(blob, viewport, collisionDetector, list);
 
-        makeDraggable(blobView.getElement(),
+        makeResizable(blobView.getElement(),
                       viewport.getGridPixelSizeInScreenPixels().intValue(),
-                      viewport.decideBasedOnOrientation("y", "x"));
+                      viewport.decideBasedOnOrientation("s", "e"));
     }
 
-    private native void makeDraggable(final HTMLElement blob,
+    private native void makeResizable(final HTMLElement blob,
                                       final int pixelSize,
                                       final String orientation) /*-{
-
         var that = this;
         var $blob = $wnd.jQuery(blob);
 
-        $blob.draggable({
-            addClasses: false,
-            cancel: '.blob div',
-            axis: orientation,
-            grid: [pixelSize, pixelSize],
-            stop: function (e, ui) {
-                that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability::onDragEnd(II)(ui.position.top, ui.position.left);
-            },
-            drag: function (e, ui) {
-                that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability::onDrag(II)(ui.position.top, ui.position.left);
-            },
-            scroll: false
+        var snapToGrid = function (coordinate) {
+            return Math.floor(coordinate - (coordinate % pixelSize))
+        };
+
+        $blob.resizable({
+            handles: orientation,
+            minHeight: 0,
+            resize: function (e, ui) {
+                if (orientation === 's') {
+                    ui.size.height = snapToGrid(ui.size.height + 2 * pixelSize);
+                } else if (orientation === 'e') {
+                    ui.size.width = snapToGrid(ui.size.width + 2 * pixelSize);
+                }
+                that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularResizability::onResize(II)(ui.size.height, ui.size.width);
+            }
         });
     }-*/;
 
-    private boolean onDragEnd(final int top, final int left) {
+    private boolean onResize(final int height, final int width) {
+        final Long newSizeInScreenPixels = viewport.decideBasedOnOrientation(height, width).longValue();
+        final Long newSizeInGridPixels = viewport.toGridPixels(newSizeInScreenPixels);
 
-        final Boolean isCompletelyOffTheGrid =
-                blob.getPositionInGridPixels() >= viewport.getSizeInGridPixels() ||
-                        blob.getEndPositionInGridPixels() <= 0;
-
-        if (isCompletelyOffTheGrid) {
-            blob.getTwin().ifPresent(twin -> twin.setTwin(null));
-            list.remove(blob);
+        if (!newSizeInGridPixels.equals(blob.getSizeInGridPixels())) {
+            handler.handle(blob.getPositionInGridPixels(), newSizeInGridPixels);
         }
 
         return true;
     }
 
-    private boolean onDrag(final int top, final int left) {
-        final Long newPositionInScreenPixels = viewport.decideBasedOnOrientation(top, left).longValue();
-        final Long newPositionInGridPixels = viewport.toGridPixels(newPositionInScreenPixels);
-
-        if (!newPositionInGridPixels.equals(blob.getPositionInGridPixels())) {
-            handler.handle(newPositionInGridPixels, blob.getSizeInGridPixels());
-        }
-
-        return true;
-    }
-
-    public void onDrag(final BiConsumer<Long, CollisionState> onDrag) {
-        handler.onChange(onDrag);
+    public void onResize(final BiConsumer<Long, CollisionState> onResize) {
+        handler.onChange(onResize);
     }
 }

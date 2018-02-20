@@ -16,15 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers;
 
-import java.util.Optional;
-
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-
-public interface BlobWithTwin<T, Y extends BlobWithTwin<T, Y>> extends Blob<T> {
-
-    Y makeTwin();
-
-    Optional<Y> getTwin();
-
-    void setTwin(final Y twin);
+public enum CollisionState {
+    COLLIDING,
+    NOT_COLLIDING;
 }
