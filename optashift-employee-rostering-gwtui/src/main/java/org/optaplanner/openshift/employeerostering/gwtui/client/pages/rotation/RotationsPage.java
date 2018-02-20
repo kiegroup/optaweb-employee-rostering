@@ -56,6 +56,10 @@ public class RotationsPage implements Page {
     private ViewportView<Long> viewportView;
 
     @Inject
+    @DataField("configuration")
+    private RotationsConfigurationView rotationsConfigurationView;
+
+    @Inject
     private TenantStore tenantStore;
 
     @Inject
@@ -63,8 +67,6 @@ public class RotationsPage implements Page {
 
     private Map<Long, Spot> spotsById;
     private Map<Long, SpotGroup> spotGroupsById;
-
-
 
     @Override
     public Promise<Void> beforeOpen() {
