@@ -30,17 +30,17 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
     private Y blob;
     private Viewport<T> viewport;
     private CircularBlobChangeHandler<T, Y> changeHandler;
-    private Long blobSizeDisplacement;
+    private Long blobSizeDisplacementInScreenPixels;
 
     public void applyFor(final Y blob,
-                         final Long blobSizeDisplacement,
+                         final Long blobSizeDisplacementInScreenPixels,
                          final ListView<Y> list,
                          final CollisionDetector<Blob<T>> collisionDetector,
                          final Viewport<T> viewport,
                          final IsElement blobView) {
 
         this.blob = blob;
-        this.blobSizeDisplacement = blobSizeDisplacement;
+        this.blobSizeDisplacementInScreenPixels = blobSizeDisplacementInScreenPixels;
         this.viewport = viewport;
         this.changeHandler = new CircularBlobChangeHandler<>(blob, list, collisionDetector, viewport);
 
@@ -74,7 +74,7 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
     }-*/;
 
     private boolean onResize(final int height, final int width) {
-        final Long newSizeInScreenPixels = viewport.decideBasedOnOrientation(height, width).longValue() - blobSizeDisplacement;
+        final Long newSizeInScreenPixels = viewport.decideBasedOnOrientation(height, width).longValue() - blobSizeDisplacementInScreenPixels;
         final Long newSizeInGridPixels = viewport.toGridPixels(newSizeInScreenPixels);
 
         if (!newSizeInGridPixels.equals(blob.getSizeInGridPixels())) {
