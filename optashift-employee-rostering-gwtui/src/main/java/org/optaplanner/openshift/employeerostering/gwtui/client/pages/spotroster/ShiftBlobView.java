@@ -48,16 +48,16 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     private HTMLElement label;
 
     private Viewport<LocalDateTime> viewport;
-    private ListView<ShiftBlob> list;
+    private ListView<ShiftBlob> blobViews;
     private Runnable onDestroy;
 
     private ShiftBlob blob;
 
     @Override
     public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
-                                            final ListView<ShiftBlob> list) {
+                                            final ListView<ShiftBlob> blobViews) {
 
-        this.list = list;
+        this.blobViews = blobViews;
         this.blob = blob;
 
         viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), 0L);
@@ -92,7 +92,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
         final MouseEvent e = Js.cast(event.getNativeEvent());
 
         if (e.altKey) {
-            list.remove(blob);
+            blobViews.remove(blob);
         }
     }
 

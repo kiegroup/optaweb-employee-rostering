@@ -28,20 +28,20 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.
 public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
 
     private Y blob;
-    private ListView<Y> list;
+    private ListView<Y> blobViews;
     private Viewport<T> viewport;
     private CircularBlobChangeHandler<T, Y> changeHandler;
 
     public void applyFor(final Y blob,
-                         final ListView<Y> list,
+                         final ListView<Y> blobViews,
                          final CollisionDetector<Blob<T>> collisionDetector,
                          final Viewport<T> viewport,
                          final IsElement blobView) {
 
         this.blob = blob;
-        this.list = list;
+        this.blobViews = blobViews;
         this.viewport = viewport;
-        this.changeHandler = new CircularBlobChangeHandler<>(blob, list, collisionDetector, viewport);
+        this.changeHandler = new CircularBlobChangeHandler<>(blob, blobViews, collisionDetector, viewport);
 
         makeDraggable(blobView.getElement(),
                       viewport.getGridPixelSizeInScreenPixels().intValue(),
@@ -78,7 +78,7 @@ public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
 
         if (isCompletelyOffTheGrid) {
             blob.getTwin().ifPresent(twin -> twin.setTwin(null));
-            list.remove(blob);
+            blobViews.remove(blob);
         }
 
         return true;

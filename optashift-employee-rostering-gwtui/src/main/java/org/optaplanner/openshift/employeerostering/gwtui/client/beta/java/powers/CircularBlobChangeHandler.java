@@ -29,21 +29,21 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java
 public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
 
     private final Y blob;
-    private final Viewport<T> viewport;
+    private final ListView<Y> blobViews;
     private final CollisionDetector<Blob<T>> collisionDetector;
-    private final ListView<Y> list;
+    private final Viewport<T> viewport;
 
     private BiConsumer<Long, CollisionState> onChange;
 
     CircularBlobChangeHandler(final Y blob,
-                              final ListView<Y> list,
+                              final ListView<Y> blobViews,
                               final CollisionDetector<Blob<T>> collisionDetector,
                               final Viewport<T> viewport) {
 
         this.blob = blob;
         this.viewport = viewport;
         this.collisionDetector = collisionDetector;
-        this.list = list;
+        this.blobViews = blobViews;
     }
 
     public void handle(final Long newPositionInGridPixels, final Long newSizeInGridPixels) {
@@ -51,9 +51,9 @@ public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
         blob.setSizeInGridPixels(newSizeInGridPixels);
         blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(newPositionInGridPixels));
 
-        blob.getTwin().ifPresent(list::remove);
+        blob.getTwin().ifPresent(blobViews::remove);
         blob.setTwin(blob.getUpdatedTwin());
-        blob.getTwin().ifPresent(list::add);
+        blob.getTwin().ifPresent(blobViews::add);
 
         final boolean anyCollisionDetected =
                 collisionDetector.collides(blob) ||
@@ -70,8 +70,8 @@ public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
 
     //FIXME: This is a side-effect used in development only
     private void paintBlobsBackground(final String backgroundColor) {
-        list.getView(blob).getElement().style.backgroundColor = backgroundColor;
-        blob.getTwin().map(list::getView).ifPresent(view -> view.getElement().style.backgroundColor = backgroundColor);
+        blobViews.getView(blob).getElement().style.backgroundColor = backgroundColor;
+        blob.getTwin().map(blobViews::getView).ifPresent(view -> view.getElement().style.backgroundColor = backgroundColor);
     }
 
     public void onChange(final BiConsumer<Long, CollisionState> onChange) {

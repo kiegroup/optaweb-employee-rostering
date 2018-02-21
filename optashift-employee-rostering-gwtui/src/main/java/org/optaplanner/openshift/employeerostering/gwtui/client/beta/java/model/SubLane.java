@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SubLane<T> {
@@ -23,6 +24,10 @@ public class SubLane<T> {
     private final List<Blob<T>> blobs;
 
     private final CollisionDetector<Blob<T>> collisionDetector;
+
+    public SubLane() {
+        this(new ArrayList<>());
+    }
 
     public SubLane(final List<Blob<T>> blobs) {
         this.blobs = blobs;
@@ -35,5 +40,15 @@ public class SubLane<T> {
 
     public CollisionDetector<Blob<T>> getCollisionDetector() {
         return collisionDetector;
+    }
+
+    public boolean anyCollide(final List<Blob<T>> blobs) {
+        return blobs.stream().anyMatch(getCollisionDetector()::collides);
+    }
+
+    public SubLane<T> withMore(final List<Blob<T>> blobs) {
+        final List<Blob<T>> newBlobs = new ArrayList<>(this.blobs);
+        newBlobs.addAll(blobs);
+        return new SubLane<>(newBlobs);
     }
 }

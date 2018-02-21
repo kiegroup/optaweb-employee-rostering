@@ -36,4 +36,13 @@ public class Lane<T> {
     public String getTitle() {
         return title;
     }
+
+    public SubLane<T> getNextSubLaneWithSpaceForBlobsStartingFrom(final SubLane<T> subLane,
+                                                                  final List<Blob<T>> newBlobs) {
+
+        return getSubLanes().subList(getSubLanes().indexOf(subLane), getSubLanes().size())
+                .stream()
+                .filter(s -> !s.anyCollide(newBlobs))
+                .findFirst().orElseGet(SubLane::new);
+    }
 }

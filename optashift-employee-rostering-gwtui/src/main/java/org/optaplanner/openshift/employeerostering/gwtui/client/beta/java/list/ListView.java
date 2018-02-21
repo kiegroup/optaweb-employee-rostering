@@ -16,8 +16,8 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -50,7 +50,7 @@ public class ListView<T> {
     private void reset() {
         if (init) {
             // Has to be a copy because the remove method removes things from the objects list.
-            new ArrayList<>(objects).forEach(this::remove);
+            new HashSet<>(objects).forEach(this::remove);
         }
     }
 
@@ -106,6 +106,15 @@ public class ListView<T> {
     public void addIfNotPresent(final T obj) {
         if (!objects.contains(obj)) {
             add(obj);
+        }
+    }
+
+    public void addOrReplace(final T obj, final T newObj) {
+        if (!objects.contains(obj)) {
+            add(newObj);
+        } else {
+            addAfter(obj, newObj);
+            remove(obj);
         }
     }
 }

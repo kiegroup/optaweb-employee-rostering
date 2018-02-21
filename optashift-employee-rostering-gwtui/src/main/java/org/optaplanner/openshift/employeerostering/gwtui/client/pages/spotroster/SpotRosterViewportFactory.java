@@ -118,7 +118,7 @@ public class SpotRosterViewportFactory {
         //FIXME: Handle overlapping blobs and discover why some TimeSlots are null
 
         if (timeSlotsByShift.isEmpty()) {
-            return new ArrayList<>(singletonList(new SubLane<>(new ArrayList<>())));
+            return new ArrayList<>(singletonList(new SubLane<>()));
         }
 
         final List<Blob<LocalDateTime>> blobs = timeSlotsByShift.entrySet()

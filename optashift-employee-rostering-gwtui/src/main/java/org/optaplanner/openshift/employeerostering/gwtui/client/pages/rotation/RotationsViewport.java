@@ -88,7 +88,7 @@ public class RotationsViewport extends Viewport<Long> {
     @Override
     public Lane<Long> newLane() {
         return new SpotLane(new Spot(tenantId, "New spot", new HashSet<>()),
-                            new ArrayList<>(singletonList(new SubLane<>(new ArrayList<>()))));
+                            new ArrayList<>(singletonList(new SubLane<>())));
     }
 
     @Override
@@ -103,7 +103,8 @@ public class RotationsViewport extends Viewport<Long> {
                 baseDate.plusMinutes(positionInScaleUnits).plusHours(8L));
 
         final Shift newShift = new Shift(
-                tenantId, spotLane.getSpot(),
+                tenantId,
+                spotLane.getSpot(),
                 timeSlot);
 
         return new ShiftBlob(newShift, baseDate, scale).toStream();
