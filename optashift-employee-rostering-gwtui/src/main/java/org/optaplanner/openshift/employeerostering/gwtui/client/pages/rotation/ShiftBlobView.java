@@ -42,6 +42,9 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java
 @Templated
 public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
+    private static final long BLOB_POSITION_DISPLACEMENT = 3L;
+    private static final long BLOB_SIZE_DISPLACEMENT = -5L;
+
     @Inject
     @DataField("blob")
     private HTMLDivElement root;
@@ -73,10 +76,10 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
         refresh();
 
-        draggability.applyFor(blob, blobViews, subLane.getCollisionDetector(), viewport, this);
+        draggability.applyFor(blob, BLOB_POSITION_DISPLACEMENT, blobViews, subLane.getCollisionDetector(), viewport, this);
         draggability.onDrag(this::onDrag);
 
-        resizability.applyFor(blob, blobViews, subLane.getCollisionDetector(), viewport, this);
+        resizability.applyFor(blob, BLOB_SIZE_DISPLACEMENT, blobViews, subLane.getCollisionDetector(), viewport, this);
         resizability.onResize(this::onResize);
 
         return this;
@@ -88,14 +91,14 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     }
 
     private void positionBlobOnGrid() {
-        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), 0L);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT);
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT);
     }
 
     private void updateLabel() {
         //FIXME: Bad labeling
-        final String start = (blob.getPositionInScaleUnits() / 60) % 24 + ":00";
-        final String end = (blob.getEndPositionInScaleUnits() / 60) % 24 + ":00";
+        final String start = ((blob.getPositionInScaleUnits() / 60) + 24) % 24 + ":00";
+        final String end = ((blob.getEndPositionInScaleUnits() / 60) + 24) % 24 + ":00";
         label.textContent = start + " to " + end;
     }
 

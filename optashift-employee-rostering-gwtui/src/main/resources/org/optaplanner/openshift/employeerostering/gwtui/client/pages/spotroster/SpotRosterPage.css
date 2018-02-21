@@ -36,16 +36,16 @@
 .viewport-frame > .viewport > .lane > .sub-lane > .blob {
     position: absolute !important;
     z-index: 10;
-    font-size: 0.75em;
+    font-size: 0.6em;
     color: black;
     white-space: nowrap;
     top: 0;
     left: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-    background-color: rgba(191, 214, 166, 0.64);
-    padding: 5px;
-    border-radius: 20px;
+    background-color: rgba(166, 214, 181, 0.49);
+    padding: 26px 3px 3px 3px;
+    border-radius: 4px;
     opacity: 0.8;
 }
 
@@ -158,8 +158,6 @@
 }
 
 .viewport-frame > .viewport.horizontal > .lane > .sub-lane > .blob {
-    width: 120px;
-    padding-top: 10px;
     height: 40px;
     border-left: 1px solid rgba(118, 133, 160, 0.1);
     border-bottom: 1px solid rgba(118, 133, 160, 0.2);

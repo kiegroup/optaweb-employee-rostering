@@ -31,14 +31,17 @@ public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
     private ListView<Y> blobViews;
     private Viewport<T> viewport;
     private CircularBlobChangeHandler<T, Y> changeHandler;
+    private Long blobPositionDisplacement;
 
     public void applyFor(final Y blob,
+                         final Long blobDisplacement,
                          final ListView<Y> blobViews,
                          final CollisionDetector<Blob<T>> collisionDetector,
                          final Viewport<T> viewport,
                          final IsElement blobView) {
 
         this.blob = blob;
+        this.blobPositionDisplacement = blobDisplacement;
         this.blobViews = blobViews;
         this.viewport = viewport;
         this.changeHandler = new CircularBlobChangeHandler<>(blob, blobViews, collisionDetector, viewport);
@@ -85,7 +88,7 @@ public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
     }
 
     private boolean onDrag(final int top, final int left) {
-        final Long newPositionInScreenPixels = viewport.decideBasedOnOrientation(top, left).longValue();
+        final Long newPositionInScreenPixels = viewport.decideBasedOnOrientation(top, left).longValue() - blobPositionDisplacement;
         final Long newPositionInGridPixels = viewport.toGridPixels(newPositionInScreenPixels);
 
         if (!newPositionInGridPixels.equals(blob.getPositionInGridPixels())) {
