@@ -16,22 +16,19 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-
 public class CollisionDetector<T extends Blob<?>> {
 
-    private final Supplier<List<T>> list;
+    private final Supplier<List<T>> blobs;
 
-    public CollisionDetector(final Supplier<List<T>> blobs) {
-        this.list = blobs;
+    CollisionDetector(final Supplier<List<T>> blobs) {
+        this.blobs = blobs;
     }
 
     public final boolean collides(final T blob) {
-        return list.get().stream()
+        return blobs.get().stream()
                 .filter(b -> !b.equals(blob))
                 .anyMatch(b -> b.collidesWith(blob));
     }

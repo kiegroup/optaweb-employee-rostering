@@ -87,7 +87,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     @Override
     public Lane<LocalDateTime> newLane() {
         return new SpotLane(new Spot(tenantId, "New spot", new HashSet<>()),
-                            new ArrayList<>(singletonList(new SubLane<>(new ArrayList<>()))));
+                            new ArrayList<>(singletonList(new SubLane<>())));
     }
 
     @Override

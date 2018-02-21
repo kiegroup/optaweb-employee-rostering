@@ -59,24 +59,24 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
     private Viewport<Long> viewport;
     private SubLane<Long> subLane;
-    private ListView<ShiftBlob> list;
+    private ListView<ShiftBlob> blobViews;
     private Runnable onDestroy;
 
     private ShiftBlob blob;
 
     @Override
     public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
-                                            final ListView<ShiftBlob> list) {
+                                            final ListView<ShiftBlob> blobViews) {
 
         this.blob = blob;
-        this.list = list;
+        this.blobViews = blobViews;
 
         refresh();
 
-        draggability.applyFor(blob, list, subLane.getCollisionDetector(), viewport, this);
+        draggability.applyFor(blob, blobViews, subLane.getCollisionDetector(), viewport, this);
         draggability.onDrag(this::onDrag);
 
-        resizability.applyFor(blob, list, subLane.getCollisionDetector(), viewport, this);
+        resizability.applyFor(blob, blobViews, subLane.getCollisionDetector(), viewport, this);
         resizability.onResize(this::onResize);
 
         return this;
@@ -123,7 +123,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
     private void refreshTwinIfAny() {
         blob.getTwin()
-                .map(list::getView)
+                .map(blobViews::getView)
                 .map(view -> (ShiftBlobView) view)
                 .ifPresent(ShiftBlobView::refresh);
     }
@@ -134,10 +134,11 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
         if (e.altKey) {
             blob.getTwin().ifPresent(twin -> {
-                list.remove(twin);
+                blobViews.remove(twin);
                 blob.setTwin(null);
             });
-            list.remove(blob);
+            blobViews.remove(blob);
+            //FIXME: Remove SubLane if list is empty
         }
     }
 
