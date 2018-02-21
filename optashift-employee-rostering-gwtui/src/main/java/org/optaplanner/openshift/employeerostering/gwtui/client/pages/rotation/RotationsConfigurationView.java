@@ -31,20 +31,12 @@ import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfigura
 public class RotationsConfigurationView implements IsElement {
 
     @Inject
-    @DataField("undesired-time-slot-weight")
-    private HTMLInputElement undesiredTimeSlotWeight;
-
-    @Inject
-    @DataField("desired-time-slot-weight")
-    private HTMLInputElement desiredTimeSlotWeight;
-
-    @Inject
     @DataField("week-start")
     private HTMLSelectElement weekStart;
 
     @Inject
     @DataField("period")
-    private HTMLSelectElement period;
+    private HTMLInputElement period;
 
     @Inject
     private TenantStore tenantStore;
@@ -52,9 +44,6 @@ public class RotationsConfigurationView implements IsElement {
     @PostConstruct
     public void init() {
         final TenantConfiguration configuration = tenantStore.getCurrentTenant().getConfiguration();
-
-        undesiredTimeSlotWeight.value = configuration.getUndesiredTimeSlotWeight().toString();
-        desiredTimeSlotWeight.value = configuration.getDesiredTimeSlotWeight().toString();
         weekStart.value = configuration.getWeekStart().toString();
         period.value = configuration.getTemplateDuration().toString();
     }

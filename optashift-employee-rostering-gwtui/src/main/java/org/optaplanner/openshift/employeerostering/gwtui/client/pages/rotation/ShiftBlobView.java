@@ -42,8 +42,8 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java
 @Templated
 public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
-    private static final long BLOB_POSITION_DISPLACEMENT = 3L;
-    private static final long BLOB_SIZE_DISPLACEMENT = -5L;
+    private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
+    private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
 
     @Inject
     @DataField("blob")
@@ -76,10 +76,10 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
         refresh();
 
-        draggability.applyFor(blob, BLOB_POSITION_DISPLACEMENT, blobViews, subLane.getCollisionDetector(), viewport, this);
+        draggability.applyFor(blob, BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS, blobViews, subLane.getCollisionDetector(), viewport, this);
         draggability.onDrag(this::onDrag);
 
-        resizability.applyFor(blob, BLOB_SIZE_DISPLACEMENT, blobViews, subLane.getCollisionDetector(), viewport, this);
+        resizability.applyFor(blob, BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS, blobViews, subLane.getCollisionDetector(), viewport, this);
         resizability.onResize(this::onResize);
 
         return this;
@@ -91,8 +91,8 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     }
 
     private void positionBlobOnGrid() {
-        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT);
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
     }
 
     private void updateLabel() {
