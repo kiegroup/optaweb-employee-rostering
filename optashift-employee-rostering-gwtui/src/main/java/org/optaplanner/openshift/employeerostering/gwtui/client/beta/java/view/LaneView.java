@@ -47,13 +47,13 @@ public class LaneView<T> implements ListElementView<Lane<T>> {
 
     @Override
     public ListElementView<Lane<T>> setup(final Lane<T> lane,
-                                          final ListView<Lane<T>> list) {
+                                          final ListView<Lane<T>> laneViews) {
 
         this.lane = lane;
 
         subLanes.init(getElement(), lane.getSubLanes(), () -> subLaneViewInstances.get()
                 .withViewport(viewport)
-                .withParent(lane, list));
+                .withParent(lane, laneViews));
 
         viewport.drawGridLinesAt(this);
 

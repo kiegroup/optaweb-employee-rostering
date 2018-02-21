@@ -30,14 +30,17 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
     private Y blob;
     private Viewport<T> viewport;
     private CircularBlobChangeHandler<T, Y> changeHandler;
+    private Long blobSizeDisplacement;
 
     public void applyFor(final Y blob,
+                         final Long blobSizeDisplacement,
                          final ListView<Y> list,
                          final CollisionDetector<Blob<T>> collisionDetector,
                          final Viewport<T> viewport,
                          final IsElement blobView) {
 
         this.blob = blob;
+        this.blobSizeDisplacement = blobSizeDisplacement;
         this.viewport = viewport;
         this.changeHandler = new CircularBlobChangeHandler<>(blob, list, collisionDetector, viewport);
 
@@ -61,9 +64,9 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
             minHeight: 0,
             resize: function (e, ui) {
                 if (orientation === 's') {
-                    ui.size.height = snapToGrid(ui.size.height + 2 * pixelSize);
+                    ui.size.height = snapToGrid(ui.size.height + 2 * pixelSize + 5) - 5; //FIXME: Read number 5 from blobSizeDisplacement field
                 } else if (orientation === 'e') {
-                    ui.size.width = snapToGrid(ui.size.width + 2 * pixelSize);
+                    ui.size.width = snapToGrid(ui.size.width + 2 * pixelSize + 5) - 5; //FIXME: Read number 5 from blobSizeDisplacement field
                 }
                 that.@org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularResizability::onResize(II)(ui.size.height, ui.size.width);
             }
@@ -71,7 +74,7 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
     }-*/;
 
     private boolean onResize(final int height, final int width) {
-        final Long newSizeInScreenPixels = viewport.decideBasedOnOrientation(height, width).longValue();
+        final Long newSizeInScreenPixels = viewport.decideBasedOnOrientation(height, width).longValue() - blobSizeDisplacement;
         final Long newSizeInGridPixels = viewport.toGridPixels(newSizeInScreenPixels);
 
         if (!newSizeInGridPixels.equals(blob.getSizeInGridPixels())) {
