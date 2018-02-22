@@ -37,11 +37,11 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
                 query = "select t from TimeSlot t" +
                         " where t.tenantId = :tenantId" +
                         " order by t.startDateTime"),
-//        @NamedQuery(name = "TimeSlot.findByStartDateEndDate",
-//                query = "select t from TimeSlot t" +
-//                        " where t.tenantId = :tenantId" +
-//                        " and t.startDateTime between :startDate and :endDate"
-//                        " order by t.startDateTime"),
+        //        @NamedQuery(name = "TimeSlot.findByStartDateEndDate",
+        //                query = "select t from TimeSlot t" +
+        //                        " where t.tenantId = :tenantId" +
+        //                        " and t.startDateTime between :startDate and :endDate"
+        //                        " order by t.startDateTime"),
 })
 public class TimeSlot extends AbstractPersistable {
 
@@ -100,6 +100,48 @@ public class TimeSlot extends AbstractPersistable {
 
     public void setTimeSlotState(TimeSlotState timeSlotState) {
         this.timeSlotState = timeSlotState;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((endDateTime == null) ? 0 : endDateTime.hashCode());
+        result = prime * result + ((startDateTime == null) ? 0 : startDateTime.hashCode());
+        result = prime * result + ((timeSlotState == null) ? 0 : timeSlotState.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof TimeSlot)) {
+            return false;
+        }
+        TimeSlot other = (TimeSlot) obj;
+        if (endDateTime == null) {
+            if (other.endDateTime != null) {
+                return false;
+            }
+        } else if (!endDateTime.equals(other.endDateTime)) {
+            return false;
+        }
+        if (startDateTime == null) {
+            if (other.startDateTime != null) {
+                return false;
+            }
+        } else if (!startDateTime.equals(other.startDateTime)) {
+            return false;
+        }
+        if (timeSlotState != other.timeSlotState) {
+            return false;
+        }
+        return true;
     }
 
 }
