@@ -40,7 +40,7 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation.HORIZONTAL;
 
-public class RotationsViewport extends Viewport<Long> {
+public class RotationViewport extends Viewport<Long> {
 
     private final Integer tenantId;
     private final LocalDateTime baseDate;
@@ -50,13 +50,13 @@ public class RotationsViewport extends Viewport<Long> {
     private final Ticks<Long> ticks;
     private final List<Lane<Long>> lanes;
 
-    RotationsViewport(final Integer tenantId,
-                      final LocalDateTime baseDate,
-                      final Supplier<ShiftBlobView> blobViewFactory,
-                      final LinearScale<Long> scale,
-                      final CssGridLines gridLines,
-                      final Ticks<Long> ticks,
-                      final List<Lane<Long>> lanes) {
+    RotationViewport(final Integer tenantId,
+                     final LocalDateTime baseDate,
+                     final Supplier<ShiftBlobView> blobViewFactory,
+                     final LinearScale<Long> scale,
+                     final CssGridLines gridLines,
+                     final Ticks<Long> ticks,
+                     final List<Lane<Long>> lanes) {
 
         this.tenantId = tenantId;
         this.baseDate = baseDate;

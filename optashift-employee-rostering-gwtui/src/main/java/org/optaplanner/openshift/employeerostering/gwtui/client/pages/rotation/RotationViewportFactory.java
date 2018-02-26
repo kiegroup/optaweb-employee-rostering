@@ -78,13 +78,13 @@ public class RotationViewportFactory {
                 .orElseThrow(() -> new RuntimeException("Cannot obtain baseDate from a ShiftTemplate with zero Shifts"))
                 .toLocalDate().atTime(0, 0);
 
-        return new RotationsViewport(tenantStore.getCurrentTenantId(),
-                                     baseDate,
-                                     shiftBlobViewPool::get,
-                                     scale,
-                                     cssGridLinesFactory.newWithSteps(2L, 24L),
-                                     ticksFactory.newTicks(scale, 4L, 24L),
-                                     buildLanes(shiftsBySpot, baseDate, scale));
+        return new RotationViewport(tenantStore.getCurrentTenantId(),
+                                    baseDate,
+                                    shiftBlobViewPool::get,
+                                    scale,
+                                    cssGridLinesFactory.newWithSteps(2L, 24L),
+                                    ticksFactory.newTicks(scale, 4L, 24L),
+                                    buildLanes(shiftsBySpot, baseDate, scale));
     }
 
     private List<Lane<Long>> buildLanes(final Map<Spot, List<Shift>> shiftsBySpot,
@@ -133,8 +133,9 @@ public class RotationViewportFactory {
     private Stream<SubLane<Long>> merge(final List<SubLane<Long>> lhs,
                                         final List<SubLane<Long>> rhs,
                                         final SubLane<Long> subLaneWithSpace) {
-        
+
         final int indexOfSubLaneWithSpace = lhs.indexOf(subLaneWithSpace);
+
         final List<SubLane<Long>> left = lhs.subList(0, indexOfSubLaneWithSpace);
         final List<SubLane<Long>> right = lhs.subList(indexOfSubLaneWithSpace + 1, lhs.size());
 

@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.RotationsPage;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.RotationPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster.SpotRosterPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.EmployeeRosterViewPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.roster.SpotRosterViewPanel;
@@ -79,7 +79,7 @@ public class Pages {
     private ManagedInstance<SpotRosterPage> spotRosterDemoPage;
 
     @Inject
-    private ManagedInstance<RotationsPage> rotationsDemoPage;
+    private ManagedInstance<RotationPage> rotationsDemoPage;
 
     private final Map<Id, LazyInit<? extends Page>> mapping = new HashMap<>();
 
