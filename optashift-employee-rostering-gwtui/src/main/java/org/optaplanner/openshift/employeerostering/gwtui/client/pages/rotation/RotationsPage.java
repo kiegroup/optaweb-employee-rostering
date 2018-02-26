@@ -67,6 +67,7 @@ public class RotationsPage implements Page {
 
     private Map<Long, Spot> spotsById;
     private Map<Long, SpotGroup> spotGroupsById;
+    private Map<Spot, List<Shift>> shiftsBySpot;
 
     @Override
     public Promise<Void> beforeOpen() {
@@ -79,6 +80,7 @@ public class RotationsPage implements Page {
 
     public Promise<Void> refresh() {
         return fetchShiftsBySpot().then(shiftsBySpot -> {
+            this.shiftsBySpot = shiftsBySpot;
             viewportView.setViewport(rotationViewportFactory.getViewport(shiftsBySpot));
             return resolve();
         });
@@ -139,5 +141,17 @@ public class RotationsPage implements Page {
         newShift.setId(id);
 
         return newShift;
+    }
+
+    private void save() {
+
+        shiftsBySpot.entrySet().stream().forEach(e -> {
+//            return new ShiftInfo(tenantStore.getCurrentTenantId(), e.getValue().)
+        });
+
+        final List<ShiftInfo> newRotationShifts = null;
+
+        ShiftRestServiceBuilder.createTemplate(tenantStore.getCurrentTenantId(), newRotationShifts, FailureShownRestCallback.onSuccess(i -> {
+        }));
     }
 }
