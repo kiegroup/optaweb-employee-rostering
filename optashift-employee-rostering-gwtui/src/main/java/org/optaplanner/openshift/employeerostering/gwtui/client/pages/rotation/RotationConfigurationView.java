@@ -28,7 +28,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantSto
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 @Templated
-public class RotationsConfigurationView implements IsElement {
+public class RotationConfigurationView implements IsElement {
 
     @Inject
     @DataField("week-start")

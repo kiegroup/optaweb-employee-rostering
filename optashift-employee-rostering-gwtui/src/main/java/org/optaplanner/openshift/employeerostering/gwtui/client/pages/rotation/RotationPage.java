@@ -57,7 +57,7 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.common.Fa
 import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 
 @Templated
-public class RotationsPage implements Page {
+public class RotationPage implements Page {
 
     @Inject
     @DataField("viewport")
@@ -65,7 +65,7 @@ public class RotationsPage implements Page {
 
     @Inject
     @DataField("configuration")
-    private RotationsConfigurationView rotationsConfigurationView;
+    private RotationConfigurationView rotationsConfigurationView;
 
     @Inject
     @DataField("save-button")
