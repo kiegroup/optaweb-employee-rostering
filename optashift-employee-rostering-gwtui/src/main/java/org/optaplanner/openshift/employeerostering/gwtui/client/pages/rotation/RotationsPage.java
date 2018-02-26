@@ -16,17 +16,23 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.HTMLButtonElement;
 import elemental2.promise.Promise;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
@@ -42,10 +48,12 @@ import org.optaplanner.openshift.employeerostering.shared.spot.SpotGroup;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
+import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 
 @Templated
@@ -60,6 +68,10 @@ public class RotationsPage implements Page {
     private RotationsConfigurationView rotationsConfigurationView;
 
     @Inject
+    @DataField("save-button")
+    private HTMLButtonElement saveButton;
+
+    @Inject
     private TenantStore tenantStore;
 
     @Inject
@@ -67,7 +79,14 @@ public class RotationsPage implements Page {
 
     private Map<Long, Spot> spotsById;
     private Map<Long, SpotGroup> spotGroupsById;
-    private Map<Spot, List<Shift>> shiftsBySpot;
+    private Viewport<Long> viewport;
+
+
+    @EventHandler("save-button")
+    private void onSaveClicked(final ClickEvent e) {
+        save();
+        e.preventDefault();
+    }
 
     @Override
     public Promise<Void> beforeOpen() {
@@ -80,8 +99,8 @@ public class RotationsPage implements Page {
 
     public Promise<Void> refresh() {
         return fetchShiftsBySpot().then(shiftsBySpot -> {
-            this.shiftsBySpot = shiftsBySpot;
-            viewportView.setViewport(rotationViewportFactory.getViewport(shiftsBySpot));
+            viewport = rotationViewportFactory.getViewport(shiftsBySpot);
+            viewportView.setViewport(viewport);
             return resolve();
         });
     }
@@ -110,7 +129,9 @@ public class RotationsPage implements Page {
                 .collect(toList());
     }
 
-    private Stream<Shift> getShiftStream(final ShiftInfo shiftInfo, final Long id) {
+    private Stream<Shift> getShiftStream(final ShiftInfo shiftInfo,
+                                         final Long id) {
+
         return shiftInfo.getSpotList().stream()
                 .flatMap(this::getSpots)
                 .map(spot -> newShift(id, shiftInfo, spot));
@@ -145,13 +166,38 @@ public class RotationsPage implements Page {
 
     private void save() {
 
-        shiftsBySpot.entrySet().stream().forEach(e -> {
-//            return new ShiftInfo(tenantStore.getCurrentTenantId(), e.getValue().)
-        });
+        final List<ShiftInfo> newShiftInfoList = viewport.getLanes().stream()
+                .flatMap(lane -> lane.getSubLanes().stream())
+                .flatMap(subLane -> subLane.getBlobs().stream())
+                .filter(blob -> blob.getPositionInGridPixels() >= 0) //Removes left-most twins
+                .map(blob -> ((ShiftBlob) blob).getShift())
+                .map(this::newShiftInfo)
+                .collect(toList());
 
-        final List<ShiftInfo> newRotationShifts = null;
+        ShiftRestServiceBuilder.createTemplate(
+                tenantStore.getCurrentTenantId(),
+                newShiftInfoList,
+                onSuccess(i -> refresh()));
+    }
 
-        ShiftRestServiceBuilder.createTemplate(tenantStore.getCurrentTenantId(), newRotationShifts, FailureShownRestCallback.onSuccess(i -> {
-        }));
+    private ShiftInfo newShiftInfo(final Shift shift) {
+        return new ShiftInfo(tenantStore.getCurrentTenantId(),
+                             shift.getTimeSlot().getStartDateTime(),
+                             shift.getTimeSlot().getEndDateTime(),
+                             singletonList(getGroupOrSpotId(shift.getSpot())),
+                             new ArrayList<>());
+    }
+
+    private IdOrGroup getGroupOrSpotId(final Spot s) {
+
+        //Try searching for a SpotGroup first
+        return spotGroupsById.values().stream()
+                .filter(group -> group.hasSpot(s)).findAny()
+                .map(group -> new IdOrGroup(tenantStore.getCurrentTenantId(), true, group.getId()))
+
+                //If it's not a SpotGroup we search for a Spot
+                .orElseGet(() -> Optional.ofNullable(spotsById.get(s.getId()))
+                        .map(spot -> new IdOrGroup(tenantStore.getCurrentTenantId(), false, spot.getId()))
+                        .orElseThrow(() -> new RuntimeException("Spot should be present either as a group or standalone")));
     }
 }

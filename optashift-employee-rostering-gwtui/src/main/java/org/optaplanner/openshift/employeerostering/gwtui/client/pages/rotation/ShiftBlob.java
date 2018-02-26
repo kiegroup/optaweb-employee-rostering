@@ -145,4 +145,8 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     public LinearScale<Long> getScale() {
         return scale;
     }
+
+    public Shift getShift() {
+        return shift;
+    }
 }

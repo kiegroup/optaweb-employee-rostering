@@ -38,6 +38,9 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.B
 @Templated
 public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
 
+    private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
+    private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
+
     @Inject
     @DataField("blob")
     private HTMLDivElement root;
@@ -60,8 +63,8 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
         this.blobViews = blobViews;
         this.blob = blob;
 
-        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), 0L);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), 0L);
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
         updateLabel();
 
         // FIXME: Enable draggability and resizability after backend supports it.

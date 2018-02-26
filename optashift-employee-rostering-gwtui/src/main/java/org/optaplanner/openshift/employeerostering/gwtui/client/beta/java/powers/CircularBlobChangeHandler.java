@@ -48,8 +48,8 @@ public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
 
     public void handle(final Long newPositionInGridPixels, final Long newSizeInGridPixels) {
 
-        blob.setSizeInGridPixels(newSizeInGridPixels);
         blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(newPositionInGridPixels));
+        blob.setSizeInGridPixels(newSizeInGridPixels);
 
         blob.getTwin().ifPresent(blobViews::remove);
         blob.setTwin(blob.getUpdatedTwin());
