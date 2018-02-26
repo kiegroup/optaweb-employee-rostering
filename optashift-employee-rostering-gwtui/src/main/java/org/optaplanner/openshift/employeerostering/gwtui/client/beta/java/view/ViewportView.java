@@ -18,14 +18,10 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view;
 
 import javax.inject.Inject;
 
-import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.MouseEvent;
-import jsinterop.base.Js;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
@@ -37,10 +33,6 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.util.Timi
 public class ViewportView<T> implements IsElement {
 
     @Inject
-    @DataField("viewport")
-    private HTMLDivElement root;
-
-    @Inject
     @DataField("ticks-lane")
     private HTMLDivElement ticksLane;
 
@@ -50,26 +42,7 @@ public class ViewportView<T> implements IsElement {
     @Inject
     private ListView<Lane<T>> lanes;
 
-    private Viewport<T> viewport;
-
-    @EventHandler("viewport")
-    public void onClick(final ClickEvent event) {
-
-        final MouseEvent e = Js.cast(event.getNativeEvent());
-
-        if (!e.target.equals(e.currentTarget)) {
-            return;
-        }
-
-        // Add Lane (SHIFT + CLICK)
-        if (e.shiftKey) {
-            lanes.add(viewport.newLane());
-        }
-    }
-
     public void setViewport(final Viewport<T> viewport) {
-
-        this.viewport = viewport;
 
         time("Viewport assemble", () -> {
             getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));

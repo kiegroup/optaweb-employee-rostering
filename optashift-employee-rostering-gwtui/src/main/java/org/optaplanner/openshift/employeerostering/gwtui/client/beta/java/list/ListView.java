@@ -103,12 +103,6 @@ public class ListView<T> {
         return views.get(obj);
     }
 
-    public void addIfNotPresent(final T obj) {
-        if (!objects.contains(obj)) {
-            add(obj);
-        }
-    }
-
     public void addOrReplace(final T obj, final T newObj) {
         if (!objects.contains(obj)) {
             add(newObj);
