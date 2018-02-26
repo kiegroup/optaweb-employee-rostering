@@ -73,6 +73,13 @@ public class Employee extends AbstractPersistable {
         skillProficiencySet = new HashSet<>(2);
     }
 
+    public Employee(Employee employee) {
+        this(employee.getTenantId(), employee.getName());
+        this.id = employee.getId();
+        this.version = employee.getVersion();
+        this.skillProficiencySet.addAll(employee.getSkillProficiencySet());
+    }
+
     public boolean hasSkill(Skill skill) {
         return skillProficiencySet.contains(skill);
     }

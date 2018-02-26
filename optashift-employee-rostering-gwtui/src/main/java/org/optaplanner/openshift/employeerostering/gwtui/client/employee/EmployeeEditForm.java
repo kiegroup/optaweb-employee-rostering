@@ -2,12 +2,14 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.ConstraintViolation;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.dom.client.Element;
@@ -18,6 +20,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import elemental2.promise.Promise;
+import elemental2.promise.Promise.PromiseExecutorCallbackFn.RejectCallbackFn;
+import elemental2.promise.Promise.PromiseExecutorCallbackFn.ResolveCallbackFn;
 import org.gwtbootstrap3.client.ui.CheckBox;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.TextBox;
@@ -33,9 +38,11 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.calendar.twodayview.TwoDayView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency;
@@ -50,11 +57,7 @@ public class EmployeeEditForm implements IsElement {
 
     @Inject
     @DataField
-    private TextBox employeeName;
-
-    @Inject
-    @DataField
-    private SingleValueTagsInput<Skill> employeeSkills;
+    private EmployeeSubform employeeSubform;
 
     @Inject
     @DataField
@@ -75,72 +78,69 @@ public class EmployeeEditForm implements IsElement {
     @Inject
     private TranslationService CONSTANTS;
 
-    private static Employee employee;
-    private static EmployeeListPanel panel;
-    private static List<Skill> skills;
+    private Employee employee;
+    private List<Skill> skillList;
 
     private FormPopup popup;
 
-    public static EmployeeEditForm create(SyncBeanManager beanManager, EmployeeListPanel employeePanel,
-            Employee employeeData, List<
-                    Skill> skillData) {
-        panel = employeePanel;
-        employee = employeeData;
-        skills = skillData;
-        return beanManager.lookupBean(EmployeeEditForm.class).newInstance();
+    ResolveCallbackFn<Void> resolve;
+    RejectCallbackFn reject;
+
+    public EmployeeEditForm withEmployee(Employee employee) {
+        this.employee = new Employee(employee);
+        return this;
     }
 
-    @PostConstruct
-    protected void initWidget() {
-        employeeName.setValue(employee.getName());
-        employeeSkills.removeAll();
-        CollectionDataset<Skill> data = new CollectionDataset<Skill>(skills) {
+    public EmployeeEditForm withSkillList(List<Skill> skillList) {
+        this.skillList = skillList;
+        return this;
+    }
 
-            @Override
-            public String getValue(Skill skill) {
-                return (skill == null) ? "" : skill.getName();
-            }
-        };
-        employeeSkills.setDatasets((Dataset<Skill>) data);
-        employeeSkills.setItemValue(Skill::getName);
-        employeeSkills.setItemText(Skill::getName);
-        employeeSkills.reconfigure();
-        employeeSkills.add(employee.getSkillProficiencySet().stream()
-                .collect(Collectors.toList()));
-        employee.getSkillProficiencySet().stream()
-                .forEach((s) -> employeeSkills.add(s));
+    public Promise<Void> show() {
+        employeeSubform.setSkillList(skillList);
+        employeeSubform.setEmployeeModel(employee);
 
         title.setInnerSafeHtml(new SafeHtmlBuilder().appendEscaped(employee.getName())
                 .toSafeHtml());
         popup = FormPopup.getFormPopup(this);
         popup.center();
+        return new Promise<Void>((res, rej) -> {
+            resolve = res;
+            reject = rej;
+        });
     }
 
     @EventHandler("cancelButton")
     public void cancel(ClickEvent e) {
         popup.hide();
+        reject.onInvoke(null);
     }
 
     @EventHandler("closeButton")
     public void close(ClickEvent e) {
         popup.hide();
+        reject.onInvoke(null);
     }
 
     @EventHandler("saveButton")
     public void save(ClickEvent click) {
-        employee.setName(employeeName.getValue());
-        employee.setSkillProficiencySet(employeeSkills.getItems().stream().collect(Collectors.toSet()));
-
         popup.hide();
-        EmployeeRestServiceBuilder.updateEmployee(employee.getTenantId(), employee, new FailureShownRestCallback<
-                Employee>() {
+        employeeSubform.getIfValid().then((myEmployee) -> {
+            EmployeeRestServiceBuilder.updateEmployee(myEmployee.getTenantId(), myEmployee,
+                    new FailureShownRestCallback<
+                            Employee>() {
 
-            @Override
-            public void onSuccess(Employee employee) {
-                panel.refresh();
-            }
+                        @Override
+                        public void onSuccess(Employee employee) {
+                            resolve.onInvoke(PromiseUtils.resolve());
+                        }
+                    });
+            return PromiseUtils.resolve();
+        }).catch_((e) -> {
+            ErrorPopup.show(CommonUtils.delimitCollection((Set<ConstraintViolation<Employee>>) e, (error) -> error
+                    .toString(), "\n"));
+            return PromiseUtils.resolve();
         });
-
     }
 
 }
