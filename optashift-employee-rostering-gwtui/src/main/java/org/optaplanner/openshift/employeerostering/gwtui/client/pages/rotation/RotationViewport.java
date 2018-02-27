@@ -24,21 +24,21 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.jboss.errai.common.client.api.elemental2.IsElement;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.CssGridLines;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.Ticks;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLines;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.Ticks;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.util.Collections.singletonList;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Orientation.HORIZONTAL;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation.HORIZONTAL;
 
 public class RotationViewport extends Viewport<Long> {
 

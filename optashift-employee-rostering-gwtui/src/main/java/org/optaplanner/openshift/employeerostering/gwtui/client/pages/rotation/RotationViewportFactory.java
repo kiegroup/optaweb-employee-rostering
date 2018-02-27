@@ -27,14 +27,14 @@ import java.util.stream.Stream;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.CssGridLinesFactory;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.grid.TicksFactory;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementViewPool;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLinesFactory;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.TicksFactory;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementViewPool;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -68,7 +68,7 @@ public class RotationViewportFactory {
 
         final Integer durationInWeeks = tenantStore.getCurrentTenant().getConfiguration().getTemplateDuration();
         final Long durationTimeInMinutes = durationInWeeks * 7 * 24 * 60L;
-        final LinearScale<Long> scale = new Positive60MinutesScale(durationTimeInMinutes);
+        final LinearScale<Long> scale = new Infinite60MinutesScale(durationTimeInMinutes);
 
         //FIXME: Is there other way to get the baseDate?
         final LocalDateTime baseDate = shiftsBySpot.values().stream()

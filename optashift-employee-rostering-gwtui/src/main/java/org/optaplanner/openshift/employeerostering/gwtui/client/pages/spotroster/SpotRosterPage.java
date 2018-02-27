@@ -32,10 +32,9 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.ViewportView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 

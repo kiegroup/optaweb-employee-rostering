@@ -19,8 +19,8 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroste
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Lane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 public class SpotLane extends Lane<LocalDateTime> {

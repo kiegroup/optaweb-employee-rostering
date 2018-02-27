@@ -19,8 +19,8 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroste
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Blob;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 

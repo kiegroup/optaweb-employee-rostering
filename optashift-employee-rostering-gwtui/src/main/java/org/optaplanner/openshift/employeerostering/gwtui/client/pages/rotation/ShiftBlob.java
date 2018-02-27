@@ -20,8 +20,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.BlobWithTwin;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobWithTwin;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
