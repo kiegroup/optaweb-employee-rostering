@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
+package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view;
 
-import java.util.List;
-
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 
-public class SpotLane extends Lane<Long> {
+public interface BlobView<Y, T extends Blob<Y>> extends ListElementView<T> {
 
-    private final Spot spot;
+    BlobView<Y, T> withViewport(final Viewport<Y> viewport);
 
-    // Changing the parameter name to 'spot' leads to an error, because it uses the field instead of the parameter.
-    public SpotLane(final Spot spotParam,
-                    final List<SubLane<Long>> subLanes) {
-
-        super(spotParam.getName(), subLanes);
-        this.spot = spotParam;
-    }
-
-    public Spot getSpot() {
-        return spot;
-    }
+    BlobView<Y, T> withSubLane(final SubLane<Y> subLaneView);
 }

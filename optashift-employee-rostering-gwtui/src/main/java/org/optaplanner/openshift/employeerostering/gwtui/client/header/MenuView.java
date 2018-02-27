@@ -35,12 +35,12 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS_OLD;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS_DEMO;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_OLD;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_DEMO;
 
 @Templated
 public class MenuView implements IsElement {
@@ -58,24 +58,24 @@ public class MenuView implements IsElement {
     private HTMLAnchorElement employees;
 
     @Inject
-    @DataField("rotations")
-    private HTMLAnchorElement rotations;
+    @DataField("rotations-old")
+    private HTMLAnchorElement rotationsOld;
 
     @Inject
-    @DataField("spot-roster")
-    private HTMLAnchorElement spotRoster;
+    @DataField("spot-roster-old")
+    private HTMLAnchorElement spotRosterOld;
 
     @Inject
     @DataField("employee-roster")
     private HTMLAnchorElement employeeRoster;
 
     @Inject
-    @DataField("spot-roster-demo")
-    private HTMLAnchorElement spotRosterDemo;
+    @DataField("spot-roster")
+    private HTMLAnchorElement spotRoster;
 
     @Inject
-    @DataField("rotations-demo")
-    private HTMLAnchorElement rotationsDemo;
+    @DataField("rotations")
+    private HTMLAnchorElement rotations;
 
     @Inject
     private Event<PageChange> pageChangeEvent;
@@ -95,14 +95,14 @@ public class MenuView implements IsElement {
         goTo(EMPLOYEES, e);
     }
 
-    @EventHandler("rotations")
-    public void rotations(final ClickEvent e) {
-        goTo(ROTATIONS, e);
+    @EventHandler("rotations-old")
+    public void rotationsOld(final ClickEvent e) {
+        goTo(ROTATIONS_OLD, e);
     }
 
-    @EventHandler("spot-roster")
-    public void spotRoster(final ClickEvent e) {
-        goTo(SPOT_ROSTER, e);
+    @EventHandler("spot-roster-old")
+    public void spotRosterOld(final ClickEvent e) {
+        goTo(SPOT_ROSTER_OLD, e);
     }
 
     @EventHandler("employee-roster")
@@ -110,14 +110,14 @@ public class MenuView implements IsElement {
         goTo(EMPLOYEE_ROSTER, e);
     }
 
-    @EventHandler("spot-roster-demo")
-    public void spotRosterDemo(final ClickEvent e) {
-        goTo(SPOT_ROSTER_DEMO, e);
+    @EventHandler("spot-roster")
+    public void spotRoster(final ClickEvent e) {
+        goTo(SPOT_ROSTER, e);
     }
 
-    @EventHandler("rotations-demo")
-    public void rotationsDemo(final ClickEvent e) {
-        goTo(ROTATIONS_DEMO, e);
+    @EventHandler("rotations")
+    public void rotations(final ClickEvent e) {
+        goTo(ROTATIONS, e);
     }
 
     private void goTo(final Pages.Id pageId,
@@ -128,7 +128,7 @@ public class MenuView implements IsElement {
     }
 
     private void handleActiveLink(final MouseEvent event) {
-        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster, rotationsDemo, spotRosterDemo);
+        setInactive(skills, spots, employees, rotationsOld, spotRosterOld, employeeRoster, rotations, spotRoster);
         setActive(Js.cast(event.target));
     }
 

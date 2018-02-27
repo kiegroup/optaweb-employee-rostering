@@ -29,11 +29,11 @@ import jsinterop.base.Js;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 
 @Templated
 public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {

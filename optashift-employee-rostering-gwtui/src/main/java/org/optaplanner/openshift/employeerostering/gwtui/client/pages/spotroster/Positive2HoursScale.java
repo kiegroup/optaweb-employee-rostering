@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 
 public class Positive2HoursScale implements LinearScale<LocalDateTime> {
 

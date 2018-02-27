@@ -36,24 +36,24 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.Configura
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS_OLD;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS_DEMO;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_OLD;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_DEMO;
 
 @Dependent
 public class Pages {
 
     public enum Id {
         SKILLS,
-        SPOT_ROSTER_DEMO,
-        ROTATIONS_DEMO,
+        SPOT_ROSTER,
+        ROTATIONS,
         SPOTS,
         EMPLOYEES,
-        ROTATIONS,
-        SPOT_ROSTER,
+        ROTATIONS_OLD,
+        SPOT_ROSTER_OLD,
         EMPLOYEE_ROSTER;
     }
 
@@ -88,11 +88,11 @@ public class Pages {
         mapping.put(SKILLS, lazyInit(skillsPage));
         mapping.put(SPOTS, lazyInit(spotsPage));
         mapping.put(EMPLOYEES, lazyInit(employeesPage));
-        mapping.put(ROTATIONS, lazyInit(rotationsPage));
-        mapping.put(SPOT_ROSTER, lazyInit(spotRosterPage));
+        mapping.put(ROTATIONS_OLD, lazyInit(rotationsPage));
+        mapping.put(SPOT_ROSTER_OLD, lazyInit(spotRosterPage));
         mapping.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
-        mapping.put(SPOT_ROSTER_DEMO, lazyInit(spotRosterDemoPage));
-        mapping.put(ROTATIONS_DEMO, lazyInit(rotationsDemoPage));
+        mapping.put(SPOT_ROSTER, lazyInit(spotRosterDemoPage));
+        mapping.put(ROTATIONS, lazyInit(rotationsDemoPage));
     }
 
     public Page get(final Id id) {

@@ -28,16 +28,16 @@ import jsinterop.base.Js;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListElementView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.list.ListView;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.SubLane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularDraggability;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CircularResizability;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState;
-import org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.view.BlobView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CircularDraggability;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CircularResizability;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionState;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.beta.java.powers.CollisionState.COLLIDING;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionState.COLLIDING;
 
 @Templated
 public class ShiftBlobView implements BlobView<Long, ShiftBlob> {

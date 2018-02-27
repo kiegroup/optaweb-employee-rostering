@@ -16,25 +16,36 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.util.List;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+public class Infinite60MinutesScale implements LinearScale<Long> {
 
-public class SpotLane extends Lane<Long> {
+    private final Long end;
 
-    private final Spot spot;
-
-    // Changing the parameter name to 'spot' leads to an error, because it uses the field instead of the parameter.
-    public SpotLane(final Spot spotParam,
-                    final List<SubLane<Long>> subLanes) {
-
-        super(spotParam.getName(), subLanes);
-        this.spot = spotParam;
+    public Infinite60MinutesScale(final Long end) {
+        this.end = end;
     }
 
-    public Spot getSpot() {
-        return spot;
+    @Override
+    public Long toGridPixelsWithFactor1(final Long valueInScaleUnits) {
+        return valueInScaleUnits;
+    }
+
+    @Override
+    public Long toScaleUnitsWithFactor1(final Long valueInGridPixels) {
+        return valueInGridPixels;
+    }
+
+    @Override
+    public Long getEndInScaleUnits() {
+        return end;
+    }
+
+    @Override
+    public Long factor() {
+        return 60L;
     }
 }
+
+
+
