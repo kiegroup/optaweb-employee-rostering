@@ -55,7 +55,27 @@ public class KiePager<T> implements HasRows {
     private Set<com.google.gwt.view.client.RowCountChangeEvent.Handler> rowCountChangeHandlers;
 
     public KiePager() {
-        pager = new SimplePager();
+        pager = new SimplePager() {
+
+            @Override
+            // See https://stackoverflow.com/a/8015681
+            public void setPageStart(int index) {
+                if (getDisplay() != null) {
+                    Range range = getDisplay().getVisibleRange();
+                    int pageSize = range.getLength();
+
+                    // Removed the min to show fixed ranges
+                    //if (isRangeLimited && display.isRowCountExact()) {
+                    //  index = Math.min(index, display.getRowCount() - pageSize);
+                    //}
+
+                    index = Math.max(0, index);
+                    if (index != range.getStart()) {
+                        getDisplay().setVisibleRange(index, pageSize);
+                    }
+                }
+            }
+        };
         this.pageSize = 10;
         pager.setPageSize(pageSize);
         rangeChangeHandlers = new HashSet<>();
@@ -139,7 +159,7 @@ public class KiePager<T> implements HasRows {
 
     @Override
     public Range getVisibleRange() {
-        return new Range(startIndex, endIndex - startIndex);
+        return new Range(startIndex, pageSize);
     }
 
     @Override
