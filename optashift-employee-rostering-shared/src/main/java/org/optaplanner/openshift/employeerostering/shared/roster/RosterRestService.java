@@ -3,6 +3,7 @@ package org.optaplanner.openshift.employeerostering.shared.roster;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,6 +21,8 @@ import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRo
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
+import static java.lang.Integer.MAX_VALUE;
+
 @Api(tags = {"Roster"})
 @Path("/tenant/{tenantId}/roster")
 @Produces(MediaType.APPLICATION_JSON)
@@ -35,8 +38,8 @@ public interface RosterRestService {
     @GET
     @Path("/spotRosterView/current")
     SpotRosterView getCurrentSpotRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                            @ApiParam(required = true) @QueryParam("p") Integer pageNumber,
-                                            @ApiParam(required = true) @QueryParam("n") Integer numberOfItemsPerPage);
+                                            @ApiParam(required = true) @QueryParam("p") @DefaultValue("0") Integer pageNumber,
+                                            @ApiParam(required = true) @QueryParam("n") @DefaultValue(MAX_VALUE + "") Integer numberOfItemsPerPage);
 
     @ApiOperation("Get a spot roster view between 2 dates")
     @GET

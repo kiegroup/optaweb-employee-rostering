@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.shared.roster;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import static java.lang.Math.max;
 
 public class Pagination {
 
@@ -42,5 +42,21 @@ public class Pagination {
 
     public Integer getFirstResultIndex() {
         return pageNumber * numberOfItemsPerPage;
+    }
+
+    public Integer getPageNumber() {
+        return pageNumber;
+    }
+
+    public Pagination nextPage() {
+        return new Pagination(pageNumber + 1, numberOfItemsPerPage);
+    }
+
+    public Pagination previousPage() {
+        return new Pagination(max(0, pageNumber - 1), numberOfItemsPerPage);
+    }
+
+    public Pagination withNumberOfItemsPerPage(final Integer numberOfItemsPerPage) {
+        return new Pagination(pageNumber, numberOfItemsPerPage);
     }
 }
