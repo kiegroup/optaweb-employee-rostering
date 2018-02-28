@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.server.solver;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -54,25 +55,24 @@ public class WannabeSolverManager {
         solverFactory = SolverFactory.createFromXmlResource(
                 "org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringSolverConfig.xml");
     }
-    
+
     public void terminate(Integer tenantId) {
         Solver<Roster> solver = tenantIdToSolverMap.get(tenantId);
         if (null != solver) {
             solver.terminateEarly();
-        }
-        else {
+        } else {
             throw new IllegalStateException("The roster with tenantId (" + tenantId
-                    + ") is not being solved currently.");
+                                                    + ") is not being solved currently.");
         }
     }
-    
+
     public void solve(Integer tenantId) {
         logger.info("Scheduling solver for tenantId ({})...", tenantId);
         // No 2 solve() calls of the same dataset in parallel
         tenantIdToSolverStateMap.compute(tenantId, (k, solverStatus) -> {
             if (solverStatus != null && solverStatus != SolverStatus.TERMINATED) {
                 throw new IllegalStateException("The roster with tenantId (" + tenantId
-                        + ") is already solving with solverStatus (" + solverStatus + ").");
+                                                        + ") is already solving with solverStatus (" + solverStatus + ").");
             }
             return SolverStatus.SCHEDULED;
         });
@@ -104,11 +104,7 @@ public class WannabeSolverManager {
         });
     }
 
-    public Roster getRoster(Integer tenantId) {
-        if (tenantIdToSolverMap.containsKey(tenantId)) {
-            return tenantIdToSolverMap.get(tenantId).getBestSolution();
-        }
-        return null;
+    public Optional<Roster> getRoster(final Integer tenantId) {
+        return Optional.ofNullable(tenantIdToSolverMap.get(tenantId)).map(Solver::getBestSolution);
     }
-
 }

@@ -134,7 +134,7 @@ public class RosterGenerator {
             previousEndDateTime = previousEndDateTime.plusDays(7);
         }
 
-        List<TimeSlot> timeSlotList = entityManager.createNamedQuery("TimeSlot.findAll", TimeSlot.class)
+        List<TimeSlot> timeSlotList = entityManager.createNamedQuery("TimeSlot.findAllOrderedByStartDate", TimeSlot.class)
                                                    .setParameter("tenantId", tenantId)
                                                    .getResultList();
 
