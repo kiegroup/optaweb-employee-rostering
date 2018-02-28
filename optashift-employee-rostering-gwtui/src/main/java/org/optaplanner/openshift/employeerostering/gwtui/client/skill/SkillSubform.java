@@ -21,6 +21,7 @@ import elemental2.promise.Promise;
 import org.gwtbootstrap3.extras.select.client.ui.MultipleSelect;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.jboss.errai.databinding.client.api.Converter;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
@@ -30,6 +31,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.StringLis
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.TableRow;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -58,8 +60,13 @@ public class SkillSubform extends TableRow<Skill> implements TakesValue<Skill> {
     @Inject
     private Event<DataInvalidation<Skill>> dataInvalidationEvent;
 
+    @Inject
+    private TranslationService translationService;
+
     @PostConstruct
     protected void initWidget() {
+        skillNameTextBox.getElement().setAttribute("placeholder", translationService.format(
+                OptaShiftUIConstants.SkillListPanel_skillName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         dataBinder.bind(skillNameTextBox, "name");
 
