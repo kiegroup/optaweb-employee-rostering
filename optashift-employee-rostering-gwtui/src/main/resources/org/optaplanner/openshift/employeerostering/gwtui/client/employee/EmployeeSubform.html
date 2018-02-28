@@ -1,25 +1,25 @@
 <table>
   <!-- TODO: i18n -->
   <tbody data-field="row">
-  <tr data-field="editor">
-    <td>
+  <tr data-field="editor" class="kie-tablelist__row">
+    <td class="kie-tablelist__cell">
       <input data-field="employeeNameTextBox" type="text" placeholder="Spot Name" class="kie-fullwidth"></input> 
     </td>
-    <td>
+    <td class="kie-tablelist__cell">
       <select data-field="skillProficiencySet" class="btn-group bootstrap-select show-tick"
       multiple data-live-search="true" data-selected-text-format="count 3"
       title="Select skills" tabindex="-98">
       </select>
     </td>
-    <td>
+    <td class="kie-tablelist__cell--actions">
       <button data-field="commitChanges" class="btn btn-primary">Save Employee</button>
       <button data-field="cancelChanges" class="btn btn-default">Cancel</button>
     </td>
   </tr>
-  <tr data-field="presenter">
-    <td data-field="employeeName"></td>
-    <td data-field="skillSet"></td>
-    <td>
+  <tr data-field="presenter" class="kie-tablelist__row">
+    <td data-field="employeeName" class="kie-tablelist__cell"></td>
+    <td data-field="skillSet" class="kie-tablelist__cell"></td>
+    <td class="kie-tablelist__cell--actions">
       <a data-field="editCell" href="#0" class="btn btn-link"><span class="fa fa-pencil"></span></a>
       <a data-field="deleteCell" href="#0" class="btn btn-link"><span class="fa fa-trash-o"></span></a>
     </td>
