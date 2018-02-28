@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.header;
 
 import java.util.Arrays;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
@@ -79,6 +80,12 @@ public class MenuView implements IsElement {
 
     @Inject
     private Event<PageChange> pageChangeEvent;
+    @PostConstruct
+    private void initMenu() {
+        pageChangeEvent.fire(new PageChange(Pages.Id.SKILLS));
+        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster);
+        setActive(skills);
+    }
 
     @EventHandler("skills")
     public void skills(final @ForEvent("click") MouseEvent e) {

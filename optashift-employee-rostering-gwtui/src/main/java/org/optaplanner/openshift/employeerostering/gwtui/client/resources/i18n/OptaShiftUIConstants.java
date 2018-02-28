@@ -100,4 +100,5 @@ public interface OptaShiftUIConstants {
 
     @TranslationKey(defaultValue = "Spot")
     final String SpotRosterView_spot = "SpotRosterView.spot";
+
 }

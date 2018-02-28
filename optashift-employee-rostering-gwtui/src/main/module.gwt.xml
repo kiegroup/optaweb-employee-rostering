@@ -3,7 +3,6 @@
     "http://www.gwtproject.org/doctype/2.8.0/gwt-module.dtd">
 <module rename-to="gwtui">
   <source path="client"/>
-  <stylesheet src="kie.css" />
   <!-- TODO remove me once https://github.com/gwtproject/gwt/issues/611 has been fixed -->
   <super-source path="emulate" />
 
@@ -35,4 +34,7 @@
   <set-property name="compiler.stackMode" value="emulated" />
   <set-configuration-property name="compiler.emulatedStack.recordFileNames" value="true" />
   <set-configuration-property name="compiler.emulatedStack.recordLineNumbers" value="true" />
+  
+  <stylesheet src="css/patternfly.min.css"/>
+  <stylesheet src="css/patternfly-additions.min.css"/>
 </module>
