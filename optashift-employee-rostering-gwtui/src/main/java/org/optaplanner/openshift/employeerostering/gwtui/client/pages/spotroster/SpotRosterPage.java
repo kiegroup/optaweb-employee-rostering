@@ -35,6 +35,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 
@@ -68,9 +69,13 @@ public class SpotRosterPage implements Page {
 
     @Inject
     private TenantStore tenantStore;
+    private int numberOfItemsPerPage;
+    private int pageNumber;
 
     @Override
     public Promise<Void> beforeOpen() {
+        numberOfItemsPerPage = 3;
+        pageNumber = 0;
         return refresh();
     }
 
@@ -89,7 +94,7 @@ public class SpotRosterPage implements Page {
 
     private Promise<SpotRosterView> fetchSpotRosterView() {
         return new Promise<>((resolve, reject) -> {
-            getCurrentSpotRosterView(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
+            getCurrentSpotRosterView(tenantStore.getCurrentTenantId(), pageNumber, numberOfItemsPerPage, onSuccess(resolve::onInvoke));
         });
     }
 

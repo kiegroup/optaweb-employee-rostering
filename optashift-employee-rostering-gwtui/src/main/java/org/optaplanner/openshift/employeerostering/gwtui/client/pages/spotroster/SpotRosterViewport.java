@@ -99,9 +99,6 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
         final TimeSlot timeSlot = new TimeSlot(tenantId, start, start.plusHours(8L));
         final Shift shift = new Shift(tenantId, spotLane.getSpot(), timeSlot);
 
-        //TODO: Create shift
-        // ShiftRestServiceBuilder.addShift(tenantId, new ShiftView(shift), onSuccess(shift::setId));
-
         return Stream.of(new ShiftBlob(scale, shift));
     }
 
