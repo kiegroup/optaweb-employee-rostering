@@ -32,8 +32,8 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
@@ -42,13 +42,14 @@ import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRoster
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 import static org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder.getCurrentSpotRosterView;
+import static org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder.getSpotRosterView;
 
 @Templated
 public class SpotRosterPage implements Page {
 
     @Inject
-    @DataField("solve")
-    private HTMLButtonElement solve;
+    @DataField("solve-button")
+    private HTMLButtonElement solveButton;
 
     @Inject
     @DataField("viewport")
@@ -65,17 +66,24 @@ public class SpotRosterPage implements Page {
     private HTMLElement softScore;
 
     @Inject
+    @DataField("next-page-button")
+    private HTMLButtonElement nextPageButton;
+
+    @Inject
+    @DataField("previous-page-button")
+    private HTMLButtonElement previousPageButton;
+
+    @Inject
     private SpotRosterViewportFactory spotRosterViewportFactory;
 
     @Inject
     private TenantStore tenantStore;
-    private int numberOfItemsPerPage;
-    private int pageNumber;
+
+    private Pagination spotsPagination = Pagination.of(0, 10);
+    private Pagination timePagination = Pagination.of(0, 7);
 
     @Override
     public Promise<Void> beforeOpen() {
-        numberOfItemsPerPage = 3;
-        pageNumber = 0;
         return refresh();
     }
 
@@ -88,19 +96,24 @@ public class SpotRosterPage implements Page {
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
             hardScore.textContent = score.map(HardSoftScore::getHardScore).map(Object::toString).orElse("");
             softScore.textContent = score.map(HardSoftScore::getSoftScore).map(Object::toString).orElse("");
-            return initViewportView(spotRosterView);
+
+            if (spotRosterView.getSpotList().isEmpty()) {
+                spotsPagination = spotsPagination.previousPage();
+                return resolve();
+            } else {
+                viewportView.setViewport(spotRosterViewportFactory.getViewport(spotRosterView));
+                return resolve();
+            }
         });
     }
 
     private Promise<SpotRosterView> fetchSpotRosterView() {
         return new Promise<>((resolve, reject) -> {
-            getCurrentSpotRosterView(tenantStore.getCurrentTenantId(), pageNumber, numberOfItemsPerPage, onSuccess(resolve::onInvoke));
-        });
-    }
 
-    private Promise<Void> initViewportView(final SpotRosterView spotRosterView) {
-        viewportView.setViewport(spotRosterViewportFactory.getViewport(spotRosterView));
-        return resolve();
+            getCurrentSpotRosterView(tenantStore.getCurrentTenantId(),
+                                     spotsPagination.getPageNumber(),
+                                     spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));
+        });
     }
 
     private Promise<Void> solveRoster() {
@@ -109,12 +122,24 @@ public class SpotRosterPage implements Page {
         });
     }
 
-    @EventHandler("solve")
+    @EventHandler("solve-button")
     public void onSolveClicked(final ClickEvent ignore) {
         solveRoster().then(i -> {
             repeat(this::refresh, 30000, 1000);
             return resolve();
         });
+    }
+
+    @EventHandler("previous-page-button")
+    public void onPreviousPageButtonClicked(final ClickEvent ignore) {
+        spotsPagination = spotsPagination.previousPage();
+        refresh();
+    }
+
+    @EventHandler("next-page-button")
+    public void onNextPageButtonClicked(final ClickEvent ignore) {
+        spotsPagination = spotsPagination.nextPage();
+        refresh();
     }
 
     private void repeat(final Runnable task,
