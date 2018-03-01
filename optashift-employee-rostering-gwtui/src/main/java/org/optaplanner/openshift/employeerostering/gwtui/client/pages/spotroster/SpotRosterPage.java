@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
@@ -96,12 +95,16 @@ public class SpotRosterPage implements Page {
         return refresh();
     }
 
-    public void onTenantChanged(final @Observes TenantStore.TenantChange tenant) {
+    public void onTenantChanged(@Observes final TenantStore.TenantChange tenant) {
         refresh();
     }
 
     public Promise<Void> refresh() {
+
+        loadingSpinner.showFor("spot-roster-page");
+
         return fetchSpotRosterView().then(spotRosterView -> {
+
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
             hardScore.textContent = score.map(HardSoftScore::getHardScore).map(Object::toString).orElse("");
             softScore.textContent = score.map(HardSoftScore::getSoftScore).map(Object::toString).orElse("");
@@ -110,7 +113,6 @@ public class SpotRosterPage implements Page {
                 spotsPagination = spotsPagination.previousPage();
                 return resolve();
             } else {
-                loadingSpinner.showFor("spot-roster-page");
                 viewportView.setViewport(spotRosterViewportFactory.getViewport(spotRosterView));
                 return resolve();
             }
