@@ -32,6 +32,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
@@ -42,7 +43,6 @@ import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRoster
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 import static org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder.getCurrentSpotRosterView;
-import static org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder.getSpotRosterView;
 
 @Templated
 public class SpotRosterPage implements Page {
@@ -50,6 +50,10 @@ public class SpotRosterPage implements Page {
     @Inject
     @DataField("solve-button")
     private HTMLButtonElement solveButton;
+
+    @Inject
+    @DataField("refresh-button")
+    private HTMLButtonElement refreshButton;
 
     @Inject
     @DataField("viewport")
@@ -79,6 +83,9 @@ public class SpotRosterPage implements Page {
     @Inject
     private TenantStore tenantStore;
 
+    @Inject
+    private LoadingSpinner loadingSpinner;
+
     private Pagination spotsPagination = Pagination.of(0, 10);
     private Pagination timePagination = Pagination.of(0, 7);
 
@@ -92,6 +99,7 @@ public class SpotRosterPage implements Page {
     }
 
     public Promise<Void> refresh() {
+        loadingSpinner.showFor("spot-roster-page");
         return fetchSpotRosterView().then(spotRosterView -> {
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
             hardScore.textContent = score.map(HardSoftScore::getHardScore).map(Object::toString).orElse("");
@@ -104,6 +112,12 @@ public class SpotRosterPage implements Page {
                 viewportView.setViewport(spotRosterViewportFactory.getViewport(spotRosterView));
                 return resolve();
             }
+        }).then(i -> {
+            loadingSpinner.hideFor("spot-roster-page");
+            return resolve();
+        }).catch_(i -> {
+            loadingSpinner.hideFor("spot-roster-page");
+            return resolve();
         });
     }
 
@@ -123,11 +137,17 @@ public class SpotRosterPage implements Page {
     }
 
     @EventHandler("solve-button")
-    public void onSolveClicked(final ClickEvent ignore) {
+    public void onSolveButtonClicked(final ClickEvent ignore) {
+        loadingSpinner.showFor("solve-roster");
         solveRoster().then(i -> {
-            repeat(this::refresh, 30000, 1000);
+            repeat(this::refresh, 30000, 1000, "solve-roster");
             return resolve();
         });
+    }
+
+    @EventHandler("refresh-button")
+    public void onRefreshButtonClicked(final ClickEvent ignore) {
+        refresh();
     }
 
     @EventHandler("previous-page-button")
@@ -144,12 +164,22 @@ public class SpotRosterPage implements Page {
 
     private void repeat(final Runnable task,
                         final int total,
-                        final int step) {
+                        final int step,
+                        final String loadingTaskId) {
 
         final long start = System.currentTimeMillis();
+
         Scheduler.get().scheduleFixedDelay(() -> {
+
             task.run();
-            return System.currentTimeMillis() - start <= total;
+
+            final boolean shouldRunAgain = System.currentTimeMillis() - start <= total;
+
+            if (!shouldRunAgain) {
+                loadingSpinner.hideFor(loadingTaskId);
+            }
+
+            return shouldRunAgain;
         }, step);
     }
 }

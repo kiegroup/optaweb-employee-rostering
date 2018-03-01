@@ -7,6 +7,7 @@
   -ms-animation: fadein 0.4s ease-in; /* Internet Explorer */
   -o-animation: fadein 0.4s ease-in; /* Opera < 12.1 */
   animation: fadein 0.4s ease-in;
+  position: relative;
 }
 
 @keyframes fadein {
@@ -82,4 +83,41 @@
 
 .rest-api-link {
   color: #d1d1d1;
+}
+
+.loading-spinner {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+  min-height: 100%;
+  min-width: 100%;
+  text-align: center;
+  padding: 50px;
+  font-size: 2em;
+  color: white;
+}
+
+.spin {
+  animation: spin 1s infinite linear;
+  -webkit-animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  from {
+    transform: scale(1) rotate(0deg);
+  }
+  to {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
 }
