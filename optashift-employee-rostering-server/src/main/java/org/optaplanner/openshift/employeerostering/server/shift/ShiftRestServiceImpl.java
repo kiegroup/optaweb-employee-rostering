@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -36,7 +35,6 @@ import org.optaplanner.openshift.employeerostering.server.common.AbstractRestSer
 import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeGroup;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.lang.parser.ParserException;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.BaseDateDefinitions;
@@ -144,19 +142,10 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         LocalDateTime startDate = LocalDateTime.parse(startDateString);
         LocalDateTime endDate = LocalDateTime.parse(endDateString);
 
-        Map<Long, List<Spot>> spotGroupMap = new HashMap<>();
-        Map<Long, List<Employee>> employeeGroupMap = new HashMap<>();
-        spotRestService.getSpotGroups(tenantId).forEach((g) -> spotGroupMap.put(g.getId(), g.getSpots()));
-        employeeRestService.getEmployeeGroups(tenantId).forEach((g) -> employeeGroupMap.put(g.getId(), g
-                .getEmployees()));
-        employeeGroupMap.put(EmployeeGroup.ALL_GROUP_ID, employeeRestService.getEmployeeList(tenantId));
-
         try {
             ShiftFileParser.ParserOut parserOutput = ShiftFileParser.parse(tenantId,
                     spotRestService.getSpotList(tenantId),
                     employeeRestService.getEmployeeList(tenantId),
-                    spotGroupMap,
-                    employeeGroupMap,
                     startDate,
                     endDate,
                     template);

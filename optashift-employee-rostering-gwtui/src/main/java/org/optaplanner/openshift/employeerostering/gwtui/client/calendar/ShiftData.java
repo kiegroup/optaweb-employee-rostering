@@ -7,7 +7,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.HasTi
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotId;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.OptionalEmployee;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -19,10 +18,10 @@ public class ShiftData extends ShiftInfo implements HasTimeslot<SpotId> {
     public ShiftData(SpotData shift) {
         super();
         super.setRotationEmployeeList(Arrays.asList(new OptionalEmployee(shift.getShift().getTenantId(), shift
-                .getShift().getRotationEmployee())));
+                                                                                                              .getShift().getRotationEmployee())));
         this.setStartTime(shift.getStartTime());
         this.setEndTime(shift.getEndTime());
-        this.setSpotList(Arrays.asList(new IdOrGroup(shift.getSpot().getTenantId(), false, shift.getSpot().getId())));
+        this.setSpotList(Arrays.asList(shift.getSpot()));
         this.shift = shift;
     }
 
