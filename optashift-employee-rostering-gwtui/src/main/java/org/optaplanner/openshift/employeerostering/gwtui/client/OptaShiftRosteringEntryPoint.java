@@ -42,9 +42,11 @@ public class OptaShiftRosteringEntryPoint {
 
     @PostConstruct
     public void onModuleLoad() {
+        final GWT.UncaughtExceptionHandler javascriptLoggerExceptionHandler = GWT.getUncaughtExceptionHandler();
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
 
             public void onUncaughtException(Throwable e) {
+                javascriptLoggerExceptionHandler.onUncaughtException(e);
                 Throwable unwrapped = unwrap(e);
                 StringBuilder message = new StringBuilder();
                 StackTracePrintStream stackTracePrintStream = new StackTracePrintStream(message);
