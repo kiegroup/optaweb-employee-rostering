@@ -27,9 +27,11 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
@@ -99,7 +101,6 @@ public class SpotRosterPage implements Page {
     }
 
     public Promise<Void> refresh() {
-        loadingSpinner.showFor("spot-roster-page");
         return fetchSpotRosterView().then(spotRosterView -> {
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
             hardScore.textContent = score.map(HardSoftScore::getHardScore).map(Object::toString).orElse("");
@@ -109,6 +110,7 @@ public class SpotRosterPage implements Page {
                 spotsPagination = spotsPagination.previousPage();
                 return resolve();
             } else {
+                loadingSpinner.showFor("spot-roster-page");
                 viewportView.setViewport(spotRosterViewportFactory.getViewport(spotRosterView));
                 return resolve();
             }
@@ -137,7 +139,7 @@ public class SpotRosterPage implements Page {
     }
 
     @EventHandler("solve-button")
-    public void onSolveButtonClicked(final ClickEvent ignore) {
+    public void onSolveButtonClicked(@ForEvent("click") final MouseEvent e) {
         loadingSpinner.showFor("solve-roster");
         solveRoster().then(i -> {
             repeat(this::refresh, 30000, 1000, "solve-roster");
@@ -146,18 +148,23 @@ public class SpotRosterPage implements Page {
     }
 
     @EventHandler("refresh-button")
-    public void onRefreshButtonClicked(final ClickEvent ignore) {
+    public void onRefreshButtonClicked(@ForEvent("click") final MouseEvent e) {
         refresh();
     }
 
     @EventHandler("previous-page-button")
-    public void onPreviousPageButtonClicked(final ClickEvent ignore) {
+    public void onPreviousPageButtonClicked(@ForEvent("click") final MouseEvent e) {
+
+        if (spotsPagination.isOnFirstPage()) {
+            return;
+        }
+
         spotsPagination = spotsPagination.previousPage();
         refresh();
     }
 
     @EventHandler("next-page-button")
-    public void onNextPageButtonClicked(final ClickEvent ignore) {
+    public void onNextPageButtonClicked(@ForEvent("click") final MouseEvent e) {
         spotsPagination = spotsPagination.nextPage();
         refresh();
     }

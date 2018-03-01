@@ -21,9 +21,11 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
-import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
+
+import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 
 @Dependent
 public class NavigationController {
@@ -34,7 +36,13 @@ public class NavigationController {
     @Inject
     private Pages pages;
 
+    @Inject
+    private LoadingSpinner loadingSpinner;
+
     public void onPageChanged(final @Observes PageChange pageChange) {
+
+        loadingSpinner.showFor("page-change");
+
         final Page page = pages.get(pageChange.getPageId());
 
         page.beforeOpen().then(i -> {
@@ -42,7 +50,10 @@ public class NavigationController {
             return page.onOpen();
         }).then(i -> {
             pageChange.afterPageOpen.run();
-            return PromiseUtils.resolve();
+            return resolve();
+        }).then(i -> {
+            loadingSpinner.hideFor("page-change");
+            return resolve();
         });
     }
 

@@ -59,4 +59,8 @@ public class Pagination {
     public Pagination withNumberOfItemsPerPage(final Integer numberOfItemsPerPage) {
         return new Pagination(pageNumber, numberOfItemsPerPage);
     }
+
+    public boolean isOnFirstPage() {
+        return pageNumber == 0;
+    }
 }
