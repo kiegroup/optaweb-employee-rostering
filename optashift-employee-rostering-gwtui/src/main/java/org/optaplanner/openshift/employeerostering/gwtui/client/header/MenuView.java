@@ -21,7 +21,6 @@ import java.util.Arrays;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
@@ -29,18 +28,19 @@ import jsinterop.base.Js;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS_OLD;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS_OLD;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_OLD;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_OLD;
 
 @Templated
 public class MenuView implements IsElement {
@@ -81,55 +81,55 @@ public class MenuView implements IsElement {
     private Event<PageChange> pageChangeEvent;
 
     @EventHandler("skills")
-    public void skills(final ClickEvent e) {
+    public void skills(final @ForEvent("click") MouseEvent e) {
         goTo(SKILLS, e);
     }
 
     @EventHandler("spots")
-    public void spots(final ClickEvent e) {
+    public void spots(final @ForEvent("click") MouseEvent e) {
         goTo(SPOTS, e);
     }
 
     @EventHandler("employees")
-    public void employees(final ClickEvent e) {
+    public void employees(final @ForEvent("click") MouseEvent e) {
         goTo(EMPLOYEES, e);
     }
 
     @EventHandler("rotations-old")
-    public void rotationsOld(final ClickEvent e) {
+    public void rotationsOld(final @ForEvent("click") MouseEvent e) {
         goTo(ROTATIONS_OLD, e);
     }
 
     @EventHandler("spot-roster-old")
-    public void spotRosterOld(final ClickEvent e) {
+    public void spotRosterOld(final @ForEvent("click") MouseEvent e) {
         goTo(SPOT_ROSTER_OLD, e);
     }
 
     @EventHandler("employee-roster")
-    public void employeeRoster(final ClickEvent e) {
+    public void employeeRoster(final @ForEvent("click") MouseEvent e) {
         goTo(EMPLOYEE_ROSTER, e);
     }
 
     @EventHandler("spot-roster")
-    public void spotRoster(final ClickEvent e) {
+    public void spotRoster(final @ForEvent("click") MouseEvent e) {
         goTo(SPOT_ROSTER, e);
     }
 
     @EventHandler("rotations")
-    public void rotations(final ClickEvent e) {
+    public void rotations(final @ForEvent("click") MouseEvent e) {
         goTo(ROTATIONS, e);
     }
 
     private void goTo(final Pages.Id pageId,
-                      final ClickEvent event) {
+                      final @ForEvent("click") MouseEvent event) {
 
         pageChangeEvent.fire(new PageChange(pageId));
-        handleActiveLink(Js.cast(event.getNativeEvent()));
+        handleActiveLink(Js.cast(event.target));
     }
 
-    private void handleActiveLink(final MouseEvent event) {
+    private void handleActiveLink(final HTMLElement target) {
         setInactive(skills, spots, employees, rotationsOld, spotRosterOld, employeeRoster, rotations, spotRoster);
-        setActive(Js.cast(event.target));
+        setActive(target);
     }
 
     private void setActive(final HTMLElement element) {

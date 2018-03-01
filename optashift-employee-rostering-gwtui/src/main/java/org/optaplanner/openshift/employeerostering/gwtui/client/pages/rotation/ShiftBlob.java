@@ -43,7 +43,7 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
         this.scale = scale;
         this.baseDate = baseDate;
         this.sizeInGridPixels = getInitialSizeInGridPixels();
-        this.twin = getUpdatedTwin();
+        this.twin = getUpdatedTwin().orElse(null);
     }
 
     private ShiftBlob(final Shift shift,
@@ -88,7 +88,7 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     }
 
     @Override
-    public ShiftBlob getUpdatedTwin() {
+    public Optional<ShiftBlob> getUpdatedTwin() {
 
         //FIXME: Maybe it's better to use the Viewport sizeInGridPixels instead of the end of the scale
 
@@ -101,9 +101,9 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
             final Long offset = (getPositionInGridPixels() < 0 ? 1 : -1) * scale.getEndInGridPixels();
             twin.setPositionInScaleUnits(scale.toScaleUnits(getPositionInGridPixels() + offset));
             twin.setSizeInGridPixels(sizeInGridPixels);
-            return twin;
+            return Optional.of(twin);
         } else {
-            return null;
+            return Optional.empty();
         }
     }
 

@@ -20,12 +20,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.MouseEvent;
-import jsinterop.base.Js;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListView;
@@ -76,8 +75,7 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
     }
 
     @EventHandler("sub-lane")
-    public void onClick(final ClickEvent event) {
-        final MouseEvent e = Js.cast(event.getNativeEvent());
+    public void onClick(final @ForEvent("click") MouseEvent e) {
 
         if (!e.target.equals(e.currentTarget)) {
             return;

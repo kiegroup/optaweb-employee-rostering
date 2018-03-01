@@ -19,14 +19,12 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
-import jsinterop.base.Js;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListView;
@@ -36,6 +34,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.power
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CircularResizability;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionState;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
+import org.slf4j.Logger;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionState.COLLIDING;
 
@@ -59,6 +58,9 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
 
     @Inject
     private CircularResizability<Long, ShiftBlob> resizability;
+
+    @Inject
+    private Logger logger;
 
     private Viewport<Long> viewport;
     private SubLane<Long> subLane;
@@ -109,7 +111,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
         refreshTwinIfAny();
 
         if (dragState.equals(COLLIDING)) {
-            DomGlobal.console.info("Collision!");
+            logger.info("Collision!");
         }
     }
 
@@ -120,7 +122,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
         refreshTwinIfAny();
 
         if (dragState.equals(COLLIDING)) {
-            DomGlobal.console.info("Collision!");
+            logger.info("Collision!");
         }
     }
 
@@ -132,9 +134,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     }
 
     @EventHandler("blob")
-    public void onBlobClicked(final ClickEvent event) {
-        final MouseEvent e = Js.cast(event.getNativeEvent());
-
+    public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
         if (e.altKey) {
             blob.getTwin().ifPresent(twin -> {
                 blobViews.remove(twin);
