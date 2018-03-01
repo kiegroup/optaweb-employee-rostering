@@ -23,7 +23,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 
 public interface BlobWithTwin<T, Y extends BlobWithTwin<T, Y>> extends Blob<T> {
 
-    Y getUpdatedTwin();
+    Optional<Y> getUpdatedTwin();
 
     Y newTwin();
 

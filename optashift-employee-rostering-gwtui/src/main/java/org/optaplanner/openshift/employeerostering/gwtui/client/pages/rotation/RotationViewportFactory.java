@@ -16,7 +16,9 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -68,15 +70,9 @@ public class RotationViewportFactory {
 
         final Integer durationInWeeks = tenantStore.getCurrentTenant().getConfiguration().getTemplateDuration();
         final Long durationTimeInMinutes = durationInWeeks * 7 * 24 * 60L;
-        final LinearScale<Long> scale = new Infinite60MinutesScale(durationTimeInMinutes);
 
-        //FIXME: Is there other way to get the baseDate?
-        final LocalDateTime baseDate = shiftsBySpot.values().stream()
-                .flatMap(Collection::stream)
-                .map(shift -> shift.getTimeSlot().getStartDateTime())
-                .min(naturalOrder())
-                .orElseThrow(() -> new RuntimeException("Cannot obtain baseDate from a ShiftTemplate with zero Shifts"))
-                .toLocalDate().atTime(0, 0);
+        final LinearScale<Long> scale = new Infinite60MinutesScale(durationTimeInMinutes);
+        final LocalDateTime baseDate = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
 
         return new RotationViewport(tenantStore.getCurrentTenantId(),
                                     baseDate,

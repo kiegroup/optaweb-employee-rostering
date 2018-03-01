@@ -26,16 +26,17 @@ import java.util.stream.Stream;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
@@ -81,9 +82,8 @@ public class RotationPage implements Page {
     private Map<Long, SpotGroup> spotGroupsById;
     private Viewport<Long> viewport;
 
-
     @EventHandler("save-button")
-    private void onSaveClicked(final ClickEvent e) {
+    public void onSaveButtonClicked(final @ForEvent("click") MouseEvent e) {
         save();
         e.preventDefault();
     }

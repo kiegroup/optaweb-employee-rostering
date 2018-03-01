@@ -52,7 +52,7 @@ public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
         blob.setSizeInGridPixels(newSizeInGridPixels);
 
         blob.getTwin().ifPresent(blobViews::remove);
-        blob.setTwin(blob.getUpdatedTwin());
+        blob.setTwin(blob.getUpdatedTwin().orElse(null));
         blob.getTwin().ifPresent(blobViews::add);
 
         final boolean anyCollisionDetected =
