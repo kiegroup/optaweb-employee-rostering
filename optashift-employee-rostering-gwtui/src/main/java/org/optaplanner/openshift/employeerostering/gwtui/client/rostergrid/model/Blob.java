@@ -43,17 +43,12 @@ public interface Blob<T> {
 
     default boolean collidesWith(final Blob<?> other) {
 
-        final Long x0 = getPositionInGridPixels();
-        final Long x1 = getEndPositionInGridPixels();
-        final Long y0 = other.getPositionInGridPixels();
-        final Long y1 = other.getEndPositionInGridPixels();
+        final long x = getPositionInGridPixels();
+        final long xs = getSizeInGridPixels();
 
-        final Long intersectionLeft = y1 - x0;
-        final Long intersectionRight = x1 - y0;
+        final long y = other.getPositionInGridPixels();
+        final long ys = other.getSizeInGridPixels();
 
-        final boolean b1 = intersectionLeft > 0 && intersectionLeft <= getSizeInGridPixels();
-        final boolean b2 = intersectionRight > 0 && intersectionRight <= other.getSizeInGridPixels();
-
-        return b1 || b2;
+        return x + xs > y && y + ys > x;
     }
 }
