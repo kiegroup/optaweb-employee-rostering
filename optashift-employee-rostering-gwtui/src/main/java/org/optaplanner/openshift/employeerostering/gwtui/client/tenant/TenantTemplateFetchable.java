@@ -11,13 +11,11 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Fetch
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotData;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotGroup;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
@@ -43,62 +41,36 @@ public class TenantTemplateFetchable implements Fetchable<Collection<ShiftData>>
 
                 @Override
                 public void onSuccess(List<Spot> spotList) {
-                    SpotRestServiceBuilder.getSpotGroups(tenantId, new FailureShownRestCallback<List<SpotGroup>>() {
+                    ShiftRestServiceBuilder.getTemplate(tenantIdSupplier.get(),
+                                                        new FailureShownRestCallback<ShiftTemplate>() {
 
-                        @Override
-                        public void onSuccess(List<SpotGroup> spotGroupList) {
-                            ShiftRestServiceBuilder.getTemplate(tenantIdSupplier.get(),
-                                    new FailureShownRestCallback<
-                                            ShiftTemplate>() {
-
-                                        @Override
-                                        public void onSuccess(ShiftTemplate template) {
-                                            id = 0L;
-                                            List<ShiftData> out = new ArrayList<>();
-                                            for (ShiftInfo shift : template.getShiftList()) {
-                                                int i = 0;
-                                                for (IdOrGroup spotId : shift.getSpotList()) {
-                                                    if (spotId.getIsGroup()) {
-                                                        for (Spot spot : spotGroupList.stream().filter((g) -> g.getId()
-                                                                .equals(
-                                                                        spotId.getItemId())).findAny().get()
-                                                                .getSpots()) {
-                                                            Shift newShift = new Shift(TENANT_ID,
-                                                                    spot, new TimeSlot(tenantId, shift.getStartTime(),
-                                                                            shift
-                                                                                    .getEndTime()));
-                                                            newShift.setId(id);
-                                                            newShift.setRotationEmployee(shift.getRotationEmployeeList()
-                                                                    .get(i).getEmployee());
-                                                            id++;
-                                                            out.add(new ShiftData(new SpotData(newShift)));
-                                                        }
-                                                    } else {
-                                                        Spot spot = spotList.stream().filter((s) -> s.getId().equals(
-                                                                spotId.getItemId())).findAny().get();
-                                                        Shift newShift = new Shift(TENANT_ID,
-                                                                spot, new TimeSlot(tenantId, shift.getStartTime(), shift
-                                                                        .getEndTime()));
-                                                        newShift.setId(id);
-                                                        newShift.setRotationEmployee(shift.getRotationEmployeeList()
-                                                                .get(i).getEmployee());
-                                                        id++;
-                                                        out.add(new ShiftData(new SpotData(newShift)));
-                                                    }
-                                                    i++;
-                                                }
-                                            }
-                                            updatable.onUpdate(out);
-                                            after.execute();
-                                        }
-                                    });
-
-                        }
-
-                    });
+                                                            @Override
+                                                            public void onSuccess(ShiftTemplate template) {
+                                                                id = 0L;
+                                                                List<ShiftData> out = new ArrayList<>();
+                                                                for (ShiftInfo shift : template.getShiftList()) {
+                                                                    int i = 0;
+                                                                    for (Spot spot : shift.getSpotList()) {
+                                                                        Shift newShift = new Shift(TENANT_ID,
+                                                                                                   spot, new TimeSlot(tenantId, shift.getStartTime(), shift
+                                                                                                                                                           .getEndTime()));
+                                                                        newShift.setId(id);
+                                                                        newShift.setRotationEmployee(shift.getRotationEmployeeList()
+                                                                                                          .get(i).getEmployee());
+                                                                        id++;
+                                                                        out.add(new ShiftData(new SpotData(newShift)));
+                                                                    }
+                                                                    i++;
+                                                                }
+                                                                updatable.onUpdate(out);
+                                                                after.execute();
+                                                            }
+                                                        });
 
                 }
+
             });
+
         } else {
             after.execute();
         }

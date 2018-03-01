@@ -24,7 +24,6 @@ import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotGroup;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestService;
 
 public class SpotRestServiceImpl extends AbstractRestServiceImpl implements SpotRestService {
@@ -74,67 +73,6 @@ public class SpotRestServiceImpl extends AbstractRestServiceImpl implements Spot
         validateTenantIdParameter(tenantId, spot);
         entityManager.remove(spot);
         return true;
-    }
-
-    @Override
-    public List<SpotGroup> getSpotGroups(Integer tenantId) {
-        return entityManager.createNamedQuery("SpotGroup.findAll", SpotGroup.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList();
-    }
-
-    @Override
-    public SpotGroup getSpotGroup(Integer tenantId, Long id) {
-        SpotGroup group = entityManager.find(SpotGroup.class, id);
-        validateTenantIdParameter(tenantId, group);
-        return group;
-    }
-
-    @Override
-    @Transactional
-    public Long createSpotGroup(Integer tenantId, SpotGroup spotGroup) {
-        validateTenantIdParameter(tenantId, spotGroup);
-        entityManager.persist(spotGroup);
-        return spotGroup.getId();
-    }
-
-    @Override
-    @Transactional
-    public void addSpotToSpotGroup(Integer tenantId, Long id, Spot spot) {
-        SpotGroup group = getSpotGroup(tenantId, id);
-        validateTenantIdParameter(tenantId, spot);
-        group.getSpots().add(spot);
-        entityManager.merge(group);
-
-    }
-
-    @Override
-    @Transactional
-    public void removeSpotFromSpotGroup(Integer tenantId, Long id, Spot spot) {
-        SpotGroup group = getSpotGroup(tenantId, id);
-        validateTenantIdParameter(tenantId, spot);
-        group.getSpots().remove(spot);
-        entityManager.merge(group);
-    }
-
-    @Override
-    @Transactional
-    public Boolean deleteSpotGroup(Integer tenantId, Long id) {
-        SpotGroup group = entityManager.find(SpotGroup.class, id);
-        if (group == null) {
-            return false;
-        }
-        validateTenantIdParameter(tenantId, group);
-        entityManager.remove(group);
-        return true;
-    }
-
-    @Override
-    public SpotGroup findSpotGroupByName(Integer tenantId, String name) {
-        return entityManager.createNamedQuery("SpotGroup.findByName", SpotGroup.class)
-                .setParameter("tenantId", tenantId)
-                .setParameter("name", name)
-                .getSingleResult();
     }
 
 }

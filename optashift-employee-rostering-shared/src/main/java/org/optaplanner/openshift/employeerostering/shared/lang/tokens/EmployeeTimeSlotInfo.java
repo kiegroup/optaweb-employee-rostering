@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 
 /**
@@ -22,11 +23,11 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 public class EmployeeTimeSlotInfo extends AbstractPersistable {
 
     /**
-     * What Employee/Employee Group does this EmployeeTimeSlotInfo
+     * What Employee does this EmployeeTimeSlotInfo
      * apply to.
      */
     @ManyToOne(cascade = CascadeType.ALL)
-    IdOrGroup employeeId;
+    Employee employeeId;
 
     /**
      * The {@link EmployeeAvailabilityState} this group have if
@@ -46,14 +47,13 @@ public class EmployeeTimeSlotInfo extends AbstractPersistable {
 
     }
 
-    public EmployeeTimeSlotInfo(Integer tenantId, IdOrGroup id, EmployeeAvailabilityState availability) {
+    public EmployeeTimeSlotInfo(Integer tenantId, Employee id, EmployeeAvailabilityState availability) {
         super(tenantId);
         this.employeeId = id;
         this.defaultAvailability = availability;
     }
 
-    public EmployeeTimeSlotInfo(Integer tenantId, IdOrGroup id, EmployeeAvailabilityState availability, List<
-            EmployeeConditional> availabilityConditions) {
+    public EmployeeTimeSlotInfo(Integer tenantId, Employee id, EmployeeAvailabilityState availability, List<EmployeeConditional> availabilityConditions) {
         this(tenantId, id, availability);
         this.availabilityConditionList = availabilityConditions;
     }
@@ -62,7 +62,7 @@ public class EmployeeTimeSlotInfo extends AbstractPersistable {
      * Getter for {@link EmployeeTimeSlotInfo#employeeId}
      * @return Value of {@link EmployeeTimeSlotInfo#employeeId}
      */
-    public IdOrGroup getEmployeeId() {
+    public Employee getEmployeeId() {
         return employeeId;
     }
 
@@ -71,7 +71,7 @@ public class EmployeeTimeSlotInfo extends AbstractPersistable {
      * 
      * @param id Value to set {@link EmployeeTimeSlotInfo#employeeId} to
      */
-    public void setEmployeeId(IdOrGroup id) {
+    public void setEmployeeId(Employee id) {
         this.employeeId = id;
     }
 

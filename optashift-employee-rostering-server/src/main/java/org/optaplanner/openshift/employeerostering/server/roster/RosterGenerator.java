@@ -38,7 +38,6 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EmployeeTimeSlotInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.OptionalEmployee;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
@@ -172,7 +171,7 @@ public class RosterGenerator {
             for (Employee employee : extractRandomSubList(employees, 0.2)) {
                 employeeTimeslot = new EmployeeTimeSlotInfo();
                 employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(new IdOrGroup(tenantId, false, employee.getId()));
+                employeeTimeslot.setEmployeeId(employee);
                 employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNAVAILABLE);
                 shiftAvailability.add(employeeTimeslot);
             }
@@ -180,7 +179,7 @@ public class RosterGenerator {
             for (Employee employee : extractRandomSubList(employees, 0.3)) {
                 employeeTimeslot = new EmployeeTimeSlotInfo();
                 employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(new IdOrGroup(tenantId, false, employee.getId()));
+                employeeTimeslot.setEmployeeId(employee);
                 employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNDESIRED);
                 shiftAvailability.add(employeeTimeslot);
             }
@@ -188,7 +187,7 @@ public class RosterGenerator {
             for (Employee employee : extractRandomSubList(employees, 0.1)) {
                 employeeTimeslot = new EmployeeTimeSlotInfo();
                 employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(new IdOrGroup(tenantId, false, employee.getId()));
+                employeeTimeslot.setEmployeeId(employee);
                 employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.DESIRED);
                 shiftAvailability.add(employeeTimeslot);
             }
@@ -196,7 +195,7 @@ public class RosterGenerator {
             shift.setEmployeeList(shiftAvailability);
 
             //Generate spots using the timeslot
-            List<IdOrGroup> shiftSpots = new ArrayList<>();
+            List<Spot> shiftSpots = new ArrayList<>();
             List<OptionalEmployee> rotationEmployeeList = new ArrayList<>();
             for (Spot spot : spots) {
                 boolean weekendEnabled = random.nextInt(10) < 8;
@@ -205,7 +204,7 @@ public class RosterGenerator {
                 if ((!weekendEnabled && i >= 5 * 3) || (!nightEnabled && i % 3 == 2)) {
                     continue;
                 }
-                shiftSpots.add(new IdOrGroup(tenantId, false, spot.getId()));
+                shiftSpots.add(spot);
                 if (assignDefaultEmployee) {
                     rotationEmployeeList.add(new OptionalEmployee(tenantId, employees.get(random.nextInt(employees
                             .size()))));

@@ -19,7 +19,6 @@ import org.optaplanner.openshift.employeerostering.shared.lang.parser.DateMatche
 import org.optaplanner.openshift.employeerostering.shared.lang.parser.ParserException;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.BaseDateDefinitions;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EmployeeTimeSlotInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.RepeatMode;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
@@ -33,8 +32,6 @@ public class ShiftFileParser {
     public static ParserOut parse(Integer tenantId,
                                   List<Spot> spots,
                                   List<Employee> employees,
-                                  Map<Long, List<Spot>> spotGroupMap,
-                                  Map<Long, List<Employee>> employeeGroupMap,
                                   LocalDateTime start,
                                   LocalDateTime end,
                                   ShiftTemplate template) throws ParserException {
@@ -118,13 +115,8 @@ public class ShiftFileParser {
 
         state.shiftOutputList = new ArrayList<>();
         state.employeeAvailabityOutputList = new ArrayList<>();
-        state.spotMap = spots.stream()
-                             .collect(Collectors.toMap(Spot::getId, Function.identity()));
         state.employeeMap = employees.stream()
                                      .collect(Collectors.toMap(Employee::getId, Function.identity()));
-        state.spotGroupMap = spotGroupMap;
-        state.employeeGroupMap = employeeGroupMap;
-
         addShiftsFrom(state, template.getShiftList());
         ParserOut out = new ParserOut();
         out.shiftOutputList = state.shiftOutputList;
@@ -199,22 +191,10 @@ public class ShiftFileParser {
     private static void addShift(ParserState state, ShiftInfo shiftInfo, LocalDateTime startDate, LocalDateTime endDate) throws ParserException {
         TimeSlot timeslot = new TimeSlot(state.tenantId, startDate, endDate);
         int i = 0;
-        for (IdOrGroup id : shiftInfo.getSpotList()) {
-            if (id.getIsGroup()) {
-                for (Spot spot : state.spotGroupMap.get(id.getItemId())) {
-                    // Grouped spots cannot have a rotation employee, since it be impossible
-                    // to decide what spot get what employee
-                    state.shiftOutputList.add(new Shift(state.tenantId, spot, timeslot, null));
-                }
-            } else {
-                Spot spot = state.spotMap.get(id.getItemId());
-                if (null == spot) {
-                    throw new ParserException("spot is null! id: " + id.getItemId());
-                }
+        for (Spot spot : shiftInfo.getSpotList()) {
                 state.shiftOutputList.add(new Shift(state.tenantId, spot, timeslot, shiftInfo.getRotationEmployeeList().get(i)
                         .getEmployee()));
                 i++;
-            }
         }
 
         for (EmployeeTimeSlotInfo employeeInfo : shiftInfo.getEmployeeList()) {
@@ -239,19 +219,10 @@ public class ShiftFileParser {
                 employeeState = employeeStateCond.get().getReplacement();
             }
 
-            if (employeeInfo.getEmployeeId().getIsGroup()) {
-                for (Employee employee : state.employeeGroupMap.get(employeeInfo.getEmployeeId().getItemId())) {
-                    EmployeeAvailability employeeAvailability = new EmployeeAvailability(state.tenantId,
-                                                                                         employee, timeslot);
-                    employeeAvailability.setState(employeeState);
-                    state.employeeAvailabityOutputList.add(employeeAvailability);
-                }
-            } else {
                 EmployeeAvailability employeeAvailability = new EmployeeAvailability(state.tenantId,
-                                                                                     state.employeeMap.get(employeeInfo.getEmployeeId().getItemId()), timeslot);
+                    state.employeeMap.get(employeeInfo.getEmployeeId().getId()), timeslot);
                 employeeAvailability.setState(employeeState);
                 state.employeeAvailabityOutputList.add(employeeAvailability);
-            }
 
         }
     }
@@ -262,10 +233,7 @@ public class ShiftFileParser {
         List<Shift> shiftOutputList;
         List<EmployeeAvailability> employeeAvailabityOutputList;
         List<DateMatcher<ShiftInfo>> universalExceptionList;
-        Map<Long, Spot> spotMap;
         Map<Long, Employee> employeeMap;
-        Map<Long, List<Spot>> spotGroupMap;
-        Map<Long, List<Employee>> employeeGroupMap;
         LocalDateTime baseDate;
         LocalDateTime startDate;
         LocalDateTime endDate;
