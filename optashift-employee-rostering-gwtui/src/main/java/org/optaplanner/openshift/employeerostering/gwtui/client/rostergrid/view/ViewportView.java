@@ -26,8 +26,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
-
-import static org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils.time;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 
 @Templated
 public class ViewportView<T> implements IsElement {
@@ -42,9 +41,12 @@ public class ViewportView<T> implements IsElement {
     @Inject
     private ListView<Lane<T>> lanes;
 
+    @Inject
+    private TimingUtils timingUtils;
+
     public void setViewport(final Viewport<T> viewport) {
 
-        time("Viewport assemble", () -> {
+        timingUtils.time("Viewport assemble", () -> {
             getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
 
             viewport.setSizeInScreenPixels(this, viewport.getSizeInGridPixels(), 12L);

@@ -34,6 +34,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
@@ -66,26 +67,34 @@ public class SpotRosterViewportFactory {
     @Inject
     private TicksFactory<LocalDateTime> ticksFactory;
 
+    @Inject
+    private TimingUtils timingUtils;
+
     private Map<Spot, Map<ShiftView, TimeSlot>> spotRosterModel;
 
     private LinearScale<LocalDateTime> scale;
 
     public SpotRosterViewport getViewport(final SpotRosterView spotRosterView) {
 
-        shiftBlobViewPool.init(1500L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
+        return timingUtils.time("Spot Roster viewport instantiation", () -> {
 
-        spotRosterModel = buildSpotRosterModel(spotRosterView);
+            shiftBlobViewPool.init(1500L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
 
-        scale = new Positive2HoursScale(spotRosterView.getStartDate().atTime(0, 0),
-                                        spotRosterView.getEndDate().atTime(0, 0));
+            spotRosterModel = buildSpotRosterModel(spotRosterView);
 
-        return new SpotRosterViewport(tenantStore.getCurrentTenantId(),
-                                      shiftBlobViewPool::get,
-                                      scale,
-                                      cssGridLinesFactory.newWithSteps(2L, 12L),
-                                      ticksFactory.newTicks(scale, 2L, 12L),
-                                      buildLanes(spotRosterView)
-        );
+            scale = new Positive2HoursScale(spotRosterView.getStartDate().atTime(0, 0),
+                                            spotRosterView.getEndDate().atTime(0, 0));
+
+            //FIXME: Resolve overlapping shifts like RotationsViewportFactory does
+            final List<Lane<LocalDateTime>> lanes = buildLanes(spotRosterView);
+
+            return new SpotRosterViewport(tenantStore.getCurrentTenantId(),
+                                          shiftBlobViewPool::get,
+                                          scale,
+                                          cssGridLinesFactory.newWithSteps(2L, 12L),
+                                          ticksFactory.newTicks(scale, 2L, 12L),
+                                          lanes);
+        });
     }
 
     private Map<Spot, Map<ShiftView, TimeSlot>> buildSpotRosterModel(final SpotRosterView spotRosterView) {
