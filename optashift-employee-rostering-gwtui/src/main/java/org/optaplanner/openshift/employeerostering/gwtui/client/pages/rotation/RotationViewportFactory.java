@@ -16,7 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -38,12 +37,12 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
-import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 
@@ -64,23 +63,31 @@ public class RotationViewportFactory {
     @Inject
     private TicksFactory<Long> ticksFactory;
 
+    @Inject
+    private TimingUtils timingUtils;
+
     public Viewport<Long> getViewport(final Map<Spot, List<Shift>> shiftsBySpot) {
 
-        shiftBlobViewPool.init(500L, shiftBlobViews::get);
+        return timingUtils.time("Rotation viewport instantiation", () -> {
 
-        final Integer durationInWeeks = tenantStore.getCurrentTenant().getConfiguration().getTemplateDuration();
-        final Long durationTimeInMinutes = durationInWeeks * 7 * 24 * 60L;
+            shiftBlobViewPool.init(500L, shiftBlobViews::get);
 
-        final LinearScale<Long> scale = new Infinite60MinutesScale(durationTimeInMinutes);
-        final LocalDateTime baseDate = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+            final Integer durationInWeeks = tenantStore.getCurrentTenant().getConfiguration().getTemplateDuration();
+            final Long durationTimeInMinutes = durationInWeeks * 7 * 24 * 60L;
 
-        return new RotationViewport(tenantStore.getCurrentTenantId(),
-                                    baseDate,
-                                    shiftBlobViewPool::get,
-                                    scale,
-                                    cssGridLinesFactory.newWithSteps(2L, 24L),
-                                    ticksFactory.newTicks(scale, 4L, 24L),
-                                    buildLanes(shiftsBySpot, baseDate, scale));
+            final LinearScale<Long> scale = new Infinite60MinutesScale(durationTimeInMinutes);
+            final LocalDateTime baseDate = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+
+            final List<Lane<Long>> lanes = buildLanes(shiftsBySpot, baseDate, scale);
+
+            return new RotationViewport(tenantStore.getCurrentTenantId(),
+                                        baseDate,
+                                        shiftBlobViewPool::get,
+                                        scale,
+                                        cssGridLinesFactory.newWithSteps(2L, 24L),
+                                        ticksFactory.newTicks(scale, 4L, 24L),
+                                        lanes);
+        });
     }
 
     private List<Lane<Long>> buildLanes(final Map<Spot, List<Shift>> shiftsBySpot,

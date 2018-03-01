@@ -33,7 +33,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
@@ -82,12 +81,6 @@ public class RotationPage implements Page {
     private Map<Long, SpotGroup> spotGroupsById;
     private Viewport<Long> viewport;
 
-    @EventHandler("save-button")
-    public void onSaveButtonClicked(final @ForEvent("click") MouseEvent e) {
-        save();
-        e.preventDefault();
-    }
-
     @Override
     public Promise<Void> beforeOpen() {
         return refresh();
@@ -98,31 +91,51 @@ public class RotationPage implements Page {
     }
 
     public Promise<Void> refresh() {
-        return fetchShiftsBySpot().then(shiftsBySpot -> {
-            viewport = rotationViewportFactory.getViewport(shiftsBySpot);
-            viewportView.setViewport(viewport);
-            return resolve();
-        });
-    }
-
-    private Promise<Map<Spot, List<Shift>>> fetchShiftsBySpot() {
-        return new Promise<>((resolve, reject) -> {
-            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.<List<Spot>>onSuccess(spots -> {
-                spotsById = spots.stream().collect(toMap(AbstractPersistable::getId, identity()));
-
-                SpotRestServiceBuilder.getSpotGroups(tenantStore.getCurrentTenantId(), FailureShownRestCallback.<List<SpotGroup>>onSuccess(spotGroups -> {
+        return fetchSpots()
+                .then(spots -> {
+                    spotsById = spots.stream().collect(toMap(AbstractPersistable::getId, identity()));
+                    return fetchSpotGroups();
+                })
+                .then(spotGroups -> {
                     spotGroupsById = spotGroups.stream().collect(toMap(AbstractPersistable::getId, identity()));
+                    return fetchShiftTemplate();
+                })
+                .then(shiftTemplate -> {
 
-                    ShiftRestServiceBuilder.getTemplate(tenantStore.getCurrentTenantId(), FailureShownRestCallback.<ShiftTemplate>onSuccess(shiftTemplate -> {
-                        resolve.onInvoke(getShifts(shiftTemplate).stream().collect(groupingBy(Shift::getSpot)));
-                        //
-                    }).onError(reject::onInvoke).onFailure(reject::onInvoke));
-                }).onError(reject::onInvoke).onFailure(reject::onInvoke));
-            }).onError(reject::onInvoke).onFailure(reject::onInvoke));
+                    final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate).stream()
+                            .collect(groupingBy(Shift::getSpot));
+
+                    viewport = rotationViewportFactory.getViewport(shiftsBySpot);
+                    viewportView.setViewport(viewport);
+                    return resolve();
+                });
+    }
+
+    // Method reference does not work, do not change
+    private Promise<List<Spot>> fetchSpots() {
+        return new Promise<>((resolve, reject) -> {
+            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(),
+                                               onSuccess(value -> resolve.onInvoke(value)));
         });
     }
 
-    private List<Shift> getShifts(final ShiftTemplate shiftTemplate) {
+    // Method reference does not work, do not change
+    private Promise<List<SpotGroup>> fetchSpotGroups() {
+        return new Promise<>((resolve, reject) -> {
+            SpotRestServiceBuilder.getSpotGroups(tenantStore.getCurrentTenantId(),
+                                                 onSuccess(value -> resolve.onInvoke(value)));
+        });
+    }
+
+    // Method reference does not work, do not change
+    private Promise<ShiftTemplate> fetchShiftTemplate() {
+        return new Promise<>((resolve, reject) -> {
+            ShiftRestServiceBuilder.getTemplate(tenantStore.getCurrentTenantId(),
+                                                onSuccess(value -> resolve.onInvoke(value)));
+        });
+    }
+
+    private List<Shift> buildShiftList(final ShiftTemplate shiftTemplate) {
         final AtomicLong id = new AtomicLong(0L);
         return shiftTemplate.getShiftList().stream()
                 .flatMap(shiftInfo -> getShiftStream(shiftInfo, id.getAndIncrement()))
@@ -162,6 +175,12 @@ public class RotationPage implements Page {
         newShift.setId(id);
 
         return newShift;
+    }
+
+    @EventHandler("save-button")
+    private void onSaveClicked(final @ForEvent("click") MouseEvent e) {
+        save();
+        e.preventDefault();
     }
 
     private void save() {

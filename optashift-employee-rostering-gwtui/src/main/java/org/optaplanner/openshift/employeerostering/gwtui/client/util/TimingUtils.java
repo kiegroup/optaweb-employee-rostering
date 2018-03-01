@@ -18,20 +18,27 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.util;
 
 import java.util.function.Supplier;
 
-import elemental2.dom.DomGlobal;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
+import org.slf4j.Logger;
+
+@Dependent
 public class TimingUtils {
 
-    public static <T> T time(final String label, final Supplier<T> r) {
+    @Inject
+    private Logger logger;
+
+    public <T> T time(final String label, final Supplier<T> r) {
         long start = System.currentTimeMillis();
         T ret = r.get();
-        DomGlobal.console.info(label + " took " + (System.currentTimeMillis() - start) + "ms");
+        logger.info(label + " took " + (System.currentTimeMillis() - start) + "ms");
         return ret;
     }
 
-    public static void time(final String label, final Runnable r) {
+    public void time(final String label, final Runnable r) {
         long start = System.currentTimeMillis();
         r.run();
-        DomGlobal.console.info(label + " took " + (System.currentTimeMillis() - start) + "ms");
+        logger.info(label + " took " + (System.currentTimeMillis() - start) + "ms");
     }
 }
