@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -36,12 +35,10 @@ import org.optaplanner.openshift.employeerostering.server.common.AbstractRestSer
 import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeGroup;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.lang.parser.ParserException;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.BaseDateDefinitions;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EnumOrCustom;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.RepeatMode;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -93,7 +90,19 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         validateTenantIdParameter(tenantId, spot);
         TimeSlot timeSlot = entityManager.find(TimeSlot.class, shiftView.getTimeSlotId());
         validateTenantIdParameter(tenantId, timeSlot);
-        Shift shift = new Shift(shiftView, spot, timeSlot);
+
+        Long rotationEmployeeId = shiftView.getRotationEmployeeId();
+        Employee rotationEmployee = null;
+        if (rotationEmployeeId != null) {
+            rotationEmployee = entityManager.find(Employee.class, rotationEmployeeId);
+            if (rotationEmployee == null) {
+                throw new IllegalArgumentException("ShiftView (" + shiftView
+                        + ") has an non-existing employeeId (" + rotationEmployeeId + ").");
+            }
+            validateTenantIdParameter(tenantId, rotationEmployee);
+        }
+
+        Shift shift = new Shift(shiftView, spot, timeSlot, rotationEmployee);
         shift.setLockedByUser(shiftView.isLockedByUser());
         Long employeeId = shiftView.getEmployeeId();
         if (employeeId != null) {
@@ -133,19 +142,10 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         LocalDateTime startDate = LocalDateTime.parse(startDateString);
         LocalDateTime endDate = LocalDateTime.parse(endDateString);
 
-        Map<Long, List<Spot>> spotGroupMap = new HashMap<>();
-        Map<Long, List<Employee>> employeeGroupMap = new HashMap<>();
-        spotRestService.getSpotGroups(tenantId).forEach((g) -> spotGroupMap.put(g.getId(), g.getSpots()));
-        employeeRestService.getEmployeeGroups(tenantId).forEach((g) -> employeeGroupMap.put(g.getId(), g
-                .getEmployees()));
-        employeeGroupMap.put(EmployeeGroup.ALL_GROUP_ID, employeeRestService.getEmployeeList(tenantId));
-
         try {
             ShiftFileParser.ParserOut parserOutput = ShiftFileParser.parse(tenantId,
                     spotRestService.getSpotList(tenantId),
                     employeeRestService.getEmployeeList(tenantId),
-                    spotGroupMap,
-                    employeeGroupMap,
                     startDate,
                     endDate,
                     template);
@@ -163,6 +163,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
                 }
                 TimeSlot timeSlot = timeSlotMap.get(shift.getTimeSlot().toString());
                 Shift newShift = new Shift(tenantId, shift.getSpot(), timeSlot);
+                newShift.setRotationEmployee(shift.getRotationEmployee());
                 entityManager.persist(newShift);
                 out.add(newShift.getId());
             }

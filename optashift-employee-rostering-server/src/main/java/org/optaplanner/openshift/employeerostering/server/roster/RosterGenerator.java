@@ -38,7 +38,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EmployeeTimeSlotInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
+import org.optaplanner.openshift.employeerostering.shared.lang.tokens.OptionalEmployee;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -98,19 +98,20 @@ public class RosterGenerator {
     @PostConstruct
     public void setUpGeneratedData() {
         tenantNameGenerator.predictMaximumSizeAndReset(10);
-        generateRoster(10, 7, false);
-        generateRoster(10, 7 * 4, false);
-        generateRoster(20, 7 * 4, false);
-        generateRoster(40, 7 * 2, false);
-        generateRoster(80, 7 * 4, false);
-        generateRoster(10, 7 * 4, true);
-        generateRoster(20, 7 * 4, true);
-        generateRoster(40, 7 * 2, true);
-        generateRoster(80, 7 * 4, true);
+        generateRoster(10, 7, false, false);
+        generateRoster(10, 7 * 4, false, false);
+        generateRoster(20, 7 * 4, false, true);
+        generateRoster(40, 7 * 2, false, false);
+        generateRoster(80, 7 * 4, false, true);
+        generateRoster(10, 7 * 4, true, false);
+        generateRoster(20, 7 * 4, true, true);
+        generateRoster(40, 7 * 2, true, false);
+        generateRoster(80, 7 * 4, true, true);
     }
 
     @Transactional
-    public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning) {
+    public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning,
+            boolean assignDefaultEmployee) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
         Integer tenantId = createTenant(spotListSize, employeeListSize);
@@ -119,7 +120,8 @@ public class RosterGenerator {
 
         List<Employee> employeeList = createEmployeeList(tenantId, employeeListSize, skillList);
 
-        shiftRestService.createTemplate(tenantId, generateShiftTemplate(tenantId, spotList, employeeList));
+        shiftRestService.createTemplate(tenantId, generateShiftTemplate(tenantId, spotList, employeeList,
+                assignDefaultEmployee));
         LocalDateTime previousEndDateTime = LocalDateTime.of(2017, 2, 1, 6, 0);
         for (int i = 0; i < timeSlotListSize; i += 7) {
             try {
@@ -152,7 +154,8 @@ public class RosterGenerator {
                           tenant.getConfiguration(), shiftList);
     }
 
-    private List<ShiftInfo> generateShiftTemplate(Integer tenantId, List<Spot> spots, List<Employee> employees) {
+    private List<ShiftInfo> generateShiftTemplate(Integer tenantId, List<Spot> spots, List<Employee> employees,
+            boolean assignDefaultEmployee) {
         LocalDateTime startTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).plusHours(6);
         List<ShiftInfo> out = new ArrayList<ShiftInfo>(7);
         for (int i = 0; i < 7 * 3; i++) {
@@ -168,7 +171,7 @@ public class RosterGenerator {
             for (Employee employee : extractRandomSubList(employees, 0.2)) {
                 employeeTimeslot = new EmployeeTimeSlotInfo();
                 employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(new IdOrGroup(tenantId, false, employee.getId()));
+                employeeTimeslot.setEmployeeId(employee);
                 employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNAVAILABLE);
                 shiftAvailability.add(employeeTimeslot);
             }
@@ -176,7 +179,7 @@ public class RosterGenerator {
             for (Employee employee : extractRandomSubList(employees, 0.3)) {
                 employeeTimeslot = new EmployeeTimeSlotInfo();
                 employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(new IdOrGroup(tenantId, false, employee.getId()));
+                employeeTimeslot.setEmployeeId(employee);
                 employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNDESIRED);
                 shiftAvailability.add(employeeTimeslot);
             }
@@ -184,7 +187,7 @@ public class RosterGenerator {
             for (Employee employee : extractRandomSubList(employees, 0.1)) {
                 employeeTimeslot = new EmployeeTimeSlotInfo();
                 employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(new IdOrGroup(tenantId, false, employee.getId()));
+                employeeTimeslot.setEmployeeId(employee);
                 employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.DESIRED);
                 shiftAvailability.add(employeeTimeslot);
             }
@@ -192,7 +195,8 @@ public class RosterGenerator {
             shift.setEmployeeList(shiftAvailability);
 
             //Generate spots using the timeslot
-            List<IdOrGroup> shiftSpots = new ArrayList<>();
+            List<Spot> shiftSpots = new ArrayList<>();
+            List<OptionalEmployee> rotationEmployeeList = new ArrayList<>();
             for (Spot spot : spots) {
                 boolean weekendEnabled = random.nextInt(10) < 8;
                 boolean nightEnabled = weekendEnabled && random.nextInt(10) < 8;
@@ -200,8 +204,15 @@ public class RosterGenerator {
                 if ((!weekendEnabled && i >= 5 * 3) || (!nightEnabled && i % 3 == 2)) {
                     continue;
                 }
-                shiftSpots.add(new IdOrGroup(tenantId, false, spot.getId()));
+                shiftSpots.add(spot);
+                if (assignDefaultEmployee) {
+                    rotationEmployeeList.add(new OptionalEmployee(tenantId, employees.get(random.nextInt(employees
+                            .size()))));
+                } else {
+                    rotationEmployeeList.add(new OptionalEmployee(tenantId, null));
+                }
             }
+            shift.setRotationEmployeeList(rotationEmployeeList);
             shift.setSpotList(shiftSpots);
             out.add(shift);
 
@@ -233,7 +244,8 @@ public class RosterGenerator {
         spotNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = spotNameGenerator.generateNextValue();
-            Spot spot = new Spot(tenantId, name, new HashSet<>(extractRandomSubList(skillList, 1.0)));
+            Spot spot = new Spot(tenantId, name, extractRandomSubListOfLength(skillList, random.nextInt(skillList
+                    .size())).stream().collect(Collectors.toSet()));
             entityManager.persist(spot);
             spotList.add(spot);
         }
@@ -258,8 +270,18 @@ public class RosterGenerator {
     private <E> List<E> extractRandomSubList(List<E> list, double maxRelativeSize) {
         List<E> subList = new ArrayList<>(list);
         Collections.shuffle(subList, random);
-        // TODO List.subList() doesn't allow outer list to be garbage collected
-        return subList.subList(0, random.nextInt((int) (list.size() * maxRelativeSize)) + 1);
+        int size = random.nextInt((int) (list.size() * maxRelativeSize)) + 1;
+        // Remove elements not in the sublist (so it can be garbage collected)
+        subList.subList(size, subList.size()).clear();
+        return subList;
+    }
+
+    private <E> List<E> extractRandomSubListOfLength(List<E> list, int length) {
+        List<E> subList = new ArrayList<>(list);
+        Collections.shuffle(subList, random);
+        // Remove elements not in the sublist (so it can be garbage collected)
+        subList.subList(length, subList.size()).clear();
+        return subList;
     }
 
     // TODO: Implement some of the logic from these methods into generateShiftTemplate

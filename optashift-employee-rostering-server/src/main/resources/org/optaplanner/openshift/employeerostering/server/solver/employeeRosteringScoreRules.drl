@@ -118,3 +118,12 @@ rule "Desired time slot for an employee"
     then
         scoreHolder.addSoftConstraintMatch(kcontext, +$tenantConfiguration.getDesiredTimeSlotWeight());
 end
+
+rule "Employee is not rotation employee"
+    when
+    	$tenantConfiguration : TenantConfiguration(rotationEmployeeMatchWeight != 0)
+        Shift(  
+                rotationEmployee != null && employee != rotationEmployee)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -$tenantConfiguration.getRotationEmployeeMatchWeight());
+end

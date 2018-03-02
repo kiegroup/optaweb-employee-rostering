@@ -19,7 +19,6 @@ import org.optaplanner.openshift.employeerostering.shared.lang.parser.DateMatche
 import org.optaplanner.openshift.employeerostering.shared.lang.parser.ParserException;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.BaseDateDefinitions;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EmployeeTimeSlotInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.RepeatMode;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
@@ -29,12 +28,13 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 //CUP maven plugins seems out of date; the format file is simple enough to code by hand
 public class ShiftFileParser {
-    
-    public static ParserOut parse(Integer tenantId, List<Spot> spotList,
-            List<Employee> employeeList, Map<Long, List<Spot>> spotGroupMap,
-            Map<Long, List<Employee>> employeeGroupMap,
-            LocalDateTime start, LocalDateTime end,
-            ShiftTemplate template) throws ParserException {
+
+    public static ParserOut parse(Integer tenantId,
+                                  List<Spot> spots,
+                                  List<Employee> employees,
+                                  LocalDateTime start,
+                                  LocalDateTime end,
+                                  ShiftTemplate template) throws ParserException {
         ParserState state = new ParserState();
         state.tenantId = tenantId;
         state.startDate = start;
@@ -56,14 +56,14 @@ public class ShiftFileParser {
                     break;
                 case WEEK_OF_START_DATE:
                     state.baseDate = start
-                            .minusDays(start.getDayOfWeek().getValue() - 1)
-                            .toLocalDate().atStartOfDay();
+                                          .minusDays(start.getDayOfWeek().getValue() - 1)
+                                          .toLocalDate().atStartOfDay();
                     state.endDate = end.plusDays(6 - end.getDayOfWeek().getValue());
                     break;
                 case WEEK_AFTER_START_DATE:
                     state.baseDate = start
-                            .minusDays(start.getDayOfWeek().getValue() - 1)
-                            .toLocalDate().atStartOfDay().plusWeeks(1);
+                                          .minusDays(start.getDayOfWeek().getValue() - 1)
+                                          .toLocalDate().atStartOfDay().plusWeeks(1);
                     state.endDate = end.plusDays(6 - (end.getDayOfWeek().getValue() - 1)).plusWeeks(1);
                     break;
                 default:
@@ -78,7 +78,7 @@ public class ShiftFileParser {
         } else {
             dateMode = null;
         }
-        
+
         if (null == dateMode) {
             String[] duration = template.getRepeatType().getValue().split(":");
             if (4 != duration.length) {
@@ -93,8 +93,7 @@ public class ShiftFileParser {
             state.repeatWeeks = 0;
             state.repeatMonths = 0;
             state.repeatYears = 0;
-        }
-        else {
+        } else {
             state.repeatDays = dateMode.daysUntilRepeat;
             state.repeatWeeks = dateMode.weeksUntilRepeat;
             state.repeatMonths = dateMode.monthsUntilRepeat;
@@ -102,77 +101,72 @@ public class ShiftFileParser {
         }
 
         state.universalExceptionList = template.getUniversalExceptionList().stream()
-                .map((e) -> {
-                    try {
-                        return DateMatcher.getDateMatcher(e);
-                    } catch (Exception bad) {
-                        return null;
-                    }
-                }).collect(Collectors.toList());
-        
+                                            .map((e) -> {
+                                                try {
+                                                    return DateMatcher.getDateMatcher(e);
+                                                } catch (Exception bad) {
+                                                    return null;
+                                                }
+                                            }).collect(Collectors.toList());
+
         if (state.universalExceptionList.contains(null)) {
             throw new ParserException("Badly formatted date exception string");
         }
 
         state.shiftOutputList = new ArrayList<>();
-        state.employeeAvailabilityOutputList = new ArrayList<>();
-        state.spotMap = spotList.stream()
-                .collect(Collectors.toMap(Spot::getId, Function.identity()));
-        state.employeeMap = employeeList.stream()
-                .collect(Collectors.toMap(Employee::getId, Function.identity()));
-        state.spotGroupMap = spotGroupMap;
-        state.employeeGroupMap = employeeGroupMap;
-        
+        state.employeeAvailabityOutputList = new ArrayList<>();
+        state.employeeMap = employees.stream()
+                                     .collect(Collectors.toMap(Employee::getId, Function.identity()));
         addShiftsFrom(state, template.getShiftList());
         ParserOut out = new ParserOut();
         out.shiftOutputList = state.shiftOutputList;
-        out.employeeAvailabilityOutputList = state.employeeAvailabilityOutputList;
+        out.employeeAvailabilityOutputList = state.employeeAvailabityOutputList;
 
         return out;
     }
-    
-    private static void addShiftsFrom(ParserState state, List<ShiftInfo> shiftList)
-            throws ParserException {
-        for (ShiftInfo shiftInfo : shiftList) {
-            List<DateMatcher<ShiftInfo>> exceptions = (null != shiftInfo.getExceptionList()) ? shiftInfo.getExceptionList()
-                    .stream()
-                    .map((e) -> {
-                        try {
-                            return DateMatcher.getDateMatcher(e);
-                        } catch (Exception bad) {
-                            return null;
-                        }
-                    }).collect(Collectors.toList()) : Collections.emptyList();
+
+    private static void addShiftsFrom(ParserState state, List<ShiftInfo> shifts) throws ParserException {
+        for (ShiftInfo shiftInfo : shifts) {
+            List<DateMatcher<ShiftInfo>> exceptions = (null != shiftInfo.getExceptionList()) ? shiftInfo
+                    .getExceptionList()
+                                                                                                     .stream()
+                                                                                                     .map((e) -> {
+                                                                                                         try {
+                                                                                                             return DateMatcher.getDateMatcher(e);
+                                                                                                         } catch (Exception bad) {
+                                                                                                             return null;
+                                                                                                         }
+                                                                                                     }).collect(Collectors.toList()) : Collections.emptyList();
             if (exceptions.contains(null)) {
                 throw new ParserException("Badly formatted date exception string");
             }
             for (LocalDateTime startDate = state.baseDate.plus(Duration.between(LocalDateTime.ofEpochSecond(0, 0,
-                    ZoneOffset.UTC),
-                    shiftInfo.getStartTime())), endDate = state.baseDate.plus(Duration.between(LocalDateTime
-                            .ofEpochSecond(0, 0, ZoneOffset.UTC),
-                            shiftInfo.getEndTime()));
+                                                                                                            ZoneOffset.UTC),
+                                                                                shiftInfo.getStartTime())), endDate = state.baseDate.plus(Duration.between(LocalDateTime
+                                                                                                                                                                        .ofEpochSecond(0, 0, ZoneOffset.UTC),
+                                                                                                                                                           shiftInfo.getEndTime()));
                     //Cond
                     startDate.isBefore(state.endDate);
                     //Post
                     startDate = startDate.plusYears(state.repeatYears)
-                            .plusMonths(state.repeatMonths)
-                            .plusWeeks(state.repeatWeeks)
-                            .plusDays(state.repeatDays),
+                                         .plusMonths(state.repeatMonths)
+                                         .plusWeeks(state.repeatWeeks)
+                                         .plusDays(state.repeatDays),
 
                     endDate = endDate.plusYears(state.repeatYears)
-                            .plusMonths(state.repeatMonths)
-                            .plusWeeks(state.repeatWeeks)
-                            .plusDays(state.repeatDays)) {
+                                     .plusMonths(state.repeatMonths)
+                                     .plusWeeks(state.repeatWeeks)
+                                     .plusDays(state.repeatDays)) {
                 LocalDateTime clone = startDate;
                 Optional<DateMatcher<ShiftInfo>> shiftException = exceptions.stream().filter((dm) -> dm.test(clone))
-                        .findFirst();
+                                                                            .findFirst();
                 if (shiftException.isPresent()) {
                     DateMatcher<ShiftInfo> dateMatcher = shiftException.get();
                     if (null != dateMatcher.getReplacement()) {
                         long oldRepeatDays = state.repeatDays;
                         state.repeatDays = Duration.between(state.startDate, state.endDate).toDays() + 1;
                         addShiftsFrom(state, Arrays.asList(dateMatcher
-                                .getReplacement()));
+                                                                      .getReplacement()));
                         state.repeatDays = oldRepeatDays;
                     }
                 } else {
@@ -183,7 +177,7 @@ public class ShiftFileParser {
                             long oldRepeatDays = state.repeatDays;
                             state.repeatDays = Duration.between(state.startDate, state.endDate).toDays() + 1;
                             addShiftsFrom(state, Arrays.asList(dateMatcher
-                                    .getReplacement()));
+                                                                          .getReplacement()));
                             state.repeatDays = oldRepeatDays;
                         }
                     } else {
@@ -194,58 +188,41 @@ public class ShiftFileParser {
         }
     }
 
-    private static void addShift(ParserState state, ShiftInfo shiftInfo, LocalDateTime startDate, LocalDateTime endDate)
-            throws ParserException {
+    private static void addShift(ParserState state, ShiftInfo shiftInfo, LocalDateTime startDate, LocalDateTime endDate) throws ParserException {
         TimeSlot timeslot = new TimeSlot(state.tenantId, startDate, endDate);
-        for (IdOrGroup id : shiftInfo.getSpotList()) {
-            if (id.getIsGroup()) {
-                for (Spot spot : state.spotGroupMap.get(id.getItemId())) {
-                    state.shiftOutputList.add(new Shift(state.tenantId, spot, timeslot));
-                }
-            }
-            else {
-                Spot spot = state.spotMap.get(id.getItemId());
-                if (null == spot) {
-                    throw new ParserException("spot is null! id: " + id.getItemId());
-                }
-                state.shiftOutputList.add(new Shift(state.tenantId, spot, timeslot));
-            }
+        int i = 0;
+        for (Spot spot : shiftInfo.getSpotList()) {
+                state.shiftOutputList.add(new Shift(state.tenantId, spot, timeslot, shiftInfo.getRotationEmployeeList().get(i)
+                        .getEmployee()));
+                i++;
         }
-        
+
         for (EmployeeTimeSlotInfo employeeInfo : shiftInfo.getEmployeeList()) {
-            List<DateMatcher<EmployeeAvailabilityState>> exceptions = (null != employeeInfo.getAvailabilityConditionList())
-                    ? employeeInfo.getAvailabilityConditionList().stream()
-                    .map((e) -> {
-                        try {
-                            return DateMatcher.getDateMatcher(e);
-                        } catch (Exception bad) {
-                            return null;
-                        }
-                            }).collect(Collectors.toList()) : Collections.emptyList();
+            List<DateMatcher<EmployeeAvailabilityState>> exceptions = (null != employeeInfo
+                    .getAvailabilityConditionList())
+                            ? employeeInfo.getAvailabilityConditionList().stream()
+                                  .map((e) -> {
+                                      try {
+                                          return DateMatcher.getDateMatcher(e);
+                                      } catch (Exception bad) {
+                                          return null;
+                                      }
+                                  }).collect(Collectors.toList()) : Collections.emptyList();
             if (exceptions.contains(null)) {
                 throw new ParserException("Badly formatted date exception string");
             }
             Optional<DateMatcher<EmployeeAvailabilityState>> employeeStateCond = exceptions.stream()
-                    .filter((cond) -> cond.test(state.startDate)).findFirst();
+                                                                                           .filter((cond) -> cond.test(state.startDate)).findFirst();
             EmployeeAvailabilityState employeeState = employeeInfo.getDefaultAvailability();
 
             if (employeeStateCond.isPresent()) {
                 employeeState = employeeStateCond.get().getReplacement();
             }
 
-            if (employeeInfo.getEmployeeId().getIsGroup()) {
-                for (Employee employee : state.employeeGroupMap.get(employeeInfo.getEmployeeId().getItemId())) {
-                    EmployeeAvailability employeeAvailability = new EmployeeAvailability(state.tenantId,
-                            employee, timeslot);
-                    employeeAvailability.setState(employeeState);
-                    state.employeeAvailabilityOutputList.add(employeeAvailability);
-                }
-            } else {
                 EmployeeAvailability employeeAvailability = new EmployeeAvailability(state.tenantId,
-                        state.employeeMap.get(employeeInfo.getEmployeeId().getItemId()), timeslot);
+                    state.employeeMap.get(employeeInfo.getEmployeeId().getId()), timeslot);
                 employeeAvailability.setState(employeeState);
-                state.employeeAvailabilityOutputList.add(employeeAvailability);
-            }
+                state.employeeAvailabityOutputList.add(employeeAvailability);
 
         }
     }
@@ -254,12 +231,9 @@ public class ShiftFileParser {
 
         Integer tenantId;
         List<Shift> shiftOutputList;
-        List<EmployeeAvailability> employeeAvailabilityOutputList;
+        List<EmployeeAvailability> employeeAvailabityOutputList;
         List<DateMatcher<ShiftInfo>> universalExceptionList;
-        Map<Long, Spot> spotMap;
         Map<Long, Employee> employeeMap;
-        Map<Long, List<Spot>> spotGroupMap;
-        Map<Long, List<Employee>> employeeGroupMap;
         LocalDateTime baseDate;
         LocalDateTime startDate;
         LocalDateTime endDate;

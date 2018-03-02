@@ -242,7 +242,7 @@ public class TwoDayViewPresenter<G extends HasTitle, I extends HasTimeslot<G>, D
         view.updateScrollBars();
         view.setViewSize(state.getScreenWidth(), state.getScreenHeight());
 
-        if (!getState().getGroupPosMap().isEmpty()) {
+        if (getState().getGroupPosMap().keySet().containsAll(getGroupList())) {
             view.draw();
         }
     }

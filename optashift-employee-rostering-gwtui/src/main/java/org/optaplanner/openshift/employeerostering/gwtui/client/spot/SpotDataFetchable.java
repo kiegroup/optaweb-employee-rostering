@@ -82,7 +82,8 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                                     .getId())) {
                                         timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot.getId())
                                                 .stream().forEach((sv) -> {
-                                                    Shift shift = new Shift(sv, spot, timeslot);
+                                                    Shift shift = new Shift(sv, spot, timeslot, employeeMap.get(sv
+                                                            .getRotationEmployeeId()));
                                                     shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
                                                     out.add(new SpotData(shift));
                                                 });
@@ -128,7 +129,8 @@ public class SpotDataFetchable implements Fetchable<Collection<SpotData>> {
                                                     timeSlotIdToSpotIdToShiftViewListMap.get(timeslot.getId()).get(spot
                                                             .getId())
                                                             .stream().forEach((sv) -> {
-                                                                Shift shift = new Shift(sv, spot, timeslot);
+                                                                Shift shift = new Shift(sv, spot, timeslot, employeeMap
+                                                                        .get(sv.getRotationEmployeeId()));
                                                                 shift.setEmployee(employeeMap.get(sv.getEmployeeId()));
                                                                 SpotData newShift = new SpotData(shift);
                                                                 calendar.updateShift(newShift);

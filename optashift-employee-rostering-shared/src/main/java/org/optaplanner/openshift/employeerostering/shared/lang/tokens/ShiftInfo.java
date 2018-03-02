@@ -1,13 +1,13 @@
 package org.optaplanner.openshift.employeerostering.shared.lang.tokens;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateTimeDeserializer;
 import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateTimeSerializer;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 /**
  * Describes a shift to generate.<br>
@@ -58,18 +59,18 @@ public class ShiftInfo extends AbstractPersistable {
     LocalDateTime endTime;
 
     /**
-     * List of spots/spot groups to create
+     * List of spots to create
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name = "orderIndex")
-    List<IdOrGroup> spotList;
+    List<Spot> spotList;
 
     /**
      * List of employees/employee groups and their availability. If an employee appear multiple
      * times or in multiple groups in this list, their last entry in the list determines their
      * availability 
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name = "orderIndex")
     List<EmployeeTimeSlotInfo> employeeList;
 
@@ -77,34 +78,58 @@ public class ShiftInfo extends AbstractPersistable {
      * List of conditions that causes this Shift not to be generated, potentially causing another
      * one to be generated instead. These are evalulated before {@link ShiftTemplate#universalExceptionList}.
      */
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderColumn(name = "orderIndex")
     List<ShiftConditional> exceptionList;
 
-    public ShiftInfo() {
-    }
+    /**
+     * List of preferred employee for a spot. Must have same length as the number
+     * of non-group entries in {@link ShiftInfo#spots}.
+     * Entries can be null.
+     */
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderColumn(name = "orderIndex")
+    List<OptionalEmployee> rotationEmployeeList;
+
+    public ShiftInfo() {}
 
     public ShiftInfo(Integer tenantId, ShiftInfo src) {
-        this(tenantId, src.startTime, src.endTime, src.spotList, src.employeeList, src.exceptionList);
+        this(tenantId, src.startTime, src.endTime, src.spotList, src.employeeList, src.exceptionList,
+             src.rotationEmployeeList);
     }
 
-    public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
-            EmployeeTimeSlotInfo> employees) {
+    public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<Spot> spots, List<EmployeeTimeSlotInfo> employees) {
         super(tenantId);
         this.startTime = startTime;
         this.endTime = endTime;
         this.spotList = spots;
         this.employeeList = employees;
+        this.rotationEmployeeList = new ArrayList<>(spots.size());
+        for (int i = 0; i < this.rotationEmployeeList.size(); i++) {
+            this.rotationEmployeeList.set(i, new OptionalEmployee(tenantId, null));
+        }
     }
 
-    public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<IdOrGroup> spots, List<
-            EmployeeTimeSlotInfo> employees, List<ShiftConditional> exceptions) {
+    public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<Spot> spots, List<EmployeeTimeSlotInfo> employees, List<ShiftConditional> exceptions) {
+        this(tenantId, startTime, endTime, spots, employees, exceptions, null);
+    }
+
+    public ShiftInfo(Integer tenantId, LocalDateTime startTime, LocalDateTime endTime, List<Spot> spots, List<EmployeeTimeSlotInfo> employees, List<ShiftConditional> exceptions,
+                     List<OptionalEmployee> rotationEmployees) {
         super(tenantId);
         this.startTime = startTime;
         this.endTime = endTime;
         this.spotList = spots;
         this.employeeList = employees;
         this.exceptionList = exceptions;
+        if (rotationEmployees != null) {
+            this.rotationEmployeeList = rotationEmployees;
+        } else {
+            this.rotationEmployeeList = new ArrayList<>(spots.size());
+            for (int i = 0; i < this.rotationEmployeeList.size(); i++) {
+                this.rotationEmployeeList.set(i, new OptionalEmployee(tenantId, null));
+            }
+        }
     }
 
     /**
@@ -127,7 +152,7 @@ public class ShiftInfo extends AbstractPersistable {
      * Getter for {@link ShiftInfo#spotList}
      * @return Value of {@link ShiftInfo#spotList}
      */
-    public List<IdOrGroup> getSpotList() {
+    public List<Spot> getSpotList() {
         return spotList;
     }
 
@@ -136,7 +161,7 @@ public class ShiftInfo extends AbstractPersistable {
      * 
      * @param spots Value to set {@link ShiftInfo#spotList} to
      */
-    public void setSpotList(List<IdOrGroup> spotList) {
+    public void setSpotList(List<Spot> spotList) {
         this.spotList = spotList;
     }
 
@@ -190,6 +215,14 @@ public class ShiftInfo extends AbstractPersistable {
      */
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public List<OptionalEmployee> getRotationEmployeeList() {
+        return rotationEmployeeList;
+    }
+
+    public void setRotationEmployeeList(List<OptionalEmployee> rotationEmployeeList) {
+        this.rotationEmployeeList = rotationEmployeeList;
     }
 
 }

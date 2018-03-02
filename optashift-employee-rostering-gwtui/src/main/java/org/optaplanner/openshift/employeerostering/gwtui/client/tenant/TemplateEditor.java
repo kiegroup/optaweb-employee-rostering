@@ -33,7 +33,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.Configura
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EmployeeTimeSlotInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
@@ -69,37 +68,36 @@ public class TemplateEditor implements IsElement {
     @Inject
     private TenantStore tenantStore;
 
-    public TemplateEditor() {
-    }
+    public TemplateEditor() {}
 
     @PostConstruct
     protected void initWidget() {
         templateFetchable = new TenantTemplateFetchable(() -> getTenantId());
         calendar = new Calendar.Builder<SpotId, ShiftData, ShiftDrawable>(container, getTenantId(), CONSTANTS)
-                .fetchingDataFrom(templateFetchable)
-                .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
-                .displayWeekAs(DateDisplay.WEEKS_FROM_EPOCH)
-                .withBeanManager(beanManager)
-                .creatingDataInstancesWith((c, name, start, end) -> {
-                    Shift newShift = new Shift(getTenantId(),
-                            name.getSpot(),
-                            new TimeSlot(getTenantId(),
-                                    start,
-                                    end));
-                    newShift.setId(templateFetchable.getFreshId());
-                    c
-                            .addShift(new ShiftData(new SpotData(newShift)));
-                })
-                .asTwoDayView((v, d, i) -> new ShiftDrawable(v, d, i));
+                                                                                                              .fetchingDataFrom(templateFetchable)
+                                                                                                              .fetchingGroupsFrom(new SpotNameFetchable(() -> getTenantId()))
+                                                                                                              .displayWeekAs(DateDisplay.WEEKS_FROM_EPOCH)
+                                                                                                              .withBeanManager(beanManager)
+                                                                                                              .creatingDataInstancesWith((c, name, start, end) -> {
+                                                                                                                  Shift newShift = new Shift(getTenantId(),
+                                                                                                                                             name.getSpot(),
+                                                                                                                                             new TimeSlot(getTenantId(),
+                                                                                                                                                          start,
+                                                                                                                                                          end));
+                                                                                                                  newShift.setId(templateFetchable.getFreshId());
+                                                                                                                  c
+                                                                                                                   .addShift(new ShiftData(new SpotData(newShift)));
+                                                                                                              })
+                                                                                                              .asTwoDayView((v, d, i) -> new ShiftDrawable(v, d, i));
         calendar.setHardStartDateBound(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC));
         Window.addResizeHandler((e) -> calendar.setViewSize(e.getWidth() - container.getAbsoluteLeft(),
-                e.getHeight() - container.getAbsoluteTop() - saveButton.getOffsetHeight()));
+                                                            e.getHeight() - container.getAbsoluteTop() - saveButton.getOffsetHeight()));
     }
 
     public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
         calendar.setTenantId(getTenantId());
         calendar.setHardEndDateBound(LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).plusWeeks(tenantStore.getCurrentTenant()
-                .getConfiguration().getTemplateDuration()));
+                                                                                                            .getConfiguration().getTemplateDuration()));
         //TODO: Also handle week start date
         refresh();
     }
@@ -110,7 +108,7 @@ public class TemplateEditor implements IsElement {
 
     public void refresh() {
         calendar.setViewSize(Window.getClientWidth() - container.getAbsoluteLeft(),
-                Window.getClientHeight() - container.getAbsoluteTop() - saveButton.getOffsetHeight());
+                             Window.getClientHeight() - container.getAbsoluteTop() - saveButton.getOffsetHeight());
         calendar.refresh();
     }
 
@@ -126,16 +124,11 @@ public class TemplateEditor implements IsElement {
     @EventHandler("saveButton")
     private void onSaveButtonClick(ClickEvent e) {
         Collection<ShiftData> shifts = calendar.getShiftSet();
-        EmployeeRestServiceBuilder.findEmployeeGroupByName(getTenantId(), "ALL", FailureShownRestCallback.onSuccess(allEmployees -> {
-            shifts.forEach((s) -> s.setEmployeeList(Arrays.asList(new EmployeeTimeSlotInfo(getTenantId(), new IdOrGroup(
-                    getTenantId(), true,
-                    allEmployees.getId()), EmployeeAvailabilityState.DESIRED))));
 
-            List<ShiftInfo> shiftInfos = new ArrayList<>();
-            shifts.forEach((s) -> shiftInfos.add(new ShiftInfo(getTenantId(), s)));
+        List<ShiftInfo> shiftInfos = new ArrayList<>();
+        shifts.forEach((s) -> shiftInfos.add(new ShiftInfo(getTenantId(), s)));
 
-            ShiftRestServiceBuilder.createTemplate(getTenantId(), shiftInfos, FailureShownRestCallback.onSuccess(i -> {
-            }));
+        ShiftRestServiceBuilder.createTemplate(getTenantId(), shiftInfos, FailureShownRestCallback.onSuccess(i -> {
         }));
     }
 

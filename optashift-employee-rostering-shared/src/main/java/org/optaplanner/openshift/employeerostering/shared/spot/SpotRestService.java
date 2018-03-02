@@ -6,7 +6,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -74,35 +73,4 @@ public interface SpotRestService {
     Boolean removeSpot(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                        @ApiParam(required = true) @PathParam("id") Long id);
 
-    // ************************************************************************
-    // SpotGroup
-    // ************************************************************************
-
-    @GET
-    @Path("/groups")
-    List<SpotGroup> getSpotGroups(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
-
-    @GET
-    @Path("/groups/{id : \\d+}")
-    SpotGroup getSpotGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id);
-
-    @GET
-    @Path("/groups/find/{name}")
-    SpotGroup findSpotGroupByName(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("name") String name);
-
-    @PUT
-    @Path("/groups/add")
-    Long createSpotGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) SpotGroup spotGroup);
-
-    @PUT
-    @Path("/groups/{id : \\d+}/add")
-    void addSpotToSpotGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id, Spot spot);
-
-    @POST
-    @Path("/groups/{id : \\d+}/remove")
-    void removeSpotFromSpotGroup(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id, Spot spot);
-
-    @DELETE
-    @Path("/groups/{id : \\d+}")
-    Boolean deleteSpotGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id);
 }

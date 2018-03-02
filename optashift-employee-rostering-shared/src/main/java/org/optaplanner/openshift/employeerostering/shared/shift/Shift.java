@@ -32,17 +32,20 @@ import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Shift.findAll",
-                query = "select distinct sa from Shift sa" +
-                        " left join fetch sa.spot s" +
-                        " left join fetch sa.timeSlot t" +
-                        " left join fetch sa.employee e" +
-                        " where sa.tenantId = :tenantId" +
-                        " order by t.startDateTime, s.name, e.name"),
+               @NamedQuery(name = "Shift.findAll",
+                           query = "select distinct sa from Shift sa" +
+                                   " left join fetch sa.spot s" +
+                                   " left join fetch sa.timeSlot t" +
+                                   " left join fetch sa.rotationEmployee re" +
+                                   " left join fetch sa.employee e" +
+                                   " where sa.tenantId = :tenantId" +
+                                   " order by t.startDateTime, s.name, e.name"),
 })
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftFilter.class)
 public class Shift extends AbstractPersistable {
 
+    @ManyToOne
+    private Employee rotationEmployee;
     @NotNull
     @ManyToOne
     private Spot spot;
@@ -57,20 +60,29 @@ public class Shift extends AbstractPersistable {
     private Employee employee = null;
 
     @SuppressWarnings("unused")
-    public Shift() {
-    }
+    public Shift() {}
 
     public Shift(Integer tenantId, Spot spot, TimeSlot timeSlot) {
+        this(tenantId, spot, timeSlot, null);
+    }
+
+    public Shift(Integer tenantId, Spot spot, TimeSlot timeSlot, Employee rotationEmployee) {
         super(tenantId);
         this.timeSlot = timeSlot;
         this.spot = spot;
+        this.rotationEmployee = rotationEmployee;
     }
 
     public Shift(ShiftView shiftView, Spot spot, TimeSlot timeSlot) {
+        this(shiftView, spot, timeSlot, null);
+    }
+
+    public Shift(ShiftView shiftView, Spot spot, TimeSlot timeSlot, Employee rotationEmployee) {
         super(shiftView);
         this.timeSlot = timeSlot;
         this.spot = spot;
         this.lockedByUser = shiftView.isLockedByUser();
+        this.rotationEmployee = rotationEmployee;
     }
 
     @Override
@@ -112,6 +124,14 @@ public class Shift extends AbstractPersistable {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    public Employee getRotationEmployee() {
+        return rotationEmployee;
+    }
+
+    public void setRotationEmployee(Employee rotationEmployee) {
+        this.rotationEmployee = rotationEmployee;
     }
 
 }

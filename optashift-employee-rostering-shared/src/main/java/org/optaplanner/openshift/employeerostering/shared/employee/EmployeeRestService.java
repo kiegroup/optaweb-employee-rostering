@@ -105,40 +105,4 @@ public interface EmployeeRestService {
     Boolean removeEmployeeAvailability(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                                        @ApiParam(required = true) @PathParam("id") Long id);
 
-    // ************************************************************************
-    // EmployeeGroup
-    // ************************************************************************
-
-    @GET
-    @Path("/groups")
-    List<EmployeeGroup> getEmployeeGroups(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
-
-    @GET
-    @Path("/groups/{id : \\d+}")
-    EmployeeGroup getEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id);
-
-    @GET
-    @Path("/groups/find/{name}")
-    EmployeeGroup findEmployeeGroupByName(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("name") String name);
-
-    @POST
-    @Path("/groups/create")
-    Long createEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, EmployeeGroup employeeGroup);
-
-    @POST
-    @Path("/groups/{id : \\d+}/add")
-    void addEmployeeToEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                    @ApiParam(required = true) @PathParam("id") Long id,
-                                    @ApiParam(required = true) Employee employee);
-
-    @POST
-    @Path("/groups/{id : \\d+}/remove")
-    void removeEmployeeFromEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                         @ApiParam(required = true) @PathParam("id") Long id,
-                                         @ApiParam(required = true) Employee employee);
-
-    @POST
-    @Path("/groups/delete/{id : \\d+}")
-    Boolean deleteEmployeeGroup(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId, @ApiParam(required = true) @PathParam("id") Long id);
-
 }
