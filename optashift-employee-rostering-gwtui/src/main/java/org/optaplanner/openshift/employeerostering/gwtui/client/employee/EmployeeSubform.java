@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,7 +29,6 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
-@Dependent
 @Templated("#row")
 public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Employee>, Updatable<Map<String, Skill>> {
 
@@ -122,5 +120,10 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
                                                FailureShownRestCallback.onSuccess(v -> {
                                                    dataInvalidationEvent.fire(new DataInvalidation<>());
                                                }));
+    }
+
+    @Override
+    public void onUnload() {
+        skillConvertor.deregisterSkillMapListener(this);
     }
 }

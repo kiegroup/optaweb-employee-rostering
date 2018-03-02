@@ -65,8 +65,7 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
         if (null == componentValue) {
             return Collections.emptySet();
         }
-        return new HashSet<Skill>(componentValue.stream().map((s) -> skillMap.get(s)).collect(
-                                                                                              Collectors.toSet()));
+        return componentValue.stream().map((s) -> skillMap.get(s)).collect(Collectors.toCollection(HashSet::new));
     }
 
     @Override
@@ -74,11 +73,7 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
         if (null == modelValue) {
             return Collections.emptyList();
         }
-        return new ArrayList<>(modelValue.stream().map((s) -> s.getName()).collect(Collectors.toList()));
-    }
-
-    public Collection<Skill> getTenantSkillCollection() {
-        return skillMap.values();
+        return modelValue.stream().map((s) -> s.getName()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public void registerSkillMapListener(Updatable<Map<String, Skill>> listener) {
@@ -86,7 +81,7 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
         listener.onUpdate(skillMap);
     }
 
-    public void dereigsterSkillMapListener(Updatable<Map<String, Skill>> listener) {
+    public void deregisterSkillMapListener(Updatable<Map<String, Skill>> listener) {
         skillMapListeners.remove(listener);
     }
 
