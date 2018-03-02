@@ -205,3 +205,8 @@
 .spot-roster-page {
     position: relative;
 }
+
+.spot-roster-shift-blob {
+    font-size: 1em !important;
+    padding-top: 10px !important;
+}

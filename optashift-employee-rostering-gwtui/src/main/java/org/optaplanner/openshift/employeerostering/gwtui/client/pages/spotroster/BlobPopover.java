@@ -38,7 +38,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.
 public class BlobPopover implements IsElement {
 
     private static final int NEGATIVE_MARGIN_DISPLACEMENT = 21;
-    private static final int MARGIN_FROM_ACTUAL_BLOB = 10;
+    private static final int MARGIN_FROM_SELECTED_BLOB = 10;
 
     @Inject
     @DataField("root")
@@ -72,7 +72,7 @@ public class BlobPopover implements IsElement {
         final Integer offsetLeft = getOffsetRelativeTo(parent, blobElement, e -> e.offsetLeft) + NEGATIVE_MARGIN_DISPLACEMENT;
         final Integer offsetTop = getOffsetRelativeTo(parent, blobElement, e -> e.offsetTop) + NEGATIVE_MARGIN_DISPLACEMENT;
 
-        content.getElement().style.left = px(offsetLeft + blobElement.offsetWidth + MARGIN_FROM_ACTUAL_BLOB);
+        content.getElement().style.left = px(offsetLeft + blobElement.offsetWidth + MARGIN_FROM_SELECTED_BLOB);
         content.getElement().style.top = px(offsetTop);
 
         blobHighlightBorder.style.left = px(offsetLeft);
@@ -95,10 +95,6 @@ public class BlobPopover implements IsElement {
         getElement().classList.add("hidden");
     }
 
-    private String px(final Object object) {
-        return object + "px";
-    }
-
     private Integer getOffsetRelativeTo(final HTMLElement parent,
                                         final HTMLElement element,
                                         final Function<HTMLElement, Double> offsetFn) {
@@ -107,6 +103,11 @@ public class BlobPopover implements IsElement {
             return 0;
         }
 
-        return offsetFn.apply(element).intValue() + getOffsetRelativeTo(parent, (HTMLElement) element.offsetParent, offsetFn);
+        return offsetFn.apply(element).intValue()
+                + getOffsetRelativeTo(parent, (HTMLElement) element.offsetParent, offsetFn);
+    }
+
+    private String px(final Object object) {
+        return object + "px";
     }
 }
