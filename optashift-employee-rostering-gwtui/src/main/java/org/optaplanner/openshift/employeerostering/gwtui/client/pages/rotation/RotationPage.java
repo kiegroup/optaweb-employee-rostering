@@ -19,9 +19,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Stream;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -37,22 +35,16 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.IdOrGroup;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotGroup;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.util.Collections.singletonList;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 
@@ -77,8 +69,6 @@ public class RotationPage implements Page {
     @Inject
     private RotationViewportFactory rotationViewportFactory;
 
-    private Map<Long, Spot> spotsById;
-    private Map<Long, SpotGroup> spotGroupsById;
     private Viewport<Long> viewport;
 
     @Override
@@ -91,71 +81,28 @@ public class RotationPage implements Page {
     }
 
     public Promise<Void> refresh() {
-        return fetchSpots()
-                .then(spots -> {
-                    spotsById = spots.stream().collect(toMap(AbstractPersistable::getId, identity()));
-                    return fetchSpotGroups();
-                })
-                .then(spotGroups -> {
-                    spotGroupsById = spotGroups.stream().collect(toMap(AbstractPersistable::getId, identity()));
-                    return fetchShiftTemplate();
-                })
-                .then(shiftTemplate -> {
+        return fetchShiftTemplate().then(shiftTemplate -> {
 
-                    final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate).stream()
-                            .collect(groupingBy(Shift::getSpot));
+            final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate).stream()
+                    .collect(groupingBy(Shift::getSpot));
 
-                    viewport = rotationViewportFactory.getViewport(shiftsBySpot);
-                    viewportView.setViewport(viewport);
-                    return resolve();
-                });
-    }
-
-    // Method reference does not work, do not change
-    private Promise<List<Spot>> fetchSpots() {
-        return new Promise<>((resolve, reject) -> {
-            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(),
-                                               onSuccess(value -> resolve.onInvoke(value)));
+            viewport = rotationViewportFactory.getViewport(shiftsBySpot);
+            viewportView.setViewport(viewport);
+            return resolve();
         });
     }
 
-    // Method reference does not work, do not change
-    private Promise<List<SpotGroup>> fetchSpotGroups() {
-        return new Promise<>((resolve, reject) -> {
-            SpotRestServiceBuilder.getSpotGroups(tenantStore.getCurrentTenantId(),
-                                                 onSuccess(value -> resolve.onInvoke(value)));
-        });
-    }
-
-    // Method reference does not work, do not change
     private Promise<ShiftTemplate> fetchShiftTemplate() {
         return new Promise<>((resolve, reject) -> {
-            ShiftRestServiceBuilder.getTemplate(tenantStore.getCurrentTenantId(),
-                                                onSuccess(value -> resolve.onInvoke(value)));
+            ShiftRestServiceBuilder.getTemplate(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
         });
     }
 
     private List<Shift> buildShiftList(final ShiftTemplate shiftTemplate) {
         final AtomicLong id = new AtomicLong(0L);
         return shiftTemplate.getShiftList().stream()
-                .flatMap(shiftInfo -> getShiftStream(shiftInfo, id.getAndIncrement()))
+                .flatMap(shiftInfo -> shiftInfo.getSpotList().stream().map(spot -> newShift(id.getAndIncrement(), shiftInfo, spot)))
                 .collect(toList());
-    }
-
-    private Stream<Shift> getShiftStream(final ShiftInfo shiftInfo,
-                                         final Long id) {
-
-        return shiftInfo.getSpotList().stream()
-                .flatMap(this::getSpots)
-                .map(spot -> newShift(id, shiftInfo, spot));
-    }
-
-    private Stream<Spot> getSpots(final IdOrGroup spotIdOrGroup) {
-        if (spotIdOrGroup.getIsGroup()) {
-            return spotGroupsById.get(spotIdOrGroup.getItemId()).getSpots().stream();
-        } else {
-            return Stream.of(spotsById.get(spotIdOrGroup.getItemId()));
-        }
     }
 
     private Shift newShift(final Long id,
@@ -203,20 +150,7 @@ public class RotationPage implements Page {
         return new ShiftInfo(tenantStore.getCurrentTenantId(),
                              shift.getTimeSlot().getStartDateTime(),
                              shift.getTimeSlot().getEndDateTime(),
-                             singletonList(getGroupOrSpotId(shift.getSpot())),
+                             singletonList(shift.getSpot()),
                              new ArrayList<>());
-    }
-
-    private IdOrGroup getGroupOrSpotId(final Spot s) {
-
-        //Try searching for a SpotGroup first
-        return spotGroupsById.values().stream()
-                .filter(group -> group.hasSpot(s)).findAny()
-                .map(group -> new IdOrGroup(tenantStore.getCurrentTenantId(), true, group.getId()))
-
-                //If it's not a SpotGroup we search for a Spot
-                .orElseGet(() -> Optional.ofNullable(spotsById.get(s.getId()))
-                        .map(spot -> new IdOrGroup(tenantStore.getCurrentTenantId(), false, spot.getId()))
-                        .orElseThrow(() -> new RuntimeException("Spot should be present either as a group or standalone")));
     }
 }
