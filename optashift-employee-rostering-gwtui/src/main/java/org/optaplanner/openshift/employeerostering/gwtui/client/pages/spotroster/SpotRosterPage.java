@@ -19,6 +19,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroste
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -79,6 +80,10 @@ public class SpotRosterPage implements Page {
     private HTMLButtonElement previousPageButton;
 
     @Inject
+    @DataField("shift-blob-popover")
+    private ShiftBlobPopover shiftBlobPopover;
+
+    @Inject
     private SpotRosterViewportFactory spotRosterViewportFactory;
 
     @Inject
@@ -89,6 +94,11 @@ public class SpotRosterPage implements Page {
 
     private Pagination spotsPagination = Pagination.of(0, 10);
     private Pagination timePagination = Pagination.of(0, 7);
+
+    @PostConstruct
+    public void init() {
+        shiftBlobPopover.init(this);
+    }
 
     @Override
     public Promise<Void> beforeOpen() {

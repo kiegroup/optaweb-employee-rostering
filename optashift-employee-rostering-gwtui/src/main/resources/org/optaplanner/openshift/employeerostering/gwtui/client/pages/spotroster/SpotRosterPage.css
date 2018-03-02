@@ -36,7 +36,7 @@
 .viewport-frame > .viewport > .lane > .sub-lane > .blob {
     position: absolute !important;
     z-index: 10;
-    font-size: 0.6em;
+    font-size: 0.7em;
     color: black;
     white-space: nowrap;
     top: 0;
@@ -171,4 +171,40 @@
 
 .ui-resizable-s {
     height: 10px;
+}
+
+.blob-popover {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    padding: 20px 20px 20px 20px;
+    box-sizing: content-box;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+.blob-border {
+    height: 40px;
+    border-radius: 4px;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid white;
+}
+
+.blob-popover-dialog {
+    background-color: white;
+    border: 1px solid gray;
+    border-radius: 4px;
+    padding: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 300px;
+}
+
+.spot-roster-page {
+    position: relative;
 }
