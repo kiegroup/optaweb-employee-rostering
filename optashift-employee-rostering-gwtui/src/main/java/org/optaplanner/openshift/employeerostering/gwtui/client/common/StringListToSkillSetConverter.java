@@ -1,7 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,12 +16,9 @@ import javax.inject.Singleton;
 
 import org.jboss.errai.databinding.client.api.Converter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
-
-import static org.junit.Assert.assertNotNull;
 
 @Singleton
 public class StringListToSkillSetConverter implements Converter<Set<Skill>, List<String>> {
@@ -37,15 +33,19 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
     public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
         if (tenantStore.getCurrentTenantId() != null) {
             SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(
-                    skillList -> {
-                        skillMap.clear();
-                        for (Skill skill : skillList) {
-                            skillMap.put(skill.getName(), skill);
-                        }
-                        skillMapListeners.forEach((l) -> l.onUpdate(skillMap));
-                    }));
+                                                                                                                      skillList -> {
+                                                                                                                          skillMap.clear();
+                                                                                                                          for (Skill skill : skillList) {
+                                                                                                                              skillMap.put(skill.getName(), skill);
+                                                                                                                          }
+                                                                                                                          skillMapListeners.forEach((l) -> l.onUpdate(skillMap));
+                                                                                                                      }));
         }
 
+    }
+
+    public void onAnyInvalidationEvent(@Observes DataInvalidation<Skill> skill) {
+        onAnyTenantEvent(null);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -66,7 +66,7 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
             return Collections.emptySet();
         }
         return new HashSet<Skill>(componentValue.stream().map((s) -> skillMap.get(s)).collect(
-                Collectors.toSet()));
+                                                                                              Collectors.toSet()));
     }
 
     @Override

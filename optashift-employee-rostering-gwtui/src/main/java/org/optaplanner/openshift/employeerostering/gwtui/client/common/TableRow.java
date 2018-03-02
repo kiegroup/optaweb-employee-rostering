@@ -1,45 +1,55 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.common;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
 
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.TakesValue;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLTableRowElement;
-import org.gwtbootstrap3.client.ui.Anchor;
+import elemental2.dom.MouseEvent;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.jboss.errai.databinding.client.api.StateSync;
 import org.jboss.errai.databinding.client.components.ListComponent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
-import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 
 public abstract class TableRow<T> extends Composite implements TakesValue<T> {
+
+    @Inject
+    private Validator validator;
 
     @Inject
     protected DataBinder<T> dataBinder;
 
     @Inject
-    @DataField
-    private Anchor deleteCell;
+    @DataField("delete")
+    private HTMLAnchorElement deleteCell;
     @Inject
-    @DataField
-    private Anchor editCell;
+    @DataField("edit")
+    private HTMLAnchorElement editCell;
 
     @Inject
-    @DataField
-    private Button commitChanges;
+    @DataField("save")
+    private HTMLButtonElement commitChanges;
     @Inject
-    @DataField
-    private Button cancelChanges;
+    @DataField("cancel")
+    private HTMLButtonElement cancelChanges;
 
     @Inject
-    @DataField
+    @DataField("editor")
     private HTMLTableRowElement editor;
     @Inject
-    @DataField
+    @DataField("presenter")
     private HTMLTableRowElement presenter;
 
     // Not Null if and only if this row is a row for creating an instance
@@ -52,18 +62,18 @@ public abstract class TableRow<T> extends Composite implements TakesValue<T> {
         setEditing(false);
     }
 
-    @EventHandler("editCell")
-    public void onEditClick(ClickEvent e) {
+    @EventHandler("edit")
+    public void onEditClick(final @ForEvent("click") MouseEvent e) {
         setEditing(true);
     }
 
-    @EventHandler("deleteCell")
-    public void onDeleteClick(ClickEvent e) {
-        deleteRow();
+    @EventHandler("delete")
+    public void onDeleteClick(final @ForEvent("click") MouseEvent e) {
+        deleteRow(getValue());
     }
 
-    @EventHandler("cancelChanges")
-    public void onCancelClick(ClickEvent e) {
+    @EventHandler("cancel")
+    public void onCancelClick(final @ForEvent("click") MouseEvent e) {
         setEditing(false);
         if (isCreatingRow()) {
             table.getValue().remove(getOldValue());
@@ -71,12 +81,19 @@ public abstract class TableRow<T> extends Composite implements TakesValue<T> {
         }
     }
 
-    @EventHandler("commitChanges")
-    public void onSaveClick(ClickEvent e) {
-        if (isCreatingRow()) {
-            createRow();
-        } else {
-            updateRow();
+    @EventHandler("save")
+    public void onSaveClick(final @ForEvent("click") MouseEvent e) {
+        try {
+            if (isCreatingRow()) {
+                createRow(tryToGetNewValue());
+            } else {
+                updateRow(getValue(), tryToGetNewValue());
+            }
+            commitChanges();
+            setEditing(false);
+        } catch (ConstraintViolationException validationException) {
+            Set<ConstraintViolation<?>> validationErrorSet = validationException.getConstraintViolations();
+            ErrorPopup.show(CommonUtils.delimitCollection(validationErrorSet, (violation) -> violation.getMessage(), "\n"));
         }
     }
 
@@ -117,6 +134,21 @@ public abstract class TableRow<T> extends Composite implements TakesValue<T> {
         return dataBinder.getModel();
     }
 
+    public Set<ConstraintViolation<?>> validate() {
+        // Stupid workaround since Set<T> cannot be casted to Set<?>
+        return new HashSet<>(validator.validate(getNewValue()));
+    }
+
+    public T tryToGetNewValue() {
+        Set<ConstraintViolation<?>> validationErrorSet = validate();
+        if (validationErrorSet.isEmpty()) {
+            return getNewValue();
+        } else {
+            throw new ConstraintViolationException(validationErrorSet);
+        }
+
+    }
+
     public static <T> void createNewRow(T value, ListComponent<T, ? extends TableRow<T>> table, KiePager<T> pager) {
         if (!table.getComponent(0).isCreatingRow()) {
             pager.getPager().firstPage();
@@ -131,9 +163,9 @@ public abstract class TableRow<T> extends Composite implements TakesValue<T> {
         return null != table;
     }
 
-    protected abstract void deleteRow();
+    protected abstract void deleteRow(T value);
 
-    protected abstract void updateRow();
+    protected abstract void updateRow(T oldValue, T newValue);
 
-    protected abstract void createRow();
+    protected abstract void createRow(T value);
 }

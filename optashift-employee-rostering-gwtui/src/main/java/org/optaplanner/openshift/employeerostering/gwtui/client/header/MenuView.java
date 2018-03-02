@@ -80,6 +80,7 @@ public class MenuView implements IsElement {
 
     @Inject
     private Event<PageChange> pageChangeEvent;
+
     @PostConstruct
     private void initMenu() {
         pageChangeEvent.fire(new PageChange(Pages.Id.SKILLS));

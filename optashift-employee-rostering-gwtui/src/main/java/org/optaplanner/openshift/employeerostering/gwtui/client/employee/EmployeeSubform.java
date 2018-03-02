@@ -1,7 +1,5 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,17 +8,13 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.TextBox;
 import elemental2.dom.HTMLTableCellElement;
-import elemental2.promise.Promise;
 import org.gwtbootstrap3.extras.select.client.ui.MultipleSelect;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
-import org.jboss.errai.databinding.client.api.Converter;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -30,10 +24,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureSh
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.TableRow;
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
@@ -43,31 +35,28 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Employee>, Updatable<Map<String, Skill>> {
 
     @Inject
-    Validator validator;
-
-    @Inject
     private TenantStore tenantStore;
 
     @Inject
     private StringListToSkillSetConverter skillConvertor;
 
     @Inject
-    @DataField
-    private TextBox employeeNameTextBox;
+    @DataField("employee-name-text-box")
+    private TextBox employeeName;
 
     @Inject
-    @DataField
-    private MultipleSelect skillProficiencySet;
+    @DataField("employee-skill-proficiency-set-select")
+    private MultipleSelect employeeSkillProficiencySet;
 
     @Inject
-    @DataField
+    @DataField("employee-name-display")
     @Named("td")
-    private HTMLTableCellElement employeeName;
+    private HTMLTableCellElement employeeNameDisplay;
 
     @Inject
-    @DataField
+    @DataField("employee-skill-proficiency-set-display")
     @Named("td")
-    private HTMLTableCellElement skillSet;
+    private HTMLTableCellElement employeeSkillProficiencySetDisplay;
 
     @Inject
     private Event<DataInvalidation<Employee>> dataInvalidationEvent;
@@ -77,100 +66,61 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
 
     @PostConstruct
     protected void initWidget() {
-        employeeNameTextBox.getElement().setAttribute("placeholder", translationService.format(
-                OptaShiftUIConstants.EmployeeListPanel_employeeName));
+        employeeName.getElement().setAttribute("placeholder", translationService.format(
+                                                                                        OptaShiftUIConstants.EmployeeListPanel_employeeName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         skillConvertor.registerSkillMapListener(this);
-        dataBinder.bind(employeeNameTextBox, "name");
-        dataBinder.bind(skillProficiencySet, "skillProficiencySet", skillConvertor);
+        dataBinder.bind(employeeName, "name");
+        dataBinder.bind(employeeSkillProficiencySet, "skillProficiencySet", skillConvertor);
 
         dataBinder.<String> addPropertyChangeHandler("name", (e) -> {
-            employeeName.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
+            employeeNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
         });
         dataBinder.<Set<Skill>> addPropertyChangeHandler("skillProficiencySet", (e) -> {
-            skillSet.innerHTML = new SafeHtmlBuilder().appendEscaped(CommonUtils.delimitCollection(e.getNewValue(),
-                    (s) -> s.getName(), ",")).toSafeHtml().asString();
+            employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(CommonUtils.delimitCollection(e.getNewValue(),
+                                                                                                                             (s) -> s.getName(), ",")).toSafeHtml().asString();
         });
-    }
-
-    public Set<ConstraintViolation<Employee>> validate() {
-        return validator.validate(getNewValue());
     }
 
     public void reset() {
-        employeeNameTextBox.setValue("");
-    }
-
-    public Promise<Employee> getIfValid() {
-        return new Promise<Employee>((res, rej) -> {
-            Set<ConstraintViolation<Employee>> validationErrorSet = validate();
-            if (validationErrorSet.isEmpty()) {
-                res.onInvoke(getNewValue());
-            } else {
-                rej.onInvoke(validationErrorSet);
-            }
-        });
-
+        employeeName.setValue("");
     }
 
     @Override
     public void onUpdate(Map<String, Skill> data) {
-        skillProficiencySet.clear();
+        employeeSkillProficiencySet.clear();
         data.forEach((name, skill) -> {
             Option option = new Option();
             option.setName(name);
             option.setValue(name);
             option.setText(name);
-            skillProficiencySet.add(option);
+            employeeSkillProficiencySet.add(option);
         });
-        skillProficiencySet.refresh();
+        employeeSkillProficiencySet.refresh();
     }
 
     @Override
-    protected void deleteRow() {
-        EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), getValue().getId(),
-                FailureShownRestCallback.onSuccess(success -> {
-                    dataInvalidationEvent.fire(new DataInvalidation<Employee>());
-                }));
+    protected void deleteRow(Employee employee) {
+        EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), employee.getId(),
+                                                  FailureShownRestCallback.onSuccess(success -> {
+                                                      dataInvalidationEvent.fire(new DataInvalidation<>());
+                                                  }));
     }
 
     @Override
-    protected void updateRow() {
-        getIfValid()
-                .then((e) -> {
-                    commitChanges();
-                    setEditing(false);
-                    EmployeeRestServiceBuilder.updateEmployee(tenantStore.getCurrentTenantId(), getNewValue(),
-                            FailureShownRestCallback.onSuccess(employee -> {
-                                dataInvalidationEvent.fire(new DataInvalidation<Employee>());
-                            }));
-                    return PromiseUtils.resolve();
-                })
-                .catch_((s) -> {
-                    @SuppressWarnings("unchecked")
-                    Set<ConstraintViolation<Employee>> errors = (Set<ConstraintViolation<Employee>>) s;
-                    ErrorPopup.show(CommonUtils.delimitCollection(errors, (e) -> e.getMessage(), "\n"));
-                    return PromiseUtils.resolve();
-                });
+    protected void updateRow(Employee oldValue, Employee newValue) {
+
+        EmployeeRestServiceBuilder.updateEmployee(tenantStore.getCurrentTenantId(), newValue,
+                                                  FailureShownRestCallback.onSuccess(v -> {
+                                                      dataInvalidationEvent.fire(new DataInvalidation<>());
+                                                  }));
     }
 
     @Override
-    protected void createRow() {
-        getIfValid()
-                .then((e) -> {
-                    commitChanges();
-                    setEditing(false);
-                    EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), getNewValue(),
-                            FailureShownRestCallback.onSuccess(employee -> {
-                                dataInvalidationEvent.fire(new DataInvalidation<Employee>());
-                            }));
-                    return PromiseUtils.resolve();
-                })
-                .catch_((s) -> {
-                    @SuppressWarnings("unchecked")
-                    Set<ConstraintViolation<Employee>> errors = (Set<ConstraintViolation<Employee>>) s;
-                    ErrorPopup.show(CommonUtils.delimitCollection(errors, (e) -> e.getMessage(), "\n"));
-                    return PromiseUtils.resolve();
-                });
+    protected void createRow(Employee employee) {
+        EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee,
+                                               FailureShownRestCallback.onSuccess(v -> {
+                                                   dataInvalidationEvent.fire(new DataInvalidation<>());
+                                               }));
     }
 }
