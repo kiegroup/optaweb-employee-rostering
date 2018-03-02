@@ -49,6 +49,9 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     @DataField("label")
     private HTMLElement label;
 
+    @Inject
+    private ShiftBlobPopover popover;
+
     private Viewport<LocalDateTime> viewport;
     private ListView<ShiftBlob> blobViews;
     private Runnable onDestroy;
@@ -93,6 +96,8 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
         if (e.altKey) {
             blobViews.remove(blob);
+        } else {
+            popover.showFor(this);
         }
     }
 
