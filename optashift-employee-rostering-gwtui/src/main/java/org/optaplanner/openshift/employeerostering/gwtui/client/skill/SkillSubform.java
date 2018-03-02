@@ -1,7 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.skill;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,7 +20,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantSto
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 
-@Dependent
 @Templated("#row")
 public class SkillSubform extends TableRow<Skill> implements TakesValue<Skill> {
 
