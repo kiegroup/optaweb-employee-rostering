@@ -146,8 +146,8 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         toHour.value = end.toLocalTime() + "";
 
         spot.value = shift.getSpot().getName();
-        employee.value = shift.getEmployee().getName();
         pinned.checked = shift.isLockedByUser();
+        employee.value = Optional.ofNullable(shift.getEmployee()).map(Employee::getName).orElse("-");
 
         rotationEmployee.textContent = Optional.ofNullable(shift.getRotationEmployee()).map(Employee::getName).orElse("-");
     }
