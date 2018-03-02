@@ -210,3 +210,7 @@
     font-size: 1em !important;
     padding-top: 10px !important;
 }
+
+.scores {
+    display: inline-block;
+}
