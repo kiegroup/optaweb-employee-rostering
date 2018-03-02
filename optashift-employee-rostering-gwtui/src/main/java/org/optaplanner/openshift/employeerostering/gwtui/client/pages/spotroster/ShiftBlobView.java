@@ -30,6 +30,7 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
@@ -50,7 +51,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     private HTMLElement label;
 
     @Inject
-    private ShiftBlobPopover popover;
+    private BlobPopover popover;
 
     private Viewport<LocalDateTime> viewport;
     private ListView<ShiftBlob> blobViews;
@@ -95,9 +96,9 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     @EventHandler("blob")
     public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
         if (e.altKey) {
-            blobViews.remove(blob);
+            remove();
         } else {
-            popover.showFor(this);
+            popover.showFor(this, blob);
         }
     }
 
@@ -124,5 +125,14 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     @Override
     public void destroy() {
         onDestroy.run();
+    }
+
+    public void remove() {
+        blobViews.remove(blob);
+    }
+
+    @Override
+    public Blob<LocalDateTime> getBlob() {
+        return blob;
     }
 }
