@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
@@ -60,6 +61,10 @@ public class SpotRosterPage implements Page {
     @Inject
     @DataField("viewport")
     private ViewportView<LocalDateTime> viewportView;
+
+    @Inject
+    @DataField("scores")
+    private HTMLDivElement scores;
 
     @Inject
     @Named("span")
@@ -98,8 +103,6 @@ public class SpotRosterPage implements Page {
     @Inject
     private TimingUtils timingUtils;
 
-
-
     private Pagination spotsPagination = Pagination.of(0, 10);
 
     @PostConstruct
@@ -123,8 +126,14 @@ public class SpotRosterPage implements Page {
         return fetchSpotRosterView().then(spotRosterView -> {
 
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
-            hardScore.textContent = score.map(HardSoftScore::getHardScore).map(Object::toString).orElse("");
-            softScore.textContent = score.map(HardSoftScore::getSoftScore).map(Object::toString).orElse("");
+
+            if (score.isPresent()) {
+                scores.classList.remove("hidden");
+                hardScore.textContent = score.get().getHardScore() + "";
+                softScore.textContent = score.get().getSoftScore() + "";
+            } else {
+                scores.classList.add("hidden");
+            }
 
             if (spotRosterView.getSpotList().isEmpty()) {
                 spotsPagination = spotsPagination.previousPage();

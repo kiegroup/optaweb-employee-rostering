@@ -60,7 +60,7 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     public String getLabel() {
         return Optional.ofNullable(shift.getEmployee())
                 .map(Employee::getName)
-                .orElse("U" + " [" + getPositionInScaleUnits() + " ~ " + getEndPositionInScaleUnits() + ", " + getSizeInGridPixels() + "]");
+                .orElse("Unassigned"); //FIXME: i18n
     }
 
     public Shift getShift() {
