@@ -26,4 +26,6 @@ public interface BlobView<Y, T extends Blob<Y>> extends ListElementView<T> {
     BlobView<Y, T> withViewport(final Viewport<Y> viewport);
 
     BlobView<Y, T> withSubLane(final SubLane<Y> subLaneView);
+
+    Blob<Y> getBlob();
 }

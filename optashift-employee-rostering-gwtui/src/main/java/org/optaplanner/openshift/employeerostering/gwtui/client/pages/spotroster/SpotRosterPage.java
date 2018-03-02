@@ -24,7 +24,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.gwt.core.client.Scheduler;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
@@ -38,6 +37,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.Load
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
@@ -81,7 +81,10 @@ public class SpotRosterPage implements Page {
 
     @Inject
     @DataField("shift-blob-popover")
-    private ShiftBlobPopover shiftBlobPopover;
+    private BlobPopover shiftBlobPopover;
+
+    @Inject
+    private ShiftBlobPopoverContent shiftBlobPopoverContent;
 
     @Inject
     private SpotRosterViewportFactory spotRosterViewportFactory;
@@ -92,12 +95,16 @@ public class SpotRosterPage implements Page {
     @Inject
     private LoadingSpinner loadingSpinner;
 
+    @Inject
+    private TimingUtils timingUtils;
+
+
+
     private Pagination spotsPagination = Pagination.of(0, 10);
-    private Pagination timePagination = Pagination.of(0, 7);
 
     @PostConstruct
     public void init() {
-        shiftBlobPopover.init(this);
+        shiftBlobPopover.init(this, shiftBlobPopoverContent);
     }
 
     @Override
@@ -154,7 +161,7 @@ public class SpotRosterPage implements Page {
     public void onSolveButtonClicked(@ForEvent("click") final MouseEvent e) {
         loadingSpinner.showFor("solve-roster");
         solveRoster().then(i -> {
-            repeat(this::refresh, 30000, 1000, "solve-roster");
+            timingUtils.repeat(this::refresh, 30000, 1000, "solve-roster");
             return resolve();
         });
     }
@@ -179,26 +186,5 @@ public class SpotRosterPage implements Page {
     public void onNextPageButtonClicked(@ForEvent("click") final MouseEvent e) {
         spotsPagination = spotsPagination.nextPage();
         refresh();
-    }
-
-    private void repeat(final Runnable task,
-                        final int total,
-                        final int step,
-                        final String loadingTaskId) {
-
-        final long start = System.currentTimeMillis();
-
-        Scheduler.get().scheduleFixedDelay(() -> {
-
-            task.run();
-
-            final boolean shouldRunAgain = System.currentTimeMillis() - start <= total;
-
-            if (!shouldRunAgain) {
-                loadingSpinner.hideFor(loadingTaskId);
-            }
-
-            return shouldRunAgain;
-        }, step);
     }
 }

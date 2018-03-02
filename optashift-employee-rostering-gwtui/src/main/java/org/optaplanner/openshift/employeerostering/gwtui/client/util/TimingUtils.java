@@ -21,6 +21,8 @@ import java.util.function.Supplier;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.Scheduler;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.slf4j.Logger;
 
 @Dependent
@@ -28,6 +30,9 @@ public class TimingUtils {
 
     @Inject
     private Logger logger;
+
+    @Inject
+    private LoadingSpinner loadingSpinner;
 
     public <T> T time(final String label, final Supplier<T> r) {
         long start = System.currentTimeMillis();
@@ -40,5 +45,26 @@ public class TimingUtils {
         long start = System.currentTimeMillis();
         r.run();
         logger.info(label + " took " + (System.currentTimeMillis() - start) + "ms");
+    }
+
+    public void repeat(final Runnable task,
+                       final int total,
+                       final int step,
+                       final String loadingTaskId) {
+
+        final long start = System.currentTimeMillis();
+
+        Scheduler.get().scheduleFixedDelay(() -> {
+
+            task.run();
+
+            final boolean shouldRunAgain = System.currentTimeMillis() - start <= total;
+
+            if (!shouldRunAgain) {
+                loadingSpinner.hideFor(loadingTaskId);
+            }
+
+            return shouldRunAgain;
+        }, step);
     }
 }

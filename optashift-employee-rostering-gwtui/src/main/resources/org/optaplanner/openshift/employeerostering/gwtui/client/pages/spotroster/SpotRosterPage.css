@@ -185,24 +185,21 @@
     z-index: 20;
 }
 
-.blob-border {
+.blob-highlight-border {
     height: 40px;
     border-radius: 4px;
     position: absolute;
     background-color: rgba(255, 255, 255, 0.2);
-    border: 1px solid white;
+    border: 2px solid rgb(227, 255, 236);
 }
 
-.blob-popover-dialog {
+.blob-popover-content {
     background-color: white;
-    border: 1px solid gray;
+    border: 1px solid rgba(0, 0, 0, 0.4);
     border-radius: 4px;
-    padding: 10px;
     position: absolute;
     top: 0;
     left: 0;
-    width: 200px;
-    height: 300px;
 }
 
 .spot-roster-page {

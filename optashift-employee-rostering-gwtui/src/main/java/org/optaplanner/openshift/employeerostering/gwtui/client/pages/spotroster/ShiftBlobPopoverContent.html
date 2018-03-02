@@ -1,0 +1,95 @@
+<!--
+  ~ Copyright 2018 Red Hat, Inc. and/or its affiliates.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- FIXME: i18n -->
+<div class="root panel panel-default blob-popover-content">
+
+    <div class="panel-heading">
+        Edit shift
+        <button data-field="close-button" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    </div>
+
+    <div class="panel-body">
+        <div>
+            <form class="form">
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <label>From</label>
+                        <input class="form-control" type="text" data-field="from-day">
+                    </div>
+                    <div class="col-md-6">
+                        <label>&nbsp;</label>
+                        <input class="form-control" type="text" data-field="from-hour">
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <label>To</label>
+                        <input class="form-control" type="text" data-field="to-day">
+                    </div>
+                    <div class="col-md-6">
+                        <label>&nbsp;</label>
+                        <input class="form-control" type="text" data-field="to-hour">
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <label>Spot</label>
+                        <input class="form-control" type="text" data-field="spot">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <label>Employee</label>
+                        <input class="form-control" type="text" data-field="employee">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <div class="checkbox">
+                            <label>
+                                <input data-field="pinned" type="checkbox"> Pinned
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-12">
+                        <label>Rotation employee</label>
+                        <p class="form-control-static" data-field="rotation-employee"></p>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="form-group row">
+                    <div class="col-md-6 text-left">
+                        <button type="button" class="btn btn-link" data-field="delete-button">Delete shift</button>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-secondary" data-field="cancel-button">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-field="apply-button">Apply</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

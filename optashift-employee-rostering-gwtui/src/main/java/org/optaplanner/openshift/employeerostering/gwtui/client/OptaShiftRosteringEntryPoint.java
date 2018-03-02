@@ -21,6 +21,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantSto
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
 
 @EntryPoint
 @Bundle("resources/i18n/OptaShiftUIConstants.properties")
@@ -69,7 +70,7 @@ public class OptaShiftRosteringEntryPoint {
 
     public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
         //FIXME: We should probably have a better 'home page' than the skills table, but since it's the lightest one to load, that was the chosen one
-        pageChangeEvent.fire(new PageChange(SKILLS, () -> {
+        pageChangeEvent.fire(new PageChange(SPOT_ROSTER, () -> {
             DomGlobal.document.getElementById("initial-loading-message").remove();
             DomGlobal.document.body.appendChild(navigationController.getAppElement());
         }));

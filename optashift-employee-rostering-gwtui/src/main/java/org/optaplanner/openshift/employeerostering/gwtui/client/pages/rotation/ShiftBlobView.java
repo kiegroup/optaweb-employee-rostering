@@ -28,6 +28,7 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CircularDraggability;
@@ -166,5 +167,10 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     @Override
     public void destroy() {
         onDestroy.run();
+    }
+
+    @Override
+    public Blob<Long> getBlob() {
+        return blob;
     }
 }

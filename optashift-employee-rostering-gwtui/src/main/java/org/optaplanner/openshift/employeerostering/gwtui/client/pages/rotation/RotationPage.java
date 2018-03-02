@@ -31,6 +31,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
@@ -69,6 +70,9 @@ public class RotationPage implements Page {
     @Inject
     private RotationViewportFactory rotationViewportFactory;
 
+    @Inject
+    private LoadingSpinner loadingSpinner;
+
     private Viewport<Long> viewport;
 
     @Override
@@ -81,6 +85,9 @@ public class RotationPage implements Page {
     }
 
     public Promise<Void> refresh() {
+
+        loadingSpinner.showFor("rotation-page");
+
         return fetchShiftTemplate().then(shiftTemplate -> {
 
             final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate).stream()
@@ -88,6 +95,10 @@ public class RotationPage implements Page {
 
             viewport = rotationViewportFactory.getViewport(shiftsBySpot);
             viewportView.setViewport(viewport);
+            loadingSpinner.hideFor("rotation-page");
+            return resolve();
+        }).catch_(i -> {
+            loadingSpinner.hideFor("rotation-page");
             return resolve();
         });
     }
