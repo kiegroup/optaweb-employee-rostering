@@ -17,26 +17,27 @@
 <!-- FIXME: i18n -->
 
 <div class="spot-roster-page">
-    <div>
 
-        <button data-field="solve-button" class="btn btn-success">
-            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-            <span data-i18n-key="General.solve">Solve</span>
-        </button>
+    <div class="row">
+        <div class="col-md-12">
+            <button data-field="refresh-button" class="btn btn-default">
+                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                <span data-i18n-key="General.refresh">Refresh</span>
+            </button>
 
-        <button data-field="refresh-button" class="btn btn-default">
-            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-            <span data-i18n-key="General.refresh">Refresh</span>
-        </button>
+            <button data-field="solve-button" class="btn btn-success">
+                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                <span data-i18n-key="General.solve">Solve</span>
+            </button>
+
+            <div data-field="scores" class="scores">
+                <div class="btn btn-default" disabled>Hard score: <span data-field="hard-score"></span></div>
+                <div class="btn btn-default" disabled>Soft score: <span data-field="soft-score"></span></div>
+            </div>
+        </div>
     </div>
 
-    <div data-field="scores">
-        Hard score: <span data-field="hard-score"></span>
-        &nbsp;
-        Soft score: <span data-field="soft-score"></span>
-    </div>
-
-    <br>
+    <hr>
 
     <div data-field="shift-blob-popover"></div>
 
