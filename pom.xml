@@ -76,6 +76,8 @@
     <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
     <version.org.wildfly.arquillian>2.1.0.Final</version.org.wildfly.arquillian>
     <version.org.wildfly.wildfly-dist>10.1.0.Final</version.org.wildfly.wildfly-dist>
+    <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.5</version.org.codehaus.cargo.cargo-maven2-plugin>
+    <version.wildfly>11.0.0.Final</version.wildfly>
   </properties>
 
   <modules>
@@ -87,6 +89,7 @@
     <module>optashift-employee-rostering-benchmark</module>
     <module>optashift-employee-rostering-docs</module>
     <module>optashift-employee-rostering-distribution</module>
+    <module>optashift-employee-rostering-client</module>
   </modules>
 
   <dependencyManagement>
@@ -130,6 +133,12 @@
         <groupId>org.optaplanner.openshift</groupId>
         <artifactId>optashift-employee-rostering-docs</artifactId>
         <type>zip</type>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner.openshift</groupId>
+        <artifactId>optashift-employee-rostering-client</artifactId>
+        <scope>test</scope>
         <version>${project.version}</version>
       </dependency>
 
@@ -394,6 +403,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-antrun-plugin</artifactId>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.cargo</groupId>
+          <artifactId>cargo-maven2-plugin</artifactId>
+          <version>${version.org.codehaus.cargo.cargo-maven2-plugin}</version>
         </plugin>
       </plugins>
     </pluginManagement>
