@@ -19,6 +19,7 @@ package org.optaplanner.openshift.employeerostering.server.skill;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
@@ -43,6 +44,9 @@ public class SkillRestServiceImpl extends AbstractRestServiceImpl implements Ski
     @Transactional
     public Skill getSkill(Integer tenantId, Long id) {
         Skill skill = entityManager.find(Skill.class, id);
+        if (skill == null) {
+            throw new EntityNotFoundException("No Skill entity found with ID (" + id + ").");
+        }
         validateTenantIdParameter(tenantId, skill);
         return skill;
     }
