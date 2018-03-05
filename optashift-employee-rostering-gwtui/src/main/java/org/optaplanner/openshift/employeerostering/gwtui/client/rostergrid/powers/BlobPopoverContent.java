@@ -21,7 +21,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.
 
 public interface BlobPopoverContent extends IsElement {
 
-    BlobPopoverContent withParent(final BlobPopover parent);
+    BlobPopoverContent withPopover(final BlobPopover parent);
 
     void setBlobView(final BlobView<?, ?> blob);
 }

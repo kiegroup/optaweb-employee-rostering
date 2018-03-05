@@ -90,6 +90,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
 
         viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
         viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
+
         updateLabel();
     }
 
@@ -113,11 +114,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
 
     @EventHandler("blob")
     public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
-        if (e.altKey) {
-            remove();
-        } else {
-            popover.showFor(this);
-        }
+        popover.showFor(this);
     }
 
     private void updateLabel() {
