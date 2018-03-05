@@ -104,7 +104,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     @DataField("apply-button")
     private HTMLButtonElement applyButton;
 
-    private BlobPopover parent;
+    private BlobPopover popover;
 
     private ShiftBlobView blobView;
 
@@ -118,7 +118,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         final Shift shift = blob.getShift();
 
         employee.clear();
-        employee.addItem("Unassigned", "-1");
+        employee.addItem("Unassigned", "-1"); //FIXME: i18n
 
         EmployeeRestServiceBuilder.getEmployeeList(shift.getTenantId(), onSuccess(employees -> {
             this.employeesById = employees.stream().collect(toMap(Employee::getId, identity()));
@@ -152,13 +152,13 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
     @EventHandler("cancel-button")
     public void onCancelButtonClick(@ForEvent("click") final MouseEvent e) {
-        parent.hide();
+        popover.hide();
         e.stopPropagation();
     }
 
     @EventHandler("close-button")
     public void onCloseButtonClick(@ForEvent("click") final MouseEvent e) {
-        parent.hide();
+        popover.hide();
         e.stopPropagation();
     }
 
@@ -183,7 +183,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         ShiftRestServiceBuilder.updateShift(shift.getTenantId(), new ShiftView(shift), onSuccess((final Shift updatedShift) -> {
             blob.setShift(updatedShift);
             blobView.refresh();
-            parent.hide();
+            popover.hide();
         }).onFailure(i -> {
             shift.setLockedByUser(oldLockedByUser);
             shift.setEmployee(oldEmployee);
@@ -198,13 +198,13 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     @EventHandler("delete-button")
     public void onDeleteButtonClick(@ForEvent("click") final MouseEvent e) {
         blobView.remove();
-        parent.hide();
+        popover.hide();
         e.stopPropagation();
     }
 
     @Override
-    public BlobPopoverContent withParent(final BlobPopover parent) {
-        this.parent = parent;
+    public BlobPopoverContent withPopover(final BlobPopover popover) {
+        this.popover = popover;
         return this;
     }
 }

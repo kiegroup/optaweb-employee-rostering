@@ -59,7 +59,7 @@ public class BlobPopover implements IsElement {
                      final BlobPopoverContent content) {
 
         this.parent = parent.getElement();
-        this.content = content.withParent(this);
+        this.content = content.withPopover(this);
     }
 
     public void showFor(final BlobView<?, ?> blobView) {
