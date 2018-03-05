@@ -27,13 +27,17 @@ import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
+import org.gwtbootstrap3.client.ui.ListBox;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 
 @Templated
 public class ShiftBlobPopoverContent implements BlobPopoverContent {
@@ -68,7 +72,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
     @Inject
     @DataField("employee")
-    private HTMLInputElement employee;
+    private ListBox employee;
 
     @Inject
     @DataField("pinned")
@@ -132,10 +136,14 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
     @Override
     public void setBlobView(final BlobView<?, ?> blobView) {
-        this.blobView = (ShiftBlobView) blobView;
 
+        this.blobView = (ShiftBlobView) blobView;
         final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
         final Shift shift = blob.getShift();
+
+        EmployeeRestServiceBuilder.getEmployeeList(shift.getTenantId(), onSuccess(employees -> {
+            employees.forEach(e -> employee.addItem(e.getName(), e.getId().toString()));
+        }));
 
         final LocalDateTime start = shift.getTimeSlot().getStartDateTime();
         fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth();
@@ -147,7 +155,6 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
         spot.value = shift.getSpot().getName();
         pinned.checked = shift.isLockedByUser();
-        employee.value = Optional.ofNullable(shift.getEmployee()).map(Employee::getName).orElse("-");
 
         rotationEmployee.textContent = Optional.ofNullable(shift.getRotationEmployee()).map(Employee::getName).orElse("-");
     }
