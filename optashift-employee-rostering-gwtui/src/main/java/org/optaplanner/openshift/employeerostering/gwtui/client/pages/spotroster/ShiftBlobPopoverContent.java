@@ -42,6 +42,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestS
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
+import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 import static java.lang.Long.parseLong;
 import static java.util.function.Function.identity;
@@ -77,11 +78,11 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
     @Inject
     @DataField("spot")
-    private HTMLInputElement spot;
+    private ListBox spotSelect; //FIXME: Don't use GWT widget
 
     @Inject
     @DataField("employee")
-    private ListBox employee;
+    private ListBox employeeSelect; //FIXME: Don't use GWT widget
 
     @Inject
     @DataField("pinned")
@@ -117,13 +118,18 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
         final Shift shift = blob.getShift();
 
-        employee.clear();
-        employee.addItem("Unassigned", "-1"); //FIXME: i18n
+        employeeSelect.clear();
+        employeeSelect.addItem("Unassigned", "-1"); //FIXME: i18n
+
+        SpotRestServiceBuilder.getSpotList(shift.getTenantId(), onSuccess(spots -> {
+            spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
+            spotSelect.setSelectedIndex(spots.indexOf(shift.getSpot()));
+        }));
 
         EmployeeRestServiceBuilder.getEmployeeList(shift.getTenantId(), onSuccess(employees -> {
             this.employeesById = employees.stream().collect(toMap(Employee::getId, identity()));
-            employees.forEach(e -> employee.addItem(e.getName(), e.getId().toString()));
-            employee.setSelectedIndex(employees.indexOf(shift.getEmployee()) + 1);
+            employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
+            employeeSelect.setSelectedIndex(employees.indexOf(shift.getEmployee()) + 1);
         }));
 
         final LocalDateTime start = shift.getTimeSlot().getStartDateTime();
@@ -134,7 +140,6 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth();
         toHour.value = end.toLocalTime() + "";
 
-        spot.value = shift.getSpot().getName();
         pinned.checked = shift.isLockedByUser();
 
         updateEmployeeSelect();
@@ -142,7 +147,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     }
 
     private void updateEmployeeSelect() {
-        employee.setEnabled(pinned.checked);
+        employeeSelect.setEnabled(pinned.checked);
     }
 
     @EventHandler("root")
@@ -178,7 +183,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         final Employee oldEmployee = shift.getEmployee();
 
         shift.setLockedByUser(pinned.checked);
-        shift.setEmployee(employeesById.get(parseLong(employee.getSelectedValue())));
+        shift.setEmployee(employeesById.get(parseLong(employeeSelect.getSelectedValue())));
 
         ShiftRestServiceBuilder.updateShift(shift.getTenantId(), new ShiftView(shift), onSuccess((final Shift updatedShift) -> {
             blob.setShift(updatedShift);
