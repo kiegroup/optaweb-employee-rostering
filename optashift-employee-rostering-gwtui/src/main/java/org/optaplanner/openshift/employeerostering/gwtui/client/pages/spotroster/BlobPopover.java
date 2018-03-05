@@ -78,18 +78,18 @@ public class BlobPopover implements IsElement {
         final Integer offsetTop = getOffsetRelativeTo(parent, blobElement, e -> e.offsetTop) + NEGATIVE_MARGIN_DISPLACEMENT;
 
         // Using style.bottom/right is not possible because the parent does not have a fixed height/width
-        content.getElement().style.top = top(blobElement, offsetTop);
-        content.getElement().style.left = left(blobElement, offsetLeft);
+        content.getElement().style.top = top(offsetTop, blobElement);
+        content.getElement().style.left = left(offsetLeft, blobElement);
 
         blobHighlightBorder.style.left = px(offsetLeft);
         blobHighlightBorder.style.top = px(offsetTop);
         blobHighlightBorder.style.width = WidthUnionType.of(px(blobElement.offsetWidth));
 
-        getElement().style.visibility = "visible";
+        getElement().style.visibility = "";
     }
 
-    public String top(final HTMLElement blobElement,
-                      final Integer offsetTop) {
+    private String top(final Integer offsetTop,
+                       final HTMLElement blobElement) {
 
         final double popoverHeight = content.getElement().offsetHeight;
 
@@ -100,8 +100,8 @@ public class BlobPopover implements IsElement {
         }
     }
 
-    private String left(final HTMLElement blobElement,
-                        final Integer offsetLeft) {
+    private String left(final Integer offsetLeft,
+                        final HTMLElement blobElement) {
 
         final double popoverWidth = content.getElement().offsetWidth;
 
