@@ -54,7 +54,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Inject
     private SpotRestService spotRestService;
 
@@ -79,9 +79,9 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Override
     @Transactional
-    public void updateShift(Integer tenantId, ShiftView shiftView) {
+    public Shift updateShift(Integer tenantId, ShiftView shiftView) {
         Shift shift = convertFromView(tenantId, shiftView);
-        entityManager.merge(shift);
+        return entityManager.merge(shift);
     }
 
     private Shift convertFromView(Integer tenantId, ShiftView shiftView) {
@@ -97,7 +97,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
             rotationEmployee = entityManager.find(Employee.class, rotationEmployeeId);
             if (rotationEmployee == null) {
                 throw new IllegalArgumentException("ShiftView (" + shiftView
-                        + ") has an non-existing employeeId (" + rotationEmployeeId + ").");
+                                                           + ") has an non-existing employeeId (" + rotationEmployeeId + ").");
             }
             validateTenantIdParameter(tenantId, rotationEmployee);
         }
@@ -109,7 +109,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
             Employee employee = entityManager.find(Employee.class, employeeId);
             if (employee == null) {
                 throw new IllegalArgumentException("ShiftView (" + shiftView
-                        + ") has an non-existing employeeId (" + employeeId + ").");
+                                                           + ") has an non-existing employeeId (" + employeeId + ").");
             }
             validateTenantIdParameter(tenantId, employee);
             shift.setEmployee(employee);
@@ -132,7 +132,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @Override
     @Transactional
     public List<Long> addShiftsFromTemplate(Integer tenantId,
-            String startDateString, String endDateString) throws Exception {
+                                            String startDateString, String endDateString) throws Exception {
         ShiftTemplate template = getTemplate(tenantId);
 
         if (null == template) {
@@ -144,11 +144,11 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
         try {
             ShiftFileParser.ParserOut parserOutput = ShiftFileParser.parse(tenantId,
-                    spotRestService.getSpotList(tenantId),
-                    employeeRestService.getEmployeeList(tenantId),
-                    startDate,
-                    endDate,
-                    template);
+                                                                           spotRestService.getSpotList(tenantId),
+                                                                           employeeRestService.getEmployeeList(tenantId),
+                                                                           startDate,
+                                                                           endDate,
+                                                                           template);
             List<Shift> shifts = parserOutput.getShiftOutputList();
 
             List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOutputList();
@@ -205,7 +205,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
             return null;
         } else if (1 != result.size()) {
             throw new IllegalStateException("Each tenant can only have 1 template! Found " + result.size()
-                    + "templates!");
+                                                    + "templates!");
         } else {
             return result.get(0);
         }
@@ -230,5 +230,4 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
         entityManager.merge(template);
     }
-
 }

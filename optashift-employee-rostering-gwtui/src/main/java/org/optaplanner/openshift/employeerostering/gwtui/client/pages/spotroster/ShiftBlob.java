@@ -26,8 +26,8 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
 public class ShiftBlob implements Blob<LocalDateTime> {
 
-    private final Shift shift;
     private final LinearScale<LocalDateTime> scale;
+    private Shift shift;
     private Long sizeInGridPixels;
 
     ShiftBlob(final LinearScale<LocalDateTime> scale, final Shift shift) {
@@ -65,6 +65,10 @@ public class ShiftBlob implements Blob<LocalDateTime> {
 
     public Shift getShift() {
         return shift;
+    }
+
+    public void setShift(final Shift shift) {
+        this.shift = shift;
     }
 
     @Override

@@ -218,3 +218,11 @@
 .last-form-group-row {
     margin-bottom: 0;
 }
+
+.locked {
+    border: 2px dashed black !important;
+}
+
+.unassigned {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;

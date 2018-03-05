@@ -17,11 +17,13 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import elemental2.dom.Event;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -32,11 +34,18 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopoverContent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
+import static java.lang.Long.parseLong;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 
 @Templated
@@ -99,6 +108,43 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
     private ShiftBlobView blobView;
 
+    private Map<Long, Employee> employeesById;
+
+    @Override
+    public void setBlobView(final BlobView<?, ?> blobView) {
+
+        this.blobView = (ShiftBlobView) blobView;
+        final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
+        final Shift shift = blob.getShift();
+
+        employee.clear();
+        employee.addItem("Unassigned", "-1");
+
+        EmployeeRestServiceBuilder.getEmployeeList(shift.getTenantId(), onSuccess(employees -> {
+            this.employeesById = employees.stream().collect(toMap(Employee::getId, identity()));
+            employees.forEach(e -> employee.addItem(e.getName(), e.getId().toString()));
+            employee.setSelectedIndex(employees.indexOf(shift.getEmployee()) + 1);
+        }));
+
+        final LocalDateTime start = shift.getTimeSlot().getStartDateTime();
+        fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth();
+        fromHour.value = start.toLocalTime() + "";
+
+        final LocalDateTime end = shift.getTimeSlot().getEndDateTime();
+        toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth();
+        toHour.value = end.toLocalTime() + "";
+
+        spot.value = shift.getSpot().getName();
+        pinned.checked = shift.isLockedByUser();
+
+        updateEmployeeSelect();
+        rotationEmployee.textContent = Optional.ofNullable(shift.getRotationEmployee()).map(Employee::getName).orElse("-");
+    }
+
+    private void updateEmployeeSelect() {
+        employee.setEnabled(pinned.checked);
+    }
+
     @EventHandler("root")
     public void onClick(@ForEvent("click") final MouseEvent e) {
         e.stopPropagation();
@@ -116,8 +162,36 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         e.stopPropagation();
     }
 
+    @EventHandler("pinned")
+    public void onPinnedCheckboxClick(@ForEvent("change") final Event e) {
+        updateEmployeeSelect();
+        e.stopPropagation();
+    }
+
     @EventHandler("apply-button")
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
+
+        final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
+        final Shift shift = blob.getShift();
+
+        final boolean oldLockedByUser = shift.isLockedByUser();
+        final Employee oldEmployee = shift.getEmployee();
+
+        shift.setLockedByUser(pinned.checked);
+        shift.setEmployee(employeesById.get(parseLong(employee.getSelectedValue())));
+
+        ShiftRestServiceBuilder.updateShift(shift.getTenantId(), new ShiftView(shift), onSuccess((final Shift updatedShift) -> {
+            blob.setShift(updatedShift);
+            blobView.refresh();
+            parent.hide();
+        }).onFailure(i -> {
+            shift.setLockedByUser(oldLockedByUser);
+            shift.setEmployee(oldEmployee);
+        }).onError(i -> {
+            shift.setLockedByUser(oldLockedByUser);
+            shift.setEmployee(oldEmployee);
+        }));
+
         e.stopPropagation();
     }
 
@@ -132,30 +206,5 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     public BlobPopoverContent withParent(final BlobPopover parent) {
         this.parent = parent;
         return this;
-    }
-
-    @Override
-    public void setBlobView(final BlobView<?, ?> blobView) {
-
-        this.blobView = (ShiftBlobView) blobView;
-        final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
-        final Shift shift = blob.getShift();
-
-        EmployeeRestServiceBuilder.getEmployeeList(shift.getTenantId(), onSuccess(employees -> {
-            employees.forEach(e -> employee.addItem(e.getName(), e.getId().toString()));
-        }));
-
-        final LocalDateTime start = shift.getTimeSlot().getStartDateTime();
-        fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth();
-        fromHour.value = start.toLocalTime() + "";
-
-        final LocalDateTime end = shift.getTimeSlot().getEndDateTime();
-        toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth();
-        toHour.value = end.toLocalTime() + "";
-
-        spot.value = shift.getSpot().getName();
-        pinned.checked = shift.isLockedByUser();
-
-        rotationEmployee.textContent = Optional.ofNullable(shift.getRotationEmployee()).map(Employee::getName).orElse("-");
     }
 }
