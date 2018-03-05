@@ -54,7 +54,7 @@ public interface ShiftRestService {
      */
     @PUT
     @Path("/update")
-    void updateShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
+    Shift updateShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
 
     @PUT
     @Path("/template/update")

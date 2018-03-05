@@ -33,6 +33,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 
 @Templated
@@ -66,13 +67,30 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
         this.blobViews = blobViews;
         this.blob = blob;
 
-        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
-        updateLabel();
+        refresh();
 
         // FIXME: Enable draggability and resizability after backend supports it.
 
         return this;
+    }
+
+    public void refresh() {
+
+        if (blob.getShift().isLockedByUser()) {
+            getElement().classList.add("locked");
+        } else {
+            getElement().classList.remove("locked");
+        }
+
+        if (blob.getShift().getEmployee() == null) {
+            getElement().classList.add("unassigned");
+        } else {
+            getElement().classList.remove("unassigned");
+        }
+
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
+        updateLabel();
     }
 
     private boolean onResize(final Long newSizeInGridPixels) {

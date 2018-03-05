@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers;
 
 import java.util.function.Function;
 
