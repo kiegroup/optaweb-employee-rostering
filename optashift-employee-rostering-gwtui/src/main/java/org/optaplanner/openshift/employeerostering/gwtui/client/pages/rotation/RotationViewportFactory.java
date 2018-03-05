@@ -18,12 +18,8 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -31,20 +27,18 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLinesFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.TicksFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementViewPool;
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionFreeSubLaneBuilder;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Stream.concat;
 
 public class RotationViewportFactory {
 
@@ -66,11 +60,14 @@ public class RotationViewportFactory {
     @Inject
     private TimingUtils timingUtils;
 
+    @Inject
+    private CollisionFreeSubLaneBuilder conflictFreeSubLanesBuilder;
+
     public Viewport<Long> getViewport(final Map<Spot, List<Shift>> shiftsBySpot) {
 
         return timingUtils.time("Rotation viewport instantiation", () -> {
 
-            shiftBlobViewPool.init(500L, shiftBlobViews::get);
+            shiftBlobViewPool.init(2000L, shiftBlobViews::get);
 
             final Integer durationInWeeks = tenantStore.getCurrentTenant().getConfiguration().getTemplateDuration();
             final Long durationTimeInMinutes = durationInWeeks * 7 * 24 * 60L;
@@ -105,57 +102,9 @@ public class RotationViewportFactory {
                                  final List<Shift> shifts,
                                  final Spot spot) {
 
-        final List<SubLane<Long>> subLanes = shifts.stream()
-                .map(shift -> new ShiftBlob(shift, baseDate, scale))
-                .map(blob -> Stream.of(new SubLane<>(new ArrayList<>(singletonList(blob)))))
-                .reduce(this::merge)
-                .orElseGet(Stream::of)
-                .map(this::withTwins)
-                .collect(toList());
+        final List<SubLane<Long>> subLanes = conflictFreeSubLanesBuilder.buildSubLanes(
+                shifts.stream().map(shift -> new ShiftBlob(shift, baseDate, scale)));
 
         return new SpotLane(spot, subLanes);
-    }
-
-    private Stream<SubLane<Long>> merge(final Stream<SubLane<Long>> lhsStream,
-                                        final Stream<SubLane<Long>> rhsStream) {
-
-        final List<SubLane<Long>> lhs = lhsStream.collect(toList());
-        final List<SubLane<Long>> rhs = rhsStream.collect(toList());
-
-        final Optional<SubLane<Long>> subLaneWithSpace = lhs.stream()
-                .filter(subLane -> rhs.stream().map(this::withTwins).noneMatch(subLane::collidesWith))
-                .findFirst();
-
-        if (subLaneWithSpace.isPresent()) {
-            return merge(lhs, rhs, subLaneWithSpace.get());
-        }
-
-        return concat(lhs.stream(), rhs.stream());
-    }
-
-    private Stream<SubLane<Long>> merge(final List<SubLane<Long>> lhs,
-                                        final List<SubLane<Long>> rhs,
-                                        final SubLane<Long> subLaneWithSpace) {
-
-        final int indexOfSubLaneWithSpace = lhs.indexOf(subLaneWithSpace);
-
-        final List<SubLane<Long>> left = lhs.subList(0, indexOfSubLaneWithSpace);
-        final List<SubLane<Long>> right = lhs.subList(indexOfSubLaneWithSpace + 1, lhs.size());
-
-        final List<Blob<Long>> mergedBlobs = concat(Stream.of(subLaneWithSpace), rhs.stream())
-                .map(SubLane::getBlobs)
-                .flatMap(Collection::stream)
-                .collect(toList());
-
-        return concat(concat(left.stream(), Stream.of(new SubLane<>(mergedBlobs))), right.stream());
-    }
-
-    private SubLane<Long> withTwins(final SubLane<Long> subLane) {
-
-        final List<Blob<Long>> blobsAndTwins = subLane.getBlobs().stream()
-                .flatMap(blob -> ((ShiftBlob) blob).toStream())
-                .collect(toList());
-
-        return new SubLane<>(blobsAndTwins);
     }
 }

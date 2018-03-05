@@ -16,20 +16,21 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model;
 
+import java.util.stream.Stream;
+
 public interface Blob<T> {
 
     T getPositionInScaleUnits();
 
     void setPositionInScaleUnits(final T position);
 
-    //FIXME: Change it to getSizeInScaleUnits?
-    Long getSizeInGridPixels();
+    long getSizeInGridPixels();
 
-    void setSizeInGridPixels(final Long sizeInGridPixels);
+    void setSizeInGridPixels(final long sizeInGridPixels);
 
     LinearScale<T> getScale();
 
-    default Long getPositionInGridPixels() {
+    default long getPositionInGridPixels() {
         return getScale().toGridPixels(getPositionInScaleUnits());
     }
 
@@ -37,18 +38,16 @@ public interface Blob<T> {
         return getScale().toScaleUnits(getEndPositionInGridPixels());
     }
 
-    default Long getEndPositionInGridPixels() {
-        return getScale().toGridPixels(getPositionInScaleUnits()) + getSizeInGridPixels();
+    default long getEndPositionInGridPixels() {
+        return getPositionInGridPixels() + getSizeInGridPixels();
     }
 
     default boolean collidesWith(final Blob<?> other) {
+        return getEndPositionInGridPixels() > other.getPositionInGridPixels()
+                && other.getEndPositionInGridPixels() > getPositionInGridPixels();
+    }
 
-        final long x = getPositionInGridPixels();
-        final long xs = getSizeInGridPixels();
-
-        final long y = other.getPositionInGridPixels();
-        final long ys = other.getSizeInGridPixels();
-
-        return x + xs > y && y + ys > x;
+    default Stream<Blob<T>> toStream() {
+        return Stream.of(this);
     }
 }
