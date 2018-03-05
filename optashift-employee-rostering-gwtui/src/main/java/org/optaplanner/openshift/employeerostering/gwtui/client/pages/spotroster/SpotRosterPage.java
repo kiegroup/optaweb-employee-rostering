@@ -56,6 +56,10 @@ public class SpotRosterPage implements Page {
     private HTMLButtonElement solveButton;
 
     @Inject
+    @DataField("terminate-earlier-button")
+    private HTMLButtonElement terminateEarlierButton;
+
+    @Inject
     @DataField("refresh-button")
     private HTMLButtonElement refreshButton;
 
@@ -105,6 +109,7 @@ public class SpotRosterPage implements Page {
     private TimingUtils timingUtils;
 
     private Pagination spotsPagination = Pagination.of(0, 10);
+    private String solvingTaskId;
 
     @PostConstruct
     public void init() {
@@ -121,9 +126,6 @@ public class SpotRosterPage implements Page {
     }
 
     public Promise<Void> refresh() {
-
-        loadingSpinner.showFor("spot-roster-page");
-
         return fetchSpotRosterView().then(spotRosterView -> {
 
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
@@ -132,8 +134,12 @@ public class SpotRosterPage implements Page {
                 scores.classList.remove("hidden");
                 hardScore.textContent = score.get().getHardScore() + "";
                 softScore.textContent = score.get().getSoftScore() + "";
+                terminateEarlierButton.classList.remove("hidden");
+                solveButton.classList.add("hidden");
             } else {
                 scores.classList.add("hidden");
+                terminateEarlierButton.classList.add("hidden");
+                solveButton.classList.remove("hidden");
             }
 
             if (spotRosterView.getSpotList().isEmpty()) {
@@ -143,18 +149,11 @@ public class SpotRosterPage implements Page {
                 viewportView.setViewport(spotRosterViewportFactory.getViewport(spotRosterView));
                 return resolve();
             }
-        }).then(i -> {
-            loadingSpinner.hideFor("spot-roster-page");
-            return resolve();
-        }).catch_(i -> {
-            loadingSpinner.hideFor("spot-roster-page");
-            return resolve();
         });
     }
 
     private Promise<SpotRosterView> fetchSpotRosterView() {
         return new Promise<>((resolve, reject) -> {
-
             getCurrentSpotRosterView(tenantStore.getCurrentTenantId(),
                                      spotsPagination.getPageNumber(),
                                      spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));
@@ -169,16 +168,27 @@ public class SpotRosterPage implements Page {
 
     @EventHandler("solve-button")
     public void onSolveButtonClicked(@ForEvent("click") final MouseEvent e) {
-        loadingSpinner.showFor("solve-roster");
         solveRoster().then(i -> {
-            timingUtils.repeat(this::refresh, 30000, 1000, "solve-roster");
+            solvingTaskId = timingUtils.repeat(this::refresh, 30000, 1000, this::refresh);
             return resolve();
         });
     }
 
+    @EventHandler("terminate-earlier-button")
+    public void onTerminateEarlierButtonClicked(@ForEvent("click") final MouseEvent e) {
+        timingUtils.terminateEarly(solvingTaskId);
+        RosterRestServiceBuilder.terminateRosterEarly(tenantStore.getCurrentTenantId(), onSuccess(i -> refresh()));
+    }
+
     @EventHandler("refresh-button")
     public void onRefreshButtonClicked(@ForEvent("click") final MouseEvent e) {
-        refresh();
+
+        loadingSpinner.showFor("refresh-spot-roster");
+
+        refresh().then(i -> {
+            loadingSpinner.hideFor("refresh-spot-roster");
+            return resolve();
+        });
     }
 
     @EventHandler("previous-page-button")
