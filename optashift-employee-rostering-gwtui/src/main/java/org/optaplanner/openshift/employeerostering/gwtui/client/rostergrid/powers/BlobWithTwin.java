@@ -31,6 +31,7 @@ public interface BlobWithTwin<T, Y extends BlobWithTwin<T, Y>> extends Blob<T> {
 
     void setTwin(final Y twin);
 
+    @Override
     default Stream<Blob<T>> toStream() {
         if (!getTwin().isPresent()) {
             return Stream.of(this);

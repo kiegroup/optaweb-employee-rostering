@@ -30,6 +30,9 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     private Shift shift;
     private Long sizeInGridPixels;
 
+    private Long positionInGridPixelsCache = null;
+    private Long endPositionInGridPixelsCache = null;
+
     ShiftBlob(final LinearScale<LocalDateTime> scale, final Shift shift) {
         this.shift = shift;
         this.scale = scale;
@@ -37,7 +40,7 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     }
 
     @Override
-    public Long getSizeInGridPixels() {
+    public long getSizeInGridPixels() {
         return sizeInGridPixels;
     }
 
@@ -47,12 +50,37 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     }
 
     @Override
+    public long getEndPositionInGridPixels() {
+
+        //Collision performance optimization
+        if (endPositionInGridPixelsCache == null) {
+            endPositionInGridPixelsCache = Blob.super.getEndPositionInGridPixels();
+        }
+
+        return endPositionInGridPixelsCache;
+    }
+
+    @Override
+    public long getPositionInGridPixels() {
+
+        //Collision performance optimization
+        if (positionInGridPixelsCache == null) {
+            positionInGridPixelsCache = Blob.super.getPositionInGridPixels();
+        }
+
+        return positionInGridPixelsCache;
+    }
+
+    @Override
     public void setPositionInScaleUnits(final LocalDateTime start) {
+        positionInGridPixelsCache = null;
+        endPositionInGridPixelsCache = null;
         shift.getTimeSlot().setStartDateTime(start);
     }
 
     @Override
-    public void setSizeInGridPixels(final Long sizeInGridPixels) {
+    public void setSizeInGridPixels(final long sizeInGridPixels) {
+        endPositionInGridPixelsCache = null;
         this.sizeInGridPixels = sizeInGridPixels;
         shift.getTimeSlot().setEndDateTime(getEndPositionInScaleUnits());
     }

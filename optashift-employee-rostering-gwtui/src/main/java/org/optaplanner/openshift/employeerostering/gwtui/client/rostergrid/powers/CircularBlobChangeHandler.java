@@ -46,7 +46,7 @@ public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
         this.blobViews = blobViews;
     }
 
-    public void handle(final Long newPositionInGridPixels, final Long newSizeInGridPixels) {
+    public void handle(final long newPositionInGridPixels, final long newSizeInGridPixels) {
 
         blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(newPositionInGridPixels));
         blob.setSizeInGridPixels(newSizeInGridPixels);

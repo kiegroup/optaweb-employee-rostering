@@ -43,7 +43,7 @@ public class SubLane<T> {
     }
 
     public boolean anyCollide(final List<Blob<T>> blobs) {
-        return blobs.stream().anyMatch(getCollisionDetector()::collides);
+        return blobs.stream().anyMatch(collisionDetector::collides);
     }
 
     public boolean collidesWith(final SubLane<T> other) {

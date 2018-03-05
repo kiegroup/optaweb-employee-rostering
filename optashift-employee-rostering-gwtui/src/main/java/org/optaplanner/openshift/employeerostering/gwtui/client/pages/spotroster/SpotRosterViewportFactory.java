@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -33,6 +34,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionFreeSubLaneBuilder;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
@@ -70,6 +72,9 @@ public class SpotRosterViewportFactory {
     @Inject
     private TimingUtils timingUtils;
 
+    @Inject
+    private CollisionFreeSubLaneBuilder conflictFreeSubLanesBuilder;
+
     private Map<Spot, Map<ShiftView, TimeSlot>> spotRosterModel;
 
     private LinearScale<LocalDateTime> scale;
@@ -78,7 +83,7 @@ public class SpotRosterViewportFactory {
 
         return timingUtils.time("Spot Roster viewport instantiation", () -> {
 
-            shiftBlobViewPool.init(1500L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
+            shiftBlobViewPool.init(2000L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
 
             spotRosterModel = buildSpotRosterModel(spotRosterView);
 
@@ -130,7 +135,7 @@ public class SpotRosterViewportFactory {
             return new ArrayList<>(singletonList(new SubLane<>()));
         }
 
-        final List<Blob<LocalDateTime>> blobs = timeSlotsByShift.entrySet()
+        final Stream<Blob<LocalDateTime>> blobs = timeSlotsByShift.entrySet()
                 .stream()
                 .filter(e -> e.getValue() != null) //FIXME: Why are there null Time Slots?
                 .map(e -> {
@@ -138,10 +143,9 @@ public class SpotRosterViewportFactory {
                     final TimeSlot timeSlot = e.getValue();
                     final Employee employee = employeesById.get(shiftView.getEmployeeId());
                     return buildShiftBlob(spot, shiftView, timeSlot, employee);
-                })
-                .collect(toList());
+                });
 
-        return new ArrayList<>(singletonList(new SubLane<>(blobs)));
+        return conflictFreeSubLanesBuilder.buildSubLanes(blobs);
     }
 
     private ShiftBlob buildShiftBlob(final Spot spot,
