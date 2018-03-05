@@ -30,7 +30,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 
 @Templated
@@ -63,26 +62,54 @@ public class BlobPopover implements IsElement {
         this.content = content.withParent(this);
     }
 
-    public void showFor(final BlobView<?, ?> blobView, final Blob<?> blob) {
+    public void showFor(final BlobView<?, ?> blobView) {
 
         content.setBlobView(blobView);
+
+        contentContainer.innerHTML = "";
+        contentContainer.appendChild(content.getElement());
+
+        getElement().style.visibility = "hidden";
+        getElement().classList.remove("hidden");
 
         final HTMLElement blobElement = blobView.getElement();
 
         final Integer offsetLeft = getOffsetRelativeTo(parent, blobElement, e -> e.offsetLeft) + NEGATIVE_MARGIN_DISPLACEMENT;
         final Integer offsetTop = getOffsetRelativeTo(parent, blobElement, e -> e.offsetTop) + NEGATIVE_MARGIN_DISPLACEMENT;
 
-        content.getElement().style.left = px(offsetLeft + blobElement.offsetWidth + MARGIN_FROM_SELECTED_BLOB);
-        content.getElement().style.top = px(offsetTop);
+        // Using style.bottom/right is not possible because the parent does not have a fixed height/width
+        content.getElement().style.top = top(blobElement, offsetTop);
+        content.getElement().style.left = left(blobElement, offsetLeft);
 
         blobHighlightBorder.style.left = px(offsetLeft);
         blobHighlightBorder.style.top = px(offsetTop);
         blobHighlightBorder.style.width = WidthUnionType.of(px(blobElement.offsetWidth));
 
-        contentContainer.innerHTML = "";
-        contentContainer.appendChild(content.getElement());
+        getElement().style.visibility = "visible";
+    }
 
-        getElement().classList.remove("hidden");
+    public String top(final HTMLElement blobElement,
+                      final Integer offsetTop) {
+
+        final double popoverHeight = content.getElement().offsetHeight;
+
+        if (offsetTop + popoverHeight > parent.offsetHeight + 50) {
+            return px(offsetTop - popoverHeight + blobElement.offsetHeight);
+        } else {
+            return px(offsetTop);
+        }
+    }
+
+    private String left(final HTMLElement blobElement,
+                        final Integer offsetLeft) {
+
+        final double popoverWidth = content.getElement().offsetWidth;
+
+        if (offsetLeft + popoverWidth > parent.offsetWidth - 50) {
+            return px(offsetLeft - popoverWidth - MARGIN_FROM_SELECTED_BLOB);
+        } else {
+            return px(offsetLeft + blobElement.offsetWidth + MARGIN_FROM_SELECTED_BLOB);
+        }
     }
 
     @EventHandler("root")

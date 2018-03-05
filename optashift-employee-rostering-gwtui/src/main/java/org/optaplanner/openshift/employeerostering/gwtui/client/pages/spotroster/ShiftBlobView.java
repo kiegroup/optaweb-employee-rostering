@@ -98,7 +98,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
         if (e.altKey) {
             remove();
         } else {
-            popover.showFor(this, blob);
+            popover.showFor(this);
         }
     }
 
