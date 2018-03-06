@@ -77,6 +77,7 @@ public class BlobPopover implements IsElement {
         final Integer offsetLeft = getOffsetRelativeTo(parent, blobElement, e -> e.offsetLeft) + NEGATIVE_MARGIN_DISPLACEMENT;
         final Integer offsetTop = getOffsetRelativeTo(parent, blobElement, e -> e.offsetTop) + NEGATIVE_MARGIN_DISPLACEMENT;
 
+        //FIXME: Doesn't with scroll
         // Using style.bottom/right is not possible because the parent does not have a fixed height/width
         content.getElement().style.top = top(offsetTop, blobElement);
         content.getElement().style.left = left(offsetLeft, blobElement);
