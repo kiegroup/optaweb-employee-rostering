@@ -35,13 +35,10 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationCo
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS_OLD;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER_OLD;
 
 @Templated
 public class MenuView implements IsElement {
@@ -57,14 +54,6 @@ public class MenuView implements IsElement {
     @Inject
     @DataField("employees")
     private HTMLAnchorElement employees;
-
-    @Inject
-    @DataField("rotations-old")
-    private HTMLAnchorElement rotationsOld;
-
-    @Inject
-    @DataField("spot-roster-old")
-    private HTMLAnchorElement spotRosterOld;
 
     @Inject
     @DataField("employee-roster")
@@ -103,19 +92,10 @@ public class MenuView implements IsElement {
         goTo(EMPLOYEES, e);
     }
 
-    @EventHandler("rotations-old")
-    public void rotationsOld(final @ForEvent("click") MouseEvent e) {
-        goTo(ROTATIONS_OLD, e);
-    }
-
-    @EventHandler("spot-roster-old")
-    public void spotRosterOld(final @ForEvent("click") MouseEvent e) {
-        goTo(SPOT_ROSTER_OLD, e);
-    }
-
     @EventHandler("employee-roster")
     public void employeeRoster(final @ForEvent("click") MouseEvent e) {
-        goTo(EMPLOYEE_ROSTER, e);
+        // TODO: Implement Employee Roster
+        // goTo(EMPLOYEE_ROSTER, e);
     }
 
     @EventHandler("spot-roster")
@@ -136,7 +116,7 @@ public class MenuView implements IsElement {
     }
 
     private void handleActiveLink(final HTMLElement target) {
-        setInactive(skills, spots, employees, rotationsOld, spotRosterOld, employeeRoster, rotations, spotRoster);
+        setInactive(skills, spots, employees, employeeRoster, rotations, spotRoster);
         setActive(target);
     }
 

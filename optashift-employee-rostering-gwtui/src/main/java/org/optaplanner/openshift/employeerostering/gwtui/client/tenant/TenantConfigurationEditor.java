@@ -18,8 +18,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.ConfigurationEditor.Views;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @Templated
@@ -48,12 +46,6 @@ public class TenantConfigurationEditor implements IsElement {
     @Inject
     @DataField
     private Button updateConfig;
-
-    @Inject
-    @DataField
-    private Button templateEditorButton;
-
-    private ConfigurationEditor configurationEditor;
 
     BiMap<Integer, Integer> templateDurationIndexBiMap;
 
@@ -91,14 +83,10 @@ public class TenantConfigurationEditor implements IsElement {
 
     public void refresh() {}
 
-    public void setConfigurationEditor(ConfigurationEditor configurationEditor) {
-        this.configurationEditor = configurationEditor;
-    }
-
     @EventHandler("updateConfig")
     private void onUpdateConfigClick(ClickEvent e) {
         tenantStore.getCurrentTenant().getConfiguration().setTemplateDuration(templateDurationIndexBiMap.inverse().get(templateDuration
-                                                                                                             .getSelectedIndex()));
+                                                                                                                                       .getSelectedIndex()));
         tenantStore.getCurrentTenant().getConfiguration().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
         tenantStore.getCurrentTenant().getConfiguration().setDesiredTimeSlotWeight(desiredWeightInput.getValue());
         tenantStore.getCurrentTenant().getConfiguration().setUndesiredTimeSlotWeight(undesiredWeightInput.getValue());
@@ -108,10 +96,5 @@ public class TenantConfigurationEditor implements IsElement {
                                                                tenantStore.updateTenant(i);
                                                                tenantStore.setCurrentTenant(i);
                                                            }));
-    }
-
-    @EventHandler("templateEditorButton")
-    private void onTemplateEditorButtonClick(ClickEvent e) {
-        configurationEditor.switchView(Views.TEMPLATE_EDITOR);
     }
 }
