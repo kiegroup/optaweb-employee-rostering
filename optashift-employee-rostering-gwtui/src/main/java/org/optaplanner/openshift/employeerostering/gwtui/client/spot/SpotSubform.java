@@ -77,7 +77,7 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot>, Upd
         dataBinder.<Set<Skill>> addPropertyChangeHandler("requiredSkillSet", (e) -> {
             spotRequiredSkillSetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(CommonUtils.delimitCollection(e
                                                                                                                        .getNewValue(),
-                                                                                                                      (s) -> s.getName(), ",")).toSafeHtml().asString();
+                                                                                                                      (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
     }
 
