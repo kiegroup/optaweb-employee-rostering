@@ -177,6 +177,7 @@ public class SpotRosterPage implements Page {
     public void onSolveButtonClicked(@ForEvent("click") final MouseEvent e) {
         RosterRestServiceBuilder.solveRoster(tenantStore.getCurrentTenantId(), onSuccess(i -> {
 
+            lockRosterViewport();
             swapSolveAndTerminateEarlyButtons();
 
             final Integer solveTimeInSeconds = 30;
@@ -200,7 +201,16 @@ public class SpotRosterPage implements Page {
         timingUtils.terminateEarly(remainingTimeUpdateTaskId);
         RosterRestServiceBuilder.terminateRosterEarly(tenantStore.getCurrentTenantId(), onSuccess(i -> {
             swapSolveAndTerminateEarlyButtons();
+            unlockRosterViewport();
         }));
+    }
+
+    private void unlockRosterViewport() {
+        viewportView.getElement().classList.remove("locked-for-interaction");
+    }
+
+    private void lockRosterViewport() {
+        viewportView.getElement().classList.add("locked-for-interaction");
     }
 
     @EventHandler("refresh-button")

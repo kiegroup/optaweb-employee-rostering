@@ -65,6 +65,10 @@ public class RotationPage implements Page {
     private HTMLButtonElement saveButton;
 
     @Inject
+    @DataField("refresh-button")
+    private HTMLButtonElement refreshButton;
+
+    @Inject
     private TenantStore tenantStore;
 
     @Inject
@@ -138,6 +142,12 @@ public class RotationPage implements Page {
     @EventHandler("save-button")
     private void onSaveClicked(final @ForEvent("click") MouseEvent e) {
         save();
+        e.preventDefault();
+    }
+
+    @EventHandler("refresh-button")
+    private void onRefreshClicked(final @ForEvent("click") MouseEvent e) {
+        refresh();
         e.preventDefault();
     }
 
