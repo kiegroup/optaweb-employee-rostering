@@ -76,7 +76,7 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
         });
         dataBinder.<Set<Skill>> addPropertyChangeHandler("skillProficiencySet", (e) -> {
             employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(CommonUtils.delimitCollection(e.getNewValue(),
-                                                                                                                             (s) -> s.getName(), ",")).toSafeHtml().asString();
+                                                                                                                             (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
     }
 

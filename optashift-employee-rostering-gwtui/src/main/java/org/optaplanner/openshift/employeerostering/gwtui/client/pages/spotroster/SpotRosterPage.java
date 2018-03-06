@@ -44,6 +44,7 @@ import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 
+import static java.lang.Math.max;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 import static org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder.getCurrentSpotRosterView;
@@ -56,8 +57,8 @@ public class SpotRosterPage implements Page {
     private HTMLButtonElement solveButton;
 
     @Inject
-    @DataField("terminate-earlier-button")
-    private HTMLButtonElement terminateEarlierButton;
+    @DataField("terminate-early-button")
+    private HTMLButtonElement terminateEarlyButton;
 
     @Inject
     @DataField("refresh-button")
@@ -80,6 +81,11 @@ public class SpotRosterPage implements Page {
     @Named("span")
     @DataField("soft-score")
     private HTMLElement softScore;
+
+    @Inject
+    @Named("span")
+    @DataField("remaining-time")
+    private HTMLElement remainingTime;
 
     @Inject
     @DataField("next-page-button")
@@ -108,8 +114,10 @@ public class SpotRosterPage implements Page {
     @Inject
     private TimingUtils timingUtils;
 
+    private String solveTaskId;
+    private String remainingTimeUpdateTaskId;
+
     private Pagination spotsPagination = Pagination.of(0, 10);
-    private String solvingTaskId;
 
     @PostConstruct
     public void init() {
@@ -118,14 +126,14 @@ public class SpotRosterPage implements Page {
 
     @Override
     public Promise<Void> beforeOpen() {
-        return refresh();
+        return refreshWithLoadingSpinner();
     }
 
     public void onTenantChanged(@Observes final TenantStore.TenantChange tenant) {
-        refresh();
+        refreshWithLoadingSpinner();
     }
 
-    public Promise<Void> refresh() {
+    private Promise<Void> refreshWithoutLoadingSpinner() {
         return fetchSpotRosterView().then(spotRosterView -> {
 
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
@@ -134,11 +142,11 @@ public class SpotRosterPage implements Page {
                 scores.classList.remove("hidden");
                 hardScore.textContent = score.get().getHardScore() + "";
                 softScore.textContent = score.get().getSoftScore() + "";
-                terminateEarlierButton.classList.remove("hidden");
+                terminateEarlyButton.classList.remove("hidden");
                 solveButton.classList.add("hidden");
             } else {
                 scores.classList.add("hidden");
-                terminateEarlierButton.classList.add("hidden");
+                terminateEarlyButton.classList.add("hidden");
                 solveButton.classList.remove("hidden");
             }
 
@@ -160,32 +168,51 @@ public class SpotRosterPage implements Page {
         });
     }
 
-    private Promise<Void> solveRoster() {
-        return new Promise<>((resolve, reject) -> {
-            RosterRestServiceBuilder.solveRoster(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
-        });
+    private void swapSolveAndTerminateEarlyButtons() {
+        solveButton.classList.toggle("hidden");
+        terminateEarlyButton.classList.toggle("hidden");
     }
 
     @EventHandler("solve-button")
     public void onSolveButtonClicked(@ForEvent("click") final MouseEvent e) {
-        solveRoster().then(i -> {
-            solvingTaskId = timingUtils.repeat(this::refresh, 30000, 1000, this::refresh);
-            return resolve();
-        });
+        RosterRestServiceBuilder.solveRoster(tenantStore.getCurrentTenantId(), onSuccess(i -> {
+
+            swapSolveAndTerminateEarlyButtons();
+
+            final Integer solveTimeInSeconds = 30;
+            final Integer solveTimeInMilliseconds = solveTimeInSeconds * 1000;
+
+            remainingTime.textContent = Integer.toString(solveTimeInSeconds);
+
+            remainingTimeUpdateTaskId = timingUtils.repeat(this::updateRemainingTime, solveTimeInMilliseconds, 1000, this::updateRemainingTime);
+            solveTaskId = timingUtils.repeat(this::refreshWithoutLoadingSpinner, solveTimeInMilliseconds, 2000, this::refreshWithoutLoadingSpinner);
+        }));
     }
 
-    @EventHandler("terminate-earlier-button")
-    public void onTerminateEarlierButtonClicked(@ForEvent("click") final MouseEvent e) {
-        timingUtils.terminateEarly(solvingTaskId);
-        RosterRestServiceBuilder.terminateRosterEarly(tenantStore.getCurrentTenantId(), onSuccess(i -> refresh()));
+    private void updateRemainingTime() {
+        final Integer time = Integer.parseInt(remainingTime.textContent) - 1;
+        remainingTime.textContent = Integer.toString(max(0, time));
+    }
+
+    @EventHandler("terminate-early-button")
+    public void onTerminateEarlyButtonClicked(@ForEvent("click") final MouseEvent e) {
+        timingUtils.terminateEarly(solveTaskId);
+        timingUtils.terminateEarly(remainingTimeUpdateTaskId);
+        RosterRestServiceBuilder.terminateRosterEarly(tenantStore.getCurrentTenantId(), onSuccess(i -> {
+            swapSolveAndTerminateEarlyButtons();
+        }));
     }
 
     @EventHandler("refresh-button")
     public void onRefreshButtonClicked(@ForEvent("click") final MouseEvent e) {
+        refreshWithLoadingSpinner();
+    }
+
+    private Promise<Void> refreshWithLoadingSpinner() {
 
         loadingSpinner.showFor("refresh-spot-roster");
 
-        refresh().then(i -> {
+        return refreshWithoutLoadingSpinner().then(i -> {
             loadingSpinner.hideFor("refresh-spot-roster");
             return resolve();
         });
@@ -199,12 +226,12 @@ public class SpotRosterPage implements Page {
         }
 
         spotsPagination = spotsPagination.previousPage();
-        refresh();
+        refreshWithLoadingSpinner();
     }
 
     @EventHandler("next-page-button")
     public void onNextPageButtonClicked(@ForEvent("click") final MouseEvent e) {
         spotsPagination = spotsPagination.nextPage();
-        refresh();
+        refreshWithLoadingSpinner();
     }
 }
