@@ -58,7 +58,7 @@ public class TimingUtils {
         timePerTask.put(taskId, 0L);
         final long start = System.currentTimeMillis();
 
-        Scheduler.get().scheduleFixedDelay(() -> {
+        final Scheduler.RepeatingCommand repeatingCommand = () -> {
 
             final boolean shouldRunAgain = timePerTask.get(taskId) <= total;
 
@@ -73,7 +73,9 @@ public class TimingUtils {
             timePerTask.put(taskId, System.currentTimeMillis() - start);
 
             return shouldRunAgain;
-        }, step);
+        };
+
+        Scheduler.get().scheduleFixedDelay(repeatingCommand, step);
 
         return taskId;
     }

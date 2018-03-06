@@ -24,6 +24,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -115,7 +116,6 @@ public class SpotRosterPage implements Page {
     private TimingUtils timingUtils;
 
     private String solveTaskId;
-    private String remainingTimeUpdateTaskId;
 
     private Pagination spotsPagination = Pagination.of(0, 10);
 
@@ -160,11 +160,13 @@ public class SpotRosterPage implements Page {
         });
     }
 
-    private Promise<SpotRosterView> fetchSpotRosterView() {
-        return new Promise<>((resolve, reject) -> {
-            getCurrentSpotRosterView(tenantStore.getCurrentTenantId(),
-                                     spotsPagination.getPageNumber(),
-                                     spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));
+    private Promise<Void> refreshWithLoadingSpinner() {
+
+        loadingSpinner.showFor("refresh-spot-roster");
+
+        return refreshWithoutLoadingSpinner().then(i -> {
+            loadingSpinner.hideFor("refresh-spot-roster");
+            return resolve();
         });
     }
 
@@ -173,36 +175,9 @@ public class SpotRosterPage implements Page {
         terminateEarlyButton.classList.toggle("hidden");
     }
 
-    @EventHandler("solve-button")
-    public void onSolveButtonClicked(@ForEvent("click") final MouseEvent e) {
-        RosterRestServiceBuilder.solveRoster(tenantStore.getCurrentTenantId(), onSuccess(i -> {
-
-            lockRosterViewport();
-            swapSolveAndTerminateEarlyButtons();
-
-            final Integer solveTimeInSeconds = 30;
-            final Integer solveTimeInMilliseconds = solveTimeInSeconds * 1000;
-
-            remainingTime.textContent = Integer.toString(solveTimeInSeconds);
-
-            remainingTimeUpdateTaskId = timingUtils.repeat(this::updateRemainingTime, solveTimeInMilliseconds, 1000, this::updateRemainingTime);
-            solveTaskId = timingUtils.repeat(this::refreshWithoutLoadingSpinner, solveTimeInMilliseconds, 2000, this::refreshWithoutLoadingSpinner);
-        }));
-    }
-
     private void updateRemainingTime() {
         final Integer time = Integer.parseInt(remainingTime.textContent) - 1;
         remainingTime.textContent = Integer.toString(max(0, time));
-    }
-
-    @EventHandler("terminate-early-button")
-    public void onTerminateEarlyButtonClicked(@ForEvent("click") final MouseEvent e) {
-        timingUtils.terminateEarly(solveTaskId);
-        timingUtils.terminateEarly(remainingTimeUpdateTaskId);
-        RosterRestServiceBuilder.terminateRosterEarly(tenantStore.getCurrentTenantId(), onSuccess(i -> {
-            swapSolveAndTerminateEarlyButtons();
-            unlockRosterViewport();
-        }));
     }
 
     private void unlockRosterViewport() {
@@ -213,19 +188,49 @@ public class SpotRosterPage implements Page {
         viewportView.getElement().classList.add("locked-for-interaction");
     }
 
+    //Events
+
+    @EventHandler("solve-button")
+    public void onSolveButtonClicked(@ForEvent("click") final MouseEvent e) {
+
+        final Integer solveTimeInSeconds = 30;
+
+        triggerRosterSolve().then(i -> {
+            lockRosterViewport();
+            swapSolveAndTerminateEarlyButtons();
+
+            remainingTime.textContent = Integer.toString(solveTimeInSeconds);
+
+            final double updateRemainingTimeTaskId = DomGlobal.setInterval(a -> {
+                updateRemainingTime();
+            }, 1000);
+
+            solveTaskId = timingUtils.repeat(
+                    this::refreshWithoutLoadingSpinner,
+                    solveTimeInSeconds * 1000,
+                    2000,
+                    () -> {
+                        DomGlobal.clearInterval(updateRemainingTimeTaskId);
+                        unlockRosterViewport();
+                        swapSolveAndTerminateEarlyButtons();
+                        refreshWithLoadingSpinner();
+                    });
+
+            return resolve();
+        });
+    }
+
+    @EventHandler("terminate-early-button")
+    public void onTerminateEarlyButtonClicked(@ForEvent("click") final MouseEvent e) {
+        triggerTerminateEarly().then(i -> {
+            timingUtils.terminateEarly(solveTaskId);
+            return resolve();
+        });
+    }
+
     @EventHandler("refresh-button")
     public void onRefreshButtonClicked(@ForEvent("click") final MouseEvent e) {
         refreshWithLoadingSpinner();
-    }
-
-    private Promise<Void> refreshWithLoadingSpinner() {
-
-        loadingSpinner.showFor("refresh-spot-roster");
-
-        return refreshWithoutLoadingSpinner().then(i -> {
-            loadingSpinner.hideFor("refresh-spot-roster");
-            return resolve();
-        });
     }
 
     @EventHandler("previous-page-button")
@@ -243,5 +248,27 @@ public class SpotRosterPage implements Page {
     public void onNextPageButtonClicked(@ForEvent("click") final MouseEvent e) {
         spotsPagination = spotsPagination.nextPage();
         refreshWithLoadingSpinner();
+    }
+
+    //API calls
+
+    private Promise<Void> triggerRosterSolve() {
+        return new Promise<>((resolve, reject) -> {
+            RosterRestServiceBuilder.solveRoster(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
+        });
+    }
+
+    private Promise<Void> triggerTerminateEarly() {
+        return new Promise<>((resolve, reject) -> {
+            RosterRestServiceBuilder.terminateRosterEarly(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
+        });
+    }
+
+    private Promise<SpotRosterView> fetchSpotRosterView() {
+        return new Promise<>((resolve, reject) -> {
+            getCurrentSpotRosterView(tenantStore.getCurrentTenantId(),
+                                     spotsPagination.getPageNumber(),
+                                     spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));
+        });
     }
 }

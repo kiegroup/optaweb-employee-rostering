@@ -77,7 +77,8 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
             if (hours == 0) {
                 final String lowerDayOfTheWeek = date.getDayOfWeek().toString().toLowerCase();
                 final String dayOfTheWeek = lowerDayOfTheWeek.substring(0, 1).toUpperCase() + lowerDayOfTheWeek.substring(1);
-                return dayOfTheWeek.substring(0, 3) + " " + date.getDayOfMonth();
+                int month = date.getMonth().getValue();
+                return ((month < 10 ? "0" : "") + month) + "/" + date.getDayOfMonth() + " " + dayOfTheWeek.substring(0, 1);
             } else {
                 return (hours < 10 ? "0" : "") + hours + ":00";
             }
