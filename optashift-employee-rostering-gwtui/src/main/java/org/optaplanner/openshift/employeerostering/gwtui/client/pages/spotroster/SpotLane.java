@@ -27,7 +27,7 @@ public class SpotLane extends Lane<LocalDateTime> {
 
     private final Spot spot;
 
-    // Changing the parameter name to 'spot' leads to an error, because it uses the field instead of the parameter.
+    // Changing the parameter name to 'spot' leads to an error, because GWT compiler uses the field instead of the parameter.
     public SpotLane(final Spot spotParam,
                     final List<SubLane<LocalDateTime>> subLanes) {
 

@@ -90,7 +90,6 @@ public class SpotRosterViewportFactory {
             scale = new Positive2HoursScale(spotRosterView.getStartDate().atTime(0, 0),
                                             spotRosterView.getEndDate().atTime(0, 0));
 
-            //FIXME: Resolve overlapping shifts like RotationsViewportFactory does
             final List<Lane<LocalDateTime>> lanes = buildLanes(spotRosterView);
 
             return new SpotRosterViewport(tenantStore.getCurrentTenantId(),

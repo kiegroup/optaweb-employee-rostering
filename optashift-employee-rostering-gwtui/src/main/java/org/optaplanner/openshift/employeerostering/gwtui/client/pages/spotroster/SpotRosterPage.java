@@ -40,11 +40,12 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 
+import static elemental2.dom.DomGlobal.setInterval;
+import static elemental2.dom.DomGlobal.setTimeout;
 import static java.lang.Math.max;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
@@ -52,6 +53,8 @@ import static org.optaplanner.openshift.employeerostering.shared.roster.RosterRe
 
 @Templated
 public class SpotRosterPage implements Page {
+
+    private static final Integer SOLVE_TIME_IN_SECONDS = 30;
 
     @Inject
     @DataField("solve-button")
@@ -112,10 +115,9 @@ public class SpotRosterPage implements Page {
     @Inject
     private LoadingSpinner loadingSpinner;
 
-    @Inject
-    private TimingUtils timingUtils;
-
-    private String solveTaskId;
+    private double solveTaskId;
+    private double updateRemainingTimeTaskId;
+    private double stopSolvingTaskId;
 
     private Pagination spotsPagination = Pagination.of(0, 10);
 
@@ -175,9 +177,10 @@ public class SpotRosterPage implements Page {
         terminateEarlyButton.classList.toggle("hidden");
     }
 
-    private void updateRemainingTime() {
-        final Integer time = Integer.parseInt(remainingTime.textContent) - 1;
-        remainingTime.textContent = Integer.toString(max(0, time));
+    private void updateRemainingTime(final long start) {
+        final long elapsed = (System.currentTimeMillis() - start) / 1000;
+        final long remaining = SOLVE_TIME_IN_SECONDS - elapsed;
+        remainingTime.textContent = Long.toString(max(0, remaining));
     }
 
     private void unlockRosterViewport() {
@@ -193,28 +196,16 @@ public class SpotRosterPage implements Page {
     @EventHandler("solve-button")
     public void onSolveButtonClicked(@ForEvent("click") final MouseEvent e) {
 
-        final Integer solveTimeInSeconds = 30;
-
         triggerRosterSolve().then(i -> {
+
             lockRosterViewport();
             swapSolveAndTerminateEarlyButtons();
 
-            remainingTime.textContent = Integer.toString(solveTimeInSeconds);
+            final long start = System.currentTimeMillis();
 
-            final double updateRemainingTimeTaskId = DomGlobal.setInterval(a -> {
-                updateRemainingTime();
-            }, 1000);
-
-            solveTaskId = timingUtils.repeat(
-                    this::refreshWithoutLoadingSpinner,
-                    solveTimeInSeconds * 1000,
-                    2000,
-                    () -> {
-                        DomGlobal.clearInterval(updateRemainingTimeTaskId);
-                        unlockRosterViewport();
-                        swapSolveAndTerminateEarlyButtons();
-                        refreshWithLoadingSpinner();
-                    });
+            updateRemainingTimeTaskId = setInterval(a -> updateRemainingTime(start), 1000);
+            solveTaskId = setInterval(a -> refreshWithoutLoadingSpinner(), 2000);
+            setTimeout(a -> stopSolving(), (SOLVE_TIME_IN_SECONDS + 1) * 1000);
 
             return resolve();
         });
@@ -223,9 +214,20 @@ public class SpotRosterPage implements Page {
     @EventHandler("terminate-early-button")
     public void onTerminateEarlyButtonClicked(@ForEvent("click") final MouseEvent e) {
         triggerTerminateEarly().then(i -> {
-            timingUtils.terminateEarly(solveTaskId);
-            return resolve();
+            swapSolveAndTerminateEarlyButtons();
+            return stopSolving();
         });
+    }
+
+    private Promise<Void> stopSolving() {
+
+        DomGlobal.clearInterval(stopSolvingTaskId);
+        DomGlobal.clearInterval(solveTaskId);
+        DomGlobal.clearInterval(updateRemainingTimeTaskId);
+
+        unlockRosterViewport();
+
+        return refreshWithLoadingSpinner();
     }
 
     @EventHandler("refresh-button")
