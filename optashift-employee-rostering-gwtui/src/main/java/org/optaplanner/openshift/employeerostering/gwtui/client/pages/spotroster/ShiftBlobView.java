@@ -77,9 +77,9 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     public void refresh() {
 
         if (blob.getShift().isLockedByUser()) {
-            getElement().classList.add("locked");
+            getElement().classList.add("pinned");
         } else {
-            getElement().classList.remove("locked");
+            getElement().classList.remove("pinned");
         }
 
         if (blob.getShift().getEmployee() == null) {
