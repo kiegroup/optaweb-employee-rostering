@@ -1,14 +1,16 @@
 package org.optaplanner.openshift.employeerostering.webapp.skill;
 
+import java.util.List;
+
 import javax.ws.rs.core.Response;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService;
 
-import static org.assertj.core.api.Assertions.*;
-
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class SkillRestServiceIT extends AbstractRestServiceIT {
 
@@ -49,7 +51,7 @@ public class SkillRestServiceIT extends AbstractRestServiceIT {
     public void testGetOfNonExistingSkill() {
         final long nonExistingSkillId = 123456L;
         assertThatExceptionOfType(javax.ws.rs.NotFoundException.class)
-                .isThrownBy(()-> skillRestService.getSkill(TENANT_ID, nonExistingSkillId));
+                .isThrownBy(() -> skillRestService.getSkill(TENANT_ID, nonExistingSkillId));
         assertClientResponseError(Response.Status.NOT_FOUND);
     }
 

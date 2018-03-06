@@ -3,13 +3,14 @@ package org.optaplanner.openshift.employeerostering.webapp.tools;
 import javax.ws.rs.client.ClientResponseContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.assertj.core.api.AbstractAssert;
 
 /**
  * Assert for a response from a server received by jax-rs client.
  **/
 public final class ClientResponseContextAssert extends
-        AbstractAssert<ClientResponseContextAssert, ClientResponseContext> {
+                                               AbstractAssert<ClientResponseContextAssert, ClientResponseContext> {
 
     public static ClientResponseContextAssert assertThat(final ClientResponseContext clientResponseContext) {
         return new ClientResponseContextAssert(clientResponseContext);
@@ -43,7 +44,7 @@ public final class ClientResponseContextAssert extends
 
         if (!MediaType.valueOf(expectedMediaType).isCompatible(actual.getMediaType())) {
             failWithMessage("Expected content type to be <%s> but was <%s>", expectedMediaType,
-                    actualMediaType.toString());
+                            actualMediaType.toString());
         }
         return myself;
     }

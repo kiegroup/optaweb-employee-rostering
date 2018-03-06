@@ -2,8 +2,10 @@ package org.optaplanner.openshift.employeerostering.webapp.skill;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
+
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.Before;
@@ -17,7 +19,7 @@ public class AbstractRestServiceIT {
     private static final String BASE_TEST_URL = TestConfig.getApplicationUrl();
 
     // Consequence of reusing JPA entities on client - cannot rely on equals()
-    protected static final  String [] IGNORED_FIELDS = {"id", "version"};
+    protected static final String[] IGNORED_FIELDS = {"id", "version"};
 
     protected final ServiceClientFactory serviceClientFactory;
     protected final RecordingClientResponseFilter recordingClientResponseFilter;
