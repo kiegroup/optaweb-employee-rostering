@@ -37,9 +37,8 @@ public class CollisionFreeSubLaneBuilder {
     public <T> List<SubLane<T>> buildSubLanes(final Stream<Blob<T>> shiftStream) {
         return shiftStream
                 .map(blob -> Stream.of(new SubLane<>(new ArrayList<>(singletonList(blob)))))
-                .reduce(this::merge)
-                .orElseGet(Stream::of)
-                .map(this::toStream)
+                .reduce(Stream.of(), this::merge)
+                .map(this::withBlobStream)
                 .collect(toList());
     }
 
@@ -50,7 +49,7 @@ public class CollisionFreeSubLaneBuilder {
         final List<SubLane<T>> rhs = rhsStream.collect(toList());
 
         final Optional<SubLane<T>> subLaneWithSpace = lhs.stream()
-                .filter(subLane -> rhs.stream().map(this::toStream).noneMatch(subLane::collidesWith))
+                .filter(subLane -> rhs.stream().map(this::withBlobStream).noneMatch(subLane::collidesWith))
                 .findFirst();
 
         if (subLaneWithSpace.isPresent()) {
@@ -77,7 +76,7 @@ public class CollisionFreeSubLaneBuilder {
         return concat(concat(left.stream(), Stream.of(new SubLane<>(mergedBlobs))), right.stream());
     }
 
-    private <T> SubLane<T> toStream(final SubLane<T> subLane) {
+    private <T> SubLane<T> withBlobStream(final SubLane<T> subLane) {
 
         final List<Blob<T>> blobs = subLane.getBlobs().stream()
                 .flatMap(Blob::toStream)
