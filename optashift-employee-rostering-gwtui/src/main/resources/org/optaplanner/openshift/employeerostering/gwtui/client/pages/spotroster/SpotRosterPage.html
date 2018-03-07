@@ -26,28 +26,45 @@
             <div class="toolbar-pf-actions search-pf kie-search-pf has-button">
                 <div class="toolbar-pf-action-right">
 
-                    <div data-field="scores" class="scores">
-                        <div class="btn btn-default" disabled>Hard score: <span data-field="hard-score"></span></div>
-                        <div class="btn btn-default" disabled>Soft score: <span data-field="soft-score"></span></div>
-                        <div class="btn btn-default" disabled>Remaining time:
-                            <span data-field="remaining-time"></span> seconds
+                    <div class="form-group">
+                        <div data-field="scores" class="scores">
+                            <div class="btn btn-default" disabled>Hard score: <span data-field="hard-score"></span>
+                            </div>
+                            <div class="btn btn-default" disabled>Soft score: <span data-field="soft-score"></span>
+                            </div>
+                            <div class="btn btn-default" disabled>Remaining time:
+                                <span data-field="remaining-time"></span> seconds
+                            </div>
                         </div>
+
+                        <button data-field="solve-button" class="btn btn-success">
+                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                            <span data-i18n-key="General.solve">Solve</span>
+                        </button>
+
+                        <button data-field="terminate-early-button" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                            <span data-i18n-key="General.terminateEarlier">Terminate earlier</span>
+                        </button>
+
+                        <button data-field="refresh-button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                            <span data-i18n-key="General.refresh">Refresh</span>
+                        </button>
                     </div>
 
-                    <button data-field="solve-button" class="btn btn-success">
-                        <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-                        <span data-i18n-key="General.solve">Solve</span>
-                    </button>
-
-                    <button data-field="terminate-early-button" class="btn btn-danger">
-                        <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
-                        <span data-i18n-key="General.terminateEarlier">Terminate earlier</span>
-                    </button>
-
-                    <button data-field="refresh-button" class="btn btn-default">
-                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-                        <span data-i18n-key="General.refresh">Refresh</span>
-                    </button>
+                    <div class="form-group">
+                        <ul class="pagination pagination-pf-back kie-pagination--optaplanner" style="vertical-align: middle;">
+                            <li>
+                                <a href="#" data-field="back-in-time-button" title="Previous Page"><span class="i fa fa-angle-left"></span></a>
+                            </li>
+                        </ul>
+                        <ul class="pagination pagination-pf-forward kie-pagination--optaplanner" style="vertical-align: middle;">
+                            <li>
+                                <a href="#" data-field="forward-in-time-button" title="Next Page"><span class="i fa fa-angle-right"></span></a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
@@ -62,8 +79,16 @@
     </div>
 
     <div>
-        <button data-field="previous-page-button">&lang;</button>
-        <button data-field="next-page-button">&rang;</button>
+        <ul class="pagination pagination-pf-back kie-pagination--optaplanner">
+            <li>
+                <a href="#" data-field="previous-page-button" title="Previous Page"><span class="i fa fa-angle-left"></span></a>
+            </li>
+        </ul>
+        <ul class="pagination pagination-pf-forward kie-pagination--optaplanner">
+            <li>
+                <a href="#" data-field="next-page-button" title="Next Page"><span class="i fa fa-angle-right"></span></a>
+            </li>
+        </ul>
     </div>
 
 </div>
