@@ -16,12 +16,15 @@
 
 package org.optaplanner.openshift.employeerostering.server.roster;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -110,8 +113,10 @@ public class RosterGenerator {
     }
 
     @Transactional
-    public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning,
-            boolean assignDefaultEmployee) {
+    public Roster generateRoster(int spotListSize,
+                                 int timeSlotListSize,
+                                 boolean continuousPlanning,
+                                 boolean assignDefaultEmployee) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
         Integer tenantId = createTenant(spotListSize, employeeListSize);
@@ -121,7 +126,7 @@ public class RosterGenerator {
         List<Employee> employeeList = createEmployeeList(tenantId, employeeListSize, skillList);
 
         shiftRestService.createTemplate(tenantId, generateShiftTemplate(tenantId, spotList, employeeList,
-                assignDefaultEmployee));
+                                                                        assignDefaultEmployee));
         LocalDateTime previousEndDateTime = LocalDateTime.of(2017, 2, 1, 6, 0);
         for (int i = 0; i < timeSlotListSize; i += 7) {
             try {
@@ -154,71 +159,233 @@ public class RosterGenerator {
                           tenant.getConfiguration(), shiftList);
     }
 
-    private List<ShiftInfo> generateShiftTemplate(Integer tenantId, List<Spot> spots, List<Employee> employees,
-            boolean assignDefaultEmployee) {
-        LocalDateTime startTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).plusHours(6);
-        List<ShiftInfo> out = new ArrayList<ShiftInfo>(7);
-        for (int i = 0; i < 7 * 3; i++) {
-            //Generate the shift's timeslot
-            ShiftInfo shift = new ShiftInfo();
-            shift.setStartTime(startTime);
-            shift.setEndTime(startTime.plusHours(8));
-            shift.setTenantId(tenantId);
-            List<EmployeeTimeSlotInfo> shiftAvailability = new ArrayList<>();
-            EmployeeTimeSlotInfo employeeTimeslot = new EmployeeTimeSlotInfo();
+    private class SpotSettings {
 
-            //Generate employees with non-indifferent availabilities
-            for (Employee employee : extractRandomSubList(employees, 0.2)) {
-                employeeTimeslot = new EmployeeTimeSlotInfo();
-                employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(employee);
-                employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNAVAILABLE);
-                shiftAvailability.add(employeeTimeslot);
-            }
+        private final Spot spot;
+        private final TimeSlotPattern timeSlotPattern;
+        private final int numberOfShiftsNormal;
+        private final int numberOfShiftsNight;
+        private final int numberOfShiftsWeekend;
+        private final int numberOfShiftsWeekendNight;
 
-            for (Employee employee : extractRandomSubList(employees, 0.3)) {
-                employeeTimeslot = new EmployeeTimeSlotInfo();
-                employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(employee);
-                employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNDESIRED);
-                shiftAvailability.add(employeeTimeslot);
-            }
+        public SpotSettings(Spot spot) {
+            this.spot = spot;
+            timeSlotPattern = TimeSlotPattern.getRandomTimeSlotPattern(random);
+            numberOfShiftsNormal = random.nextInt(3) + 1;
+            numberOfShiftsNight = random.nextInt(numberOfShiftsNormal + 1);
+            numberOfShiftsWeekend = random.nextInt(numberOfShiftsNormal + 1);
+            numberOfShiftsWeekendNight = random.nextInt(Math.min(numberOfShiftsNight + 1, numberOfShiftsWeekend + 1));
+        }
 
-            for (Employee employee : extractRandomSubList(employees, 0.1)) {
-                employeeTimeslot = new EmployeeTimeSlotInfo();
-                employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(employee);
-                employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.DESIRED);
-                shiftAvailability.add(employeeTimeslot);
-            }
+        public Spot getSpot() {
+            return spot;
+        }
 
-            shift.setEmployeeList(shiftAvailability);
+        public TimeSlotPattern getTimeSlotPattern() {
+            return timeSlotPattern;
+        }
 
-            //Generate spots using the timeslot
-            List<Spot> shiftSpots = new ArrayList<>();
-            List<OptionalEmployee> rotationEmployeeList = new ArrayList<>();
-            for (Spot spot : spots) {
-                boolean weekendEnabled = random.nextInt(10) < 8;
-                boolean nightEnabled = weekendEnabled && random.nextInt(10) < 8;
+        public int getNumberOfShiftsNormal() {
+            return numberOfShiftsNormal;
+        }
 
-                if ((!weekendEnabled && i >= 5 * 3) || (!nightEnabled && i % 3 == 2)) {
-                    continue;
-                }
-                shiftSpots.add(spot);
-                if (assignDefaultEmployee) {
-                    rotationEmployeeList.add(new OptionalEmployee(tenantId, employees.get(random.nextInt(employees
-                            .size()))));
+        public int getNumberOfShiftsNight() {
+            return numberOfShiftsNight;
+        }
+
+        public int getNumberOfShiftsWeekend() {
+            return numberOfShiftsWeekend;
+        }
+
+        public int getNumberOfShiftsWeekendNight() {
+            return numberOfShiftsWeekendNight;
+        }
+
+    }
+
+    private static final class TimeSlotInfo {
+
+        private final TimeSlot timeSlot;
+        private final boolean isNightShift;
+
+        public TimeSlotInfo(TimeSlot timeSlot, boolean isNightShift) {
+            this.timeSlot = timeSlot;
+            this.isNightShift = isNightShift;
+        }
+
+        public TimeSlot getTimeSlot() {
+            return timeSlot;
+        }
+
+        public boolean isNightShift() {
+            return isNightShift;
+        }
+    }
+
+    private static LocalDateTime time(long time) {
+        return LocalDateTime.ofEpochSecond(time, 0, ZoneOffset.UTC);
+    }
+
+    private static LocalDateTime time(Duration time) {
+        return LocalDateTime.ofEpochSecond(time.getSeconds(), 0, ZoneOffset.UTC);
+    }
+
+    private static LocalDateTime day(int day) {
+        return time(Duration.ofDays(day));
+    }
+
+    private static LocalDateTime hour(int hour) {
+        return time(Duration.ofHours(hour));
+    }
+
+    private static enum TimeSlotPattern {
+        //9am-5pm, 4pm-midnight, 10pm-6am (next day)
+        DAY_AFTERNOON_NIGHT(Duration.ofDays(1),
+                            hour(9), hour(12 + 5), hour(12 + 4), hour(24), null, hour(12 + 10), day(1).plusHours(6)),
+        //4pm-midnight
+        DAY(Duration.ofDays(1), hour(9), hour(12 + 5)),
+        //9am-5pm
+        AFTERNOON(Duration.ofDays(1), hour(12 + 4), hour(24)),
+        //10pm-6am (next day)
+        NIGHT(Duration.ofDays(1), hour(12 + 10), day(1).plusHours(6)),
+        LONG_DAY(Duration.ofDays(1), hour(9), hour(24)),
+        LONG_NIGHT(Duration.ofDays(1), hour(7), day(1).plusHours(7));
+
+        List<TimeSlotInfo> timeSlotInfoList;
+        Duration offsetLength;
+
+        // IMPORTANT NOTE: A Null seperate day shifts from night shifts
+        // List is in the format dayShifts [null [nightShifts]]
+        private TimeSlotPattern(Duration offsetLength, LocalDateTime... dateTimes) {
+            timeSlotInfoList = new ArrayList<>(dateTimes.length);
+            this.offsetLength = offsetLength;
+            boolean isNightShift = false;
+
+            for (int i = 0; i < dateTimes.length; i += 2) {
+                if (null == dateTimes[i]) {
+                    i++;
+                    isNightShift = true;
                 } else {
-                    rotationEmployeeList.add(new OptionalEmployee(tenantId, null));
+                    timeSlotInfoList.add(new TimeSlotInfo(new TimeSlot(-1, dateTimes[i], dateTimes[i + 1]),
+                                                          isNightShift));
                 }
             }
-            shift.setRotationEmployeeList(rotationEmployeeList);
-            shift.setSpotList(shiftSpots);
-            out.add(shift);
+        }
 
-            startTime = startTime.plusHours(8);
+        public static TimeSlotPattern getRandomTimeSlotPattern(Random random) {
+            return TimeSlotPattern.values()[random.nextInt(TimeSlotPattern.values().length)];
+        }
+
+        public List<TimeSlotInfo> getTimeSlotInfoForOffset(int tenant, int offset) {
+            return timeSlotInfoList.stream().map((t) -> new TimeSlotInfo(new TimeSlot(tenant, t.getTimeSlot()
+                                                                                               .getStartDateTime().plus(offsetLength.multipliedBy(offset)),
+                                                                                      t.getTimeSlot().getEndDateTime().plus(offsetLength.multipliedBy(offset))), t.isNightShift()))
+                                   .collect(Collectors.toList());
+        }
+
+        public Duration getDuration() {
+            return offsetLength;
+        }
+    }
+
+    private List<ShiftInfo> generateShiftTemplate(Integer tenantId, List<Spot> spots, List<Employee> employees, boolean assignDefaultEmployee) {
+        Map<TimeSlot, ShiftInfo> timeslotToShiftMap = new HashMap<>();
+        List<SpotSettings> spotSettingList = new ArrayList<SpotSettings>();
+        spots.forEach((s) -> spotSettingList.add(new SpotSettings(s)));
+        LocalDateTime startDate = time(0);
+        LocalDateTime endDate = LocalDateTime.ofEpochSecond(Duration.ofDays(7).getSeconds(), 0, ZoneOffset.UTC);
+
+        for (SpotSettings spotInfo : spotSettingList) {
+            List<TimeSlotInfo> timeSlotList = getTimeSlotsFor(tenantId, spotInfo, startDate, endDate);
+            for (TimeSlotInfo timeSlotInfo : timeSlotList) {
+                if (hasAtLeastOneShift(spotInfo, timeSlotInfo)) {
+                    ShiftInfo info = timeslotToShiftMap.computeIfAbsent(timeSlotInfo.getTimeSlot(),
+                                                                        (k) -> createShiftInfo(tenantId, employees, timeSlotInfo.getTimeSlot()));
+                    for (int i = 0; i < getNumberOfShifts(spotInfo, timeSlotInfo); i++) {
+                        info.getSpotList().add(spotInfo.getSpot());
+                        if (assignDefaultEmployee) {
+                            info.getRotationEmployeeList().add(new OptionalEmployee(tenantId, employees.get(random.nextInt(employees
+                                                                                                                                    .size()))));
+                        } else {
+                            info.getRotationEmployeeList().add(new OptionalEmployee(tenantId, null));
+                        }
+                    }
+                }
+            }
+        }
+
+        return new ArrayList<>(timeslotToShiftMap.values());
+    }
+
+    private int getNumberOfShifts(SpotSettings spotInfo, TimeSlotInfo timeSlotInfo) {
+        if (isWeekend(timeSlotInfo.getTimeSlot()) && timeSlotInfo.isNightShift()) {
+            return spotInfo.getNumberOfShiftsWeekendNight();
+        } else if (isWeekend(timeSlotInfo.getTimeSlot())) {
+            return spotInfo.getNumberOfShiftsWeekend();
+        } else if (timeSlotInfo.isNightShift()) {
+            return spotInfo.getNumberOfShiftsNight();
+        } else {
+            return spotInfo.getNumberOfShiftsNormal();
+        }
+    }
+
+    private boolean hasAtLeastOneShift(SpotSettings spotInfo, TimeSlotInfo timeSlotInfo) {
+        return getNumberOfShifts(spotInfo, timeSlotInfo) > 0;
+    }
+
+    private boolean isWeekend(TimeSlot timeSlot) {
+        return timeSlot.getStartDateTime().isAfter(day(5));
+    }
+
+    private List<TimeSlotInfo> getTimeSlotsFor(int tenantId,
+                                               SpotSettings spotSettings,
+                                               LocalDateTime start,
+                                               LocalDateTime end) {
+        List<TimeSlotInfo> out = new ArrayList<>();
+        Duration duration = Duration.ZERO;
+        for (int i = 0; duration.compareTo(Duration.between(start, end)) <= 0; i++, duration = duration.plus(spotSettings.getTimeSlotPattern().getDuration())) {
+            out.addAll(spotSettings.getTimeSlotPattern().getTimeSlotInfoForOffset(tenantId, i));
         }
         return out;
+    }
+
+    private ShiftInfo createShiftInfo(int tenantId, List<Employee> employees, TimeSlot timeSlot) {
+        ShiftInfo shift = new ShiftInfo();
+        shift.setStartTime(timeSlot.getStartDateTime());
+        shift.setEndTime(timeSlot.getEndDateTime());
+        shift.setTenantId(tenantId);
+        List<EmployeeTimeSlotInfo> shiftAvailability = new ArrayList<>();
+        EmployeeTimeSlotInfo employeeTimeslot = new EmployeeTimeSlotInfo();
+
+        //Generate employees with non-indifferent availabilities
+        for (Employee employee : extractRandomSubList(employees, 0.2)) {
+            employeeTimeslot = new EmployeeTimeSlotInfo();
+            employeeTimeslot.setTenantId(tenantId);
+            employeeTimeslot.setEmployeeId(employee);
+            employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNAVAILABLE);
+            shiftAvailability.add(employeeTimeslot);
+        }
+
+        for (Employee employee : extractRandomSubList(employees, 0.3)) {
+            employeeTimeslot = new EmployeeTimeSlotInfo();
+            employeeTimeslot.setTenantId(tenantId);
+            employeeTimeslot.setEmployeeId(employee);
+            employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNDESIRED);
+            shiftAvailability.add(employeeTimeslot);
+        }
+
+        for (Employee employee : extractRandomSubList(employees, 0.1)) {
+            employeeTimeslot = new EmployeeTimeSlotInfo();
+            employeeTimeslot.setTenantId(tenantId);
+            employeeTimeslot.setEmployeeId(employee);
+            employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.DESIRED);
+            shiftAvailability.add(employeeTimeslot);
+        }
+
+        shift.setEmployeeList(shiftAvailability);
+        shift.setSpotList(new ArrayList<>());
+        shift.setRotationEmployeeList(new ArrayList<>());
+        return shift;
     }
 
     private Integer createTenant(int spotListSize, int employeeListSize) {
@@ -244,8 +411,7 @@ public class RosterGenerator {
         spotNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = spotNameGenerator.generateNextValue();
-            Spot spot = new Spot(tenantId, name, extractRandomSubListOfLength(skillList, random.nextInt(skillList
-                    .size())).stream().collect(Collectors.toSet()));
+            Spot spot = new Spot(tenantId, name, new HashSet<>(extractRandomSubList(skillList, 1.0)));
             entityManager.persist(spot);
             spotList.add(spot);
         }
@@ -259,8 +425,8 @@ public class RosterGenerator {
             String name = employeeNameGenerator.generateNextValue();
             Employee employee = new Employee(tenantId, name);
             employee.setSkillProficiencySet(
-                                             extractRandomSubList(generalSkillList, 1.0).stream()
-                            .collect(Collectors.toCollection(HashSet::new)));
+                                            extractRandomSubList(generalSkillList, 1.0).stream()
+                                                                                       .collect(Collectors.toCollection(HashSet::new)));
             entityManager.persist(employee);
             employeeList.add(employee);
         }
