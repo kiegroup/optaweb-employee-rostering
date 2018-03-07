@@ -205,7 +205,7 @@ public class SpotRosterPage implements Page {
 
             updateRemainingTimeTaskId = setInterval(a -> updateRemainingTime(start), 1000);
             solveTaskId = setInterval(a -> refreshWithoutLoadingSpinner(), 2000);
-            setTimeout(a -> stopSolving(), (SOLVE_TIME_IN_SECONDS + 1) * 1000);
+            stopSolvingTaskId = setTimeout(a -> stopSolving(), (SOLVE_TIME_IN_SECONDS + 1) * 1000);
 
             return resolve();
         });
