@@ -17,7 +17,8 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -35,53 +36,30 @@ import static java.util.stream.Stream.concat;
 public class CollisionFreeSubLaneBuilder {
 
     public <T> List<SubLane<T>> buildSubLanes(final Stream<Blob<T>> shiftStream) {
+
         return shiftStream
-                .map(blob -> Stream.of(new SubLane<>(new ArrayList<>(singletonList(blob)))))
-                .reduce(Stream.of(), this::merge)
-                .map(this::withBlobStream)
-                .collect(toList());
+                .map(blob -> {
+                    final List<SubLane<T>> l = new ArrayList<>();
+                    l.add(new SubLane<>(blob.toStream().collect(toList())));
+                    return l;
+                })
+                .reduce(this::merge)
+                .orElseGet(Collections::emptyList);
     }
 
-    private <T> Stream<SubLane<T>> merge(final Stream<SubLane<T>> lhsStream,
-                                         final Stream<SubLane<T>> rhsStream) {
-
-        final List<SubLane<T>> lhs = lhsStream.collect(toList());
-        final List<SubLane<T>> rhs = rhsStream.collect(toList());
+    private <T> List<SubLane<T>> merge(final List<SubLane<T>> lhs,
+                                       final List<SubLane<T>> rhs) {
 
         final Optional<SubLane<T>> subLaneWithSpace = lhs.stream()
-                .filter(subLane -> rhs.stream().map(this::withBlobStream).noneMatch(subLane::collidesWith))
+                .filter(subLane -> rhs.stream().noneMatch(subLane::collidesWith))
                 .findFirst();
 
         if (subLaneWithSpace.isPresent()) {
-            return merge(lhs, rhs, subLaneWithSpace.get());
+            subLaneWithSpace.get().getBlobs().addAll(rhs.get(0).getBlobs());
+            return lhs;
         }
 
-        return concat(lhs.stream(), rhs.stream());
-    }
-
-    private <T> Stream<SubLane<T>> merge(final List<SubLane<T>> lhs,
-                                         final List<SubLane<T>> rhs,
-                                         final SubLane<T> subLaneWithSpace) {
-
-        final int indexOfSubLaneWithSpace = lhs.indexOf(subLaneWithSpace);
-
-        final List<SubLane<T>> left = lhs.subList(0, indexOfSubLaneWithSpace);
-        final List<SubLane<T>> right = lhs.subList(indexOfSubLaneWithSpace + 1, lhs.size());
-
-        final List<Blob<T>> mergedBlobs = concat(Stream.of(subLaneWithSpace), rhs.stream())
-                .map(SubLane::getBlobs)
-                .flatMap(Collection::stream)
-                .collect(toList());
-
-        return concat(concat(left.stream(), Stream.of(new SubLane<>(mergedBlobs))), right.stream());
-    }
-
-    private <T> SubLane<T> withBlobStream(final SubLane<T> subLane) {
-
-        final List<Blob<T>> blobs = subLane.getBlobs().stream()
-                .flatMap(Blob::toStream)
-                .collect(toList());
-
-        return new SubLane<>(blobs);
+        lhs.addAll(rhs);
+        return lhs;
     }
 }
