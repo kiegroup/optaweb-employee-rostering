@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import elemental2.dom.DomGlobal;
+import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -69,6 +70,10 @@ public class SpotRosterPage implements Page {
     private HTMLButtonElement refreshButton;
 
     @Inject
+    @DataField("viewport-frame")
+    private HTMLDivElement viewportFrame;
+
+    @Inject
     @DataField("viewport")
     private ViewportView<LocalDateTime> viewportView;
 
@@ -93,11 +98,19 @@ public class SpotRosterPage implements Page {
 
     @Inject
     @DataField("next-page-button")
-    private HTMLButtonElement nextPageButton;
+    private HTMLAnchorElement nextPageButton;
 
     @Inject
     @DataField("previous-page-button")
-    private HTMLButtonElement previousPageButton;
+    private HTMLAnchorElement previousPageButton;
+
+    @Inject
+    @DataField("back-in-time-button")
+    private HTMLAnchorElement backInTimeButton;
+
+    @Inject
+    @DataField("forward-in-time-button")
+    private HTMLAnchorElement forwardInTimeButton;
 
     @Inject
     @DataField("shift-blob-popover")
@@ -119,6 +132,7 @@ public class SpotRosterPage implements Page {
     private double updateRemainingTimeTaskId;
     private double stopSolvingTaskId;
 
+    private SpotRosterViewport viewport;
     private Pagination spotsPagination = Pagination.of(0, 10);
 
     @PostConstruct
@@ -156,7 +170,8 @@ public class SpotRosterPage implements Page {
                 spotsPagination = spotsPagination.previousPage();
                 return resolve();
             } else {
-                viewportView.setViewport(spotRosterViewportFactory.getViewport(spotRosterView));
+                viewport = spotRosterViewportFactory.getViewport(spotRosterView);
+                viewportView.setViewport(viewport);
                 return resolve();
             }
         });
@@ -250,6 +265,19 @@ public class SpotRosterPage implements Page {
     public void onNextPageButtonClicked(@ForEvent("click") final MouseEvent e) {
         spotsPagination = spotsPagination.nextPage();
         refreshWithLoadingSpinner();
+    }
+
+    //FIXME: Improve horizontal navigation. Probably snap to fixed dates with animation.
+    private static final Integer TIME_SCROLL_SIZE = 300;
+
+    @EventHandler("forward-in-time-button")
+    public void onForwardInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
+        viewportFrame.scrollLeft += TIME_SCROLL_SIZE;
+    }
+
+    @EventHandler("back-in-time-button")
+    public void onBackInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
+        viewportFrame.scrollLeft -= TIME_SCROLL_SIZE;
     }
 
     //API calls
