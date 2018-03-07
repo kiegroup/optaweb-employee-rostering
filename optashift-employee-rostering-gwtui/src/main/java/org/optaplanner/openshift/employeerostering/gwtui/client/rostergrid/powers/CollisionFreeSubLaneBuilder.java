@@ -52,19 +52,23 @@ public class CollisionFreeSubLaneBuilder {
         final List<Blob<T>> rhsBlobs = rhs.get(0).getBlobs();
 
         final Optional<SubLane<T>> subLaneWithSpace = lhs.stream()
-                .filter(candidate -> {
-                    final Blob<T> lastBlob = lastBlob(candidate);
-                    return rhsBlobs.stream().noneMatch(b -> lastBlob.collidesWith(b));
-                })
+                .filter(candidate -> noneCollide(rhsBlobs, candidate))
                 .findFirst();
 
         if (subLaneWithSpace.isPresent()) {
             subLaneWithSpace.get().getBlobs().addAll(rhsBlobs);
             return lhs;
+        } else {
+            lhs.addAll(rhs);
+            return lhs;
         }
+    }
 
-        lhs.addAll(rhs);
-        return lhs;
+    private <T> boolean noneCollide(final List<Blob<T>> blobs,
+                                    final SubLane<T> subLane) {
+
+        final Blob<T> lastBlob = lastBlob(subLane);
+        return blobs.stream().noneMatch(b -> lastBlob.collidesWith(b));
     }
 
     private <T> Blob<T> lastBlob(final SubLane<T> subLane) {
