@@ -83,7 +83,7 @@ public class SpotRosterViewportFactory {
 
         return timingUtils.time("Spot Roster viewport instantiation", () -> {
 
-            shiftBlobViewPool.init(2000L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
+            shiftBlobViewPool.init(2000L, shiftBlobViewInstances::get);
 
             spotRosterModel = buildSpotRosterModel(spotRosterView);
 

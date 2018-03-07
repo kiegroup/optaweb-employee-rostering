@@ -64,7 +64,7 @@ public class BlobPopover implements IsElement {
 
     public void showFor(final BlobView<?, ?> blobView) {
 
-        content.setBlobView(blobView);
+        content.init(blobView);
 
         contentContainer.innerHTML = "";
         contentContainer.appendChild(content.getElement());

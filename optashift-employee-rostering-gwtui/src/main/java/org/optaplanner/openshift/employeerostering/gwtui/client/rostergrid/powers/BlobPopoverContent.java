@@ -23,5 +23,5 @@ public interface BlobPopoverContent extends IsElement {
 
     BlobPopoverContent withPopover(final BlobPopover parent);
 
-    void setBlobView(final BlobView<?, ?> blob);
+    void init(final BlobView<?, ?> blob);
 }
