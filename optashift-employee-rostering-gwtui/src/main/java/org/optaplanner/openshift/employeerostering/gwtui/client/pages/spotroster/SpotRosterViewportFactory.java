@@ -34,7 +34,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionFreeSubLaneBuilder;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionFreeSubLaneFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
@@ -73,7 +73,7 @@ public class SpotRosterViewportFactory {
     private TimingUtils timingUtils;
 
     @Inject
-    private CollisionFreeSubLaneBuilder conflictFreeSubLanesBuilder;
+    private CollisionFreeSubLaneFactory conflictFreeSubLanesFactory;
 
     private Map<Spot, Map<ShiftView, TimeSlot>> spotRosterModel;
 
@@ -144,7 +144,7 @@ public class SpotRosterViewportFactory {
                     return buildShiftBlob(spot, shiftView, timeSlot, employee);
                 });
 
-        return conflictFreeSubLanesBuilder.buildSubLanes(blobs);
+        return conflictFreeSubLanesFactory.createSubLanes(blobs);
     }
 
     private ShiftBlob buildShiftBlob(final Spot spot,
