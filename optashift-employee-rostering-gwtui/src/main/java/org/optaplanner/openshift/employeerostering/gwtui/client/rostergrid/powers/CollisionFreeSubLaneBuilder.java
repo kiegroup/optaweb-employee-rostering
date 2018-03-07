@@ -17,7 +17,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -28,38 +27,47 @@ import javax.enterprise.context.Dependent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 
-import static java.util.Collections.singletonList;
+import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Stream.concat;
 
 @Dependent
 public class CollisionFreeSubLaneBuilder {
 
     public <T> List<SubLane<T>> buildSubLanes(final Stream<Blob<T>> blobs) {
-
-        return blobs
-                .map(blob -> {
-                    final List<SubLane<T>> subLaneSingletonList = new ArrayList<>();
-                    subLaneSingletonList.add(new SubLane<>(blob.toStream().collect(toList())));
-                    return subLaneSingletonList;
-                })
+        return blobs.sorted(comparing(Blob::getPositionInGridPixels))
+                .map(this::singletonSubLaneList)
                 .reduce(this::merge)
                 .orElseGet(Collections::emptyList);
+    }
+
+    private <T> List<SubLane<T>> singletonSubLaneList(final Blob<T> blob) {
+        final List<SubLane<T>> subLaneSingletonList = new ArrayList<>();
+        subLaneSingletonList.add(new SubLane<>(blob.toStream().collect(toList())));
+        return subLaneSingletonList;
     }
 
     private <T> List<SubLane<T>> merge(final List<SubLane<T>> lhs,
                                        final List<SubLane<T>> rhs) {
 
+        final List<Blob<T>> rhsBlobs = rhs.get(0).getBlobs();
+
         final Optional<SubLane<T>> subLaneWithSpace = lhs.stream()
-                .filter(subLane -> rhs.stream().noneMatch(subLane::collidesWith))
+                .filter(candidate -> {
+                    final Blob<T> lastBlob = lastBlob(candidate);
+                    return rhsBlobs.stream().noneMatch(b -> lastBlob.collidesWith(b));
+                })
                 .findFirst();
 
         if (subLaneWithSpace.isPresent()) {
-            subLaneWithSpace.get().getBlobs().addAll(rhs.get(0).getBlobs());
+            subLaneWithSpace.get().getBlobs().addAll(rhsBlobs);
             return lhs;
         }
 
         lhs.addAll(rhs);
         return lhs;
+    }
+
+    private <T> Blob<T> lastBlob(final SubLane<T> subLane) {
+        return subLane.getBlobs().get(subLane.getBlobs().size() - 1);
     }
 }
