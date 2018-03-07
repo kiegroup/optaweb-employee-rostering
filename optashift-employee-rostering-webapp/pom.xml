@@ -220,7 +220,8 @@
       <id>skip-cargo</id>
       <activation>
         <property>
-          <name>cargo.skip</name>
+          <name>skipTests</name>
+          <value>true</value>
         </property>
       </activation>
       <properties>
