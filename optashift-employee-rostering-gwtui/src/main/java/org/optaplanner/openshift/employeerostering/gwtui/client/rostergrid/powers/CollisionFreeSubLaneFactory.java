@@ -31,9 +31,9 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 @Dependent
-public class CollisionFreeSubLaneBuilder {
+public class CollisionFreeSubLaneFactory {
 
-    public <T> List<SubLane<T>> buildSubLanes(final Stream<Blob<T>> blobs) {
+    public <T> List<SubLane<T>> createSubLanes(final Stream<Blob<T>> blobs) {
         return blobs.sorted(comparing(Blob::getPositionInGridPixels))
                 .map(this::singletonSubLaneList)
                 .reduce(this::merge)
@@ -52,7 +52,7 @@ public class CollisionFreeSubLaneBuilder {
         final List<Blob<T>> rhsBlobs = rhs.get(0).getBlobs();
 
         final Optional<SubLane<T>> subLaneWithSpace = lhs.stream()
-                .filter(candidate -> noneCollide(rhsBlobs, candidate))
+                .filter(candidate -> noneCollideWithEdgeBlobs(rhsBlobs, candidate))
                 .findFirst();
 
         if (subLaneWithSpace.isPresent()) {
@@ -64,14 +64,11 @@ public class CollisionFreeSubLaneBuilder {
         }
     }
 
-    private <T> boolean noneCollide(final List<Blob<T>> blobs,
-                                    final SubLane<T> subLane) {
+    private <T> boolean noneCollideWithEdgeBlobs(final List<Blob<T>> blobs,
+                                                 final SubLane<T> subLane) {
 
-        final Blob<T> lastBlob = lastBlob(subLane);
-        return blobs.stream().noneMatch(b -> lastBlob.collidesWith(b));
-    }
-
-    private <T> Blob<T> lastBlob(final SubLane<T> subLane) {
-        return subLane.getBlobs().get(subLane.getBlobs().size() - 1);
+        final Blob<T> firstBlob = subLane.getBlobs().get(0);
+        final Blob<T> lastBlob = subLane.getBlobs().get(subLane.getBlobs().size() - 1);
+        return blobs.stream().noneMatch(b -> firstBlob.collidesWith(b) || lastBlob.collidesWith(b));
     }
 }
