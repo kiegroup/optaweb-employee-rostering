@@ -112,7 +112,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     private Map<Long, Employee> employeesById;
 
     @Override
-    public void setBlobView(final BlobView<?, ?> blobView) {
+    public void init(final BlobView<?, ?> blobView) {
 
         this.blobView = (ShiftBlobView) blobView;
         final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
@@ -121,11 +121,13 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         employeeSelect.clear();
         employeeSelect.addItem("Unassigned", "-1"); //FIXME: i18n
 
+        //FIXME: Loading the entire list is not a good idea
         SpotRestServiceBuilder.getSpotList(shift.getTenantId(), onSuccess(spots -> {
             spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
             spotSelect.setSelectedIndex(spots.indexOf(shift.getSpot()));
         }));
 
+        //FIXME: Loading the entire list is not a good idea
         EmployeeRestServiceBuilder.getEmployeeList(shift.getTenantId(), onSuccess(employees -> {
             this.employeesById = employees.stream().collect(toMap(Employee::getId, identity()));
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));

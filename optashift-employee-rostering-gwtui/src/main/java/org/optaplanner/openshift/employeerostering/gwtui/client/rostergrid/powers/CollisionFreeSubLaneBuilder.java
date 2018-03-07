@@ -35,13 +35,13 @@ import static java.util.stream.Stream.concat;
 @Dependent
 public class CollisionFreeSubLaneBuilder {
 
-    public <T> List<SubLane<T>> buildSubLanes(final Stream<Blob<T>> shiftStream) {
+    public <T> List<SubLane<T>> buildSubLanes(final Stream<Blob<T>> blobs) {
 
-        return shiftStream
+        return blobs
                 .map(blob -> {
-                    final List<SubLane<T>> l = new ArrayList<>();
-                    l.add(new SubLane<>(blob.toStream().collect(toList())));
-                    return l;
+                    final List<SubLane<T>> subLaneSingletonList = new ArrayList<>();
+                    subLaneSingletonList.add(new SubLane<>(blob.toStream().collect(toList())));
+                    return subLaneSingletonList;
                 })
                 .reduce(this::merge)
                 .orElseGet(Collections::emptyList);
