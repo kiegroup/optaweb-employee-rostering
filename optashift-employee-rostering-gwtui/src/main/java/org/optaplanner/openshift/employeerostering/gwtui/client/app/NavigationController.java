@@ -54,6 +54,9 @@ public class NavigationController {
         }).then(i -> {
             loadingSpinner.hideFor("page-change");
             return resolve();
+        }).catch_(i -> {
+            loadingSpinner.hideFor("page-change");
+            return resolve();
         });
     }
 

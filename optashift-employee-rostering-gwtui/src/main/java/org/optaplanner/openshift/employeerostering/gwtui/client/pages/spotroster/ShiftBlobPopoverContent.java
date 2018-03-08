@@ -135,11 +135,11 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         }));
 
         final LocalDateTime start = shift.getTimeSlot().getStartDateTime();
-        fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth();
+        fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth(); //FIXME: i18n
         fromHour.value = start.toLocalTime() + "";
 
         final LocalDateTime end = shift.getTimeSlot().getEndDateTime();
-        toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth();
+        toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth(); //FIXME: i18n
         toHour.value = end.toLocalTime() + "";
 
         pinned.checked = shift.isLockedByUser();
