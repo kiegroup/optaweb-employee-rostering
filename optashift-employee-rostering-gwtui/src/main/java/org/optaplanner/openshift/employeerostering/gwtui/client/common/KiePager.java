@@ -23,9 +23,10 @@ import org.jboss.errai.databinding.client.components.ListComponent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 
 @Templated
-public class KiePager<T> implements HasRows {
+public class KiePager<T> implements Updatable<List<T>>, HasRows {
 
     @Inject
     @DataField
@@ -97,8 +98,7 @@ public class KiePager<T> implements HasRows {
         pager.firstPage();
         enableDisablePagerButtons();
         RowCountChangeEvent.fire(this, listData.size(), true);
-        setVisibleRange(0, Math.min(listData.size(), pageSize));
-        setRowCount(listData.size());
+        refresh();
     }
 
     public void setPresenter(ListComponent<T, ?> listPresenter) {
@@ -205,5 +205,10 @@ public class KiePager<T> implements HasRows {
         sorter = comparator;
         Collections.sort(listData, sorter);
         refresh();
+    }
+
+    @Override
+    public void onUpdate(List<T> data) {
+        setData(data);
     }
 }
