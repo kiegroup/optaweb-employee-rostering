@@ -107,8 +107,10 @@ public class SpotListPanel implements IsElement,
     }
 
     private void initTable() {
-        pager.setData(Collections.emptyList());
         pager.setPresenter(table);
+        searchBar.setListToFilter(Collections.emptyList());
+        searchBar.setElementToStringMapping((spot) -> spot.getName());
+        searchBar.addFilterListener(pager);
     }
 
     @EventHandler("add-button")
