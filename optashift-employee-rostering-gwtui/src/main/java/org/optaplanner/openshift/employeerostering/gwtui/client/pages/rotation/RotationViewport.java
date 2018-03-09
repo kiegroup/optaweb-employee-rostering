@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +35,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation.HORIZONTAL;
@@ -43,7 +42,7 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergri
 public class RotationViewport extends Viewport<Long> {
 
     private final Integer tenantId;
-    private final LocalDateTime baseDate;
+    private final OffsetDateTime baseDate;
     private final Supplier<ShiftBlobView> blobViewFactory;
     private final LinearScale<Long> scale;
     private final CssGridLines gridLines;
@@ -51,7 +50,7 @@ public class RotationViewport extends Viewport<Long> {
     private final List<Lane<Long>> lanes;
 
     RotationViewport(final Integer tenantId,
-                     final LocalDateTime baseDate,
+                     final OffsetDateTime baseDate,
                      final Supplier<ShiftBlobView> blobViewFactory,
                      final LinearScale<Long> scale,
                      final CssGridLines gridLines,
@@ -97,15 +96,11 @@ public class RotationViewport extends Viewport<Long> {
 
         final SpotLane spotLane = (SpotLane) lane;
 
-        final TimeSlot timeSlot = new TimeSlot(
-                tenantId,
-                baseDate.plusMinutes(positionInScaleUnits),
-                baseDate.plusMinutes(positionInScaleUnits).plusHours(8L));
-
         final Shift newShift = new Shift(
                 tenantId,
                 spotLane.getSpot(),
-                timeSlot);
+                baseDate.plusMinutes(positionInScaleUnits),
+                baseDate.plusMinutes(positionInScaleUnits).plusHours(8L));
 
         return new ShiftBlob(newShift, baseDate, scale).toStream();
     }

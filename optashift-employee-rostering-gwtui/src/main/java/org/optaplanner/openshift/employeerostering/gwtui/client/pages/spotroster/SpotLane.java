@@ -16,20 +16,20 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-public class SpotLane extends Lane<LocalDateTime> {
+public class SpotLane extends Lane<OffsetDateTime> {
 
     private final Spot spot;
 
     // Changing the parameter name to 'spot' leads to an error, because GWT compiler uses the field instead of the parameter.
     public SpotLane(final Spot spotParam,
-                    final List<SubLane<LocalDateTime>> subLanes) {
+                    final List<SubLane<OffsetDateTime>> subLanes) {
 
         super(spotParam.getName(), subLanes);
         this.spot = spotParam;

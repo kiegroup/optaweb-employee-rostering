@@ -18,24 +18,23 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroste
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 
-public class Positive2HoursScale implements LinearScale<LocalDateTime> {
+public class Positive2HoursScale implements LinearScale<OffsetDateTime> {
 
-    private final LocalDateTime start;
-    private final LocalDateTime end;
+    private final OffsetDateTime start;
+    private final OffsetDateTime end;
 
-    public Positive2HoursScale(final LocalDateTime start, final LocalDateTime end) {
+    public Positive2HoursScale(final OffsetDateTime start, final OffsetDateTime end) {
         this.start = start;
         this.end = end;
     }
 
     @Override
-    public Long toGridPixelsWithFactor1(final LocalDateTime valueInScaleUnits) {
-        final LocalDateTime date;
+    public Long toGridPixelsWithFactor1(final OffsetDateTime valueInScaleUnits) {
+        final OffsetDateTime date;
 
         if (valueInScaleUnits.isBefore(start)) {
             date = start;
@@ -51,9 +50,9 @@ public class Positive2HoursScale implements LinearScale<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime toScaleUnitsWithFactor1(final Long valueInGridPixels) {
+    public OffsetDateTime toScaleUnitsWithFactor1(final Long valueInGridPixels) {
 
-        final LocalDateTime date = start.plusHours(valueInGridPixels);
+        final OffsetDateTime date = start.plusHours(valueInGridPixels);
 
         if (date.isBefore(start)) {
             return start;
@@ -65,7 +64,7 @@ public class Positive2HoursScale implements LinearScale<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime getEndInScaleUnits() {
+    public OffsetDateTime getEndInScaleUnits() {
         return end;
     }
 
@@ -74,8 +73,8 @@ public class Positive2HoursScale implements LinearScale<LocalDateTime> {
         return 2L;
     }
 
-    private Instant instantOf(final LocalDateTime value) {
-        return value.toInstant(ZoneOffset.UTC); //FIXME: Configurable?
+    private Instant instantOf(final OffsetDateTime value) {
+        return value.toInstant();
     }
 }
 

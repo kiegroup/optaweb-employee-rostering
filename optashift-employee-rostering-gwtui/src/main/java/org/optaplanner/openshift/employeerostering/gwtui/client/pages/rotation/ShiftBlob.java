@@ -17,29 +17,24 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobWithTwin;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
-import static java.time.ZoneOffset.UTC;
 
 public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
 
     private final Shift shift;
     private final LinearScale<Long> scale;
-    private final LocalDateTime baseDate;
+    private final OffsetDateTime baseDate;
     private Long sizeInGridPixels;
     private ShiftBlob twin;
 
-    private Long positionInGridPixelsCache;
-    private Long endPositionInGridPixelsCache;
-
     ShiftBlob(final Shift shift,
-              final LocalDateTime baseDate,
+              final OffsetDateTime baseDate,
               final LinearScale<Long> scale) {
 
         this.shift = shift;
@@ -50,7 +45,7 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     }
 
     private ShiftBlob(final Shift shift,
-                      final LocalDateTime baseDate,
+                      final OffsetDateTime baseDate,
                       final LinearScale<Long> scale,
                       final ShiftBlob twin) {
 
@@ -62,12 +57,12 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     }
 
     private long getInitialSizeInGridPixels() {
-        return scale.toGridPixels(minutesAfterBaseDate(shift.getTimeSlot().getEndDateTime())) - getPositionInGridPixels();
+        return scale.toGridPixels(minutesAfterBaseDate(shift.getEndDateTime())) - getPositionInGridPixels();
     }
 
     @Override
     public Long getPositionInScaleUnits() {
-        return minutesAfterBaseDate(shift.getTimeSlot().getStartDateTime());
+        return minutesAfterBaseDate(shift.getStartDateTime());
     }
 
     @Override
@@ -94,25 +89,22 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
 
     @Override
     public void setPositionInScaleUnits(final Long positionInScaleUnits) {
-        positionInGridPixelsCache = null;
-        endPositionInGridPixelsCache = null;
-        shift.getTimeSlot().setStartDateTime(baseDate.plusMinutes(positionInScaleUnits));
+        shift.setStartDateTime(baseDate.plusMinutes(positionInScaleUnits));
     }
 
     @Override
-    public long getSizeInGridPixels() {
+    public Long getSizeInGridPixels() {
         return sizeInGridPixels;
     }
 
     @Override
-    public void setSizeInGridPixels(final long sizeInGridPixels) {
-        endPositionInGridPixelsCache = null;
+    public void setSizeInGridPixels(final Long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
-        shift.getTimeSlot().setEndDateTime(shift.getTimeSlot().getStartDateTime().plusMinutes(scale.toScaleUnits(sizeInGridPixels)));
+        shift.setEndDateTime(shift.getStartDateTime().plusMinutes(scale.toScaleUnits(sizeInGridPixels)));
     }
 
-    private long minutesAfterBaseDate(final LocalDateTime startDateTime) {
-        return Duration.between(baseDate.toInstant(UTC), startDateTime.toInstant(UTC)).getSeconds() / 60;
+    private long minutesAfterBaseDate(final OffsetDateTime startDateTime) {
+        return Duration.between(baseDate, startDateTime).getSeconds() / 60;
     }
 
     @Override
@@ -137,15 +129,12 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
 
     public ShiftBlob newTwin() {
 
-        final TimeSlot timeSlot = new TimeSlot(
-                shift.getTimeSlot().getTenantId(),
-                shift.getTimeSlot().getStartDateTime(), //intentionally overwritten below
-                shift.getTimeSlot().getEndDateTime()); //intentionally overwritten below
-
         final Shift shiftTwin = new Shift(
                 shift.getTenantId(),
                 shift.getSpot(),
-                timeSlot);
+                shift.getStartDateTime(),
+                shift.getEndDateTime(),
+                shift.getRotationEmployee());
 
         final ShiftBlob twin = new ShiftBlob(
                 shiftTwin,

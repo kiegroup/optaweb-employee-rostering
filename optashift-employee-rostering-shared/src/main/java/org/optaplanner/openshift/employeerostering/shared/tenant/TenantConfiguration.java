@@ -1,11 +1,17 @@
 package org.optaplanner.openshift.employeerostering.shared.tenant;
 
 import java.time.DayOfWeek;
+import java.time.ZoneId;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ZoneIdDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.ZoneIdSerializer;
 
 @Entity
 public class TenantConfiguration extends AbstractPersistable {
@@ -17,10 +23,7 @@ public class TenantConfiguration extends AbstractPersistable {
     private Integer desiredTimeSlotWeight = 10;
     @NotNull
     private Integer rotationEmployeeMatchWeight = 500;
-    @NotNull
-    private Integer templateDuration = 1;
-    @NotNull
-    private DayOfWeek weekStart = DayOfWeek.MONDAY;
+    private ZoneId timeZone = ZoneId.of("UTC");
 
     @SuppressWarnings("unused")
     public TenantConfiguration() {
@@ -29,13 +32,12 @@ public class TenantConfiguration extends AbstractPersistable {
 
     public TenantConfiguration(Integer tenantId, Integer templateDuration, DayOfWeek weekStart,
                                Integer undesiredTimeSlotWeight, Integer desiredTimeSlotWeight,
-                               Integer rotationEmployeeMatchWeight) {
+                               Integer rotationEmployeeMatchWeight, ZoneId timeZone) {
         super(tenantId);
-        this.templateDuration = templateDuration;
-        this.weekStart = weekStart;
         this.undesiredTimeSlotWeight = undesiredTimeSlotWeight;
         this.desiredTimeSlotWeight = desiredTimeSlotWeight;
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
+        this.timeZone = timeZone;
     }
 
     public Integer getUndesiredTimeSlotWeight() {
@@ -62,20 +64,15 @@ public class TenantConfiguration extends AbstractPersistable {
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
     }
 
-    public Integer getTemplateDuration() {
-        return templateDuration;
+    @JsonSerialize(using = ZoneIdSerializer.class)
+    @JsonDeserialize(using = ZoneIdDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public ZoneId getTimeZone() {
+        return timeZone;
     }
 
-    public void setTemplateDuration(Integer templateDuration) {
-        this.templateDuration = templateDuration;
-    }
-
-    public DayOfWeek getWeekStart() {
-        return weekStart;
-    }
-
-    public void setWeekStart(DayOfWeek weekStart) {
-        this.weekStart = weekStart;
+    public void setTimeZone(ZoneId timeZone) {
+        this.timeZone = timeZone;
     }
 
 }

@@ -16,46 +16,61 @@
 
 package org.optaplanner.openshift.employeerostering.shared.employee.view;
 
+import java.time.LocalDate;
+import java.time.OffsetTime;
+
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
+import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSerializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetTimeDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetTimeSerializer;
 
 public class EmployeeAvailabilityView extends AbstractPersistable {
 
     @NotNull
     private Long employeeId;
+
     @NotNull
-    private Long timeSlotId;
+    private LocalDate date;
+    @NotNull
+    private OffsetTime startTime;
+    @NotNull
+    private OffsetTime endTime;
 
     private EmployeeAvailabilityState state;
 
     @SuppressWarnings("unused")
-    public EmployeeAvailabilityView() {
-    }
+    public EmployeeAvailabilityView() {}
 
-    public EmployeeAvailabilityView(Integer tenantId, Employee employee, TimeSlot timeSlot, EmployeeAvailabilityState state) {
+    public EmployeeAvailabilityView(Integer tenantId, Employee employee, LocalDate date, OffsetTime startTime, OffsetTime endTime, EmployeeAvailabilityState state) {
         super(tenantId);
         this.employeeId = employee.getId();
-        this.timeSlotId = timeSlot.getId();
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.state = state;
     }
 
     public EmployeeAvailabilityView(EmployeeAvailability employeeAvailability) {
         super(employeeAvailability);
         this.employeeId = employeeAvailability.getEmployee().getId();
-        this.timeSlotId = employeeAvailability.getTimeSlot().getId();
+        this.date = employeeAvailability.getDate();
+        this.startTime = employeeAvailability.getStartTime();
+        this.endTime = employeeAvailability.getEndTime();
         this.state = employeeAvailability.getState();
     }
 
     @Override
     public String toString() {
-        return employeeId + " " + timeSlotId;
+        return employeeId + " " + date + ":" + startTime + "-" + endTime;
     }
 
     // ************************************************************************
@@ -70,12 +85,37 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.employeeId = employeeId;
     }
 
-    public Long getTimeSlotId() {
-        return timeSlotId;
+    @JsonSerialize(using = LocalDateSerializer.class)
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setTimeSlotId(Long timeSlotId) {
-        this.timeSlotId = timeSlotId;
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    @JsonSerialize(using = OffsetTimeSerializer.class)
+    @JsonDeserialize(using = OffsetTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public OffsetTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(OffsetTime startTime) {
+        this.startTime = startTime;
+    }
+
+    @JsonSerialize(using = OffsetTimeSerializer.class)
+    @JsonDeserialize(using = OffsetTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public OffsetTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(OffsetTime endTime) {
+        this.endTime = endTime;
     }
 
     public EmployeeAvailabilityState getState() {

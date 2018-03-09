@@ -6,10 +6,8 @@ import java.util.HashSet;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLTableCellElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
 import org.jboss.errai.databinding.client.components.ListComponent;
@@ -19,7 +17,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInvalidation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.KiePager;
@@ -57,16 +54,6 @@ public class SpotListPanel implements IsElement,
     @DataField
     @ListContainer("table")
     private ListComponent<Spot, SpotSubform> table;
-
-    @Inject
-    @DataField("name-header")
-    @Named("th")
-    private HTMLTableCellElement spotNameHeader;
-
-    @Inject
-    @DataField("skill-set-header")
-    @Named("th")
-    private HTMLTableCellElement skillSetHeader;
 
     public SpotListPanel() {}
 
@@ -114,15 +101,5 @@ public class SpotListPanel implements IsElement,
     @EventHandler("addButton")
     public void add(final @ForEvent("click") MouseEvent e) {
         SpotSubform.createNewRow(new Spot(tenantStore.getCurrentTenantId(), "", new HashSet<>()), table, pager);
-    }
-
-    @EventHandler("name-header")
-    public void spotNameHeaderClick(final @ForEvent("click") MouseEvent e) {
-        pager.sortBy((a, b) -> CommonUtils.stringWithIntCompareTo(a.getName(), b.getName()));
-    }
-
-    @EventHandler("skill-set-header")
-    public void skillSetHeaderClick(final @ForEvent("click") MouseEvent e) {
-        pager.sortBy((a, b) -> b.getRequiredSkillSet().size() - a.getRequiredSkillSet().size());
     }
 }

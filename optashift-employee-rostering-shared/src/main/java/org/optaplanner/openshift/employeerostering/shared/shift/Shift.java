@@ -16,30 +16,35 @@
 
 package org.optaplanner.openshift.employeerostering.shared.shift;
 
+import java.time.OffsetDateTime;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetDateTimeDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetDateTimeSerializer;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 @Entity
 @NamedQueries({
                @NamedQuery(name = "Shift.findAll",
                            query = "select distinct sa from Shift sa" +
                                    " left join fetch sa.spot s" +
-                                   " left join fetch sa.timeSlot t" +
                                    " left join fetch sa.rotationEmployee re" +
                                    " left join fetch sa.employee e" +
                                    " where sa.tenantId = :tenantId" +
-                                   " order by t.startDateTime, s.name, e.name"),
+                                   " order by sa.startDateTime, s.name, e.name"),
 })
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftFilter.class)
 public class Shift extends AbstractPersistable {
@@ -49,11 +54,13 @@ public class Shift extends AbstractPersistable {
     @NotNull
     @ManyToOne
     private Spot spot;
-    @NotNull
-    @ManyToOne
-    private TimeSlot timeSlot;
 
-    private boolean lockedByUser = false;
+    @NotNull
+    private OffsetDateTime startDateTime;
+    @NotNull
+    private OffsetDateTime endDateTime;
+
+    private boolean pinnedByUser = false;
 
     @ManyToOne
     @PlanningVariable(valueRangeProviderRefs = "employeeRange")
@@ -62,32 +69,34 @@ public class Shift extends AbstractPersistable {
     @SuppressWarnings("unused")
     public Shift() {}
 
-    public Shift(Integer tenantId, Spot spot, TimeSlot timeSlot) {
-        this(tenantId, spot, timeSlot, null);
+    public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        this(tenantId, spot, startDateTime, endDateTime, null);
     }
 
-    public Shift(Integer tenantId, Spot spot, TimeSlot timeSlot, Employee rotationEmployee) {
+    public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime, Employee rotationEmployee) {
         super(tenantId);
-        this.timeSlot = timeSlot;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.spot = spot;
         this.rotationEmployee = rotationEmployee;
     }
 
-    public Shift(ShiftView shiftView, Spot spot, TimeSlot timeSlot) {
-        this(shiftView, spot, timeSlot, null);
+    public Shift(ShiftView shiftView, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        this(shiftView, spot, startDateTime, endDateTime, null);
     }
 
-    public Shift(ShiftView shiftView, Spot spot, TimeSlot timeSlot, Employee rotationEmployee) {
+    public Shift(ShiftView shiftView, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime, Employee rotationEmployee) {
         super(shiftView);
-        this.timeSlot = timeSlot;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.spot = spot;
-        this.lockedByUser = shiftView.isLockedByUser();
+        this.pinnedByUser = shiftView.isLockedByUser();
         this.rotationEmployee = rotationEmployee;
     }
 
     @Override
     public String toString() {
-        return spot + " " + timeSlot;
+        return spot + " " + startDateTime + "-" + endDateTime;
     }
 
     // ************************************************************************
@@ -102,20 +111,34 @@ public class Shift extends AbstractPersistable {
         this.spot = spot;
     }
 
-    public TimeSlot getTimeSlot() {
-        return timeSlot;
+    @JsonSerialize(using = OffsetDateTimeSerializer.class)
+    @JsonDeserialize(using = OffsetDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public OffsetDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setTimeSlot(TimeSlot timeSlot) {
-        this.timeSlot = timeSlot;
+    public void setStartDateTime(OffsetDateTime startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public boolean isLockedByUser() {
-        return lockedByUser;
+    @JsonSerialize(using = OffsetDateTimeSerializer.class)
+    @JsonDeserialize(using = OffsetDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public OffsetDateTime getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setLockedByUser(boolean lockedByUser) {
-        this.lockedByUser = lockedByUser;
+    public void setEndDateTime(OffsetDateTime endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
+    public boolean isPinnedByUser() {
+        return pinnedByUser;
+    }
+
+    public void setPinnedByUser(boolean lockedByUser) {
+        this.pinnedByUser = lockedByUser;
     }
 
     public Employee getEmployee() {

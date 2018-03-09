@@ -16,10 +16,13 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 
@@ -27,6 +30,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLinesFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.TicksFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementViewPool;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
@@ -37,8 +41,10 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
+import static java.util.Collections.singletonList;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Stream.concat;
 
 public class RotationViewportFactory {
 
@@ -69,11 +75,11 @@ public class RotationViewportFactory {
 
             shiftBlobViewPool.init(2000L, shiftBlobViews::get);
 
-            final Integer durationInWeeks = tenantStore.getCurrentTenant().getConfiguration().getTemplateDuration();
-            final Long durationTimeInMinutes = durationInWeeks * 7 * 24 * 60L;
+            final Integer durationInDays = tenantStore.getCurrentTenant().getRosterState().getRotationLength();
+            final Long durationTimeInMinutes = durationInDays * 24 * 60L;
 
             final LinearScale<Long> scale = new Infinite60MinutesScale(durationTimeInMinutes);
-            final LocalDateTime baseDate = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+            final OffsetDateTime baseDate = RotationPage.getBaseDateTime();
 
             final List<Lane<Long>> lanes = buildLanes(shiftsBySpot, baseDate, scale);
 
@@ -88,7 +94,7 @@ public class RotationViewportFactory {
     }
 
     private List<Lane<Long>> buildLanes(final Map<Spot, List<Shift>> shiftsBySpot,
-                                        final LocalDateTime baseDate,
+                                        final OffsetDateTime baseDate,
                                         final LinearScale<Long> scale) {
 
         return shiftsBySpot.entrySet().stream()
@@ -97,7 +103,7 @@ public class RotationViewportFactory {
                 .collect(toList());
     }
 
-    private SpotLane newSpotLane(final LocalDateTime baseDate,
+    private SpotLane newSpotLane(final OffsetDateTime baseDate,
                                  final LinearScale<Long> scale,
                                  final List<Shift> shifts,
                                  final Spot spot) {

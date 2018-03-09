@@ -16,7 +16,8 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,7 +44,6 @@ import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRoster
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
@@ -67,7 +67,7 @@ public class SpotRosterViewportFactory {
     private CssGridLinesFactory cssGridLinesFactory;
 
     @Inject
-    private TicksFactory<LocalDateTime> ticksFactory;
+    private TicksFactory<OffsetDateTime> ticksFactory;
 
     @Inject
     private TimingUtils timingUtils;
@@ -75,22 +75,22 @@ public class SpotRosterViewportFactory {
     @Inject
     private CollisionFreeSubLaneFactory conflictFreeSubLanesFactory;
 
-    private Map<Spot, Map<ShiftView, TimeSlot>> spotRosterModel;
+    private Map<Spot, List<ShiftView>> spotRosterModel;
 
-    private LinearScale<LocalDateTime> scale;
+    private LinearScale<OffsetDateTime> scale;
 
     public SpotRosterViewport getViewport(final SpotRosterView spotRosterView) {
 
         return timingUtils.time("Spot Roster viewport instantiation", () -> {
 
-            shiftBlobViewPool.init(2000L, shiftBlobViewInstances::get);
+            shiftBlobViewPool.init(1500L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
 
             spotRosterModel = buildSpotRosterModel(spotRosterView);
 
-            scale = new Positive2HoursScale(spotRosterView.getStartDate().atTime(0, 0),
-                                            spotRosterView.getEndDate().atTime(0, 0));
+            scale = new Positive2HoursScale(OffsetDateTime.of(spotRosterView.getStartDate().atTime(0, 0), ZoneOffset.UTC),
+                                            OffsetDateTime.of(spotRosterView.getEndDate().atTime(0, 0), ZoneOffset.UTC));
 
-            final List<Lane<LocalDateTime>> lanes = buildLanes(spotRosterView);
+            final List<Lane<OffsetDateTime>> lanes = buildLanes(spotRosterView);
 
             return new SpotRosterViewport(tenantStore.getCurrentTenantId(),
                                           shiftBlobViewPool::get,
@@ -101,19 +101,17 @@ public class SpotRosterViewportFactory {
         });
     }
 
-    private Map<Spot, Map<ShiftView, TimeSlot>> buildSpotRosterModel(final SpotRosterView spotRosterView) {
+    private Map<Spot, List<ShiftView>> buildSpotRosterModel(final SpotRosterView spotRosterView) {
 
         final Map<Long, Spot> spotsById = indexById(spotRosterView.getSpotList());
-        final Map<Long, TimeSlot> timeSlotsById = indexById(spotRosterView.getTimeSlotList());
 
-        return spotRosterView.getTimeSlotIdToSpotIdToShiftViewListMap().values().stream()
-                .flatMap(s -> s.values().stream())
-                .flatMap(Collection::stream)
-                .collect(groupingBy(shiftView -> spotsById.get(shiftView.getSpotId()),
-                                    toMap(identity(), shiftView -> timeSlotsById.get(shiftView.getTimeSlotId()))));
+        return spotRosterView.getSpotIdToShiftViewListMap().values().stream()
+                             .flatMap(Collection::stream)
+                             .collect(groupingBy(shiftView -> spotsById.get(shiftView.getSpotId()),
+                                                 toList()));
     }
 
-    private List<Lane<LocalDateTime>> buildLanes(final SpotRosterView spotRosterView) {
+    private List<Lane<OffsetDateTime>> buildLanes(final SpotRosterView spotRosterView) {
 
         final Map<Long, Employee> employeesById = indexById(spotRosterView.getEmployeeList());
 
@@ -124,9 +122,9 @@ public class SpotRosterViewportFactory {
                 .collect(toList());
     }
 
-    private List<SubLane<LocalDateTime>> buildSubLanes(final Spot spot,
-                                                       final Map<ShiftView, TimeSlot> timeSlotsByShift,
-                                                       final Map<Long, Employee> employeesById) {
+    private List<SubLane<OffsetDateTime>> buildSubLanes(final Spot spot,
+                                                        final List<ShiftView> timeSlotsByShift,
+                                                        final Map<Long, Employee> employeesById) {
 
         //FIXME: Handle overlapping blobs and discover why some TimeSlots are null
 
@@ -134,14 +132,13 @@ public class SpotRosterViewportFactory {
             return new ArrayList<>(singletonList(new SubLane<>()));
         }
 
-        final Stream<Blob<LocalDateTime>> blobs = timeSlotsByShift.entrySet()
+        final Stream<Blob<OffsetDateTime>> blobs = timeSlotsByShift
                 .stream()
-                .filter(e -> e.getValue() != null) //FIXME: Why are there null Time Slots?
+                .filter(e -> e != null) //FIXME: Why are there null Time Slots?
                 .map(e -> {
-                    final ShiftView shiftView = e.getKey();
-                    final TimeSlot timeSlot = e.getValue();
+                    final ShiftView shiftView = e;
                     final Employee employee = employeesById.get(shiftView.getEmployeeId());
-                    return buildShiftBlob(spot, shiftView, timeSlot, employee);
+                    return buildShiftBlob(spot, shiftView, employee);
                 });
 
         return conflictFreeSubLanesFactory.createSubLanes(blobs);
@@ -149,10 +146,9 @@ public class SpotRosterViewportFactory {
 
     private ShiftBlob buildShiftBlob(final Spot spot,
                                      final ShiftView shiftView,
-                                     final TimeSlot timeSlot,
                                      final Employee employee) {
 
-        final Shift shift = new Shift(shiftView, spot, timeSlot);
+        final Shift shift = new Shift(shiftView, spot, shiftView.getStartDateTime(), shiftView.getEndDateTime());
         shift.setEmployee(employee);
         return new ShiftBlob(scale, shift);
     }

@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.shared.timeslot;
+package org.optaplanner.openshift.employeerostering.shared.common;
 
 import java.util.ArrayList;
 import java.util.Collections;

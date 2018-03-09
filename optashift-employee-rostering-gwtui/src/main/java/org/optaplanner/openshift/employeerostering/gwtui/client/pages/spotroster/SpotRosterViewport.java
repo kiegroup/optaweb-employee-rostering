@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,26 +35,25 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation.HORIZONTAL;
 
-public class SpotRosterViewport extends Viewport<LocalDateTime> {
+public class SpotRosterViewport extends Viewport<OffsetDateTime> {
 
     private final Integer tenantId;
     private final Supplier<ShiftBlobView> blobViewSupplier;
-    private final LinearScale<LocalDateTime> scale;
+    private final LinearScale<OffsetDateTime> scale;
     private final CssGridLines gridLines;
-    private final Ticks<LocalDateTime> ticks;
-    private final List<Lane<LocalDateTime>> lanes;
+    private final Ticks<OffsetDateTime> ticks;
+    private final List<Lane<OffsetDateTime>> lanes;
 
     SpotRosterViewport(final Integer tenantId,
                        final Supplier<ShiftBlobView> blobViewSupplier,
-                       final LinearScale<LocalDateTime> scale,
+                       final LinearScale<OffsetDateTime> scale,
                        final CssGridLines gridLines,
-                       final Ticks<LocalDateTime> ticks,
-                       final List<Lane<LocalDateTime>> lanes) {
+                       final Ticks<OffsetDateTime> ticks,
+                       final List<Lane<OffsetDateTime>> lanes) {
 
         this.tenantId = tenantId;
         this.blobViewSupplier = blobViewSupplier;
@@ -86,30 +85,29 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     }
 
     @Override
-    public Lane<LocalDateTime> newLane() {
+    public Lane<OffsetDateTime> newLane() {
         return new SpotLane(new Spot(tenantId, "New spot", new HashSet<>()),
                             new ArrayList<>(singletonList(new SubLane<>())));
     }
 
     @Override
-    public Stream<Blob<LocalDateTime>> newBlob(final Lane<LocalDateTime> lane, final LocalDateTime start) {
+    public Stream<Blob<OffsetDateTime>> newBlob(final Lane<OffsetDateTime> lane, final OffsetDateTime start) {
 
         // Casting is preferable to avoid over-use of generics in the Viewport class
         final SpotLane spotLane = (SpotLane) lane;
 
-        final TimeSlot timeSlot = new TimeSlot(tenantId, start, start.plusHours(8L));
-        final Shift shift = new Shift(tenantId, spotLane.getSpot(), timeSlot);
+        final Shift shift = new Shift(tenantId, spotLane.getSpot(), start, start.plusHours(8L));
 
         return Stream.of(new ShiftBlob(scale, shift));
     }
 
     @Override
-    public BlobView<LocalDateTime, ?> newBlobView() {
+    public BlobView<OffsetDateTime, ?> newBlobView() {
         return blobViewSupplier.get();
     }
 
     @Override
-    public List<Lane<LocalDateTime>> getLanes() {
+    public List<Lane<OffsetDateTime>> getLanes() {
         return lanes;
     }
 
@@ -124,7 +122,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     }
 
     @Override
-    public LinearScale<LocalDateTime> getScale() {
+    public LinearScale<OffsetDateTime> getScale() {
         return scale;
     }
 }

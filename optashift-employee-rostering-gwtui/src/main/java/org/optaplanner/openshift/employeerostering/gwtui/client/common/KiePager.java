@@ -1,7 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.common;
 
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,14 +49,12 @@ public class KiePager<T> implements HasRows {
 
     private int pageSize;
 
-    private Comparator<T> sorter;
     private ListComponent<T, ?> listPresenter;
     private List<T> listData;
     private Set<Handler> rangeChangeHandlers;
     private Set<com.google.gwt.view.client.RowCountChangeEvent.Handler> rowCountChangeHandlers;
 
     public KiePager() {
-        sorter = (a, b) -> 0;
         pager = new SimplePager() {
 
             @Override
@@ -93,7 +90,6 @@ public class KiePager<T> implements HasRows {
 
     public void setData(List<T> listData) {
         this.listData = listData;
-        Collections.sort(listData, sorter);
         pager.firstPage();
         enableDisablePagerButtons();
         RowCountChangeEvent.fire(this, listData.size(), true);
@@ -151,7 +147,7 @@ public class KiePager<T> implements HasRows {
 
     @Override
     public HandlerRegistration addRowCountChangeHandler(
-                                                        com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
+            com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
         rowCountChangeHandlers.add(handler);
         return () -> rowCountChangeHandlers.remove(handler);
     }
@@ -199,11 +195,5 @@ public class KiePager<T> implements HasRows {
     public void refresh() {
         setVisibleRange(startIndex, Math.min(listData.size(), pageSize));
         setRowCount(listData.size());
-    }
-
-    public void sortBy(Comparator<T> comparator) {
-        sorter = comparator;
-        Collections.sort(listData, sorter);
-        refresh();
     }
 }

@@ -19,14 +19,13 @@ package org.optaplanner.openshift.employeerostering.shared.shift;
 import org.optaplanner.core.impl.heuristic.selector.common.decorator.SelectionFilter;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
 
 public class MovableShiftFilter implements SelectionFilter<Roster, Shift> {
 
     @Override
     public boolean accept(ScoreDirector<Roster> scoreDirector, Shift shift) {
-        return !shift.isLockedByUser()
-                && shift.getTimeSlot().getTimeSlotState() != TimeSlotState.HISTORY;
+        // TODO: Check if shift is historic from RosterState
+        return !shift.isPinnedByUser();
     }
 
 }
