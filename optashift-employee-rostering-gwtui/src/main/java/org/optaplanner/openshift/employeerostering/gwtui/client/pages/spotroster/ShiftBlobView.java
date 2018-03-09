@@ -76,7 +76,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     public void refresh() {
 
-        if (blob.getShift().isLockedByUser()) {
+        if (blob.getShift().isPinnedByUser()) {
             getElement().classList.add("pinned");
         } else {
             getElement().classList.remove("pinned");

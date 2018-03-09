@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -46,7 +45,6 @@ import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotUtils;
 
 public class RosterRestServiceImpl extends AbstractRestServiceImpl implements RosterRestService {
 
@@ -58,29 +56,26 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Override
     @Transactional
-    public SpotRosterView getCurrentSpotRosterView(Integer tenantId) {
+    public SpotRosterView getCurrentSpotRosterView(Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage) {
         RosterState rosterState = entityManager.find(Tenant.class, tenantId).getRosterState();
         LocalDate startDate = rosterState.getFirstPublishedDate();
         LocalDate endDate = rosterState.getLastDraftDate();
-        return getSpotRosterView(tenantId, startDate, endDate, entityManager.createNamedQuery("Spot.findAll",
-                Spot.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList());
+        return getSpotRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
     }
 
     @Override
     @Transactional
     public SpotRosterView getSpotRosterView(final Integer tenantId,
-                                            final String startDateString,
-                                            final String endDateString) {
+            final String startDateString,
+            final String endDateString) {
 
         return getSpotRosterView(tenantId, LocalDate.parse(startDateString), LocalDate.parse(endDateString));
     }
 
     private SpotRosterView getSpotRosterView(final Integer tenantId,
-                                             final LocalDate startDate,
-                                             final LocalDate endDate,
-                                             final Pagination pagination) {
+            final LocalDate startDate,
+            final LocalDate endDate,
+            final Pagination pagination) {
 
         final List<Spot> spots = entityManager.createNamedQuery("Spot.findAll", Spot.class)
                 .setParameter("tenantId", tenantId)
@@ -92,8 +87,8 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     }
 
     private SpotRosterView getSpotRosterView(final Integer tenantId,
-                                             final LocalDate startDate,
-                                             final LocalDate endDate) {
+            final LocalDate startDate,
+            final LocalDate endDate) {
 
         final List<Spot> spots = entityManager.createNamedQuery("Spot.findAll", Spot.class)
                 .setParameter("tenantId", tenantId)
@@ -111,9 +106,6 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         if (null == spots) {
             throw new IllegalArgumentException("spots is null!");
         }
-
-        final LocalDate startDate = LocalDate.parse(startDateString);
-        final LocalDate endDate = LocalDate.parse(endDateString);
 
         return getSpotRosterView(tenantId, startDate, endDate, spots);
     }
@@ -156,7 +148,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         LocalDate startDate = rosterState.getFirstPublishedDate();
         LocalDate endDate = rosterState.getLastDraftDate();
         return getEmployeeRosterView(tenantId, startDate, endDate, entityManager.createNamedQuery("Employee.findAll",
-                                                                                                  Employee.class)
+                Employee.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList());
     }
@@ -167,7 +159,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         return getEmployeeRosterView(tenantId, startDate, endDate, entityManager.createNamedQuery("Employee.findAll",
-                                                                                                  Employee.class)
+                Employee.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList());
     }
@@ -175,7 +167,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Override
     @Transactional
     public EmployeeRosterView getEmployeeRosterViewFor(Integer tenantId, String startDateString, String endDateString,
-                                                       List<Employee> employees) {
+            List<Employee> employees) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         if (null == employees) {
@@ -217,7 +209,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                     k -> new ArrayList<>()).add(new EmployeeAvailabilityView(employeeAvailability));
         }
         employeeRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
-        Roster roster = solverManager.getRoster(tenantId);
+        Roster roster = solverManager.getRoster(tenantId).orElse(null);
         if (null != roster) {
             employeeRosterView.setScore(roster.getScore());
         }
@@ -279,7 +271,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 continue;
             }
             attachedShift.setEmployee((shift.getEmployee() == null)
-                                              ? null : employeeIdMap.get(shift.getEmployee().getId()));
+                    ? null : employeeIdMap.get(shift.getEmployee().getId()));
         }
     }
 }

@@ -24,7 +24,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobWithTwin;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
-
 public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
 
     private final Shift shift;
@@ -32,6 +31,9 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     private final OffsetDateTime baseDate;
     private Long sizeInGridPixels;
     private ShiftBlob twin;
+
+    private Long positionInGridPixelsCache;
+    private Long endPositionInGridPixelsCache;
 
     ShiftBlob(final Shift shift,
               final OffsetDateTime baseDate,
@@ -93,12 +95,12 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     }
 
     @Override
-    public Long getSizeInGridPixels() {
+    public long getSizeInGridPixels() {
         return sizeInGridPixels;
     }
 
     @Override
-    public void setSizeInGridPixels(final Long sizeInGridPixels) {
+    public void setSizeInGridPixels(final long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
         shift.setEndDateTime(shift.getStartDateTime().plusMinutes(scale.toScaleUnits(sizeInGridPixels)));
     }
@@ -114,7 +116,7 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
 
         final boolean hasAnyPartOffTheGrid =
                 getEndPositionInGridPixels() > scale.getEndInGridPixels() ||
-                        getPositionInGridPixels() < 0;
+                                             getPositionInGridPixels() < 0;
 
         if (hasAnyPartOffTheGrid) {
             final ShiftBlob twin = getTwin().orElseGet(this::newTwin);
@@ -130,17 +132,17 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     public ShiftBlob newTwin() {
 
         final Shift shiftTwin = new Shift(
-                shift.getTenantId(),
-                shift.getSpot(),
-                shift.getStartDateTime(),
-                shift.getEndDateTime(),
-                shift.getRotationEmployee());
+                                          shift.getTenantId(),
+                                          shift.getSpot(),
+                                          shift.getStartDateTime(),
+                                          shift.getEndDateTime(),
+                                          shift.getRotationEmployee());
 
         final ShiftBlob twin = new ShiftBlob(
-                shiftTwin,
-                baseDate,
-                scale,
-                this);
+                                             shiftTwin,
+                                             baseDate,
+                                             scale,
+                                             this);
 
         twin.setPositionInScaleUnits(getPositionInScaleUnits());
         twin.setSizeInGridPixels(getSizeInGridPixels());

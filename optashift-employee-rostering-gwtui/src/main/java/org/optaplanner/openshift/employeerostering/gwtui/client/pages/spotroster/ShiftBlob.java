@@ -79,15 +79,15 @@ public class ShiftBlob implements Blob<OffsetDateTime> {
     }
 
     @Override
-    public void setSizeInGridPixels(final Long sizeInGridPixels) {
+    public void setSizeInGridPixels(final long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
         shift.setEndDateTime(getEndPositionInScaleUnits());
     }
 
     public String getLabel() {
         return Optional.ofNullable(shift.getEmployee())
-                .map(Employee::getName)
-                .orElse("U" + " [" + getPositionInScaleUnits() + " ~ " + getEndPositionInScaleUnits() + ", " + getSizeInGridPixels() + "]");
+                       .map(Employee::getName)
+                       .orElse("U" + " [" + getPositionInScaleUnits() + " ~ " + getEndPositionInScaleUnits() + ", " + getSizeInGridPixels() + "]");
     }
 
     public Shift getShift() {
