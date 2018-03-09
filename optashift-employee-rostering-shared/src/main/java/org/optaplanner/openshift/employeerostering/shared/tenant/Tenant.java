@@ -33,8 +33,8 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import io.swagger.annotations.ApiModel;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Entity
 @NamedQueries({
@@ -56,6 +56,9 @@ public class Tenant implements Serializable {
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
     private TenantConfiguration configuration;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
+    private RosterState rosterState;
+
     @NotNull
     @Size(min = 1, max = 120)
     private String name;
@@ -63,16 +66,19 @@ public class Tenant implements Serializable {
     @SuppressWarnings("unused")
     public Tenant() {
         this.configuration = new TenantConfiguration();
+        this.rosterState = new RosterState();
     }
 
     public Tenant(String name) {
         this.name = name;
         this.configuration = new TenantConfiguration();
+        this.rosterState = new RosterState();
     }
 
-    public Tenant(String name, TenantConfiguration configuration) {
+    public Tenant(String name, TenantConfiguration configuration, RosterState rosterState) {
         this.name = name;
         this.configuration = configuration;
+        this.rosterState = rosterState;
     }
 
     @Override
@@ -140,6 +146,14 @@ public class Tenant implements Serializable {
     public void setConfiguration(TenantConfiguration configuration) {
         this.configuration = configuration;
         configuration.setTenantId(id);
+    }
+
+    public RosterState getRosterState() {
+        return rosterState;
+    }
+
+    public void setRosterState(RosterState rosterState) {
+        this.rosterState = rosterState;
     }
 
 }

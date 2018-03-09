@@ -35,20 +35,13 @@ import org.optaplanner.openshift.employeerostering.server.common.AbstractRestSer
 import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
-import org.optaplanner.openshift.employeerostering.shared.lang.parser.ParserException;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.BaseDateDefinitions;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EnumOrCustom;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
+import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestService;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlotState;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements ShiftRestService {
 
@@ -56,10 +49,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     private EntityManager entityManager;
 
     @Inject
-    private SpotRestService spotRestService;
-
-    @Inject
-    private EmployeeRestService employeeRestService;
+    private ShiftFileParser shiftGenerator;
 
     @Override
     @Transactional
@@ -88,8 +78,6 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         validateTenantIdParameter(tenantId, shiftView);
         Spot spot = entityManager.find(Spot.class, shiftView.getSpotId());
         validateTenantIdParameter(tenantId, spot);
-        TimeSlot timeSlot = entityManager.find(TimeSlot.class, shiftView.getTimeSlotId());
-        validateTenantIdParameter(tenantId, timeSlot);
 
         Long rotationEmployeeId = shiftView.getRotationEmployeeId();
         Employee rotationEmployee = null;
@@ -102,8 +90,9 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
             validateTenantIdParameter(tenantId, rotationEmployee);
         }
 
-        Shift shift = new Shift(shiftView, spot, timeSlot, rotationEmployee);
-        shift.setLockedByUser(shiftView.isLockedByUser());
+        Shift shift = new Shift(shiftView, spot, shiftView.getStartDateTime(), shiftView.getEndDateTime(),
+                rotationEmployee);
+        shift.setPinnedByUser(shiftView.isLockedByUser());
         Long employeeId = shiftView.getEmployeeId();
         if (employeeId != null) {
             Employee employee = entityManager.find(Employee.class, employeeId);
@@ -131,58 +120,24 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Override
     @Transactional
-    public List<Long> addShiftsFromTemplate(Integer tenantId,
-                                            String startDateString, String endDateString) throws Exception {
-        ShiftTemplate template = getTemplate(tenantId);
+    public List<Long> addShiftsFromTemplate(Integer tenantId, Integer lengthInDays) {
+        Collection<ShiftTemplate> shiftTemplates = getTemplate(tenantId);
 
-        if (null == template) {
-            throw new IllegalStateException("You cannot add shifts if you don't have a template!");
+        TenantConfiguration tenantConfiguration = entityManager.find(Tenant.class, tenantId).getConfiguration();
+        ShiftFileParser.ParserOut parserOutput = shiftGenerator.parse(tenantId, tenantConfiguration, null,
+                lengthInDays, shiftTemplates);
+
+        List<Shift> shifts = parserOutput.getShiftOutputList();
+        List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOutputList();
+        List<Long> out = new ArrayList<>();
+        for (Shift shift : shifts) {
+            entityManager.persist(shift);
+            out.add(shift.getId());
         }
-
-        LocalDateTime startDate = LocalDateTime.parse(startDateString);
-        LocalDateTime endDate = LocalDateTime.parse(endDateString);
-
-        try {
-            ShiftFileParser.ParserOut parserOutput = ShiftFileParser.parse(tenantId,
-                                                                           spotRestService.getSpotList(tenantId),
-                                                                           employeeRestService.getEmployeeList(tenantId),
-                                                                           startDate,
-                                                                           endDate,
-                                                                           template);
-            List<Shift> shifts = parserOutput.getShiftOutputList();
-
-            List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOutputList();
-
-            HashMap<String, TimeSlot> timeSlotMap = new HashMap<>();
-            List<Long> out = new ArrayList<Long>();
-            for (Shift shift : shifts) {
-                if (!timeSlotMap.containsKey(shift.getTimeSlot().toString())) {
-                    shift.getTimeSlot().setTimeSlotState(TimeSlotState.DRAFT);
-                    entityManager.persist(shift.getTimeSlot());
-                    timeSlotMap.put(shift.getTimeSlot().toString(), shift.getTimeSlot());
-                }
-                TimeSlot timeSlot = timeSlotMap.get(shift.getTimeSlot().toString());
-                Shift newShift = new Shift(tenantId, shift.getSpot(), timeSlot);
-                newShift.setRotationEmployee(shift.getRotationEmployee());
-                entityManager.persist(newShift);
-                out.add(newShift.getId());
-            }
-
-            HashSet<String> employeeAvailabilitySet = new HashSet<>();
-            for (EmployeeAvailability availability : employeeAvailabilities) {
-                if (!employeeAvailabilitySet.contains(availability.toString())) {
-                    TimeSlot timeSlot = timeSlotMap.get(availability.getTimeSlot().toString());
-                    availability.setTimeSlot(timeSlot);
-                    if (null != availability.getState()) {
-                        entityManager.persist(availability);
-                    }
-                    employeeAvailabilitySet.add(availability.toString());
-                }
-            }
-            return out;
-        } catch (ParserException e) {
-            throw new Exception(e.getMessage());
+        for (EmployeeAvailability availability : employeeAvailabilities) {
+            entityManager.persist(availability);
         }
+        return out;
     }
 
     @Override
@@ -197,37 +152,17 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     }
 
     @Override
-    public ShiftTemplate getTemplate(Integer tenantId) {
-        TypedQuery<ShiftTemplate> q = entityManager.createNamedQuery("ShiftTemplate.get", ShiftTemplate.class);
+    public Collection<ShiftTemplate> getTemplate(Integer tenantId) {
+        TypedQuery<ShiftTemplate> q = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class);
         q.setParameter("tenantId", tenantId);
-        List<ShiftTemplate> result = q.getResultList();
-        if (result.isEmpty()) {
-            return null;
-        } else if (1 != result.size()) {
-            throw new IllegalStateException("Each tenant can only have 1 template! Found " + result.size()
-                                                    + "templates!");
-        } else {
-            return result.get(0);
-        }
+        return q.getResultList();
     }
 
     @Override
     @Transactional
-    public void createTemplate(Integer tenantId, Collection<ShiftInfo> shifts) {
-        Tenant tenant = entityManager.find(Tenant.class, tenantId);
-        if (null == tenant) {
-            throw new IllegalStateException("Tenant " + tenantId + " does not exist!");
-        }
-        ShiftTemplate old = getTemplate(tenantId);
-        ShiftTemplate template = (null != old) ? old : new ShiftTemplate();
-        template.setBaseDateType(new EnumOrCustom(tenantId, false, BaseDateDefinitions.WEEK_AFTER_START_DATE
-                .toString()));
-        long weeksInShifts = tenant.getConfiguration().getTemplateDuration();
-        template.setRepeatType(new EnumOrCustom(tenantId, true, "0:" + weeksInShifts + ":0:0"));
-        template.setUniversalExceptionList(Collections.emptyList());
-        template.setShiftList(shifts.stream().collect(Collectors.toList()));
-        template.setTenantId(tenantId);
-
-        entityManager.merge(template);
+    public void updateTemplate(Integer tenantId, Collection<ShiftTemplate> shifts) {
+        Collection<ShiftTemplate> oldShiftTemplates = getTemplate(tenantId);
+        oldShiftTemplates.forEach((s) -> entityManager.remove(s));
+        shifts.forEach((s) -> entityManager.persist(s));
     }
 }

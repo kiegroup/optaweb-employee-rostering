@@ -1,249 +1,71 @@
 package org.optaplanner.openshift.employeerostering.server.lang.parser;
 
-import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
-import org.optaplanner.openshift.employeerostering.shared.lang.parser.DateMatcher;
-import org.optaplanner.openshift.employeerostering.shared.lang.parser.ParserException;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.BaseDateDefinitions;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EmployeeTimeSlotInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.RepeatMode;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
+import javax.inject.Singleton;
 
-//CUP maven plugins seems out of date; the format file is simple enough to code by hand
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
+import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
+
+@Singleton
 public class ShiftFileParser {
 
-    public static ParserOut parse(Integer tenantId,
-                                  List<Spot> spots,
-                                  List<Employee> employees,
-                                  LocalDateTime start,
-                                  LocalDateTime end,
-                                  ShiftTemplate template) throws ParserException {
-        ParserState state = new ParserState();
-        state.tenantId = tenantId;
-        state.startDate = start;
-        state.endDate = end;
+    public ParserOut parse(Integer tenantId,
+            TenantConfiguration tenantConfiguration,
+            RosterState rosterState,
+            int lengthInDays,
+            Collection<ShiftTemplate> shifts) {
+        List<Shift> shiftOutputList = new ArrayList<>();
 
-        BaseDateDefinitions baseDateType;
-        if (!template.getBaseDateType().getIsCustom()) {
-            baseDateType = BaseDateDefinitions.valueOf(template.getBaseDateType().getValue());
-        } else {
-            baseDateType = null;
-        }
+        for (LocalDate currDay = rosterState.getFirstDraftDate(); currDay.isBefore(rosterState.getFirstDraftDate()
+                .plusDays(lengthInDays)); currDay = currDay.plusDays(1), rosterState.setUnplannedOffset((rosterState
+                        .getUnplannedOffset() + 1) % rosterState.getRotationLength())) {
+            List<ShiftTemplate> shiftsToAdd = shifts.stream().filter((s) -> s.getOffsetStartDay() == rosterState
+                    .getUnplannedOffset()).collect(Collectors.toList());
+            for (ShiftTemplate shiftTemplate : shiftsToAdd) {
+                LocalDateTime startDateTime = currDay.atTime(shiftTemplate.getStartTime());
+                LocalDateTime endDateTime = currDay.plusDays(shiftTemplate.getOffsetEndDay() - shiftTemplate
+                        .getOffsetStartDay()).atTime(shiftTemplate.getEndTime());
 
-        if (null == baseDateType) {
+                // TODO: How to handle start/end time in transitions? Current is the Offset BEFORE the transition
+                OffsetDateTime startOffsetDateTime = startDateTime.atOffset(tenantConfiguration.getTimeZone().getRules()
+                        .getOffset(startDateTime));
+                OffsetDateTime endOffsetDateTime = endDateTime.atOffset(tenantConfiguration.getTimeZone().getRules()
+                        .getOffset(endDateTime));
 
-        } else {
-            switch (baseDateType) {
-                case SAME_AS_START_DATE:
-                    state.baseDate = start;
-                    break;
-                case WEEK_OF_START_DATE:
-                    state.baseDate = start
-                                          .minusDays(start.getDayOfWeek().getValue() - 1)
-                                          .toLocalDate().atStartOfDay();
-                    state.endDate = end.plusDays(6 - end.getDayOfWeek().getValue());
-                    break;
-                case WEEK_AFTER_START_DATE:
-                    state.baseDate = start
-                                          .minusDays(start.getDayOfWeek().getValue() - 1)
-                                          .toLocalDate().atStartOfDay().plusWeeks(1);
-                    state.endDate = end.plusDays(6 - (end.getDayOfWeek().getValue() - 1)).plusWeeks(1);
-                    break;
-                default:
-                    break;
-
+                shiftOutputList.add(new Shift(tenantId, shiftTemplate.getSpot(), startOffsetDateTime, endOffsetDateTime,
+                        shiftTemplate.getRotationEmployee()));
             }
         }
 
-        RepeatMode dateMode;
-        if (!template.getRepeatType().getIsCustom()) {
-            dateMode = RepeatMode.valueOf(template.getRepeatType().getValue());
-        } else {
-            dateMode = null;
-        }
-
-        if (null == dateMode) {
-            String[] duration = template.getRepeatType().getValue().split(":");
-            if (4 != duration.length) {
-                throw new ParserException("Badly formatted custom duration");
-            }
-            state.repeatDays = Long.parseLong(duration[0]);
-            state.repeatWeeks = Long.parseLong(duration[1]);
-            state.repeatMonths = Long.parseLong(duration[2]);
-            state.repeatYears = Long.parseLong(duration[3]);
-        } else if (RepeatMode.NONE == dateMode) {
-            state.repeatDays = Math.abs(Duration.between(state.baseDate, end).toDays()) + 1;
-            state.repeatWeeks = 0;
-            state.repeatMonths = 0;
-            state.repeatYears = 0;
-        } else {
-            state.repeatDays = dateMode.daysUntilRepeat;
-            state.repeatWeeks = dateMode.weeksUntilRepeat;
-            state.repeatMonths = dateMode.monthsUntilRepeat;
-            state.repeatYears = dateMode.yearsUntilRepeat;
-        }
-
-        state.universalExceptionList = template.getUniversalExceptionList().stream()
-                                            .map((e) -> {
-                                                try {
-                                                    return DateMatcher.getDateMatcher(e);
-                                                } catch (Exception bad) {
-                                                    return null;
-                                                }
-                                            }).collect(Collectors.toList());
-
-        if (state.universalExceptionList.contains(null)) {
-            throw new ParserException("Badly formatted date exception string");
-        }
-
-        state.shiftOutputList = new ArrayList<>();
-        state.employeeAvailabityOutputList = new ArrayList<>();
-        state.employeeMap = employees.stream()
-                                     .collect(Collectors.toMap(Employee::getId, Function.identity()));
-        addShiftsFrom(state, template.getShiftList());
         ParserOut out = new ParserOut();
-        out.shiftOutputList = state.shiftOutputList;
-        out.employeeAvailabilityOutputList = state.employeeAvailabityOutputList;
+        out.newRosterState = rosterState;
+        out.shiftOutputList = shiftOutputList;
+
+        // TODO: Actually generate the employee avaliability output (need design and info from users first)
+        out.employeeAvailabilityOutputList = new ArrayList<>();
 
         return out;
     }
 
-    private static void addShiftsFrom(ParserState state, List<ShiftInfo> shifts) throws ParserException {
-        for (ShiftInfo shiftInfo : shifts) {
-            List<DateMatcher<ShiftInfo>> exceptions = (null != shiftInfo.getExceptionList()) ? shiftInfo
-                    .getExceptionList()
-                                                                                                     .stream()
-                                                                                                     .map((e) -> {
-                                                                                                         try {
-                                                                                                             return DateMatcher.getDateMatcher(e);
-                                                                                                         } catch (Exception bad) {
-                                                                                                             return null;
-                                                                                                         }
-                                                                                                     }).collect(Collectors.toList()) : Collections.emptyList();
-            if (exceptions.contains(null)) {
-                throw new ParserException("Badly formatted date exception string");
-            }
-            for (LocalDateTime startDate = state.baseDate.plus(Duration.between(LocalDateTime.ofEpochSecond(0, 0,
-                                                                                                            ZoneOffset.UTC),
-                                                                                shiftInfo.getStartTime())), endDate = state.baseDate.plus(Duration.between(LocalDateTime
-                                                                                                                                                                        .ofEpochSecond(0, 0, ZoneOffset.UTC),
-                                                                                                                                                           shiftInfo.getEndTime()));
-                    //Cond
-                    startDate.isBefore(state.endDate);
-                    //Post
-                    startDate = startDate.plusYears(state.repeatYears)
-                                         .plusMonths(state.repeatMonths)
-                                         .plusWeeks(state.repeatWeeks)
-                                         .plusDays(state.repeatDays),
-
-                    endDate = endDate.plusYears(state.repeatYears)
-                                     .plusMonths(state.repeatMonths)
-                                     .plusWeeks(state.repeatWeeks)
-                                     .plusDays(state.repeatDays)) {
-                LocalDateTime clone = startDate;
-                Optional<DateMatcher<ShiftInfo>> shiftException = exceptions.stream().filter((dm) -> dm.test(clone))
-                                                                            .findFirst();
-                if (shiftException.isPresent()) {
-                    DateMatcher<ShiftInfo> dateMatcher = shiftException.get();
-                    if (null != dateMatcher.getReplacement()) {
-                        long oldRepeatDays = state.repeatDays;
-                        state.repeatDays = Duration.between(state.startDate, state.endDate).toDays() + 1;
-                        addShiftsFrom(state, Arrays.asList(dateMatcher
-                                                                      .getReplacement()));
-                        state.repeatDays = oldRepeatDays;
-                    }
-                } else {
-                    shiftException = state.universalExceptionList.stream().filter((dm) -> dm.test(clone)).findFirst();
-                    if (shiftException.isPresent()) {
-                        DateMatcher<ShiftInfo> dateMatcher = shiftException.get();
-                        if (null != dateMatcher.getReplacement()) {
-                            long oldRepeatDays = state.repeatDays;
-                            state.repeatDays = Duration.between(state.startDate, state.endDate).toDays() + 1;
-                            addShiftsFrom(state, Arrays.asList(dateMatcher
-                                                                          .getReplacement()));
-                            state.repeatDays = oldRepeatDays;
-                        }
-                    } else {
-                        addShift(state, shiftInfo, startDate, endDate);
-                    }
-                }
-            }
-        }
-    }
-
-    private static void addShift(ParserState state, ShiftInfo shiftInfo, LocalDateTime startDate, LocalDateTime endDate) throws ParserException {
-        TimeSlot timeslot = new TimeSlot(state.tenantId, startDate, endDate);
-        int i = 0;
-        for (Spot spot : shiftInfo.getSpotList()) {
-                state.shiftOutputList.add(new Shift(state.tenantId, spot, timeslot, shiftInfo.getRotationEmployeeList().get(i)
-                        .getEmployee()));
-                i++;
-        }
-
-        for (EmployeeTimeSlotInfo employeeInfo : shiftInfo.getEmployeeList()) {
-            List<DateMatcher<EmployeeAvailabilityState>> exceptions = (null != employeeInfo
-                    .getAvailabilityConditionList())
-                            ? employeeInfo.getAvailabilityConditionList().stream()
-                                  .map((e) -> {
-                                      try {
-                                          return DateMatcher.getDateMatcher(e);
-                                      } catch (Exception bad) {
-                                          return null;
-                                      }
-                                  }).collect(Collectors.toList()) : Collections.emptyList();
-            if (exceptions.contains(null)) {
-                throw new ParserException("Badly formatted date exception string");
-            }
-            Optional<DateMatcher<EmployeeAvailabilityState>> employeeStateCond = exceptions.stream()
-                                                                                           .filter((cond) -> cond.test(state.startDate)).findFirst();
-            EmployeeAvailabilityState employeeState = employeeInfo.getDefaultAvailability();
-
-            if (employeeStateCond.isPresent()) {
-                employeeState = employeeStateCond.get().getReplacement();
-            }
-
-                EmployeeAvailability employeeAvailability = new EmployeeAvailability(state.tenantId,
-                    state.employeeMap.get(employeeInfo.getEmployeeId().getId()), timeslot);
-                employeeAvailability.setState(employeeState);
-                state.employeeAvailabityOutputList.add(employeeAvailability);
-
-        }
-    }
-
-    private static class ParserState {
-
-        Integer tenantId;
-        List<Shift> shiftOutputList;
-        List<EmployeeAvailability> employeeAvailabityOutputList;
-        List<DateMatcher<ShiftInfo>> universalExceptionList;
-        Map<Long, Employee> employeeMap;
-        LocalDateTime baseDate;
-        LocalDateTime startDate;
-        LocalDateTime endDate;
-        long repeatDays, repeatWeeks, repeatMonths, repeatYears;
-    }
-
     public static class ParserOut {
 
+        RosterState newRosterState;
         List<Shift> shiftOutputList;
         List<EmployeeAvailability> employeeAvailabilityOutputList;
+
+        public RosterState getNewRosterState() {
+            return newRosterState;
+        }
 
         public List<Shift> getShiftOutputList() {
             return shiftOutputList;

@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -75,7 +75,7 @@ public class SpotRosterPage implements Page {
 
     @Inject
     @DataField("viewport")
-    private ViewportView<LocalDateTime> viewportView;
+    private ViewportView<OffsetDateTime> viewportView;
 
     @Inject
     @DataField("scores")

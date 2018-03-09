@@ -24,11 +24,11 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
+import org.optaplanner.openshift.employeerostering.shared.common.TimeSlotUtils;
 
 global HardSoftScoreHolder scoreHolder;
 
@@ -50,10 +50,13 @@ rule "Unavailable time slot for an employee"
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNAVAILABLE,
                 $e : employee,
-                $t : timeSlot)
+                $date : date,
+                $startTime : startTime,
+                $endTime : endTime)
         Shift(
                 employee == $e,
-                timeSlot == $t)
+                TimeSlotUtils.doTimeslotsIntersect($date,$startTime,$endTime,
+                                                   startDateTime, endDateTime))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -50);
 end
@@ -63,10 +66,10 @@ rule "At most one shift assignment per day per employee"
         $s : Shift(
                 employee != null,
                 $e : employee,
-                $leftDay : getTimeSlot().getStartDateTime().toLocalDate())
+                $leftDay : startDateTime.toLocalDate())
         Shift(
                 employee == $e,
-                getTimeSlot().getStartDateTime().toLocalDate() == $leftDay,
+                startDateTime.toLocalDate() == $leftDay,
                 this != $s)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -10);
@@ -77,11 +80,11 @@ rule "No 2 shifts within 10 hours from each other"
         $s : Shift(
                 employee != null,
                 $e : employee,
-                $leftEndDateTime : getTimeSlot().getEndDateTime())
+                $leftEndDateTime : endDateTime)
         Shift(
                 employee == $e,
-                $leftEndDateTime <= getTimeSlot().getEndDateTime(),
-                $leftEndDateTime.until(getTimeSlot().getStartDateTime(), ChronoUnit.HOURS) < 10,
+                $leftEndDateTime <= endDateTime,
+                $leftEndDateTime.until(startDateTime, ChronoUnit.HOURS) < 10,
                 this != $s)
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
@@ -97,10 +100,13 @@ rule "Undesired time slot for an employee"
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNDESIRED,
                 $e : employee,
-                $t : timeSlot)
+                $date : date,
+                $startTime : startTime,
+                $endTime : endTime)
         Shift(
                 employee == $e,
-                timeSlot == $t)
+                TimeSlotUtils.doTimeslotsIntersect($date,$startTime,$endTime,
+                                                   startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -$tenantConfiguration.getUndesiredTimeSlotWeight());
 end
@@ -111,10 +117,13 @@ rule "Desired time slot for an employee"
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.DESIRED,
                 $e : employee,
-                $t : timeSlot)
+                $date : date,
+                $startTime : startTime,
+                $endTime : endTime)
         Shift(
                 employee == $e,
-                timeSlot == $t)
+                TimeSlotUtils.doTimeslotsIntersect($date,$startTime,$endTime,
+                                                   startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, +$tenantConfiguration.getDesiredTimeSlotWeight());
 end

@@ -16,7 +16,14 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -36,12 +43,11 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils;
+import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
@@ -107,36 +113,57 @@ public class RotationPage implements Page {
         });
     }
 
-    private Promise<ShiftTemplate> fetchShiftTemplate() {
+    private Promise<Collection<ShiftTemplate>> fetchShiftTemplate() {
         return new Promise<>((resolve, reject) -> {
             ShiftRestServiceBuilder.getTemplate(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
         });
     }
 
-    private List<Shift> buildShiftList(final ShiftTemplate shiftTemplate) {
+    private List<Shift> buildShiftList(final Collection<ShiftTemplate> shiftTemplate) {
         final AtomicLong id = new AtomicLong(0L);
-        return shiftTemplate.getShiftList().stream()
-                .flatMap(shiftInfo -> shiftInfo.getSpotList().stream().map(spot -> newShift(id.getAndIncrement(), shiftInfo, spot)))
-                .collect(toList());
+        return shiftTemplate.stream()
+                .map(shiftInfo -> newShift(id.getAndIncrement(), shiftInfo)).collect(toList());
     }
 
     private Shift newShift(final Long id,
-                           final ShiftInfo shift,
-                           final Spot spot) {
-
-        final TimeSlot newTimeSlot = new TimeSlot(
-                tenantStore.getCurrentTenantId(),
-                shift.getStartTime(),
-                shift.getEndTime());
-
+                           final ShiftTemplate shift) {
         final Shift newShift = new Shift(
                 tenantStore.getCurrentTenantId(),
-                spot,
-                newTimeSlot);
+                shift.getSpot(),
+                getStartDateTime(shift),
+                getEndDateTime(shift));
 
         newShift.setId(id);
 
         return newShift;
+    }
+    
+    public static LocalDate getBaseDate() {
+        return LocalDate.of(0, 1, 1);
+    }
+    
+    public static OffsetDateTime getBaseDateTime() {
+        return OffsetDateTime.of(getBaseDate().atTime(LocalTime.MIDNIGHT), ZoneOffset.UTC);
+    }
+    
+    private OffsetDateTime getStartDateTime(ShiftTemplate shift) {
+        return OffsetDateTime.of(getBaseDate()
+                .plusDays(shift.getOffsetStartDay())
+                .atTime(shift.getStartTime()),ZoneOffset.UTC);
+    }
+    
+    private OffsetDateTime getEndDateTime(ShiftTemplate shift) {
+        return OffsetDateTime.of(getBaseDate()
+                .plusDays(shift.getOffsetEndDay())
+                .atTime(shift.getEndTime()),ZoneOffset.UTC);
+    }
+    
+    private int getOffsetStartDay(Shift shift) {
+        return DateTimeUtils.daysBetween(getBaseDate(), shift.getStartDateTime());
+    }
+    
+    private int getOffsetEndDay(Shift shift) {
+        return DateTimeUtils.daysBetween(getBaseDate(), shift.getEndDateTime());
     }
 
     @EventHandler("save-button")
@@ -153,25 +180,23 @@ public class RotationPage implements Page {
 
     private void save() {
 
-        final List<ShiftInfo> newShiftInfoList = viewport.getLanes().stream()
+        final List<ShiftTemplate> newShiftInfoList = viewport.getLanes().stream()
                 .flatMap(lane -> lane.getSubLanes().stream())
                 .flatMap(subLane -> subLane.getBlobs().stream())
                 .filter(blob -> blob.getPositionInGridPixels() >= 0) //Removes left-most twins
                 .map(blob -> ((ShiftBlob) blob).getShift())
-                .map(this::newShiftInfo)
+                .map(this::newShiftTemplate)
                 .collect(toList());
 
-        ShiftRestServiceBuilder.createTemplate(
+        ShiftRestServiceBuilder.updateTemplate(
                 tenantStore.getCurrentTenantId(),
                 newShiftInfoList,
                 onSuccess(i -> refresh()));
     }
 
-    private ShiftInfo newShiftInfo(final Shift shift) {
-        return new ShiftInfo(tenantStore.getCurrentTenantId(),
-                             shift.getTimeSlot().getStartDateTime(),
-                             shift.getTimeSlot().getEndDateTime(),
-                             singletonList(shift.getSpot()),
-                             new ArrayList<>());
+    private ShiftTemplate newShiftTemplate(final Shift shift) {
+        return new ShiftTemplate(tenantStore.getCurrentTenantId(),
+                             shift.getSpot(), getOffsetStartDay(shift), DateTimeUtils.getLocalTimeOf(shift.getStartDateTime()), 
+                             getOffsetEndDay(shift), DateTimeUtils.getLocalTimeOf(shift.getEndDateTime()), shift.getRotationEmployee());
     }
 }

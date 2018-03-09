@@ -16,13 +16,19 @@
 
 package org.optaplanner.openshift.employeerostering.shared.shift.view;
 
+import java.time.OffsetDateTime;
+
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetDateTimeDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetDateTimeSerializer;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class ShiftView extends AbstractPersistable {
 
@@ -30,7 +36,9 @@ public class ShiftView extends AbstractPersistable {
     @NotNull
     private Long spotId;
     @NotNull
-    private Long timeSlotId;
+    private OffsetDateTime startDateTime;
+    @NotNull
+    private OffsetDateTime endDateTime;
 
     private boolean lockedByUser = false;
 
@@ -39,29 +47,31 @@ public class ShiftView extends AbstractPersistable {
     @SuppressWarnings("unused")
     public ShiftView() {}
 
-    public ShiftView(Integer tenantId, Spot spot, TimeSlot timeSlot) {
-        this(tenantId, spot, timeSlot, null);
+    public ShiftView(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+        this(tenantId, spot, startDateTime, endDateTime, null);
     }
 
-    public ShiftView(Integer tenantId, Spot spot, TimeSlot timeSlot, Employee rotationEmployee) {
+    public ShiftView(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime, Employee rotationEmployee) {
         super(tenantId);
         this.spotId = spot.getId();
-        this.timeSlotId = timeSlot.getId();
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.rotationEmployeeId = (rotationEmployee == null) ? null : rotationEmployee.getId();
     }
 
     public ShiftView(Shift shift) {
         super(shift);
         this.spotId = shift.getSpot().getId();
-        this.timeSlotId = shift.getTimeSlot().getId();
-        this.lockedByUser = shift.isLockedByUser();
+        this.startDateTime = shift.getStartDateTime();
+        this.endDateTime = shift.getEndDateTime();
+        this.lockedByUser = shift.isPinnedByUser();
         this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
     }
 
     @Override
     public String toString() {
-        return spotId + " " + timeSlotId;
+        return spotId + " " + startDateTime + "-" + endDateTime;
     }
 
     // ************************************************************************
@@ -76,12 +86,26 @@ public class ShiftView extends AbstractPersistable {
         this.spotId = spotId;
     }
 
-    public Long getTimeSlotId() {
-        return timeSlotId;
+    @JsonSerialize(using = OffsetDateTimeSerializer.class)
+    @JsonDeserialize(using = OffsetDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public OffsetDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setTimeSlotId(Long timeSlotId) {
-        this.timeSlotId = timeSlotId;
+    public void setStartDateTime(OffsetDateTime startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    @JsonSerialize(using = OffsetDateTimeSerializer.class)
+    @JsonDeserialize(using = OffsetDateTimeDeserializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public OffsetDateTime getEndDateTime() {
+        return endDateTime;
+    }
+
+    public void setEndDateTime(OffsetDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public boolean isLockedByUser() {

@@ -11,13 +11,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
 import io.swagger.annotations.Api;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftTemplate;
+import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
 @Api(tags = {"Shift"})
@@ -58,18 +56,15 @@ public interface ShiftRestService {
 
     @PUT
     @Path("/template/update")
-    // TODO: Rename this updateTemplate
-    void createTemplate(@PathParam("tenantId") Integer tenantId, Collection<ShiftInfo> shifts);
+    void updateTemplate(@PathParam("tenantId") Integer tenantId, Collection<ShiftTemplate> shifts);
 
     @GET
     @Path("/template")
-    ShiftTemplate getTemplate(@PathParam("tenantId") Integer tenantId);
+    Collection<ShiftTemplate> getTemplate(@PathParam("tenantId") Integer tenantId);
 
     @PUT
     @Path("/add/fromTemplate")
-    List<Long> addShiftsFromTemplate(@PathParam("tenantId") Integer tenantId,
-                                     @QueryParam("startDate") String startDateString,
-                                     @QueryParam("endDate") String endDateString) throws Exception;
+    List<Long> addShiftsFromTemplate(@PathParam("tenantId") Integer tenantId, Integer lengthInDays);
 
     /**
      * @param id never null

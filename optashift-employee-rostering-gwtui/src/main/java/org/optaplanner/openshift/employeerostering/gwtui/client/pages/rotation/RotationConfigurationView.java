@@ -25,7 +25,6 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 @Templated
 public class RotationConfigurationView implements IsElement {
@@ -43,8 +42,6 @@ public class RotationConfigurationView implements IsElement {
 
     @PostConstruct
     public void init() {
-        final TenantConfiguration configuration = tenantStore.getCurrentTenant().getConfiguration();
-        weekStart.value = configuration.getWeekStart().toString();
-        period.value = configuration.getTemplateDuration().toString();
+        // TODO: Setup databinder to TenantConfiguration/Intialize widget values
     }
 }

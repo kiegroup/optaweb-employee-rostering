@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +37,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.power
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 
 @Templated
-public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
+public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
     private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
@@ -54,7 +54,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     @Inject
     private BlobPopover popover;
 
-    private Viewport<LocalDateTime> viewport;
+    private Viewport<OffsetDateTime> viewport;
     private ListView<ShiftBlob> blobViews;
     private Runnable onDestroy;
 
@@ -122,13 +122,13 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     }
 
     @Override
-    public BlobView<LocalDateTime, ShiftBlob> withViewport(final Viewport<LocalDateTime> viewport) {
+    public BlobView<OffsetDateTime, ShiftBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<LocalDateTime, ShiftBlob> withSubLane(final SubLane<LocalDateTime> subLaneView) {
+    public BlobView<OffsetDateTime, ShiftBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
         return this;
     }
 
@@ -147,7 +147,7 @@ public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
     }
 
     @Override
-    public Blob<LocalDateTime> getBlob() {
+    public Blob<OffsetDateTime> getBlob() {
         return blob;
     }
 }

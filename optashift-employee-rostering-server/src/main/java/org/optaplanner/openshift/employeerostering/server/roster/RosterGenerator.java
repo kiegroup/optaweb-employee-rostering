@@ -16,6 +16,8 @@
 
 package org.optaplanner.openshift.employeerostering.server.roster;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -34,19 +36,16 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.generator.StringDataGenerator;
+import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.EmployeeTimeSlotInfo;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.OptionalEmployee;
-import org.optaplanner.openshift.employeerostering.shared.lang.tokens.ShiftInfo;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
+import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 @Singleton
 @Startup
@@ -57,24 +56,24 @@ public class RosterGenerator {
     private final StringDataGenerator spotNameGenerator = StringDataGenerator.buildAssemblyLineNames();
 
     private final StringDataGenerator skillNameGenerator = new StringDataGenerator()
-                                                                                    .addPart(
-                                                                                             "Mechanical",
-                                                                                             "Electrical",
-                                                                                             "Safety",
-                                                                                             "Transportation",
-                                                                                             "Operational",
-                                                                                             "Physics",
-                                                                                             "Monitoring",
-                                                                                             "ICT")
-                                                                                    .addPart(
-                                                                                             "bachelor",
-                                                                                             "engineer",
-                                                                                             "instructor",
-                                                                                             "coordinator",
-                                                                                             "manager",
-                                                                                             "expert",
-                                                                                             "inspector",
-                                                                                             "analyst");
+            .addPart(
+                    "Mechanical",
+                    "Electrical",
+                    "Safety",
+                    "Transportation",
+                    "Operational",
+                    "Physics",
+                    "Monitoring",
+                    "ICT")
+            .addPart(
+                    "bachelor",
+                    "engineer",
+                    "instructor",
+                    "coordinator",
+                    "manager",
+                    "expert",
+                    "inspector",
+                    "analyst");
 
     private Random random = new Random(37);
 
@@ -82,10 +81,11 @@ public class RosterGenerator {
     private EntityManager entityManager;
 
     @Inject
-    private ShiftRestService shiftRestService;
+    private ShiftFileParser shiftGenerator;
 
     @SuppressWarnings("unused")
-    public RosterGenerator() {}
+    public RosterGenerator() {
+    }
 
     /**
      * For benchmark only
@@ -110,120 +110,285 @@ public class RosterGenerator {
     }
 
     @Transactional
-    public Roster generateRoster(int spotListSize, int timeSlotListSize, boolean continuousPlanning,
+    public Roster generateRoster(int spotListSize,
+            int lengthInDays,
+            boolean continuousPlanning,
             boolean assignDefaultEmployee) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
-        Integer tenantId = createTenant(spotListSize, employeeListSize);
+        Integer tenantId = createTenant(spotListSize, employeeListSize, lengthInDays);
         List<Skill> skillList = createSkillList(tenantId, skillListSize);
         List<Spot> spotList = createSpotList(tenantId, spotListSize, skillList);
 
         List<Employee> employeeList = createEmployeeList(tenantId, employeeListSize, skillList);
 
-        shiftRestService.createTemplate(tenantId, generateShiftTemplate(tenantId, spotList, employeeList,
-                assignDefaultEmployee));
-        LocalDateTime previousEndDateTime = LocalDateTime.of(2017, 2, 1, 6, 0);
-        for (int i = 0; i < timeSlotListSize; i += 7) {
-            try {
-                shiftRestService.addShiftsFromTemplate(tenantId, previousEndDateTime.toString(), previousEndDateTime
-                                                                                                                    .plusDays(7).toString());
-                previousEndDateTime = previousEndDateTime.plusWeeks(1);
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
-            previousEndDateTime = previousEndDateTime.plusDays(7);
-        }
-
-        List<TimeSlot> timeSlotList = entityManager.createNamedQuery("TimeSlot.findAllOrderedByStartDate", TimeSlot.class)
-                                                   .setParameter("tenantId", tenantId)
-                                                   .getResultList();
-
-        List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
-                                             .setParameter("tenantId", tenantId)
-                                             .getResultList();
-
-        List<EmployeeAvailability> employeeAvailabilityList = entityManager
-                                                                           .createNamedQuery("EmployeeAvailability.findAll", EmployeeAvailability.class)
-                                                                           .setParameter("tenantId", tenantId)
-                                                                           .getResultList();
-
         Tenant tenant = entityManager.find(Tenant.class, tenantId);
 
+        LocalDate origDraftDate = tenant.getRosterState().getFirstDraftDate();
+        tenant.getRosterState().setFirstDraftDate(origDraftDate.minusDays(tenant.getRosterState().getPublishLength()));
+
+        ShiftFileParser.ParserOut parserOutput = shiftGenerator.parse(tenantId, tenant.getConfiguration(), tenant
+                .getRosterState(), tenant.getRosterState().getPublishLength()
+                        + tenant.getRosterState().getDraftLength(), generateShiftTemplate(tenantId, spotList,
+                                employeeList,
+                                assignDefaultEmployee));
+
+        for (Shift shift : parserOutput.getShiftOutputList()) {
+            entityManager.persist(shift);
+        }
+        for (EmployeeAvailability avaliability : parserOutput.getEmployeeAvailabilityOutputList()) {
+            entityManager.persist(avaliability);
+        }
+        parserOutput.getNewRosterState().setFirstDraftDate(origDraftDate);
+        entityManager.merge(parserOutput.getNewRosterState());
+
+        List<Shift> shiftList = parserOutput.getShiftOutputList();
+
+        List<EmployeeAvailability> employeeAvailabilityList = parserOutput.getEmployeeAvailabilityOutputList();
+
         return new Roster((long) tenantId, tenantId,
-                          skillList, spotList, employeeList, timeSlotList, employeeAvailabilityList,
-                          tenant.getConfiguration(), shiftList);
+                skillList, spotList, employeeList, employeeAvailabilityList,
+                tenant.getConfiguration(), tenant.getRosterState(), shiftList);
     }
 
-    private List<ShiftInfo> generateShiftTemplate(Integer tenantId, List<Spot> spots, List<Employee> employees,
-            boolean assignDefaultEmployee) {
-        LocalDateTime startTime = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC).plusHours(6);
-        List<ShiftInfo> out = new ArrayList<ShiftInfo>(7);
-        for (int i = 0; i < 7 * 3; i++) {
-            //Generate the shift's timeslot
-            ShiftInfo shift = new ShiftInfo();
-            shift.setStartTime(startTime);
-            shift.setEndTime(startTime.plusHours(8));
-            shift.setTenantId(tenantId);
-            List<EmployeeTimeSlotInfo> shiftAvailability = new ArrayList<>();
-            EmployeeTimeSlotInfo employeeTimeslot = new EmployeeTimeSlotInfo();
+    private class SpotSettings {
 
-            //Generate employees with non-indifferent availabilities
-            for (Employee employee : extractRandomSubList(employees, 0.2)) {
-                employeeTimeslot = new EmployeeTimeSlotInfo();
-                employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(employee);
-                employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNAVAILABLE);
-                shiftAvailability.add(employeeTimeslot);
-            }
+        private final Spot spot;
+        private final TimeSlotPattern timeSlotPattern;
+        private final int numberOfShiftsNormal;
+        private final int numberOfShiftsNight;
+        private final int numberOfShiftsWeekend;
+        private final int numberOfShiftsWeekendNight;
 
-            for (Employee employee : extractRandomSubList(employees, 0.3)) {
-                employeeTimeslot = new EmployeeTimeSlotInfo();
-                employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(employee);
-                employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.UNDESIRED);
-                shiftAvailability.add(employeeTimeslot);
-            }
+        public SpotSettings(Spot spot) {
+            this.spot = spot;
+            timeSlotPattern = TimeSlotPattern.getRandomTimeSlotPattern(random);
+            numberOfShiftsNormal = random.nextInt(3) + 1;
+            numberOfShiftsNight = random.nextInt(numberOfShiftsNormal + 1);
+            numberOfShiftsWeekend = random.nextInt(numberOfShiftsNormal + 1);
+            numberOfShiftsWeekendNight = random.nextInt(Math.min(numberOfShiftsNight + 1, numberOfShiftsWeekend + 1));
+        }
 
-            for (Employee employee : extractRandomSubList(employees, 0.1)) {
-                employeeTimeslot = new EmployeeTimeSlotInfo();
-                employeeTimeslot.setTenantId(tenantId);
-                employeeTimeslot.setEmployeeId(employee);
-                employeeTimeslot.setDefaultAvailability(EmployeeAvailabilityState.DESIRED);
-                shiftAvailability.add(employeeTimeslot);
-            }
+        public Spot getSpot() {
+            return spot;
+        }
 
-            shift.setEmployeeList(shiftAvailability);
+        public TimeSlotPattern getTimeSlotPattern() {
+            return timeSlotPattern;
+        }
 
-            //Generate spots using the timeslot
-            List<Spot> shiftSpots = new ArrayList<>();
-            List<OptionalEmployee> rotationEmployeeList = new ArrayList<>();
-            for (Spot spot : spots) {
-                boolean weekendEnabled = random.nextInt(10) < 8;
-                boolean nightEnabled = weekendEnabled && random.nextInt(10) < 8;
+        public int getNumberOfShiftsNormal() {
+            return numberOfShiftsNormal;
+        }
 
-                if ((!weekendEnabled && i >= 5 * 3) || (!nightEnabled && i % 3 == 2)) {
-                    continue;
-                }
-                shiftSpots.add(spot);
-                if (assignDefaultEmployee) {
-                    rotationEmployeeList.add(new OptionalEmployee(tenantId, employees.get(random.nextInt(employees
-                            .size()))));
+        public int getNumberOfShiftsNight() {
+            return numberOfShiftsNight;
+        }
+
+        public int getNumberOfShiftsWeekend() {
+            return numberOfShiftsWeekend;
+        }
+
+        public int getNumberOfShiftsWeekendNight() {
+            return numberOfShiftsWeekendNight;
+        }
+
+    }
+
+    private static final class TimeSlotInfo {
+
+        private final LocalDateTime startTime;
+        private final LocalDateTime endTime;
+        private final boolean isNightShift;
+
+        public TimeSlotInfo(LocalDateTime startTime, LocalDateTime endTime, boolean isNightShift) {
+            this.startTime = startTime;
+            this.endTime = endTime;
+            this.isNightShift = isNightShift;
+        }
+
+        public LocalDateTime getStartTime() {
+            return startTime;
+        }
+
+        public LocalDateTime getEndTime() {
+            return endTime;
+        }
+
+        public boolean isNightShift() {
+            return isNightShift;
+        }
+    }
+
+    private static LocalDateTime time(long time) {
+        return LocalDateTime.ofEpochSecond(time, 0, ZoneOffset.UTC);
+    }
+
+    private static LocalDateTime time(Duration time) {
+        return LocalDateTime.ofEpochSecond(time.getSeconds(), 0, ZoneOffset.UTC);
+    }
+
+    private static LocalDateTime day(int day) {
+        return time(Duration.ofDays(day));
+    }
+
+    private static LocalDateTime hour(int hour) {
+        return time(Duration.ofHours(hour));
+    }
+
+    private static enum TimeSlotPattern {
+        //9am-5pm, 4pm-midnight, 10pm-6am (next day)
+        DAY_AFTERNOON_NIGHT(Duration.ofDays(1),
+                hour(9), hour(12 + 5), hour(12 + 4), hour(24), null, hour(12 + 10), day(1).plusHours(6)),
+        //4pm-midnight
+        DAY(Duration.ofDays(1), hour(9), hour(12 + 5)),
+        //9am-5pm
+        AFTERNOON(Duration.ofDays(1), hour(12 + 4), hour(24)),
+        //10pm-6am (next day)
+        NIGHT(Duration.ofDays(1), hour(12 + 10), day(1).plusHours(6)),
+        LONG_DAY(Duration.ofDays(1), hour(9), hour(24)),
+        LONG_NIGHT(Duration.ofDays(1), hour(7), day(1).plusHours(7));
+
+        List<TimeSlotInfo> timeSlotInfoList;
+        Duration offsetLength;
+
+        // IMPORTANT NOTE: A Null seperate day shifts from night shifts
+        // List is in the format dayShifts [null [nightShifts]]
+        private TimeSlotPattern(Duration offsetLength, LocalDateTime... dateTimes) {
+            timeSlotInfoList = new ArrayList<>(dateTimes.length);
+            this.offsetLength = offsetLength;
+            boolean isNightShift = false;
+
+            for (int i = 0; i < dateTimes.length; i += 2) {
+                if (null == dateTimes[i]) {
+                    i++;
+                    isNightShift = true;
                 } else {
-                    rotationEmployeeList.add(new OptionalEmployee(tenantId, null));
+                    timeSlotInfoList.add(new TimeSlotInfo(dateTimes[i], dateTimes[i + 1],
+                            isNightShift));
                 }
             }
-            shift.setRotationEmployeeList(rotationEmployeeList);
-            shift.setSpotList(shiftSpots);
-            out.add(shift);
+        }
 
-            startTime = startTime.plusHours(8);
+        public static TimeSlotPattern getRandomTimeSlotPattern(Random random) {
+            return TimeSlotPattern.values()[random.nextInt(TimeSlotPattern.values().length)];
+        }
+
+        public List<TimeSlotInfo> getTimeSlotInfoForOffset(int tenant, int offset) {
+            return timeSlotInfoList.stream().map((t) -> new TimeSlotInfo(t.getStartTime().plus(offsetLength
+                    .multipliedBy(offset)),
+                    t.getEndTime().plus(offsetLength.multipliedBy(offset)), t.isNightShift()))
+                    .collect(Collectors.toList());
+        }
+
+        public Duration getDuration() {
+            return offsetLength;
+        }
+    }
+
+    private List<ShiftTemplate> generateShiftTemplate(Integer tenantId,
+            List<Spot> spots,
+            List<Employee> employees,
+            boolean assignDefaultEmployee) {
+        List<ShiftTemplate> out = new ArrayList<>();
+        List<SpotSettings> spotSettingList = new ArrayList<SpotSettings>();
+        spots.forEach((s) -> spotSettingList.add(new SpotSettings(s)));
+        LocalDateTime startDate = time(0);
+        LocalDateTime endDate = LocalDateTime.ofEpochSecond(Duration.ofDays(7).getSeconds(), 0, ZoneOffset.UTC);
+
+        for (SpotSettings spotInfo : spotSettingList) {
+            List<TimeSlotInfo> timeSlotList = getTimeSlotsFor(tenantId, spotInfo, startDate, endDate);
+            for (TimeSlotInfo timeSlotInfo : timeSlotList) {
+                if (hasAtLeastOneShift(spotInfo, timeSlotInfo)) {
+                    List<ShiftTemplate> toAdd = createShiftTemplates(tenantId, spotInfo.getSpot(), getNumberOfShifts(
+                            spotInfo, timeSlotInfo), employees, timeSlotInfo.getStartTime(), timeSlotInfo.getEndTime(),
+                            assignDefaultEmployee);
+                    out.addAll(toAdd);
+                    toAdd.forEach((s) -> entityManager.persist(s));
+                }
+            }
+        }
+
+        return out;
+    }
+
+    private Employee getRotationEmployee(List<Employee> employeeList, boolean hasRotationEmployee) {
+        if (!hasRotationEmployee) {
+            return null;
+        } else {
+            return employeeList.get(random.nextInt(employeeList.size()));
+        }
+    }
+
+    private int getNumberOfShifts(SpotSettings spotInfo, TimeSlotInfo timeSlotInfo) {
+        if (isWeekend(timeSlotInfo.getStartTime()) && timeSlotInfo.isNightShift()) {
+            return spotInfo.getNumberOfShiftsWeekendNight();
+        } else if (isWeekend(timeSlotInfo.getStartTime())) {
+            return spotInfo.getNumberOfShiftsWeekend();
+        } else if (timeSlotInfo.isNightShift()) {
+            return spotInfo.getNumberOfShiftsNight();
+        } else {
+            return spotInfo.getNumberOfShiftsNormal();
+        }
+    }
+
+    private boolean hasAtLeastOneShift(SpotSettings spotInfo, TimeSlotInfo timeSlotInfo) {
+        return getNumberOfShifts(spotInfo, timeSlotInfo) > 0;
+    }
+
+    // Assumes generated templates are a week long!
+    private boolean isWeekend(LocalDateTime timeSlot) {
+        return timeSlot.isAfter(day(5));
+    }
+
+    private List<TimeSlotInfo> getTimeSlotsFor(int tenantId,
+            SpotSettings spotSettings,
+            LocalDateTime start,
+            LocalDateTime end) {
+        List<TimeSlotInfo> out = new ArrayList<>();
+        Duration duration = Duration.ZERO;
+        for (int i = 0; duration.compareTo(Duration.between(start, end)) < 0; i++, duration = duration.plus(
+                spotSettings.getTimeSlotPattern().getDuration())) {
+            out.addAll(spotSettings.getTimeSlotPattern().getTimeSlotInfoForOffset(tenantId, i));
         }
         return out;
     }
 
-    private Integer createTenant(int spotListSize, int employeeListSize) {
-        Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue() + " (" + employeeListSize + " employees, " + spotListSize + "spots)");
+    private List<ShiftTemplate> createShiftTemplates(int tenantId,
+            Spot spot,
+            int shifts,
+            List<Employee> employeeList,
+            LocalDateTime start,
+            LocalDateTime end,
+            boolean assignDefaultEmployee) {
+        List<ShiftTemplate> out = new ArrayList<>(shifts);
+        for (int i = 0; i < shifts; i++) {
+            ShiftTemplate shift = new ShiftTemplate();
+            shift.setOffsetStartDay((int) Duration.between(day(0), start).toDays());
+            shift.setStartTime(start.toLocalTime());
+            shift.setOffsetEndDay((int) Duration.between(day(0), end).toDays());
+            shift.setEndTime(end.toLocalTime());
+            shift.setTenantId(tenantId);
+            shift.setSpot(spot);
+            shift.setRotationEmployee(getRotationEmployee(employeeList, assignDefaultEmployee));
+            out.add(shift);
+        }
+
+        return out;
+    }
+
+    private Integer createTenant(int spotListSize, int employeeListSize, int lengthInDays) {
+        Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue() + " (" + employeeListSize + " employees, "
+                + spotListSize + "spots)");
+        tenant.getRosterState().setDraftLength(lengthInDays);
+        tenant.getRosterState().setFirstDraftDate(LocalDate.now().plusDays(lengthInDays * 2));
+        tenant.getRosterState().setPublishLength(lengthInDays * 2);
+        tenant.getRosterState().setPublishNotice(lengthInDays);
+        tenant.getRosterState().setRotationLength(7);
+        tenant.getRosterState().setUnplannedOffset(0);
         entityManager.persist(tenant);
+        tenant.getConfiguration().setTenantId(tenant.getId());
+        tenant.getRosterState().setTenantId(tenant.getId());
         return tenant.getId();
     }
 
@@ -259,7 +424,7 @@ public class RosterGenerator {
             String name = employeeNameGenerator.generateNextValue();
             Employee employee = new Employee(tenantId, name);
             employee.setSkillProficiencySet(
-                                             extractRandomSubList(generalSkillList, 1.0).stream()
+                    extractRandomSubList(generalSkillList, 1.0).stream()
                             .collect(Collectors.toCollection(HashSet::new)));
             entityManager.persist(employee);
             employeeList.add(employee);

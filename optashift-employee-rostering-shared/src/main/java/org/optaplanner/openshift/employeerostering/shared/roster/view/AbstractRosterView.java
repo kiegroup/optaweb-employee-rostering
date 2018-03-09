@@ -3,19 +3,18 @@ package org.optaplanner.openshift.employeerostering.shared.roster.view;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSerializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
-
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
+import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSerializer;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.persistence.jackson.api.score.ScoreJacksonJsonSerializer;
 import org.optaplanner.persistence.jackson.api.score.buildin.hardsoft.HardSoftScoreJacksonJsonDeserializer;
 
@@ -31,8 +30,8 @@ public class AbstractRosterView implements Serializable {
     protected List<Spot> spotList;
     @NotNull
     protected List<Employee> employeeList;
-    @NotNull
-    protected List<TimeSlot> timeSlotList;
+
+    protected RosterState rosterState;
 
     private HardSoftScore score = null;
 
@@ -91,14 +90,6 @@ public class AbstractRosterView implements Serializable {
         this.employeeList = employeeList;
     }
 
-    public List<TimeSlot> getTimeSlotList() {
-        return timeSlotList;
-    }
-
-    public void setTimeSlotList(List<TimeSlot> timeSlotList) {
-        this.timeSlotList = timeSlotList;
-    }
-
     @JsonSerialize(using = ScoreJacksonJsonSerializer.class)
     @JsonDeserialize(using = HardSoftScoreJacksonJsonDeserializer.class)
     public HardSoftScore getScore() {
@@ -107,6 +98,14 @@ public class AbstractRosterView implements Serializable {
 
     public void setScore(HardSoftScore score) {
         this.score = score;
+    }
+
+    public RosterState getRosterState() {
+        return rosterState;
+    }
+
+    public void setRosterState(RosterState rosterState) {
+        this.rosterState = rosterState;
     }
 
 }

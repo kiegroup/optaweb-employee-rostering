@@ -18,6 +18,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @Templated
@@ -37,45 +38,19 @@ public class TenantConfigurationEditor implements IsElement {
 
     @Inject
     @DataField
-    private ListBox weekStart;
-
-    @Inject
-    @DataField
-    private ListBox templateDuration;
-
-    @Inject
-    @DataField
     private Button updateConfig;
-
-    BiMap<Integer, Integer> templateDurationIndexBiMap;
 
     @Inject
     private TenantStore tenantStore;
 
     @PostConstruct
     protected void initWidget() {
-        for (DayOfWeek day : DayOfWeek.values()) {
-            weekStart.addItem(day.toString());
-        }
-
-        // TODO: Make this more maintainable
-        templateDurationIndexBiMap = HashBiMap.create();
-        templateDuration.addItem("1 Week");
-        templateDurationIndexBiMap.put(1, 0);
-        templateDuration.addItem("2 Weeks");
-        templateDurationIndexBiMap.put(2, 1);
-        templateDuration.addItem("4 Weeks");
-        templateDurationIndexBiMap.put(4, 2);
-
         desiredWeightInput.setValidators(new DecimalMinValidator<Integer>(0));
         undesiredWeightInput.setValidators(new DecimalMinValidator<Integer>(0));
         rotationEmployeeMatchWeightInput.setValidators(new DecimalMinValidator<Integer>(0));
     }
 
     public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
-        weekStart.setSelectedIndex(tenantStore.getCurrentTenant().getConfiguration().getWeekStart().getValue() - 1);
-        templateDuration.setSelectedIndex(templateDurationIndexBiMap.get(tenantStore.getCurrentTenant().getConfiguration()
-                                                                                    .getTemplateDuration()));
         desiredWeightInput.setValue(tenantStore.getCurrentTenant().getConfiguration().getDesiredTimeSlotWeight());
         undesiredWeightInput.setValue(tenantStore.getCurrentTenant().getConfiguration().getUndesiredTimeSlotWeight());
         refresh();
@@ -85,9 +60,6 @@ public class TenantConfigurationEditor implements IsElement {
 
     @EventHandler("updateConfig")
     private void onUpdateConfigClick(ClickEvent e) {
-        tenantStore.getCurrentTenant().getConfiguration().setTemplateDuration(templateDurationIndexBiMap.inverse().get(templateDuration
-                                                                                                                                       .getSelectedIndex()));
-        tenantStore.getCurrentTenant().getConfiguration().setWeekStart(DayOfWeek.valueOf(weekStart.getSelectedItemText()));
         tenantStore.getCurrentTenant().getConfiguration().setDesiredTimeSlotWeight(desiredWeightInput.getValue());
         tenantStore.getCurrentTenant().getConfiguration().setUndesiredTimeSlotWeight(undesiredWeightInput.getValue());
         tenantStore.getCurrentTenant().getConfiguration().setRotationEmployeeMatchWeight(rotationEmployeeMatchWeightInput.getValue());

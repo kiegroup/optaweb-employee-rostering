@@ -16,30 +16,21 @@
 
 package org.optaplanner.openshift.employeerostering.shared.roster.view;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class SpotRosterView extends AbstractRosterView {
 
     @NotNull
-    protected Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap;
+    protected Map<Long, List<ShiftView>> spotIdToShiftViewListMap;
 
     @SuppressWarnings("unused")
-    public SpotRosterView() {
-    }
+    public SpotRosterView() {}
 
     public SpotRosterView(Integer tenantId) {
         this.tenantId = tenantId;
@@ -55,12 +46,12 @@ public class SpotRosterView extends AbstractRosterView {
     // Simple getters and setters
     // ************************************************************************
 
-    public Map<Long, Map<Long, List<ShiftView>>> getTimeSlotIdToSpotIdToShiftViewListMap() {
-        return timeSlotIdToSpotIdToShiftViewListMap;
+    public Map<Long, List<ShiftView>> getSpotIdToShiftViewListMap() {
+        return spotIdToShiftViewListMap;
     }
 
-    public void setTimeSlotIdToSpotIdToShiftViewListMap(Map<Long, Map<Long, List<ShiftView>>> timeSlotIdToSpotIdToShiftViewListMap) {
-        this.timeSlotIdToSpotIdToShiftViewListMap = timeSlotIdToSpotIdToShiftViewListMap;
+    public void setSpotIdToShiftViewListMap(Map<Long, List<ShiftView>> spotIdToShiftViewListMap) {
+        this.spotIdToShiftViewListMap = spotIdToShiftViewListMap;
     }
 
 }

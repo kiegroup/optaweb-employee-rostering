@@ -29,7 +29,6 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 
 public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements EmployeeRestService {
 
@@ -110,9 +109,9 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
         validateTenantIdParameter(tenantId, employeeAvailabilityView);
         Employee employee = entityManager.find(Employee.class, employeeAvailabilityView.getEmployeeId());
         validateTenantIdParameter(tenantId, employee);
-        TimeSlot timeSlot = entityManager.find(TimeSlot.class, employeeAvailabilityView.getTimeSlotId());
-        validateTenantIdParameter(tenantId, timeSlot);
-        EmployeeAvailability employeeAvailability = new EmployeeAvailability(employeeAvailabilityView, employee, timeSlot);
+        EmployeeAvailability employeeAvailability = new EmployeeAvailability(employeeAvailabilityView, employee,
+                employeeAvailabilityView.getDate(), employeeAvailabilityView.getStartTime(), employeeAvailabilityView
+                        .getEndTime());
         employeeAvailability.setState(employeeAvailabilityView.getState());
         return employeeAvailability;
     }

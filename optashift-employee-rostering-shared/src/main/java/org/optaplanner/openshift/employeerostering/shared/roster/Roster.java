@@ -18,8 +18,6 @@ package org.optaplanner.openshift.employeerostering.shared.roster;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
@@ -31,7 +29,6 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
@@ -47,13 +44,13 @@ public class Roster extends AbstractPersistable {
     @ValueRangeProvider(id = "employeeRange")
     private List<Employee> employeeList;
     @ProblemFactCollectionProperty
-    private List<TimeSlot> timeSlotList;
-    @ProblemFactCollectionProperty
     private List<EmployeeAvailability> employeeAvailabilityList;
-    
+
     @ProblemFactProperty
     private TenantConfiguration tenantConfiguration;
-    
+    @ProblemFactProperty
+    private RosterState rosterState;
+
     @PlanningEntityCollectionProperty
     private List<Shift> shiftList;
 
@@ -61,18 +58,17 @@ public class Roster extends AbstractPersistable {
     private HardSoftScore score = null;
 
     @SuppressWarnings("unused")
-    public Roster() {
-    }
+    public Roster() {}
 
-    public Roster(Long id, Integer tenantId, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList, List<TimeSlot> timeSlotList,
-            List<EmployeeAvailability> employeeAvailabilityList, TenantConfiguration tenantConfiguration, List<Shift> shiftList) {
+    public Roster(Long id, Integer tenantId, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
+                  List<EmployeeAvailability> employeeAvailabilityList, TenantConfiguration tenantConfiguration, RosterState rosterState, List<Shift> shiftList) {
         super(id, tenantId);
         this.skillList = skillList;
         this.spotList = spotList;
         this.employeeList = employeeList;
-        this.timeSlotList = timeSlotList;
         this.employeeAvailabilityList = employeeAvailabilityList;
         this.tenantConfiguration = tenantConfiguration;
+        this.rosterState = rosterState;
         this.shiftList = shiftList;
     }
 
@@ -104,14 +100,6 @@ public class Roster extends AbstractPersistable {
         this.employeeList = employeeList;
     }
 
-    public List<TimeSlot> getTimeSlotList() {
-        return timeSlotList;
-    }
-
-    public void setTimeSlotList(List<TimeSlot> timeSlotList) {
-        this.timeSlotList = timeSlotList;
-    }
-
     public List<EmployeeAvailability> getEmployeeAvailabilityList() {
         return employeeAvailabilityList;
     }
@@ -119,13 +107,21 @@ public class Roster extends AbstractPersistable {
     public void setEmployeeAvailabilityList(List<EmployeeAvailability> employeeAvailabilityList) {
         this.employeeAvailabilityList = employeeAvailabilityList;
     }
-    
+
     public TenantConfiguration getTenantConfiguration() {
-    	return tenantConfiguration;
+        return tenantConfiguration;
     }
-    
+
     public void setTenantConfiguration(TenantConfiguration tenantConfiguration) {
-    	this.tenantConfiguration = tenantConfiguration;
+        this.tenantConfiguration = tenantConfiguration;
+    }
+
+    public RosterState getRosterState() {
+        return rosterState;
+    }
+
+    public void setRosterState(RosterState rosterState) {
+        this.rosterState = rosterState;
     }
 
     public List<Shift> getShiftList() {

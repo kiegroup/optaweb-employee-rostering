@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
@@ -24,19 +24,19 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
-public class ShiftBlob implements Blob<LocalDateTime> {
+public class ShiftBlob implements Blob<OffsetDateTime> {
 
-    private final LinearScale<LocalDateTime> scale;
+    private final LinearScale<OffsetDateTime> scale;
     private Shift shift;
     private Long sizeInGridPixels;
 
     private Long positionInGridPixelsCache = null;
     private Long endPositionInGridPixelsCache = null;
 
-    ShiftBlob(final LinearScale<LocalDateTime> scale, final Shift shift) {
+    ShiftBlob(final LinearScale<OffsetDateTime> scale, final Shift shift) {
         this.shift = shift;
         this.scale = scale;
-        this.sizeInGridPixels = scale.toGridPixels(shift.getTimeSlot().getEndDateTime()) - scale.toGridPixels(getPositionInScaleUnits());
+        this.sizeInGridPixels = scale.toGridPixels(shift.getEndDateTime()) - scale.toGridPixels(getPositionInScaleUnits());
     }
 
     @Override
@@ -45,8 +45,8 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime getPositionInScaleUnits() {
-        return shift.getTimeSlot().getStartDateTime();
+    public OffsetDateTime getPositionInScaleUnits() {
+        return shift.getStartDateTime();
     }
 
     @Override
@@ -72,23 +72,22 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     }
 
     @Override
-    public void setPositionInScaleUnits(final LocalDateTime start) {
+    public void setPositionInScaleUnits(final OffsetDateTime start) {
         positionInGridPixelsCache = null;
         endPositionInGridPixelsCache = null;
-        shift.getTimeSlot().setStartDateTime(start);
+        shift.setStartDateTime(start);
     }
 
     @Override
-    public void setSizeInGridPixels(final long sizeInGridPixels) {
-        endPositionInGridPixelsCache = null;
+    public void setSizeInGridPixels(final Long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
-        shift.getTimeSlot().setEndDateTime(getEndPositionInScaleUnits());
+        shift.setEndDateTime(getEndPositionInScaleUnits());
     }
 
     public String getLabel() {
         return Optional.ofNullable(shift.getEmployee())
                 .map(Employee::getName)
-                .orElse("Unassigned"); //FIXME: i18n
+                .orElse("U" + " [" + getPositionInScaleUnits() + " ~ " + getEndPositionInScaleUnits() + ", " + getSizeInGridPixels() + "]");
     }
 
     public Shift getShift() {
@@ -100,7 +99,7 @@ public class ShiftBlob implements Blob<LocalDateTime> {
     }
 
     @Override
-    public LinearScale<LocalDateTime> getScale() {
+    public LinearScale<OffsetDateTime> getScale() {
         return scale;
     }
 }
