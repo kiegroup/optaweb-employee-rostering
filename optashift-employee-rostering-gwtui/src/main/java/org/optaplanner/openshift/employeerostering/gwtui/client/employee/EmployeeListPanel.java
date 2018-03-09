@@ -5,8 +5,10 @@ import java.util.Collections;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLTableCellElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
 import org.jboss.errai.databinding.client.components.ListComponent;
@@ -16,6 +18,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInvalidation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.KiePager;
@@ -31,18 +34,18 @@ public class EmployeeListPanel implements IsElement,
                                Page {
 
     @Inject
-    @DataField
+    @DataField("refresh-button")
     private HTMLButtonElement refreshButton;
     @Inject
-    @DataField
+    @DataField("add-button")
     private HTMLButtonElement addButton;
 
     @Inject
-    @DataField
+    @DataField("pager")
     private KiePager<Employee> pager;
 
     @Inject
-    @DataField
+    @DataField("search-bar")
     private KieSearchBar searchBar;
 
     @Inject
@@ -50,9 +53,19 @@ public class EmployeeListPanel implements IsElement,
 
     // TODO use DataGrid instead
     @Inject
-    @DataField
+    @DataField("table")
     @ListContainer("table")
     private ListComponent<Employee, EmployeeSubform> table;
+
+    @Inject
+    @DataField("name-header")
+    @Named("th")
+    private HTMLTableCellElement employeeNameHeader;
+
+    @Inject
+    @DataField("skill-set-header")
+    @Named("th")
+    private HTMLTableCellElement skillSetHeader;
 
     public EmployeeListPanel() {}
 
@@ -74,7 +87,7 @@ public class EmployeeListPanel implements IsElement,
         refresh();
     }
 
-    @EventHandler("refreshButton")
+    @EventHandler("refresh-button")
     public void refresh(final @ForEvent("click") MouseEvent e) {
         refresh();
     }
@@ -97,8 +110,18 @@ public class EmployeeListPanel implements IsElement,
         pager.setPresenter(table);
     }
 
-    @EventHandler("addButton")
+    @EventHandler("add-button")
     public void add(final @ForEvent("click") MouseEvent e) {
         EmployeeSubform.createNewRow(new Employee(tenantStore.getCurrentTenantId(), ""), table, pager);
+    }
+
+    @EventHandler("name-header")
+    public void spotNameHeaderClick(final @ForEvent("click") MouseEvent e) {
+        pager.sortBy((a, b) -> CommonUtils.stringWithIntCompareTo(a.getName(), b.getName()));
+    }
+
+    @EventHandler("skill-set-header")
+    public void skillSetHeaderClick(final @ForEvent("click") MouseEvent e) {
+        pager.sortBy((a, b) -> b.getSkillProficiencySet().size() - a.getSkillProficiencySet().size());
     }
 }

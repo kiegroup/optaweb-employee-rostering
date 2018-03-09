@@ -35,18 +35,18 @@ public class SpotListPanel implements IsElement,
                            Page {
 
     @Inject
-    @DataField
+    @DataField("refresh-button")
     private HTMLButtonElement refreshButton;
     @Inject
-    @DataField
+    @DataField("add-button")
     private HTMLButtonElement addButton;
 
     @Inject
-    @DataField
+    @DataField("pager")
     private KiePager<Spot> pager;
 
     @Inject
-    @DataField
+    @DataField("search-bar")
     private KieSearchBar searchBar;
 
     @Inject
@@ -54,7 +54,7 @@ public class SpotListPanel implements IsElement,
 
     // TODO use DataGrid instead
     @Inject
-    @DataField
+    @DataField("table")
     @ListContainer("table")
     private ListComponent<Spot, SpotSubform> table;
 
@@ -88,7 +88,7 @@ public class SpotListPanel implements IsElement,
         refresh();
     }
 
-    @EventHandler("refreshButton")
+    @EventHandler("refresh-button")
     public void refresh(final @ForEvent("click") MouseEvent e) {
         refresh();
     }
@@ -111,7 +111,7 @@ public class SpotListPanel implements IsElement,
         pager.setPresenter(table);
     }
 
-    @EventHandler("addButton")
+    @EventHandler("add-button")
     public void add(final @ForEvent("click") MouseEvent e) {
         SpotSubform.createNewRow(new Spot(tenantStore.getCurrentTenantId(), "", new HashSet<>()), table, pager);
     }
