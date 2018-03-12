@@ -2,6 +2,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -24,6 +25,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInval
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.KiePager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.KieSearchBar;
+import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;

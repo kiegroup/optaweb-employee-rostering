@@ -1,0 +1,72 @@
+<!--
+  ~ Copyright 2018 Red Hat, Inc. and/or its affiliates.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- FIXME: i18n -->
+
+<div class="employee-roster-page container-fluid">
+    <div class="row toolbar-pf">
+        <div class="col-sm-3">
+            <h1>Employee Roster</h1>
+        </div>
+        <div class="col-md-9">
+            <h1></h1>
+            <div class="toolbar-pf-actions search-pf kie-search-pf has-button">
+                <div class="toolbar-pf-action-right">
+                    <div class="form-group">
+                        <button data-field="refresh-button" class="btn btn-default">
+                            <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                            <span data-i18n-key="General.refresh">Refresh</span>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <ul class="pagination pagination-pf-back kie-pagination--optaplanner" style="vertical-align: middle;">
+                            <li>
+                                <a href="#" data-field="back-in-time-button" title="Previous Page"><span class="i fa fa-angle-left"></span></a>
+                            </li>
+                        </ul>
+                        <ul class="pagination pagination-pf-forward kie-pagination--optaplanner" style="vertical-align: middle;">
+                            <li>
+                                <a href="#" data-field="forward-in-time-button" title="Next Page"><span class="i fa fa-angle-right"></span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>                
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <div data-field="availability-blob-popover"></div>
+
+    <div data-field="viewport-frame" class="viewport-frame">
+        <div data-field="viewport" class="viewport"></div>
+    </div>
+
+    <div>
+        <ul class="pagination pagination-pf-back kie-pagination--optaplanner">
+            <li>
+                <a href="#" data-field="previous-page-button" title="Previous Page"><span class="i fa fa-angle-left"></span></a>
+            </li>
+        </ul>
+        <ul class="pagination pagination-pf-forward kie-pagination--optaplanner">
+            <li>
+                <a href="#" data-field="next-page-button" title="Next Page"><span class="i fa fa-angle-right"></span></a>
+            </li>
+        </ul>
+    </div>
+
+</div>

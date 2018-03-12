@@ -204,11 +204,17 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .setParameter("tenantId", tenantId)
                 .getResultList();
         Map<Long, List<ShiftView>> employeeIdToShiftViewListMap = new LinkedHashMap<>(employeeList.size());
+        List<ShiftView> unassignedShiftViewList = new ArrayList<>();
         for (Shift shift : shiftList) {
-            employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(), k -> new ArrayList<>()).add(
-                    new ShiftView(shift));
+            if (shift.getEmployee() != null) {
+                employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(), k -> new ArrayList<>()).add(
+                        new ShiftView(shift));
+            } else {
+                unassignedShiftViewList.add(new ShiftView(shift));
+            }
         }
         employeeRosterView.setEmployeeIdToShiftViewListMap(employeeIdToShiftViewListMap);
+        employeeRosterView.setUnassignedShiftViewList(unassignedShiftViewList);
         Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap = new LinkedHashMap<>(employeeList
                 .size());
         // TODO use startDate and endDate

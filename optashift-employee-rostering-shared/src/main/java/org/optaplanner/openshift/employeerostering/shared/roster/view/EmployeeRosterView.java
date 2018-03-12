@@ -28,9 +28,14 @@ import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 public class EmployeeRosterView extends AbstractRosterView {
 
     @NotNull
+    // The list in each entry is sorted by startTime
     protected Map<Long, List<ShiftView>> employeeIdToShiftViewListMap;
     @NotNull
+    // The list in each entry is sorted by startTime
     protected Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap;
+    @NotNull
+    // The list in each entry is sorted by startTime
+    protected List<ShiftView> unassignedShiftViewList;
 
     @SuppressWarnings("unused")
     public EmployeeRosterView() {}
@@ -63,6 +68,14 @@ public class EmployeeRosterView extends AbstractRosterView {
 
     public void setEmployeeIdToAvailabilityViewListMap(Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap) {
         this.employeeIdToAvailabilityViewListMap = employeeIdToAvailabilityViewListMap;
+    }
+
+    public List<ShiftView> getUnassignedShiftViewList() {
+        return unassignedShiftViewList;
+    }
+
+    public void setUnassignedShiftViewList(List<ShiftView> unassignedShiftViewList) {
+        this.unassignedShiftViewList = unassignedShiftViewList;
     }
 
 }

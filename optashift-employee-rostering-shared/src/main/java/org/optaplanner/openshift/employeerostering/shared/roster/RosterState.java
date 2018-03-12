@@ -25,15 +25,15 @@ public class RosterState extends AbstractPersistable {
     @NotNull
     private Integer publishNotice;
     @NotNull
-    private Integer draftLength;
+    private LocalDate firstDraftDate;
     @NotNull
     private Integer publishLength;
     @NotNull
+    private Integer draftLength;
+    @NotNull
+    private Integer unplannedRotationOffset;
+    @NotNull
     private Integer rotationLength;
-    @NotNull
-    private LocalDate firstDraftDate;
-    @NotNull
-    private Integer unplannedOffset;
     @NotNull
     private LocalDate lastHistoricDate;
 
@@ -42,14 +42,14 @@ public class RosterState extends AbstractPersistable {
         super(-1);
     }
 
-    public RosterState(Integer tenantId, Integer publishNotice, Integer draftLength, Integer publishLength, Integer rotationLength, LocalDate firstDraftDate, Integer unplannedOffset) {
+    public RosterState(Integer tenantId, Integer publishNotice, LocalDate firstDraftDate, Integer publishLength, Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength) {
         super(tenantId);
         this.publishNotice = publishNotice;
         this.draftLength = draftLength;
         this.publishLength = publishLength;
         this.rotationLength = rotationLength;
         this.firstDraftDate = firstDraftDate;
-        this.unplannedOffset = unplannedOffset;
+        this.unplannedRotationOffset = unplannedRotationOffset;
     }
 
     public Integer getPublishNotice() {
@@ -93,12 +93,12 @@ public class RosterState extends AbstractPersistable {
         this.firstDraftDate = firstDraftDate;
     }
 
-    public Integer getUnplannedOffset() {
-        return unplannedOffset;
+    public Integer getUnplannedRotationOffset() {
+        return unplannedRotationOffset;
     }
 
-    public void setUnplannedOffset(Integer unplannedOffset) {
-        this.unplannedOffset = unplannedOffset;
+    public void setUnplannedRotationOffset(Integer unplannedOffset) {
+        this.unplannedRotationOffset = unplannedOffset;
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -111,24 +111,33 @@ public class RosterState extends AbstractPersistable {
     }
 
     @JsonIgnore
-    public boolean isHistoric(Shift shift) {
-        return shift.getEndDateTime().isBefore(OffsetDateTime.of(getFirstPublishedDate().atTime(LocalTime.MIDNIGHT), shift.getEndDateTime().getOffset()));
+    public boolean isHistoric(OffsetDateTime dateTime) {
+        return dateTime.isBefore(OffsetDateTime.of(getFirstPublishedDate().atTime(LocalTime.MIDNIGHT), dateTime.getOffset()));
     }
 
-    // Do we need this, since if a shift exists, it would be draft...
-    /*@JsonIgnore
-    public boolean isUnplanned(Shift shift) {
-        return shift.getStartDateTime().isAfter(OffsetDateTime.of(getLastDraftDate().atTime(LocalTime.MIDNIGHT), shift.getStartDateTime().getOffset()));
-    }*/
+    @JsonIgnore
+    public boolean isDraft(OffsetDateTime dateTime) {
+        return dateTime.isAfter(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT), dateTime.getOffset()));
+    }
+
+    @JsonIgnore
+    public boolean isPublished(OffsetDateTime dateTime) {
+        return !isHistoric(dateTime) && !isDraft(dateTime);
+    }
+
+    @JsonIgnore
+    public boolean isHistoric(Shift shift) {
+        return isHistoric(shift.getStartDateTime());
+    }
 
     @JsonIgnore
     public boolean isDraft(Shift shift) {
-        return shift.getStartDateTime().isAfter(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT), shift.getStartDateTime().getOffset()));
+        return isDraft(shift.getStartDateTime());
     }
 
     @JsonIgnore
     public boolean isPublished(Shift shift) {
-        return !isHistoric(shift) && !isDraft(shift);
+        return isPublished(shift.getStartDateTime());
     }
 
     @JsonIgnore

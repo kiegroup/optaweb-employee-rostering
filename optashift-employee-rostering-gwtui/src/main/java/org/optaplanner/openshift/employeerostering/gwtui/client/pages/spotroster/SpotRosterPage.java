@@ -40,6 +40,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
@@ -147,6 +148,10 @@ public class SpotRosterPage implements Page {
         shiftBlobPopover.init(this, shiftBlobPopoverContent);
     }
 
+    public BlobPopover getBlobPopover() {
+        return shiftBlobPopover;
+    }
+
     @Override
     public Promise<Void> beforeOpen() {
         return refreshWithLoadingSpinner();
@@ -189,6 +194,10 @@ public class SpotRosterPage implements Page {
         loadingSpinner.showFor("refresh-spot-roster");
 
         return refreshWithoutLoadingSpinner().then(i -> {
+            loadingSpinner.hideFor("refresh-spot-roster");
+            return resolve();
+        }).catch_(e -> {
+            ErrorPopup.show(e.toString());
             loadingSpinner.hideFor("refresh-spot-roster");
             return resolve();
         });

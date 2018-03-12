@@ -35,10 +35,11 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationCo
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;;
 
 @Templated
 public class MenuView implements IsElement {
@@ -94,8 +95,7 @@ public class MenuView implements IsElement {
 
     @EventHandler("employee-roster")
     public void employeeRoster(final @ForEvent("click") MouseEvent e) {
-        // TODO: Implement Employee Roster
-        // goTo(EMPLOYEE_ROSTER, e);
+        goTo(EMPLOYEE_ROSTER, e);
     }
 
     @EventHandler("spot-roster")

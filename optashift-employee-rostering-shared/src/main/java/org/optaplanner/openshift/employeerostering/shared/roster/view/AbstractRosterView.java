@@ -28,7 +28,7 @@ public class AbstractRosterView implements Serializable {
     protected List<Spot> spotList;
     @NotNull
     protected List<Employee> employeeList;
-
+    @NotNull
     protected RosterState rosterState;
 
     private HardSoftScore score = null;

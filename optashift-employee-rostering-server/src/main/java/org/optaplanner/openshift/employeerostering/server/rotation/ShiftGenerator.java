@@ -15,7 +15,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 @Singleton
-public class ShiftFileParser {
+public class ShiftGenerator {
 
     public ParserOut parse(Integer tenantId,
                            TenantConfiguration tenantConfiguration,

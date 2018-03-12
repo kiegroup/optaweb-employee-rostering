@@ -1,7 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.common;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,13 +9,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import elemental2.promise.Promise;
+import org.jboss.errai.bus.client.ErraiBus;
+import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.databinding.client.api.Converter;
-import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestServiceBuilder;
 
@@ -24,28 +27,25 @@ import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService
 public class StringListToSkillSetConverter implements Converter<Set<Skill>, List<String>> {
 
     @Inject
-    private TenantStore tenantStore;
+    TenantStore tenantStore;
 
-    private Map<String, Skill> skillMap = new HashMap<>();;
+    private Map<String, Skill> skillMap;
 
-    private Collection<Updatable<Map<String, Skill>>> skillMapListeners = new HashSet<>();
-
-    public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
-        if (tenantStore.getCurrentTenantId() != null) {
-            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(
-                                                                                                                      skillList -> {
-                                                                                                                          skillMap.clear();
-                                                                                                                          for (Skill skill : skillList) {
-                                                                                                                              skillMap.put(skill.getName(), skill);
-                                                                                                                          }
-                                                                                                                          skillMapListeners.forEach((l) -> l.onUpdate(skillMap));
-                                                                                                                      }));
-        }
-
+    @SuppressWarnings("unchecked")
+    @PostConstruct
+    private void init() {
+        skillMap = new HashMap<>();
+        updateSkillMappings(Collections.emptyList());
     }
 
-    public void onAnyInvalidationEvent(@Observes DataInvalidation<Skill> skill) {
-        onAnyTenantEvent(null);
+    @SuppressWarnings("unused")
+    private void onTenantChanged(@Observes TenantStore.TenantChange event) {
+        fetchSkillListAndUpdateSkillMapping();
+    }
+
+    @SuppressWarnings("unused")
+    private void onSkillListInvalidation(@Observes DataInvalidation<Skill> event) {
+        fetchSkillListAndUpdateSkillMapping();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -76,13 +76,33 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
         return modelValue.stream().map((s) -> s.getName()).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    public void registerSkillMapListener(Updatable<Map<String, Skill>> listener) {
-        skillMapListeners.add(listener);
-        listener.onUpdate(skillMap);
+    public Map<String, Skill> getSkillMap() {
+        return skillMap;
     }
 
-    public void deregisterSkillMapListener(Updatable<Map<String, Skill>> listener) {
-        skillMapListeners.remove(listener);
+    private void updateSkillMappings(List<Skill> skillList) {
+        skillMap.clear();
+        for (Skill skill : skillList) {
+            skillMap.put(skill.getName(), skill);
+        }
+        MessageBuilder.createMessage()
+                .toSubject("SkillMapListener")
+                .with("Map", getSkillMap())
+                .noErrorHandling().sendNowWith(ErraiBus.getDispatcher());
+    }
+
+    private Promise<List<Skill>> getSkillList() {
+        return new Promise<>((resolve, reject) -> SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
+                .onSuccess(newSkillList -> {
+                    resolve.onInvoke(newSkillList);
+                })));
+    }
+
+    private void fetchSkillListAndUpdateSkillMapping() {
+        getSkillList().then((skillList) -> {
+            updateSkillMappings(skillList);
+            return PromiseUtils.resolve();
+        });
     }
 
 }

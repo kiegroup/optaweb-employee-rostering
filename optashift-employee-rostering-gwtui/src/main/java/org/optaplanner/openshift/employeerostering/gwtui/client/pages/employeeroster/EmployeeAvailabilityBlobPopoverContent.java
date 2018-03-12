@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
-import elemental2.dom.Event;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.ListBox;
@@ -43,17 +40,12 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
-
-import static java.lang.Long.parseLong;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 
 @Templated
-public class ShiftBlobPopoverContent implements BlobPopoverContent {
+public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverContent {
 
     @Inject
     @DataField("root")
@@ -64,37 +56,24 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     private HTMLButtonElement closeButton;
 
     @Inject
-    @DataField("from-day")
-    private HTMLInputElement fromDay;
+    @DataField("day")
+    private HTMLInputElement day;
 
     @Inject
     @DataField("from-hour")
     private HTMLInputElement fromHour;
 
     @Inject
-    @DataField("to-day")
-    private HTMLInputElement toDay;
-
-    @Inject
     @DataField("to-hour")
     private HTMLInputElement toHour;
-
-    @Inject
-    @DataField("spot")
-    private ListBox spotSelect; //FIXME: Don't use GWT widget
 
     @Inject
     @DataField("employee")
     private ListBox employeeSelect; //FIXME: Don't use GWT widget
 
     @Inject
-    @DataField("pinned")
-    private HTMLInputElement pinned;
-
-    @Inject
-    @Named("p")
-    @DataField("rotation-employee")
-    private HTMLElement rotationEmployee;
+    @DataField("availability")
+    private ListBox availabilitySelect; //FIXME: Don't use GWT widget
 
     @Inject
     @DataField("delete-button")
@@ -113,48 +92,37 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
     private BlobPopover popover;
 
-    private ShiftBlobView blobView;
+    private EmployeeAvailabilityBlobView blobView;
 
     private Map<Long, Employee> employeesById;
 
     @Override
     public void init(final BlobView<?, ?> blobView) {
 
-        this.blobView = (ShiftBlobView) blobView;
-        final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
-        final Shift shift = blob.getShift();
+        this.blobView = (EmployeeAvailabilityBlobView) blobView;
+        final EmployeeAvailabilityBlob blob = (EmployeeAvailabilityBlob) blobView.getBlob();
+        final EmployeeAvailability availability = blob.getAvailability();
 
         employeeSelect.clear();
         employeeSelect.addItem("Unassigned", "-1"); //FIXME: i18n
 
-        // TODO: Do rest call
-        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spots -> {
-            spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
-            spotSelect.setSelectedIndex(spots.indexOf(shift.getSpot()));
-        }));
-
         EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
             this.employeesById = employees.stream().collect(Collectors.toMap(Employee::getId, Function.identity()));
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
-            employeeSelect.setSelectedIndex((shift.getEmployee() == null) ? 0 : employees.indexOf(shift.getEmployee()) + 1);
+            employeeSelect.setSelectedIndex(employees.indexOf(availability.getEmployee()) + 1);
         }));
 
-        final OffsetDateTime start = shift.getStartDateTime();
-        fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth(); //FIXME: i18n
-        fromHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(start) + "";
+        // TODO: Indifferent = NULL case
+        Arrays.asList(EmployeeAvailabilityState.values()).forEach((e) -> {
+            availabilitySelect.addItem(e.toString());
+        });
+        int availabilityIndex = Arrays.asList(EmployeeAvailabilityState.values()).indexOf(availability.getState());
+        availabilitySelect.setSelectedIndex((availabilityIndex > -1) ? availabilityIndex : 0);
 
-        final OffsetDateTime end = shift.getEndDateTime();
-        toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth(); //FIXME: i18n
-        toHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(end) + "";
-
-        pinned.checked = shift.isPinnedByUser();
-
-        updateEmployeeSelect();
-        rotationEmployee.textContent = Optional.ofNullable(shift.getRotationEmployee()).map(Employee::getName).orElse("-");
-    }
-
-    private void updateEmployeeSelect() {
-        employeeSelect.setEnabled(pinned.checked);
+        final LocalDate date = availability.getDate();
+        day.value = date.getMonth().toString() + " " + date.getDayOfMonth(); //FIXME: i18n
+        fromHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getStartTime().atDate(date)) + "";
+        toHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getEndTime().atDate(date)) + "";
     }
 
     @EventHandler("root")
@@ -174,35 +142,15 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         e.stopPropagation();
     }
 
-    @EventHandler("pinned")
-    public void onPinnedCheckboxClick(@ForEvent("change") final Event e) {
-        updateEmployeeSelect();
-        e.stopPropagation();
-    }
-
     @EventHandler("apply-button")
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
 
-        final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
-        final Shift shift = blob.getShift();
+        final EmployeeAvailabilityBlob blob = (EmployeeAvailabilityBlob) blobView.getBlob();
+        final EmployeeAvailability availability = blob.getAvailability();
 
-        final boolean oldLockedByUser = shift.isPinnedByUser();
-        final Employee oldEmployee = shift.getEmployee();
+        final Employee oldEmployee = availability.getEmployee();
 
-        shift.setPinnedByUser(pinned.checked);
-        shift.setEmployee(employeesById.get(parseLong(employeeSelect.getSelectedValue())));
-
-        ShiftRestServiceBuilder.updateShift(shift.getTenantId(), new ShiftView(shift), onSuccess((final Shift updatedShift) -> {
-            blob.setShift(updatedShift);
-            blobView.refresh();
-            popover.hide();
-        }).onFailure(i -> {
-            shift.setPinnedByUser(oldLockedByUser);
-            shift.setEmployee(oldEmployee);
-        }).onError(i -> {
-            shift.setPinnedByUser(oldLockedByUser);
-            shift.setEmployee(oldEmployee);
-        }));
+        // TODO: Update the availability using a REST call
 
         e.stopPropagation();
     }
