@@ -80,24 +80,22 @@ public class SpotRosterViewportFactory {
     private LinearScale<OffsetDateTime> scale;
 
     public SpotRosterViewport getViewport(final SpotRosterView spotRosterView) {
-
         return timingUtils.time("Spot Roster viewport instantiation", () -> {
-
             shiftBlobViewPool.init(1500L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
 
             spotRosterModel = buildSpotRosterModel(spotRosterView);
 
             scale = new Positive2HoursScale(OffsetDateTime.of(spotRosterView.getStartDate().atTime(0, 0), ZoneOffset.UTC),
-                                            OffsetDateTime.of(spotRosterView.getEndDate().atTime(0, 0), ZoneOffset.UTC));
+                    OffsetDateTime.of(spotRosterView.getEndDate().atTime(0, 0), ZoneOffset.UTC));
 
             final List<Lane<OffsetDateTime>> lanes = buildLanes(spotRosterView);
 
             return new SpotRosterViewport(tenantStore.getCurrentTenantId(),
-                                          shiftBlobViewPool::get,
-                                          scale,
-                                          cssGridLinesFactory.newWithSteps(2L, 12L),
-                                          ticksFactory.newTicks(scale, 2L, 12L),
-                                          lanes);
+                    shiftBlobViewPool::get,
+                    scale,
+                    cssGridLinesFactory.newWithSteps(2L, 12L),
+                    ticksFactory.newTicks(scale, 2L, 12L),
+                    lanes);
         });
     }
 
@@ -106,15 +104,14 @@ public class SpotRosterViewportFactory {
         final Map<Long, Spot> spotsById = indexById(spotRosterView.getSpotList());
 
         return spotRosterView.getSpotIdToShiftViewListMap().values().stream()
-                             .flatMap(Collection::stream)
-                             .collect(groupingBy(shiftView -> spotsById.get(shiftView.getSpotId()),
-                                                 toList()));
+                .flatMap(Collection::stream)
+                .collect(groupingBy(shiftView -> spotsById.get(shiftView.getSpotId()),
+                        toList()));
     }
 
     private List<Lane<OffsetDateTime>> buildLanes(final SpotRosterView spotRosterView) {
 
         final Map<Long, Employee> employeesById = indexById(spotRosterView.getEmployeeList());
-
         return spotRosterModel
                 .entrySet()
                 .stream()

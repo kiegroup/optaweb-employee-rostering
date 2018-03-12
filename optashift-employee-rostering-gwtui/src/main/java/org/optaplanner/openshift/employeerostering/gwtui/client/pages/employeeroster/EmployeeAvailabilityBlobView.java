@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
 import java.time.OffsetDateTime;
 
@@ -34,10 +34,11 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Templated
-public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
+public class EmployeeAvailabilityBlobView implements BlobView<OffsetDateTime, EmployeeAvailabilityBlob> {
 
     private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
     private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
@@ -52,17 +53,17 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     private HTMLElement label;
 
     @Inject
-    private SpotRosterPage page;
+    private EmployeeRosterPage page;
 
     private Viewport<OffsetDateTime> viewport;
-    private ListView<ShiftBlob> blobViews;
+    private ListView<EmployeeAvailabilityBlob> blobViews;
     private Runnable onDestroy;
 
-    private ShiftBlob blob;
+    private EmployeeAvailabilityBlob blob;
 
     @Override
-    public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
-                                            final ListView<ShiftBlob> blobViews) {
+    public ListElementView<EmployeeAvailabilityBlob> setup(final EmployeeAvailabilityBlob blob,
+                                                           final ListView<EmployeeAvailabilityBlob> blobViews) {
 
         this.blobViews = blobViews;
         this.blob = blob;
@@ -75,13 +76,14 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     }
 
     public void refresh() {
+        setClassProperty("desired", blob.getAvailability().getState() == EmployeeAvailabilityState.DESIRED);
+        setClassProperty("undesired", blob.getAvailability().getState() == EmployeeAvailabilityState.UNDESIRED);
+        setClassProperty("unavailable", blob.getAvailability().getState() == EmployeeAvailabilityState.UNAVAILABLE);
 
-        setClassProperty("pinned", blob.getShift().isPinnedByUser());
-        setClassProperty("unassigned", blob.getShift().getEmployee() == null);
-        RosterState rosterState = page.getCurrentSpotRosterView().getRosterState();
-        setClassProperty("historic", rosterState.isHistoric(blob.getShift()));
-        setClassProperty("published", rosterState.isPublished(blob.getShift()));
-        setClassProperty("draft", rosterState.isDraft(blob.getShift()));
+        RosterState rosterState = page.getCurrentEmployeeRosterView().getRosterState();
+        setClassProperty("historic", rosterState.isHistoric(blob.getAvailability().getStartTime().atDate(blob.getAvailability().getDate())));
+        setClassProperty("published", rosterState.isPublished(blob.getAvailability().getStartTime().atDate(blob.getAvailability().getDate())));
+        setClassProperty("draft", rosterState.isDraft(blob.getAvailability().getStartTime().atDate(blob.getAvailability().getDate())));
 
         viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
         viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
@@ -99,7 +101,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     private boolean onResize(final Long newSizeInGridPixels) {
         blob.setSizeInGridPixels(newSizeInGridPixels);
-        //TODO: Update Shift's time slot
+        //TODO: Update Availability start and end times
         //ShiftRestServiceBuilder.updateShift(blob.getShift().getTenantId(), new ShiftView(blob.getShift()));
 
         updateLabel();
@@ -108,7 +110,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     private boolean onDrag(final Long newPositionInGridPixels) {
         blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(newPositionInGridPixels));
-        //TODO: Update Shift's time slot
+        //TODO: Update Availability start and end times
         //ShiftRestServiceBuilder.updateShift(blob.getShift().getTenantId(), new ShiftView(blob.getShift()));
 
         updateLabel();
@@ -125,13 +127,13 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     }
 
     @Override
-    public BlobView<OffsetDateTime, ShiftBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
+    public BlobView<OffsetDateTime, EmployeeAvailabilityBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<OffsetDateTime, ShiftBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
+    public BlobView<OffsetDateTime, EmployeeAvailabilityBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
         return this;
     }
 

@@ -10,8 +10,8 @@ import javax.persistence.Persistence;
 import org.optaplanner.benchmark.api.PlannerBenchmark;
 import org.optaplanner.benchmark.api.PlannerBenchmarkFactory;
 import org.optaplanner.core.api.solver.SolverFactory;
-import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.server.roster.RosterGenerator;
+import org.optaplanner.openshift.employeerostering.server.rotation.ShiftGenerator;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 
 public class OptaShiftEmployeeRosteringBenchmarkApp {
@@ -20,7 +20,7 @@ public class OptaShiftEmployeeRosteringBenchmarkApp {
         List<Roster> rosterList = generateRosters();
 
         SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(
-                                                                                  "org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringSolverConfig.xml");
+                "org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringSolverConfig.xml");
         PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromSolverFactory(solverFactory);
         PlannerBenchmark plannerBenchmark = benchmarkFactory.buildPlannerBenchmark(rosterList);
         plannerBenchmark.benchmark();
@@ -28,9 +28,9 @@ public class OptaShiftEmployeeRosteringBenchmarkApp {
 
     private static List<Roster> generateRosters() {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(
-                                                                                           "optashift-employee-rostering-persistence-unit");
+                "optashift-employee-rostering-persistence-unit");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        RosterGenerator rosterGenerator = new RosterGenerator(entityManager, new ShiftFileParser());
+        RosterGenerator rosterGenerator = new RosterGenerator(entityManager, new ShiftGenerator());
 
         List<Roster> rosterList = new ArrayList<>();
         rosterList.add(rosterGenerator.generateRoster(10, 7, false, false));

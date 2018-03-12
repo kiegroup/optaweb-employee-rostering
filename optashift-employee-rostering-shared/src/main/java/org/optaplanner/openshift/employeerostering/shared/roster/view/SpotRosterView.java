@@ -27,6 +27,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 public class SpotRosterView extends AbstractRosterView {
 
     @NotNull
+    // The list in each entry is sorted by startTime
     protected Map<Long, List<ShiftView>> spotIdToShiftViewListMap;
 
     @SuppressWarnings("unused")

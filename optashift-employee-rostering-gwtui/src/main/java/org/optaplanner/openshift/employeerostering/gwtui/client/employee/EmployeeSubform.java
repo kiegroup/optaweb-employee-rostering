@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import elemental2.dom.HTMLTableCellElement;
 import org.gwtbootstrap3.extras.select.client.ui.MultipleSelect;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
+import org.jboss.errai.bus.client.ErraiBus;
+import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -22,7 +24,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInval
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.TableRow;
-import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -30,7 +31,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestS
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 @Templated("#row")
-public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Employee>, Updatable<Map<String, Skill>> {
+public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Employee> {
 
     @Inject
     private TenantStore tenantStore;
@@ -62,12 +63,15 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
     @Inject
     private TranslationService translationService;
 
+    private Subscription subscription;
+
+    @SuppressWarnings("unchecked")
     @PostConstruct
     protected void initWidget() {
         employeeName.getElement().setAttribute("placeholder", translationService.format(
-                                                                                        OptaShiftUIConstants.EmployeeListPanel_employeeName));
+                OptaShiftUIConstants.EmployeeListPanel_employeeName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
-        skillConvertor.registerSkillMapListener(this);
+        updateSkillMap(skillConvertor.getSkillMap());
         dataBinder.bind(employeeName, "name");
         dataBinder.bind(employeeSkillProficiencySet, "skillProficiencySet", skillConvertor);
 
@@ -76,18 +80,18 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
         });
         dataBinder.<Set<Skill>> addPropertyChangeHandler("skillProficiencySet", (e) -> {
             employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(CommonUtils.delimitCollection(e.getNewValue(),
-                                                                                                                             (s) -> s.getName(), ", ")).toSafeHtml().asString();
+                    (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
+        subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.get(Map.class, "Map")));
     }
 
     public void reset() {
         employeeName.setValue("");
     }
 
-    @Override
-    public void onUpdate(Map<String, Skill> data) {
+    private void updateSkillMap(Map<String, Skill> skillMap) {
         employeeSkillProficiencySet.clear();
-        data.forEach((name, skill) -> {
+        skillMap.forEach((name, skill) -> {
             Option option = new Option();
             option.setName(name);
             option.setValue(name);
@@ -100,30 +104,30 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
     @Override
     protected void deleteRow(Employee employee) {
         EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), employee.getId(),
-                                                  FailureShownRestCallback.onSuccess(success -> {
-                                                      dataInvalidationEvent.fire(new DataInvalidation<>());
-                                                  }));
+                FailureShownRestCallback.onSuccess(success -> {
+                    dataInvalidationEvent.fire(new DataInvalidation<>());
+                }));
     }
 
     @Override
     protected void updateRow(Employee oldValue, Employee newValue) {
 
         EmployeeRestServiceBuilder.updateEmployee(tenantStore.getCurrentTenantId(), newValue,
-                                                  FailureShownRestCallback.onSuccess(v -> {
-                                                      dataInvalidationEvent.fire(new DataInvalidation<>());
-                                                  }));
+                FailureShownRestCallback.onSuccess(v -> {
+                    dataInvalidationEvent.fire(new DataInvalidation<>());
+                }));
     }
 
     @Override
     protected void createRow(Employee employee) {
         EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee,
-                                               FailureShownRestCallback.onSuccess(v -> {
-                                                   dataInvalidationEvent.fire(new DataInvalidation<>());
-                                               }));
+                FailureShownRestCallback.onSuccess(v -> {
+                    dataInvalidationEvent.fire(new DataInvalidation<>());
+                }));
     }
 
     @Override
     public void onUnload() {
-        skillConvertor.deregisterSkillMapListener(this);
+        subscription.remove();
     }
 }

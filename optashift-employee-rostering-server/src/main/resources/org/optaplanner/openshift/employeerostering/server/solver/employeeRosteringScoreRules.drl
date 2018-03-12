@@ -28,7 +28,7 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
-import org.optaplanner.openshift.employeerostering.shared.common.TimeSlotUtils;
+import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 
 global HardSoftScoreHolder scoreHolder;
 
@@ -55,7 +55,7 @@ rule "Unavailable time slot for an employee"
                 $endTime : endTime)
         Shift(
                 employee == $e,
-                TimeSlotUtils.doTimeslotsIntersect($date,$startTime,$endTime,
+                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($date,$startTime,$endTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -50);
@@ -105,7 +105,7 @@ rule "Undesired time slot for an employee"
                 $endTime : endTime)
         Shift(
                 employee == $e,
-                TimeSlotUtils.doTimeslotsIntersect($date,$startTime,$endTime,
+                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($date,$startTime,$endTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -$tenantConfiguration.getUndesiredTimeSlotWeight());
@@ -122,7 +122,7 @@ rule "Desired time slot for an employee"
                 $endTime : endTime)
         Shift(
                 employee == $e,
-                TimeSlotUtils.doTimeslotsIntersect($date,$startTime,$endTime,
+                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($date,$startTime,$endTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, +$tenantConfiguration.getDesiredTimeSlotWeight());

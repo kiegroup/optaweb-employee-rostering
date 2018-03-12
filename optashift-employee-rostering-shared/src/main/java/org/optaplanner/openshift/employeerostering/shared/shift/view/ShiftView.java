@@ -38,7 +38,7 @@ public class ShiftView extends AbstractPersistable {
     @NotNull
     private OffsetDateTime endDateTime;
 
-    private boolean lockedByUser = false;
+    private boolean pinnedByUser = false;
 
     private Long employeeId = null;
 
@@ -62,7 +62,7 @@ public class ShiftView extends AbstractPersistable {
         this.spotId = shift.getSpot().getId();
         this.startDateTime = shift.getStartDateTime();
         this.endDateTime = shift.getEndDateTime();
-        this.lockedByUser = shift.isPinnedByUser();
+        this.pinnedByUser = shift.isPinnedByUser();
         this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
     }
@@ -102,12 +102,12 @@ public class ShiftView extends AbstractPersistable {
         this.endDateTime = endDateTime;
     }
 
-    public boolean isLockedByUser() {
-        return lockedByUser;
+    public boolean isPinnedByUser() {
+        return pinnedByUser;
     }
 
-    public void setLockedByUser(boolean lockedByUser) {
-        this.lockedByUser = lockedByUser;
+    public void setPinnedByUser(boolean pinnedByUser) {
+        this.pinnedByUser = pinnedByUser;
     }
 
     public Long getEmployeeId() {

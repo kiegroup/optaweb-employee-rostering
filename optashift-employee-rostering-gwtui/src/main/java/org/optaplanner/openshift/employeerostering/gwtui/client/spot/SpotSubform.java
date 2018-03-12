@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import elemental2.dom.HTMLTableCellElement;
 import org.gwtbootstrap3.extras.select.client.ui.MultipleSelect;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
+import org.jboss.errai.bus.client.ErraiBus;
+import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -22,7 +24,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInval
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.TableRow;
-import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
@@ -30,7 +31,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 @Templated("#row")
-public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot>, Updatable<Map<String, Skill>> {
+public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
 
     @Inject
     private TenantStore tenantStore;
@@ -62,12 +63,15 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot>, Upd
     @Inject
     private TranslationService translationService;
 
+    private Subscription subscription;
+
+    @SuppressWarnings("unchecked")
     @PostConstruct
     protected void initWidget() {
         spotName.getElement().setAttribute("placeholder", translationService.format(
-                                                                                    OptaShiftUIConstants.SpotListPanel_spotName));
+                OptaShiftUIConstants.SpotListPanel_spotName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
-        skillConvertor.registerSkillMapListener(this);
+        updateSkillMap(skillConvertor.getSkillMap());
         dataBinder.bind(spotName, "name");
         dataBinder.bind(spotRequiredSkillSet, "requiredSkillSet", skillConvertor);
 
@@ -76,19 +80,19 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot>, Upd
         });
         dataBinder.<Set<Skill>> addPropertyChangeHandler("requiredSkillSet", (e) -> {
             spotRequiredSkillSetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(CommonUtils.delimitCollection(e
-                                                                                                                       .getNewValue(),
-                                                                                                                      (s) -> s.getName(), ", ")).toSafeHtml().asString();
+                    .getNewValue(),
+                    (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
+        subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.get(Map.class, "Map")));
     }
 
     public void reset() {
         spotName.setValue("");
     }
 
-    @Override
-    public void onUpdate(Map<String, Skill> data) {
+    private void updateSkillMap(Map<String, Skill> skillMap) {
         spotRequiredSkillSet.clear();
-        data.forEach((name, skill) -> {
+        skillMap.forEach((name, skill) -> {
             Option option = new Option();
             option.setName(name);
             option.setValue(name);
@@ -101,29 +105,29 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot>, Upd
     @Override
     protected void deleteRow(Spot spot) {
         SpotRestServiceBuilder.removeSpot(tenantStore.getCurrentTenantId(), spot.getId(),
-                                          FailureShownRestCallback.onSuccess(success -> {
-                                              dataInvalidationEvent.fire(new DataInvalidation<>());
-                                          }));
+                FailureShownRestCallback.onSuccess(success -> {
+                    dataInvalidationEvent.fire(new DataInvalidation<>());
+                }));
     }
 
     @Override
     protected void updateRow(Spot oldValue, Spot newValue) {
         SpotRestServiceBuilder.updateSpot(tenantStore.getCurrentTenantId(), newValue,
-                                          FailureShownRestCallback.onSuccess(v -> {
-                                              dataInvalidationEvent.fire(new DataInvalidation<>());
-                                          }));
+                FailureShownRestCallback.onSuccess(v -> {
+                    dataInvalidationEvent.fire(new DataInvalidation<>());
+                }));
     }
 
     @Override
     protected void createRow(Spot spot) {
         SpotRestServiceBuilder.addSpot(tenantStore.getCurrentTenantId(), spot,
-                                       FailureShownRestCallback.onSuccess(v -> {
-                                           dataInvalidationEvent.fire(new DataInvalidation<>());
-                                       }));
+                FailureShownRestCallback.onSuccess(v -> {
+                    dataInvalidationEvent.fire(new DataInvalidation<>());
+                }));
     }
 
     @Override
     public void onUnload() {
-        skillConvertor.deregisterSkillMapListener(this);
+        subscription.remove();
     }
 }

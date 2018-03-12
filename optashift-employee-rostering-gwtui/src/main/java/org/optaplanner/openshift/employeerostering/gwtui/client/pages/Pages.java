@@ -26,12 +26,14 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster.EmployeeRosterPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.RotationPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster.SpotRosterPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
@@ -43,6 +45,7 @@ public class Pages {
     public enum Id {
         SKILLS,
         SPOT_ROSTER,
+        EMPLOYEE_ROSTER,
         ROTATIONS,
         SPOTS,
         EMPLOYEES;
@@ -58,10 +61,13 @@ public class Pages {
     private ManagedInstance<EmployeeListPanel> employeesPage;
 
     @Inject
-    private ManagedInstance<SpotRosterPage> spotRosterDemoPage;
+    private ManagedInstance<SpotRosterPage> spotRosterPage;
 
     @Inject
-    private ManagedInstance<RotationPage> rotationsDemoPage;
+    private ManagedInstance<EmployeeRosterPage> employeeRosterPage;
+
+    @Inject
+    private ManagedInstance<RotationPage> rotationsPage;
 
     private final Map<Id, LazyInit<? extends Page>> mapping = new HashMap<>();
 
@@ -70,8 +76,9 @@ public class Pages {
         mapping.put(SKILLS, lazyInit(skillsPage));
         mapping.put(SPOTS, lazyInit(spotsPage));
         mapping.put(EMPLOYEES, lazyInit(employeesPage));
-        mapping.put(SPOT_ROSTER, lazyInit(spotRosterDemoPage));
-        mapping.put(ROTATIONS, lazyInit(rotationsDemoPage));
+        mapping.put(SPOT_ROSTER, lazyInit(spotRosterPage));
+        mapping.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
+        mapping.put(ROTATIONS, lazyInit(rotationsPage));
     }
 
     public Page get(final Id id) {

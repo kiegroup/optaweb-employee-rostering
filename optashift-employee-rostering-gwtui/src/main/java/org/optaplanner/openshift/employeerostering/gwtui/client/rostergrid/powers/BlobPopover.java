@@ -18,7 +18,6 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powe
 
 import java.util.function.Function;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import elemental2.dom.CSSProperties.WidthUnionType;
@@ -33,7 +32,6 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 
 @Templated
-@ApplicationScoped
 public class BlobPopover implements IsElement {
 
     private static final int NEGATIVE_MARGIN_DISPLACEMENT = 21;
@@ -51,9 +49,9 @@ public class BlobPopover implements IsElement {
     @DataField("content")
     private HTMLDivElement contentContainer;
 
-    private BlobPopoverContent content;
-
     private HTMLElement parent;
+
+    private BlobPopoverContent content;
 
     public void init(final IsElement parent,
                      final BlobPopoverContent content) {
@@ -63,7 +61,6 @@ public class BlobPopover implements IsElement {
     }
 
     public void showFor(final BlobView<?, ?> blobView) {
-
         content.init(blobView);
 
         contentContainer.innerHTML = "";
@@ -130,8 +127,7 @@ public class BlobPopover implements IsElement {
             return 0;
         }
 
-        return offsetFn.apply(element).intValue()
-                + getOffsetRelativeTo(parent, (HTMLElement) element.offsetParent, offsetFn);
+        return offsetFn.apply(element).intValue() + getOffsetRelativeTo(parent, (HTMLElement) element.offsetParent, offsetFn);
     }
 
     private String px(final Object object) {

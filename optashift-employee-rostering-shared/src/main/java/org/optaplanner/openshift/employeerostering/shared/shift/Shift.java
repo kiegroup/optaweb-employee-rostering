@@ -90,7 +90,7 @@ public class Shift extends AbstractPersistable {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.spot = spot;
-        this.pinnedByUser = shiftView.isLockedByUser();
+        this.pinnedByUser = shiftView.isPinnedByUser();
         this.rotationEmployee = rotationEmployee;
     }
 

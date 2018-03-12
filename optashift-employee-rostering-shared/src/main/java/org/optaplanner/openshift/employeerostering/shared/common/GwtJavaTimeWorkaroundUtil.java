@@ -5,7 +5,14 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 
-public class TimeSlotUtils {
+// WORKAROUND: Our client-side emulated java.time library lacks many features. This class contains methods to work-around these lack of feature
+// REMOVE ME when GWT supports java.time or when we update our supersources at
+// "/optashift-employee-rostering-gwtui/src/main/super/org/optaplanner/openshift/employeerostering/gwtui/emulate"
+public class GwtJavaTimeWorkaroundUtil {
+
+    public static LocalDate toLocalDate(OffsetDateTime time) {
+        return LocalDate.of(time.getYear(), time.getMonthValue(), time.getDayOfMonth());
+    }
 
     public static LocalTime toLocalTime(OffsetDateTime time) {
         return LocalTime.of(time.getHour(), time.getMinute(), time.getSecond(), time.getNano());

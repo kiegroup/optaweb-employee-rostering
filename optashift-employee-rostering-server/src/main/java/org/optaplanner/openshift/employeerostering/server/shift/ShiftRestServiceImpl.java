@@ -16,27 +16,40 @@
 
 package org.optaplanner.openshift.employeerostering.server.shift;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
+import org.optaplanner.openshift.employeerostering.server.rotation.ShiftGenerator;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements ShiftRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Inject
+    private ShiftGenerator shiftGenerator;
 
     @Override
     @Transactional
@@ -78,7 +91,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
         Shift shift = new Shift(shiftView, spot, shiftView.getStartDateTime(), shiftView.getEndDateTime(),
                 rotationEmployee);
-        shift.setPinnedByUser(shiftView.isLockedByUser());
+        shift.setPinnedByUser(shiftView.isPinnedByUser());
         Long employeeId = shiftView.getEmployeeId();
         if (employeeId != null) {
             Employee employee = entityManager.find(Employee.class, employeeId);

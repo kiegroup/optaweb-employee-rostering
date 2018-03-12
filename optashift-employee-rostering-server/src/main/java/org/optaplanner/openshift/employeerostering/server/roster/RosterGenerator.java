@@ -19,6 +19,8 @@ package org.optaplanner.openshift.employeerostering.server.roster;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,9 +38,10 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.generator.StringDataGenerator;
-import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
+import org.optaplanner.openshift.employeerostering.server.rotation.ShiftGenerator;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
@@ -82,7 +85,7 @@ public class RosterGenerator {
     private EntityManager entityManager;
 
     @Inject
-    private ShiftFileParser shiftGenerator;
+    private ShiftGenerator shiftGenerator;
 
     @SuppressWarnings("unused")
     public RosterGenerator() {}
@@ -91,7 +94,7 @@ public class RosterGenerator {
      * For benchmark only
      * @param entityManager never null
      */
-    public RosterGenerator(EntityManager entityManager, ShiftFileParser shiftGenerator) {
+    public RosterGenerator(EntityManager entityManager, ShiftGenerator shiftGenerator) {
         this.entityManager = entityManager;
         this.shiftGenerator = shiftGenerator;
     }
@@ -144,7 +147,10 @@ public class RosterGenerator {
 
         List<Shift> shiftList = parserOutput.getShiftOutputList();
 
-        List<EmployeeAvailability> employeeAvailabilityList = parserOutput.getEmployeeAvailabilityOutputList();
+        List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(tenantId, tenant
+                .getConfiguration(), employeeList, parserOutput.getNewRosterState().getFirstPublishedDate(),
+                parserOutput
+                        .getNewRosterState().getFirstDraftDate());
 
         return new Roster((long) tenantId, tenantId,
                 skillList, spotList, employeeList, employeeAvailabilityList,
@@ -434,6 +440,50 @@ public class RosterGenerator {
             employeeList.add(employee);
         }
         return employeeList;
+    }
+
+    private List<EmployeeAvailability> createEmployeeAvailabilityList(int tenantId, TenantConfiguration config, List<Employee> employeeList, LocalDate fromDate, LocalDate toDate) {
+        List<EmployeeAvailability> out = new ArrayList<>();
+        List<LocalDate> datesBetween = new ArrayList<>();
+        for (LocalDate currDate = fromDate; currDate.isBefore(toDate); currDate = currDate.plusDays(1)) {
+            datesBetween.add(currDate);
+        }
+        for (LocalDate date : datesBetween) {
+            List<Employee> employeesListCopy = new ArrayList<>(employeeList);
+            List<Employee> unavailableEmployees = new ArrayList<>(extractRandomSubList(employeesListCopy, 0.3));
+            employeesListCopy.removeAll(unavailableEmployees);
+            List<Employee> undesiredEmployees = new ArrayList<>(extractRandomSubList(employeesListCopy, 0.3));
+            employeesListCopy.removeAll(undesiredEmployees);
+            List<Employee> desiredEmployees = new ArrayList<>(extractRandomSubList(employeesListCopy, 0.3));
+            employeesListCopy.removeAll(desiredEmployees);
+
+            unavailableEmployees.forEach((e) -> {
+                EmployeeAvailability toAdd = new EmployeeAvailability(tenantId, e, date, OffsetTime.of(LocalTime.MIN,
+                        config.getTimeZone().getRules().getOffset(date.atStartOfDay())), OffsetTime.of(LocalTime.MAX,
+                                config
+                                        .getTimeZone().getRules().getOffset(date.atTime(LocalTime.MAX))));
+                toAdd.setState(EmployeeAvailabilityState.UNAVAILABLE);
+                out.add(toAdd);
+            });
+            undesiredEmployees.forEach((e) -> {
+                EmployeeAvailability toAdd = new EmployeeAvailability(tenantId, e, date, OffsetTime.of(LocalTime.MIN,
+                        config.getTimeZone().getRules().getOffset(date.atStartOfDay())), OffsetTime.of(LocalTime.MAX,
+                                config
+                                        .getTimeZone().getRules().getOffset(date.atTime(LocalTime.MAX))));
+                toAdd.setState(EmployeeAvailabilityState.UNDESIRED);
+                out.add(toAdd);
+            });
+            desiredEmployees.forEach((e) -> {
+                EmployeeAvailability toAdd = new EmployeeAvailability(tenantId, e, date, OffsetTime.of(LocalTime.MIN,
+                        config.getTimeZone().getRules().getOffset(date.atStartOfDay())), OffsetTime.of(LocalTime.MAX,
+                                config
+                                        .getTimeZone().getRules().getOffset(date.atTime(LocalTime.MAX))));
+                toAdd.setState(EmployeeAvailabilityState.DESIRED);
+                out.add(toAdd);
+            });
+        }
+        out.forEach((e) -> entityManager.persist(e));
+        return out;
     }
 
     private <E> List<E> extractRandomSubList(List<E> list, double maxRelativeSize) {
