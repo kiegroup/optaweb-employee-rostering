@@ -9,9 +9,11 @@
     <class>org.optaplanner.openshift.employeerostering.shared.employee.Employee</class>
     <class>org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability</class>
     <class>org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency</class>
-    <class>org.optaplanner.openshift.employeerostering.shared.timeslot.TimeSlot</class>
     <class>org.optaplanner.openshift.employeerostering.shared.shift.Shift</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.roster.RosterState</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate</class>
     <class>org.optaplanner.openshift.employeerostering.shared.tenant.Tenant</class>
+    <class>org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
