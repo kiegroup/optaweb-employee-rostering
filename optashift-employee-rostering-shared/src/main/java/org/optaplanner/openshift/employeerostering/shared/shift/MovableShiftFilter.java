@@ -24,8 +24,8 @@ public class MovableShiftFilter implements SelectionFilter<Roster, Shift> {
 
     @Override
     public boolean accept(ScoreDirector<Roster> scoreDirector, Shift shift) {
-        // TODO: Check if shift is historic from RosterState
-        return !shift.isPinnedByUser();
+        // TODO: Fix RosterState.isHistoric so that it works (crashes the application for some reason)
+        return true;
     }
 
 }
