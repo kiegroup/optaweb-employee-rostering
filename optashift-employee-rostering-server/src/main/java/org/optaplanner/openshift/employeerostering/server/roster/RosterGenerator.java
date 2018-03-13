@@ -39,7 +39,6 @@ import org.optaplanner.openshift.employeerostering.server.common.generator.Strin
 import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -91,8 +90,9 @@ public class RosterGenerator {
      * For benchmark only
      * @param entityManager never null
      */
-    public RosterGenerator(EntityManager entityManager) {
+    public RosterGenerator(EntityManager entityManager, ShiftFileParser shiftGenerator) {
         this.entityManager = entityManager;
+        this.shiftGenerator = shiftGenerator;
     }
 
     @PostConstruct
