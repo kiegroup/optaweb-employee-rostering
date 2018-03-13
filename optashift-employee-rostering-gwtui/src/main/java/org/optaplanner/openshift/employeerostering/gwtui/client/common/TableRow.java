@@ -150,7 +150,7 @@ public abstract class TableRow<T> extends Composite implements TakesValue<T> {
     }
 
     public static <T> void createNewRow(T value, ListComponent<T, ? extends TableRow<T>> table, KiePager<T> pager) {
-        if (!table.getComponent(0).isCreatingRow()) {
+        if (table.getValue().isEmpty() || !table.getComponent(0).isCreatingRow()) {
             pager.getPager().firstPage();
             table.getValue().add(0, value);
             pager.refresh();

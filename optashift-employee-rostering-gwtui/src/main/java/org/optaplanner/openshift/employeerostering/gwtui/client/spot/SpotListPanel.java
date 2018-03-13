@@ -47,7 +47,7 @@ public class SpotListPanel implements IsElement,
 
     @Inject
     @DataField("search-bar")
-    private KieSearchBar searchBar;
+    private KieSearchBar<Spot> searchBar;
 
     @Inject
     private TenantStore tenantStore;
@@ -100,13 +100,14 @@ public class SpotListPanel implements IsElement,
         return new Promise<>((res, rej) -> {
             SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
                     .onSuccess(newSpotList -> {
-                        pager.setData(newSpotList);
+                        searchBar.setListToFilter(newSpotList);
                         res.onInvoke(PromiseUtils.resolve());
                     }));
         });
     }
 
     private void initTable() {
+        searchBar.setListToFilter(Collections.emptyList());
         pager.setPresenter(table);
         searchBar.setListToFilter(Collections.emptyList());
         searchBar.setElementToStringMapping((spot) -> spot.getName());
