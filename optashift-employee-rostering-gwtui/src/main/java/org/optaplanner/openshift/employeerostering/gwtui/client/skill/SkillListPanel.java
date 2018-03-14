@@ -46,7 +46,7 @@ public class SkillListPanel implements IsElement,
 
     @Inject
     @DataField("search-bar")
-    private KieSearchBar searchBar;
+    private KieSearchBar<Skill> searchBar;
 
     @Inject
     private TenantStore tenantStore;
@@ -92,16 +92,18 @@ public class SkillListPanel implements IsElement,
         }
         return new Promise<>((res, rej) -> {
             SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
-                                                                                                           .onSuccess(newSkillList -> {
-                                                                                                               pager.setData(newSkillList);
-                                                                                                               res.onInvoke(PromiseUtils.resolve());
-                                                                                                           }));
+                    .onSuccess(newSkillList -> {
+                        searchBar.setListToFilter(newSkillList);
+                        res.onInvoke(PromiseUtils.resolve());
+                    }));
         });
     }
 
     private void initTable() {
-        pager.setData(Collections.emptyList());
+        searchBar.setListToFilter(Collections.emptyList());
         pager.setPresenter(table);
+        searchBar.setElementToStringMapping((skill) -> skill.getName());
+        searchBar.addFilterListener(pager);
     }
 
     @EventHandler("add-button")

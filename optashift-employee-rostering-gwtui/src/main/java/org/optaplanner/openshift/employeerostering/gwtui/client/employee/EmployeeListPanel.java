@@ -46,7 +46,7 @@ public class EmployeeListPanel implements IsElement,
 
     @Inject
     @DataField("search-bar")
-    private KieSearchBar searchBar;
+    private KieSearchBar<Employee> searchBar;
 
     @Inject
     private TenantStore tenantStore;
@@ -98,16 +98,18 @@ public class EmployeeListPanel implements IsElement,
         }
         return new Promise<>((res, rej) -> {
             EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
-                                                                                                                 .onSuccess(newEmployeeList -> {
-                                                                                                                     pager.setData(newEmployeeList);
-                                                                                                                     res.onInvoke(PromiseUtils.resolve());
-                                                                                                                 }));
+                    .onSuccess(newEmployeeList -> {
+                        searchBar.setListToFilter(newEmployeeList);
+                        res.onInvoke(PromiseUtils.resolve());
+                    }));
         });
     }
 
     private void initTable() {
-        pager.setData(Collections.emptyList());
+        searchBar.setListToFilter(Collections.emptyList());
         pager.setPresenter(table);
+        searchBar.setElementToStringMapping((employee) -> employee.getName());
+        searchBar.addFilterListener(pager);
     }
 
     @EventHandler("add-button")
