@@ -1,3 +1,8 @@
+@font-face {
+    font-family: PatternFlyIcons;
+    src: url(fonts/PatternFlyIcons-webfont.ttf);
+}
+
 .viewport-frame div {
     box-sizing: border-box;
 }
@@ -219,15 +224,29 @@
     margin-bottom: 0;
 }
 
-.pinned {
-    border: 2px dashed black !important;
-}
-
 .locked-for-interaction {
     opacity: 0.7;
     pointer-events: none;
 }
 
+/* Blobs */
+
 .unassigned {
     background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.historic {
+}
+
+.published {
+    border: 2px solid black !important;
+}
+
+.draft {
+    border: 2px dashed black !important;
+}
+
+.pinned:before {
+	font-family: FontAwesome;
+    content: "\f08d"; /*Pin*/
 }

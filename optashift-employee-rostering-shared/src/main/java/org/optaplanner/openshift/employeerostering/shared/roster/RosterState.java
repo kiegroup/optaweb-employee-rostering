@@ -103,21 +103,20 @@ public class RosterState extends AbstractPersistable {
         return shift.getEndDateTime().isBefore(OffsetDateTime.of(getFirstPublishedDate().atTime(LocalTime.MIDNIGHT), shift.getEndDateTime().getOffset()));
     }
 
-    @JsonIgnore
+    // Do we need this, since if a shift exists, it would be draft...
+    /*@JsonIgnore
     public boolean isUnplanned(Shift shift) {
         return shift.getStartDateTime().isAfter(OffsetDateTime.of(getLastDraftDate().atTime(LocalTime.MIDNIGHT), shift.getStartDateTime().getOffset()));
-    }
+    }*/
 
     @JsonIgnore
     public boolean isDraft(Shift shift) {
-        return shift.getStartDateTime().isBefore(OffsetDateTime.of(getLastDraftDate().atTime(LocalTime.MIDNIGHT), shift.getStartDateTime().getOffset())) &&
-               shift.getEndDateTime().isAfter(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT), shift.getEndDateTime().getOffset()));
+        return shift.getStartDateTime().isAfter(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT), shift.getStartDateTime().getOffset()));
     }
 
     @JsonIgnore
     public boolean isPublished(Shift shift) {
-        return shift.getStartDateTime().isBefore(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT), shift.getStartDateTime().getOffset())) &&
-               shift.getEndDateTime().isAfter(OffsetDateTime.of(getFirstPublishedDate().atTime(LocalTime.MIDNIGHT), shift.getEndDateTime().getOffset()));
+        return !isHistoric(shift) && !isDraft(shift);
     }
 
     @JsonIgnore

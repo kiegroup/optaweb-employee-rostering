@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -50,9 +51,9 @@ import static elemental2.dom.DomGlobal.setTimeout;
 import static java.lang.Math.max;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
-import static org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder.getCurrentSpotRosterView;
 
 @Templated
+@ApplicationScoped
 public class SpotRosterPage implements Page {
 
     private static final Integer SOLVE_TIME_IN_SECONDS = 30;
@@ -134,6 +135,7 @@ public class SpotRosterPage implements Page {
 
     private SpotRosterViewport viewport;
     private Pagination spotsPagination = Pagination.of(0, 10);
+    private SpotRosterView currentSpotRosterView;
 
     @PostConstruct
     public void init() {
@@ -151,7 +153,7 @@ public class SpotRosterPage implements Page {
 
     private Promise<Void> refreshWithoutLoadingSpinner() {
         return fetchSpotRosterView().then(spotRosterView -> {
-
+            currentSpotRosterView = spotRosterView;
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
 
             if (score.isPresent()) {
@@ -280,6 +282,10 @@ public class SpotRosterPage implements Page {
         viewportFrame.scrollLeft -= TIME_SCROLL_SIZE;
     }
 
+    public SpotRosterView getCurrentSpotRosterView() {
+        return currentSpotRosterView;
+    }
+
     //API calls
 
     private Promise<Void> triggerRosterSolve() {
@@ -296,9 +302,9 @@ public class SpotRosterPage implements Page {
 
     private Promise<SpotRosterView> fetchSpotRosterView() {
         return new Promise<>((resolve, reject) -> {
-            getCurrentSpotRosterView(tenantStore.getCurrentTenantId(),
-                                     spotsPagination.getPageNumber(),
-                                     spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));
+            RosterRestServiceBuilder.getCurrentSpotRosterView(tenantStore.getCurrentTenantId(),
+                    spotsPagination.getPageNumber(),
+                    spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));
         });
     }
 }
