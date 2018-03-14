@@ -35,6 +35,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Templated
 public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
@@ -53,6 +54,9 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     @Inject
     private BlobPopover popover;
+
+    @Inject
+    private SpotRosterPage page;
 
     private Viewport<OffsetDateTime> viewport;
     private ListView<ShiftBlob> blobViews;
@@ -76,22 +80,25 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     public void refresh() {
 
-        if (blob.getShift().isPinnedByUser()) {
-            getElement().classList.add("pinned");
-        } else {
-            getElement().classList.remove("pinned");
-        }
-
-        if (blob.getShift().getEmployee() == null) {
-            getElement().classList.add("unassigned");
-        } else {
-            getElement().classList.remove("unassigned");
-        }
+        setClassProperty("pinned", blob.getShift().isPinnedByUser());
+        setClassProperty("unassigned", blob.getShift().getEmployee() == null);
+        RosterState rosterState = page.getCurrentSpotRosterView().getRosterState();
+        setClassProperty("historic", rosterState.isHistoric(blob.getShift()));
+        setClassProperty("published", rosterState.isPublished(blob.getShift()));
+        setClassProperty("draft", rosterState.isDraft(blob.getShift()));
 
         viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
         viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
 
         updateLabel();
+    }
+
+    private void setClassProperty(String clazz, boolean isSet) {
+        if (isSet) {
+            getElement().classList.add(clazz);
+        } else {
+            getElement().classList.remove(clazz);
+        }
     }
 
     private boolean onResize(final Long newSizeInGridPixels) {

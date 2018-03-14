@@ -133,6 +133,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
         //Score
         spotRosterView.setScore(solverManager.getRoster(tenantId).map(Roster::getScore).orElse(null));
+        spotRosterView.setRosterState(getRosterState(tenantId));
 
         return spotRosterView;
     }
@@ -213,6 +214,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         if (null != roster) {
             employeeRosterView.setScore(roster.getScore());
         }
+        employeeRosterView.setRosterState(getRosterState(tenantId));
         return employeeRosterView;
     }
 
@@ -273,5 +275,10 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             attachedShift.setEmployee((shift.getEmployee() == null)
                     ? null : employeeIdMap.get(shift.getEmployee().getId()));
         }
+    }
+
+    // TODO: Make this a REST method?
+    private RosterState getRosterState(Integer tenantId) {
+        return entityManager.find(Tenant.class, tenantId).getRosterState();
     }
 }

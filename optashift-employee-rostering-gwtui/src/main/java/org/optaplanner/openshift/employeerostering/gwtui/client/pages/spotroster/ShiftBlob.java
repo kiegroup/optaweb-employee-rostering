@@ -86,8 +86,8 @@ public class ShiftBlob implements Blob<OffsetDateTime> {
 
     public String getLabel() {
         return Optional.ofNullable(shift.getEmployee())
-                       .map(Employee::getName)
-                       .orElse("U" + " [" + getPositionInScaleUnits() + " ~ " + getEndPositionInScaleUnits() + ", " + getSizeInGridPixels() + "]");
+                .map(Employee::getName)
+                .orElse("Unassigned");
     }
 
     public Shift getShift() {
