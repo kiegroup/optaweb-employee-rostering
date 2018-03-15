@@ -13,8 +13,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalTimeDeserializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalTimeSerializer;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 @Entity
@@ -80,8 +78,6 @@ public class ShiftTemplate extends AbstractPersistable {
         this.offsetStartDay = offsetStartDay;
     }
 
-    @JsonSerialize(using = LocalTimeSerializer.class)
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalTime getStartTime() {
         return startTime;
@@ -99,8 +95,6 @@ public class ShiftTemplate extends AbstractPersistable {
         this.offsetEndDay = offsetEndDay;
     }
 
-    @JsonSerialize(using = LocalTimeSerializer.class)
-    @JsonDeserialize(using = LocalTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalTime getEndTime() {
         return endTime;

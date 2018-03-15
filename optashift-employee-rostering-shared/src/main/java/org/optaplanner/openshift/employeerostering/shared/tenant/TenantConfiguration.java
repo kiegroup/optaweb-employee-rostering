@@ -10,8 +10,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
-import org.optaplanner.openshift.employeerostering.shared.jackson.ZoneIdDeserializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.ZoneIdSerializer;
 
 @Entity
 public class TenantConfiguration extends AbstractPersistable {
@@ -64,8 +62,6 @@ public class TenantConfiguration extends AbstractPersistable {
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
     }
 
-    @JsonSerialize(using = ZoneIdSerializer.class)
-    @JsonDeserialize(using = ZoneIdDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public ZoneId getTimeZone() {
         return timeZone;
