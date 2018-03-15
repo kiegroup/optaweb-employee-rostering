@@ -40,7 +40,7 @@ public interface TenantRestService {
     @GET
     @Path("/{id : \\d+}")
     Tenant getTenant(
-                     @ApiParam(required = true) @PathParam("id") Long id);
+                     @ApiParam(required = true) @PathParam("id") Integer id);
 
     /**
      * @param tenant never null
@@ -55,11 +55,18 @@ public interface TenantRestService {
     // ************************************************************************
     // TenantConfiguration
     // ************************************************************************
+    /**
+     * @param id never null
+     * @return never null, the id
+     */
+    @ApiOperation("Get a tenant configuration")
+    @GET
+    @Path("/{id}")
+    TenantConfiguration getTenantConfiguration(@ApiParam(required = true) @PathParam("id") Integer id);
 
     @ApiOperation("Update a tenant configuration")
     @POST
     @Path("/config/update")
-    Tenant updateTenantConfiguration(
-                                     @ApiParam(required = true) TenantConfiguration tenantConfiguration);
+    TenantConfiguration updateTenantConfiguration(@ApiParam(required = true) TenantConfiguration tenantConfiguration);
 
 }

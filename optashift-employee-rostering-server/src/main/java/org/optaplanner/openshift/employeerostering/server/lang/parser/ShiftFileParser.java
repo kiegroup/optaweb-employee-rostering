@@ -1,8 +1,6 @@
 package org.optaplanner.openshift.employeerostering.server.lang.parser;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,32 +18,24 @@ import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfigura
 public class ShiftFileParser {
 
     public ParserOut parse(Integer tenantId,
-            TenantConfiguration tenantConfiguration,
-            RosterState rosterState,
-            int lengthInDays,
-            Collection<ShiftTemplate> shifts) {
+                           TenantConfiguration tenantConfiguration,
+                           RosterState rosterState,
+                           int lengthInDays,
+                           Collection<ShiftTemplate> shifts) {
         List<Shift> shiftOutputList = new ArrayList<>();
 
-        for (LocalDate currDay = rosterState.getFirstDraftDate(); currDay.isBefore(rosterState.getFirstDraftDate()
-                .plusDays(lengthInDays)); currDay = currDay.plusDays(1), rosterState.setUnplannedOffset((rosterState
-                        .getUnplannedOffset() + 1) % rosterState.getRotationLength())) {
+        LocalDate oldLastDraftDate = rosterState.getLastDraftDate();
+        LocalDate newLastDraftDate = oldLastDraftDate.plusDays(lengthInDays);
+
+        for (LocalDate currDay = oldLastDraftDate.plusDays(1); !currDay.isAfter(newLastDraftDate); currDay = currDay.plusDays(1)) {
             List<ShiftTemplate> shiftsToAdd = shifts.stream().filter((s) -> s.getOffsetStartDay() == rosterState
                     .getUnplannedOffset()).collect(Collectors.toList());
             for (ShiftTemplate shiftTemplate : shiftsToAdd) {
-                LocalDateTime startDateTime = currDay.atTime(shiftTemplate.getStartTime());
-                LocalDateTime endDateTime = currDay.plusDays(shiftTemplate.getOffsetEndDay() - shiftTemplate
-                        .getOffsetStartDay()).atTime(shiftTemplate.getEndTime());
-
-                // TODO: How to handle start/end time in transitions? Current is the Offset BEFORE the transition
-                OffsetDateTime startOffsetDateTime = startDateTime.atOffset(tenantConfiguration.getTimeZone().getRules()
-                        .getOffset(startDateTime));
-                OffsetDateTime endOffsetDateTime = endDateTime.atOffset(tenantConfiguration.getTimeZone().getRules()
-                        .getOffset(endDateTime));
-
-                shiftOutputList.add(new Shift(tenantId, shiftTemplate.getSpot(), startOffsetDateTime, endOffsetDateTime,
-                        shiftTemplate.getRotationEmployee()));
+                shiftOutputList.add(shiftTemplate.asShiftOnDate(currDay, tenantConfiguration.getTimeZone()));
             }
+            rosterState.setUnplannedOffset((rosterState.getUnplannedOffset() + 1) % rosterState.getRotationLength());
         }
+        rosterState.setDraftLength(rosterState.getDraftLength() + lengthInDays);
 
         ParserOut out = new ParserOut();
         out.newRosterState = rosterState;

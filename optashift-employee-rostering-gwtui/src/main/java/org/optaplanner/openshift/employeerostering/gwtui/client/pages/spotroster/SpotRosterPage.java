@@ -38,6 +38,7 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
@@ -69,6 +70,10 @@ public class SpotRosterPage implements Page {
     @Inject
     @DataField("refresh-button")
     private HTMLButtonElement refreshButton;
+
+    @Inject
+    @DataField("publish-button")
+    private HTMLButtonElement publishButton;
 
     @Inject
     @DataField("viewport-frame")
@@ -249,6 +254,12 @@ public class SpotRosterPage implements Page {
 
     @EventHandler("refresh-button")
     public void onRefreshButtonClicked(@ForEvent("click") final MouseEvent e) {
+        refreshWithLoadingSpinner();
+    }
+
+    @EventHandler("publish-button")
+    public void onPublishButtonClicked(@ForEvent("click") final MouseEvent e) {
+        RosterRestServiceBuilder.publishAndProvision(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(v -> refreshWithLoadingSpinner()));
         refreshWithLoadingSpinner();
     }
 

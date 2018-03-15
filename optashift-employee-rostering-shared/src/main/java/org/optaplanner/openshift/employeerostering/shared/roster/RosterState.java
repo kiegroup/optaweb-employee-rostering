@@ -5,16 +5,21 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 
 import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
 @Entity
+@NamedQueries({
+               @NamedQuery(name = "RosterState.find",
+                           query = "select distinct rs from RosterState rs" +
+                                   " where rs.tenantId = :tenantId")
+})
 public class RosterState extends AbstractPersistable {
 
     @NotNull
@@ -29,6 +34,8 @@ public class RosterState extends AbstractPersistable {
     private LocalDate firstDraftDate;
     @NotNull
     private Integer unplannedOffset;
+    @NotNull
+    private LocalDate lastHistoricDate;
 
     @SuppressWarnings("unused")
     public RosterState() {
@@ -94,6 +101,15 @@ public class RosterState extends AbstractPersistable {
         this.unplannedOffset = unplannedOffset;
     }
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public void setLastHistoricDate(LocalDate lastHistoricDate) {
+        this.lastHistoricDate = lastHistoricDate;
+    }
+
+    public LocalDate getLastHistoricDate() {
+        return lastHistoricDate;
+    }
+
     @JsonIgnore
     public boolean isHistoric(Shift shift) {
         return shift.getEndDateTime().isBefore(OffsetDateTime.of(getFirstPublishedDate().atTime(LocalTime.MIDNIGHT), shift.getEndDateTime().getOffset()));
@@ -117,7 +133,7 @@ public class RosterState extends AbstractPersistable {
 
     @JsonIgnore
     public LocalDate getFirstPublishedDate() {
-        return firstDraftDate.minusDays(publishLength);
+        return lastHistoricDate.plusDays(1);
     }
 
     @JsonIgnore
@@ -127,7 +143,7 @@ public class RosterState extends AbstractPersistable {
 
     @JsonIgnore
     public LocalDate getLastDraftDate() {
-        return firstDraftDate.plusDays(rotationLength);
+        return firstDraftDate.plusDays(draftLength);
     }
 
     @JsonIgnore

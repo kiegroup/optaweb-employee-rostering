@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.server.roster;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
+import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverManager;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
@@ -40,11 +42,14 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServi
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestService;
 
 public class RosterRestServiceImpl extends AbstractRestServiceImpl implements RosterRestService {
 
@@ -54,10 +59,19 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Inject
     private WannabeSolverManager solverManager;
 
+    @Inject
+    private ShiftFileParser shiftGenerator;
+
+    @Inject
+    private TenantRestService tenantRestService;
+
+    @Inject
+    private ShiftRestService shiftRestService;
+
     @Override
     @Transactional
     public SpotRosterView getCurrentSpotRosterView(Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage) {
-        RosterState rosterState = entityManager.find(Tenant.class, tenantId).getRosterState();
+        RosterState rosterState = getRosterState(tenantId);
         LocalDate startDate = rosterState.getFirstPublishedDate();
         LocalDate endDate = rosterState.getLastDraftDate();
         return getSpotRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
@@ -66,16 +80,16 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Override
     @Transactional
     public SpotRosterView getSpotRosterView(final Integer tenantId,
-            final String startDateString,
-            final String endDateString) {
+                                            final String startDateString,
+                                            final String endDateString) {
 
         return getSpotRosterView(tenantId, LocalDate.parse(startDateString), LocalDate.parse(endDateString));
     }
 
     private SpotRosterView getSpotRosterView(final Integer tenantId,
-            final LocalDate startDate,
-            final LocalDate endDate,
-            final Pagination pagination) {
+                                             final LocalDate startDate,
+                                             final LocalDate endDate,
+                                             final Pagination pagination) {
 
         final List<Spot> spots = entityManager.createNamedQuery("Spot.findAll", Spot.class)
                 .setParameter("tenantId", tenantId)
@@ -87,8 +101,8 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     }
 
     private SpotRosterView getSpotRosterView(final Integer tenantId,
-            final LocalDate startDate,
-            final LocalDate endDate) {
+                                             final LocalDate startDate,
+                                             final LocalDate endDate) {
 
         final List<Spot> spots = entityManager.createNamedQuery("Spot.findAll", Spot.class)
                 .setParameter("tenantId", tenantId)
@@ -99,8 +113,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Override
     @Transactional
-    public SpotRosterView getSpotRosterViewFor(Integer tenantId, String startDateString, String endDateString, List<
-            Spot> spots) {
+    public SpotRosterView getSpotRosterViewFor(Integer tenantId, String startDateString, String endDateString, List<Spot> spots) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         if (null == spots) {
@@ -111,8 +124,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     }
 
     @Transactional
-    protected SpotRosterView getSpotRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate, List<
-            Spot> spotList) {
+    protected SpotRosterView getSpotRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate, List<Spot> spotList) {
         SpotRosterView spotRosterView = new SpotRosterView(tenantId, startDate, endDate);
         spotRosterView.setSpotList(spotList);
         List<Employee> employeeList = entityManager.createNamedQuery("Employee.findAll", Employee.class)
@@ -145,8 +157,8 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Override
     @Transactional
     public EmployeeRosterView getCurrentEmployeeRosterView(Integer tenantId) {
-        RosterState rosterState = entityManager.find(Tenant.class, tenantId).getRosterState();
-        LocalDate startDate = rosterState.getFirstPublishedDate();
+        RosterState rosterState = getRosterState(tenantId);
+        LocalDate startDate = rosterState.getLastHistoricDate();
         LocalDate endDate = rosterState.getLastDraftDate();
         return getEmployeeRosterView(tenantId, startDate, endDate, entityManager.createNamedQuery("Employee.findAll",
                 Employee.class)
@@ -168,7 +180,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Override
     @Transactional
     public EmployeeRosterView getEmployeeRosterViewFor(Integer tenantId, String startDateString, String endDateString,
-            List<Employee> employees) {
+                                                       List<Employee> employees) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
         if (null == employees) {
@@ -178,8 +190,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     }
 
     @Transactional
-    protected EmployeeRosterView getEmployeeRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate, List<
-            Employee> employeeList) {
+    protected EmployeeRosterView getEmployeeRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate, List<Employee> employeeList) {
         EmployeeRosterView employeeRosterView = new EmployeeRosterView(tenantId, startDate, endDate);
         List<Spot> spotList = entityManager.createNamedQuery("Spot.findAll", Spot.class)
                 .setParameter("tenantId", tenantId)
@@ -248,11 +259,10 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .setParameter("tenantId", tenantId)
                 .getResultList();
 
-        Tenant tenant = entityManager.find(Tenant.class, tenantId);
         // TODO fill in the score too - do we inject a ScoreDirectorFactory?
         return new Roster((long) tenantId, tenantId,
                 skillList, spotList, employeeList, employeeAvailabilityList,
-                tenant.getConfiguration(), tenant.getRosterState(), shiftList);
+                tenantRestService.getTenantConfiguration(tenantId), getRosterState(tenantId), shiftList);
     }
 
     @Override
@@ -277,8 +287,48 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         }
     }
 
-    // TODO: Make this a REST method?
-    private RosterState getRosterState(Integer tenantId) {
-        return entityManager.find(Tenant.class, tenantId).getRosterState();
+    @Override
+    @Transactional
+    public void publishAndProvision(Integer tenantId) {
+        RosterState rosterState = getRosterState(tenantId);
+        publish(tenantId, rosterState.getPublishLength());
+        provision(tenantId, rosterState.getPublishLength());
+    }
+
+    @Override
+    @Transactional
+    public void publish(Integer tenantId, Integer lengthInDays) {
+        RosterState rosterState = getRosterState(tenantId);
+        rosterState.setFirstDraftDate(rosterState.getFirstDraftDate().plusDays(lengthInDays));
+        rosterState.setDraftLength(rosterState.getDraftLength() - lengthInDays);
+        entityManager.merge(rosterState);
+    }
+
+    @Override
+    @Transactional
+    public List<Long> provision(Integer tenantId, Integer lengthInDays) {
+        Collection<ShiftTemplate> shiftTemplates = shiftRestService.getTemplate(tenantId);
+        TenantConfiguration tenantConfiguration = tenantRestService.getTenantConfiguration(tenantId);
+        ShiftFileParser.ParserOut parserOutput = shiftGenerator.parse(tenantId, tenantConfiguration, getRosterState(tenantId),
+                lengthInDays, shiftTemplates);
+
+        List<Shift> shifts = parserOutput.getShiftOutputList();
+        List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOutputList();
+        List<Long> out = new ArrayList<>();
+        for (Shift shift : shifts) {
+            entityManager.persist(shift);
+            out.add(shift.getId());
+        }
+        for (EmployeeAvailability availability : employeeAvailabilities) {
+            entityManager.persist(availability);
+        }
+        return out;
+    }
+
+    @Override
+    public RosterState getRosterState(Integer tenantId) {
+        return entityManager.createNamedQuery("RosterState.find", RosterState.class)
+                .setParameter("tenantId", tenantId)
+                .getSingleResult();
     }
 }

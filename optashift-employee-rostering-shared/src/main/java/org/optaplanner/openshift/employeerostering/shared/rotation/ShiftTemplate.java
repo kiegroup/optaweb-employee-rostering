@@ -1,6 +1,10 @@
 package org.optaplanner.openshift.employeerostering.shared.rotation;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -9,10 +13,9 @@ import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 @Entity
@@ -110,5 +113,15 @@ public class ShiftTemplate extends AbstractPersistable {
 
     public void setRotationEmployee(Employee rotationEmployee) {
         this.rotationEmployee = rotationEmployee;
+    }
+
+    public Shift asShiftOnDate(LocalDate date, ZoneId timeZone) {
+        LocalDateTime startDateTime = date.atTime(getStartTime());
+        LocalDateTime endDateTime = date.plusDays(getOffsetEndDay() - getOffsetStartDay()).atTime(getEndTime());
+
+        // TODO: How to handle start/end time in transitions? Current is the Offset BEFORE the transition
+        OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime, timeZone.getRules().getOffset(startDateTime));
+        OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, timeZone.getRules().getOffset(endDateTime));
+        return new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, getRotationEmployee());
     }
 }

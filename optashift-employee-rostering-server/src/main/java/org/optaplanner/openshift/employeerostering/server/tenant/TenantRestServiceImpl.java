@@ -36,12 +36,12 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
     @Transactional
     public List<Tenant> getTenantList() {
         return entityManager.createNamedQuery("Tenant.findAll", Tenant.class)
-                            .getResultList();
+                .getResultList();
     }
 
     @Override
     @Transactional
-    public Tenant getTenant(Long id) {
+    public Tenant getTenant(Integer id) {
         Tenant tenant = entityManager.find(Tenant.class, id);
         return tenant;
     }
@@ -55,14 +55,15 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
 
     @Override
     @Transactional
-    public Tenant updateTenantConfiguration(TenantConfiguration tenantConfiguration) {
-        Tenant tenant = entityManager.find(Tenant.class, tenantConfiguration.getTenantId());
-        if (null == tenant) {
-            throw new IllegalStateException("There is no tenant with id (" +
-                                            tenantConfiguration.getTenantId() + ").");
-        }
-        tenant.setConfiguration(tenantConfiguration);
-        return entityManager.merge(tenant);
+    public TenantConfiguration updateTenantConfiguration(TenantConfiguration tenantConfiguration) {
+        return entityManager.merge(tenantConfiguration);
+    }
+
+    @Override
+    public TenantConfiguration getTenantConfiguration(Integer tenantId) {
+        return entityManager.createNamedQuery("TenantConfiguration.find", TenantConfiguration.class)
+                .setParameter("tenantId", tenantId)
+                .getSingleResult();
     }
 
 }
