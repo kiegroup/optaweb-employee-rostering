@@ -99,7 +99,7 @@
             <deployables>
               <deployable>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>${artifactId}</artifactId>
+                <artifactId>${project.artifactId}</artifactId>
                 <type>war</type>
                 <pingURL>${application.url}</pingURL>
                 <pingTimeout>30000</pingTimeout>
@@ -225,28 +225,8 @@
         </property>
       </activation>
       <properties>
-        <skipTests>true</skipTests>
+        <cargo.maven.skip>true</cargo.maven.skip>
       </properties>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.codehaus.cargo</groupId>
-              <artifactId>cargo-maven2-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>start-container</id>
-                  <phase>none</phase>
-                </execution>
-                <execution>
-                  <id>stop-container</id>
-                  <phase>none</phase>
-                </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
     </profile>
   </profiles>
 </project>

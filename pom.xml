@@ -67,15 +67,13 @@
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.net.ltgt.gwt.maven.gwt-maven-plugin>1.0-rc-9</version.net.ltgt.gwt.maven.gwt-maven-plugin>
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
-    <version.org.jboss.arquillian>1.2.1.Final</version.org.jboss.arquillian>
     <version.org.jboss.errai>4.1.2.Final</version.org.jboss.errai>
     <version.org.jboss.resteasy>3.1.4.Final</version.org.jboss.resteasy>
     <version.org.optaplanner>${project.version}</version.org.optaplanner>
     <version.org.slf4j>1.7.25</version.org.slf4j>
     <version.org.webjars.bower.org.patternfly>3.18.1</version.org.webjars.bower.org.patternfly>
     <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
-    <version.org.wildfly.arquillian>2.1.0.Final</version.org.wildfly.arquillian>
-    <version.org.wildfly.wildfly-dist>10.1.0.Final</version.org.wildfly.wildfly-dist>
+    <version.org.wildfly.wildfly-dist>11.0.0.Final</version.org.wildfly.wildfly-dist>
     <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.5</version.org.codehaus.cargo.cargo-maven2-plugin>
     <version.wildfly>11.0.0.Final</version.wildfly>
   </properties>
@@ -202,18 +200,6 @@
         <version>${version.org.jboss.errai}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.arquillian</groupId>
-        <artifactId>arquillian-bom</artifactId>
-        <version>${version.org.jboss.arquillian}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.wildfly.arquillian</groupId>
-        <artifactId>wildfly-arquillian-container-managed</artifactId>
-        <version>${version.org.wildfly.arquillian}</version>
       </dependency>
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
@@ -418,12 +404,11 @@
     <profile>
       <!-- Use this profile for any OpenShift specific customization your 
         app will need. -->
-      <!-- By default that is to put the resulting archive into the 'deployments' 
-        folder. -->
       <id>openshift</id>
       <properties>
         <wildfly.install.skip>true</wildfly.install.skip>
         <antrun.skip>true</antrun.skip>
+        <cargo.maven.skip>true</cargo.maven.skip>
       </properties>
       <build>
         <plugins>
@@ -443,6 +428,14 @@
                 <arg>-Xmx1024m</arg>
                 <arg>-Xss256k</arg>
               </jvmArgs>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <configuration>
+              <!-- Because cargo was skipped -->
+              <skipITs>true</skipITs>
             </configuration>
           </plugin>
         </plugins>
