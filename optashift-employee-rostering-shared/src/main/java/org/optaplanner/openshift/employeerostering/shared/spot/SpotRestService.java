@@ -39,7 +39,7 @@ public interface SpotRestService {
      */
     @ApiOperation("Get a spot by id")
     @GET
-    @Path("/{id : \\d+}")
+    @Path("/{id}")
     Spot getSpot(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                  @ApiParam(required = true) @PathParam("id") Long id);
 
@@ -69,7 +69,7 @@ public interface SpotRestService {
      */
     @ApiOperation("Delete a spot")
     @DELETE
-    @Path("/{id : \\d+}")
+    @Path("/{id}")
     Boolean removeSpot(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                        @ApiParam(required = true) @PathParam("id") Long id);
 
