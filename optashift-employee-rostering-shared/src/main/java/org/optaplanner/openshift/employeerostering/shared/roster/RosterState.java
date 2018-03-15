@@ -12,8 +12,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSerializer;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
 @Entity
@@ -79,8 +77,6 @@ public class RosterState extends AbstractPersistable {
         this.rotationLength = rotationLength;
     }
 
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getFirstDraftDate() {
         return firstDraftDate;

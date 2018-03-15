@@ -28,10 +28,6 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSerializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetTimeDeserializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetTimeSerializer;
 
 public class EmployeeAvailabilityView extends AbstractPersistable {
 
@@ -85,8 +81,6 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.employeeId = employeeId;
     }
 
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getDate() {
         return date;
@@ -96,8 +90,6 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.date = date;
     }
 
-    @JsonSerialize(using = OffsetTimeSerializer.class)
-    @JsonDeserialize(using = OffsetTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetTime getStartTime() {
         return startTime;
@@ -107,8 +99,6 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.startTime = startTime;
     }
 
-    @JsonSerialize(using = OffsetTimeSerializer.class)
-    @JsonDeserialize(using = OffsetTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetTime getEndTime() {
         return endTime;

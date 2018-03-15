@@ -11,8 +11,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSerializer;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.persistence.jackson.api.score.ScoreJacksonJsonSerializer;
@@ -52,8 +50,6 @@ public class AbstractRosterView implements Serializable {
         this.tenantId = tenantId;
     }
 
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getStartDate() {
         return startDate;
@@ -63,8 +59,6 @@ public class AbstractRosterView implements Serializable {
         this.startDate = startDate;
     }
 
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getEndDate() {
         return endDate;

@@ -33,10 +33,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateDeserializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.LocalDateSerializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetTimeDeserializer;
-import org.optaplanner.openshift.employeerostering.shared.jackson.OffsetTimeSerializer;
 
 @Entity
 @NamedQueries({
@@ -99,8 +95,6 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.employee = employee;
     }
 
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getDate() {
         return date;
@@ -110,8 +104,6 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.date = date;
     }
 
-    @JsonSerialize(using = OffsetTimeSerializer.class)
-    @JsonDeserialize(using = OffsetTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetTime getStartTime() {
         return startTime;
@@ -121,8 +113,6 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.startTime = startTime;
     }
 
-    @JsonSerialize(using = OffsetTimeSerializer.class)
-    @JsonDeserialize(using = OffsetTimeDeserializer.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetTime getEndTime() {
         return endTime;

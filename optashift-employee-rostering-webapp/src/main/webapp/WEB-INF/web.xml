@@ -20,7 +20,7 @@
     <param-value>
       io.swagger.jaxrs.listing.ApiListingResource,
       io.swagger.jaxrs.listing.SwaggerSerializers,
-      package org.optaplanner.openshift.employeerostering.server.common.exception.OptashiftExceptionMapper
+      package org.optaplanner.openshift.employeerostering.server.common.jaxrs.OptaShiftExceptionMapper
     </param-value>
     
   </context-param>
