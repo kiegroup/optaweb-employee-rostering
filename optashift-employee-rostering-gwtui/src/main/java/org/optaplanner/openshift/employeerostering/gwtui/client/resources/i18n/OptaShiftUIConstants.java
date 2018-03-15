@@ -5,7 +5,7 @@ import org.jboss.errai.ui.shared.api.annotations.TranslationKey;
 public interface OptaShiftUIConstants {
 
     @TranslationKey(
-            defaultValue = "The server returned an empty result which is impossible.\nMaybe the server is using the wrong WildFly version. Try using WildFly 10.1.0.Final.")
+            defaultValue = "The server returned an empty result which is impossible.\nMaybe the server is using the wrong WildFly version.")
     final String AbstractRosterViewPanel_emptyResult = "AbstractRosterViewPanel.emptyResult";
 
     @TranslationKey(defaultValue = "Finished solving")
