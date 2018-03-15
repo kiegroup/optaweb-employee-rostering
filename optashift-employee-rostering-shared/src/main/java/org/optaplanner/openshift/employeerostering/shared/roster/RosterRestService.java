@@ -31,6 +31,14 @@ import static java.lang.Integer.MAX_VALUE;
 public interface RosterRestService {
 
     // ************************************************************************
+    // RosterState
+    // ************************************************************************
+    @ApiOperation("Fetches the current Roster State")
+    @GET
+    @Path("/state")
+    RosterState getRosterState(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
+
+    // ************************************************************************
     // SpotRosterView
     // ************************************************************************
 
@@ -77,7 +85,7 @@ public interface RosterRestService {
     @ApiOperation("Get an employee roster view between 2 dates for a subset of the employees")
     @POST
     @Path("/employeeRosterView/for")
-        // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
+    // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
     EmployeeRosterView getEmployeeRosterViewFor(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                                                 @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
                                                 @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString,
@@ -97,9 +105,20 @@ public interface RosterRestService {
     @Path("/terminate")
     void terminateRosterEarly(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
 
+    @ApiOperation("Publishes the next set of draft shifts and creates new draft shift from the rotation template.")
+    @POST
+    @Path("/publishAndProvision")
+    void publishAndProvision(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
+
     // Not a REST method
     Roster buildRoster(Integer tenantId);
 
     // Not a REST method
     void updateShiftsOfRoster(Roster newRoster);
+
+    // Not a REST method
+    void publish(Integer tenantId, Integer lengthInDays);
+
+    // Not a REST method
+    List<Long> provision(Integer tenantId, Integer lengthInDays);
 }

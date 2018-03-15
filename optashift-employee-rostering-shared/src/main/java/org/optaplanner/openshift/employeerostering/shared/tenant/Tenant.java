@@ -18,15 +18,12 @@ package org.optaplanner.openshift.employeerostering.shared.tenant;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
@@ -34,7 +31,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.optaplanner.core.api.domain.lookup.PlanningId;
-import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Entity
 @NamedQueries({
@@ -53,32 +49,15 @@ public class Tenant implements Serializable {
     @Version
     protected Long version;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
-    private TenantConfiguration configuration;
-
-    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, optional = false)
-    private RosterState rosterState;
-
     @NotNull
     @Size(min = 1, max = 120)
     private String name;
 
     @SuppressWarnings("unused")
-    public Tenant() {
-        this.configuration = new TenantConfiguration();
-        this.rosterState = new RosterState();
-    }
+    public Tenant() {}
 
     public Tenant(String name) {
         this.name = name;
-        this.configuration = new TenantConfiguration();
-        this.rosterState = new RosterState();
-    }
-
-    public Tenant(String name, TenantConfiguration configuration, RosterState rosterState) {
-        this.name = name;
-        this.configuration = configuration;
-        this.rosterState = rosterState;
     }
 
     @Override
@@ -120,7 +99,6 @@ public class Tenant implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-        configuration.setTenantId(id);
     }
 
     public Long getVersion() {
@@ -137,23 +115,6 @@ public class Tenant implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public TenantConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(TenantConfiguration configuration) {
-        this.configuration = configuration;
-        configuration.setTenantId(id);
-    }
-
-    public RosterState getRosterState() {
-        return rosterState;
-    }
-
-    public void setRosterState(RosterState rosterState) {
-        this.rosterState = rosterState;
     }
 
 }

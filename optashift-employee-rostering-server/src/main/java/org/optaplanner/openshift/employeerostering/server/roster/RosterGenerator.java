@@ -40,11 +40,13 @@ import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileP
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 @Singleton
 @Startup
@@ -83,8 +85,7 @@ public class RosterGenerator {
     private ShiftFileParser shiftGenerator;
 
     @SuppressWarnings("unused")
-    public RosterGenerator() {
-    }
+    public RosterGenerator() {}
 
     /**
      * For benchmark only
@@ -111,9 +112,9 @@ public class RosterGenerator {
 
     @Transactional
     public Roster generateRoster(int spotListSize,
-            int lengthInDays,
-            boolean continuousPlanning,
-            boolean assignDefaultEmployee) {
+                                 int lengthInDays,
+                                 boolean continuousPlanning,
+                                 boolean assignDefaultEmployee) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
         Integer tenantId = createTenant(spotListSize, employeeListSize, lengthInDays);
@@ -122,16 +123,16 @@ public class RosterGenerator {
 
         List<Employee> employeeList = createEmployeeList(tenantId, employeeListSize, skillList);
 
-        Tenant tenant = entityManager.find(Tenant.class, tenantId);
+        RosterState rosterState = entityManager.createNamedQuery("RosterState.find", RosterState.class)
+                .setParameter("tenantId", tenantId)
+                .getSingleResult();
+        TenantConfiguration tenantConfiguration = entityManager.createNamedQuery("TenantConfiguration.find", TenantConfiguration.class)
+                .setParameter("tenantId", tenantId)
+                .getSingleResult();
 
-        LocalDate origDraftDate = tenant.getRosterState().getFirstDraftDate();
-        tenant.getRosterState().setFirstDraftDate(origDraftDate.minusDays(tenant.getRosterState().getPublishLength()));
-
-        ShiftFileParser.ParserOut parserOutput = shiftGenerator.parse(tenantId, tenant.getConfiguration(), tenant
-                .getRosterState(), tenant.getRosterState().getPublishLength()
-                        + tenant.getRosterState().getDraftLength(), generateShiftTemplate(tenantId, spotList,
-                                employeeList,
-                                assignDefaultEmployee));
+        ShiftFileParser.ParserOut parserOutput = shiftGenerator.parse(tenantId, tenantConfiguration, rosterState, rosterState.getPublishLength() * 2, generateShiftTemplate(tenantId, spotList,
+                employeeList,
+                assignDefaultEmployee));
 
         for (Shift shift : parserOutput.getShiftOutputList()) {
             entityManager.persist(shift);
@@ -139,7 +140,6 @@ public class RosterGenerator {
         for (EmployeeAvailability avaliability : parserOutput.getEmployeeAvailabilityOutputList()) {
             entityManager.persist(avaliability);
         }
-        parserOutput.getNewRosterState().setFirstDraftDate(origDraftDate);
         entityManager.merge(parserOutput.getNewRosterState());
 
         List<Shift> shiftList = parserOutput.getShiftOutputList();
@@ -148,7 +148,7 @@ public class RosterGenerator {
 
         return new Roster((long) tenantId, tenantId,
                 skillList, spotList, employeeList, employeeAvailabilityList,
-                tenant.getConfiguration(), tenant.getRosterState(), shiftList);
+                tenantConfiguration, rosterState, shiftList);
     }
 
     private class SpotSettings {
@@ -287,9 +287,9 @@ public class RosterGenerator {
     }
 
     private List<ShiftTemplate> generateShiftTemplate(Integer tenantId,
-            List<Spot> spots,
-            List<Employee> employees,
-            boolean assignDefaultEmployee) {
+                                                      List<Spot> spots,
+                                                      List<Employee> employees,
+                                                      boolean assignDefaultEmployee) {
         List<ShiftTemplate> out = new ArrayList<>();
         List<SpotSettings> spotSettingList = new ArrayList<SpotSettings>();
         spots.forEach((s) -> spotSettingList.add(new SpotSettings(s)));
@@ -342,9 +342,9 @@ public class RosterGenerator {
     }
 
     private List<TimeSlotInfo> getTimeSlotsFor(int tenantId,
-            SpotSettings spotSettings,
-            LocalDateTime start,
-            LocalDateTime end) {
+                                               SpotSettings spotSettings,
+                                               LocalDateTime start,
+                                               LocalDateTime end) {
         List<TimeSlotInfo> out = new ArrayList<>();
         Duration duration = Duration.ZERO;
         for (int i = 0; duration.compareTo(Duration.between(start, end)) < 0; i++, duration = duration.plus(
@@ -355,12 +355,12 @@ public class RosterGenerator {
     }
 
     private List<ShiftTemplate> createShiftTemplates(int tenantId,
-            Spot spot,
-            int shifts,
-            List<Employee> employeeList,
-            LocalDateTime start,
-            LocalDateTime end,
-            boolean assignDefaultEmployee) {
+                                                     Spot spot,
+                                                     int shifts,
+                                                     List<Employee> employeeList,
+                                                     LocalDateTime start,
+                                                     LocalDateTime end,
+                                                     boolean assignDefaultEmployee) {
         List<ShiftTemplate> out = new ArrayList<>(shifts);
         for (int i = 0; i < shifts; i++) {
             ShiftTemplate shift = new ShiftTemplate();
@@ -378,17 +378,21 @@ public class RosterGenerator {
     }
 
     private Integer createTenant(int spotListSize, int employeeListSize, int lengthInDays) {
-        Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue() + " (" + employeeListSize + " employees, "
-                + spotListSize + "spots)");
-        tenant.getRosterState().setDraftLength(lengthInDays);
-        tenant.getRosterState().setFirstDraftDate(LocalDate.now().plusDays(lengthInDays * 2));
-        tenant.getRosterState().setPublishLength(lengthInDays * 2);
-        tenant.getRosterState().setPublishNotice(lengthInDays);
-        tenant.getRosterState().setRotationLength(7);
-        tenant.getRosterState().setUnplannedOffset(0);
+        Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue() + " (" + employeeListSize + " employees, " + spotListSize + "spots)");
+        TenantConfiguration configuration = new TenantConfiguration();
+        RosterState rosterState = new RosterState();
+        rosterState.setDraftLength(0);
+        rosterState.setFirstDraftDate(LocalDate.now());
+        rosterState.setPublishLength(lengthInDays);
+        rosterState.setPublishNotice(lengthInDays);
+        rosterState.setRotationLength(7);
+        rosterState.setUnplannedOffset(0);
+        rosterState.setLastHistoricDate(LocalDate.now());
         entityManager.persist(tenant);
-        tenant.getConfiguration().setTenantId(tenant.getId());
-        tenant.getRosterState().setTenantId(tenant.getId());
+        configuration.setTenantId(tenant.getId());
+        rosterState.setTenantId(tenant.getId());
+        entityManager.persist(rosterState);
+        entityManager.persist(configuration);
         return tenant.getId();
     }
 

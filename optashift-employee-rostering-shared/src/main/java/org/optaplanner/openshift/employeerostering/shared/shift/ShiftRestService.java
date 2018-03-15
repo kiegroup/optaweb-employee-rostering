@@ -62,10 +62,6 @@ public interface ShiftRestService {
     @Path("/template")
     Collection<ShiftTemplate> getTemplate(@PathParam("tenantId") Integer tenantId);
 
-    @PUT
-    @Path("/add/fromTemplate")
-    List<Long> addShiftsFromTemplate(@PathParam("tenantId") Integer tenantId, Integer lengthInDays);
-
     /**
      * @param id never null
      * @return return true if the shift was removed, false otherwise

@@ -16,13 +16,10 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -44,12 +41,13 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
@@ -103,10 +101,13 @@ public class RotationPage implements Page {
             final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate).stream()
                     .collect(groupingBy(Shift::getSpot));
 
-            viewport = rotationViewportFactory.getViewport(shiftsBySpot);
-            viewportView.setViewport(viewport);
-            loadingSpinner.hideFor("rotation-page");
-            return resolve();
+            return fetchRosterState().then(rosterState -> {
+                viewport = rotationViewportFactory.getViewport(rosterState, shiftsBySpot);
+                viewportView.setViewport(viewport);
+                loadingSpinner.hideFor("rotation-page");
+                return resolve();
+            });
+
         }).catch_(i -> {
             loadingSpinner.hideFor("rotation-page");
             return resolve();
@@ -116,6 +117,12 @@ public class RotationPage implements Page {
     private Promise<Collection<ShiftTemplate>> fetchShiftTemplate() {
         return new Promise<>((resolve, reject) -> {
             ShiftRestServiceBuilder.getTemplate(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
+        });
+    }
+
+    private Promise<RosterState> fetchRosterState() {
+        return new Promise<>((resolve, reject) -> {
+            RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
         });
     }
 
@@ -137,31 +144,31 @@ public class RotationPage implements Page {
 
         return newShift;
     }
-    
+
     public static LocalDate getBaseDate() {
         return LocalDate.of(0, 1, 1);
     }
-    
+
     public static OffsetDateTime getBaseDateTime() {
         return OffsetDateTime.of(getBaseDate().atTime(LocalTime.MIDNIGHT), ZoneOffset.UTC);
     }
-    
+
     private OffsetDateTime getStartDateTime(ShiftTemplate shift) {
         return OffsetDateTime.of(getBaseDate()
                 .plusDays(shift.getOffsetStartDay())
-                .atTime(shift.getStartTime()),ZoneOffset.UTC);
+                .atTime(shift.getStartTime()), ZoneOffset.UTC);
     }
-    
+
     private OffsetDateTime getEndDateTime(ShiftTemplate shift) {
         return OffsetDateTime.of(getBaseDate()
                 .plusDays(shift.getOffsetEndDay())
-                .atTime(shift.getEndTime()),ZoneOffset.UTC);
+                .atTime(shift.getEndTime()), ZoneOffset.UTC);
     }
-    
+
     private int getOffsetStartDay(Shift shift) {
         return DateTimeUtils.daysBetween(getBaseDate(), shift.getStartDateTime());
     }
-    
+
     private int getOffsetEndDay(Shift shift) {
         return DateTimeUtils.daysBetween(getBaseDate(), shift.getEndDateTime());
     }
@@ -196,7 +203,7 @@ public class RotationPage implements Page {
 
     private ShiftTemplate newShiftTemplate(final Shift shift) {
         return new ShiftTemplate(tenantStore.getCurrentTenantId(),
-                             shift.getSpot(), getOffsetStartDay(shift), DateTimeUtils.getLocalTimeOf(shift.getStartDateTime()), 
-                             getOffsetEndDay(shift), DateTimeUtils.getLocalTimeOf(shift.getEndDateTime()), shift.getRotationEmployee());
+                shift.getSpot(), getOffsetStartDay(shift), DateTimeUtils.getLocalTimeOf(shift.getStartDateTime()),
+                getOffsetEndDay(shift), DateTimeUtils.getLocalTimeOf(shift.getEndDateTime()), shift.getRotationEmployee());
     }
 }

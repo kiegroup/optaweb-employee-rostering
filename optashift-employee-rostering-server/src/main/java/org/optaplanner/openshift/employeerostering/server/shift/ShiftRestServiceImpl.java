@@ -16,40 +16,27 @@
 
 package org.optaplanner.openshift.employeerostering.server.shift;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
-import org.optaplanner.openshift.employeerostering.server.lang.parser.ShiftFileParser;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements ShiftRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
-
-    @Inject
-    private ShiftFileParser shiftGenerator;
 
     @Override
     @Transactional
@@ -84,8 +71,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         if (rotationEmployeeId != null) {
             rotationEmployee = entityManager.find(Employee.class, rotationEmployeeId);
             if (rotationEmployee == null) {
-                throw new IllegalArgumentException("ShiftView (" + shiftView
-                                                           + ") has an non-existing employeeId (" + rotationEmployeeId + ").");
+                throw new IllegalArgumentException("ShiftView (" + shiftView + ") has an non-existing employeeId (" + rotationEmployeeId + ").");
             }
             validateTenantIdParameter(tenantId, rotationEmployee);
         }
@@ -97,8 +83,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         if (employeeId != null) {
             Employee employee = entityManager.find(Employee.class, employeeId);
             if (employee == null) {
-                throw new IllegalArgumentException("ShiftView (" + shiftView
-                                                           + ") has an non-existing employeeId (" + employeeId + ").");
+                throw new IllegalArgumentException("ShiftView (" + shiftView + ") has an non-existing employeeId (" + employeeId + ").");
             }
             validateTenantIdParameter(tenantId, employee);
             shift.setEmployee(employee);
@@ -116,28 +101,6 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         validateTenantIdParameter(tenantId, shift);
         entityManager.remove(shift);
         return true;
-    }
-
-    @Override
-    @Transactional
-    public List<Long> addShiftsFromTemplate(Integer tenantId, Integer lengthInDays) {
-        Collection<ShiftTemplate> shiftTemplates = getTemplate(tenantId);
-
-        TenantConfiguration tenantConfiguration = entityManager.find(Tenant.class, tenantId).getConfiguration();
-        ShiftFileParser.ParserOut parserOutput = shiftGenerator.parse(tenantId, tenantConfiguration, null,
-                lengthInDays, shiftTemplates);
-
-        List<Shift> shifts = parserOutput.getShiftOutputList();
-        List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOutputList();
-        List<Long> out = new ArrayList<>();
-        for (Shift shift : shifts) {
-            entityManager.persist(shift);
-            out.add(shift.getId());
-        }
-        for (EmployeeAvailability availability : employeeAvailabilities) {
-            entityManager.persist(availability);
-        }
-        return out;
     }
 
     @Override
