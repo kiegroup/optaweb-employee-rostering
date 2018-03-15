@@ -39,7 +39,7 @@ public interface SkillRestService {
      */
     @ApiOperation("Get a skill by id")
     @GET
-    @Path("/{id : \\d+}")
+    @Path("/{id}")
     Skill getSkill(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                    @ApiParam(required = true) @PathParam("id") Long id);
 
@@ -69,7 +69,7 @@ public interface SkillRestService {
      */
     @ApiOperation("Delete a skill")
     @DELETE
-    @Path("/{id : \\d+}")
+    @Path("/{id}")
     Boolean removeSkill(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                         @ApiParam(required = true) @PathParam("id") Long id);
 

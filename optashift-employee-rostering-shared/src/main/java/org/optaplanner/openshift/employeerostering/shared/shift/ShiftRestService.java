@@ -32,7 +32,7 @@ public interface ShiftRestService {
      * @return never null, the id
      */
     @GET
-    @Path("/{id : \\d+}")
+    @Path("/{id}")
     ShiftView getShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
     @GET
@@ -71,7 +71,7 @@ public interface ShiftRestService {
      * @return return true if the shift was removed, false otherwise
      */
     @DELETE
-    @Path("/{id : \\d+}")
+    @Path("/{id}")
     Boolean removeShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
 }

@@ -41,7 +41,7 @@ public interface EmployeeRestService {
      */
     @ApiOperation("Get an employee by id")
     @GET
-    @Path("/{id : \\d+}")
+    @Path("/{id}")
     Employee getEmployee(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                          @ApiParam(required = true) @PathParam("id") Long id);
 
@@ -71,7 +71,7 @@ public interface EmployeeRestService {
      */
     @ApiOperation("Delete an employee")
     @DELETE
-    @Path("/{id : \\d+}")
+    @Path("/{id}")
     Boolean removeEmployee(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                            @ApiParam(required = true) @PathParam("id") Long id);
 
@@ -101,7 +101,7 @@ public interface EmployeeRestService {
      * @return never null, the id
      */
     @DELETE
-    @Path("/availability/{id : \\d+}")
+    @Path("/availability/{id}")
     Boolean removeEmployeeAvailability(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                                        @ApiParam(required = true) @PathParam("id") Long id);
 
