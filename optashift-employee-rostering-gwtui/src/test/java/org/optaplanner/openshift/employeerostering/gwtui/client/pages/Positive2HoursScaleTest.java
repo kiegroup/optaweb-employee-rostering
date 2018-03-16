@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;

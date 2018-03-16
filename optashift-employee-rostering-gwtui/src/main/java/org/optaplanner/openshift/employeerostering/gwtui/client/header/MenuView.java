@@ -36,10 +36,10 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATION;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
 
 @Templated
 public class MenuView implements IsElement {
@@ -65,8 +65,8 @@ public class MenuView implements IsElement {
     private HTMLAnchorElement spotRoster;
 
     @Inject
-    @DataField("rotations")
-    private HTMLAnchorElement rotations;
+    @DataField("rotation")
+    private HTMLAnchorElement rotation;
 
     @Inject
     private Event<PageChange> pageChangeEvent;
@@ -74,7 +74,7 @@ public class MenuView implements IsElement {
     @PostConstruct
     private void initMenu() {
         pageChangeEvent.fire(new PageChange(Pages.Id.SKILLS));
-        setInactive(skills, spots, employees, rotations, spotRoster, employeeRoster);
+        setInactive(skills, spots, employees, rotation, spotRoster, employeeRoster);
         setActive(skills);
     }
 
@@ -103,9 +103,9 @@ public class MenuView implements IsElement {
         goTo(SPOT_ROSTER, e);
     }
 
-    @EventHandler("rotations")
+    @EventHandler("rotation")
     public void rotations(final @ForEvent("click") MouseEvent e) {
-        goTo(ROTATIONS, e);
+        goTo(ROTATION, e);
     }
 
     private void goTo(final Pages.Id pageId,
@@ -116,7 +116,7 @@ public class MenuView implements IsElement {
     }
 
     private void handleActiveLink(final HTMLElement target) {
-        setInactive(skills, spots, employees, employeeRoster, rotations, spotRoster);
+        setInactive(skills, spots, employees, employeeRoster, rotation, spotRoster);
         setActive(target);
     }
 

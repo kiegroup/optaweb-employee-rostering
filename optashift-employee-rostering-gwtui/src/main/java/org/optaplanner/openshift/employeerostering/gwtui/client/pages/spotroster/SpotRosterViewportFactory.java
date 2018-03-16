@@ -28,6 +28,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Positive2HoursScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLinesFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.TicksFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListElementViewPool;

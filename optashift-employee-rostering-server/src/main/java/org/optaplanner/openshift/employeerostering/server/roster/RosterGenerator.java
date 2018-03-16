@@ -255,8 +255,7 @@ public class RosterGenerator {
         AFTERNOON(Duration.ofDays(1), hour(12 + 4), hour(24)),
         //10pm-6am (next day)
         NIGHT(Duration.ofDays(1), hour(12 + 10), day(1).plusHours(6)),
-        LONG_DAY(Duration.ofDays(1), hour(9), hour(24)),
-        LONG_NIGHT(Duration.ofDays(1), hour(7), day(1).plusHours(7));
+        LONG_DAY(Duration.ofDays(1), hour(9), hour(24));
 
         List<TimeSlotInfo> timeSlotInfoList;
         Duration offsetLength;
@@ -448,11 +447,11 @@ public class RosterGenerator {
 
     private List<EmployeeAvailability> createEmployeeAvailabilityList(int tenantId, TenantConfiguration config, List<
             Employee> employeeList, LocalDate fromDate, LocalDate toDate) {
-        List<EmployeeAvailability> out = new ArrayList<>();
         List<LocalDate> datesBetween = new ArrayList<>();
         for (LocalDate currDate = fromDate; currDate.isBefore(toDate); currDate = currDate.plusDays(1)) {
             datesBetween.add(currDate);
         }
+        // TODO: Use TimeSlotPattern to make this more realistic
         for (LocalDate date : datesBetween) {
             List<Employee> employeesListCopy = new ArrayList<>(employeeList);
             List<Employee> unavailableEmployees = new ArrayList<>(extractRandomSubList(employeesListCopy, 0.3));
@@ -462,33 +461,27 @@ public class RosterGenerator {
             List<Employee> desiredEmployees = new ArrayList<>(extractRandomSubList(employeesListCopy, 0.3));
             employeesListCopy.removeAll(desiredEmployees);
 
-            unavailableEmployees.forEach((e) -> {
-                EmployeeAvailability toAdd = new EmployeeAvailability(tenantId, e, date, OffsetTime.of(LocalTime.MIN,
-                        config.getTimeZone().getRules().getOffset(date.atStartOfDay())), OffsetTime.of(LocalTime.MAX,
-                                config
-                                        .getTimeZone().getRules().getOffset(date.atTime(LocalTime.MAX))));
-                toAdd.setState(EmployeeAvailabilityState.UNAVAILABLE);
-                out.add(toAdd);
-            });
-            undesiredEmployees.forEach((e) -> {
-                EmployeeAvailability toAdd = new EmployeeAvailability(tenantId, e, date, OffsetTime.of(LocalTime.MIN,
-                        config.getTimeZone().getRules().getOffset(date.atStartOfDay())), OffsetTime.of(LocalTime.MAX,
-                                config
-                                        .getTimeZone().getRules().getOffset(date.atTime(LocalTime.MAX))));
-                toAdd.setState(EmployeeAvailabilityState.UNDESIRED);
-                out.add(toAdd);
-            });
-            desiredEmployees.forEach((e) -> {
-                EmployeeAvailability toAdd = new EmployeeAvailability(tenantId, e, date, OffsetTime.of(LocalTime.MIN,
-                        config.getTimeZone().getRules().getOffset(date.atStartOfDay())), OffsetTime.of(LocalTime.MAX,
-                                config
-                                        .getTimeZone().getRules().getOffset(date.atTime(LocalTime.MAX))));
-                toAdd.setState(EmployeeAvailabilityState.DESIRED);
-                out.add(toAdd);
-            });
+            unavailableEmployees.forEach(e -> createEmployeeAvailability(tenantId, config, e, date,
+                    EmployeeAvailabilityState.UNAVAILABLE));
+            undesiredEmployees.forEach(e -> createEmployeeAvailability(tenantId, config, e, date,
+                    EmployeeAvailabilityState.UNDESIRED));
+            desiredEmployees.forEach(e -> createEmployeeAvailability(tenantId, config, e, date,
+                    EmployeeAvailabilityState.DESIRED));
         }
-        out.forEach((e) -> entityManager.persist(e));
-        return out;
+        return entityManager.createNamedQuery("EmployeeAvailability.findAll", EmployeeAvailability.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
+    }
+
+    private void createEmployeeAvailability(int tenantId, TenantConfiguration config, Employee employee, LocalDate date,
+            EmployeeAvailabilityState state) {
+        EmployeeAvailability availability = new EmployeeAvailability(tenantId, employee, date, OffsetTime.of(
+                LocalTime.MIN,
+                config.getTimeZone().getRules().getOffset(date.atStartOfDay())), OffsetTime.of(LocalTime.MAX,
+                        config
+                                .getTimeZone().getRules().getOffset(date.atTime(LocalTime.MAX))));
+        availability.setState(state);
+        entityManager.persist(availability);
     }
 
     private <E> List<E> extractRandomSubList(List<E> list, double maxRelativeSize) {
@@ -507,82 +500,5 @@ public class RosterGenerator {
         subList.subList(length, subList.size()).clear();
         return subList;
     }
-
-    // TODO: Implement some of the logic from these methods into generateShiftTemplate
-
-    /*private List<TimeSlot> createTimeSlotList(Integer tenantId, int size, boolean continuousPlanning) {
-        List<TimeSlot> timeSlotList = new ArrayList<>(size);
-        LocalDateTime previousEndDateTime = LocalDateTime.of(2017, 2, 1, 6, 0);
-        for (int i = 0; i < size; i++) {
-            LocalDateTime startDateTime = previousEndDateTime;
-            LocalDateTime endDateTime = startDateTime.plusHours(8);
-            TimeSlot timeSlot = new TimeSlot(tenantId, startDateTime, endDateTime);
-            if (continuousPlanning && i < size / 2) {
-                if (i < size / 4) {
-                    timeSlot.setTimeSlotState(TimeSlotState.HISTORY);
-                } else {
-                    timeSlot.setTimeSlotState(TimeSlotState.TENTATIVE);
-                }
-            } else {
-                timeSlot.setTimeSlotState(TimeSlotState.DRAFT);
-            }
-            entityManager.persist(timeSlot);
-            timeSlotList.add(timeSlot);
-            previousEndDateTime = endDateTime;
-        }
-        return timeSlotList;
-    }
-    
-    private List<EmployeeAvailability> createEmployeeAvailabilityList(Integer tenantId,
-            List<Employee> employeeList, List<TimeSlot> timeSlotList) {
-        List<EmployeeAvailability> employeeAvailabilityList = new ArrayList<>(employeeList.size() * timeSlotList.size());
-        for (Employee employee : employeeList) {
-            for (TimeSlot timeSlot : extractRandomSubList(timeSlotList, 0.6)) {
-                EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee, timeSlot);
-                employeeAvailability.setState(EmployeeAvailabilityState.values()[
-                        random.nextInt(EmployeeAvailabilityState.values().length)]);
-                entityManager.persist(employeeAvailability);
-            }
-        }
-        return employeeAvailabilityList;
-    }
-    
-    private List<Shift> createShiftList(Integer tenantId, List<Spot> spotList, List<TimeSlot> timeSlotList,
-            List<Employee> employeeList, boolean continuousPlanning) {
-        List<Shift> shiftList = new ArrayList<>(spotList.size() * timeSlotList.size());
-        for (Spot spot : spotList) {
-            boolean weekendEnabled = random.nextInt(10) < 8;
-            boolean nightEnabled = weekendEnabled && random.nextInt(10) < 8;
-            int timeSlotIndex = 0;
-            for (TimeSlot timeSlot : timeSlotList) {
-                DayOfWeek dayOfWeek = timeSlot.getStartDateTime().getDayOfWeek();
-                if (!weekendEnabled && (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY)) {
-                    timeSlotIndex++;
-                    continue;
-                }
-                if (!nightEnabled && timeSlot.getStartDateTime().getHour() >= 20) {
-                    timeSlotIndex++;
-                    continue;
-                }
-                Shift shift = new Shift(tenantId, spot, timeSlot);
-                if (continuousPlanning) {
-                    if (timeSlotIndex < timeSlotList.size() / 2) {
-                        List<Employee> availableEmployeeList = employeeList.stream()
-    //                                .filter(employee -> !employee.getUnavailableTimeSlotSet().contains(timeSlot))
-                                .collect(Collectors.toList());
-                        Employee employee = availableEmployeeList.get(random.nextInt(availableEmployeeList.size()));
-                        shift.setEmployee(employee);
-                        shift.setLockedByUser(random.nextDouble() < 0.05);
-                    }
-                }
-                entityManager.persist(shift);
-                shiftList.add(shift);
-                timeSlotIndex++;
-            }
-    
-        }
-        return shiftList;
-    
-    }*/
 
 }
