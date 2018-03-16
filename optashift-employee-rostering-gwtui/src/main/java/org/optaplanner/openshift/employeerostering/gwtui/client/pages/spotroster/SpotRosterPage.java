@@ -196,7 +196,7 @@ public class SpotRosterPage implements Page {
         return refreshWithoutLoadingSpinner().then(i -> {
             loadingSpinner.hideFor("refresh-spot-roster");
             return resolve();
-        }).catch_(e -> {
+        }).catch_(e -> { // need to hide the loading spinner
             ErrorPopup.show(e.toString());
             loadingSpinner.hideFor("refresh-spot-roster");
             return resolve();

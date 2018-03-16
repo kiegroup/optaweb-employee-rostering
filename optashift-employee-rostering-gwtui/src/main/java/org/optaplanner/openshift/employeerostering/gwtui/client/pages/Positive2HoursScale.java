@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.pages;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -34,19 +34,18 @@ public class Positive2HoursScale implements LinearScale<OffsetDateTime> {
 
     @Override
     public Long toGridPixelsWithFactor1(final OffsetDateTime valueInScaleUnits) {
-        final OffsetDateTime date;
+        final OffsetDateTime dateTime;
 
         if (valueInScaleUnits.isBefore(start)) {
-            date = start;
+            dateTime = start;
         } else if (valueInScaleUnits.isAfter(end)) {
-            date = end;
+            dateTime = end;
         } else {
-            date = valueInScaleUnits;
+            dateTime = valueInScaleUnits;
         }
 
-
         // .get(ChronoUnit.HOURS) does not work
-        return Duration.between(instantOf(start), instantOf(date)).getSeconds() / 60 / 60;
+        return Duration.between(instantOf(start), instantOf(dateTime)).getSeconds() / 60 / 60;
     }
 
     @Override
@@ -77,6 +76,3 @@ public class Positive2HoursScale implements LinearScale<OffsetDateTime> {
         return value.toInstant();
     }
 }
-
-
-

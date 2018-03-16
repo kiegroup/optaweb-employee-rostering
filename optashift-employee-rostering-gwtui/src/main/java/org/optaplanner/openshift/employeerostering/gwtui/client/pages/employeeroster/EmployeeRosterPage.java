@@ -94,7 +94,6 @@ public class EmployeeRosterPage implements Page {
 
     private EmployeeRosterViewport viewport;
     private EmployeeRosterView currentEmployeeRosterView;
-    //private Pagination spotsPagination = Pagination.of(0, 10);
 
     @PostConstruct
     public void init() {
@@ -103,6 +102,10 @@ public class EmployeeRosterPage implements Page {
 
     public BlobPopover getBlobPopover() {
         return availabilityBlobPopover;
+    }
+
+    public EmployeeRosterView getCurrentEmployeeRosterView() {
+        return currentEmployeeRosterView;
     }
 
     @Override
@@ -145,19 +148,12 @@ public class EmployeeRosterPage implements Page {
 
     @EventHandler("previous-page-button")
     public void onPreviousPageButtonClicked(@ForEvent("click") final MouseEvent e) {
-
-        /*if (spotsPagination.isOnFirstPage()) {
-            return;
-        }
-        
-        spotsPagination = spotsPagination.previousPage();
-        refreshWithLoadingSpinner();*/
+        // TODO: Implement pagination
     }
 
     @EventHandler("next-page-button")
     public void onNextPageButtonClicked(@ForEvent("click") final MouseEvent e) {
-        /*spotsPagination = spotsPagination.nextPage();
-        refreshWithLoadingSpinner();*/
+        // TODO: Implement pagination
     }
 
     //FIXME: Improve horizontal navigation. Probably snap to fixed dates with animation.
@@ -174,6 +170,7 @@ public class EmployeeRosterPage implements Page {
     }
 
     //API calls
+
     private Promise<EmployeeRosterView> fetchEmployeeRosterView() {
         return new Promise<>((resolve, reject) -> {
             RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantStore.getCurrentTenantId(),
@@ -182,10 +179,5 @@ public class EmployeeRosterPage implements Page {
                         resolve.onInvoke(v);
                     }));
         });
-    }
-
-    public EmployeeRosterView getCurrentEmployeeRosterView() {
-        // TODO Auto-generated method stub
-        return currentEmployeeRosterView;
     }
 }

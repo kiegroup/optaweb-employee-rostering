@@ -34,7 +34,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPan
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATIONS;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATION;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
@@ -46,7 +46,7 @@ public class Pages {
         SKILLS,
         SPOT_ROSTER,
         EMPLOYEE_ROSTER,
-        ROTATIONS,
+        ROTATION,
         SPOTS,
         EMPLOYEES;
     }
@@ -67,7 +67,7 @@ public class Pages {
     private ManagedInstance<EmployeeRosterPage> employeeRosterPage;
 
     @Inject
-    private ManagedInstance<RotationPage> rotationsPage;
+    private ManagedInstance<RotationPage> rotationPage;
 
     private final Map<Id, LazyInit<? extends Page>> mapping = new HashMap<>();
 
@@ -78,7 +78,7 @@ public class Pages {
         mapping.put(EMPLOYEES, lazyInit(employeesPage));
         mapping.put(SPOT_ROSTER, lazyInit(spotRosterPage));
         mapping.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
-        mapping.put(ROTATIONS, lazyInit(rotationsPage));
+        mapping.put(ROTATION, lazyInit(rotationPage));
     }
 
     public Page get(final Id id) {

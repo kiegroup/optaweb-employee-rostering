@@ -32,7 +32,7 @@ public class EmployeeAvailabilityBlob implements Blob<OffsetDateTime> {
     private Long positionInGridPixelsCache = null;
     private Long endPositionInGridPixelsCache = null;
 
-    EmployeeAvailabilityBlob(final LinearScale<OffsetDateTime> scale, final EmployeeAvailability availability) {
+    public EmployeeAvailabilityBlob(final LinearScale<OffsetDateTime> scale, final EmployeeAvailability availability) {
         this.availability = availability;
         this.scale = scale;
         this.sizeInGridPixels = scale.toGridPixels(availability.getEndTime().atDate(availability.getDate())) - scale.toGridPixels(getPositionInScaleUnits());
