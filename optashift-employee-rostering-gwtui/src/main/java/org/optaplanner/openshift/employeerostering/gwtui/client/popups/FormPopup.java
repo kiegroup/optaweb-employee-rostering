@@ -1,7 +1,5 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.popups;
 
-import com.google.gwt.core.client.JavaScriptObject;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.PopupPanel;
 import jsinterop.base.Js;
 import org.gwtbootstrap3.client.ui.html.Div;

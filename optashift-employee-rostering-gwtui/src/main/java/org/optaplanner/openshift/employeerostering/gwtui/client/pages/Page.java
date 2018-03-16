@@ -18,16 +18,14 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages;
 
 import elemental2.promise.Promise;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 
 public interface Page extends IsElement {
 
     default Promise<Void> beforeOpen() {
-        return PromiseUtils.resolve();
+        return Promise.resolve((Promise<Void>) null);
     }
 
     default Promise<Void> onOpen() {
-        return PromiseUtils.resolve();
+        return Promise.resolve((Promise<Void>) null);
     }
 }
-

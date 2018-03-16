@@ -19,7 +19,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInvalidation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.KiePager;
@@ -27,6 +26,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.KieSearch
 import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -69,6 +69,12 @@ public class EmployeeListPanel implements IsElement,
     @Named("th")
     private HTMLTableCellElement skillSetHeader;
 
+    @Inject
+    private PromiseUtils promiseUtils;
+
+    @Inject
+    private CommonUtils commonUtils;
+
     public EmployeeListPanel() {}
 
     @PostConstruct
@@ -96,13 +102,13 @@ public class EmployeeListPanel implements IsElement,
 
     public Promise<Void> refresh() {
         if (tenantStore.getCurrentTenantId() == null) {
-            return PromiseUtils.resolve();
+            return promiseUtils.resolve();
         }
-        return new Promise<>((res, rej) -> {
+        return promiseUtils.promise((res, rej) -> {
             EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
                     .onSuccess(newEmployeeList -> {
                         searchBar.setListToFilter(newEmployeeList);
-                        res.onInvoke(PromiseUtils.resolve());
+                        res.onInvoke(promiseUtils.resolve());
                     }));
         });
     }
@@ -121,7 +127,7 @@ public class EmployeeListPanel implements IsElement,
 
     @EventHandler("name-header")
     public void spotNameHeaderClick(final @ForEvent("click") MouseEvent e) {
-        pager.sortBy((a, b) -> CommonUtils.stringWithIntCompareTo(a.getName(), b.getName()));
+        pager.sortBy((a, b) -> commonUtils.stringWithIntCompareTo(a.getName(), b.getName()));
     }
 
     @EventHandler("skill-set-header")

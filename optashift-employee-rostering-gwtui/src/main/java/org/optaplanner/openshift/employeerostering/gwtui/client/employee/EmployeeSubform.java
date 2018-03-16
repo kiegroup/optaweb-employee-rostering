@@ -19,13 +19,13 @@ import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInvalidation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.TableRow;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.i18n.OptaShiftUIConstants;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
@@ -65,6 +65,9 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
 
     private Subscription subscription;
 
+    @Inject
+    private CommonUtils commonUtils;
+
     @SuppressWarnings("unchecked")
     @PostConstruct
     protected void initWidget() {
@@ -79,7 +82,7 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
             employeeNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
         });
         dataBinder.<Set<Skill>> addPropertyChangeHandler("skillProficiencySet", (e) -> {
-            employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(CommonUtils.delimitCollection(e.getNewValue(),
+            employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(commonUtils.delimitCollection(e.getNewValue(),
                     (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
         subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.get(Map.class, "Map")));
