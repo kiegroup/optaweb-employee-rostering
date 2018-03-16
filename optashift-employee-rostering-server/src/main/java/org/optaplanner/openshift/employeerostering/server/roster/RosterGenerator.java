@@ -88,7 +88,8 @@ public class RosterGenerator {
     private ShiftGenerator shiftGenerator;
 
     @SuppressWarnings("unused")
-    public RosterGenerator() {}
+    public RosterGenerator() {
+    }
 
     /**
      * For benchmark only
@@ -115,9 +116,9 @@ public class RosterGenerator {
 
     @Transactional
     public Roster generateRoster(int spotListSize,
-                                 int lengthInDays,
-                                 boolean continuousPlanning,
-                                 boolean assignDefaultEmployee) {
+            int lengthInDays,
+            boolean continuousPlanning,
+            boolean assignDefaultEmployee) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
         Integer tenantId = createTenant(spotListSize, employeeListSize, lengthInDays);
@@ -129,13 +130,15 @@ public class RosterGenerator {
         RosterState rosterState = entityManager.createNamedQuery("RosterState.find", RosterState.class)
                 .setParameter("tenantId", tenantId)
                 .getSingleResult();
-        TenantConfiguration tenantConfiguration = entityManager.createNamedQuery("TenantConfiguration.find", TenantConfiguration.class)
+        TenantConfiguration tenantConfiguration = entityManager.createNamedQuery("TenantConfiguration.find",
+                TenantConfiguration.class)
                 .setParameter("tenantId", tenantId)
                 .getSingleResult();
 
-        ShiftFileParser.ParserOut parserOutput = shiftGenerator.parse(tenantId, tenantConfiguration, rosterState, rosterState.getPublishLength() * 2, generateShiftTemplate(tenantId, spotList,
-                employeeList,
-                assignDefaultEmployee));
+        ShiftGenerator.ParserOut parserOutput = shiftGenerator.parse(tenantId, tenantConfiguration, rosterState,
+                rosterState.getPublishLength() * 2, generateShiftTemplate(tenantId, spotList,
+                        employeeList,
+                        assignDefaultEmployee));
 
         for (Shift shift : parserOutput.getShiftOutputList()) {
             entityManager.persist(shift);
@@ -147,10 +150,10 @@ public class RosterGenerator {
 
         List<Shift> shiftList = parserOutput.getShiftOutputList();
 
-        List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(tenantId, tenant
-                .getConfiguration(), employeeList, parserOutput.getNewRosterState().getFirstPublishedDate(),
+        List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(tenantId,
+                tenantConfiguration, employeeList, parserOutput.getNewRosterState().getLastHistoricDate(),
                 parserOutput
-                        .getNewRosterState().getFirstDraftDate());
+                        .getNewRosterState().getLastDraftDate());
 
         return new Roster((long) tenantId, tenantId,
                 skillList, spotList, employeeList, employeeAvailabilityList,
@@ -293,9 +296,9 @@ public class RosterGenerator {
     }
 
     private List<ShiftTemplate> generateShiftTemplate(Integer tenantId,
-                                                      List<Spot> spots,
-                                                      List<Employee> employees,
-                                                      boolean assignDefaultEmployee) {
+            List<Spot> spots,
+            List<Employee> employees,
+            boolean assignDefaultEmployee) {
         List<ShiftTemplate> out = new ArrayList<>();
         List<SpotSettings> spotSettingList = new ArrayList<SpotSettings>();
         spots.forEach((s) -> spotSettingList.add(new SpotSettings(s)));
@@ -348,9 +351,9 @@ public class RosterGenerator {
     }
 
     private List<TimeSlotInfo> getTimeSlotsFor(int tenantId,
-                                               SpotSettings spotSettings,
-                                               LocalDateTime start,
-                                               LocalDateTime end) {
+            SpotSettings spotSettings,
+            LocalDateTime start,
+            LocalDateTime end) {
         List<TimeSlotInfo> out = new ArrayList<>();
         Duration duration = Duration.ZERO;
         for (int i = 0; duration.compareTo(Duration.between(start, end)) < 0; i++, duration = duration.plus(
@@ -361,12 +364,12 @@ public class RosterGenerator {
     }
 
     private List<ShiftTemplate> createShiftTemplates(int tenantId,
-                                                     Spot spot,
-                                                     int shifts,
-                                                     List<Employee> employeeList,
-                                                     LocalDateTime start,
-                                                     LocalDateTime end,
-                                                     boolean assignDefaultEmployee) {
+            Spot spot,
+            int shifts,
+            List<Employee> employeeList,
+            LocalDateTime start,
+            LocalDateTime end,
+            boolean assignDefaultEmployee) {
         List<ShiftTemplate> out = new ArrayList<>(shifts);
         for (int i = 0; i < shifts; i++) {
             ShiftTemplate shift = new ShiftTemplate();
@@ -384,7 +387,8 @@ public class RosterGenerator {
     }
 
     private Integer createTenant(int spotListSize, int employeeListSize, int lengthInDays) {
-        Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue() + " (" + employeeListSize + " employees, " + spotListSize + "spots)");
+        Tenant tenant = new Tenant(tenantNameGenerator.generateNextValue() + " (" + employeeListSize + " employees, "
+                + spotListSize + "spots)");
         TenantConfiguration configuration = new TenantConfiguration();
         RosterState rosterState = new RosterState();
         rosterState.setDraftLength(0);
@@ -392,7 +396,7 @@ public class RosterGenerator {
         rosterState.setPublishLength(lengthInDays);
         rosterState.setPublishNotice(lengthInDays);
         rosterState.setRotationLength(7);
-        rosterState.setUnplannedOffset(0);
+        rosterState.setUnplannedRotationOffset(0);
         rosterState.setLastHistoricDate(LocalDate.now());
         entityManager.persist(tenant);
         configuration.setTenantId(tenant.getId());
@@ -442,7 +446,8 @@ public class RosterGenerator {
         return employeeList;
     }
 
-    private List<EmployeeAvailability> createEmployeeAvailabilityList(int tenantId, TenantConfiguration config, List<Employee> employeeList, LocalDate fromDate, LocalDate toDate) {
+    private List<EmployeeAvailability> createEmployeeAvailabilityList(int tenantId, TenantConfiguration config, List<
+            Employee> employeeList, LocalDate fromDate, LocalDate toDate) {
         List<EmployeeAvailability> out = new ArrayList<>();
         List<LocalDate> datesBetween = new ArrayList<>();
         for (LocalDate currDate = fromDate; currDate.isBefore(toDate); currDate = currDate.plusDays(1)) {
