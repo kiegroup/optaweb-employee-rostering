@@ -1,11 +1,16 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.common;
+package org.optaplanner.openshift.employeerostering.gwtui.client.util;
 
 import java.util.Collection;
 import java.util.Iterator;
 
+import javax.inject.Singleton;
+
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.OneWayMapping;
+
+@Singleton
 public class CommonUtils {
 
-    public static int stringWithIntCompareTo(String a, String b) {
+    public int stringWithIntCompareTo(String a, String b) {
         Iterator<Integer> aIter = a.chars().iterator();
         Iterator<Integer> bIter = b.chars().iterator();
 
@@ -87,12 +92,12 @@ public class CommonUtils {
         }
     }
 
-    public static boolean isDigit(int a) {
+    public boolean isDigit(int a) {
         char[] chars = Character.toChars(a);
         return chars.length == 1 && Character.isDigit(chars[0]);
     }
 
-    public static String pad(String str, int len) {
+    public String pad(String str, int len) {
         StringBuilder out = new StringBuilder(str);
         while (out.length() < len) {
             out.insert(0, "0");
@@ -100,12 +105,13 @@ public class CommonUtils {
         return out.toString();
     }
 
-    public static int roundToNearestMultipleOf(double toRound, int num) {
+    public int roundToNearestMultipleOf(double toRound, int num) {
         return (int) (Math.round(Math.round(toRound) * (1.0 / num)) * num);
     }
 
-    public static <T> String delimitCollection(Collection<T> toDelimit, OneWayMapping<T, String> mapper,
-            String delimiter) {
+    public <T> String delimitCollection(Collection<T> toDelimit,
+                                        OneWayMapping<T, String> mapper,
+                                        String delimiter) {
         StringBuilder out = new StringBuilder();
         if (null == toDelimit) {
             return "";
@@ -117,7 +123,7 @@ public class CommonUtils {
         return out.toString();
     }
 
-    public static <T> Iterable<T> flatten(Iterable<? extends Iterable<T>> collection) {
+    public <T> Iterable<T> flatten(Iterable<? extends Iterable<T>> collection) {
         return new Iterable<T>() {
 
             @Override
@@ -127,7 +133,7 @@ public class CommonUtils {
         };
     }
 
-    private static class FlattenIterator<T> implements Iterator<T> {
+    private class FlattenIterator<T> implements Iterator<T> {
 
         Iterator<? extends Iterable<T>> mainIterator;
         Iterator<T> subIterator;

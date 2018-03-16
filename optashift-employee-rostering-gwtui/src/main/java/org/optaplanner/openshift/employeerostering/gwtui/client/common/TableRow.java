@@ -22,6 +22,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
 
 public abstract class TableRow<T> extends Composite implements TakesValue<T> {
 
@@ -51,6 +52,9 @@ public abstract class TableRow<T> extends Composite implements TakesValue<T> {
     @Inject
     @DataField("presenter")
     private HTMLTableRowElement presenter;
+
+    @Inject
+    private CommonUtils commonUtils;
 
     // Not Null if and only if this row is a row for creating an instance
     private KiePager<T> pager;
@@ -93,7 +97,7 @@ public abstract class TableRow<T> extends Composite implements TakesValue<T> {
             setEditing(false);
         } catch (ConstraintViolationException validationException) {
             Set<ConstraintViolation<?>> validationErrorSet = validationException.getConstraintViolations();
-            ErrorPopup.show(CommonUtils.delimitCollection(validationErrorSet, (violation) -> violation.getMessage(), "\n"));
+            ErrorPopup.show(commonUtils.delimitCollection(validationErrorSet, (violation) -> violation.getMessage(), "\n"));
         }
     }
 
