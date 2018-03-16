@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>optashift-employee-rostering</artifactId>
     <groupId>org.optaplanner.openshift</groupId>
+    <artifactId>optashift-employee-rostering</artifactId>
     <version>7.7.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.optaplanner.openshift</groupId>
-  <artifactId>optashift-employee-rostering-client</artifactId>
+  <artifactId>optashift-employee-rostering-restclient</artifactId>
   <packaging>jar</packaging>
-  <name>Employee Rostering Service Java Client</name>
+
+  <name>Employee Rostering Service Java REST Client</name>
 
   <dependencies>
     <dependency>

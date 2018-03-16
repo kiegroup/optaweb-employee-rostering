@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.client;
+package org.optaplanner.openshift.employeerostering.restclient;
 
 import java.net.URL;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
@@ -30,9 +30,8 @@ public final class ServiceClientFactory {
     }
 
     /**
-     * Constructor.
      * @param baseUrl URL of the Employee Shift Rostering application
-     * @param resteasyClient Resteasy client to be used for client connections
+     * @param resteasyClient Resteasy client to be used for restclient connections
      **/
     public ServiceClientFactory(URL baseUrl, ResteasyClient resteasyClient) {
         this.baseUrl = baseUrl;
@@ -63,4 +62,5 @@ public final class ServiceClientFactory {
     public TenantRestService createTenantRestServiceClient() {
         return target.proxy(TenantRestService.class);
     }
+
 }

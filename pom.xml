@@ -80,14 +80,14 @@
 
   <modules>
     <module>optashift-employee-rostering-shared</module>
-    <module>optashift-employee-rostering-shared-gwt</module>
-    <module>optashift-employee-rostering-gwtui</module>
+    <!-- The modules optashift-employee-rostering-shared-gwt and optashift-employee-rostering-gwtui
+       are added by the maven profile withGwt (which is enabled by default) -->
     <module>optashift-employee-rostering-server</module>
+    <module>optashift-employee-rostering-restclient</module>
     <module>optashift-employee-rostering-webapp</module>
     <module>optashift-employee-rostering-benchmark</module>
     <module>optashift-employee-rostering-docs</module>
     <module>optashift-employee-rostering-distribution</module>
-    <module>optashift-employee-rostering-client</module>
   </modules>
 
   <dependencyManagement>
@@ -135,8 +135,7 @@
       </dependency>
       <dependency>
         <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optashift-employee-rostering-client</artifactId>
-        <scope>test</scope>
+        <artifactId>optashift-employee-rostering-restclient</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -401,6 +400,19 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>withGwt</id>
+      <activation>
+        <property>
+          <name>!withoutGwt</name>
+        </property>
+      </activation>
+      <modules>
+        <module>optashift-employee-rostering-shared-gwt</module>
+        <module>optashift-employee-rostering-gwtui</module>
+      </modules>
+    </profile>
+
     <profile>
       <!-- Use this profile for any OpenShift specific customization your 
         app will need. -->
