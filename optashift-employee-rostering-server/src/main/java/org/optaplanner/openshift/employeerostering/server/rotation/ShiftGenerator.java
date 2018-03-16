@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.server.lang.parser;
+package org.optaplanner.openshift.employeerostering.server.rotation;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,22 +18,24 @@ import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfigura
 public class ShiftGenerator {
 
     public ParserOut parse(Integer tenantId,
-                           TenantConfiguration tenantConfiguration,
-                           RosterState rosterState,
-                           int lengthInDays,
-                           Collection<ShiftTemplate> shifts) {
+            TenantConfiguration tenantConfiguration,
+            RosterState rosterState,
+            int lengthInDays,
+            Collection<ShiftTemplate> shifts) {
         List<Shift> shiftOutputList = new ArrayList<>();
 
         LocalDate oldLastDraftDate = rosterState.getLastDraftDate();
         LocalDate newLastDraftDate = oldLastDraftDate.plusDays(lengthInDays);
 
-        for (LocalDate currDay = oldLastDraftDate.plusDays(1); !currDay.isAfter(newLastDraftDate); currDay = currDay.plusDays(1)) {
+        for (LocalDate currDay = oldLastDraftDate.plusDays(1); !currDay.isAfter(newLastDraftDate); currDay = currDay
+                .plusDays(1)) {
             List<ShiftTemplate> shiftsToAdd = shifts.stream().filter((s) -> s.getOffsetStartDay() == rosterState
-                    .getUnplannedOffset()).collect(Collectors.toList());
+                    .getUnplannedRotationOffset()).collect(Collectors.toList());
             for (ShiftTemplate shiftTemplate : shiftsToAdd) {
                 shiftOutputList.add(shiftTemplate.asShiftOnDate(currDay, tenantConfiguration.getTimeZone()));
             }
-            rosterState.setUnplannedOffset((rosterState.getUnplannedOffset() + 1) % rosterState.getRotationLength());
+            rosterState.setUnplannedRotationOffset((rosterState.getUnplannedRotationOffset() + 1) % rosterState
+                    .getRotationLength());
         }
         rosterState.setDraftLength(rosterState.getDraftLength() + lengthInDays);
 
