@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response.Status;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.Before;
-import org.optaplanner.openshift.employeerostering.client.ServiceClientFactory;
+import org.optaplanner.openshift.employeerostering.restclient.ServiceClientFactory;
 import org.optaplanner.openshift.employeerostering.webapp.tools.ClientResponseContextAssert;
 import org.optaplanner.openshift.employeerostering.webapp.tools.RecordingClientResponseFilter;
 import org.optaplanner.openshift.employeerostering.webapp.tools.TestConfig;
