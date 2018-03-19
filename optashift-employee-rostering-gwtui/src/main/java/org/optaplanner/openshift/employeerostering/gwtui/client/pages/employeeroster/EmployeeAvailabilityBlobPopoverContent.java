@@ -92,16 +92,16 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
 
     private BlobPopover popover;
 
-    private EmployeeAvailabilityBlobView blobView;
+    private EmployeeBlobView blobView;
 
     private Map<Long, Employee> employeesById;
 
     @Override
     public void init(final BlobView<?, ?> blobView) {
 
-        this.blobView = (EmployeeAvailabilityBlobView) blobView;
-        final EmployeeAvailabilityBlob blob = (EmployeeAvailabilityBlob) blobView.getBlob();
-        final EmployeeAvailability availability = blob.getAvailability();
+        this.blobView = (EmployeeBlobView) blobView;
+        final EmployeeBlob blob = (EmployeeBlob) blobView.getBlob();
+        final EmployeeAvailability availability = blob.getEmployeeAvailability();
 
         employeeSelect.clear();
         employeeSelect.addItem("Unassigned", "-1"); //FIXME: i18n
@@ -145,8 +145,8 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
     @EventHandler("apply-button")
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
 
-        final EmployeeAvailabilityBlob blob = (EmployeeAvailabilityBlob) blobView.getBlob();
-        final EmployeeAvailability availability = blob.getAvailability();
+        final EmployeeBlob blob = (EmployeeBlob) blobView.getBlob();
+        final EmployeeAvailability availability = blob.getEmployeeAvailability();
 
         final Employee oldEmployee = availability.getEmployee();
 

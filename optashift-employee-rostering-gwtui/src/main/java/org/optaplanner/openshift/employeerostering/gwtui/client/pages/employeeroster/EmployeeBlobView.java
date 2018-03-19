@@ -38,7 +38,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Templated
-public class EmployeeAvailabilityBlobView implements BlobView<OffsetDateTime, EmployeeAvailabilityBlob> {
+public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> {
 
     private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
     private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
@@ -56,14 +56,14 @@ public class EmployeeAvailabilityBlobView implements BlobView<OffsetDateTime, Em
     private EmployeeRosterPage page;
 
     private Viewport<OffsetDateTime> viewport;
-    private ListView<EmployeeAvailabilityBlob> blobViews;
+    private ListView<EmployeeBlob> blobViews;
     private Runnable onDestroy;
 
-    private EmployeeAvailabilityBlob blob;
+    private EmployeeBlob blob;
 
     @Override
-    public ListElementView<EmployeeAvailabilityBlob> setup(final EmployeeAvailabilityBlob blob,
-                                                           final ListView<EmployeeAvailabilityBlob> blobViews) {
+    public ListElementView<EmployeeBlob> setup(final EmployeeBlob blob,
+                                               final ListView<EmployeeBlob> blobViews) {
 
         this.blobViews = blobViews;
         this.blob = blob;
@@ -76,14 +76,20 @@ public class EmployeeAvailabilityBlobView implements BlobView<OffsetDateTime, Em
     }
 
     public void refresh() {
-        setClassProperty("desired", blob.getAvailability().getState() == EmployeeAvailabilityState.DESIRED);
-        setClassProperty("undesired", blob.getAvailability().getState() == EmployeeAvailabilityState.UNDESIRED);
-        setClassProperty("unavailable", blob.getAvailability().getState() == EmployeeAvailabilityState.UNAVAILABLE);
-
         RosterState rosterState = page.getCurrentEmployeeRosterView().getRosterState();
-        setClassProperty("historic", rosterState.isHistoric(blob.getAvailability().getStartTime().atDate(blob.getAvailability().getDate())));
-        setClassProperty("published", rosterState.isPublished(blob.getAvailability().getStartTime().atDate(blob.getAvailability().getDate())));
-        setClassProperty("draft", rosterState.isDraft(blob.getAvailability().getStartTime().atDate(blob.getAvailability().getDate())));
+
+        if (blob.getShift() != null) {
+            setClassProperty("historic", rosterState.isHistoric(blob.getShift()));
+            setClassProperty("published", rosterState.isPublished(blob.getShift()));
+            setClassProperty("draft", rosterState.isDraft(blob.getShift()));
+        } else if (blob.getEmployeeAvailability() != null) {
+            setClassProperty("desired", blob.getEmployeeAvailability().getState() == EmployeeAvailabilityState.DESIRED);
+            setClassProperty("undesired", blob.getEmployeeAvailability().getState() == EmployeeAvailabilityState.UNDESIRED);
+            setClassProperty("unavailable", blob.getEmployeeAvailability().getState() == EmployeeAvailabilityState.UNAVAILABLE);
+            setClassProperty("historic", rosterState.isHistoric(blob.getEmployeeAvailability().getStartTime().atDate(blob.getEmployeeAvailability().getDate())));
+            setClassProperty("published", rosterState.isPublished(blob.getEmployeeAvailability().getStartTime().atDate(blob.getEmployeeAvailability().getDate())));
+            setClassProperty("draft", rosterState.isDraft(blob.getEmployeeAvailability().getStartTime().atDate(blob.getEmployeeAvailability().getDate())));
+        }
 
         viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
         viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
@@ -119,7 +125,9 @@ public class EmployeeAvailabilityBlobView implements BlobView<OffsetDateTime, Em
 
     @EventHandler("blob")
     public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
-        page.getBlobPopover().showFor(this);
+        if (blob.getEmployeeAvailability() != null) {
+            page.getBlobPopover().showFor(this);
+        }
     }
 
     private void updateLabel() {
@@ -127,13 +135,13 @@ public class EmployeeAvailabilityBlobView implements BlobView<OffsetDateTime, Em
     }
 
     @Override
-    public BlobView<OffsetDateTime, EmployeeAvailabilityBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
+    public BlobView<OffsetDateTime, EmployeeBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<OffsetDateTime, EmployeeAvailabilityBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
+    public BlobView<OffsetDateTime, EmployeeBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
         return this;
     }
 

@@ -45,6 +45,9 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
@@ -56,10 +59,10 @@ import static java.util.stream.Collectors.toMap;
 public class EmployeeRosterViewportFactory {
 
     @Inject
-    private ListElementViewPool<EmployeeAvailabilityBlobView> shiftBlobViewPool;
+    private ListElementViewPool<EmployeeBlobView> shiftBlobViewPool;
 
     @Inject
-    private ManagedInstance<EmployeeAvailabilityBlobView> shiftBlobViewInstances;
+    private ManagedInstance<EmployeeBlobView> shiftBlobViewInstances;
 
     @Inject
     private TenantStore tenantStore;
@@ -82,6 +85,7 @@ public class EmployeeRosterViewportFactory {
         return timingUtils.time("Employee Roster viewport instantiation", () -> {
 
             shiftBlobViewPool.init(1500L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
+            // availabilityBlobViewPool.init(1500L, availabilityBlobViewInstances::get);
 
             employeeRosterModel = buildEmployeeRosterModel(employeeRosterView);
 
@@ -112,42 +116,64 @@ public class EmployeeRosterViewportFactory {
     private List<Lane<OffsetDateTime>> buildLanes(final EmployeeRosterView employeeRosterView) {
 
         final Map<Long, Employee> employeesById = indexById(employeeRosterView.getEmployeeList());
+        final Map<Long, Spot> spotsById = indexById(employeeRosterView.getSpotList());
 
         return employeeRosterView.getEmployeeList()
                 .stream()
-                .map(e -> new EmployeeLane(e, buildSubLanes(e, employeeRosterView.getEmployeeIdToAvailabilityViewListMap(), employeesById)))
+                .map(e -> new EmployeeLane(e, buildSubLanes(e, employeeRosterView.getEmployeeIdToAvailabilityViewListMap(), employeeRosterView.getEmployeeIdToShiftViewListMap(), employeesById, spotsById)))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private List<SubLane<OffsetDateTime>> buildSubLanes(final Employee employee,
                                                         final Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewList,
-                                                        final Map<Long, Employee> employeeIdToEmployee) {
+                                                        final Map<Long, List<ShiftView>> employeeIdToShiftViewList,
+                                                        final Map<Long, Employee> employeeIdToEmployee,
+                                                        final Map<Long, Spot> spotIdToSpot) {
 
         if (employeeIdToAvailabilityViewList.isEmpty()) {
             return new ArrayList<>(singletonList(new SubLane<>()));
         }
 
         List<EmployeeAvailabilityView> employeeAvailabilities = new ArrayList<>();
+        List<ShiftView> employeeShifts = new ArrayList<>();
         for (EmployeeAvailabilityView eav : CommonUtils.flatten(employeeIdToAvailabilityViewList.values())) {
             employeeAvailabilities.add(eav);
         }
+        for (ShiftView sv : CommonUtils.flatten(employeeIdToShiftViewList.values())) {
+            employeeShifts.add(sv);
+        }
 
-        final List<Blob<OffsetDateTime>> blobs = employeeAvailabilities
+        final List<Blob<OffsetDateTime>> employeeAvailabilitiesBlobs = employeeAvailabilities
                 .stream()
                 .filter(a -> a.getEmployeeId().equals(employee.getId()))
                 .map(a -> {
                     return buildEmployeeAvailabilityBlob(employee, a);
                 }).collect(Collectors.toList());
+
+        final List<Blob<OffsetDateTime>> employeeShiftsBlobs = employeeShifts
+                .stream()
+                .filter(s -> s.getEmployeeId().equals(employee.getId()))
+                .map(s -> {
+                    return buildEmployeeShiftBlob(employee, spotIdToSpot.get(s.getSpotId()), s);
+                }).collect(Collectors.toList());
         // Impossible for an employee to have two employee availabilities at the same time
-        return new ArrayList<>(Arrays.asList(new SubLane<>(blobs)));//conflictFreeSubLanesFactory.createSubLanes(blobs);
+        return new ArrayList<>(Arrays.asList(new SubLane<>(employeeAvailabilitiesBlobs), new SubLane<>(employeeShiftsBlobs)));//conflictFreeSubLanesFactory.createSubLanes(blobs);
     }
 
-    private EmployeeAvailabilityBlob buildEmployeeAvailabilityBlob(final Employee employee,
-                                                                   final EmployeeAvailabilityView availabilityView) {
+    private EmployeeBlob buildEmployeeAvailabilityBlob(final Employee employee,
+                                                       final EmployeeAvailabilityView availabilityView) {
 
         final EmployeeAvailability availability = new EmployeeAvailability(availabilityView, employee, availabilityView.getDate(), availabilityView.getStartTime(), availabilityView.getEndTime());
         availability.setState(availabilityView.getState());
-        return new EmployeeAvailabilityBlob(scale, availability);
+        return new EmployeeBlob(scale, availability);
+    }
+
+    private EmployeeBlob buildEmployeeShiftBlob(final Employee employee,
+                                                final Spot spot,
+                                                final ShiftView shiftView) {
+        final Shift shift = new Shift(shiftView, spot, shiftView.getStartDateTime(), shiftView.getEndDateTime());
+        shift.setEmployee(employee);
+        return new EmployeeBlob(scale, shift);
     }
 
     private <T extends AbstractPersistable> Map<Long, T> indexById(final List<T> abstractPersistables) {

@@ -15,7 +15,15 @@ public class GwtJavaTimeWorkaroundUtil {
     }
 
     public static LocalTime toLocalTime(OffsetDateTime time) {
+        return toLocalTime(time.toOffsetTime());
+    }
+
+    public static LocalTime toLocalTime(OffsetTime time) {
         return LocalTime.of(time.getHour(), time.getMinute(), time.getSecond(), time.getNano());
+    }
+
+    public static OffsetDateTime toOffsetDateTime(LocalDate date, OffsetTime offsetTime) {
+        return OffsetDateTime.of(date.atTime(toLocalTime(offsetTime)), offsetTime.getOffset());
     }
 
     public static boolean doTimeslotsIntersect(OffsetDateTime start1, OffsetDateTime end1, OffsetDateTime start2, OffsetDateTime end2) {
