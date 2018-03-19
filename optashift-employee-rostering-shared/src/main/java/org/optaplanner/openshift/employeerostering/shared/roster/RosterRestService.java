@@ -73,7 +73,9 @@ public interface RosterRestService {
     @ApiOperation("Get the current employee roster view")
     @GET
     @Path("/employeeRosterView/current")
-    EmployeeRosterView getCurrentEmployeeRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
+    EmployeeRosterView getCurrentEmployeeRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                                    @ApiParam(required = true) @QueryParam("p") @DefaultValue("0") Integer pageNumber,
+                                                    @ApiParam(required = true) @QueryParam("n") @DefaultValue(MAX_VALUE + "") Integer numberOfItemsPerPage);
 
     @ApiOperation("Get an employee roster view between 2 dates")
     @GET

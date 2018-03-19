@@ -17,7 +17,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -37,7 +37,7 @@ public class CollisionFreeSubLaneFactory {
         return blobs.sorted(comparing(Blob::getPositionInGridPixels))
                 .map(this::singletonSubLaneList)
                 .reduce(this::merge)
-                .orElseGet(Collections::emptyList);
+                .orElseGet(() -> new ArrayList<>(Arrays.asList(new SubLane<>())));
     }
 
     private <T> List<SubLane<T>> singletonSubLaneList(final Blob<T> blob) {

@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,6 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
 public class RotationViewportFactory {
@@ -63,7 +63,7 @@ public class RotationViewportFactory {
     @Inject
     private CollisionFreeSubLaneFactory conflictFreeSubLanesFactory;
 
-    public Viewport<Long> getViewport(final RosterState rosterState, final Map<Spot, List<Shift>> shiftsBySpot) {
+    public Viewport<Long> getViewport(final RosterState rosterState, final Map<Spot, List<Shift>> shiftsBySpot, final List<Spot> spotList) {
 
         return timingUtils.time("Rotation viewport instantiation", () -> {
 
@@ -75,7 +75,7 @@ public class RotationViewportFactory {
             final LinearScale<Long> scale = new Infinite60MinutesScale(durationTimeInMinutes);
             final OffsetDateTime baseDate = RotationPage.getBaseDateTime();
 
-            final List<Lane<Long>> lanes = buildLanes(shiftsBySpot, baseDate, scale);
+            final List<Lane<Long>> lanes = buildLanes(shiftsBySpot, spotList, baseDate, scale);
 
             return new RotationViewport(tenantStore.getCurrentTenantId(),
                     baseDate,
@@ -88,12 +88,12 @@ public class RotationViewportFactory {
     }
 
     private List<Lane<Long>> buildLanes(final Map<Spot, List<Shift>> shiftsBySpot,
+                                        final List<Spot> spotList,
                                         final OffsetDateTime baseDate,
                                         final LinearScale<Long> scale) {
 
-        return shiftsBySpot.entrySet().stream()
-                .sorted(comparing(e -> e.getKey().getName())) //FIXME: Should sorting be done on the ViewportView?
-                .map(spot -> newSpotLane(baseDate, scale, spot.getValue(), spot.getKey()))
+        return spotList.stream()
+                .map(spot -> newSpotLane(baseDate, scale, shiftsBySpot.getOrDefault(spot, new ArrayList<>()), spot))
                 .collect(toList());
     }
 
