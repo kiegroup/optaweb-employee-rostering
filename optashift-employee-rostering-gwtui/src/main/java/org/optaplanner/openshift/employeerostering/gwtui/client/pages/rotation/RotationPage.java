@@ -36,6 +36,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
@@ -48,6 +49,7 @@ import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -104,11 +106,13 @@ public class RotationPage implements Page {
             final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate).stream()
                     .collect(groupingBy(Shift::getSpot));
 
-            return promiseUtils.manage(fetchRosterState().then(rosterState -> {
-                viewport = rotationViewportFactory.getViewport(rosterState, shiftsBySpot);
-                viewportView.setViewport(viewport);
-                loadingSpinner.hideFor("rotation-page");
-                return promiseUtils.resolve();
+            return promiseUtils.manage(fetchSpotList().then((spotList) -> {
+                return promiseUtils.manage(fetchRosterState().then(rosterState -> {
+                    viewport = rotationViewportFactory.getViewport(rosterState, shiftsBySpot, spotList);
+                    viewportView.setViewport(viewport);
+                    loadingSpinner.hideFor("rotation-page");
+                    return promiseUtils.resolve();
+                }));
             }));
 
         }).catch_(i -> {
@@ -209,5 +213,11 @@ public class RotationPage implements Page {
         return new ShiftTemplate(tenantStore.getCurrentTenantId(),
                 shift.getSpot(), getOffsetStartDay(shift), DateTimeUtils.getLocalTimeOf(shift.getStartDateTime()),
                 getOffsetEndDay(shift), DateTimeUtils.getLocalTimeOf(shift.getEndDateTime()), shift.getRotationEmployee());
+    }
+
+    private Promise<List<Spot>> fetchSpotList() {
+        return promiseUtils.promise((res, rej) -> {
+            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spotList -> res.onInvoke(spotList)));
+        });
     }
 }

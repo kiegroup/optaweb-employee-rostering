@@ -20,7 +20,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -51,8 +50,6 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 @Dependent
@@ -79,7 +76,9 @@ public class EmployeeRosterViewportFactory {
     @Inject
     private CommonUtils commonUtils;
 
-    private Map<Employee, List<EmployeeAvailabilityView>> employeeRosterModel;
+    private Map<Employee, List<ShiftView>> employeeShiftRosterModel;
+
+    private Map<Employee, List<EmployeeAvailabilityView>> employeeAvailabilityRosterModel;
 
     private LinearScale<OffsetDateTime> scale;
 
@@ -88,9 +87,10 @@ public class EmployeeRosterViewportFactory {
         return timingUtils.time("Employee Roster viewport instantiation", () -> {
 
             shiftBlobViewPool.init(1500L, shiftBlobViewInstances::get); //FIXME: Make maxSize variable
-            // availabilityBlobViewPool.init(1500L, availabilityBlobViewInstances::get);
 
-            employeeRosterModel = buildEmployeeRosterModel(employeeRosterView);
+            employeeAvailabilityRosterModel = buildEmployeeAvailabilityRosterModel(employeeRosterView);
+
+            employeeShiftRosterModel = buildEmployeeShiftRosterModel(employeeRosterView);
 
             scale = new Positive2HoursScale(OffsetDateTime.of(employeeRosterView.getStartDate().atTime(0, 0), ZoneOffset.UTC),
                     OffsetDateTime.of(employeeRosterView.getEndDate().atTime(0, 0), ZoneOffset.UTC));
@@ -106,14 +106,16 @@ public class EmployeeRosterViewportFactory {
         });
     }
 
-    private Map<Employee, List<EmployeeAvailabilityView>> buildEmployeeRosterModel(final EmployeeRosterView employeeRosterView) {
+    private Map<Employee, List<EmployeeAvailabilityView>> buildEmployeeAvailabilityRosterModel(final EmployeeRosterView employeeRosterView) {
+        return employeeRosterView.getEmployeeList().stream()
+                .collect(Collectors.toMap((employee) -> employee,
+                        (employee) -> employeeRosterView.getEmployeeIdToAvailabilityViewListMap().get(employee.getId())));
+    }
 
-        final Map<Long, Employee> employeesById = indexById(employeeRosterView.getEmployeeList());
-
-        return employeeRosterView.getEmployeeIdToAvailabilityViewListMap().values().stream()
-                .flatMap(Collection::stream)
-                .collect(groupingBy(availabilityView -> employeesById.get(availabilityView.getEmployeeId()),
-                        toList()));
+    private Map<Employee, List<ShiftView>> buildEmployeeShiftRosterModel(final EmployeeRosterView employeeRosterView) {
+        return employeeRosterView.getEmployeeList().stream()
+                .collect(Collectors.toMap((employee) -> employee,
+                        (employee) -> employeeRosterView.getEmployeeIdToShiftViewListMap().get(employee.getId())));
     }
 
     private List<Lane<OffsetDateTime>> buildLanes(final EmployeeRosterView employeeRosterView) {

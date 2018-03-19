@@ -38,6 +38,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.power
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
+import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 
@@ -95,6 +96,7 @@ public class EmployeeRosterPage implements Page {
     private PromiseUtils promiseUtils;
 
     private EmployeeRosterViewport viewport;
+    private Pagination employeePagination = Pagination.of(0, 10);
     private EmployeeRosterView currentEmployeeRosterView;
 
     @PostConstruct
@@ -121,10 +123,14 @@ public class EmployeeRosterPage implements Page {
 
     private Promise<Void> refreshWithoutLoadingSpinner() {
         return fetchEmployeeRosterView().then(employeeRosterView -> {
-            viewport = employeeRosterViewportFactory.getViewport(employeeRosterView);
-            viewportView.setViewport(viewport);
-            return promiseUtils.resolve();
-
+            if (employeeRosterView.getEmployeeList().isEmpty()) {
+                employeePagination = employeePagination.previousPage();
+                return promiseUtils.resolve();
+            } else {
+                viewport = employeeRosterViewportFactory.getViewport(employeeRosterView);
+                viewportView.setViewport(viewport);
+                return promiseUtils.resolve();
+            }
         });
     }
 
@@ -149,12 +155,19 @@ public class EmployeeRosterPage implements Page {
 
     @EventHandler("previous-page-button")
     public void onPreviousPageButtonClicked(@ForEvent("click") final MouseEvent e) {
-        // TODO: Implement pagination
+
+        if (employeePagination.isOnFirstPage()) {
+            return;
+        }
+
+        employeePagination = employeePagination.previousPage();
+        refreshWithLoadingSpinner();
     }
 
     @EventHandler("next-page-button")
     public void onNextPageButtonClicked(@ForEvent("click") final MouseEvent e) {
-        // TODO: Implement pagination
+        employeePagination = employeePagination.nextPage();
+        refreshWithLoadingSpinner();
     }
 
     //FIXME: Improve horizontal navigation. Probably snap to fixed dates with animation.
@@ -174,7 +187,7 @@ public class EmployeeRosterPage implements Page {
 
     private Promise<EmployeeRosterView> fetchEmployeeRosterView() {
         return new Promise<>((resolve, reject) -> {
-            RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantStore.getCurrentTenantId(),
+            RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantStore.getCurrentTenantId(), employeePagination.getPageNumber(), employeePagination.getNumberOfItemsPerPage(),
                     onSuccess(v -> {
                         currentEmployeeRosterView = v;
                         resolve.onInvoke(v);

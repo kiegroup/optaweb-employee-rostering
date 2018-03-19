@@ -100,14 +100,9 @@ public class SpotRosterViewportFactory {
     }
 
     private Map<Spot, List<ShiftView>> buildSpotRosterModel(final SpotRosterView spotRosterView) {
-
-        final Map<Long, Spot> spotsById = indexById(spotRosterView.getSpotList());
-
-        // TODO: Find out why this have null as a key when you add a new spot
-        // (spotsById contains the added spot, which is odd considering this exception)
-        return spotRosterView.getSpotIdToShiftViewListMap().keySet()
-                .stream().collect(Collectors.toMap(id -> spotsById.get(id),
-                        id -> spotRosterView.getSpotIdToShiftViewListMap().get(id)));
+        return spotRosterView.getSpotList()
+                .stream().collect(Collectors.toMap(spot -> spot,
+                        spot -> spotRosterView.getSpotIdToShiftViewListMap().getOrDefault(spot.getId(), new ArrayList<>())));
     }
 
     private List<Lane<OffsetDateTime>> buildLanes(final SpotRosterView spotRosterView) {

@@ -19,9 +19,11 @@ package org.optaplanner.openshift.employeerostering.server.roster;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -139,9 +141,13 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .getResultList();
 
         Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
+        Set<Spot> spotSet = new HashSet<>(spotList);
         for (Shift shift : shiftList) {
-            spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>()).add(new ShiftView(
-                    shift));
+            if (spotSet.contains(shift.getSpot())) {
+                spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>()).add(
+                        new ShiftView(
+                                shift));
+            }
         }
         spotRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
 
@@ -158,14 +164,12 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Override
     @Transactional
-    public EmployeeRosterView getCurrentEmployeeRosterView(Integer tenantId) {
+    public EmployeeRosterView getCurrentEmployeeRosterView(Integer tenantId, Integer pageNumber,
+            Integer numberOfItemsPerPage) {
         RosterState rosterState = getRosterState(tenantId);
         LocalDate startDate = rosterState.getLastHistoricDate();
         LocalDate endDate = rosterState.getLastDraftDate();
-        return getEmployeeRosterView(tenantId, startDate, endDate, entityManager.createNamedQuery("Employee.findAll",
-                Employee.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList());
+        return getEmployeeRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
     }
 
     @Override
@@ -191,6 +195,20 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         return getEmployeeRosterView(tenantId, startDate, endDate, employees);
     }
 
+    private EmployeeRosterView getEmployeeRosterView(final Integer tenantId,
+            final LocalDate startDate,
+            final LocalDate endDate,
+            final Pagination pagination) {
+
+        final List<Employee> spots = entityManager.createNamedQuery("Employee.findAll", Employee.class)
+                .setParameter("tenantId", tenantId)
+                .setMaxResults(pagination.getNumberOfItemsPerPage())
+                .setFirstResult(pagination.getFirstResultIndex())
+                .getResultList();
+
+        return getEmployeeRosterView(tenantId, startDate, endDate, spots);
+    }
+
     @Transactional
     protected EmployeeRosterView getEmployeeRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate, List<
             Employee> employeeList) {
@@ -208,10 +226,15 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .getResultList();
         Map<Long, List<ShiftView>> employeeIdToShiftViewListMap = new LinkedHashMap<>(employeeList.size());
         List<ShiftView> unassignedShiftViewList = new ArrayList<>();
+        Set<Employee> employeeSet = new HashSet<>(employeeList);
         for (Shift shift : shiftList) {
             if (shift.getEmployee() != null) {
-                employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(), k -> new ArrayList<>()).add(
-                        new ShiftView(shift));
+                if (employeeSet.contains(shift.getEmployee())) {
+                    employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(), k -> new ArrayList<>())
+                            .add(
+                                    new ShiftView(shift));
+                }
+
             } else {
                 unassignedShiftViewList.add(new ShiftView(shift));
             }
@@ -226,8 +249,10 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .setParameter("tenantId", tenantId)
                 .getResultList();
         for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
-            employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),
-                    k -> new ArrayList<>()).add(new EmployeeAvailabilityView(employeeAvailability));
+            if (employeeSet.contains(employeeAvailability.getEmployee())) {
+                employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),
+                        k -> new ArrayList<>()).add(new EmployeeAvailabilityView(employeeAvailability));
+            }
         }
         employeeRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
         Roster roster = solverManager.getRoster(tenantId).orElse(null);
