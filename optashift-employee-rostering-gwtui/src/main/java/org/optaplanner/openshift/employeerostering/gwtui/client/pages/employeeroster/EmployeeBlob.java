@@ -46,31 +46,22 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
         this.employeeAvailability = employeeAvailability;
         this.shift = shift;
         this.scale = scale;
-        this.sizeInGridPixels = scale.toGridPixels(getEndDateTime()) - scale.toGridPixels(getPositionInScaleUnits());
-    }
-
-    private OffsetDateTime getEndDateTime() {
-        if (null != shift) {
-            return shift.getEndDateTime();
-        } else {
-            return GwtJavaTimeWorkaroundUtil.toOffsetDateTime(employeeAvailability.getDate(), employeeAvailability.getStartTime());
-        }
+        this.sizeInGridPixels = scale.toGridPixels(getEndDateTime()) - scale.toGridPixels(getStartDateTime());
     }
 
     private OffsetDateTime getStartDateTime() {
         if (null != shift) {
             return shift.getStartDateTime();
         } else {
-            return GwtJavaTimeWorkaroundUtil.toOffsetDateTime(employeeAvailability.getDate(), employeeAvailability.getEndTime());
+            return GwtJavaTimeWorkaroundUtil.toOffsetDateTime(employeeAvailability.getDate(), employeeAvailability.getStartTime());
         }
     }
 
-    private void setEndDateTime(OffsetDateTime endDateTime) {
+    private OffsetDateTime getEndDateTime() {
         if (null != shift) {
-            shift.setEndDateTime(endDateTime);
+            return shift.getEndDateTime();
         } else {
-            employeeAvailability.setDate(GwtJavaTimeWorkaroundUtil.toLocalDate(endDateTime));
-            employeeAvailability.setEndTime(endDateTime.toOffsetTime());
+            return GwtJavaTimeWorkaroundUtil.toOffsetDateTime(employeeAvailability.getDate(), employeeAvailability.getEndTime());
         }
     }
 
@@ -80,6 +71,15 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
         } else {
             employeeAvailability.setDate(GwtJavaTimeWorkaroundUtil.toLocalDate(startDateTime));
             employeeAvailability.setStartTime(startDateTime.toOffsetTime());
+        }
+    }
+
+    private void setEndDateTime(OffsetDateTime endDateTime) {
+        if (null != shift) {
+            shift.setEndDateTime(endDateTime);
+        } else {
+            employeeAvailability.setDate(GwtJavaTimeWorkaroundUtil.toLocalDate(endDateTime));
+            employeeAvailability.setEndTime(endDateTime.toOffsetTime());
         }
     }
 
