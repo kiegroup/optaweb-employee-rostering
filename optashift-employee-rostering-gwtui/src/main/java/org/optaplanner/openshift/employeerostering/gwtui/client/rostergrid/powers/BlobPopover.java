@@ -123,7 +123,7 @@ public class BlobPopover implements IsElement {
                                         final HTMLElement element,
                                         final Function<HTMLElement, Double> offsetFn) {
 
-        if (element.equals(parent)) {
+        if (null == element || element.equals(parent)) {
             return 0;
         }
 

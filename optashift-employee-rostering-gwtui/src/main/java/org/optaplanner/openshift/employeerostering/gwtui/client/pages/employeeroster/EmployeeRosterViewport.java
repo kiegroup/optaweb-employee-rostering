@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -28,24 +29,27 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 
+import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation.HORIZONTAL;
 
 public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
 
     private final Integer tenantId;
-    private final Supplier<EmployeeAvailabilityBlobView> blobViewSupplier;
+    private final Supplier<EmployeeBlobView> blobViewSupplier;
     private final LinearScale<OffsetDateTime> scale;
     private final CssGridLines gridLines;
     private final Ticks<OffsetDateTime> ticks;
     private final List<Lane<OffsetDateTime>> lanes;
 
     EmployeeRosterViewport(final Integer tenantId,
-                           final Supplier<EmployeeAvailabilityBlobView> blobViewSupplier,
+                           final Supplier<EmployeeBlobView> blobViewSupplier,
                            final LinearScale<OffsetDateTime> scale,
                            final CssGridLines gridLines,
                            final Ticks<OffsetDateTime> ticks,
@@ -82,18 +86,20 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
 
     @Override
     public Lane<OffsetDateTime> newLane() {
-        throw new UnsupportedOperationException();
+        return new EmployeeLane(new Employee(tenantId, "New Employee"),
+                new ArrayList<>(singletonList(new SubLane<>())));
     }
 
     @Override
     public Stream<Blob<OffsetDateTime>> newBlob(final Lane<OffsetDateTime> lane, final OffsetDateTime start) {
 
         // Casting is preferable to avoid over-use of generics in the Viewport class
-        final AvailabilityLane availabilityLane = (AvailabilityLane) lane;
+        final EmployeeLane employeeLane = (EmployeeLane) lane;
 
-        final EmployeeAvailability availability = new EmployeeAvailability(tenantId, null, GwtJavaTimeWorkaroundUtil.toLocalDate(start), start.toOffsetTime(), start.toOffsetTime().plusHours(8));
-        availability.setState(availabilityLane.getAvailabilityState());
-        return Stream.of(new EmployeeAvailabilityBlob(scale, availability));
+        final EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employeeLane.getEmployee(), GwtJavaTimeWorkaroundUtil.toLocalDate(start), start.toOffsetTime(), start.plusHours(8L)
+                .toOffsetTime());
+
+        return Stream.of(new EmployeeBlob(scale, employeeAvailability));
     }
 
     @Override
