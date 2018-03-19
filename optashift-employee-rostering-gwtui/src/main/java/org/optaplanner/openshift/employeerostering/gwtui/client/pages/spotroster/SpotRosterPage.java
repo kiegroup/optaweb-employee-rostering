@@ -199,7 +199,6 @@ public class SpotRosterPage implements Page {
             loadingSpinner.hideFor("refresh-spot-roster");
             return promiseUtils.resolve();
         }).catch_(e -> {
-            promiseUtils.getDefaultCatch().onInvoke(e);
             loadingSpinner.hideFor("refresh-spot-roster");
             return promiseUtils.resolve();
         });

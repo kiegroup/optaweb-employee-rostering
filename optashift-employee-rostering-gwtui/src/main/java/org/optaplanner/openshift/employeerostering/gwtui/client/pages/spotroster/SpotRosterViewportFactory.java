@@ -19,9 +19,9 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroste
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.enterprise.context.Dependent;
@@ -48,7 +48,6 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -104,10 +103,11 @@ public class SpotRosterViewportFactory {
 
         final Map<Long, Spot> spotsById = indexById(spotRosterView.getSpotList());
 
-        return spotRosterView.getSpotIdToShiftViewListMap().values().stream()
-                .flatMap(Collection::stream)
-                .collect(groupingBy(shiftView -> spotsById.get(shiftView.getSpotId()),
-                        toList()));
+        // TODO: Find out why this have null as a key when you add a new spot
+        // (spotsById contains the added spot, which is odd considering this exception)
+        return spotRosterView.getSpotIdToShiftViewListMap().keySet()
+                .stream().collect(Collectors.toMap(id -> spotsById.get(id),
+                        id -> spotRosterView.getSpotIdToShiftViewListMap().get(id)));
     }
 
     private List<Lane<OffsetDateTime>> buildLanes(final SpotRosterView spotRosterView) {

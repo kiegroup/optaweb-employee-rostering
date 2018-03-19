@@ -60,9 +60,16 @@ public class PromiseUtils {
                             GWT.getUncaughtExceptionHandler().onUncaughtException(new Throwable(e.toString()));
                         }
                     }
+                    // GWT Native exceptions (like NPE) seem to have stack and message variables, not __java$exception though
+                    else if (error.hasOwnProperty("message")) {
+                        String message = JsObject.getOwnPropertyDescriptor(error, "message").value.toString();
+                        GWT.getUncaughtExceptionHandler().onUncaughtException(new Throwable(message));
+                    } else {
+                        GWT.getUncaughtExceptionHandler().onUncaughtException(new Throwable("An unknown exception occured inside a promise: " + e.toString()));
+                    }
                 }
             }
-            return new Promise<>((res, rej) -> resolve());
+            return new Promise<>((res, rej) -> rej.onInvoke(e));
         };
     }
 }
