@@ -136,7 +136,6 @@ public class EmployeeRosterPage implements Page {
             loadingSpinner.hideFor("refresh-employee-roster");
             return promiseUtils.resolve();
         }).catch_(e -> {
-            promiseUtils.getDefaultCatch().onInvoke(e);
             loadingSpinner.hideFor("refresh-employee-roster");
             return promiseUtils.resolve();
         });
