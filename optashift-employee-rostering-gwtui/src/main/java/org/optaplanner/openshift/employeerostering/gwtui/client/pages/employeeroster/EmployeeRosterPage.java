@@ -34,15 +34,14 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 
 @Templated
 @ApplicationScoped
@@ -92,6 +91,9 @@ public class EmployeeRosterPage implements Page {
     @Inject
     private LoadingSpinner loadingSpinner;
 
+    @Inject
+    private PromiseUtils promiseUtils;
+
     private EmployeeRosterViewport viewport;
     private EmployeeRosterView currentEmployeeRosterView;
 
@@ -121,7 +123,7 @@ public class EmployeeRosterPage implements Page {
         return fetchEmployeeRosterView().then(employeeRosterView -> {
             viewport = employeeRosterViewportFactory.getViewport(employeeRosterView);
             viewportView.setViewport(viewport);
-            return resolve();
+            return promiseUtils.resolve();
 
         });
     }
@@ -132,11 +134,11 @@ public class EmployeeRosterPage implements Page {
 
         return refreshWithoutLoadingSpinner().then(i -> {
             loadingSpinner.hideFor("refresh-employee-roster");
-            return resolve();
+            return promiseUtils.resolve();
         }).catch_(e -> {
-            ErrorPopup.show(e.toString());
+            promiseUtils.getDefaultCatch().onInvoke(e);
             loadingSpinner.hideFor("refresh-employee-roster");
-            return resolve();
+            return promiseUtils.resolve();
         });
     }
 
