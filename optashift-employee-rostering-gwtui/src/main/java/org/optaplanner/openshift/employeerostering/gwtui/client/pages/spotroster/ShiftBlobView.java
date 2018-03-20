@@ -21,7 +21,6 @@ import java.time.OffsetDateTime;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -44,7 +43,8 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     @Inject
     @DataField("blob")
-    private HTMLDivElement root;
+    @Named("span")
+    private HTMLElement root;
 
     @Inject
     @Named("span")
@@ -55,14 +55,14 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     private SpotRosterPage page;
 
     private Viewport<OffsetDateTime> viewport;
-    private ListView<ShiftBlob> blobViews;
+    private ListView<SubLane<OffsetDateTime>, ShiftBlob> blobViews;
     private Runnable onDestroy;
 
     private ShiftBlob blob;
 
     @Override
-    public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
-                                            final ListView<ShiftBlob> blobViews) {
+    public ListElementView<SubLane<OffsetDateTime>, ShiftBlob> setup(final ShiftBlob blob,
+                                                                     final ListView<SubLane<OffsetDateTime>, ShiftBlob> blobViews) {
 
         this.blobViews = blobViews;
         this.blob = blob;
@@ -132,6 +132,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     @Override
     public BlobView<OffsetDateTime, ShiftBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
+        viewport.setGroupPosition(this, viewport.getSubLanePosition(subLaneView));
         return this;
     }
 

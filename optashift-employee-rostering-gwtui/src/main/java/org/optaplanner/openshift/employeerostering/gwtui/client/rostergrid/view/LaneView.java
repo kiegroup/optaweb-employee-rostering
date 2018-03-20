@@ -17,8 +17,10 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -29,36 +31,49 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 
 @Templated
-public class LaneView<T> implements ListElementView<Lane<T>> {
+public class LaneView<T> implements ListElementView<Viewport<T>, Lane<T>> {
 
     @Inject
     @DataField("title")
     public HTMLDivElement title;
 
     @Inject
-    private ListView<SubLane<T>> subLanes;
+    private ListView<Lane<T>, SubLane<T>> subLanes;
 
     @Inject
     private ManagedInstance<SubLaneView<T>> subLaneViewInstances;
+
+    @Inject
+    @Named("span")
+    private HTMLElement laneBackground;
 
     private Lane<T> lane;
 
     private Viewport<T> viewport;
 
     @Override
-    public ListElementView<Lane<T>> setup(final Lane<T> lane,
-                                          final ListView<Lane<T>> laneViews) {
+    public ListElementView<Viewport<T>, Lane<T>> setup(final Lane<T> lane,
+                                                       final ListView<Viewport<T>, Lane<T>> laneViews) {
 
         this.lane = lane;
 
-        subLanes.init(getElement(), lane.getSubLanes(), () -> subLaneViewInstances.get()
+        subLaneViewInstances.get().withViewport(viewport).withParent(lane, laneViews);
+        subLanes.init(laneViews.getHTMLParentElement(), lane, lane.getSubLanes(), () -> subLaneViewInstances.get()
                 .withViewport(viewport)
                 .withParent(lane, laneViews));
 
-        viewport.drawGridLinesAt(this);
+        getElement().textContent = lane.getTitle();
+        laneBackground.classList.add("lane-background");
 
-        title.textContent = lane.getTitle();
+        viewport.setAbsPositionInScreenPixels(() -> laneBackground, 1L, 0L);
+        viewport.setSizeInScreenPixels(() -> laneBackground, viewport.getScale().getEndInGridPixels(), 0L);
+        viewport.setGroupPosition(() -> laneBackground, viewport.getLaneStartPosition(lane));
+        viewport.setGroupSizeInScreenPixels(() -> laneBackground, lane.getSubLanes().size() + 0L, 0L);
 
+        viewport.setGroupPosition(this, viewport.getLaneStartPosition(lane));
+        viewport.setGroupSizeInScreenPixels(this, lane.getSubLanes().size() + 0L, 0L);
+
+        laneViews.getHTMLParentElement().appendChild(laneBackground);
         return this;
     }
 

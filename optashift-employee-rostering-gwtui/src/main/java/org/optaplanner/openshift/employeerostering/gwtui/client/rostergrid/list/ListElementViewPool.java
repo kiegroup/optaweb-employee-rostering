@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 import javax.enterprise.context.Dependent;
 
 @Dependent
-public class ListElementViewPool<T extends ListElementView<?>> {
+public class ListElementViewPool<T extends ListElementView<?, ?>> {
 
     private final Set<T> availableInstances = new HashSet<>();
 

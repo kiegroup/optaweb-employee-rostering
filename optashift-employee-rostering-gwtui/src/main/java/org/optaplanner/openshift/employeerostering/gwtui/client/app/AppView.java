@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.app;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLDivElement;
@@ -26,8 +27,10 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.app.footer.Foote
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.header.HeaderView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 
 @Templated
+//@ApplicationScoped
 public class AppView implements IsElement {
 
     @Inject
@@ -45,6 +48,15 @@ public class AppView implements IsElement {
     @Inject
     @DataField("loading-spinner")
     private LoadingSpinner loadingSpinner;
+
+    @Inject
+    private PageUtils pageUtils;
+
+    @PostConstruct
+    public void init() {
+        pageUtils.addHeightEaterElements(header, footer)
+                .withVerticalPadding(125);
+    }
 
     public void goTo(final Page page) {
         content.innerHTML = "";

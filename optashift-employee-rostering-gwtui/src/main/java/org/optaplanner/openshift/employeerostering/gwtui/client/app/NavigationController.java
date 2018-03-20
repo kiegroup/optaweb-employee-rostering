@@ -21,6 +21,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
@@ -41,24 +42,32 @@ public class NavigationController {
     @Inject
     private PromiseUtils promiseUtils;
 
+    private Page currentPage;
+
     public void onPageChanged(final @Observes PageChange pageChange) {
 
         loadingSpinner.showFor("page-change");
 
         final Page page = pages.get(pageChange.getPageId());
 
-        page.beforeOpen().then(i -> {
-            appView.goTo(page);
-            return page.onOpen();
-        }).then(i -> {
-            pageChange.afterPageOpen.run();
-            return promiseUtils.resolve();
-        }).then(i -> {
-            loadingSpinner.hideFor("page-change");
-            return promiseUtils.resolve();
-        }).catch_(i -> {
-            promiseUtils.getDefaultCatch().onInvoke(i);
-            loadingSpinner.hideFor("page-change");
+        Promise<Void> onClose = (currentPage != null) ? currentPage.onClose() : promiseUtils.resolve();
+
+        onClose.then(v -> {
+            page.beforeOpen().then(i -> {
+                appView.goTo(page);
+                return page.onOpen();
+            }).then(i -> {
+                pageChange.afterPageOpen.run();
+                currentPage = page;
+                return promiseUtils.resolve();
+            }).then(i -> {
+                loadingSpinner.hideFor("page-change");
+                return promiseUtils.resolve();
+            }).catch_(i -> {
+                promiseUtils.getDefaultCatch().onInvoke(i);
+                loadingSpinner.hideFor("page-change");
+                return promiseUtils.resolve();
+            });
             return promiseUtils.resolve();
         });
     }

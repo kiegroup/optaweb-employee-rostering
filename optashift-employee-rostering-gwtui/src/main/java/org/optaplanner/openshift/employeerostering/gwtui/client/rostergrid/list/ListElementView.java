@@ -18,9 +18,9 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 
-public interface ListElementView<T> extends IsElement {
+public interface ListElementView<C, T> extends IsElement {
 
-    ListElementView<T> setup(final T t, final ListView<T> list);
+    ListElementView<C, T> setup(final T t, final ListView<C, T> list);
 
     default void destroy() {
         //no-op

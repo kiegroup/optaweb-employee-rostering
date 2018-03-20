@@ -82,7 +82,8 @@ public class RotationViewportFactory {
                     shiftBlobViewPool::get,
                     scale,
                     cssGridLinesFactory.newWithSteps(2L, 24L),
-                    ticksFactory.newTicks(scale, 4L, 24L),
+                    ticksFactory.newTicks(scale, "date-tick", 0L, 24L),
+                    ticksFactory.newTicks(scale, "time-tick", 1L, 4L),
                     lanes);
         });
     }
@@ -102,7 +103,7 @@ public class RotationViewportFactory {
                                  final List<Shift> shifts,
                                  final Spot spot) {
 
-        final List<SubLane<OffsetDateTime>> subLanes = conflictFreeSubLanesFactory.createSubLanes(
+        final List<SubLane<OffsetDateTime>> subLanes = conflictFreeSubLanesFactory.createSubLanes(spot.getName(),
                 shifts.stream().map(shift -> new ShiftBlob(shift, baseDate, scale)));
 
         return new SpotLane(spot, subLanes);

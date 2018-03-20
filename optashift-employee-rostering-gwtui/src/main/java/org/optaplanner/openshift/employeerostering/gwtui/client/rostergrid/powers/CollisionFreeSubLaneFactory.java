@@ -33,16 +33,16 @@ import static java.util.stream.Collectors.toList;
 @Dependent
 public class CollisionFreeSubLaneFactory {
 
-    public <T> List<SubLane<T>> createSubLanes(final Stream<Blob<T>> blobs) {
+    public <T> List<SubLane<T>> createSubLanes(final String laneTitle, final Stream<Blob<T>> blobs) {
         return blobs.sorted(comparing(Blob::getPositionInGridPixels))
-                .map(this::singletonSubLaneList)
+                .map((b) -> singletonSubLaneList(laneTitle, b))
                 .reduce(this::merge)
-                .orElseGet(() -> new ArrayList<>(Arrays.asList(new SubLane<>())));
+                .orElseGet(() -> new ArrayList<>(Arrays.asList(new SubLane<>(laneTitle))));
     }
 
-    private <T> List<SubLane<T>> singletonSubLaneList(final Blob<T> blob) {
+    private <T> List<SubLane<T>> singletonSubLaneList(final String laneTitle, final Blob<T> blob) {
         final List<SubLane<T>> subLaneSingletonList = new ArrayList<>();
-        subLaneSingletonList.add(new SubLane<>(blob.toStream().collect(toList())));
+        subLaneSingletonList.add(new SubLane<>(laneTitle, blob.toStream().collect(toList())));
         return subLaneSingletonList;
     }
 

@@ -56,14 +56,14 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     private EmployeeRosterPage page;
 
     private Viewport<OffsetDateTime> viewport;
-    private ListView<EmployeeBlob> blobViews;
+    private ListView<SubLane<OffsetDateTime>, EmployeeBlob> blobViews;
     private Runnable onDestroy;
 
     private EmployeeBlob blob;
 
     @Override
-    public ListElementView<EmployeeBlob> setup(final EmployeeBlob blob,
-                                               final ListView<EmployeeBlob> blobViews) {
+    public ListElementView<SubLane<OffsetDateTime>, EmployeeBlob> setup(final EmployeeBlob blob,
+                                                                        final ListView<SubLane<OffsetDateTime>, EmployeeBlob> blobViews) {
 
         this.blobViews = blobViews;
         this.blob = blob;
@@ -142,6 +142,7 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
 
     @Override
     public BlobView<OffsetDateTime, EmployeeBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
+        this.viewport.setGroupPosition(this, viewport.getSubLanePosition(subLaneView));
         return this;
     }
 

@@ -18,11 +18,13 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroste
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.Ticks;
@@ -45,21 +47,24 @@ public class SpotRosterViewport extends Viewport<OffsetDateTime> {
     private final Supplier<ShiftBlobView> blobViewSupplier;
     private final LinearScale<OffsetDateTime> scale;
     private final CssGridLines gridLines;
-    private final Ticks<OffsetDateTime> ticks;
+    private final Ticks<OffsetDateTime> dateTicks;
+    private final Ticks<OffsetDateTime> timeTicks;
     private final List<Lane<OffsetDateTime>> lanes;
 
     SpotRosterViewport(final Integer tenantId,
                        final Supplier<ShiftBlobView> blobViewSupplier,
                        final LinearScale<OffsetDateTime> scale,
                        final CssGridLines gridLines,
-                       final Ticks<OffsetDateTime> ticks,
+                       final Ticks<OffsetDateTime> dateTicks,
+                       final Ticks<OffsetDateTime> timeTicks,
                        final List<Lane<OffsetDateTime>> lanes) {
 
         this.tenantId = tenantId;
         this.blobViewSupplier = blobViewSupplier;
         this.scale = scale;
         this.gridLines = gridLines;
-        this.ticks = ticks;
+        this.dateTicks = dateTicks;
+        this.timeTicks = timeTicks;
         this.lanes = lanes;
     }
 
@@ -71,23 +76,20 @@ public class SpotRosterViewport extends Viewport<OffsetDateTime> {
     @Override
     public void drawTicksAt(final IsElement target) {
         //FIXME: Make it18n
-        ticks.drawAt(target, this, date -> {
-            final int hours = date.getHour();
-            if (hours == 0) {
-                final String lowerDayOfTheWeek = date.getDayOfWeek().toString().toLowerCase();
-                final String dayOfTheWeek = lowerDayOfTheWeek.substring(0, 1).toUpperCase() + lowerDayOfTheWeek.substring(1);
-                int month = date.getMonth().getValue();
-                return ((month < 10 ? "0" : "") + month) + "/" + date.getDayOfMonth() + " " + dayOfTheWeek.substring(0, 1);
-            } else {
-                return (hours < 10 ? "0" : "") + hours + ":00";
-            }
+        DateTimeFormat dateFormat = DateTimeFormat.getFormat("EEE MMM d, yyyy");
+        DateTimeFormat timeFormat = DateTimeFormat.getFormat("h a");
+        dateTicks.drawAt(target, this, date -> {
+            return dateFormat.format(new Date(date.toEpochSecond() * 1000));
+        });
+        timeTicks.drawAt(target, this, date -> {
+            return timeFormat.format(new Date(date.toEpochSecond() * 1000));
         });
     }
 
     @Override
     public Lane<OffsetDateTime> newLane() {
         return new SpotLane(new Spot(tenantId, "New spot", new HashSet<>()),
-                            new ArrayList<>(singletonList(new SubLane<>())));
+                new ArrayList<>(singletonList(new SubLane<>("New spot"))));
     }
 
     @Override
@@ -124,5 +126,17 @@ public class SpotRosterViewport extends Viewport<OffsetDateTime> {
     @Override
     public LinearScale<OffsetDateTime> getScale() {
         return scale;
+    }
+
+    @Override
+    public Long getHeaderRows() {
+        // 2 rows: one for dates, another for times
+        return 2L;
+    }
+
+    @Override
+    public Long getHeaderColumns() {
+        // One column for spot names
+        return 1L;
     }
 }
