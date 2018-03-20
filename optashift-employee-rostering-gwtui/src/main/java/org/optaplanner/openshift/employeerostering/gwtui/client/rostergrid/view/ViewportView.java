@@ -17,15 +17,22 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
+import elemental2.dom.MouseEventInit;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.ListView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 
 @Templated
@@ -39,21 +46,101 @@ public class ViewportView<T> implements IsElement {
     private ManagedInstance<LaneView<T>> laneViewInstances;
 
     @Inject
-    private ListView<Lane<T>> lanes;
+    private ListView<Viewport<T>, Lane<T>> lanes;
 
     @Inject
     private TimingUtils timingUtils;
 
+    @Inject
+    private PageUtils pageUtils;
+
+    @Inject
+    @Named("span")
+    private HTMLElement headerBackground;
+
+    private Viewport<T> viewport;
+
+    private boolean inMouseEvent = false;
+
     public void setViewport(final Viewport<T> viewport) {
 
         timingUtils.time("Viewport assemble", () -> {
+            this.viewport = viewport;
+            if (headerBackground.isConnected) {
+                headerBackground.remove();
+            }
             getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
 
-            viewport.setSizeInScreenPixels(this, viewport.getSizeInGridPixels(), 12L);
+            getElement().style.set("grid-template-columns", "auto " + "repeat(" + (viewport.getScale().getEndInGridPixels()) + ", 20px)");
 
-            viewport.drawTicksAt(() -> ticksLane);
+            pageUtils.expandElementToRemainingHeight(this);
 
-            lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get().withViewport(viewport));
+            headerBackground.classList.add("header-background");
+            getElement().appendChild(headerBackground);
+            viewport.setAbsPositionInScreenPixels(() -> headerBackground, 0L, 0L);
+            viewport.setSizeInScreenPixels(() -> headerBackground, viewport.getScale().getEndInGridPixels() + viewport.getHeaderColumns(), 0L);
+            viewport.setAbsGroupPosition(() -> headerBackground, 0);
+            viewport.setGroupSizeInScreenPixels(() -> headerBackground, viewport.getHeaderRows(), 0L);
+            viewport.drawTicksAt(this);
+            viewport.drawGridLinesAt(this);
+
+            lanes.init(getElement(), viewport, viewport.getLanes(), () -> laneViewInstances.get().withViewport(viewport));
         });
+    }
+
+    @EventHandler("viewport")
+    private void onDragStart(@ForEvent("mousedown") MouseEvent e) {
+        if (!inMouseEvent && viewport != null && viewport.getMouseTarget() != null) {
+            try {
+                inMouseEvent = true;
+                e.target = viewport.getMouseTarget().getElement();
+                MouseEvent copy = new MouseEvent(e.type, (MouseEventInit) e);
+                viewport.getMouseTarget().getElement().dispatchEvent(copy);
+            } finally {
+                inMouseEvent = false;
+            }
+        }
+    }
+
+    @EventHandler("viewport")
+    private void onDrag(@ForEvent("mousemove") MouseEvent e) {
+        if (!inMouseEvent && viewport != null && viewport.getMouseTarget() != null) {
+            try {
+                inMouseEvent = true;
+                e.target = viewport.getMouseTarget().getElement();
+                MouseEvent copy = new MouseEvent(e.type, (MouseEventInit) e);
+                viewport.getMouseTarget().getElement().dispatchEvent(copy);
+            } finally {
+                inMouseEvent = false;
+            }
+        }
+    }
+
+    @EventHandler("viewport")
+    private void onDragEnd(@ForEvent("mouseup") MouseEvent e) {
+        if (!inMouseEvent && viewport != null && viewport.getMouseTarget() != null) {
+            try {
+                inMouseEvent = true;
+                e.target = viewport.getMouseTarget().getElement();
+                MouseEvent copy = new MouseEvent(e.type, (MouseEventInit) e);
+                viewport.getMouseTarget().getElement().dispatchEvent(copy);
+            } finally {
+                inMouseEvent = false;
+            }
+        }
+    }
+
+    @EventHandler("viewport")
+    private void onMouseExit(@ForEvent("mouseleave") MouseEvent e) {
+        if (!inMouseEvent && viewport != null && viewport.getMouseTarget() != null) {
+            try {
+                inMouseEvent = true;
+                e.target = viewport.getMouseTarget().getElement();
+                MouseEvent copy = new MouseEvent("mouseup", (MouseEventInit) e);
+                viewport.getMouseTarget().getElement().dispatchEvent(copy);
+            } finally {
+                inMouseEvent = false;
+            }
+        }
     }
 }

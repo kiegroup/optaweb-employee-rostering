@@ -16,6 +16,10 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
@@ -24,38 +28,42 @@ public class CssGridLines {
 
     private final Long softLineStepInGridPixels;
     private final Long strongLineStepInGridPixels;
+    private final Supplier<HTMLElement> divFactory;
+
+    private final List<HTMLElement> gridLineElements;
 
     CssGridLines(final Long softStep,
-                 final Long harshStep) {
+                 final Long harshStep,
+                 final Supplier<HTMLElement> divFactory) {
 
         softLineStepInGridPixels = softStep;
         strongLineStepInGridPixels = harshStep;
+        this.divFactory = divFactory;
+        gridLineElements = new ArrayList<>();
     }
 
     public void drawAt(final IsElement target, final Viewport<?> viewport) {
 
         final HTMLElement targetElement = target.getElement();
 
-        targetElement.style.backgroundPosition = "5px 5px, 5px 5px";
+        gridLineElements.forEach((e) -> e.remove());
+        gridLineElements.clear();
 
-        targetElement.style.backgroundImage =
-                "linear-gradient(" + getRotation(viewport) + "deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px)," +
-                        " linear-gradient(" + getRotation(viewport) + "deg, rgba(0, 0, 0, 0.2) 1px, transparent 1px)";
+        for (long i = 0; i < viewport.getScale().getEndInGridPixels(); i += softLineStepInGridPixels) {
+            HTMLElement gridLine = divFactory.get();
 
-        targetElement.style.backgroundSize =
-                getSoftLinesInterval(viewport) + getSoftLinesInterval(viewport) + ", " +
-                        getHarshLinesInterval(viewport) + getHarshLinesInterval(viewport);
-    }
-
-    private String getHarshLinesInterval(final Viewport<?> viewport) {
-        return viewport.toScreenPixels(strongLineStepInGridPixels) + "px ";
-    }
-
-    private String getSoftLinesInterval(final Viewport<?> viewport) {
-        return viewport.toScreenPixels(softLineStepInGridPixels) + "px ";
-    }
-
-    private Integer getRotation(final Viewport<?> viewport) {
-        return viewport.decideBasedOnOrientation(0, 90);
+            // Assumes strongLineStepInGridPixels is a multiple of softLineStepInGridPixels
+            if (i % strongLineStepInGridPixels == 0) {
+                gridLine.classList.add("strong-grid-line");
+            } else {
+                gridLine.classList.add("soft-grid-line");
+            }
+            viewport.setPositionInScreenPixels(() -> gridLine, i, 0L);
+            viewport.setSizeInScreenPixels(() -> gridLine, 1L, 0L);
+            viewport.setGroupPosition(() -> gridLine, 0L);
+            viewport.setGroupSizeInScreenPixels(() -> gridLine, viewport.getGroupEndPosition() + 1, 0L);
+            targetElement.appendChild(gridLine);
+            gridLineElements.add(gridLine);
+        }
     }
 }

@@ -25,13 +25,20 @@ public class SubLane<T> {
 
     private final CollisionDetector<Blob<T>> collisionDetector;
 
-    public SubLane() {
-        this(new ArrayList<>());
+    private final String laneTitle;
+
+    public SubLane(final String laneTitle) {
+        this(laneTitle, new ArrayList<>());
     }
 
-    public SubLane(final List<Blob<T>> blobs) {
+    public SubLane(final String laneTitle, final List<Blob<T>> blobs) {
         this.blobs = blobs;
+        this.laneTitle = laneTitle;
         this.collisionDetector = new CollisionDetector<>(this::getBlobs);
+    }
+
+    public String getLaneTitle() {
+        return laneTitle;
     }
 
     public List<Blob<T>> getBlobs() {
@@ -53,6 +60,6 @@ public class SubLane<T> {
     public SubLane<T> withMore(final List<Blob<T>> blobs) {
         final List<Blob<T>> newBlobs = new ArrayList<>(this.blobs);
         newBlobs.addAll(blobs);
-        return new SubLane<>(newBlobs);
+        return new SubLane<>(laneTitle, newBlobs);
     }
 }

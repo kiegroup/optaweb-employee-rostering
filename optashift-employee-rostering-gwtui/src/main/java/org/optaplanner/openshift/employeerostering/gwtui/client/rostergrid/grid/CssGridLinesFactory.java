@@ -17,13 +17,21 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+import javax.inject.Named;
+
+import elemental2.dom.HTMLElement;
 
 @Dependent
 public class CssGridLinesFactory {
 
+    @Inject
+    @Named("span")
+    private HTMLElement span;
+
     public CssGridLines newWithSteps(final Long softLineStep,
                                      final Long harshLineStep) {
 
-        return new CssGridLines(softLineStep, harshLineStep);
+        return new CssGridLines(softLineStep, harshLineStep, () -> (HTMLElement) span.cloneNode(false));
     }
 }

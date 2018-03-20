@@ -24,23 +24,26 @@ import java.util.function.Supplier;
 
 import elemental2.dom.HTMLElement;
 
-public class ListView<T> {
+public class ListView<C, T> {
 
-    private Supplier<ListElementView<T>> viewFactory;
-    private HTMLElement container;
+    private Supplier<ListElementView<C, T>> viewFactory;
+    private C container;
+    private HTMLElement htmlParentElement;
 
     private List<T> objects;
-    private Map<T, ListElementView<T>> views;
+    private Map<T, ListElementView<C, T>> views;
 
     private boolean init = false;
 
-    public void init(final HTMLElement container,
+    public void init(final HTMLElement htmlParentElement,
+                     final C container,
                      final List<T> objects,
-                     final Supplier<ListElementView<T>> viewFactory) {
+                     final Supplier<ListElementView<C, T>> viewFactory) {
 
         reset();
         this.init = true;
         this.container = container;
+        this.htmlParentElement = htmlParentElement;
         this.viewFactory = viewFactory;
         this.objects = objects;
         this.views = new HashMap<>();
@@ -55,16 +58,16 @@ public class ListView<T> {
     }
 
     public void addAfter(final T object, final T newObject) {
-        final ListElementView<T> view = viewFactory.get().setup(newObject, this);
+        final ListElementView<C, T> view = viewFactory.get().setup(newObject, this);
         views.put(newObject, view);
 
         int next = objects.indexOf(object) + 1;
 
         if (next <= 0 || next >= objects.size()) {
-            container.appendChild(view.getElement());
+            htmlParentElement.appendChild(view.getElement());
             objects.add(newObject);
         } else {
-            container.insertBefore(view.getElement(), views.get(objects.get(next)).getElement());
+            htmlParentElement.insertBefore(view.getElement(), views.get(objects.get(next)).getElement());
             objects.add(next, newObject);
         }
     }
@@ -75,15 +78,15 @@ public class ListView<T> {
     }
 
     private void addViewFor(final T newObject) {
-        final ListElementView<T> view = viewFactory.get().setup(newObject, this);
+        final ListElementView<C, T> view = viewFactory.get().setup(newObject, this);
         views.put(newObject, view);
-        container.appendChild(view.getElement());
+        htmlParentElement.appendChild(view.getElement());
     }
 
     public void remove(final T object) {
-        final ListElementView<T> view = views.remove(object);
+        final ListElementView<C, T> view = views.remove(object);
         view.destroy();
-        container.removeChild(view.getElement());
+        view.getElement().remove();
         objects.remove(object);
     }
 
@@ -99,7 +102,7 @@ public class ListView<T> {
         return objects.isEmpty();
     }
 
-    public ListElementView<T> getView(final T obj) {
+    public ListElementView<C, T> getView(final T obj) {
         return views.get(obj);
     }
 
@@ -110,5 +113,13 @@ public class ListView<T> {
             addAfter(obj, newObj);
             remove(obj);
         }
+    }
+
+    public C getContainer() {
+        return container;
+    }
+
+    public HTMLElement getHTMLParentElement() {
+        return htmlParentElement;
     }
 }

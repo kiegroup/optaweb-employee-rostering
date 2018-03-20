@@ -101,7 +101,8 @@ public class EmployeeRosterViewportFactory {
                     shiftBlobViewPool::get,
                     scale,
                     cssGridLinesFactory.newWithSteps(2L, 12L),
-                    ticksFactory.newTicks(scale, 2L, 12L),
+                    ticksFactory.newTicks(scale, "date-tick", 0L, 12L),
+                    ticksFactory.newTicks(scale, "time-tick", 1L, 2L),
                     lanes);
         });
     }
@@ -136,7 +137,7 @@ public class EmployeeRosterViewportFactory {
                                                         final Map<Long, Spot> spotIdToSpot) {
 
         if (employeeIdToAvailabilityViewList.isEmpty()) {
-            return new ArrayList<>(singletonList(new SubLane<>()));
+            return new ArrayList<>(singletonList(new SubLane<>(employee.getName())));
         }
 
         List<EmployeeAvailabilityView> employeeAvailabilities = new ArrayList<>();
@@ -162,7 +163,7 @@ public class EmployeeRosterViewportFactory {
                     return buildEmployeeShiftBlob(employee, spotIdToSpot.get(s.getSpotId()), s);
                 }).collect(Collectors.toList());
         // Impossible for an employee to have two employee availabilities at the same time
-        return new ArrayList<>(Arrays.asList(new SubLane<>(employeeAvailabilitiesBlobs), new SubLane<>(employeeShiftsBlobs)));//conflictFreeSubLanesFactory.createSubLanes(blobs);
+        return new ArrayList<>(Arrays.asList(new SubLane<>(employee.getName(), employeeAvailabilitiesBlobs), new SubLane<>(employee.getName(), employeeShiftsBlobs)));//conflictFreeSubLanesFactory.createSubLanes(blobs);
     }
 
     private EmployeeBlob buildEmployeeAvailabilityBlob(final Employee employee,

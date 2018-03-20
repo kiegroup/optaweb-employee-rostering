@@ -94,7 +94,8 @@ public class SpotRosterViewportFactory {
                     shiftBlobViewPool::get,
                     scale,
                     cssGridLinesFactory.newWithSteps(2L, 12L),
-                    ticksFactory.newTicks(scale, 2L, 12L),
+                    ticksFactory.newTicks(scale, "date-tick", 0L, 12L),
+                    ticksFactory.newTicks(scale, "time-tick", 1L, 2L),
                     lanes);
         });
     }
@@ -122,7 +123,7 @@ public class SpotRosterViewportFactory {
         //FIXME: Handle overlapping blobs and discover why some TimeSlots are null
 
         if (timeSlotsByShift.isEmpty()) {
-            return new ArrayList<>(singletonList(new SubLane<>()));
+            return new ArrayList<>(singletonList(new SubLane<>(spot.getName())));
         }
 
         final Stream<Blob<OffsetDateTime>> blobs = timeSlotsByShift
@@ -134,7 +135,7 @@ public class SpotRosterViewportFactory {
                     return buildShiftBlob(spot, shiftView, employee);
                 });
 
-        return conflictFreeSubLanesFactory.createSubLanes(blobs);
+        return conflictFreeSubLanesFactory.createSubLanes(spot.getName(), blobs);
     }
 
     private ShiftBlob buildShiftBlob(final Spot spot,
