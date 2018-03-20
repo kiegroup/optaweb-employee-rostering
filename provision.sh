@@ -1,5 +1,5 @@
-#!/bin/sh
 #!/bin/bash
+#!/bin/sh
 set -e
 
 command -v oc >/dev/null 2>&1 || {
