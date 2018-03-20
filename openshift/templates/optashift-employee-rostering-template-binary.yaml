@@ -4,7 +4,7 @@ labels:
   app: employee-rostering
 metadata:
   annotations:
-    description: OptaPlanner Employee Rostering on OpenShift
+    description: Employee Rostering with OptaPlanner on OpenShift
     iconClass: icon-java
     tags: optaplanner,jboss
   name: employee-rostering-builds
