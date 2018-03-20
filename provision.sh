@@ -9,31 +9,31 @@ command -v oc >/dev/null 2>&1 || {
 }
 
 ################################################################################
-# Provisioning script to deploy the demo on an OpenShift environment           #
+# Provisioning script to deploy the app on an OpenShift environment           #
 ################################################################################
 function usage() {
     echo
     echo "Usage:"
-    echo " $0 [command] [demo-name] [options]"
+    echo " $0 [command] [app-name] [options]"
     echo " $0 --help"
     echo
     echo "Example:"
     echo " $0 setup --maven-mirror-url http://nexus.repo.com/content/groups/public/ --project-suffix s40d"
     echo
     echo "COMMANDS:"
-    echo "   setup                    Set up the demo projects and deploy demo apps"
-    echo "   deploy                   Deploy demo apps"
-    echo "   delete                   Clean up and remove demo projects and objects"
-    echo "   verify                   Verify the demo is deployed correctly"
-    echo "   idle                     Make all demo services idle"
+    echo "   setup                    Set up the projects and deploy the apps"
+    echo "   deploy                   Deploy the apps"
+    echo "   delete                   Clean up and remove projects and objects"
+    echo "   verify                   Verify the app is deployed correctly"
+    echo "   idle                     Make all services idle"
     echo
-    echo "DEMOS:"
-    echo "   employee-rostering       OptaPlanner Employee Rostering demo."
+    echo "APPS:"
+    echo "   employee-rostering       OptaShift Employee Rostering"
     echo
     echo "OPTIONS:"
     echo "   --binary                  Performs an OpenShift 'binary-build', which builds the WAR file locally and sends it to the OpenShift BuildConfig. Requires less memory in OpenShift."
-    echo "   --user [username]         The admin user for the demo projects. mandatory if logged in as system:admin"
-    echo "   --project-suffix [suffix] Suffix to be added to demo project names e.g. ci-SUFFIX. If empty, user will be used as suffix."
+    echo "   --user [username]         The admin user for the project. mandatory if logged in as system:admin"
+    echo "   --project-suffix [suffix] Suffix to be added to project names e.g. ci-SUFFIX. If empty, user will be used as suffix."
     echo "   --run-verify              Run verify after provisioning"
     # TODO support --maven-mirror-url
     echo
@@ -44,42 +44,42 @@ ARG_PROJECT_SUFFIX=
 ARG_COMMAND=
 ARG_RUN_VERIFY=false
 ARG_BINARY_BUILD=false
-ARG_DEMO=
+ARG_APP=
 
 while :; do
     case $1 in
         setup)
             ARG_COMMAND=setup
             if [ -n "$2" ]; then
-                ARG_DEMO=$2
+                ARG_APP=$2
                 shift
             fi
             ;;
         deploy)
             ARG_COMMAND=deploy
             if [ -n "$2" ]; then
-                ARG_DEMO=$2
+                ARG_APP=$2
                 shift
             fi
             ;;
         delete)
             ARG_COMMAND=delete
             if [ -n "$2" ]; then
-                ARG_DEMO=$2
+                ARG_APP=$2
                 shift
             fi
             ;;
         verify)
             ARG_COMMAND=verify
             if [ -n "$2" ]; then
-                ARG_DEMO=$2
+                ARG_APP=$2
                 shift
             fi
             ;;
         idle)
             ARG_COMMAND=idle
             if [ -n "$2" ]; then
-                ARG_DEMO=$2
+                ARG_APP=$2
                 shift
             fi
             ;;
@@ -139,26 +139,23 @@ OPENSHIFT_USER=${ARG_USERNAME:-$LOGGEDIN_USER}
 PRJ_SUFFIX=${ARG_PROJECT_SUFFIX:-`echo $OPENSHIFT_USER | sed -e 's/[-@].*//g'`}
 PRJ=optashift-$PRJ_SUFFIX
 
-PRJ_DISPLAY_NAME="OptaShift"
-PRJ_DESCRIPTION="OptaShift Employee Rostering Demo"
-#GIT_URI="https://github.com/ge0ffrey/optashift-employee-rostering"
-#GIT_URI="https://github.com/DuncanDoyle/optaplanner-openshift-worker-rostering" // TODO rename to optashift-employee-rostering
-#GIT_REF="openshift-template"
+PRJ_DISPLAY_NAME="OptaShift Employee Rostering"
+PRJ_DESCRIPTION="Employee Rostering with OptaPlanner on OpenShift"
 
 # config
-GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-ge0ffrey}
+GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-kiegroup}
 GIT_REF=${GITHUB_REF:-master}
 GIT_URI=https://github.com/$GITHUB_ACCOUNT/optashift-employee-rostering
 
 ################################################################################
-# DEMO MATRIX                                                                  #
+# APP MATRIX                                                                  #
 ################################################################################
-case $ARG_DEMO in
+case $ARG_APP in
     employee-rostering)
 	   # No need to set anything here anymore.
 	;;
     *)
-        echo "ERROR: Invalid demo name: \"$ARG_DEMO\""
+        echo "ERROR: Invalid app name: \"$ARG_APP\""
         usage
         exit 255
         ;;
@@ -181,7 +178,7 @@ function print_info() {
 
   OPENSHIFT_MASTER=$(oc status | head -1 | sed 's#.*\(https://[^ ]*\)#\1#g') # must run after projects are created
 
-  echo "Demo name:           $ARG_DEMO"
+  echo "App name:            $ARG_APP"
   echo "OpenShift master:    $OPENSHIFT_MASTER"
   echo "Current user:        $LOGGEDIN_USER"
   echo "Project suffix:      $PRJ_SUFFIX"
@@ -306,28 +303,28 @@ fi
 #pushd ~ >/dev/null
 START=`date +%s`
 
-echo_header "OptaPlanner OpenShift Demo ($(date))"
+echo_header "$PRJ_DISPLAY_NAME ($(date))"
 
 case "$ARG_COMMAND" in
     delete)
-        echo "Delete OptaPlanner demo ($ARG_DEMO)..."
+        echo "Delete $PRJ_DISPLAY_NAME ($ARG_APP)..."
         oc delete project $PRJ
         ;;
 
     verify)
-        echo "Verifying OptaPlanner demo ($ARG_DEMO)..."
+        echo "Verifying $PRJ_DISPLAY_NAME ($ARG_APP)..."
         print_info
         verify_build_and_deployments
         ;;
 
     idle)
-        echo "Idling OptaPlanner OpenShift demo ($ARG_DEMO)..."
+        echo "Idling $PRJ_DISPLAY_NAME ($ARG_APP)..."
         print_info
         make_idle
         ;;
 
     setup)
-        echo "Setting up and deploying OptaPlanner demo ($ARG_DEMO)..."
+        echo "Setting up and deploying $PRJ_DISPLAY_NAME ($ARG_APP)..."
 
         print_info
         create_projects
@@ -348,7 +345,7 @@ case "$ARG_COMMAND" in
         ;;
 
     deploy)
-        echo "Deploying OptaPlanner demo ($ARG_DEMO)..."
+        echo "Deploying $PRJ_DISPLAY_NAME ($ARG_APP)..."
 
         print_info
 
