@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -43,9 +42,8 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 @NamedQueries({
         @NamedQuery(name = "Employee.findAll",
                 query = "select distinct e from Employee e left join fetch e.skillProficiencySet s"
-                        +
-                        " where e.tenantId = :tenantId" +
-                        " order by e.name, s.name"),
+                        + " where e.tenantId = :tenantId"
+                        + " order by e.name, s.name"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Employee extends AbstractPersistable {
@@ -59,12 +57,8 @@ public class Employee extends AbstractPersistable {
     @Size(min = 1)
     private Set<Skill> skillProficiencySet;
 
-    @Inject
     @SuppressWarnings("unused")
     public Employee() {
-        super();
-        name = "";
-        skillProficiencySet = new HashSet<>();
     }
 
     public Employee(Integer tenantId, String name) {
