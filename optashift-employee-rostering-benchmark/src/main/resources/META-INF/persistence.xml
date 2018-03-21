@@ -8,7 +8,6 @@
     <class>org.optaplanner.openshift.employeerostering.shared.spot.Spot</class>
     <class>org.optaplanner.openshift.employeerostering.shared.employee.Employee</class>
     <class>org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability</class>
-    <class>org.optaplanner.openshift.employeerostering.shared.employee.EmployeeSkillProficiency</class>
     <class>org.optaplanner.openshift.employeerostering.shared.shift.Shift</class>
     <class>org.optaplanner.openshift.employeerostering.shared.roster.RosterState</class>
     <class>org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate</class>
