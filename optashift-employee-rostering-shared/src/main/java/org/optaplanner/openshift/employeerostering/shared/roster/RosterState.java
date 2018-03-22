@@ -23,17 +23,17 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 public class RosterState extends AbstractPersistable {
 
     @NotNull
-    private Integer publishNotice;
+    private Integer publishNotice; // In number of days
     @NotNull
     private LocalDate firstDraftDate;
     @NotNull
-    private Integer publishLength;
+    private Integer publishLength; // In number of days
     @NotNull
-    private Integer draftLength;
+    private Integer draftLength; // In number of days
     @NotNull
-    private Integer unplannedRotationOffset;
+    private Integer unplannedRotationOffset; // In number of days from reference point
     @NotNull
-    private Integer rotationLength;
+    private Integer rotationLength; // In number of days
     @NotNull
     private LocalDate lastHistoricDate;
 
@@ -42,15 +42,70 @@ public class RosterState extends AbstractPersistable {
         super(-1);
     }
 
-    public RosterState(Integer tenantId, Integer publishNotice, LocalDate firstDraftDate, Integer publishLength, Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength) {
+    public RosterState(Integer tenantId, Integer publishNotice, LocalDate firstDraftDate, Integer publishLength, Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength, LocalDate lastHistoricDate) {
         super(tenantId);
         this.publishNotice = publishNotice;
-        this.draftLength = draftLength;
-        this.publishLength = publishLength;
-        this.rotationLength = rotationLength;
         this.firstDraftDate = firstDraftDate;
+        this.publishLength = publishLength;
+        this.draftLength = draftLength;
         this.unplannedRotationOffset = unplannedRotationOffset;
+        this.rotationLength = rotationLength;
+        this.lastHistoricDate = lastHistoricDate;
     }
+
+    @JsonIgnore
+    public boolean isHistoric(OffsetDateTime dateTime) {
+        return dateTime.isBefore(OffsetDateTime.of(getFirstPublishedDate().atTime(LocalTime.MIDNIGHT), dateTime.getOffset()));
+    }
+
+    @JsonIgnore
+    public boolean isDraft(OffsetDateTime dateTime) {
+        return dateTime.isAfter(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT), dateTime.getOffset()));
+    }
+
+    @JsonIgnore
+    public boolean isPublished(OffsetDateTime dateTime) {
+        return !isHistoric(dateTime) && !isDraft(dateTime);
+    }
+
+    @JsonIgnore
+    public boolean isHistoric(Shift shift) {
+        return isHistoric(shift.getStartDateTime());
+    }
+
+    @JsonIgnore
+    public boolean isDraft(Shift shift) {
+        return isDraft(shift.getStartDateTime());
+    }
+
+    @JsonIgnore
+    public boolean isPublished(Shift shift) {
+        return isPublished(shift.getStartDateTime());
+    }
+
+    @JsonIgnore
+    public LocalDate getFirstPublishedDate() {
+        return lastHistoricDate.plusDays(1);
+    }
+
+    @JsonIgnore
+    public LocalDate getLastPublishedDate() {
+        return firstDraftDate.minusDays(1);
+    }
+
+    @JsonIgnore
+    public LocalDate getLastDraftDate() {
+        return firstDraftDate.plusDays(draftLength);
+    }
+
+    @JsonIgnore
+    public LocalDate getPublishDeadline() {
+        return firstDraftDate.minusDays(publishNotice);
+    }
+
+    // ************************************************************************
+    // Simple getters and setters
+    // ************************************************************************
 
     public Integer getPublishNotice() {
         return publishNotice;
@@ -110,53 +165,4 @@ public class RosterState extends AbstractPersistable {
         return lastHistoricDate;
     }
 
-    @JsonIgnore
-    public boolean isHistoric(OffsetDateTime dateTime) {
-        return dateTime.isBefore(OffsetDateTime.of(getFirstPublishedDate().atTime(LocalTime.MIDNIGHT), dateTime.getOffset()));
-    }
-
-    @JsonIgnore
-    public boolean isDraft(OffsetDateTime dateTime) {
-        return dateTime.isAfter(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT), dateTime.getOffset()));
-    }
-
-    @JsonIgnore
-    public boolean isPublished(OffsetDateTime dateTime) {
-        return !isHistoric(dateTime) && !isDraft(dateTime);
-    }
-
-    @JsonIgnore
-    public boolean isHistoric(Shift shift) {
-        return isHistoric(shift.getStartDateTime());
-    }
-
-    @JsonIgnore
-    public boolean isDraft(Shift shift) {
-        return isDraft(shift.getStartDateTime());
-    }
-
-    @JsonIgnore
-    public boolean isPublished(Shift shift) {
-        return isPublished(shift.getStartDateTime());
-    }
-
-    @JsonIgnore
-    public LocalDate getFirstPublishedDate() {
-        return lastHistoricDate.plusDays(1);
-    }
-
-    @JsonIgnore
-    public LocalDate getLastPublishedDate() {
-        return firstDraftDate.minusDays(1);
-    }
-
-    @JsonIgnore
-    public LocalDate getLastDraftDate() {
-        return firstDraftDate.plusDays(draftLength);
-    }
-
-    @JsonIgnore
-    public LocalDate getPublishDeadline() {
-        return firstDraftDate.minusDays(publishNotice);
-    }
 }

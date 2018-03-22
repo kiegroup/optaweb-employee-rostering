@@ -30,11 +30,11 @@ public class OptaShiftEmployeeRosteringBenchmarkApp {
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(
                 "optashift-employee-rostering-persistence-unit");
         EntityManager entityManager = entityManagerFactory.createEntityManager();
-        RosterGenerator rosterGenerator = new RosterGenerator(entityManager, new ShiftGenerator());
+        RosterGenerator rosterGenerator = new RosterGenerator(entityManager);
 
         List<Roster> rosterList = new ArrayList<>();
-        rosterList.add(rosterGenerator.generateRoster(10, 7, false, false));
-        rosterList.add(rosterGenerator.generateRoster(80, (28 * 4), false, true));
+        rosterList.add(rosterGenerator.generateRoster(10, 7));
+        rosterList.add(rosterGenerator.generateRoster(80, (28 * 4)));
 
         entityManager.close();
         entityManagerFactory.close();

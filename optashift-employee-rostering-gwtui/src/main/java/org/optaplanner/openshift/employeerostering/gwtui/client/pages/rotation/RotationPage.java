@@ -163,13 +163,13 @@ public class RotationPage implements Page {
 
     private OffsetDateTime getStartDateTime(ShiftTemplate shift) {
         return OffsetDateTime.of(getBaseDate()
-                .plusDays(shift.getOffsetStartDay())
+                .plusDays(shift.getStartDayOffset())
                 .atTime(shift.getStartTime()), ZoneOffset.UTC);
     }
 
     private OffsetDateTime getEndDateTime(ShiftTemplate shift) {
         return OffsetDateTime.of(getBaseDate()
-                .plusDays(shift.getOffsetEndDay())
+                .plusDays(shift.getEndDayOffset())
                 .atTime(shift.getEndTime()), ZoneOffset.UTC);
     }
 
