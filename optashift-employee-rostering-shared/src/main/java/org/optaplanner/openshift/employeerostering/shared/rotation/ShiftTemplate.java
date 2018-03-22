@@ -25,7 +25,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
                                    " left join fetch sa.spot s" +
                                    " left join fetch sa.rotationEmployee re" +
                                    " where sa.tenantId = :tenantId" +
-                                   " order by sa.offsetStartDay, sa.startTime, s.name, re.name"),
+                                   " order by sa.startDayOffset, sa.startTime, s.name, re.name"),
 })
 public class ShiftTemplate extends AbstractPersistable {
 
@@ -34,14 +34,12 @@ public class ShiftTemplate extends AbstractPersistable {
     private Spot spot;
 
     @NotNull
-    private Integer offsetStartDay;
-
+    private Integer startDayOffset;
     @NotNull
     private LocalTime startTime;
 
     @NotNull
-    private Integer offsetEndDay;
-
+    private Integer endDayOffset;
     @NotNull
     private LocalTime endTime;
 
@@ -51,19 +49,35 @@ public class ShiftTemplate extends AbstractPersistable {
     @SuppressWarnings("unused")
     public ShiftTemplate() {}
 
-    public ShiftTemplate(Integer tenantId, Spot spot, int offsetStartDay, LocalTime startTime, int offsetEndDay, LocalTime endTime) {
-        this(tenantId, spot, offsetStartDay, startTime, offsetEndDay, endTime, null);
+    public ShiftTemplate(Integer tenantId, Spot spot, int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime) {
+        this(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, null);
     }
 
-    public ShiftTemplate(Integer tenantId, Spot spot, int offsetStartDay, LocalTime startTime, int offsetEndDay, LocalTime endTime, Employee rotationEmployee) {
+    public ShiftTemplate(Integer tenantId, Spot spot,
+            int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime,
+            Employee rotationEmployee) {
         super(tenantId);
         this.rotationEmployee = rotationEmployee;
         this.spot = spot;
-        this.offsetStartDay = offsetStartDay;
-        this.offsetEndDay = offsetEndDay;
+        this.startDayOffset = startDayOffset;
+        this.endDayOffset = endDayOffset;
         this.startTime = startTime;
         this.endTime = endTime;
     }
+
+    public Shift createShiftOnDate(LocalDate date, ZoneId zoneId) {
+        LocalDateTime startDateTime = date.atTime(getStartTime());
+        LocalDateTime endDateTime = date.plusDays(getEndDayOffset() - getStartDayOffset()).atTime(getEndTime());
+
+        // TODO: How to handle start/end time in transitions? Current is the Offset BEFORE the transition
+        OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime, zoneId.getRules().getOffset(startDateTime));
+        OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime));
+        return new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, getRotationEmployee());
+    }
+
+    // ************************************************************************
+    // Simple getters and setters
+    // ************************************************************************
 
     public Spot getSpot() {
         return spot;
@@ -73,12 +87,12 @@ public class ShiftTemplate extends AbstractPersistable {
         this.spot = spot;
     }
 
-    public Integer getOffsetStartDay() {
-        return offsetStartDay;
+    public Integer getStartDayOffset() {
+        return startDayOffset;
     }
 
-    public void setOffsetStartDay(Integer offsetStartDay) {
-        this.offsetStartDay = offsetStartDay;
+    public void setStartDayOffset(Integer offsetStartDay) {
+        this.startDayOffset = offsetStartDay;
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -90,12 +104,12 @@ public class ShiftTemplate extends AbstractPersistable {
         this.startTime = startTime;
     }
 
-    public Integer getOffsetEndDay() {
-        return offsetEndDay;
+    public Integer getEndDayOffset() {
+        return endDayOffset;
     }
 
-    public void setOffsetEndDay(Integer offsetEndDay) {
-        this.offsetEndDay = offsetEndDay;
+    public void setEndDayOffset(Integer offsetEndDay) {
+        this.endDayOffset = offsetEndDay;
     }
 
     @JsonFormat(shape = JsonFormat.Shape.STRING)
@@ -115,13 +129,4 @@ public class ShiftTemplate extends AbstractPersistable {
         this.rotationEmployee = rotationEmployee;
     }
 
-    public Shift asShiftOnDate(LocalDate date, ZoneId timeZone) {
-        LocalDateTime startDateTime = date.atTime(getStartTime());
-        LocalDateTime endDateTime = date.plusDays(getOffsetEndDay() - getOffsetStartDay()).atTime(getEndTime());
-
-        // TODO: How to handle start/end time in transitions? Current is the Offset BEFORE the transition
-        OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime, timeZone.getRules().getOffset(startDateTime));
-        OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, timeZone.getRules().getOffset(endDateTime));
-        return new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, getRotationEmployee());
-    }
 }

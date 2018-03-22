@@ -29,10 +29,10 @@ public class ShiftGenerator {
 
         for (LocalDate currDay = oldLastDraftDate.plusDays(1); !currDay.isAfter(newLastDraftDate); currDay = currDay
                 .plusDays(1)) {
-            List<ShiftTemplate> shiftsToAdd = shifts.stream().filter((s) -> s.getOffsetStartDay() == rosterState
+            List<ShiftTemplate> shiftsToAdd = shifts.stream().filter((s) -> s.getStartDayOffset() == rosterState
                     .getUnplannedRotationOffset()).collect(Collectors.toList());
             for (ShiftTemplate shiftTemplate : shiftsToAdd) {
-                shiftOutputList.add(shiftTemplate.asShiftOnDate(currDay, tenantConfiguration.getTimeZone()));
+                shiftOutputList.add(shiftTemplate.createShiftOnDate(currDay, tenantConfiguration.getTimeZone()));
             }
             rosterState.setUnplannedRotationOffset((rosterState.getUnplannedRotationOffset() + 1) % rosterState
                     .getRotationLength());
@@ -43,7 +43,7 @@ public class ShiftGenerator {
         out.newRosterState = rosterState;
         out.shiftOutputList = shiftOutputList;
 
-        // TODO: Actually generate the employee avaliability output (need design and info from users first)
+        // TODO: Actually generate the employee availability output (need design and info from users first)
         out.employeeAvailabilityOutputList = new ArrayList<>();
 
         return out;

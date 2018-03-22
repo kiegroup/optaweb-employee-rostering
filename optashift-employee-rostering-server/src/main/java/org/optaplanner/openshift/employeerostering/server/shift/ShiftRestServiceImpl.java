@@ -48,9 +48,6 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Inject
-    private ShiftGenerator shiftGenerator;
-
     @Override
     @Transactional
     public ShiftView getShift(Integer tenantId, Long id) {
@@ -118,7 +115,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Override
     public List<ShiftView> getShifts(Integer tenantId) {
-        return getAllShifts(tenantId).stream().map((s) -> new ShiftView(s)).collect(Collectors.toList());
+        return getAllShifts(tenantId).stream().map(ShiftView::new).collect(Collectors.toList());
     }
 
     private List<Shift> getAllShifts(Integer tenantId) {
@@ -141,4 +138,5 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         oldShiftTemplates.forEach((s) -> entityManager.remove(s));
         shifts.forEach((s) -> entityManager.persist(s));
     }
+
 }
