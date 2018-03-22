@@ -27,8 +27,11 @@ import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService
 public class StringListToSkillSetConverter implements Converter<Set<Skill>, List<String>> {
 
     @Inject
-    TenantStore tenantStore;
-
+    private TenantStore tenantStore;
+    
+    @Inject
+    private PromiseUtils promiseUtils;
+    
     private Map<String, Skill> skillMap;
 
     @SuppressWarnings("unchecked")
@@ -101,7 +104,7 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
     private void fetchSkillListAndUpdateSkillMapping() {
         getSkillList().then((skillList) -> {
             updateSkillMappings(skillList);
-            return PromiseUtils.resolve();
+            return promiseUtils.resolve();
         });
     }
 

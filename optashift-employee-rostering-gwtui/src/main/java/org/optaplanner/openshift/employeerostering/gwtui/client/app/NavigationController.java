@@ -24,8 +24,7 @@ import elemental2.dom.HTMLElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
-
-import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 
 @Dependent
 public class NavigationController {
@@ -39,6 +38,9 @@ public class NavigationController {
     @Inject
     private LoadingSpinner loadingSpinner;
 
+    @Inject
+    private PromiseUtils promiseUtils;
+
     public void onPageChanged(final @Observes PageChange pageChange) {
 
         loadingSpinner.showFor("page-change");
@@ -50,13 +52,14 @@ public class NavigationController {
             return page.onOpen();
         }).then(i -> {
             pageChange.afterPageOpen.run();
-            return resolve();
+            return promiseUtils.resolve();
         }).then(i -> {
             loadingSpinner.hideFor("page-change");
-            return resolve();
+            return promiseUtils.resolve();
         }).catch_(i -> {
+            promiseUtils.getDefaultCatch().onInvoke(i);
             loadingSpinner.hideFor("page-change");
-            return resolve();
+            return promiseUtils.resolve();
         });
     }
 

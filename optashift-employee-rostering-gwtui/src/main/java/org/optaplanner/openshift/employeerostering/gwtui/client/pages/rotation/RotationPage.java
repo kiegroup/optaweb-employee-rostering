@@ -41,6 +41,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
@@ -51,7 +52,6 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 
 @Templated
 public class RotationPage implements Page {
@@ -81,6 +81,9 @@ public class RotationPage implements Page {
     @Inject
     private LoadingSpinner loadingSpinner;
 
+    @Inject
+    private PromiseUtils promiseUtils;
+
     private Viewport<Long> viewport;
 
     @Override
@@ -101,21 +104,22 @@ public class RotationPage implements Page {
             final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate).stream()
                     .collect(groupingBy(Shift::getSpot));
 
-            return fetchRosterState().then(rosterState -> {
+            return promiseUtils.manage(fetchRosterState().then(rosterState -> {
                 viewport = rotationViewportFactory.getViewport(rosterState, shiftsBySpot);
                 viewportView.setViewport(viewport);
                 loadingSpinner.hideFor("rotation-page");
-                return resolve();
-            });
+                return promiseUtils.resolve();
+            }));
 
         }).catch_(i -> {
+            promiseUtils.getDefaultCatch().onInvoke(i);
             loadingSpinner.hideFor("rotation-page");
-            return resolve();
+            return promiseUtils.resolve();
         });
     }
 
     private Promise<Collection<ShiftTemplate>> fetchShiftTemplate() {
-        return new Promise<>((resolve, reject) -> {
+        return promiseUtils.promise((resolve, reject) -> {
             ShiftRestServiceBuilder.getTemplate(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
         });
     }

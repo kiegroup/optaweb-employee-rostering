@@ -40,10 +40,10 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
-import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
@@ -52,7 +52,6 @@ import static elemental2.dom.DomGlobal.setInterval;
 import static elemental2.dom.DomGlobal.setTimeout;
 import static java.lang.Math.max;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils.resolve;
 
 @Templated
 @ApplicationScoped
@@ -135,6 +134,9 @@ public class SpotRosterPage implements Page {
     @Inject
     private LoadingSpinner loadingSpinner;
 
+    @Inject
+    private PromiseUtils promiseUtils;
+
     private double solveTaskId;
     private double updateRemainingTimeTaskId;
     private double stopSolvingTaskId;
@@ -162,7 +164,7 @@ public class SpotRosterPage implements Page {
     }
 
     private Promise<Void> refreshWithoutLoadingSpinner() {
-        return fetchSpotRosterView().then(spotRosterView -> {
+        return promiseUtils.manage(fetchSpotRosterView().then(spotRosterView -> {
             currentSpotRosterView = spotRosterView;
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
 
@@ -180,13 +182,13 @@ public class SpotRosterPage implements Page {
 
             if (spotRosterView.getSpotList().isEmpty()) {
                 spotsPagination = spotsPagination.previousPage();
-                return resolve();
+                return promiseUtils.resolve();
             } else {
                 viewport = spotRosterViewportFactory.getViewport(spotRosterView);
                 viewportView.setViewport(viewport);
-                return resolve();
+                return promiseUtils.resolve();
             }
-        });
+        }));
     }
 
     private Promise<Void> refreshWithLoadingSpinner() {
@@ -195,11 +197,10 @@ public class SpotRosterPage implements Page {
 
         return refreshWithoutLoadingSpinner().then(i -> {
             loadingSpinner.hideFor("refresh-spot-roster");
-            return resolve();
-        }).catch_(e -> { // need to hide the loading spinner
-            ErrorPopup.show(e.toString());
+            return promiseUtils.resolve();
+        }).catch_(e -> {
             loadingSpinner.hideFor("refresh-spot-roster");
-            return resolve();
+            return promiseUtils.resolve();
         });
     }
 
@@ -238,7 +239,7 @@ public class SpotRosterPage implements Page {
             solveTaskId = setInterval(a -> refreshWithoutLoadingSpinner(), 2000);
             stopSolvingTaskId = setTimeout(a -> stopSolving(), (SOLVE_TIME_IN_SECONDS + 1) * 1000);
 
-            return resolve();
+            return promiseUtils.resolve();
         });
     }
 
@@ -309,19 +310,19 @@ public class SpotRosterPage implements Page {
     //API calls
 
     private Promise<Void> triggerRosterSolve() {
-        return new Promise<>((resolve, reject) -> {
+        return promiseUtils.promise((resolve, reject) -> {
             RosterRestServiceBuilder.solveRoster(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
         });
     }
 
     private Promise<Void> triggerTerminateEarly() {
-        return new Promise<>((resolve, reject) -> {
+        return promiseUtils.promise((resolve, reject) -> {
             RosterRestServiceBuilder.terminateRosterEarly(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
         });
     }
 
     private Promise<SpotRosterView> fetchSpotRosterView() {
-        return new Promise<>((resolve, reject) -> {
+        return promiseUtils.promise((resolve, reject) -> {
             RosterRestServiceBuilder.getCurrentSpotRosterView(tenantStore.getCurrentTenantId(),
                     spotsPagination.getPageNumber(),
                     spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));

@@ -29,7 +29,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Positive2HoursScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLinesFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.TicksFactory;
@@ -39,6 +38,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -75,6 +75,9 @@ public class EmployeeRosterViewportFactory {
 
     @Inject
     private TimingUtils timingUtils;
+
+    @Inject
+    private CommonUtils commonUtils;
 
     private Map<Employee, List<EmployeeAvailabilityView>> employeeRosterModel;
 
@@ -136,10 +139,10 @@ public class EmployeeRosterViewportFactory {
 
         List<EmployeeAvailabilityView> employeeAvailabilities = new ArrayList<>();
         List<ShiftView> employeeShifts = new ArrayList<>();
-        for (EmployeeAvailabilityView eav : CommonUtils.flatten(employeeIdToAvailabilityViewList.values())) {
+        for (EmployeeAvailabilityView eav : commonUtils.flatten(employeeIdToAvailabilityViewList.values())) {
             employeeAvailabilities.add(eav);
         }
-        for (ShiftView sv : CommonUtils.flatten(employeeIdToShiftViewList.values())) {
+        for (ShiftView sv : commonUtils.flatten(employeeIdToShiftViewList.values())) {
             employeeShifts.add(sv);
         }
 
