@@ -44,7 +44,7 @@ public class SkillSubform extends TableRow<Skill> implements TakesValue<Skill> {
     @PostConstruct
     protected void initWidget() {
         skillName.getElement().setAttribute("placeholder", translationService.format(
-                                                                                     OptaShiftUIConstants.SkillListPanel_skillName));
+                OptaShiftUIConstants.SkillListPanel_skillName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         dataBinder.bind(skillName, "name");
 
@@ -60,24 +60,29 @@ public class SkillSubform extends TableRow<Skill> implements TakesValue<Skill> {
     @Override
     protected void deleteRow(Skill skill) {
         SkillRestServiceBuilder.removeSkill(tenantStore.getCurrentTenantId(), skill.getId(),
-                                            FailureShownRestCallback.onSuccess(success -> {
-                                                dataInvalidationEvent.fire(new DataInvalidation<>());
-                                            }));
+                FailureShownRestCallback.onSuccess(success -> {
+                    dataInvalidationEvent.fire(new DataInvalidation<>());
+                }));
     }
 
     @Override
     protected void updateRow(Skill oldValue, Skill newValue) {
         SkillRestServiceBuilder.updateSkill(tenantStore.getCurrentTenantId(), newValue,
-                                            FailureShownRestCallback.onSuccess(v -> {
-                                                dataInvalidationEvent.fire(new DataInvalidation<>());
-                                            }));
+                FailureShownRestCallback.onSuccess(v -> {
+                    dataInvalidationEvent.fire(new DataInvalidation<>());
+                }));
     }
 
     @Override
     protected void createRow(Skill skill) {
         SkillRestServiceBuilder.addSkill(tenantStore.getCurrentTenantId(), skill,
-                                         FailureShownRestCallback.onSuccess(v -> {
-                                             dataInvalidationEvent.fire(new DataInvalidation<>());
-                                         }));
+                FailureShownRestCallback.onSuccess(v -> {
+                    dataInvalidationEvent.fire(new DataInvalidation<>());
+                }));
+    }
+
+    @Override
+    protected void focusOnFirstInput() {
+        skillName.setFocus(true);
     }
 }
