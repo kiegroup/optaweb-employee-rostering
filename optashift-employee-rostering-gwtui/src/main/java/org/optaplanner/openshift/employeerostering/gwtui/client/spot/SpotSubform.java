@@ -133,4 +133,9 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
     public void onUnload() {
         subscription.remove();
     }
+
+    @Override
+    protected void focusOnFirstInput() {
+        spotName.setFocus(true);
+    }
 }
