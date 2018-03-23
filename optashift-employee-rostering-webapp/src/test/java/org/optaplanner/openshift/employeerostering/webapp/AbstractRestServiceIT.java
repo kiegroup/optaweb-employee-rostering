@@ -10,6 +10,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.Before;
 import org.optaplanner.openshift.employeerostering.restclient.ServiceClientFactory;
+import org.optaplanner.openshift.employeerostering.server.common.jaxrs.OptaShiftObjectMapperResolver;
 import org.optaplanner.openshift.employeerostering.webapp.tools.ClientResponseContextAssert;
 import org.optaplanner.openshift.employeerostering.webapp.tools.RecordingClientResponseFilter;
 import org.optaplanner.openshift.employeerostering.webapp.tools.TestConfig;
@@ -19,7 +20,7 @@ public class AbstractRestServiceIT {
     private static final String BASE_TEST_URL = TestConfig.getApplicationUrl();
 
     // Consequence of reusing JPA entities on client - cannot rely on equals()
-    protected static final String[] IGNORED_FIELDS = {"id", "version"};
+    protected static final String[] IGNORED_FIELDS = {"id", "lastUpdateDateTime"};
 
     protected final ServiceClientFactory serviceClientFactory;
     protected final RecordingClientResponseFilter recordingClientResponseFilter;
@@ -33,7 +34,8 @@ public class AbstractRestServiceIT {
         }
 
         recordingClientResponseFilter = new RecordingClientResponseFilter();
-        ResteasyClient resteasyClient = new ResteasyClientBuilder().register(recordingClientResponseFilter).build();
+        ResteasyClient resteasyClient = new ResteasyClientBuilder().register(new OptaShiftObjectMapperResolver())
+                .register(recordingClientResponseFilter).build();
         serviceClientFactory = new ServiceClientFactory(baseTestUrl, resteasyClient);
     }
 

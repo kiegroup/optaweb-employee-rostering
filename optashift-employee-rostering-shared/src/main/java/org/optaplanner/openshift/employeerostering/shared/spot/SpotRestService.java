@@ -55,7 +55,7 @@ public interface SpotRestService {
 
     /**
      * @param spot never null
-     * @return never null, with an updated {@link AbstractPersistable#getVersion()}
+     * @return never null, with an updated {@link AbstractPersistable#getLastUpdateDateTime()}
      */
     @ApiOperation("Update a spot")
     @POST

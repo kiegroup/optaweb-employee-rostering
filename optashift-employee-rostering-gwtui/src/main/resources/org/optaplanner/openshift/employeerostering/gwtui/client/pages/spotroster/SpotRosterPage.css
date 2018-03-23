@@ -1,0 +1,82 @@
+.unavaliable-time-slot-for-an-employee:after, .desired-time-slot-for-an-employee:after, .undesired-time-slot-for-an-employee:after, .at-most-one-shift-assignment-per-day-per-employee:after,
+.employee-is-not-rotation-employee:after, .required-skill-for-a-shift:after {
+	font: normal normal normal 14px/1 FontAwesome;
+    font-size: inherit;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+}
+
+.no-2-shifts-within-10-hours-from-each-other:after  {
+	display: inline-block;
+    font-family: PatternFlyIcons-webfont;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 1;
+    speak: none;
+    text-transform: none;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14px;
+    margin-right: 5px;
+    text-align: center;
+    width: 14px;
+}
+
+.at-most-one-shift-assignment-per-day-per-employee:after {
+	content: "\f273";
+}
+
+.no-2-shifts-within-10-hours-from-each-other:after {
+	content: "\e91c";
+}
+
+.employee-is-not-rotation-employee:after {
+	content: "\f21b";
+}
+
+.required-skill-for-a-shift:after {
+	content: "\f235";
+}
+
+.unavaliable-time-slot-for-an-employee:after {
+	content: "\f05e";
+}
+
+.desired-time-slot-for-an-employeet:after {
+	content: "\f118";
+}
+
+.undesired-time-slot-for-an-employee:after {
+	content: "\f119";
+}
+
+.score {
+	animation-name: score-highlight;
+	animation-play-state: paused;
+	animation-duration: 100s;
+}
+
+@keyframes score-highlight {
+  0% {
+    background-color: rgba(163, 0, 0, 0.4);
+  }
+  
+  25% {
+    background-color: rgba(243, 157, 60, 0.4);
+  }
+  
+  50% {
+    background-color: rgba(209, 209, 209, 0.4);
+  }
+  
+  75% {
+    background-color: rgba(209, 209, 209, 0.4);
+  }
+  
+  100% {
+    /* How to make hard positive score different than soft positive score? ideally, hard score cannot be positive... */ 
+    background-color: rgba(53, 202, 237, 0.4);
+  }
+}

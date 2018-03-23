@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.shared.common;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,6 +26,7 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.optaplanner.core.api.domain.lookup.PlanningId;
 
 @MappedSuperclass
@@ -39,11 +41,10 @@ public abstract class AbstractPersistable implements Serializable {
     protected Integer tenantId;
 
     @Version
-    protected Long version;
+    protected OffsetDateTime lastUpdateDateTime;
 
     @SuppressWarnings("unused")
-    public AbstractPersistable() {
-    }
+    public AbstractPersistable() {}
 
     protected AbstractPersistable(Integer tenantId) {
         this(null, tenantId);
@@ -57,7 +58,7 @@ public abstract class AbstractPersistable implements Serializable {
     protected AbstractPersistable(AbstractPersistable other) {
         this.id = other.id;
         this.tenantId = other.tenantId;
-        this.version = other.version;
+        this.lastUpdateDateTime = other.lastUpdateDateTime;
     }
 
     @Override
@@ -112,12 +113,13 @@ public abstract class AbstractPersistable implements Serializable {
         this.tenantId = tenantId;
     }
 
-    public Long getVersion() {
-        return version;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    public OffsetDateTime getLastUpdateDateTime() {
+        return lastUpdateDateTime;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setLastUpdateDateTime(OffsetDateTime lastUpdateDateTime) {
+        this.lastUpdateDateTime = lastUpdateDateTime;
     }
 
 }
