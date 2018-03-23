@@ -133,4 +133,9 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
     public void onUnload() {
         subscription.remove();
     }
+
+    @Override
+    protected void focusOnFirstInput() {
+        employeeName.setFocus(true);
+    }
 }

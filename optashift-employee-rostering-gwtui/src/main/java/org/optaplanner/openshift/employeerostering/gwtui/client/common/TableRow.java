@@ -109,6 +109,10 @@ public abstract class TableRow<T> extends Composite implements TakesValue<T> {
         }
         presenter.hidden = isEditing;
         editor.hidden = !isEditing;
+
+        if (isEditing) {
+            focusOnFirstInput();
+        }
     }
 
     public void markAsCreator(ListComponent<T, ?> table, KiePager<T> pager) {
@@ -166,6 +170,8 @@ public abstract class TableRow<T> extends Composite implements TakesValue<T> {
     protected boolean isCreatingRow() {
         return null != table;
     }
+
+    protected abstract void focusOnFirstInput();
 
     protected abstract void deleteRow(T value);
 
