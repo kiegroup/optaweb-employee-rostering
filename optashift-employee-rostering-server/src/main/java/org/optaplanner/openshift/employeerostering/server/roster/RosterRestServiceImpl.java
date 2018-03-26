@@ -70,6 +70,10 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Inject
     private ShiftRestService shiftRestService;
 
+    // ************************************************************************
+    // SpotRosterView
+    // ************************************************************************
+
     @Override
     @Transactional
     public SpotRosterView getCurrentSpotRosterView(Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage) {
@@ -151,16 +155,19 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         }
         spotRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
 
-        //Score
-        spotRosterView.setScore(solverManager.getRoster(tenantId).map(Roster::getScore).orElse(null));
+
+        // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched,
+        // so the score might be inaccurate.
+        Roster roster = solverManager.getRoster(tenantId);
+        spotRosterView.setScore(roster == null ? null : roster.getScore());
         spotRosterView.setRosterState(getRosterState(tenantId));
 
         return spotRosterView;
     }
 
-    //
-    //
-    // Employee Roster
+    // ************************************************************************
+    // EmployeeRosterView
+    // ************************************************************************
 
     @Override
     @Transactional
@@ -186,13 +193,13 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Override
     @Transactional
     public EmployeeRosterView getEmployeeRosterViewFor(Integer tenantId, String startDateString, String endDateString,
-            List<Employee> employees) {
+            List<Employee> employeeList) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
-        if (null == employees) {
-            throw new IllegalArgumentException("employees is null!");
+        if (employeeList == null) {
+            throw new IllegalArgumentException("The employeeList (" + employeeList + ") must not be null.");
         }
-        return getEmployeeRosterView(tenantId, startDate, endDate, employees);
+        return getEmployeeRosterView(tenantId, startDate, endDate, employeeList);
     }
 
     private EmployeeRosterView getEmployeeRosterView(final Integer tenantId,
@@ -200,18 +207,18 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             final LocalDate endDate,
             final Pagination pagination) {
 
-        final List<Employee> spots = entityManager.createNamedQuery("Employee.findAll", Employee.class)
+        final List<Employee> employeeList = entityManager.createNamedQuery("Employee.findAll", Employee.class)
                 .setParameter("tenantId", tenantId)
                 .setMaxResults(pagination.getNumberOfItemsPerPage())
                 .setFirstResult(pagination.getFirstResultIndex())
                 .getResultList();
 
-        return getEmployeeRosterView(tenantId, startDate, endDate, spots);
+        return getEmployeeRosterView(tenantId, startDate, endDate, employeeList);
     }
 
     @Transactional
-    protected EmployeeRosterView getEmployeeRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate, List<
-            Employee> employeeList) {
+    protected EmployeeRosterView getEmployeeRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate,
+            List<Employee> employeeList) {
         EmployeeRosterView employeeRosterView = new EmployeeRosterView(tenantId, startDate, endDate);
         List<Spot> spotList = entityManager.createNamedQuery("Spot.findAll", Spot.class)
                 .setParameter("tenantId", tenantId)
@@ -231,18 +238,16 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             if (shift.getEmployee() != null) {
                 if (employeeSet.contains(shift.getEmployee())) {
                     employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(), k -> new ArrayList<>())
-                            .add(
-                                    new ShiftView(shift));
+                            .add(new ShiftView(shift));
                 }
-
             } else {
                 unassignedShiftViewList.add(new ShiftView(shift));
             }
         }
         employeeRosterView.setEmployeeIdToShiftViewListMap(employeeIdToShiftViewListMap);
         employeeRosterView.setUnassignedShiftViewList(unassignedShiftViewList);
-        Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap = new LinkedHashMap<>(employeeList
-                .size());
+        Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap = new LinkedHashMap<>(
+                employeeList.size());
         // TODO use startDate and endDate
         List<EmployeeAvailability> employeeAvailabilityList = entityManager.createNamedQuery(
                 "EmployeeAvailability.findAll", EmployeeAvailability.class)
@@ -255,13 +260,18 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             }
         }
         employeeRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
-        Roster roster = solverManager.getRoster(tenantId).orElse(null);
-        if (null != roster) {
-            employeeRosterView.setScore(roster.getScore());
-        }
+
+        // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched,
+        // so the score might be inaccurate.
+        Roster roster = solverManager.getRoster(tenantId);
+        employeeRosterView.setScore(roster == null ? null : roster.getScore());
         employeeRosterView.setRosterState(getRosterState(tenantId));
         return employeeRosterView;
     }
+
+    // ************************************************************************
+    // Other
+    // ************************************************************************
 
     @Override
     public void solveRoster(Integer tenantId) {
@@ -366,4 +376,5 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .setParameter("tenantId", tenantId)
                 .getSingleResult();
     }
+
 }

@@ -104,7 +104,8 @@ public class WannabeSolverManager {
         });
     }
 
-    public Optional<Roster> getRoster(final Integer tenantId) {
-        return Optional.ofNullable(tenantIdToSolverMap.get(tenantId)).map(Solver::getBestSolution);
+    public Roster getRoster(final Integer tenantId) {
+        Solver<Roster> solver = tenantIdToSolverMap.get(tenantId);
+        return solver == null ? null : solver.getBestSolution();
     }
 }
