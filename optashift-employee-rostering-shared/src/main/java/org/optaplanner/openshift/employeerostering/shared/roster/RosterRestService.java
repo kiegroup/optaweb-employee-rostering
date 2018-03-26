@@ -46,8 +46,8 @@ public interface RosterRestService {
     @GET
     @Path("/spotRosterView/current")
     SpotRosterView getCurrentSpotRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                            @ApiParam(required = true) @QueryParam("p") @DefaultValue("0") Integer pageNumber,
-                                            @ApiParam(required = true) @QueryParam("n") @DefaultValue(MAX_VALUE + "") Integer numberOfItemsPerPage);
+                                            @ApiParam @QueryParam("p") Integer pageNumber,
+                                            @ApiParam @QueryParam("n") Integer numberOfItemsPerPage);
 
     @ApiOperation("Get a spot roster view between 2 dates")
     @GET
@@ -74,8 +74,8 @@ public interface RosterRestService {
     @GET
     @Path("/employeeRosterView/current")
     EmployeeRosterView getCurrentEmployeeRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                                    @ApiParam(required = true) @QueryParam("p") @DefaultValue("0") Integer pageNumber,
-                                                    @ApiParam(required = true) @QueryParam("n") @DefaultValue(MAX_VALUE + "") Integer numberOfItemsPerPage);
+                                                    @ApiParam @QueryParam("p") Integer pageNumber,
+                                                    @ApiParam @QueryParam("n") Integer numberOfItemsPerPage);
 
     @ApiOperation("Get an employee roster view between 2 dates")
     @GET
