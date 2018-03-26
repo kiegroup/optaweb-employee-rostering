@@ -69,7 +69,7 @@ public class ShiftTemplate extends AbstractPersistable {
         LocalDateTime startDateTime = date.atTime(getStartTime());
         LocalDateTime endDateTime = date.plusDays(getEndDayOffset() - getStartDayOffset()).atTime(getEndTime());
 
-        // TODO: How to handle start/end time in transitions? Current is the Offset BEFORE the transition
+        // TODO Can this and RosterGenerator.createEmployeeAvailabilityList() be simplified and be DST spring/fall compatible?
         OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime, zoneId.getRules().getOffset(startDateTime));
         OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime));
         return new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, getRotationEmployee());

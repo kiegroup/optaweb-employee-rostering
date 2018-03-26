@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.shared.employee;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 
 import javax.persistence.Entity;
@@ -50,11 +51,11 @@ public class EmployeeAvailability extends AbstractPersistable {
     private Employee employee;
 
     @NotNull
-    private LocalDate date;
+    private LocalDate date; // TODO remove me
     @NotNull
-    private OffsetTime startTime;
+    private OffsetTime startTime; // TODO change into OffsetDateTime startDateTime
     @NotNull
-    private OffsetTime endTime;
+    private OffsetTime endTime; // TODO change into OffsetDateTime endDateTime
 
     @NotNull
     private EmployeeAvailabilityState state;
@@ -62,6 +63,12 @@ public class EmployeeAvailability extends AbstractPersistable {
     @SuppressWarnings("unused")
     public EmployeeAvailability() {}
 
+//    public EmployeeAvailability(Integer tenantId, Employee employee, OffsetDateTime startDateTime, OffsetDateTime endDateTime, EmployeeAvailabilityState state) {
+//        this(tenantId, employee, startDateTime.toLocalDate(), startDateTime.toOffsetTime(), endDateTime.toOffsetTime());
+//        this.state = state;
+//    }
+
+    // TODO use OffsetDateTime startDateTime and OffsetDateTime endDateTime instead, remove this constructor
     public EmployeeAvailability(Integer tenantId, Employee employee, LocalDate date, OffsetTime startTime, OffsetTime endTime) {
         super(tenantId);
         this.employee = employee;
@@ -70,6 +77,7 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.endTime = endTime;
     }
 
+    // TODO use OffsetDateTime startDateTime and OffsetDateTime endDateTime instead, remove this constructor
     public EmployeeAvailability(EmployeeAvailabilityView employeeAvailabilityView, Employee employee, LocalDate date, OffsetTime startTime, OffsetTime endTime) {
         super(employeeAvailabilityView);
         this.employee = employee;
