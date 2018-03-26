@@ -39,8 +39,7 @@ public interface TenantRestService {
     @ApiOperation("Get a tenant by id")
     @GET
     @Path("/{id : \\d+}")
-    Tenant getTenant(
-                     @ApiParam(required = true) @PathParam("id") Integer id);
+    Tenant getTenant(@ApiParam(required = true) @PathParam("id") Integer id);
 
     /**
      * @param tenant never null
@@ -49,8 +48,7 @@ public interface TenantRestService {
     @ApiOperation("Add a new tenant")
     @POST
     @Path("/add")
-    Tenant addTenant(
-                     @ApiParam(value = "with no id", required = true) Tenant tenant);
+    Tenant addTenant(@ApiParam(value = "with no id", required = true) Tenant tenant);
 
     // ************************************************************************
     // TenantConfiguration
