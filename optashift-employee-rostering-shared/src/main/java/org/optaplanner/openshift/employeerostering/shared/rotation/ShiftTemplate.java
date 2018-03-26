@@ -12,7 +12,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -108,7 +107,6 @@ public class ShiftTemplate extends AbstractPersistable {
         this.startDayOffset = offsetStartDay;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalTime getStartTime() {
         return startTime;
     }
@@ -125,7 +123,6 @@ public class ShiftTemplate extends AbstractPersistable {
         this.endDayOffset = offsetEndDay;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalTime getEndTime() {
         return endTime;
     }

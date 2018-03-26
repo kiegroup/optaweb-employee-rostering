@@ -24,9 +24,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.entity.PlanningPin;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -111,7 +108,6 @@ public class Shift extends AbstractPersistable {
         this.spot = spot;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetDateTime getStartDateTime() {
         return startDateTime;
     }
@@ -120,7 +116,6 @@ public class Shift extends AbstractPersistable {
         this.startDateTime = startDateTime;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetDateTime getEndDateTime() {
         return endDateTime;
     }
