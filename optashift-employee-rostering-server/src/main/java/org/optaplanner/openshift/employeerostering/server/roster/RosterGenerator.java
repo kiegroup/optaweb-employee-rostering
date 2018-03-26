@@ -454,14 +454,18 @@ public class RosterGenerator {
         while (date.compareTo(lastDraftDate) <= 0) {
             List<Shift> dayShiftList = startDayToShiftListMap.get(date);
             List<Employee> availableEmployeeList = new ArrayList<>(employeeList);
-            int stateCount = (employeeList.size() - dayShiftList.size()) / 5;
+            int stateCount = (employeeList.size() - dayShiftList.size()) / 4;
+            if (stateCount <= 0) {
+                // Heavy overconstrained planning (more shifts than employees)
+                stateCount = 1;
+            }
             for (EmployeeAvailabilityState state : EmployeeAvailabilityState.values()) {
                 for (int i = 0; i < stateCount; i++) {
                     Employee employee = availableEmployeeList.remove(random.nextInt(availableEmployeeList.size()));
                     // TODO Can this and ShiftTemplate.createShiftOnDate() be simplified and be DST spring/fall compatible?
                     EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee, date,
                             OffsetTime.of(LocalTime.MIN, zoneRules.getOffset(date.atStartOfDay())),
-                            OffsetTime.of(LocalTime.MAX, zoneRules.getOffset(date.atTime(LocalTime.MAX)))); // TODO set to 00:00 next day instead
+                            OffsetTime.of(LocalTime.MAX, zoneRules.getOffset(date.plusDays(1).atStartOfDay()))); // TODO set to 00:00 next day instead
                     employeeAvailability.setState(state);
                     entityManager.persist(employeeAvailability);
                     employeeAvailabilityList.add(employeeAvailability);

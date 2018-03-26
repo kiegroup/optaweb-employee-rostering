@@ -53,7 +53,7 @@ public class Employee extends AbstractPersistable {
     private String name;
     //@JsonManagedReference
     @NotNull
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER) // TODO Eager fetching bloats the EmployeeAvailability.findAll query
     @Size(min = 1)
     private Set<Skill> skillProficiencySet;
 
