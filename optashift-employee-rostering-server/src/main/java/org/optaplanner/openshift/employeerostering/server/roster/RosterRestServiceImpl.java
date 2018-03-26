@@ -255,8 +255,9 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .getResultList();
         for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
             if (employeeSet.contains(employeeAvailability.getEmployee())) {
-                employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),
-                        k -> new ArrayList<>()).add(new EmployeeAvailabilityView(employeeAvailability));
+                List<EmployeeAvailabilityView> employeeAvailabilityViewList = employeeIdToAvailabilityViewListMap
+                        .computeIfAbsent(employeeAvailability.getEmployee().getId(), k -> new ArrayList<>());
+                employeeAvailabilityViewList.add(new EmployeeAvailabilityView(employeeAvailability));
             }
         }
         employeeRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
