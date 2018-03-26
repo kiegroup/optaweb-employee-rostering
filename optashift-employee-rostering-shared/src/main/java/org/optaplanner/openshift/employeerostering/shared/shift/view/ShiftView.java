@@ -20,9 +20,6 @@ import java.time.OffsetDateTime;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -84,7 +81,6 @@ public class ShiftView extends AbstractPersistable {
         this.spotId = spotId;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetDateTime getStartDateTime() {
         return startDateTime;
     }
@@ -93,7 +89,6 @@ public class ShiftView extends AbstractPersistable {
         this.startDateTime = startDateTime;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetDateTime getEndDateTime() {
         return endDateTime;
     }

@@ -1,6 +1,5 @@
 package org.optaplanner.openshift.employeerostering.shared.tenant;
 
-import java.time.DayOfWeek;
 import java.time.ZoneId;
 
 import javax.persistence.Entity;
@@ -8,7 +7,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 
 @Entity
@@ -33,7 +31,7 @@ public class TenantConfiguration extends AbstractPersistable {
         super(-1);
     }
 
-    public TenantConfiguration(Integer tenantId, Integer templateDuration, DayOfWeek weekStart,
+    public TenantConfiguration(Integer tenantId,
                                Integer undesiredTimeSlotWeight, Integer desiredTimeSlotWeight,
                                Integer rotationEmployeeMatchWeight, ZoneId timeZone) {
         super(tenantId);
@@ -67,7 +65,6 @@ public class TenantConfiguration extends AbstractPersistable {
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public ZoneId getTimeZone() {
         return timeZone;
     }

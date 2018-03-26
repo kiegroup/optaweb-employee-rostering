@@ -9,7 +9,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -134,7 +133,6 @@ public class RosterState extends AbstractPersistable {
         this.rotationLength = rotationLength;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getFirstDraftDate() {
         return firstDraftDate;
     }
@@ -151,7 +149,6 @@ public class RosterState extends AbstractPersistable {
         this.unplannedRotationOffset = unplannedOffset;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public void setLastHistoricDate(LocalDate lastHistoricDate) {
         this.lastHistoricDate = lastHistoricDate;
     }
