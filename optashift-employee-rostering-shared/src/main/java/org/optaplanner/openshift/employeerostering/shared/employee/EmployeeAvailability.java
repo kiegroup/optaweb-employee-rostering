@@ -29,9 +29,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 
@@ -105,7 +102,6 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.employee = employee;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getDate() {
         return date;
     }
@@ -114,7 +110,6 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.date = date;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetTime getStartTime() {
         return startTime;
     }
@@ -123,7 +118,6 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.startTime = startTime;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public OffsetTime getEndTime() {
         return endTime;
     }

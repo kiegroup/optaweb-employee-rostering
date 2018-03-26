@@ -6,15 +6,14 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.persistence.jackson.api.score.ScoreJacksonJsonSerializer;
 import org.optaplanner.persistence.jackson.api.score.buildin.hardsoft.HardSoftScoreJacksonJsonDeserializer;
+import org.optaplanner.persistence.jackson.api.score.buildin.hardsoft.HardSoftScoreJacksonJsonSerializer;
 
 public class AbstractRosterView implements Serializable {
 
@@ -50,7 +49,6 @@ public class AbstractRosterView implements Serializable {
         this.tenantId = tenantId;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -59,7 +57,6 @@ public class AbstractRosterView implements Serializable {
         this.startDate = startDate;
     }
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
     public LocalDate getEndDate() {
         return endDate;
     }
@@ -84,7 +81,7 @@ public class AbstractRosterView implements Serializable {
         this.employeeList = employeeList;
     }
 
-    @JsonSerialize(using = ScoreJacksonJsonSerializer.class)
+    @JsonSerialize(using = HardSoftScoreJacksonJsonSerializer.class)
     @JsonDeserialize(using = HardSoftScoreJacksonJsonDeserializer.class)
     public HardSoftScore getScore() {
         return score;

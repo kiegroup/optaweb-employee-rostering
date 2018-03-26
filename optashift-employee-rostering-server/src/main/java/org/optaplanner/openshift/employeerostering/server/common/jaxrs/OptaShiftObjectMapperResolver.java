@@ -16,15 +16,12 @@
 
 package org.optaplanner.openshift.employeerostering.server.common.jaxrs;
 
-import javax.persistence.EntityNotFoundException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Provider
@@ -34,7 +31,10 @@ public class OptaShiftObjectMapperResolver implements ContextResolver<ObjectMapp
 
     public OptaShiftObjectMapperResolver() {
         objectMapper = new ObjectMapper()
-                .registerModule(new JavaTimeModule());
+                .registerModule(new JavaTimeModule())
+                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                // This converts the server side offset to GMT, is that what we want?
+                .setDateFormat(new ISO8601DateFormat());
     }
 
     @Override
