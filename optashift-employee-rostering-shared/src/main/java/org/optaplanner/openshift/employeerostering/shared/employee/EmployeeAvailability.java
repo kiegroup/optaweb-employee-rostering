@@ -40,7 +40,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.view.Employee
                @NamedQuery(name = "EmployeeAvailability.findAll",
                            query = "select distinct ea from EmployeeAvailability ea" +
                                    " left join fetch ea.employee e" +
-                                   " where e.tenantId = :tenantId" +
+                                   " where ea.tenantId = :tenantId" +
                                    " order by e.name, ea.date, ea.startTime"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "employee_id", "date", "startTime", "endTime"}))
