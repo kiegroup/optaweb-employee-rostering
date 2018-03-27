@@ -11,7 +11,6 @@ import org.optaplanner.benchmark.api.PlannerBenchmark;
 import org.optaplanner.benchmark.api.PlannerBenchmarkFactory;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.openshift.employeerostering.server.roster.RosterGenerator;
-import org.optaplanner.openshift.employeerostering.server.rotation.ShiftGenerator;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 
 public class OptaShiftEmployeeRosteringBenchmarkApp {

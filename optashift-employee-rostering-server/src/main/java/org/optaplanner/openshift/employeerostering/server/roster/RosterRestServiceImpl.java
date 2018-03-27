@@ -18,7 +18,6 @@ package org.optaplanner.openshift.employeerostering.server.roster;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,7 +32,6 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
-import org.optaplanner.openshift.employeerostering.server.rotation.ShiftGenerator;
 import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverManager;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
@@ -53,6 +51,8 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestService;
 
+import static java.util.stream.Collectors.groupingBy;
+
 public class RosterRestServiceImpl extends AbstractRestServiceImpl implements RosterRestService {
 
     @PersistenceContext
@@ -60,9 +60,6 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Inject
     private WannabeSolverManager solverManager;
-
-    @Inject
-    private ShiftGenerator shiftGenerator;
 
     @Inject
     private TenantRestService tenantRestService;
@@ -79,7 +76,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     public SpotRosterView getCurrentSpotRosterView(Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage) {
         RosterState rosterState = getRosterState(tenantId);
         LocalDate startDate = rosterState.getFirstPublishedDate();
-        LocalDate endDate = rosterState.getLastDraftDate();
+        LocalDate endDate = rosterState.getFirstUnplannedDate();
         return getSpotRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
     }
 
@@ -175,7 +172,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             Integer numberOfItemsPerPage) {
         RosterState rosterState = getRosterState(tenantId);
         LocalDate startDate = rosterState.getLastHistoricDate();
-        LocalDate endDate = rosterState.getLastDraftDate();
+        LocalDate endDate = rosterState.getFirstUnplannedDate();
         return getEmployeeRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
     }
 
@@ -335,40 +332,27 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Override
     @Transactional
     public void publishAndProvision(Integer tenantId) {
-        RosterState rosterState = getRosterState(tenantId);
-        publish(tenantId, rosterState.getPublishLength());
-        provision(tenantId, rosterState.getPublishLength());
-    }
-
-    @Override
-    @Transactional
-    public void publish(Integer tenantId, Integer lengthInDays) {
-        RosterState rosterState = getRosterState(tenantId);
-        rosterState.setFirstDraftDate(rosterState.getFirstDraftDate().plusDays(lengthInDays));
-        rosterState.setDraftLength(rosterState.getDraftLength() - lengthInDays);
-        entityManager.merge(rosterState);
-    }
-
-    @Override
-    @Transactional
-    public List<Long> provision(Integer tenantId, Integer lengthInDays) {
-        Collection<ShiftTemplate> shiftTemplates = shiftRestService.getTemplate(tenantId);
         TenantConfiguration tenantConfiguration = tenantRestService.getTenantConfiguration(tenantId);
-        ShiftGenerator.ParserOut parserOutput = shiftGenerator.parse(tenantId, tenantConfiguration, getRosterState(
-                tenantId),
-                lengthInDays, shiftTemplates);
-
-        List<Shift> shifts = parserOutput.getShiftOutputList();
-        List<EmployeeAvailability> employeeAvailabilities = parserOutput.getEmployeeAvailabilityOutputList();
-        List<Long> out = new ArrayList<>();
-        for (Shift shift : shifts) {
-            entityManager.persist(shift);
-            out.add(shift.getId());
+        RosterState rosterState = getRosterState(tenantId);
+        LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
+        // Publish
+        rosterState.setFirstDraftDate(rosterState.getFirstDraftDate().plusDays(rosterState.getPublishLength()));
+        // Provision
+        List<ShiftTemplate> shiftTemplateList = shiftRestService.getShiftTemplateList(tenantId);
+        Map<Integer, List<ShiftTemplate>> dayOffsetToShiftTemplateListMap = shiftTemplateList.stream()
+                .collect(groupingBy(ShiftTemplate::getStartDayOffset));
+        int dayOffset = rosterState.getUnplannedRotationOffset();
+        LocalDate shiftDate = firstUnplannedDate;
+        for (int i = 0; i < rosterState.getPublishLength(); i++) {
+            List<ShiftTemplate> dayShiftTemplateList = dayOffsetToShiftTemplateListMap.get(dayOffset);
+            for (ShiftTemplate shiftTemplate : dayShiftTemplateList) {
+                Shift shift = shiftTemplate.createShiftOnDate(shiftDate, tenantConfiguration.getTimeZone(), true);
+                entityManager.persist(shift);
+            }
+            shiftDate = shiftDate.plusDays(1);
+            dayOffset = (dayOffset + 1) % rosterState.getRotationLength();
         }
-        for (EmployeeAvailability availability : employeeAvailabilities) {
-            entityManager.persist(availability);
-        }
-        return out;
+        rosterState.setUnplannedRotationOffset(dayOffset);
     }
 
     @Override

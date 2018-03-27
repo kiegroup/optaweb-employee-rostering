@@ -118,9 +118,4 @@ public interface RosterRestService {
     // Not a REST method
     void updateShiftsOfRoster(Roster newRoster);
 
-    // Not a REST method
-    void publish(Integer tenantId, Integer lengthInDays);
-
-    // Not a REST method
-    List<Long> provision(Integer tenantId, Integer lengthInDays);
 }
