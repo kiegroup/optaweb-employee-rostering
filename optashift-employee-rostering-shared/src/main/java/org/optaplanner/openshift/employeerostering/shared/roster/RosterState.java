@@ -64,13 +64,13 @@ public class RosterState extends AbstractPersistable {
     }
 
     @JsonIgnore
-    public boolean isPublished(OffsetDateTime dateTime) {
-        return !isHistoric(dateTime) && !isDraft(dateTime);
+    public boolean isHistoric(Shift shift) {
+        return isHistoric(shift.getStartDateTime());
     }
 
     @JsonIgnore
-    public boolean isHistoric(Shift shift) {
-        return isHistoric(shift.getStartDateTime());
+    public boolean isPublished(OffsetDateTime dateTime) {
+        return !isHistoric(dateTime) && !isDraft(dateTime);
     }
 
     @JsonIgnore
@@ -89,12 +89,7 @@ public class RosterState extends AbstractPersistable {
     }
 
     @JsonIgnore
-    public LocalDate getLastPublishedDate() {
-        return firstDraftDate.minusDays(1);
-    }
-
-    @JsonIgnore
-    public LocalDate getLastDraftDate() {
+    public LocalDate getFirstUnplannedDate() {
         return firstDraftDate.plusDays(draftLength);
     }
 
