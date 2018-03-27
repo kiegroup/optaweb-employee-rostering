@@ -44,6 +44,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.optaplanner.openshift.employeerostering.server.common.generator.StringDataGenerator;
 import org.optaplanner.openshift.employeerostering.server.rotation.ShiftGenerator;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -308,10 +309,9 @@ public class RosterGenerator {
 
         List<Skill> skillList = createSkillList(generatorType, tenantId, skillListSize);
         List<Spot> spotList = createSpotList(generatorType, tenantId, spotListSize, skillList);
-
         List<Employee> employeeList = createEmployeeList(generatorType, tenantId, employeeListSize, skillList);
-        List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId, rosterState, spotList);
-        List<Shift> shiftList = createShiftList(generatorType, tenantId, tenantConfiguration, rosterState, shiftTemplateList);
+        List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId, rosterState, spotList, employeeList);
+        List<Shift> shiftList = createShiftList(generatorType, tenantId, tenantConfiguration, rosterState, spotList, shiftTemplateList);
         List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
                 generatorType, tenantId, tenantConfiguration, rosterState, employeeList, shiftList);
 
@@ -340,7 +340,8 @@ public class RosterGenerator {
         rosterState.setTenantId(tenantId);
         int publishNotice = 14;
         rosterState.setPublishNotice(publishNotice);
-        LocalDate firstDraftDate = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+        LocalDate firstDraftDate = LocalDate.now()
+                .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
                 .plusDays(publishNotice);
         rosterState.setFirstDraftDate(firstDraftDate);
         rosterState.setPublishLength(7);
@@ -391,7 +392,8 @@ public class RosterGenerator {
         return employeeList;
     }
 
-    private List<ShiftTemplate> createShiftTemplateList(GeneratorType generatorType, Integer tenantId, RosterState rosterState, List<Spot> spotList) {
+    private List<ShiftTemplate> createShiftTemplateList(GeneratorType generatorType, Integer tenantId,
+            RosterState rosterState, List<Spot> spotList,  List<Employee> employeeList) {
         int rotationLength = rosterState.getRotationLength();
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength
                 * generatorType.timeslotRanges.length);
@@ -419,21 +421,33 @@ public class RosterGenerator {
     }
 
     private List<Shift> createShiftList(GeneratorType generatorType, Integer tenantId,
-            TenantConfiguration tenantConfiguration, RosterState rosterState, List<ShiftTemplate> shiftTemplateList) {
+            TenantConfiguration tenantConfiguration, RosterState rosterState, List<Spot> spotList,
+            List<ShiftTemplate> shiftTemplateList) {
         int rotationLength = rosterState.getRotationLength();
-        LocalDate date = rosterState.getFirstDraftDate().minusDays(rosterState.getPublishNotice());
+        LocalDate date = rosterState.getLastHistoricDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate lastDraftDate = rosterState.getLastDraftDate();
 
         List<Shift> shiftList = new ArrayList<>();
-        Map<Integer, List<ShiftTemplate>> startDayOffsetToShiftTemplateListMap = shiftTemplateList.stream()
-                .collect(groupingBy(ShiftTemplate::getStartDayOffset));
+        Map<Pair<Integer, Spot>, List<ShiftTemplate>> startDayOffsetAndSpotToShiftTemplateListMap = shiftTemplateList.stream()
+                .collect(groupingBy(shiftTemplate -> Pair.of(shiftTemplate.getStartDayOffset(), shiftTemplate.getSpot())));
         int dayOffset = 0;
         while (date.compareTo(lastDraftDate) <= 0) {
-            List<ShiftTemplate> dayShiftTemplateList = startDayOffsetToShiftTemplateListMap.get(dayOffset);
-            for (ShiftTemplate shiftTemplate : dayShiftTemplateList) {
-                Shift shift = shiftTemplate.createShiftOnDate(date, tenantConfiguration.getTimeZone());
-                entityManager.persist(shift);
-                shiftList.add(shift);
+            for (Spot spot : spotList) {
+                List<ShiftTemplate> subShiftTemplateList = startDayOffsetAndSpotToShiftTemplateListMap.get(Pair.of(dayOffset, spot));
+                for (ShiftTemplate shiftTemplate : subShiftTemplateList) {
+                    Shift shift = shiftTemplate.createShiftOnDate(date, tenantConfiguration.getTimeZone());
+                    entityManager.persist(shift);
+                    shiftList.add(shift);
+                }
+                if (date.compareTo(rosterState.getFirstDraftDate()) >= 0) {
+                    int extraShiftCount = generateRandomIntFromThresholds(0.5, 0.8, 0.95);
+                    for (int i = 0; i < extraShiftCount; i++) {
+                        ShiftTemplate shiftTemplate = extractRandomElement(subShiftTemplateList);
+                        Shift shift = shiftTemplate.createShiftOnDate(date, tenantConfiguration.getTimeZone());
+                        entityManager.persist(shift);
+                        shiftList.add(shift);
+                    }
+                }
             }
             date = date.plusDays(1);
             dayOffset = (dayOffset + 1) % rotationLength;
@@ -476,6 +490,10 @@ public class RosterGenerator {
         return employeeAvailabilityList;
     }
 
+    private <E> E extractRandomElement(List<E> list) {
+        return list.get(random.nextInt(list.size()));
+    }
+
     private <E> List<E> extractRandomSubList(List<E> list, double maxRelativeSize) {
         int size = random.nextInt((int) (list.size() * maxRelativeSize)) + 1;
         return extractRandomSubListOfSize(list, size);
@@ -487,6 +505,16 @@ public class RosterGenerator {
         // Remove elements not in the sublist (so it can be garbage collected)
         subList.subList(size, subList.size()).clear();
         return subList;
+    }
+
+    private int generateRandomIntFromThresholds(double... thresholds) {
+        double randomDouble = random.nextDouble();
+        for (int i = 0; i < thresholds.length; i++) {
+            if (randomDouble < thresholds[i]) {
+                return i;
+            }
+        }
+        return thresholds.length;
     }
 
 }
