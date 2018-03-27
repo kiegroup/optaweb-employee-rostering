@@ -19,13 +19,14 @@ package org.optaplanner.openshift.employeerostering.shared.shift;
 import org.optaplanner.core.impl.heuristic.selector.common.decorator.SelectionFilter;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 public class MovableShiftFilter implements SelectionFilter<Roster, Shift> {
 
     @Override
     public boolean accept(ScoreDirector<Roster> scoreDirector, Shift shift) {
-        // TODO: Fix RosterState.isHistoric so that it works (crashes the application for some reason)
-        return true;
+        RosterState rosterState = scoreDirector.getWorkingSolution().getRosterState();
+        return rosterState.isDraft(shift);
     }
 
 }
