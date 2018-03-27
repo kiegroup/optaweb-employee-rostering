@@ -86,6 +86,8 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.endTime = endTime;
     }
 
+    // add method getDuration() and validate it's less than 28 hours (DST buffer)
+
     @Override
     public String toString() {
         return employee + " " + date + ":" + startTime + "-" + endTime;
