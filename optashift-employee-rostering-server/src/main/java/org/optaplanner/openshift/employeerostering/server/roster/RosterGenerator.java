@@ -17,14 +17,9 @@
 package org.optaplanner.openshift.employeerostering.server.roster;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
 import java.time.OffsetTime;
-import java.time.ZoneOffset;
-import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.time.zone.ZoneRules;
 import java.util.ArrayList;
@@ -34,19 +29,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.function.BiFunction;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.optaplanner.openshift.employeerostering.server.common.generator.StringDataGenerator;
-import org.optaplanner.openshift.employeerostering.server.rotation.ShiftGenerator;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
@@ -59,7 +51,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 
 @Singleton
 @Startup
@@ -70,12 +62,19 @@ public class RosterGenerator {
         private final StringDataGenerator skillNameGenerator;
         private final StringDataGenerator spotNameGenerator;
         private final int[][] timeslotRanges; // Start and end in minutes
+        private final int rotationLength;
+        private final int rotationEmployeeListSize;
+        private final BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator;
 
-        public GeneratorType(String tenantNamePrefix, StringDataGenerator skillNameGenerator, StringDataGenerator spotNameGenerator, int[][] timeslotRanges) {
+        public GeneratorType(String tenantNamePrefix, StringDataGenerator skillNameGenerator, StringDataGenerator spotNameGenerator,
+                int[][] timeslotRanges, int rotationLength, int RotationEmployeeListSize, BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator) {
             this.tenantNamePrefix = tenantNamePrefix;
             this.skillNameGenerator = skillNameGenerator;
             this.spotNameGenerator = spotNameGenerator;
             this.timeslotRanges = timeslotRanges;
+            this.rotationLength = rotationLength;
+            rotationEmployeeListSize = RotationEmployeeListSize;
+            this.rotationEmployeeIndexCalculator = rotationEmployeeIndexCalculator;
         }
 
     }
@@ -162,7 +161,26 @@ public class RosterGenerator {
                     {9 * 60, 17 * 60},
                     {14 * 60, 22 * 60},
                     {22 * 60, 6 * 60}
-            });
+            },
+            // Morning:   A A A A A D D B B B B B D D C C C C C D D
+            // Afternoon: D D D E E E E D D D E E E E D D D E E E E
+            // Night:     E C C C C C C E A A A A A A E B B B B B B
+            // Day:       F F B B B F F F F C C C F F F F A A A F F
+            21, 6, (startDayOffset, timeslotRangesIndex) -> {
+                switch (timeslotRangesIndex) {
+                    case 0:
+                        return startDayOffset % 7 >= 5 ? 3 : startDayOffset / 7;
+                    case 1:
+                        return startDayOffset % 7 < 3 ? 3 : 4;
+                    case 2:
+                        return startDayOffset % 7 < 1 ? 4 : (startDayOffset - 8 + 21) % 21 / 7;
+                    case 3:
+                        return (startDayOffset + 2) % 7 < 4 ? 5 : (startDayOffset - 16 + 21) % 21 / 7;
+                    default:
+                        throw new IllegalStateException("Impossible state for timeslotRangesIndex ("
+                                + timeslotRangesIndex + ").");
+                }
+    });
     private final GeneratorType factoryAssemblyGeneratorType = new GeneratorType(
             "Factory assembly",
             new StringDataGenerator()
@@ -189,7 +207,11 @@ public class RosterGenerator {
                     {6 * 60, 14 * 60},
                     {14 * 60, 22 * 60},
                     {22 * 60, 6 * 60}
-            });
+            },
+            // Morning:   A A A A A A A B B B B B B B C C C C C C C D D D D D D D
+            // Afternoon: C C D D D D D D D A A A A A A A B B B B B B B C C C C C
+            // Night:     B B B B C C C C C C C D D D D D D D A A A A A A A B B B
+            28, 4, (startDayOffset, timeslotRangesIndex) -> (startDayOffset - (9 * timeslotRangesIndex) + 28) % 28 / 7);
     private final GeneratorType guardSecurityGeneratorType = new GeneratorType(
             "Guard security",
             new StringDataGenerator()
@@ -200,30 +222,13 @@ public class RosterGenerator {
                             "Technical",
                             "Computer")
                     .addPart(
-                            "Basic",
-                            "Advanced",
-                            "Expert",
-                            "Master",
-                            "Novice"),
+                            "basic",
+                            "advanced",
+                            "expert",
+                            "master",
+                            "novice"),
             new StringDataGenerator()
-                    .addPart(false, 0,
-                            "North gate",
-                            "South gate",
-                            "East gate",
-                            "West gate",
-                            "Roof",
-                            "Cellar",
-                            "North west gate",
-                            "North east gate",
-                            "South west gate",
-                            "South east gate",
-                            "Main door",
-                            "Back door",
-                            "Side door",
-                            "Balcony",
-                            "Patio")
-                    .addPart(true, 1,
-                            "Airport",
+                    .addPart("Airport",
                             "Harbor",
                             "Bank",
                             "Office",
@@ -238,8 +243,22 @@ public class RosterGenerator {
                             "Prison",
                             "Mine",
                             "Palace")
-                    .addPart(false, 0,
-                            "Alpha",
+                    .addPart("north gate",
+                            "south gate",
+                            "east gate",
+                            "west gate",
+                            "roof",
+                            "cellar",
+                            "north west gate",
+                            "north east gate",
+                            "south west gate",
+                            "south east gate",
+                            "main door",
+                            "back door",
+                            "side door",
+                            "balcony",
+                            "patio")
+                    .addPart("Alpha",
                             "Beta",
                             "Gamma",
                             "Delta",
@@ -257,7 +276,14 @@ public class RosterGenerator {
             new int[][]{
                     {7 * 60, 19 * 60},
                     {19 * 60, 7 * 60}
-            });
+            },
+            // Day:   A A A B B B B C C C A A A A B B B C C C C
+            // Night: C C C A A A A B B B C C C C A A A B B B B
+            21, 3, (startDayOffset, timeslotRangesIndex) -> {
+                int offset = timeslotRangesIndex == 0 ? startDayOffset : (startDayOffset + 14) % 21;
+                return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 3 :
+                        offset < 14 ? 0 : offset < 17 ? 1 : offset < 21 ? 3 : -1;
+    });
 
     private Random random = new Random(37);
 
@@ -347,7 +373,7 @@ public class RosterGenerator {
         rosterState.setPublishLength(7);
         rosterState.setDraftLength(14);
         rosterState.setUnplannedRotationOffset(0);
-        rosterState.setRotationLength(7);
+        rosterState.setRotationLength(generatorType.rotationLength);
         rosterState.setLastHistoricDate(LocalDate.now().minusDays(1));
         entityManager.persist(rosterState);
         return rosterState;
@@ -397,25 +423,31 @@ public class RosterGenerator {
         int rotationLength = rosterState.getRotationLength();
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength
                 * generatorType.timeslotRanges.length);
+        int employeeStart = 0;
         for (Spot spot : spotList) {
+            List<Employee> rotationEmployeeList = employeeList.subList(Math.min(employeeList.size(), employeeStart),
+                    Math.min(employeeList.size(), employeeStart + rotationLength));
             // For every day in the rotation (independent of publishLength and draftLength)
             for (int startDayOffset = 0; startDayOffset < rotationLength; startDayOffset++) {
                 // Fill the offset day with shift templates
-                for (int[] timeslotRange : generatorType.timeslotRanges) {
+                for (int timeslotRangesIndex = 0; timeslotRangesIndex < generatorType.timeslotRanges.length; timeslotRangesIndex++) {
+                    int[] timeslotRange = generatorType.timeslotRanges[timeslotRangesIndex];
                     int startMinute = timeslotRange[0];
-                    int endMinute = timeslotRange[1];
+                    int endMinute =  timeslotRange[1];
                     LocalTime startTime = LocalTime.of(startMinute / 60, startMinute % 60);
                     int endDayOffset = startDayOffset;
                     if (endMinute < startMinute) {
                         endDayOffset = (startDayOffset + 1) % rotationLength;
                     }
                     LocalTime endTime = LocalTime.of(endMinute / 60, endMinute % 60);
-                    Employee rotationEmployee = null;
+                    int rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator.apply(startDayOffset, timeslotRangesIndex);
+                    Employee rotationEmployee = rotationEmployeeIndex >= rotationEmployeeList.size() ? null : rotationEmployeeList.get(rotationEmployeeIndex);
                     ShiftTemplate shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, rotationEmployee);
                     entityManager.persist(shiftTemplate);
                     shiftTemplateList.add(shiftTemplate);
                 }
             }
+            employeeStart += generatorType.rotationEmployeeListSize;
         }
         return shiftTemplateList;
     }
