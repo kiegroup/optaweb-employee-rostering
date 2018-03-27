@@ -16,32 +16,22 @@
 
 package org.optaplanner.openshift.employeerostering.server.shift;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
-import org.optaplanner.openshift.employeerostering.server.rotation.ShiftGenerator;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
 public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements ShiftRestService {
 
@@ -125,7 +115,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     }
 
     @Override
-    public Collection<ShiftTemplate> getTemplate(Integer tenantId) {
+    public List<ShiftTemplate> getShiftTemplateList(Integer tenantId) {
         TypedQuery<ShiftTemplate> q = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class);
         q.setParameter("tenantId", tenantId);
         return q.getResultList();
@@ -133,10 +123,10 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Override
     @Transactional
-    public void updateTemplate(Integer tenantId, Collection<ShiftTemplate> shifts) {
-        Collection<ShiftTemplate> oldShiftTemplates = getTemplate(tenantId);
-        oldShiftTemplates.forEach((s) -> entityManager.remove(s));
-        shifts.forEach((s) -> entityManager.persist(s));
+    public void updateShiftTemplate(Integer tenantId, List<ShiftTemplate> shiftTemplateList) {
+        List<ShiftTemplate> oldShiftTemplateList = getShiftTemplateList(tenantId);
+        oldShiftTemplateList.forEach((s) -> entityManager.remove(s));
+        shiftTemplateList.forEach((s) -> entityManager.persist(s));
     }
 
 }

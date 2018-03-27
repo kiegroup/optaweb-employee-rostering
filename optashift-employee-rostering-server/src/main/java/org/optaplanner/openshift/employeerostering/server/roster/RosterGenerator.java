@@ -457,17 +457,17 @@ public class RosterGenerator {
             List<ShiftTemplate> shiftTemplateList) {
         int rotationLength = rosterState.getRotationLength();
         LocalDate date = rosterState.getLastHistoricDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate lastDraftDate = rosterState.getLastDraftDate();
+        LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
 
         List<Shift> shiftList = new ArrayList<>();
-        Map<Pair<Integer, Spot>, List<ShiftTemplate>> startDayOffsetAndSpotToShiftTemplateListMap = shiftTemplateList.stream()
+        Map<Pair<Integer, Spot>, List<ShiftTemplate>> dayOffsetAndSpotToShiftTemplateListMap = shiftTemplateList.stream()
                 .collect(groupingBy(shiftTemplate -> Pair.of(shiftTemplate.getStartDayOffset(), shiftTemplate.getSpot())));
         int dayOffset = 0;
-        while (date.compareTo(lastDraftDate) <= 0) {
+        while (date.compareTo(firstUnplannedDate) < 0) {
             for (Spot spot : spotList) {
-                List<ShiftTemplate> subShiftTemplateList = startDayOffsetAndSpotToShiftTemplateListMap.get(Pair.of(dayOffset, spot));
+                List<ShiftTemplate> subShiftTemplateList = dayOffsetAndSpotToShiftTemplateListMap.get(Pair.of(dayOffset, spot));
                 for (ShiftTemplate shiftTemplate : subShiftTemplateList) {
-                    Shift shift = shiftTemplate.createShiftOnDate(date, tenantConfiguration.getTimeZone());
+                    Shift shift = shiftTemplate.createShiftOnDate(date, tenantConfiguration.getTimeZone(), true);
                     entityManager.persist(shift);
                     shiftList.add(shift);
                 }
@@ -475,7 +475,7 @@ public class RosterGenerator {
                     int extraShiftCount = generateRandomIntFromThresholds(0.5, 0.8, 0.95);
                     for (int i = 0; i < extraShiftCount; i++) {
                         ShiftTemplate shiftTemplate = extractRandomElement(subShiftTemplateList);
-                        Shift shift = shiftTemplate.createShiftOnDate(date, tenantConfiguration.getTimeZone());
+                        Shift shift = shiftTemplate.createShiftOnDate(date, tenantConfiguration.getTimeZone(), false);
                         entityManager.persist(shift);
                         shiftList.add(shift);
                     }
@@ -492,12 +492,12 @@ public class RosterGenerator {
             TenantConfiguration tenantConfiguration, RosterState rosterState, List<Employee> employeeList, List<Shift> shiftList) {
         ZoneRules zoneRules = tenantConfiguration.getTimeZone().getRules();
         LocalDate date = rosterState.getFirstDraftDate();
-        LocalDate lastDraftDate = rosterState.getLastDraftDate();
+        LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
         List<EmployeeAvailability> employeeAvailabilityList = new ArrayList<>();
         Map<LocalDate, List<Shift>> startDayToShiftListMap = shiftList.stream()
                 .collect(groupingBy(shift -> shift.getStartDateTime().toLocalDate()));
 
-        while (date.compareTo(lastDraftDate) <= 0) {
+        while (date.compareTo(firstUnplannedDate) < 0) {
             List<Shift> dayShiftList = startDayToShiftListMap.get(date);
             List<Employee> availableEmployeeList = new ArrayList<>(employeeList);
             int stateCount = (employeeList.size() - dayShiftList.size()) / 4;

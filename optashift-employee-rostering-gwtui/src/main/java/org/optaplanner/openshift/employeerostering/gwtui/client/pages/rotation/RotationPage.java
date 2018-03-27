@@ -124,7 +124,7 @@ public class RotationPage implements Page {
 
     private Promise<Collection<ShiftTemplate>> fetchShiftTemplate() {
         return promiseUtils.promise((resolve, reject) -> {
-            ShiftRestServiceBuilder.getTemplate(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
+            ShiftRestServiceBuilder.getShiftTemplateList(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
         });
     }
 
@@ -203,7 +203,7 @@ public class RotationPage implements Page {
                 .map(this::newShiftTemplate)
                 .collect(toList());
 
-        ShiftRestServiceBuilder.updateTemplate(
+        ShiftRestServiceBuilder.updateShiftTemplate(
                 tenantStore.getCurrentTenantId(),
                 newShiftInfoList,
                 onSuccess(i -> refresh()));

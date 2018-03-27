@@ -54,14 +54,6 @@ public interface ShiftRestService {
     @Path("/update")
     Shift updateShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
 
-    @PUT
-    @Path("/template/update")
-    void updateTemplate(@PathParam("tenantId") Integer tenantId, Collection<ShiftTemplate> shifts);
-
-    @GET
-    @Path("/template")
-    Collection<ShiftTemplate> getTemplate(@PathParam("tenantId") Integer tenantId);
-
     /**
      * @param id never null
      * @return return true if the shift was removed, false otherwise
@@ -69,5 +61,13 @@ public interface ShiftRestService {
     @DELETE
     @Path("/{id}")
     Boolean removeShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+
+    @PUT
+    @Path("/template/update") // TODO /update should update a single item. Use /bulkUpdate for list
+    void updateShiftTemplate(@PathParam("tenantId") Integer tenantId, List<ShiftTemplate> shiftTemplateList);
+
+    @GET
+    @Path("/template")
+    List<ShiftTemplate> getShiftTemplateList(@PathParam("tenantId") Integer tenantId);
 
 }
