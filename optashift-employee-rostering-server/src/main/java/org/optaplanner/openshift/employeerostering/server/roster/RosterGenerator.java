@@ -23,6 +23,7 @@ import java.time.OffsetTime;
 import java.time.temporal.TemporalAdjusters;
 import java.time.zone.ZoneRules;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -61,17 +62,18 @@ public class RosterGenerator {
         private final String tenantNamePrefix;
         private final StringDataGenerator skillNameGenerator;
         private final StringDataGenerator spotNameGenerator;
-        private final int[][] timeslotRanges; // Start and end in minutes
+        private final List<Pair<LocalTime, LocalTime>> timeslotRangeList; // Start and end time per timeslot
         private final int rotationLength;
         private final int rotationEmployeeListSize;
         private final BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator;
 
         public GeneratorType(String tenantNamePrefix, StringDataGenerator skillNameGenerator, StringDataGenerator spotNameGenerator,
-                int[][] timeslotRanges, int rotationLength, int RotationEmployeeListSize, BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator) {
+                List<Pair<LocalTime, LocalTime>> timeslotRangeList, int rotationLength, int RotationEmployeeListSize,
+                BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator) {
             this.tenantNamePrefix = tenantNamePrefix;
             this.skillNameGenerator = skillNameGenerator;
             this.spotNameGenerator = spotNameGenerator;
-            this.timeslotRanges = timeslotRanges;
+            this.timeslotRangeList = timeslotRangeList;
             this.rotationLength = rotationLength;
             rotationEmployeeListSize = RotationEmployeeListSize;
             this.rotationEmployeeIndexCalculator = rotationEmployeeIndexCalculator;
@@ -107,7 +109,7 @@ public class RosterGenerator {
                             "practitioner",
                             "pharmacist",
                             "researcher"),
-            new StringDataGenerator()
+            new StringDataGenerator(true)
                     .addPart(false, 0,
                             "Basic",
                             "Advanced",
@@ -156,26 +158,26 @@ public class RosterGenerator {
                             "Nu",
                             "Xi",
                             "Omicron"),
-            new int[][]{
-                    {6 * 60, 14 * 60},
-                    {9 * 60, 17 * 60},
-                    {14 * 60, 22 * 60},
-                    {22 * 60, 6 * 60}
-            },
+            Arrays.asList(
+                    Pair.of(LocalTime.of(6, 0), LocalTime.of(14, 0)),
+                    Pair.of(LocalTime.of(9, 0), LocalTime.of(17, 0)),
+                    Pair.of(LocalTime.of(14, 0), LocalTime.of(22, 0)),
+                    Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))
+            ),
             // Morning:   A A A A A D D B B B B B D D C C C C C D D
+            // Day:       F F B B B F F F F C C C F F F F A A A F F
             // Afternoon: D D D E E E E D D D E E E E D D D E E E E
             // Night:     E C C C C C C E A A A A A A E B B B B B B
-            // Day:       F F B B B F F F F C C C F F F F A A A F F
             21, 6, (startDayOffset, timeslotRangesIndex) -> {
                 switch (timeslotRangesIndex) {
                     case 0:
                         return startDayOffset % 7 >= 5 ? 3 : startDayOffset / 7;
                     case 1:
-                        return startDayOffset % 7 < 3 ? 3 : 4;
-                    case 2:
-                        return startDayOffset % 7 < 1 ? 4 : (startDayOffset - 8 + 21) % 21 / 7;
-                    case 3:
                         return (startDayOffset + 2) % 7 < 4 ? 5 : (startDayOffset - 16 + 21) % 21 / 7;
+                    case 2:
+                        return startDayOffset % 7 < 3 ? 3 : 4;
+                    case 3:
+                        return startDayOffset % 7 < 1 ? 4 : (startDayOffset - 8 + 21) % 21 / 7;
                     default:
                         throw new IllegalStateException("Impossible state for timeslotRangesIndex ("
                                 + timeslotRangesIndex + ").");
@@ -203,11 +205,11 @@ public class RosterGenerator {
                             "inspector",
                             "analyst"),
             StringDataGenerator.buildAssemblyLineNames(),
-            new int[][]{
-                    {6 * 60, 14 * 60},
-                    {14 * 60, 22 * 60},
-                    {22 * 60, 6 * 60}
-            },
+            Arrays.asList(
+                    Pair.of(LocalTime.of(6, 0), LocalTime.of(14, 0)),
+                    Pair.of(LocalTime.of(14, 0), LocalTime.of(22, 0)),
+                    Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))
+            ),
             // Morning:   A A A A A A A B B B B B B B C C C C C C C D D D D D D D
             // Afternoon: C C D D D D D D D A A A A A A A B B B B B B B C C C C C
             // Night:     B B B B C C C C C C C D D D D D D D A A A A A A A B B B
@@ -273,10 +275,10 @@ public class RosterGenerator {
                             "Nu",
                             "Xi",
                             "Omicron"),
-            new int[][]{
-                    {7 * 60, 19 * 60},
-                    {19 * 60, 7 * 60}
-            },
+            Arrays.asList(
+                    Pair.of(LocalTime.of(7, 0), LocalTime.of(19, 0)),
+                    Pair.of(LocalTime.of(19, 0), LocalTime.of(7, 0))
+            ),
             // Day:   A A A B B B B C C C A A A A B B B C C C C
             // Night: C C C A A A A B B B C C C C A A A B B B B
             21, 3, (startDayOffset, timeslotRangesIndex) -> {
@@ -422,7 +424,7 @@ public class RosterGenerator {
             RosterState rosterState, List<Spot> spotList,  List<Employee> employeeList) {
         int rotationLength = rosterState.getRotationLength();
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength
-                * generatorType.timeslotRanges.length);
+                * generatorType.timeslotRangeList.size());
         int employeeStart = 0;
         for (Spot spot : spotList) {
             List<Employee> rotationEmployeeList = employeeList.subList(Math.min(employeeList.size(), employeeStart),
@@ -430,16 +432,14 @@ public class RosterGenerator {
             // For every day in the rotation (independent of publishLength and draftLength)
             for (int startDayOffset = 0; startDayOffset < rotationLength; startDayOffset++) {
                 // Fill the offset day with shift templates
-                for (int timeslotRangesIndex = 0; timeslotRangesIndex < generatorType.timeslotRanges.length; timeslotRangesIndex++) {
-                    int[] timeslotRange = generatorType.timeslotRanges[timeslotRangesIndex];
-                    int startMinute = timeslotRange[0];
-                    int endMinute =  timeslotRange[1];
-                    LocalTime startTime = LocalTime.of(startMinute / 60, startMinute % 60);
+                for (int timeslotRangesIndex = 0; timeslotRangesIndex < generatorType.timeslotRangeList.size(); timeslotRangesIndex++) {
+                    Pair<LocalTime, LocalTime> timeslotRange = generatorType.timeslotRangeList.get(timeslotRangesIndex);
+                    LocalTime startTime = timeslotRange.getLeft();
+                    LocalTime endTime = timeslotRange.getRight();
                     int endDayOffset = startDayOffset;
-                    if (endMinute < startMinute) {
+                    if (endTime.compareTo(startTime) < 0) {
                         endDayOffset = (startDayOffset + 1) % rotationLength;
                     }
-                    LocalTime endTime = LocalTime.of(endMinute / 60, endMinute % 60);
                     int rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator.apply(startDayOffset, timeslotRangesIndex);
                     Employee rotationEmployee = rotationEmployeeIndex >= rotationEmployeeList.size() ? null : rotationEmployeeList.get(rotationEmployeeIndex);
                     ShiftTemplate shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, rotationEmployee);
