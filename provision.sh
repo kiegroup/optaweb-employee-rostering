@@ -1,10 +1,9 @@
 #!/bin/bash
-#!/bin/sh
 set -e
 
 command -v oc >/dev/null 2>&1 || {
-  echo >&2 "The oc client tools need to be installed to connect to OpenShift Online.";
-  echo >&2 "Download it from https://www.openshift.org/download.html and confirm that \"oc version\" runs.";
+  echo >&2 "ERROR: The oc client tools need to be installed to connect to OpenShift Online.";
+  echo >&2 "       Download it from https://www.openshift.org/download.html and confirm that \"oc version\" runs.";
   exit 1;
 }
 
@@ -155,7 +154,7 @@ case $ARG_APP in
 	   # No need to set anything here anymore.
 	;;
     *)
-        echo "ERROR: Invalid app name: \"$ARG_APP\""
+        echo "ERROR: Invalid app name: \"$ARG_APP\"."
         usage
         exit 255
         ;;
@@ -201,7 +200,7 @@ function wait_while_empty() {
     x=$(( $x + 1 ))
     if [ $x -gt $_TIMEOUT ]
     then
-      echo "$_NAME still not ready, I GIVE UP!"
+      echo "ERROR: $_NAME still not ready, I GIVE UP!"
       exit 255
     fi
   done
@@ -241,6 +240,11 @@ function build_and_deploy_binary() {
 }
 
 function start_maven_build() {
+    command -v mvn >/dev/null 2>&1 || {
+      echo >&2 "ERROR: The Maven build tool need to be installed to build with Maven.";
+      echo >&2 "       Download it and confirm that \"mvn --version\" runs.";
+      exit 1;
+    }
     echo_header "Starting local Maven build..."
     mvn clean install -P openshift
 }
