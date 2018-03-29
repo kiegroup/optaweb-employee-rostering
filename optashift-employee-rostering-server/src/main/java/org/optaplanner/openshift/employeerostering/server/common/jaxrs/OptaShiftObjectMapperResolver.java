@@ -19,10 +19,11 @@ package org.optaplanner.openshift.employeerostering.server.common.jaxrs;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.util.ISO8601DateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.optaplanner.persistence.jackson.api.OptaPlannerJacksonModule;
 
 @Provider
 public class OptaShiftObjectMapperResolver implements ContextResolver<ObjectMapper> {
@@ -30,11 +31,13 @@ public class OptaShiftObjectMapperResolver implements ContextResolver<ObjectMapp
     private final ObjectMapper objectMapper;
 
     public OptaShiftObjectMapperResolver() {
+        // JavaTimeModule defaults date format to ISO, so we don't need to deal with the headache of setting
+        // a universal date format that is ISO and includes an offset
         objectMapper = new ObjectMapper()
+                .registerModule(OptaPlannerJacksonModule.createModule())
                 .registerModule(new JavaTimeModule())
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                // This converts the server side offset to GMT, is that what we want?
-                .setDateFormat(new ISO8601DateFormat());
+                .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
     }
 
     @Override
