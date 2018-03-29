@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.skill.SkillRestService;
+import org.optaplanner.openshift.employeerostering.webapp.AbstractRestServiceIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;

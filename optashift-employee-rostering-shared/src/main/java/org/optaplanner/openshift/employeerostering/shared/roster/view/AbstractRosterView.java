@@ -6,14 +6,10 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.persistence.jackson.api.score.buildin.hardsoft.HardSoftScoreJacksonJsonDeserializer;
-import org.optaplanner.persistence.jackson.api.score.buildin.hardsoft.HardSoftScoreJacksonJsonSerializer;
 
 public class AbstractRosterView implements Serializable {
 
@@ -81,8 +77,6 @@ public class AbstractRosterView implements Serializable {
         this.employeeList = employeeList;
     }
 
-    @JsonSerialize(using = HardSoftScoreJacksonJsonSerializer.class)
-    @JsonDeserialize(using = HardSoftScoreJacksonJsonDeserializer.class)
     public HardSoftScore getScore() {
         return score;
     }
