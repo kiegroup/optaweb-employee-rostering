@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.webapp.skill;
+package org.optaplanner.openshift.employeerostering.webapp;
 
 import java.net.MalformedURLException;
 import java.net.URL;
