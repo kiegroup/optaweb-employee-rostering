@@ -60,7 +60,7 @@ public class RotationPage implements Page {
 
     @Inject
     @DataField("viewport")
-    private ViewportView<Long> viewportView;
+    private ViewportView<OffsetDateTime> viewportView;
 
     @Inject
     @DataField("configuration")
@@ -86,7 +86,7 @@ public class RotationPage implements Page {
     @Inject
     private PromiseUtils promiseUtils;
 
-    private Viewport<Long> viewport;
+    private Viewport<OffsetDateTime> viewport;
 
     @Override
     public Promise<Void> beforeOpen() {
@@ -102,12 +102,10 @@ public class RotationPage implements Page {
         loadingSpinner.showFor("rotation-page");
 
         return fetchShiftTemplate().then(shiftTemplate -> {
-
-            final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate).stream()
-                    .collect(groupingBy(Shift::getSpot));
-
             return promiseUtils.manage(fetchSpotList().then((spotList) -> {
                 return promiseUtils.manage(fetchRosterState().then(rosterState -> {
+                    final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate, rosterState).stream()
+                            .collect(groupingBy(Shift::getSpot));
                     viewport = rotationViewportFactory.getViewport(rosterState, shiftsBySpot, spotList);
                     viewportView.setViewport(viewport);
                     loadingSpinner.hideFor("rotation-page");
@@ -134,19 +132,21 @@ public class RotationPage implements Page {
         });
     }
 
-    private List<Shift> buildShiftList(final Collection<ShiftTemplate> shiftTemplate) {
+    private List<Shift> buildShiftList(final Collection<ShiftTemplate> shiftTemplate, final RosterState rosterState) {
         final AtomicLong id = new AtomicLong(0L);
         return shiftTemplate.stream()
-                .map(shiftInfo -> newShift(id.getAndIncrement(), shiftInfo)).collect(toList());
+                .map(shiftInfo -> newShift(id.getAndIncrement(), shiftInfo, rosterState)).collect(toList());
     }
 
     private Shift newShift(final Long id,
-                           final ShiftTemplate shift) {
+                           final ShiftTemplate shift,
+                           final RosterState rosterState) {
         final Shift newShift = new Shift(
                 tenantStore.getCurrentTenantId(),
                 shift.getSpot(),
                 getStartDateTime(shift),
-                getEndDateTime(shift));
+                getEndDateTime(shift, rosterState.getRotationLength()),
+                shift.getRotationEmployee());
 
         newShift.setId(id);
 
@@ -167,10 +167,16 @@ public class RotationPage implements Page {
                 .atTime(shift.getStartTime()), ZoneOffset.UTC);
     }
 
-    private OffsetDateTime getEndDateTime(ShiftTemplate shift) {
-        return OffsetDateTime.of(getBaseDate()
-                .plusDays(shift.getEndDayOffset())
-                .atTime(shift.getEndTime()), ZoneOffset.UTC);
+    private OffsetDateTime getEndDateTime(ShiftTemplate shift, int rotationLength) {
+        if (shift.getEndDayOffset() < shift.getStartDayOffset()) {
+            return OffsetDateTime.of(getBaseDate().plusDays(rotationLength)
+                    .plusDays(shift.getEndDayOffset())
+                    .atTime(shift.getEndTime()), ZoneOffset.UTC);
+        } else {
+            return OffsetDateTime.of(getBaseDate()
+                    .plusDays(shift.getEndDayOffset())
+                    .atTime(shift.getEndTime()), ZoneOffset.UTC);
+        }
     }
 
     private int getOffsetStartDay(Shift shift) {

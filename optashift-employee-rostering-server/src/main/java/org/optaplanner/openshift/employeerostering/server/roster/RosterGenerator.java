@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -52,13 +53,14 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
 
 @Singleton
 @Startup
 public class RosterGenerator {
 
     private static class GeneratorType {
+
         private final String tenantNamePrefix;
         private final StringDataGenerator skillNameGenerator;
         private final StringDataGenerator spotNameGenerator;
@@ -68,8 +70,8 @@ public class RosterGenerator {
         private final BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator;
 
         public GeneratorType(String tenantNamePrefix, StringDataGenerator skillNameGenerator, StringDataGenerator spotNameGenerator,
-                List<Pair<LocalTime, LocalTime>> timeslotRangeList, int rotationLength, int RotationEmployeeListSize,
-                BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator) {
+                             List<Pair<LocalTime, LocalTime>> timeslotRangeList, int rotationLength, int RotationEmployeeListSize,
+                             BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator) {
             this.tenantNamePrefix = tenantNamePrefix;
             this.skillNameGenerator = skillNameGenerator;
             this.spotNameGenerator = spotNameGenerator;
@@ -162,8 +164,7 @@ public class RosterGenerator {
                     Pair.of(LocalTime.of(6, 0), LocalTime.of(14, 0)),
                     Pair.of(LocalTime.of(9, 0), LocalTime.of(17, 0)),
                     Pair.of(LocalTime.of(14, 0), LocalTime.of(22, 0)),
-                    Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))
-            ),
+                    Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))),
             // Morning:   A A A A A D D B B B B B D D C C C C C D D
             // Day:       F F B B B F F F F C C C F F F F A A A F F
             // Afternoon: D D D E E E E D D D E E E E D D D E E E E
@@ -179,10 +180,9 @@ public class RosterGenerator {
                     case 3:
                         return startDayOffset % 7 < 1 ? 4 : (startDayOffset - 8 + 21) % 21 / 7;
                     default:
-                        throw new IllegalStateException("Impossible state for timeslotRangesIndex ("
-                                + timeslotRangesIndex + ").");
+                        throw new IllegalStateException("Impossible state for timeslotRangesIndex (" + timeslotRangesIndex + ").");
                 }
-    });
+            });
     private final GeneratorType factoryAssemblyGeneratorType = new GeneratorType(
             "Factory assembly",
             new StringDataGenerator()
@@ -208,8 +208,7 @@ public class RosterGenerator {
             Arrays.asList(
                     Pair.of(LocalTime.of(6, 0), LocalTime.of(14, 0)),
                     Pair.of(LocalTime.of(14, 0), LocalTime.of(22, 0)),
-                    Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))
-            ),
+                    Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))),
             // Morning:   A A A A A A A B B B B B B B C C C C C C C D D D D D D D
             // Afternoon: C C D D D D D D D A A A A A A A B B B B B B B C C C C C
             // Night:     B B B B C C C C C C C D D D D D D D A A A A A A A B B B
@@ -277,15 +276,13 @@ public class RosterGenerator {
                             "Omicron"),
             Arrays.asList(
                     Pair.of(LocalTime.of(7, 0), LocalTime.of(19, 0)),
-                    Pair.of(LocalTime.of(19, 0), LocalTime.of(7, 0))
-            ),
+                    Pair.of(LocalTime.of(19, 0), LocalTime.of(7, 0))),
             // Day:   A A A B B B B C C C A A A A B B B C C C C
             // Night: C C C A A A A B B B C C C C A A A B B B B
             21, 3, (startDayOffset, timeslotRangesIndex) -> {
                 int offset = timeslotRangesIndex == 0 ? startDayOffset : (startDayOffset + 14) % 21;
-                return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 3 :
-                        offset < 14 ? 0 : offset < 17 ? 1 : offset < 21 ? 3 : -1;
-    });
+                return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 3 : offset < 14 ? 0 : offset < 17 ? 1 : offset < 21 ? 3 : -1;
+            });
 
     private Random random = new Random(37);
 
@@ -293,8 +290,7 @@ public class RosterGenerator {
     private EntityManager entityManager;
 
     @SuppressWarnings("unused")
-    public RosterGenerator() {
-    }
+    public RosterGenerator() {}
 
     /**
      * For benchmark only
@@ -326,7 +322,7 @@ public class RosterGenerator {
 
     @Transactional
     public Roster generateRoster(int spotListSize,
-            int lengthInDays, GeneratorType generatorType) {
+                                 int lengthInDays, GeneratorType generatorType) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
 
@@ -349,8 +345,7 @@ public class RosterGenerator {
     }
 
     private Tenant createTenant(GeneratorType generatorType, int employeeListSize) {
-        String tenantName = generatorType.tenantNamePrefix + " " + tenantNameGenerator.generateNextValue()
-                + " (" + employeeListSize + " employees)";
+        String tenantName = generatorType.tenantNamePrefix + " " + tenantNameGenerator.generateNextValue() + " (" + employeeListSize + " employees)";
         Tenant tenant = new Tenant(tenantName);
         entityManager.persist(tenant);
         return tenant;
@@ -421,10 +416,9 @@ public class RosterGenerator {
     }
 
     private List<ShiftTemplate> createShiftTemplateList(GeneratorType generatorType, Integer tenantId,
-            RosterState rosterState, List<Spot> spotList,  List<Employee> employeeList) {
+                                                        RosterState rosterState, List<Spot> spotList, List<Employee> employeeList) {
         int rotationLength = rosterState.getRotationLength();
-        List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength
-                * generatorType.timeslotRangeList.size());
+        List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength * generatorType.timeslotRangeList.size());
         int employeeStart = 0;
         for (Spot spot : spotList) {
             List<Employee> rotationEmployeeList = employeeList.subList(Math.min(employeeList.size(), employeeStart),
@@ -453,8 +447,8 @@ public class RosterGenerator {
     }
 
     private List<Shift> createShiftList(GeneratorType generatorType, Integer tenantId,
-            TenantConfiguration tenantConfiguration, RosterState rosterState, List<Spot> spotList,
-            List<ShiftTemplate> shiftTemplateList) {
+                                        TenantConfiguration tenantConfiguration, RosterState rosterState, List<Spot> spotList,
+                                        List<ShiftTemplate> shiftTemplateList) {
         int rotationLength = rosterState.getRotationLength();
         LocalDate date = rosterState.getLastHistoricDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
@@ -467,7 +461,7 @@ public class RosterGenerator {
             for (Spot spot : spotList) {
                 List<ShiftTemplate> subShiftTemplateList = dayOffsetAndSpotToShiftTemplateListMap.get(Pair.of(dayOffset, spot));
                 for (ShiftTemplate shiftTemplate : subShiftTemplateList) {
-                    Shift shift = shiftTemplate.createShiftOnDate(date, tenantConfiguration.getTimeZone(), true);
+                    Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(), tenantConfiguration.getTimeZone(), true);
                     entityManager.persist(shift);
                     shiftList.add(shift);
                 }
@@ -475,7 +469,7 @@ public class RosterGenerator {
                     int extraShiftCount = generateRandomIntFromThresholds(0.5, 0.8, 0.95);
                     for (int i = 0; i < extraShiftCount; i++) {
                         ShiftTemplate shiftTemplate = extractRandomElement(subShiftTemplateList);
-                        Shift shift = shiftTemplate.createShiftOnDate(date, tenantConfiguration.getTimeZone(), false);
+                        Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(), tenantConfiguration.getTimeZone(), false);
                         entityManager.persist(shift);
                         shiftList.add(shift);
                     }
@@ -489,7 +483,7 @@ public class RosterGenerator {
     }
 
     private List<EmployeeAvailability> createEmployeeAvailabilityList(GeneratorType generatorType, Integer tenantId,
-            TenantConfiguration tenantConfiguration, RosterState rosterState, List<Employee> employeeList, List<Shift> shiftList) {
+                                                                      TenantConfiguration tenantConfiguration, RosterState rosterState, List<Employee> employeeList, List<Shift> shiftList) {
         ZoneRules zoneRules = tenantConfiguration.getTimeZone().getRules();
         LocalDate date = rosterState.getFirstDraftDate();
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();

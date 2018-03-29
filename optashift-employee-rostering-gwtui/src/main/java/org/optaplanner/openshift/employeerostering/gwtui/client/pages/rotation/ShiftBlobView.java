@@ -16,6 +16,8 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
+import java.time.OffsetDateTime;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -40,7 +42,7 @@ import org.slf4j.Logger;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionState.COLLIDING;
 
 @Templated
-public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
+public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
     private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
@@ -55,16 +57,16 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     private HTMLElement label;
 
     @Inject
-    private CircularDraggability<Long, ShiftBlob> draggability;
+    private CircularDraggability<OffsetDateTime, ShiftBlob> draggability;
 
     @Inject
-    private CircularResizability<Long, ShiftBlob> resizability;
+    private CircularResizability<OffsetDateTime, ShiftBlob> resizability;
 
     @Inject
     private Logger logger;
 
-    private Viewport<Long> viewport;
-    private SubLane<Long> subLane;
+    private Viewport<OffsetDateTime> viewport;
+    private SubLane<OffsetDateTime> subLane;
     private ListView<ShiftBlob> blobViews;
     private Runnable onDestroy;
 
@@ -99,10 +101,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     }
 
     private void updateLabel() {
-        //FIXME: Bad labeling
-        final String start = ((blob.getPositionInScaleUnits() / 60) + 24) % 24 + ":00";
-        final String end = ((blob.getEndPositionInScaleUnits() / 60) + 24) % 24 + ":00";
-        label.textContent = start + " to " + end;
+        label.textContent = (blob.getShift().getRotationEmployee() != null) ? blob.getShift().getRotationEmployee().getName() : "Unassigned";
     }
 
     private void onResize(final Long newSizeInGridPixels,
@@ -147,13 +146,13 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     }
 
     @Override
-    public BlobView<Long, ShiftBlob> withViewport(final Viewport<Long> viewport) {
+    public BlobView<OffsetDateTime, ShiftBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<Long, ShiftBlob> withSubLane(final SubLane<Long> subLane) {
+    public BlobView<OffsetDateTime, ShiftBlob> withSubLane(final SubLane<OffsetDateTime> subLane) {
         this.subLane = subLane;
         return this;
     }
@@ -170,7 +169,7 @@ public class ShiftBlobView implements BlobView<Long, ShiftBlob> {
     }
 
     @Override
-    public Blob<Long> getBlob() {
+    public Blob<OffsetDateTime> getBlob() {
         return blob;
     }
 }
