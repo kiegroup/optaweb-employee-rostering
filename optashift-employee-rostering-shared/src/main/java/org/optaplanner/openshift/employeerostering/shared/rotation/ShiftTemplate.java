@@ -54,8 +54,8 @@ public class ShiftTemplate extends AbstractPersistable {
     }
 
     public ShiftTemplate(Integer tenantId, Spot spot,
-            int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime,
-            Employee rotationEmployee) {
+                         int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime,
+                         Employee rotationEmployee) {
         super(tenantId);
         this.rotationEmployee = rotationEmployee;
         this.spot = spot;
@@ -65,9 +65,18 @@ public class ShiftTemplate extends AbstractPersistable {
         this.endTime = endTime;
     }
 
-    public Shift createShiftOnDate(LocalDate date, ZoneId zoneId, boolean defaultToRotationEmployee) {
-        LocalDateTime startDateTime = date.atTime(getStartTime());
-        LocalDateTime endDateTime = date.plusDays(getEndDayOffset() - getStartDayOffset()).atTime(getEndTime());
+    public Shift createShiftOnDate(LocalDate startDate, int rotationLength, ZoneId zoneId, boolean defaultToRotationEmployee) {
+        LocalDateTime startDateTime = startDate.atTime(getStartTime());
+
+        LocalDate endDate;
+        if (getStartDayOffset() <= getEndDayOffset()) {
+            endDate = startDate.plusDays(getEndDayOffset() - getStartDayOffset());
+        } else {
+            // Happens for shifts that "wrap around" in the rotation (ex: start on last day of the rotation,
+            // end on first day of the rotation)
+            endDate = startDate.plusDays(rotationLength + getEndDayOffset() - getStartDayOffset());
+        }
+        LocalDateTime endDateTime = endDate.atTime(getEndTime());
 
         // TODO Can this and RosterGenerator.createEmployeeAvailabilityList() be simplified and be DST spring/fall compatible?
         OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime, zoneId.getRules().getOffset(startDateTime));
