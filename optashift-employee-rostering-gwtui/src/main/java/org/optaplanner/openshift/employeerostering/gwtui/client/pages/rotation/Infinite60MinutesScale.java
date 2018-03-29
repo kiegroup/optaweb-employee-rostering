@@ -16,29 +16,34 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
+import java.time.Duration;
+import java.time.OffsetDateTime;
+
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 
-public class Infinite60MinutesScale implements LinearScale<Long> {
+public class Infinite60MinutesScale implements LinearScale<OffsetDateTime> {
 
-    private final Long end;
+    private final OffsetDateTime startDateTime;
+    private final OffsetDateTime endDateTime;
 
-    public Infinite60MinutesScale(final Long end) {
-        this.end = end;
+    public Infinite60MinutesScale(final OffsetDateTime startDateTime, final OffsetDateTime endDateTime) {
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
     }
 
     @Override
-    public Long toGridPixelsWithFactor1(final Long valueInScaleUnits) {
-        return valueInScaleUnits;
+    public Long toGridPixelsWithFactor1(final OffsetDateTime valueInScaleUnits) {
+        return Duration.between(startDateTime, valueInScaleUnits).getSeconds() / 60;
     }
 
     @Override
-    public Long toScaleUnitsWithFactor1(final Long valueInGridPixels) {
-        return valueInGridPixels;
+    public OffsetDateTime toScaleUnitsWithFactor1(final Long valueInGridPixels) {
+        return startDateTime.plusMinutes(valueInGridPixels);
     }
 
     @Override
-    public Long getEndInScaleUnits() {
-        return end;
+    public OffsetDateTime getEndInScaleUnits() {
+        return endDateTime;
     }
 
     @Override
@@ -46,6 +51,3 @@ public class Infinite60MinutesScale implements LinearScale<Long> {
         return 60L;
     }
 }
-
-
-

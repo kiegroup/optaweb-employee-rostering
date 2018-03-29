@@ -16,7 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
@@ -24,10 +23,10 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobWithTwin;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
-public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
+public class ShiftBlob implements BlobWithTwin<OffsetDateTime, ShiftBlob> {
 
     private final Shift shift;
-    private final LinearScale<Long> scale;
+    private final LinearScale<OffsetDateTime> scale;
     private final OffsetDateTime baseDate;
     private Long sizeInGridPixels;
     private ShiftBlob twin;
@@ -37,7 +36,7 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
 
     ShiftBlob(final Shift shift,
               final OffsetDateTime baseDate,
-              final LinearScale<Long> scale) {
+              final LinearScale<OffsetDateTime> scale) {
 
         this.shift = shift;
         this.scale = scale;
@@ -48,7 +47,7 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
 
     private ShiftBlob(final Shift shift,
                       final OffsetDateTime baseDate,
-                      final LinearScale<Long> scale,
+                      final LinearScale<OffsetDateTime> scale,
                       final ShiftBlob twin) {
 
         this.shift = shift;
@@ -59,12 +58,12 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     }
 
     private long getInitialSizeInGridPixels() {
-        return scale.toGridPixels(minutesAfterBaseDate(shift.getEndDateTime())) - getPositionInGridPixels();
+        return scale.toGridPixels(shift.getEndDateTime()) - getPositionInGridPixels();
     }
 
     @Override
-    public Long getPositionInScaleUnits() {
-        return minutesAfterBaseDate(shift.getStartDateTime());
+    public OffsetDateTime getPositionInScaleUnits() {
+        return shift.getStartDateTime();
     }
 
     @Override
@@ -90,8 +89,10 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     }
 
     @Override
-    public void setPositionInScaleUnits(final Long positionInScaleUnits) {
-        shift.setStartDateTime(baseDate.plusMinutes(positionInScaleUnits));
+    public void setPositionInScaleUnits(final OffsetDateTime positionInScaleUnits) {
+        shift.setStartDateTime(positionInScaleUnits);
+        // invalidate the cache
+        positionInGridPixelsCache = null;
     }
 
     @Override
@@ -102,11 +103,9 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     @Override
     public void setSizeInGridPixels(final long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
-        shift.setEndDateTime(shift.getStartDateTime().plusMinutes(scale.toScaleUnits(sizeInGridPixels)));
-    }
-
-    private long minutesAfterBaseDate(final OffsetDateTime startDateTime) {
-        return Duration.between(baseDate, startDateTime).getSeconds() / 60;
+        shift.setEndDateTime(scale.toScaleUnits(getPositionInGridPixels() + sizeInGridPixels));
+        // invalidate the cache
+        endPositionInGridPixelsCache = null;
     }
 
     @Override
@@ -114,15 +113,21 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
 
         //FIXME: Maybe it's better to use the Viewport sizeInGridPixels instead of the end of the scale
 
-        final boolean hasAnyPartOffTheGrid =
-                getEndPositionInGridPixels() > scale.getEndInGridPixels() ||
-                                             getPositionInGridPixels() < 0;
+        final boolean hasAnyPartOffTheGrid = getPositionInScaleUnits().isBefore(baseDate) ||
+                getEndPositionInScaleUnits().isAfter(scale.getEndInScaleUnits());
 
         if (hasAnyPartOffTheGrid) {
             final ShiftBlob twin = getTwin().orElseGet(this::newTwin);
-            final Long offset = (getPositionInGridPixels() < 0 ? 1 : -1) * scale.getEndInGridPixels();
-            twin.setPositionInScaleUnits(scale.toScaleUnits(getPositionInGridPixels() + offset));
-            twin.setSizeInGridPixels(sizeInGridPixels);
+            long duration = getEndPositionInGridPixels() - getPositionInGridPixels();
+            if (getPositionInScaleUnits().isBefore(baseDate)) {
+                long durationBeforeStart = -getPositionInGridPixels();
+                twin.setPositionInScaleUnits(scale.toScaleUnits(scale.getEndInGridPixels() - durationBeforeStart));
+                twin.setSizeInGridPixels(duration);
+            } else {
+                long durationAfterEnd = getEndPositionInGridPixels() - scale.getEndInGridPixels();
+                twin.setPositionInScaleUnits(scale.toScaleUnits(durationAfterEnd - duration));
+                twin.setSizeInGridPixels(duration);
+            }
             return Optional.of(twin);
         } else {
             return Optional.empty();
@@ -132,17 +137,17 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     public ShiftBlob newTwin() {
 
         final Shift shiftTwin = new Shift(
-                                          shift.getTenantId(),
-                                          shift.getSpot(),
-                                          shift.getStartDateTime(),
-                                          shift.getEndDateTime(),
-                                          shift.getRotationEmployee());
+                shift.getTenantId(),
+                shift.getSpot(),
+                shift.getStartDateTime(),
+                shift.getEndDateTime(),
+                shift.getRotationEmployee());
 
         final ShiftBlob twin = new ShiftBlob(
-                                             shiftTwin,
-                                             baseDate,
-                                             scale,
-                                             this);
+                shiftTwin,
+                baseDate,
+                scale,
+                this);
 
         twin.setPositionInScaleUnits(getPositionInScaleUnits());
         twin.setSizeInGridPixels(getSizeInGridPixels());
@@ -161,7 +166,7 @@ public class ShiftBlob implements BlobWithTwin<Long, ShiftBlob> {
     }
 
     @Override
-    public LinearScale<Long> getScale() {
+    public LinearScale<OffsetDateTime> getScale() {
         return scale;
     }
 

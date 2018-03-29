@@ -55,7 +55,7 @@ public class RotationViewportFactory {
     private CssGridLinesFactory cssGridLinesFactory;
 
     @Inject
-    private TicksFactory<Long> ticksFactory;
+    private TicksFactory<OffsetDateTime> ticksFactory;
 
     @Inject
     private TimingUtils timingUtils;
@@ -63,19 +63,19 @@ public class RotationViewportFactory {
     @Inject
     private CollisionFreeSubLaneFactory conflictFreeSubLanesFactory;
 
-    public Viewport<Long> getViewport(final RosterState rosterState, final Map<Spot, List<Shift>> shiftsBySpot, final List<Spot> spotList) {
+    public Viewport<OffsetDateTime> getViewport(final RosterState rosterState, final Map<Spot, List<Shift>> shiftsBySpot, final List<Spot> spotList) {
 
         return timingUtils.time("Rotation viewport instantiation", () -> {
 
             shiftBlobViewPool.init(2000L, shiftBlobViews::get);
 
             final Integer durationInDays = rosterState.getRotationLength();
-            final Long durationTimeInMinutes = durationInDays * 24 * 60L;
 
-            final LinearScale<Long> scale = new Infinite60MinutesScale(durationTimeInMinutes);
+            final LinearScale<OffsetDateTime> scale = new Infinite60MinutesScale(RotationPage.getBaseDateTime(),
+                    RotationPage.getBaseDateTime().plusDays(durationInDays));
             final OffsetDateTime baseDate = RotationPage.getBaseDateTime();
 
-            final List<Lane<Long>> lanes = buildLanes(shiftsBySpot, spotList, baseDate, scale);
+            final List<Lane<OffsetDateTime>> lanes = buildLanes(shiftsBySpot, spotList, baseDate, scale);
 
             return new RotationViewport(tenantStore.getCurrentTenantId(),
                     baseDate,
@@ -87,10 +87,10 @@ public class RotationViewportFactory {
         });
     }
 
-    private List<Lane<Long>> buildLanes(final Map<Spot, List<Shift>> shiftsBySpot,
-                                        final List<Spot> spotList,
-                                        final OffsetDateTime baseDate,
-                                        final LinearScale<Long> scale) {
+    private List<Lane<OffsetDateTime>> buildLanes(final Map<Spot, List<Shift>> shiftsBySpot,
+                                                  final List<Spot> spotList,
+                                                  final OffsetDateTime baseDate,
+                                                  final LinearScale<OffsetDateTime> scale) {
 
         return spotList.stream()
                 .map(spot -> newSpotLane(baseDate, scale, shiftsBySpot.getOrDefault(spot, new ArrayList<>()), spot))
@@ -98,11 +98,11 @@ public class RotationViewportFactory {
     }
 
     private SpotLane newSpotLane(final OffsetDateTime baseDate,
-                                 final LinearScale<Long> scale,
+                                 final LinearScale<OffsetDateTime> scale,
                                  final List<Shift> shifts,
                                  final Spot spot) {
 
-        final List<SubLane<Long>> subLanes = conflictFreeSubLanesFactory.createSubLanes(
+        final List<SubLane<OffsetDateTime>> subLanes = conflictFreeSubLanesFactory.createSubLanes(
                 shifts.stream().map(shift -> new ShiftBlob(shift, baseDate, scale)));
 
         return new SpotLane(spot, subLanes);

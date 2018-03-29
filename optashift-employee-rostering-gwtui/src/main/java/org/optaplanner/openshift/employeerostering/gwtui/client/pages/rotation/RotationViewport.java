@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,23 +40,23 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation.HORIZONTAL;
 
-public class RotationViewport extends Viewport<Long> {
+public class RotationViewport extends Viewport<OffsetDateTime> {
 
     private final Integer tenantId;
     private final OffsetDateTime baseDate;
     private final Supplier<ShiftBlobView> blobViewFactory;
-    private final LinearScale<Long> scale;
+    private final LinearScale<OffsetDateTime> scale;
     private final CssGridLines gridLines;
-    private final Ticks<Long> ticks;
-    private final List<Lane<Long>> lanes;
+    private final Ticks<OffsetDateTime> ticks;
+    private final List<Lane<OffsetDateTime>> lanes;
 
     RotationViewport(final Integer tenantId,
                      final OffsetDateTime baseDate,
                      final Supplier<ShiftBlobView> blobViewFactory,
-                     final LinearScale<Long> scale,
+                     final LinearScale<OffsetDateTime> scale,
                      final CssGridLines gridLines,
-                     final Ticks<Long> ticks,
-                     final List<Lane<Long>> lanes) {
+                     final Ticks<OffsetDateTime> ticks,
+                     final List<Lane<OffsetDateTime>> lanes) {
 
         this.tenantId = tenantId;
         this.baseDate = baseDate;
@@ -74,10 +75,10 @@ public class RotationViewport extends Viewport<Long> {
     @Override
     public void drawTicksAt(final IsElement target) {
         //FIXME: Make it18n
-        ticks.drawAt(target, this, minutes -> {
-            final Long hours = (minutes / 60) % 24;
+        ticks.drawAt(target, this, date -> {
+            final int hours = date.getHour();
             if (hours == 0) {
-                return "Day " + (minutes % scale.getEndInScaleUnits()) / (24 * 60);
+                return "Day " + (Duration.between(scale.toScaleUnits(0L), date).getSeconds() / 60 / 60 / 24);
             } else {
                 return (hours < 10 ? "0" : "") + hours + ":00";
             }
@@ -85,33 +86,33 @@ public class RotationViewport extends Viewport<Long> {
     }
 
     @Override
-    public Lane<Long> newLane() {
+    public Lane<OffsetDateTime> newLane() {
         return new SpotLane(new Spot(tenantId, "New spot", new HashSet<>()),
-                            new ArrayList<>(singletonList(new SubLane<>())));
+                new ArrayList<>(singletonList(new SubLane<>())));
     }
 
     @Override
-    public Stream<Blob<Long>> newBlob(final Lane<Long> lane,
-                                      final Long positionInScaleUnits) {
+    public Stream<Blob<OffsetDateTime>> newBlob(final Lane<OffsetDateTime> lane,
+                                                final OffsetDateTime positionInScaleUnits) {
 
         final SpotLane spotLane = (SpotLane) lane;
 
         final Shift newShift = new Shift(
                 tenantId,
                 spotLane.getSpot(),
-                baseDate.plusMinutes(positionInScaleUnits),
-                baseDate.plusMinutes(positionInScaleUnits).plusHours(8L));
+                positionInScaleUnits,
+                positionInScaleUnits.plusHours(8L));
 
         return new ShiftBlob(newShift, baseDate, scale).toStream();
     }
 
     @Override
-    public BlobView<Long, ?> newBlobView() {
+    public BlobView<OffsetDateTime, ?> newBlobView() {
         return blobViewFactory.get();
     }
 
     @Override
-    public List<Lane<Long>> getLanes() {
+    public List<Lane<OffsetDateTime>> getLanes() {
         return lanes;
     }
 
@@ -126,7 +127,7 @@ public class RotationViewport extends Viewport<Long> {
     }
 
     @Override
-    public LinearScale<Long> getScale() {
+    public LinearScale<OffsetDateTime> getScale() {
         return scale;
     }
 }
