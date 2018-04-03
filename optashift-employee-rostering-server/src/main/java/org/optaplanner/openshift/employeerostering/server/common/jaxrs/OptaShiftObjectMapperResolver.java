@@ -31,11 +31,11 @@ public class OptaShiftObjectMapperResolver implements ContextResolver<ObjectMapp
     private final ObjectMapper objectMapper;
 
     public OptaShiftObjectMapperResolver() {
-        // JavaTimeModule defaults date format to ISO, so we don't need to deal with the headache of setting
-        // a universal date format that is ISO and includes an offset
         objectMapper = new ObjectMapper()
                 .registerModule(OptaPlannerJacksonModule.createModule())
                 .registerModule(new JavaTimeModule())
+                // Write OffsetDateTime's (and similar) to JSON in ISO-8601 format, 
+                // for example: 2007-12-03T10:15:30+01:00
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
     }
