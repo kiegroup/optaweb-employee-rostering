@@ -150,4 +150,10 @@ public class RotationViewport extends Viewport<OffsetDateTime> {
         // One column for spot names
         return 1L;
     }
+
+    @Override
+    public void onClose() {
+        dateTicks.clear();
+        timeTicks.clear();
+    }
 }

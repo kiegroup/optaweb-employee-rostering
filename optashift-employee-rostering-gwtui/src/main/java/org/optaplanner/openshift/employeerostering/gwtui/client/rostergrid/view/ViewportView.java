@@ -19,13 +19,11 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import elemental2.dom.MouseEventInit;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -39,10 +37,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils
 public class ViewportView<T> implements IsElement {
 
     @Inject
-    @DataField("ticks-lane")
-    private HTMLDivElement ticksLane;
-
-    @Inject
     private ManagedInstance<LaneView<T>> laneViewInstances;
 
     @Inject
@@ -52,15 +46,17 @@ public class ViewportView<T> implements IsElement {
     private TimingUtils timingUtils;
 
     @Inject
-    private PageUtils pageUtils;
-
-    @Inject
     @Named("span")
     private HTMLElement headerBackground;
+
+    @Inject
+    private PageUtils pageUtils;
 
     private Viewport<T> viewport;
 
     private boolean inMouseEvent = false;
+
+    private static int COLUMN_WIDTH_IN_PIXELS = 20;
 
     public void setViewport(final Viewport<T> viewport) {
 
@@ -71,9 +67,7 @@ public class ViewportView<T> implements IsElement {
             }
             getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
 
-            getElement().style.set("grid-template-columns", "auto " + "repeat(" + (viewport.getScale().getEndInGridPixels()) + ", 20px)");
-
-            pageUtils.expandElementToRemainingHeight(this);
+            getElement().style.set("grid-template-columns", "auto " + "repeat(" + (viewport.getScale().getEndInGridPixels()) + ", " + COLUMN_WIDTH_IN_PIXELS + "px)");
 
             headerBackground.classList.add("header-background");
             getElement().appendChild(headerBackground);
@@ -85,6 +79,10 @@ public class ViewportView<T> implements IsElement {
             viewport.drawGridLinesAt(this);
 
             lanes.init(getElement(), viewport, viewport.getLanes(), () -> laneViewInstances.get().withViewport(viewport));
+
+            pageUtils.makePageScrollable();
+            getElement().style.set("width", (viewport.getGridPixelSizeInScreenPixels() * (viewport.getScale().getEndInGridPixels() + viewport.getHeaderColumns())) + "px");
+            getElement().style.set("height", (30 * (viewport.getGroupEndPosition() + viewport.getHeaderRows()) + pageUtils.getHeightConsumed()) + "px");
         });
     }
 
@@ -141,6 +139,12 @@ public class ViewportView<T> implements IsElement {
             } finally {
                 inMouseEvent = false;
             }
+        }
+    }
+
+    public void onClose() {
+        if (viewport != null) {
+            viewport.onClose();
         }
     }
 }

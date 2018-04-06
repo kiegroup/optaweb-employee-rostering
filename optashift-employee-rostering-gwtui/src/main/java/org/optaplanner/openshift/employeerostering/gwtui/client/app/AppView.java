@@ -53,8 +53,8 @@ public class AppView implements IsElement {
 
     @PostConstruct
     public void init() {
-        pageUtils.addHeightConsumingElements(header, footer)
-                .withVerticalPadding(125);
+        pageUtils.setPage(this)
+                .appendHeightConsumingElements(header);
     }
 
     public void goTo(final Page page) {

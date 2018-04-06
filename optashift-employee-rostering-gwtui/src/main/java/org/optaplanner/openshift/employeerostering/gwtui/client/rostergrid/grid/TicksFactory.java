@@ -22,6 +22,7 @@ import javax.inject.Named;
 
 import elemental2.dom.HTMLElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 
 @Dependent
 public class TicksFactory<T> {
@@ -30,9 +31,12 @@ public class TicksFactory<T> {
     @Named("span")
     private HTMLElement span;
 
+    @Inject
+    private PageUtils pageUtils;
+
     public Ticks<T> newTicks(final LinearScale<T> scale, String className, final Long position, final Long stepSize, final Long offset) {
         HTMLElement element = (HTMLElement) span.cloneNode(false);
         element.classList.add(className);
-        return new Ticks<>(scale, className, position, stepSize, offset, () -> (HTMLElement) element.cloneNode(false));
+        return new Ticks<>(scale, className, position, stepSize, offset, () -> (HTMLElement) element.cloneNode(false), pageUtils);
     }
 }

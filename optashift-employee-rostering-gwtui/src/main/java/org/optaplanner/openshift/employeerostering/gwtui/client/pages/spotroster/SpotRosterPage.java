@@ -41,6 +41,7 @@ import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
@@ -76,10 +77,6 @@ public class SpotRosterPage implements Page {
     @Inject
     @DataField("publish-button")
     private HTMLButtonElement publishButton;
-
-    @Inject
-    @DataField("viewport-frame")
-    private HTMLDivElement viewportFrame;
 
     @Inject
     @DataField("viewport")
@@ -142,11 +139,13 @@ public class SpotRosterPage implements Page {
     @Inject
     private PromiseUtils promiseUtils;
 
+    private Pages.Id pageId;
+
     private double solveTaskId;
     private double updateRemainingTimeTaskId;
     private double stopSolvingTaskId;
 
-    private IsElement topToolbar, bottomToolbar;
+    private IsElement topToolbar;
     private SpotRosterViewport viewport;
     private Pagination spotsPagination = Pagination.of(0, 10);
     private SpotRosterView currentSpotRosterView;
@@ -163,25 +162,30 @@ public class SpotRosterPage implements Page {
     @Override
     public Promise<Void> onOpen() {
         topToolbar = () -> (HTMLElement) getElement().firstElementChild;
-        bottomToolbar = () -> (HTMLElement) getElement().lastElementChild;
-        pageUtils.addHeightConsumingElements(topToolbar, bottomToolbar);
+        pageUtils.appendHeightConsumingElements(topToolbar)
+                .appendWidthFillingElements(topToolbar);
         return refreshWithLoadingSpinner();
     }
 
     @Override
     public Promise<Void> onClose() {
-        pageUtils.removeHeightConsumingElements(topToolbar, bottomToolbar);
+        pageUtils.removeHeightConsumingElements(topToolbar)
+                .removeWidthFillingElements(topToolbar);
+        viewportView.onClose();
         return promiseUtils.resolve();
     }
 
     public void onTenantChanged(@Observes final TenantStore.TenantChange tenant) {
-        refreshWithLoadingSpinner();
+        if (pageId == Pages.Id.SPOT_ROSTER) {
+            refreshWithLoadingSpinner();
+        }
     }
 
     private Promise<Void> refreshWithoutLoadingSpinner() {
         return promiseUtils.manage(fetchSpotRosterView().then(spotRosterView -> {
             currentSpotRosterView = spotRosterView;
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
+            pageUtils.refresh();
 
             if (score.isPresent()) {
                 scores.classList.remove("hidden");
@@ -199,6 +203,7 @@ public class SpotRosterPage implements Page {
                 spotsPagination = spotsPagination.previousPage();
                 return promiseUtils.resolve();
             } else {
+                viewportView.onClose();
                 viewport = spotRosterViewportFactory.getViewport(spotRosterView);
                 viewportView.setViewport(viewport);
                 return promiseUtils.resolve();
@@ -309,14 +314,10 @@ public class SpotRosterPage implements Page {
     private static final Integer TIME_SCROLL_SIZE = 300;
 
     @EventHandler("forward-in-time-button")
-    public void onForwardInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        viewportFrame.scrollLeft += TIME_SCROLL_SIZE;
-    }
+    public void onForwardInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {}
 
     @EventHandler("back-in-time-button")
-    public void onBackInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        viewportFrame.scrollLeft -= TIME_SCROLL_SIZE;
-    }
+    public void onBackInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {}
 
     public SpotRosterView getCurrentSpotRosterView() {
         return currentSpotRosterView;

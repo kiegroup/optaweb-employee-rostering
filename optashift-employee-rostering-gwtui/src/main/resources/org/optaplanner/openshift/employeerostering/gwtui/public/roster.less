@@ -15,7 +15,7 @@
     padding: 5px;
 }
 
-.viewport-frame > .viewport {
+.viewport {
     text-align: left;
     white-space: nowrap;
     position: relative;
@@ -25,11 +25,12 @@
     height: 50vh;
 }
 
-.viewport-frame > .viewport > .lane {
+.viewport > .lane {
     background-color: #f9f9f9;
     border: 1px solid #aaa;
     border-radius: 3px;
     position: sticky;
+    z-index: 16;
     left: 0;
 }
 
