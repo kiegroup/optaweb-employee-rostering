@@ -16,12 +16,14 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.header;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import elemental2.dom.HTMLAnchorElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-
-import javax.inject.Inject;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 
 @Templated
 public class HeaderView implements IsElement {
@@ -37,4 +39,12 @@ public class HeaderView implements IsElement {
     @Inject
     @DataField("tenant-selector")
     private TenantSelectorView tenantSelectorView;
+
+    @Inject
+    private PageUtils pageUtils;
+
+    @PostConstruct
+    private void init() {
+        pageUtils.appendWidthFillingElements(this);
+    }
 }

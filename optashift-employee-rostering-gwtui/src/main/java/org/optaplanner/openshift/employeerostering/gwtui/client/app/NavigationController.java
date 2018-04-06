@@ -25,6 +25,7 @@ import elemental2.promise.Promise;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 
 @Dependent
@@ -42,7 +43,14 @@ public class NavigationController {
     @Inject
     private PromiseUtils promiseUtils;
 
+    @Inject
+    private PageUtils pageUtils;
+
     private Page currentPage;
+
+    public Page getCurrentPage() {
+        return currentPage;
+    }
 
     public void onPageChanged(final @Observes PageChange pageChange) {
 
@@ -52,6 +60,7 @@ public class NavigationController {
 
         Promise<Void> onClose = (currentPage != null) ? currentPage.onClose() : promiseUtils.resolve();
 
+        pageUtils.resetPageToDefault();
         onClose.then(v -> {
             page.beforeOpen().then(i -> {
                 appView.goTo(page);
@@ -93,7 +102,7 @@ public class NavigationController {
             this.afterPageOpen = afterPageOpen;
         }
 
-        private Pages.Id getPageId() {
+        public Pages.Id getPageId() {
             return pageId;
         }
     }

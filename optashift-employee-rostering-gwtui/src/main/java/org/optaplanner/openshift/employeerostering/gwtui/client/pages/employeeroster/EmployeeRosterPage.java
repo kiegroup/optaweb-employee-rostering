@@ -25,18 +25,22 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
+import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
@@ -51,10 +55,6 @@ public class EmployeeRosterPage implements Page {
     @Inject
     @DataField("refresh-button")
     private HTMLButtonElement refreshButton;
-
-    @Inject
-    @DataField("viewport-frame")
-    private HTMLDivElement viewportFrame;
 
     @Inject
     @DataField("viewport")
@@ -95,6 +95,12 @@ public class EmployeeRosterPage implements Page {
     @Inject
     private PromiseUtils promiseUtils;
 
+    @Inject
+    private PageUtils pageUtils;
+
+    private Pages.Id pageId;
+    private IsElement topToolbar;
+
     private EmployeeRosterViewport viewport;
     private Pagination employeePagination = Pagination.of(0, 10);
     private EmployeeRosterView currentEmployeeRosterView;
@@ -113,12 +119,29 @@ public class EmployeeRosterPage implements Page {
     }
 
     @Override
-    public Promise<Void> beforeOpen() {
+    public Promise<Void> onOpen() {
+        topToolbar = () -> (HTMLElement) getElement().firstElementChild;
+        pageUtils.appendHeightConsumingElements(topToolbar)
+                .appendWidthFillingElements(topToolbar);
         return refreshWithLoadingSpinner();
     }
 
+    @Override
+    public Promise<Void> onClose() {
+        pageUtils.removeHeightConsumingElements(topToolbar)
+                .removeWidthFillingElements(topToolbar);
+        viewportView.onClose();
+        return promiseUtils.resolve();
+    }
+
+    public void onPageChanged(final @Observes PageChange pageChange) {
+        pageId = pageChange.getPageId();
+    }
+
     public void onTenantChanged(@Observes final TenantStore.TenantChange tenant) {
-        refreshWithLoadingSpinner();
+        if (pageId == Pages.Id.EMPLOYEE_ROSTER) {
+            refreshWithLoadingSpinner();
+        }
     }
 
     private Promise<Void> refreshWithoutLoadingSpinner() {
@@ -127,6 +150,7 @@ public class EmployeeRosterPage implements Page {
                 employeePagination = employeePagination.previousPage();
                 return promiseUtils.resolve();
             } else {
+                viewportView.onClose();
                 viewport = employeeRosterViewportFactory.getViewport(employeeRosterView);
                 viewportView.setViewport(viewport);
                 return promiseUtils.resolve();
@@ -175,12 +199,12 @@ public class EmployeeRosterPage implements Page {
 
     @EventHandler("forward-in-time-button")
     public void onForwardInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        viewportFrame.scrollLeft += TIME_SCROLL_SIZE;
+        //viewportFrame.scrollLeft += TIME_SCROLL_SIZE;
     }
 
     @EventHandler("back-in-time-button")
     public void onBackInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        viewportFrame.scrollLeft -= TIME_SCROLL_SIZE;
+        //viewportFrame.scrollLeft -= TIME_SCROLL_SIZE;
     }
 
     //API calls

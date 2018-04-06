@@ -31,6 +31,8 @@ public abstract class Viewport<T> {
 
     public abstract void drawTicksAt(final IsElement target);
 
+    public abstract void onClose();
+
     public abstract Lane<T> newLane();
 
     public abstract Stream<Blob<T>> newBlob(final Lane<T> lane, final T positionInScaleUnits);
@@ -153,4 +155,5 @@ public abstract class Viewport<T> {
     public void setMouseTarget(IsElement mouseTarget) {
         this.mouseTarget = mouseTarget;
     }
+
 }

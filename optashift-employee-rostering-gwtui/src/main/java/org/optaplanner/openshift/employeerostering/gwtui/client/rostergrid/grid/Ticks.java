@@ -25,6 +25,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 
 public class Ticks<T> {
 
@@ -34,29 +35,31 @@ public class Ticks<T> {
     private final Long stepSize;
     private final Long offset;
     private final Supplier<HTMLElement> divFactory;
+    private final PageUtils pageUtils;
 
-    private final List<HTMLElement> tickElements;
+    private final List<IsElement> tickElements;
 
     Ticks(final LinearScale<T> scale,
           final String className,
           final Long position,
           final Long stepSize,
           final Long offset,
-          final Supplier<HTMLElement> divFactory) {
+          final Supplier<HTMLElement> divFactory,
+          final PageUtils pageUtils) {
         this.scale = scale;
         this.className = className;
         this.position = position;
         this.stepSize = stepSize;
         this.offset = offset;
         this.divFactory = divFactory;
+        this.pageUtils = pageUtils;
         tickElements = new ArrayList<>();
     }
 
     public void drawAt(final IsElement target,
                        final Viewport<T> viewport,
                        final Function<T, String> tickText) {
-        tickElements.forEach((e) -> e.remove());
-        tickElements.clear();
+        clear();
 
         final HTMLElement background = divFactory.get();
         background.classList.remove(className);
@@ -66,7 +69,7 @@ public class Ticks<T> {
         viewport.setAbsGroupPosition(() -> background, position);
         viewport.setGroupSizeInScreenPixels(() -> background, 1L);
         target.getElement().appendChild(background);
-        tickElements.add(background);
+        tickElements.add(() -> background);
 
         Long start = (offset > 0) ? offset - stepSize : offset;
         for (Long i = start; i < scale.getEndInGridPixels(); i += stepSize) {
@@ -77,7 +80,15 @@ public class Ticks<T> {
             viewport.setAbsGroupPosition(() -> tick, position);
             viewport.setGroupSizeInScreenPixels(() -> tick, 1L);
             target.getElement().appendChild(tick);
-            tickElements.add(tick);
+            tickElements.add(() -> tick);
         }
+
+        pageUtils.appendHeightConsumingElementsAsRow(tickElements);
+    }
+
+    public void clear() {
+        pageUtils.removeHeightConsumingElementsAsRow(tickElements);
+        tickElements.forEach((e) -> e.getElement().remove());
+        tickElements.clear();
     }
 }
