@@ -19,13 +19,13 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.Ticks;
@@ -36,6 +36,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
+import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
@@ -80,13 +81,15 @@ public class RotationViewport extends Viewport<OffsetDateTime> {
     @Override
     public void drawTicksAt(final IsElement target) {
         //FIXME: Make it18n
-        DateTimeFormat timeFormat = DateTimeFormat.getFormat("h a");
         dateTicks.drawAt(target, this, date -> {
             return "Day " + (Duration.between(scale.toScaleUnits(0L), date).getSeconds() / 60 / 60 / 24 + 1);
         });
+        DateTimeFormat timeFormat = DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT);
         timeTicks.drawAt(target, this, date -> {
-            // LocalTime.midnight() == 7PM according to time format, so need to add 5 hours...
-            return timeFormat.format(new Date(Duration.between(scale.toScaleUnits(0L), date).getSeconds() * 1000 + (5 * 60 * 60 * 1000)));
+            if (date.getHour() == 0) {
+                return "";
+            }
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDateAsLocalTime(date));
         });
     }
 
@@ -123,7 +126,7 @@ public class RotationViewport extends Viewport<OffsetDateTime> {
 
     @Override
     public Long getGridPixelSizeInScreenPixels() {
-        return 23L;
+        return 20L;
     }
 
     @Override

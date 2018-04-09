@@ -23,8 +23,6 @@
     display: grid;
     grid-auto-columns: 1fr;
     grid-auto-rows: 40px;
-    grid-column-gap: 3px;
-    grid-row-gap: 3px;
     height: 50vh;
 }
 
@@ -45,37 +43,6 @@
 
 .viewport-frame > .viewport > .lane > .sub-lane:last-child {
     border: 0 !important;
-}
-
-.blob {
-    background-color: rgba(166, 214, 181, 0.49);
-    box-sizing: border-box;
-    color: rgb(0, 0, 0);
-    display: block;
-    font-size: 12px;
-    line-height: 20px;
-    opacity: 0.8;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    padding-bottom: 3px;
-    padding-left: 3px;
-    padding-right: 3px;
-    padding-top: 10px;
-    text-align: left;
-    text-overflow: ellipsis;
-    text-size-adjust: 100%;
-    top: 0px;
-    user-select: none;
-    white-space: nowrap;
-    z-index: 10;
-}
-
-.blob:hover {
-    opacity: 1;
-}
-
-.blob:active {
-    opacity: 1;
 }
 
 /* VIEWPORT - VERTICAL */
@@ -142,7 +109,7 @@
 
 .strong-grid-line {
     border-left: 1px solid rgba(0, 0, 0, 0.2);
-    z-index: 6;
+    z-index: 16;
 }
 
 .soft-grid-line {
@@ -164,9 +131,13 @@
     position: sticky;
     font-size: 1.0em;
     height: 25px;
-    border: 1px solid lightgray;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
     opacity: 0.7;
     z-index: 15;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
 }
 
 .date-tick-background {
@@ -176,6 +147,7 @@
     background-color: #FAFAFA;
     width: 100%;
     height: 100%;
+    text-align: center;
 }
 
 .time-tick {
@@ -185,6 +157,8 @@
     font-size: 0.8em;
     opacity: 0.7;
     z-index: 15;
+    transform-origin: left;
+    transform: translateX(2em) translateY(6px) rotate(-60deg);
 }
 
 .time-tick-background {
@@ -274,6 +248,39 @@
 }
 
 /* Blobs */
+.blob {
+    background-color: rgba(166, 214, 181, 0.49);
+    box-sizing: border-box;
+    color: rgb(0, 0, 0);
+    display: block;
+    font-size: 12px;
+    line-height: 20px;
+    opacity: 0.8;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding-bottom: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 10px;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    text-align: left;
+    text-overflow: ellipsis;
+    text-size-adjust: 100%;
+    top: 0px;
+    user-select: none;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.blob:hover {
+    opacity: 1;
+}
+
+.blob:active {
+    opacity: 1;
+}
+
 
 .unassigned {
     background-color: rgba(0, 0, 0, 0.1) !important;

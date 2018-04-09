@@ -28,16 +28,19 @@ public class CssGridLines {
 
     private final Long softLineStepInGridPixels;
     private final Long strongLineStepInGridPixels;
+    private final Long offset;
     private final Supplier<HTMLElement> divFactory;
 
     private final List<HTMLElement> gridLineElements;
 
     CssGridLines(final Long softStep,
                  final Long harshStep,
+                 final Long offset,
                  final Supplier<HTMLElement> divFactory) {
 
         softLineStepInGridPixels = softStep;
         strongLineStepInGridPixels = harshStep;
+        this.offset = offset;
         this.divFactory = divFactory;
         gridLineElements = new ArrayList<>();
     }
@@ -53,15 +56,17 @@ public class CssGridLines {
             HTMLElement gridLine = divFactory.get();
 
             // Assumes strongLineStepInGridPixels is a multiple of softLineStepInGridPixels
-            if (i % strongLineStepInGridPixels == 0) {
+            if (i % strongLineStepInGridPixels == offset) {
                 gridLine.classList.add("strong-grid-line");
+                viewport.setAbsGroupPosition(() -> gridLine, 0L);
+                viewport.setGroupSizeInScreenPixels(() -> gridLine, viewport.getHeaderColumns() + viewport.getGroupEndPosition() + 1, 0L);
             } else {
                 gridLine.classList.add("soft-grid-line");
+                viewport.setGroupPosition(() -> gridLine, 0L);
+                viewport.setGroupSizeInScreenPixels(() -> gridLine, viewport.getGroupEndPosition() + 1, 0L);
             }
             viewport.setPositionInScreenPixels(() -> gridLine, i, 0L);
             viewport.setSizeInScreenPixels(() -> gridLine, 1L, 0L);
-            viewport.setGroupPosition(() -> gridLine, 0L);
-            viewport.setGroupSizeInScreenPixels(() -> gridLine, viewport.getGroupEndPosition() + 1, 0L);
             targetElement.appendChild(gridLine);
             gridLineElements.add(gridLine);
         }

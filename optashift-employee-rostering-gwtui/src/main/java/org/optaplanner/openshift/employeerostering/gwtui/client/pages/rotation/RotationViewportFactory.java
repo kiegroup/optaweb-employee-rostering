@@ -81,9 +81,9 @@ public class RotationViewportFactory {
                     baseDate,
                     shiftBlobViewPool::get,
                     scale,
-                    cssGridLinesFactory.newWithSteps(2L, 24L),
-                    ticksFactory.newTicks(scale, "date-tick", 0L, 24L),
-                    ticksFactory.newTicks(scale, "time-tick", 1L, 4L),
+                    cssGridLinesFactory.newWithSteps(2L, 24L, 0L),
+                    ticksFactory.newTicks(scale, "date-tick", 0L, 24L, 0L),
+                    ticksFactory.newTicks(scale, "time-tick", 1L, 4L, 0L),
                     lanes);
         });
     }

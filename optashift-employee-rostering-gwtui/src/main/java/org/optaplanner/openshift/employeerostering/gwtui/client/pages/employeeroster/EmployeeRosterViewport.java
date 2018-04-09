@@ -19,12 +19,12 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeer
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.Ticks;
@@ -78,13 +78,17 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
     @Override
     public void drawTicksAt(final IsElement target) {
         //FIXME: Make it18n
-        DateTimeFormat dateFormat = DateTimeFormat.getFormat("EEE MMM d, yyyy");
-        DateTimeFormat timeFormat = DateTimeFormat.getFormat("h a");
+        DateTimeFormat dateFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);
+        DateTimeFormat timeFormat = DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT);
         dateTicks.drawAt(target, this, date -> {
-            return dateFormat.format(new Date(date.toEpochSecond() * 1000));
+            return dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
         });
         timeTicks.drawAt(target, this, date -> {
-            return timeFormat.format(new Date(date.toEpochSecond() * 1000));
+            if (date.plusMinutes(GwtJavaTimeWorkaroundUtil.getOffsetInMinutes(
+                    GwtJavaTimeWorkaroundUtil.toLocalDate(date), date.getOffset())).getHour() == 0) {
+                return "";
+            }
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
         });
     }
 

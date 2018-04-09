@@ -1,14 +1,25 @@
 package org.optaplanner.openshift.employeerostering.shared.common;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.ZoneOffset;
+import java.util.Date;
+
+import com.google.gwt.core.client.JsDate;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 
 // WORKAROUND: Our client-side emulated java.time library lacks many features. This class contains methods to work-around these lack of feature
 // REMOVE ME when GWT supports java.time or when we update our supersources at
 // "/optashift-employee-rostering-gwtui/src/main/super/org/optaplanner/openshift/employeerostering/gwtui/emulate"
 public class GwtJavaTimeWorkaroundUtil {
+
+    public static LocalDateTime toLocalDateTime(OffsetDateTime time) {
+        return LocalDateTime.of(toLocalDate(time), toLocalTime(time));
+    }
 
     public static LocalDate toLocalDate(OffsetDateTime time) {
         return LocalDate.of(time.getYear(), time.getMonthValue(), time.getDayOfMonth());
@@ -32,5 +43,31 @@ public class GwtJavaTimeWorkaroundUtil {
 
     public static boolean doTimeslotsIntersect(LocalDate date, OffsetTime start1, OffsetTime end1, OffsetDateTime start2, OffsetDateTime end2) {
         return doTimeslotsIntersect(start1.atDate(date), end1.atDate(date), start2, end2);
+    }
+
+    public static Date toDate(OffsetDateTime offsetDateTime) {
+        DateTimeFormat offsetDateTimeConvertor = DateTimeFormat.getFormat(PredefinedFormat.ISO_8601);
+        return offsetDateTimeConvertor.parse(offsetDateTimeToISO(offsetDateTime));
+    }
+
+    public static Date toDateAsLocalTime(OffsetDateTime offsetDateTime) {
+        return toDate(toLocalDateTime(offsetDateTime));
+    }
+
+    public static Date toDate(LocalDateTime localDateTime) {
+        DateTimeFormat offsetDateTimeConvertor = DateTimeFormat.getFormat(PredefinedFormat.ISO_8601);
+        return offsetDateTimeConvertor.parse(offsetDateTimeToISO(OffsetDateTime.of(localDateTime, ZoneOffset.ofTotalSeconds(60 * getOffsetInMinutes(localDateTime.toLocalDate(), ZoneOffset.UTC)))));
+    }
+
+    public static String offsetDateTimeToISO(OffsetDateTime offsetDateTime) {
+        return toLocalDate(offsetDateTime).toString() + "T" + getGWTTime(toLocalTime(offsetDateTime)) + offsetDateTime.getOffset().toString();
+    }
+
+    public static String getGWTTime(LocalTime time) {
+        return time.getHour() + ":" + time.getMinute() + ":" + time.getSecond() + "." + time.getNano();
+    }
+
+    public static int getOffsetInMinutes(LocalDate date, ZoneOffset offset) {
+        return (offset.getTotalSeconds() / 60) - JsDate.create(date.getYear(), date.getMonthValue(), date.getDayOfMonth()).getTimezoneOffset();
     }
 }
