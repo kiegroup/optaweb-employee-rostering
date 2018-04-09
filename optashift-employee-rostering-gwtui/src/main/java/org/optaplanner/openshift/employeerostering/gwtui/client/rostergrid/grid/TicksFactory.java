@@ -30,9 +30,9 @@ public class TicksFactory<T> {
     @Named("span")
     private HTMLElement span;
 
-    public Ticks<T> newTicks(final LinearScale<T> scale, String className, final Long position, final Long stepSize) {
+    public Ticks<T> newTicks(final LinearScale<T> scale, String className, final Long position, final Long stepSize, final Long offset) {
         HTMLElement element = (HTMLElement) span.cloneNode(false);
         element.classList.add(className);
-        return new Ticks<>(scale, className, position, stepSize, () -> (HTMLElement) element.cloneNode(false));
+        return new Ticks<>(scale, className, position, stepSize, offset, () -> (HTMLElement) element.cloneNode(false));
     }
 }

@@ -30,8 +30,9 @@ public class CssGridLinesFactory {
     private HTMLElement span;
 
     public CssGridLines newWithSteps(final Long softLineStep,
-                                     final Long harshLineStep) {
+                                     final Long harshLineStep,
+                                     final Long offset) {
 
-        return new CssGridLines(softLineStep, harshLineStep, () -> (HTMLElement) span.cloneNode(false));
+        return new CssGridLines(softLineStep, harshLineStep, offset, () -> (HTMLElement) span.cloneNode(false));
     }
 }

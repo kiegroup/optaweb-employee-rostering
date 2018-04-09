@@ -32,6 +32,7 @@ public class Ticks<T> {
     private final String className;
     private final Long position;
     private final Long stepSize;
+    private final Long offset;
     private final Supplier<HTMLElement> divFactory;
 
     private final List<HTMLElement> tickElements;
@@ -40,11 +41,13 @@ public class Ticks<T> {
           final String className,
           final Long position,
           final Long stepSize,
+          final Long offset,
           final Supplier<HTMLElement> divFactory) {
         this.scale = scale;
         this.className = className;
         this.position = position;
         this.stepSize = stepSize;
+        this.offset = offset;
         this.divFactory = divFactory;
         tickElements = new ArrayList<>();
     }
@@ -65,7 +68,8 @@ public class Ticks<T> {
         target.getElement().appendChild(background);
         tickElements.add(background);
 
-        for (Long i = 0L; i < scale.getEndInGridPixels(); i += stepSize) {
+        Long start = (offset > 0) ? offset - stepSize : offset;
+        for (Long i = start; i < scale.getEndInGridPixels(); i += stepSize) {
             final HTMLElement tick = divFactory.get();
             tick.textContent = tickText.apply(scale.toScaleUnits(i));
             viewport.setPositionInScreenPixels(() -> tick, i, -2L);
