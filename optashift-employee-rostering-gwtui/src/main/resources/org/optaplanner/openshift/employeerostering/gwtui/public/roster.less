@@ -48,19 +48,26 @@
 }
 
 .blob {
-    z-index: 10;
-    font-size: 0.7em;
-    color: black;
-    white-space: nowrap;
-    top: 0;
-    left: 0;
-    height: fit-content;
-    overflow: hidden;
-    text-overflow: ellipsis;
     background-color: rgba(166, 214, 181, 0.49);
-    padding: 26px 3px 3px 3px;
-    border-radius: 2px;
+    box-sizing: border-box;
+    color: rgb(0, 0, 0);
+    display: block;
+    font-size: 12px;
+    line-height: 20px;
     opacity: 0.8;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    padding-bottom: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 10px;
+    text-align: left;
+    text-overflow: ellipsis;
+    text-size-adjust: 100%;
+    top: 0px;
+    user-select: none;
+    white-space: nowrap;
+    z-index: 10;
 }
 
 .blob:hover {
@@ -96,15 +103,6 @@
     width: 85px;
     height: 100%;
     border-right: 1px dashed #dfdfdf;
-}
-
-.viewport-frame > .viewport.vertical > .lane > .sub-lane > .blob {
-    width: 80px;
-    height: 120px;
-    border-top: 1px solid rgba(118, 133, 160, 0.1);
-    border-right: 1px solid rgba(118, 133, 160, 0.2);
-    border-bottom: 1px solid rgba(118, 133, 160, 0.1);
-    border-left: 1px solid rgba(118, 133, 160, 0.2);
 }
 
 /* VIEWPORT - HORIZONTAL */
@@ -223,13 +221,6 @@
 .viewport-frame > .viewport.horizontal > .lane > .sub-lane {
     height: 45px;
     border-bottom: 1px dashed #dfdfdf;
-}
-
-.blob {
-    border-left: 1px solid rgba(118, 133, 160, 0.1);
-    border-bottom: 1px solid rgba(118, 133, 160, 0.2);
-    border-right: 1px solid rgba(118, 133, 160, 0.1);
-    border-top: 1px solid rgba(118, 133, 160, 0.2);
 }
 
 .ui-resizable-e {
