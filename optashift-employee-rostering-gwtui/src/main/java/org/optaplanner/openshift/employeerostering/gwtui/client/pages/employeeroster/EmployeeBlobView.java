@@ -91,8 +91,8 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
             setClassProperty("draft", rosterState.isDraft(blob.getEmployeeAvailability().getStartDateTime()));
         }
 
-        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels());
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels());
 
         updateLabel();
     }

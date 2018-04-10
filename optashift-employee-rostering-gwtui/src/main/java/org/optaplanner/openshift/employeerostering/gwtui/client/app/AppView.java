@@ -30,7 +30,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 
 @Templated
-//@ApplicationScoped
 public class AppView implements IsElement {
 
     @Inject
@@ -54,7 +53,7 @@ public class AppView implements IsElement {
 
     @PostConstruct
     public void init() {
-        pageUtils.addHeightEaterElements(header, footer)
+        pageUtils.addHeightConsumingElements(header, footer)
                 .withVerticalPadding(125);
     }
 

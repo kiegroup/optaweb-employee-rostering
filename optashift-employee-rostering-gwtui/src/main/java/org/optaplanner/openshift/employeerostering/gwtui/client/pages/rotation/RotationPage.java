@@ -95,13 +95,13 @@ public class RotationPage implements Page {
     @Override
     public Promise<Void> onOpen() {
         topToolbar = () -> (HTMLElement) getElement().firstElementChild;
-        pageUtils.addHeightEaterElements(topToolbar);
+        pageUtils.addHeightConsumingElements(topToolbar);
         return promiseUtils.resolve();
     }
 
     @Override
     public Promise<Void> onClose() {
-        pageUtils.removeHeightEaterElements(topToolbar);
+        pageUtils.removeHeightConsumingElements(topToolbar);
         return promiseUtils.resolve();
     }
 

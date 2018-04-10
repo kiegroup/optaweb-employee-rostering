@@ -65,13 +65,13 @@ public class LaneView<T> implements ListElementView<Viewport<T>, Lane<T>> {
         getElement().textContent = lane.getTitle();
         laneBackground.classList.add("lane-background");
 
-        viewport.setAbsPositionInScreenPixels(() -> laneBackground, 1L, 0L);
-        viewport.setSizeInScreenPixels(() -> laneBackground, viewport.getScale().getEndInGridPixels(), 0L);
+        viewport.setAbsPositionInScreenPixels(() -> laneBackground, 1L);
+        viewport.setSizeInScreenPixels(() -> laneBackground, viewport.getScale().getEndInGridPixels());
         viewport.setGroupPosition(() -> laneBackground, viewport.getLaneStartPosition(lane));
-        viewport.setGroupSizeInScreenPixels(() -> laneBackground, lane.getSubLanes().size() + 0L, 0L);
+        viewport.setGroupSizeInScreenPixels(() -> laneBackground, lane.getSubLanes().size() + 0L);
 
         viewport.setGroupPosition(this, viewport.getLaneStartPosition(lane));
-        viewport.setGroupSizeInScreenPixels(this, lane.getSubLanes().size() + 0L, 0L);
+        viewport.setGroupSizeInScreenPixels(this, lane.getSubLanes().size() + 0L);
 
         laneViews.getHTMLParentElement().appendChild(laneBackground);
         return this;

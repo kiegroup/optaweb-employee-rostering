@@ -61,10 +61,10 @@ public class Ticks<T> {
         final HTMLElement background = divFactory.get();
         background.classList.remove(className);
         background.classList.add(className + "-background");
-        viewport.setAbsPositionInScreenPixels(() -> background, 0L, 0L);
-        viewport.setSizeInScreenPixels(() -> background, scale.getEndInGridPixels(), -2L);
+        viewport.setAbsPositionInScreenPixels(() -> background, 0L);
+        viewport.setSizeInScreenPixels(() -> background, scale.getEndInGridPixels());
         viewport.setAbsGroupPosition(() -> background, position);
-        viewport.setGroupSizeInScreenPixels(() -> background, 1L, 0L);
+        viewport.setGroupSizeInScreenPixels(() -> background, 1L);
         target.getElement().appendChild(background);
         tickElements.add(background);
 
@@ -72,10 +72,10 @@ public class Ticks<T> {
         for (Long i = start; i < scale.getEndInGridPixels(); i += stepSize) {
             final HTMLElement tick = divFactory.get();
             tick.textContent = tickText.apply(scale.toScaleUnits(i));
-            viewport.setPositionInScreenPixels(() -> tick, i, -2L);
-            viewport.setSizeInScreenPixels(() -> tick, stepSize, -2L);
+            viewport.setPositionInScreenPixels(() -> tick, i);
+            viewport.setSizeInScreenPixels(() -> tick, stepSize);
             viewport.setAbsGroupPosition(() -> tick, position);
-            viewport.setGroupSizeInScreenPixels(() -> tick, 1L, -2L);
+            viewport.setGroupSizeInScreenPixels(() -> tick, 1L);
             target.getElement().appendChild(tick);
             tickElements.add(tick);
         }

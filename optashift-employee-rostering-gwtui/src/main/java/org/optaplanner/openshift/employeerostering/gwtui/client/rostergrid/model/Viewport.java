@@ -67,28 +67,28 @@ public abstract class Viewport<T> {
         return gridPixels * getGridPixelSizeInScreenPixels();
     }
 
-    public void setSizeInScreenPixels(final IsElement element, final Long sizeInGridPixels, final Long offsetInScreenPixels) {
-        getOrientation().scale(element, sizeInGridPixels, this, offsetInScreenPixels);
+    public void setSizeInScreenPixels(final IsElement element, final Long sizeInGridPixels) {
+        getOrientation().scale(element, sizeInGridPixels, this);
     }
 
-    public void setGroupSizeInScreenPixels(final IsElement element, final Long sizeInGridPixels, final Long offsetInScreenPixels) {
-        getOrientation().groupScale(element, sizeInGridPixels, this, offsetInScreenPixels);
+    public void setGroupSizeInScreenPixels(final IsElement element, final Long sizeInGridPixels) {
+        getOrientation().groupScale(element, sizeInGridPixels, this);
     }
 
-    public void setPositionInScreenPixels(final IsElement element, final Long positionInGridPixels, final Long offsetInScreenPixels) {
-        getOrientation().position(element, positionInGridPixels, this, offsetInScreenPixels);
+    public void setPositionInScreenPixels(final IsElement element, final Long positionInGridPixels) {
+        getOrientation().position(element, positionInGridPixels, this);
     }
 
-    public void setAbsPositionInScreenPixels(final IsElement element, final Long positionInGridPixels, final Long offsetInScreenPixels) {
-        getOrientation().absPosition(element, positionInGridPixels, this, offsetInScreenPixels);
+    public void setAbsPositionInScreenPixels(final IsElement element, final Long positionInGridPixels) {
+        getOrientation().absPosition(element, positionInGridPixels, this);
     }
 
     public void setGroupPosition(final IsElement element, final long groupPosition) {
-        getOrientation().groupPosition(element, groupPosition, this, 0L);
+        getOrientation().groupPosition(element, groupPosition, this);
     }
 
     public void setAbsGroupPosition(final IsElement element, final long groupPosition) {
-        getOrientation().absGroupPosition(element, groupPosition, this, 0L);
+        getOrientation().absGroupPosition(element, groupPosition, this);
     }
 
     public Long getSizeInGridPixels() {
