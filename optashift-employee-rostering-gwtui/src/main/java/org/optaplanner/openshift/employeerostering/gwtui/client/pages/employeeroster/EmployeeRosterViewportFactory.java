@@ -168,7 +168,7 @@ public class EmployeeRosterViewportFactory {
     private EmployeeBlob buildEmployeeAvailabilityBlob(final Employee employee,
                                                        final EmployeeAvailabilityView availabilityView) {
 
-        final EmployeeAvailability availability = new EmployeeAvailability(availabilityView, employee, availabilityView.getDate(), availabilityView.getStartTime(), availabilityView.getEndTime());
+        final EmployeeAvailability availability = new EmployeeAvailability(availabilityView, employee);
         availability.setState(availabilityView.getState());
         return new EmployeeBlob(scale, availability);
     }

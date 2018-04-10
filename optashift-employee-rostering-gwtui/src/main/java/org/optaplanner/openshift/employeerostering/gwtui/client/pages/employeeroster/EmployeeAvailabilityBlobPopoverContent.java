@@ -16,7 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
@@ -119,10 +118,9 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
         int availabilityIndex = Arrays.asList(EmployeeAvailabilityState.values()).indexOf(availability.getState());
         availabilitySelect.setSelectedIndex((availabilityIndex > -1) ? availabilityIndex : 0);
 
-        final LocalDate date = availability.getDate();
-        day.value = date.getMonth().toString() + " " + date.getDayOfMonth(); //FIXME: i18n
-        fromHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getStartTime().atDate(date)) + "";
-        toHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getEndTime().atDate(date)) + "";
+        day.value = GwtJavaTimeWorkaroundUtil.toLocalDate(availability.getStartDateTime()).getMonth().toString() + " " + GwtJavaTimeWorkaroundUtil.toLocalDate(availability.getStartDateTime()).getDayOfMonth(); //FIXME: i18n
+        fromHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getStartDateTime()) + "";
+        toHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getEndDateTime()) + "";
     }
 
     @EventHandler("root")
