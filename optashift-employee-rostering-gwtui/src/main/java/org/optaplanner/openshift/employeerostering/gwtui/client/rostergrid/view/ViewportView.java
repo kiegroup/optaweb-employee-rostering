@@ -77,10 +77,10 @@ public class ViewportView<T> implements IsElement {
 
             headerBackground.classList.add("header-background");
             getElement().appendChild(headerBackground);
-            viewport.setAbsPositionInScreenPixels(() -> headerBackground, 0L, 0L);
-            viewport.setSizeInScreenPixels(() -> headerBackground, viewport.getScale().getEndInGridPixels() + viewport.getHeaderColumns(), 0L);
+            viewport.setAbsPositionInScreenPixels(() -> headerBackground, 0L);
+            viewport.setSizeInScreenPixels(() -> headerBackground, viewport.getScale().getEndInGridPixels() + viewport.getHeaderColumns());
             viewport.setAbsGroupPosition(() -> headerBackground, 0);
-            viewport.setGroupSizeInScreenPixels(() -> headerBackground, viewport.getHeaderRows(), 0L);
+            viewport.setGroupSizeInScreenPixels(() -> headerBackground, viewport.getHeaderRows());
             viewport.drawTicksAt(this);
             viewport.drawGridLinesAt(this);
 

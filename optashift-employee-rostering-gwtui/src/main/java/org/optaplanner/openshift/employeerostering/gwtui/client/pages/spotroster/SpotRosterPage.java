@@ -164,13 +164,13 @@ public class SpotRosterPage implements Page {
     public Promise<Void> onOpen() {
         topToolbar = () -> (HTMLElement) getElement().firstElementChild;
         bottomToolbar = () -> (HTMLElement) getElement().lastElementChild;
-        pageUtils.addHeightEaterElements(topToolbar, bottomToolbar);
+        pageUtils.addHeightConsumingElements(topToolbar, bottomToolbar);
         return refreshWithLoadingSpinner();
     }
 
     @Override
     public Promise<Void> onClose() {
-        pageUtils.removeHeightEaterElements(topToolbar, bottomToolbar);
+        pageUtils.removeHeightConsumingElements(topToolbar, bottomToolbar);
         return promiseUtils.resolve();
     }
 

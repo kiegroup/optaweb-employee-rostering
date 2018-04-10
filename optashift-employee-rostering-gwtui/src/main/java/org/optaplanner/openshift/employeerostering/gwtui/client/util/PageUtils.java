@@ -12,16 +12,14 @@ import org.jboss.errai.common.client.api.elemental2.IsElement;
 @Singleton
 public class PageUtils {
 
-    private Collection<IsElement> heightEaterElements;
-    private Collection<IsElement> widthEaterElements;
+    private Collection<IsElement> heightConsumingElements = new ArrayList<>();;
+    private Collection<IsElement> widthConsumingElements = new ArrayList<>();
 
     private double verticalPadding;
     private double horizontalPadding;
 
     @PostConstruct
     public void init() {
-        widthEaterElements = new ArrayList<>();
-        heightEaterElements = new ArrayList<>();
         verticalPadding = 0;
         horizontalPadding = 0;
     }
@@ -36,37 +34,37 @@ public class PageUtils {
         return this;
     }
 
-    public PageUtils addWidthEaterElements(IsElement... elements) {
-        widthEaterElements.addAll(Arrays.asList(elements));
+    public PageUtils addWidthConsumingElements(IsElement... elements) {
+        widthConsumingElements.addAll(Arrays.asList(elements));
         return this;
     }
 
-    public PageUtils addHeightEaterElements(IsElement... elements) {
-        heightEaterElements.addAll(Arrays.asList(elements));
+    public PageUtils addHeightConsumingElements(IsElement... elements) {
+        heightConsumingElements.addAll(Arrays.asList(elements));
         return this;
     }
 
-    public PageUtils removeWidthEaterElements(IsElement... elements) {
-        widthEaterElements.removeAll(Arrays.asList(elements));
+    public PageUtils removeWidthConsumingElements(IsElement... elements) {
+        widthConsumingElements.removeAll(Arrays.asList(elements));
         return this;
     }
 
-    public PageUtils removeHeightEaterElements(IsElement... elements) {
-        heightEaterElements.removeAll(Arrays.asList(elements));
+    public PageUtils removeHeightConsumingElements(IsElement... elements) {
+        heightConsumingElements.removeAll(Arrays.asList(elements));
         return this;
     }
 
     public void expandElementToRemainingHeight(IsElement element) {
-        double totalHeightEaten = heightEaterElements.stream().map(e -> e.getElement().scrollHeight).reduce((a, b) -> a + b).orElseGet(() -> Double.valueOf(0));
-        totalHeightEaten += verticalPadding;
+        double totalHeightConsumed = heightConsumingElements.stream().map(e -> e.getElement().scrollHeight).reduce((a, b) -> a + b).orElseGet(() -> Double.valueOf(0));
+        totalHeightConsumed += verticalPadding;
         element.getElement().style.set("height", "calc(100vh - " +
-                totalHeightEaten + "px)");
+                totalHeightConsumed + "px)");
     }
 
     public void expandElementToRemainingWidth(IsElement element) {
-        double totalWidthEaten = widthEaterElements.stream().map(e -> e.getElement().scrollWidth).reduce((a, b) -> a + b).orElseGet(() -> Double.valueOf(0));
-        totalWidthEaten += horizontalPadding;
+        double totalWidthConsumed = widthConsumingElements.stream().map(e -> e.getElement().scrollWidth).reduce((a, b) -> a + b).orElseGet(() -> Double.valueOf(0));
+        totalWidthConsumed += horizontalPadding;
         element.getElement().style.set("width", "calc(100vw - " +
-                totalWidthEaten + "px)");
+                totalWidthConsumed + "px)");
     }
 }

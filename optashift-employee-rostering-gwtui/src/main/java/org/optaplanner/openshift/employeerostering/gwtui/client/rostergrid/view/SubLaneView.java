@@ -61,8 +61,8 @@ public class SubLaneView<T> implements ListElementView<Lane<T>, SubLane<T>> {
         this.subLaneViews = subLaneViews;
         this.subLane = subLane;
 
-        viewport.setPositionInScreenPixels(this, 0L, 0L);
-        viewport.setSizeInScreenPixels(this, viewport.getScale().getEndInGridPixels(), 0L);
+        viewport.setPositionInScreenPixels(this, 0L);
+        viewport.setSizeInScreenPixels(this, viewport.getScale().getEndInGridPixels());
         viewport.setGroupPosition(this, viewport.getSubLanePosition(subLane));
 
         //FIXME: Generics issue
@@ -85,8 +85,7 @@ public class SubLaneView<T> implements ListElementView<Lane<T>, SubLane<T>> {
             return;
         }
 
-        // Add Blob (ALT + CLICK)
-        //if (e.altKey) {
+        // Add Blob (CLICK)
         final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
         final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
         final T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
