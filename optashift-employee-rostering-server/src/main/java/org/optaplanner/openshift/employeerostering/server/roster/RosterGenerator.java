@@ -20,6 +20,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.OffsetTime;
+import java.time.ZoneOffset;
 import java.time.temporal.TemporalAdjusters;
 import java.time.zone.ZoneRules;
 import java.util.ArrayList;
@@ -503,9 +504,8 @@ public class RosterGenerator {
                 for (int i = 0; i < stateCount; i++) {
                     Employee employee = availableEmployeeList.remove(random.nextInt(availableEmployeeList.size()));
                     // TODO Can this and ShiftTemplate.createShiftOnDate() be simplified and be DST spring/fall compatible?
-                    EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee, date,
-                            OffsetTime.of(LocalTime.MIN, zoneRules.getOffset(date.atStartOfDay())),
-                            OffsetTime.of(LocalTime.MAX, zoneRules.getOffset(date.plusDays(1).atStartOfDay()))); // TODO set to 00:00 next day instead
+                    EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee, date.atTime(OffsetTime.of(LocalTime.MIN, ZoneOffset.UTC)),
+                            date.plusDays(1).atTime(OffsetTime.of(LocalTime.MIN, ZoneOffset.UTC)));
                     employeeAvailability.setState(state);
                     entityManager.persist(employeeAvailability);
                     employeeAvailabilityList.add(employeeAvailability);

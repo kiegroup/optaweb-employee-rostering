@@ -83,9 +83,7 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
         super.validateTenantIdParameter(tenantId, employee);
         for (Skill skill : employee.getSkillProficiencySet()) {
             if (!Objects.equals(skill.getTenantId(), tenantId)) {
-                throw new IllegalStateException("The tenantId (" + tenantId
-                        + ") does not match the skillProficiency (" + skill
-                        + ")'s tenantId (" + skill.getTenantId() + ").");
+                throw new IllegalStateException("The tenantId (" + tenantId + ") does not match the skillProficiency (" + skill + ")'s tenantId (" + skill.getTenantId() + ").");
             }
         }
     }
@@ -109,9 +107,7 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
         validateTenantIdParameter(tenantId, employeeAvailabilityView);
         Employee employee = entityManager.find(Employee.class, employeeAvailabilityView.getEmployeeId());
         validateTenantIdParameter(tenantId, employee);
-        EmployeeAvailability employeeAvailability = new EmployeeAvailability(employeeAvailabilityView, employee,
-                employeeAvailabilityView.getDate(), employeeAvailabilityView.getStartTime(), employeeAvailabilityView
-                        .getEndTime());
+        EmployeeAvailability employeeAvailability = new EmployeeAvailability(employeeAvailabilityView, employee);
         employeeAvailability.setState(employeeAvailabilityView.getState());
         return employeeAvailability;
     }

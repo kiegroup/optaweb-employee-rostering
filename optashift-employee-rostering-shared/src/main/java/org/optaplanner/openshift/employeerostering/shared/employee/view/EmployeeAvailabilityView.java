@@ -16,8 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.shared.employee.view;
 
-import java.time.LocalDate;
-import java.time.OffsetTime;
+import java.time.OffsetDateTime;
 
 import javax.validation.constraints.NotNull;
 
@@ -32,38 +31,34 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
     private Long employeeId;
 
     @NotNull
-    private LocalDate date;
+    private OffsetDateTime startDateTime;
     @NotNull
-    private OffsetTime startTime;
-    @NotNull
-    private OffsetTime endTime;
+    private OffsetDateTime endDateTime;
 
     private EmployeeAvailabilityState state;
 
     @SuppressWarnings("unused")
     public EmployeeAvailabilityView() {}
 
-    public EmployeeAvailabilityView(Integer tenantId, Employee employee, LocalDate date, OffsetTime startTime, OffsetTime endTime, EmployeeAvailabilityState state) {
+    public EmployeeAvailabilityView(Integer tenantId, Employee employee, OffsetDateTime startDateTime, OffsetDateTime endDateTime, EmployeeAvailabilityState state) {
         super(tenantId);
         this.employeeId = employee.getId();
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
         this.state = state;
     }
 
     public EmployeeAvailabilityView(EmployeeAvailability employeeAvailability) {
         super(employeeAvailability);
         this.employeeId = employeeAvailability.getEmployee().getId();
-        this.date = employeeAvailability.getDate();
-        this.startTime = employeeAvailability.getStartTime();
-        this.endTime = employeeAvailability.getEndTime();
+        this.startDateTime = employeeAvailability.getStartDateTime();
+        this.endDateTime = employeeAvailability.getEndDateTime();
         this.state = employeeAvailability.getState();
     }
 
     @Override
     public String toString() {
-        return employeeId + " " + date + ":" + startTime + "-" + endTime;
+        return employeeId + ":" + startDateTime + "-" + endDateTime;
     }
 
     // ************************************************************************
@@ -78,28 +73,20 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.employeeId = employeeId;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public OffsetDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setStartDateTime(OffsetDateTime startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public OffsetTime getStartTime() {
-        return startTime;
+    public OffsetDateTime getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setStartTime(OffsetTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public OffsetTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(OffsetTime endTime) {
-        this.endTime = endTime;
+    public void setEndDateTime(OffsetDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public EmployeeAvailabilityState getState() {

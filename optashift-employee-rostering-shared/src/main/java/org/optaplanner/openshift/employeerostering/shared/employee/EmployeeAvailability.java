@@ -16,9 +16,8 @@
 
 package org.optaplanner.openshift.employeerostering.shared.employee;
 
-import java.time.LocalDate;
+import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,6 +26,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
@@ -38,9 +38,9 @@ import org.optaplanner.openshift.employeerostering.shared.employee.view.Employee
                            query = "select distinct ea from EmployeeAvailability ea" +
                                    " left join fetch ea.employee e" +
                                    " where ea.tenantId = :tenantId" +
-                                   " order by e.name, ea.date, ea.startTime"),
+                                   " order by e.name, ea.startDateTime"),
 })
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "employee_id", "date", "startTime", "endTime"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "employee_id", "startDateTime", "endDateTime"}))
 public class EmployeeAvailability extends AbstractPersistable {
 
     @NotNull
@@ -48,11 +48,9 @@ public class EmployeeAvailability extends AbstractPersistable {
     private Employee employee;
 
     @NotNull
-    private LocalDate date; // TODO remove me
+    private OffsetDateTime startDateTime;
     @NotNull
-    private OffsetTime startTime; // TODO change into OffsetDateTime startDateTime
-    @NotNull
-    private OffsetTime endTime; // TODO change into OffsetDateTime endDateTime
+    private OffsetDateTime endDateTime;
 
     @NotNull
     private EmployeeAvailabilityState state;
@@ -60,34 +58,32 @@ public class EmployeeAvailability extends AbstractPersistable {
     @SuppressWarnings("unused")
     public EmployeeAvailability() {}
 
-//    public EmployeeAvailability(Integer tenantId, Employee employee, OffsetDateTime startDateTime, OffsetDateTime endDateTime, EmployeeAvailabilityState state) {
-//        this(tenantId, employee, startDateTime.toLocalDate(), startDateTime.toOffsetTime(), endDateTime.toOffsetTime());
-//        this.state = state;
-//    }
-
-    // TODO use OffsetDateTime startDateTime and OffsetDateTime endDateTime instead, remove this constructor
-    public EmployeeAvailability(Integer tenantId, Employee employee, LocalDate date, OffsetTime startTime, OffsetTime endTime) {
+    public EmployeeAvailability(Integer tenantId, Employee employee, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         super(tenantId);
         this.employee = employee;
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
     }
 
-    // TODO use OffsetDateTime startDateTime and OffsetDateTime endDateTime instead, remove this constructor
-    public EmployeeAvailability(EmployeeAvailabilityView employeeAvailabilityView, Employee employee, LocalDate date, OffsetTime startTime, OffsetTime endTime) {
+    public EmployeeAvailability(EmployeeAvailabilityView employeeAvailabilityView, Employee employee) {
         super(employeeAvailabilityView);
         this.employee = employee;
-        this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startDateTime = employeeAvailabilityView.getStartDateTime();
+        this.endDateTime = employeeAvailabilityView.getEndDateTime();
     }
 
-    // add method getDuration() and validate it's less than 28 hours (DST buffer)
+    @AssertTrue
+    public boolean isValid() {
+        return getDuration().getSeconds() / (60 * 60) < 28;
+    }
+
+    public Duration getDuration() {
+        return Duration.between(startDateTime, endDateTime);
+    }
 
     @Override
     public String toString() {
-        return employee + " " + date + ":" + startTime + "-" + endTime;
+        return employee + ":" + startDateTime + "-" + endDateTime;
     }
 
     // ************************************************************************
@@ -102,28 +98,20 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.employee = employee;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public OffsetDateTime getStartDateTime() {
+        return startDateTime;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setStartDateTime(OffsetDateTime startDateTime) {
+        this.startDateTime = startDateTime;
     }
 
-    public OffsetTime getStartTime() {
-        return startTime;
+    public OffsetDateTime getEndDateTime() {
+        return endDateTime;
     }
 
-    public void setStartTime(OffsetTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public OffsetTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(OffsetTime endTime) {
-        this.endTime = endTime;
+    public void setEndDateTime(OffsetDateTime endDateTime) {
+        this.endDateTime = endDateTime;
     }
 
     public EmployeeAvailabilityState getState() {
