@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation.HORIZONTAL;
@@ -96,8 +98,9 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
         // Casting is preferable to avoid over-use of generics in the Viewport class
         final EmployeeLane employeeLane = (EmployeeLane) lane;
 
-        final EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employeeLane.getEmployee(), GwtJavaTimeWorkaroundUtil.toLocalDate(start), start.toOffsetTime(), start.plusHours(8L)
-                .toOffsetTime());
+        OffsetDateTime startOfDay = OffsetDateTime.of(GwtJavaTimeWorkaroundUtil.toLocalDate(start), LocalTime.of(0, 0), start.getOffset());
+        final EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employeeLane.getEmployee(), startOfDay, startOfDay.plusDays(1));
+        employeeAvailability.setState(EmployeeAvailabilityState.UNAVAILABLE);
 
         return Stream.of(new EmployeeBlob(scale, employeeAvailability));
     }

@@ -20,7 +20,6 @@ import java.time.OffsetDateTime;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
-import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
@@ -53,7 +52,7 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
         if (null != shift) {
             return shift.getStartDateTime();
         } else {
-            return GwtJavaTimeWorkaroundUtil.toOffsetDateTime(employeeAvailability.getDate(), employeeAvailability.getStartTime());
+            return employeeAvailability.getStartDateTime();
         }
     }
 
@@ -61,7 +60,7 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
         if (null != shift) {
             return shift.getEndDateTime();
         } else {
-            return GwtJavaTimeWorkaroundUtil.toOffsetDateTime(employeeAvailability.getDate(), employeeAvailability.getEndTime());
+            return employeeAvailability.getEndDateTime();
         }
     }
 
@@ -69,8 +68,7 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
         if (null != shift) {
             shift.setStartDateTime(startDateTime);
         } else {
-            employeeAvailability.setDate(GwtJavaTimeWorkaroundUtil.toLocalDate(startDateTime));
-            employeeAvailability.setStartTime(startDateTime.toOffsetTime());
+            employeeAvailability.setStartDateTime(startDateTime);
         }
     }
 
@@ -78,8 +76,7 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
         if (null != shift) {
             shift.setEndDateTime(endDateTime);
         } else {
-            employeeAvailability.setDate(GwtJavaTimeWorkaroundUtil.toLocalDate(endDateTime));
-            employeeAvailability.setEndTime(endDateTime.toOffsetTime());
+            employeeAvailability.setEndDateTime(endDateTime);
         }
     }
 

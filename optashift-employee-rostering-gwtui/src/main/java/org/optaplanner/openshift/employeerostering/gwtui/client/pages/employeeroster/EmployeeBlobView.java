@@ -86,9 +86,9 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
             setClassProperty("desired", blob.getEmployeeAvailability().getState() == EmployeeAvailabilityState.DESIRED);
             setClassProperty("undesired", blob.getEmployeeAvailability().getState() == EmployeeAvailabilityState.UNDESIRED);
             setClassProperty("unavailable", blob.getEmployeeAvailability().getState() == EmployeeAvailabilityState.UNAVAILABLE);
-            setClassProperty("historic", rosterState.isHistoric(blob.getEmployeeAvailability().getStartTime().atDate(blob.getEmployeeAvailability().getDate())));
-            setClassProperty("published", rosterState.isPublished(blob.getEmployeeAvailability().getStartTime().atDate(blob.getEmployeeAvailability().getDate())));
-            setClassProperty("draft", rosterState.isDraft(blob.getEmployeeAvailability().getStartTime().atDate(blob.getEmployeeAvailability().getDate())));
+            setClassProperty("historic", rosterState.isHistoric(blob.getEmployeeAvailability().getStartDateTime()));
+            setClassProperty("published", rosterState.isPublished(blob.getEmployeeAvailability().getStartDateTime()));
+            setClassProperty("draft", rosterState.isDraft(blob.getEmployeeAvailability().getStartDateTime()));
         }
 
         viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
