@@ -117,7 +117,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     @EventHandler("blob")
     public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
-        page.getBlobPopover().showFor(this);
+        page.getBlobPopover().showFor(viewport, this);
     }
 
     private void updateLabel() {
