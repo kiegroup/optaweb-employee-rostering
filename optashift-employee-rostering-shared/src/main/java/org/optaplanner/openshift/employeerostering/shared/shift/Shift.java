@@ -41,6 +41,35 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
                                    " left join fetch sa.employee e" +
                                    " where sa.tenantId = :tenantId" +
                                    " order by sa.startDateTime, s.name, e.name"),
+               @NamedQuery(name = "Shift.filter",
+                           query = "select distinct sa from Shift sa" +
+                                   " left join fetch sa.spot s" +
+                                   " left join fetch sa.rotationEmployee re" +
+                                   " left join fetch sa.employee e" +
+                                   " where sa.tenantId = :tenantId" +
+                                   " and sa.endDateTime >= :startDateTime" +
+                                   " and sa.startDateTime < :endDateTime" +
+                                   " order by sa.startDateTime, s.name, e.name"),
+               @NamedQuery(name = "Shift.filterWithEmployees",
+                           query = "select distinct sa from Shift sa" +
+                                   " left join fetch sa.spot s" +
+                                   " left join fetch sa.rotationEmployee re" +
+                                   " left join fetch sa.employee e" +
+                                   " where sa.tenantId = :tenantId" +
+                                   " and sa.employee IN :employees" +
+                                   " and sa.endDateTime >= :startDateTime" +
+                                   " and sa.startDateTime < :endDateTime" +
+                                   " order by sa.startDateTime, s.name, e.name"),
+               @NamedQuery(name = "Shift.filterWithSpots",
+                           query = "select distinct sa from Shift sa" +
+                                   " left join fetch sa.spot s" +
+                                   " left join fetch sa.rotationEmployee re" +
+                                   " left join fetch sa.employee e" +
+                                   " where sa.tenantId = :tenantId" +
+                                   " and sa.spot IN :spots" +
+                                   " and sa.endDateTime >= :startDateTime" +
+                                   " and sa.startDateTime < :endDateTime" +
+                                   " order by sa.startDateTime, s.name, e.name")
 })
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftFilter.class)
 public class Shift extends AbstractPersistable {

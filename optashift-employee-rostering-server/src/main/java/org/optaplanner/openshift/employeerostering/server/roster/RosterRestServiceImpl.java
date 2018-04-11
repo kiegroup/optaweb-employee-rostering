@@ -135,18 +135,25 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .getResultList();
         spotRosterView.setEmployeeList(employeeList);
 
-        List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
+        Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
+        Set<Spot> spotSet = new HashSet<>(spotList);
+        TenantConfiguration tenantConfig = entityManager.createNamedQuery("TenantConfiguration.find",
+                TenantConfiguration.class)
+                .setParameter("tenantId", tenantId).getSingleResult();
+
+        List<Shift> shiftList = entityManager.createNamedQuery("Shift.filterWithSpots", Shift.class)
                 .setParameter("tenantId", tenantId)
+                .setParameter("spots", spotSet)
+                .setParameter("startDateTime", startDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
+                .setParameter("endDateTime", endDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
                 .getResultList();
 
         Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
         Set<Spot> spotSet = new HashSet<>(spotList);
         for (Shift shift : shiftList) {
-            if (spotSet.contains(shift.getSpot())) {
-                spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>()).add(
-                        new ShiftView(
-                                shift));
-            }
+            spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>()).add(
+                    new ShiftView(
+                            shift));
         }
         spotRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
 
@@ -221,19 +228,25 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
         employeeRosterView.setEmployeeList(employeeList);
 
-        // TODO use startDate and endDate in query
-        List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList();
         Map<Long, List<ShiftView>> employeeIdToShiftViewListMap = new LinkedHashMap<>(employeeList.size());
         List<ShiftView> unassignedShiftViewList = new ArrayList<>();
         Set<Employee> employeeSet = new HashSet<>(employeeList);
+        TenantConfiguration tenantConfig = entityManager.createNamedQuery("TenantConfiguration.find",
+                TenantConfiguration.class)
+                .setParameter("tenantId", tenantId).getSingleResult();
+
+        List<Shift> shiftList = entityManager.createNamedQuery("Shift.filterWithEmployees", Shift.class)
+                .setParameter("tenantId", tenantId)
+                .setParameter("startDateTime", startDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
+                .setParameter("endDateTime", endDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
+                .setParameter("employees", employeeSet)
+                .getResultList();
+
         for (Shift shift : shiftList) {
             if (shift.getEmployee() != null) {
-                if (employeeSet.contains(shift.getEmployee())) {
-                    employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(), k -> new ArrayList<>())
-                            .add(new ShiftView(shift));
-                }
+                employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(),
+                        k -> new ArrayList<>())
+                        .add(new ShiftView(shift));
             } else {
                 unassignedShiftViewList.add(new ShiftView(shift));
             }
@@ -242,17 +255,17 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         employeeRosterView.setUnassignedShiftViewList(unassignedShiftViewList);
         Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap = new LinkedHashMap<>(
                 employeeList.size());
-        // TODO use startDate and endDate
         List<EmployeeAvailability> employeeAvailabilityList = entityManager.createNamedQuery(
-                "EmployeeAvailability.findAll", EmployeeAvailability.class)
+                "EmployeeAvailability.filterWithEmployee", EmployeeAvailability.class)
                 .setParameter("tenantId", tenantId)
+                .setParameter("startDateTime", startDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
+                .setParameter("endDateTime", endDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
+                .setParameter("employees", employeeSet)
                 .getResultList();
         for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
-            if (employeeSet.contains(employeeAvailability.getEmployee())) {
-                List<EmployeeAvailabilityView> employeeAvailabilityViewList = employeeIdToAvailabilityViewListMap
-                        .computeIfAbsent(employeeAvailability.getEmployee().getId(), k -> new ArrayList<>());
-                employeeAvailabilityViewList.add(new EmployeeAvailabilityView(employeeAvailability));
-            }
+            employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),
+                    k -> new ArrayList<>())
+                    .add(new EmployeeAvailabilityView(employeeAvailability));
         }
         employeeRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
 
