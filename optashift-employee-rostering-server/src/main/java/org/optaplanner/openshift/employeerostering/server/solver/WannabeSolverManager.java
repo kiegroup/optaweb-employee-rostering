@@ -38,6 +38,8 @@ import org.slf4j.LoggerFactory;
 @ApplicationScoped
 public class WannabeSolverManager {
 
+    public static final String SOLVER_CONFIG = "org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringSolverConfig.xml";
+
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private SolverFactory<Roster> solverFactory;
@@ -54,8 +56,7 @@ public class WannabeSolverManager {
 
     @PostConstruct
     public void setUpSolverFactory() {
-        solverFactory = SolverFactory.createFromXmlResource(
-                                                            "org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringSolverConfig.xml");
+        solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG);
         scoreDirectorFactory = solverFactory.buildSolver().getScoreDirectorFactory();
     }
 
