@@ -452,6 +452,7 @@ public class RosterGenerator {
                                         List<ShiftTemplate> shiftTemplateList) {
         int rotationLength = rosterState.getRotationLength();
         LocalDate date = rosterState.getLastHistoricDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate firstDraftDate = rosterState.getFirstDraftDate();
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
 
         List<Shift> shiftList = new ArrayList<>();
@@ -462,15 +463,18 @@ public class RosterGenerator {
             for (Spot spot : spotList) {
                 List<ShiftTemplate> subShiftTemplateList = dayOffsetAndSpotToShiftTemplateListMap.get(Pair.of(dayOffset, spot));
                 for (ShiftTemplate shiftTemplate : subShiftTemplateList) {
-                    Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(), tenantConfiguration.getTimeZone(), true);
+                    boolean defaultToRotationEmployee = date.compareTo(firstDraftDate) < 0;
+                    Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
+                            tenantConfiguration.getTimeZone(), defaultToRotationEmployee);
                     entityManager.persist(shift);
                     shiftList.add(shift);
                 }
-                if (date.compareTo(rosterState.getFirstDraftDate()) >= 0) {
+                if (date.compareTo(firstDraftDate) >= 0) {
                     int extraShiftCount = generateRandomIntFromThresholds(0.5, 0.8, 0.95);
                     for (int i = 0; i < extraShiftCount; i++) {
                         ShiftTemplate shiftTemplate = extractRandomElement(subShiftTemplateList);
-                        Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(), tenantConfiguration.getTimeZone(), false);
+                        Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
+                                tenantConfiguration.getTimeZone(), false);
                         entityManager.persist(shift);
                         shiftList.add(shift);
                     }

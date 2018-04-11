@@ -343,7 +343,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         for (int i = 0; i < rosterState.getPublishLength(); i++) {
             List<ShiftTemplate> dayShiftTemplateList = dayOffsetToShiftTemplateListMap.get(dayOffset);
             for (ShiftTemplate shiftTemplate : dayShiftTemplateList) {
-                Shift shift = shiftTemplate.createShiftOnDate(shiftDate, rosterState.getRotationLength(), tenantConfiguration.getTimeZone(), true);
+                Shift shift = shiftTemplate.createShiftOnDate(shiftDate, rosterState.getRotationLength(), tenantConfiguration.getTimeZone(), false);
                 entityManager.persist(shift);
             }
             shiftDate = shiftDate.plusDays(1);
