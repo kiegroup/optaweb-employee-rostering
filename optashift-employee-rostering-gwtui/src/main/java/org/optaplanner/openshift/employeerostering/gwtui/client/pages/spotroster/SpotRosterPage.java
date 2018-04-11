@@ -32,6 +32,7 @@ import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
+import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
@@ -43,6 +44,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
@@ -123,6 +125,9 @@ public class SpotRosterPage implements Page {
     private BlobPopover shiftBlobPopover;
 
     @Inject
+    private PageUtils pageUtils;
+
+    @Inject
     private ShiftBlobPopoverContent shiftBlobPopoverContent;
 
     @Inject
@@ -141,6 +146,7 @@ public class SpotRosterPage implements Page {
     private double updateRemainingTimeTaskId;
     private double stopSolvingTaskId;
 
+    private IsElement topToolbar, bottomToolbar;
     private SpotRosterViewport viewport;
     private Pagination spotsPagination = Pagination.of(0, 10);
     private SpotRosterView currentSpotRosterView;
@@ -155,8 +161,17 @@ public class SpotRosterPage implements Page {
     }
 
     @Override
-    public Promise<Void> beforeOpen() {
+    public Promise<Void> onOpen() {
+        topToolbar = () -> (HTMLElement) getElement().firstElementChild;
+        bottomToolbar = () -> (HTMLElement) getElement().lastElementChild;
+        pageUtils.addHeightConsumingElements(topToolbar, bottomToolbar);
         return refreshWithLoadingSpinner();
+    }
+
+    @Override
+    public Promise<Void> onClose() {
+        pageUtils.removeHeightConsumingElements(topToolbar, bottomToolbar);
+        return promiseUtils.resolve();
     }
 
     public void onTenantChanged(@Observes final TenantStore.TenantChange tenant) {

@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
@@ -90,9 +91,12 @@ public class ShiftBlob implements BlobWithTwin<OffsetDateTime, ShiftBlob> {
 
     @Override
     public void setPositionInScaleUnits(final OffsetDateTime positionInScaleUnits) {
+        Duration duration = Duration.between(shift.getStartDateTime(), shift.getEndDateTime());
         shift.setStartDateTime(positionInScaleUnits);
+        shift.setEndDateTime(positionInScaleUnits.plus(duration));
         // invalidate the cache
         positionInGridPixelsCache = null;
+        endPositionInGridPixelsCache = null;
     }
 
     @Override

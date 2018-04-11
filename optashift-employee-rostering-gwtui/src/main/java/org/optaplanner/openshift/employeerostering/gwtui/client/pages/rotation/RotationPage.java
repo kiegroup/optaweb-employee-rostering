@@ -29,8 +29,10 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
+import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
@@ -42,6 +44,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
@@ -63,10 +66,6 @@ public class RotationPage implements Page {
     private ViewportView<OffsetDateTime> viewportView;
 
     @Inject
-    @DataField("configuration")
-    private RotationConfigurationView rotationsConfigurationView;
-
-    @Inject
     @DataField("save-button")
     private HTMLButtonElement saveButton;
 
@@ -86,7 +85,25 @@ public class RotationPage implements Page {
     @Inject
     private PromiseUtils promiseUtils;
 
+    @Inject
+    private PageUtils pageUtils;
+
     private Viewport<OffsetDateTime> viewport;
+
+    private IsElement topToolbar;
+
+    @Override
+    public Promise<Void> onOpen() {
+        topToolbar = () -> (HTMLElement) getElement().firstElementChild;
+        pageUtils.addHeightConsumingElements(topToolbar);
+        return promiseUtils.resolve();
+    }
+
+    @Override
+    public Promise<Void> onClose() {
+        pageUtils.removeHeightConsumingElements(topToolbar);
+        return promiseUtils.resolve();
+    }
 
     @Override
     public Promise<Void> beforeOpen() {

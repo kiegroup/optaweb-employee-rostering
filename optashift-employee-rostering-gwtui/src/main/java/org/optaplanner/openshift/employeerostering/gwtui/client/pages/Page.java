@@ -28,4 +28,8 @@ public interface Page extends IsElement {
     default Promise<Void> onOpen() {
         return Promise.resolve((Promise<Void>) null);
     }
+
+    default Promise<Void> onClose() {
+        return Promise.resolve((Promise<Void>) null);
+    }
 }

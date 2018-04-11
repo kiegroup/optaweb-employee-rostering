@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
 import java.time.OffsetDateTime;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -33,8 +34,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CircularDraggability;
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CircularResizability;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobMouseHandler;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobMouseHandler.BlobMouseEvent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionState;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.slf4j.Logger;
@@ -57,37 +58,37 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     private HTMLElement label;
 
     @Inject
-    private CircularDraggability<OffsetDateTime, ShiftBlob> draggability;
-
-    @Inject
-    private CircularResizability<OffsetDateTime, ShiftBlob> resizability;
-
-    @Inject
     private Logger logger;
 
     private Viewport<OffsetDateTime> viewport;
     private SubLane<OffsetDateTime> subLane;
-    private ListView<ShiftBlob> blobViews;
+    private ListView<SubLane<OffsetDateTime>, ShiftBlob> blobViews;
     private Runnable onDestroy;
 
+    private BlobMouseHandler<OffsetDateTime> mouseHandler;
     private ShiftBlob blob;
 
     @Override
-    public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
-                                            final ListView<ShiftBlob> blobViews) {
-
+    public ListElementView<SubLane<OffsetDateTime>, ShiftBlob> setup(final ShiftBlob blob,
+                                                                     final ListView<SubLane<OffsetDateTime>, ShiftBlob> blobViews) {
         this.blob = blob;
         this.blobViews = blobViews;
+        this.withSubLane(blobViews.getContainer());
 
         refresh();
 
-        draggability.applyFor(blob, BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS, blobViews, subLane.getCollisionDetector(), viewport, this);
-        draggability.onDrag(this::onDrag);
-
-        resizability.applyFor(blob, BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS, blobViews, subLane.getCollisionDetector(), viewport, this);
-        resizability.onResize(this::onResize);
-
         return this;
+    }
+
+    @PostConstruct
+    private void init() {
+        mouseHandler = new BlobMouseHandler<OffsetDateTime>(this::getBlob, this::getViewport, this)
+                .withDragHandler(this::onDrag)
+                .withResizeHandler(this::onResize);
+    }
+
+    private Viewport<OffsetDateTime> getViewport() {
+        return viewport;
     }
 
     private void refresh() {
@@ -96,8 +97,8 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     }
 
     private void positionBlobOnGrid() {
-        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels());
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels());
     }
 
     private void updateLabel() {
@@ -106,17 +107,6 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     private void onResize(final Long newSizeInGridPixels,
                           final CollisionState dragState) {
-
-        refresh();
-        refreshTwinIfAny();
-
-        if (dragState.equals(COLLIDING)) {
-            logger.info("Collision!");
-        }
-    }
-
-    private void onDrag(final Long newPositionInGridPixels,
-                        final CollisionState dragState) {
 
         refresh();
         refreshTwinIfAny();
@@ -154,6 +144,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     @Override
     public BlobView<OffsetDateTime, ShiftBlob> withSubLane(final SubLane<OffsetDateTime> subLane) {
         this.subLane = subLane;
+        viewport.setGroupPosition(this, viewport.getSubLanePosition(subLane));
         return this;
     }
 
@@ -172,4 +163,49 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     public Blob<OffsetDateTime> getBlob() {
         return blob;
     }
+
+    private void onDrag(BlobMouseEvent e) {
+        blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(Math.round(e.getMousePositionDeltaInGridPixels() + e.getOriginalBlobStartPositionInGridPixels())));
+        updateView();
+    }
+
+    private void onResize(BlobMouseEvent e) {
+        switch (e.getResizingFrom()) {
+            case END:
+                if (e.getMousePositionInGridPixels() <= e.getOriginalBlobStartPositionInGridPixels()) {
+                    blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(Math.round(e.getMousePositionInGridPixels())));
+                    blob.setSizeInGridPixels(Math.round(e.getOriginalBlobStartPositionInGridPixels() - e.getMousePositionInGridPixels()));
+                } else {
+                    blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(e.getOriginalBlobStartPositionInGridPixels()));
+                    blob.setSizeInGridPixels(Math.round(e.getOriginalBlobLengthInGridPixels() + e.getMousePositionDeltaInGridPixels()));
+                }
+                break;
+            case START:
+                if (e.getMousePositionInGridPixels() > e.getOriginalBlobEndPositionInGridPixels()) {
+                    blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(e.getOriginalBlobEndPositionInGridPixels()));
+                    blob.setSizeInGridPixels(Math.round(e.getMousePositionInGridPixels() - e.getOriginalBlobEndPositionInGridPixels()));
+                } else {
+                    blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(Math.round(e.getOriginalBlobStartPositionInGridPixels() + e.getMousePositionDeltaInGridPixels())));
+                    blob.setSizeInGridPixels(Math.round(e.getOriginalBlobLengthInGridPixels() - e.getMousePositionDeltaInGridPixels()));
+                }
+                break;
+            default:
+                throw new IllegalStateException("No case to handle resizingFrom (" + e.getResizingFrom() + ") in ShiftBlobView.onResize");
+
+        }
+        updateView();
+    }
+
+    private void updateView() {
+        blob.getTwin().ifPresent(blobViews::remove);
+        blob.setTwin(blob.getUpdatedTwin().orElse(null));
+        blob.getTwin().ifPresent(blobViews::add);
+        if (blob.getEndPositionInGridPixels() < 0 || blob.getPositionInGridPixels() > viewport.getScale().getEndInGridPixels()) {
+            blob.getTwin().ifPresent(twin -> twin.setTwin(null));
+            blobViews.remove(blob);
+        }
+        refresh();
+        refreshTwinIfAny();
+    }
+
 }

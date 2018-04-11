@@ -16,25 +16,23 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.inject.Named;
 
-import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 
 @Dependent
 public class TicksFactory<T> {
 
     @Inject
-    private HTMLDivElement div;
+    @Named("span")
+    private HTMLElement span;
 
-    @PostConstruct
-    private void init() {
-        div.classList.add("tick");
-    }
-
-    public Ticks<T> newTicks(final LinearScale<T> scale, final Long softStepSize, final Long harshStepSize) {
-        return new Ticks<>(scale, softStepSize, harshStepSize, () -> (HTMLDivElement) div.cloneNode(false));
+    public Ticks<T> newTicks(final LinearScale<T> scale, String className, final Long position, final Long stepSize, final Long offset) {
+        HTMLElement element = (HTMLElement) span.cloneNode(false);
+        element.classList.add(className);
+        return new Ticks<>(scale, className, position, stepSize, offset, () -> (HTMLElement) element.cloneNode(false));
     }
 }
