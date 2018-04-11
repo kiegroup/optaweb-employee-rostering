@@ -50,12 +50,11 @@ rule "Unavailable time slot for an employee"
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNAVAILABLE,
                 $e : employee,
-                $date : date,
-                $startTime : startTime,
-                $endTime : endTime)
+                $startDateTime : startDateTime,
+                $endDateTime : endDateTime)
         Shift(
                 employee == $e,
-                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($date,$startTime,$endTime,
+                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -50);
@@ -100,12 +99,11 @@ rule "Undesired time slot for an employee"
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNDESIRED,
                 $e : employee,
-                $date : date,
-                $startTime : startTime,
-                $endTime : endTime)
+                $startDateTime : startDateTime,
+                $endDateTime : endDateTime)
         Shift(
                 employee == $e,
-                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($date,$startTime,$endTime,
+                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -$tenantConfiguration.getUndesiredTimeSlotWeight());
@@ -117,12 +115,11 @@ rule "Desired time slot for an employee"
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.DESIRED,
                 $e : employee,
-                $date : date,
-                $startTime : startTime,
-                $endTime : endTime)
+                $startDateTime : startDateTime,
+                $endDateTime : endDateTime)
         Shift(
                 employee == $e,
-                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($date,$startTime,$endTime,
+                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, +$tenantConfiguration.getDesiredTimeSlotWeight());
