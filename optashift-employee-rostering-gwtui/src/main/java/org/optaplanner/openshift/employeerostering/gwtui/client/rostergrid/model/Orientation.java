@@ -28,9 +28,9 @@ public enum Orientation {
             Long size = getSize(element);
             Long endPosition = clamp(positionInGridPixels + viewport.getHeaderColumns() + size, viewport.getHeaderColumns(), viewport.getScale().getEndInGridPixels() + viewport.getHeaderColumns());
             element.getElement().style.set("grid-row-start", (position + 1) + "");
-            element.getElement().style.set("--grid-row-start", (positionInGridPixels + viewport.getHeaderColumns()) + "");
+            element.getElement().setAttribute("data-grid-main-axis-start", (positionInGridPixels + viewport.getHeaderColumns()) + "");
             element.getElement().style.set("grid-row-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-row-end", (positionInGridPixels + size + viewport.getHeaderColumns()) + "");
+            element.getElement().setAttribute("data-grid-main-axis-end", (positionInGridPixels + size + viewport.getHeaderColumns()) + "");
         }
 
         @Override
@@ -38,9 +38,9 @@ public enum Orientation {
             Long size = getSize(element);
             Long endPosition = clamp(positionInGridPixels + size, viewport.getHeaderColumns(), viewport.getScale().getEndInGridPixels() + viewport.getHeaderColumns());
             element.getElement().style.set("grid-row-start", (positionInGridPixels + 1) + "");
-            element.getElement().style.set("--grid-row-start", (positionInGridPixels) + "");
+            element.getElement().setAttribute("data-grid-main-axis-start", (positionInGridPixels) + "");
             element.getElement().style.set("grid-row-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-row-end", (positionInGridPixels + size) + "");
+            element.getElement().setAttribute("data-grid-main-axis-end", (positionInGridPixels + size) + "");
         }
 
         @Override
@@ -48,18 +48,18 @@ public enum Orientation {
             Long position = clamp(positionInGridPixels + viewport.getHeaderRows(), viewport.getHeaderRows(), Long.MAX_VALUE);
             Long endPosition = positionInGridPixels + getGroupSize(element) + viewport.getHeaderRows();
             element.getElement().style.set("grid-column-start", (position + 1) + "");
-            element.getElement().style.set("--grid-column-start", (positionInGridPixels + viewport.getHeaderRows()) + "");
+            element.getElement().setAttribute("data-grid-secondary-axis-start", (positionInGridPixels + viewport.getHeaderRows()) + "");
             element.getElement().style.set("grid-column-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-column-end", (endPosition) + "");
+            element.getElement().setAttribute("data-grid-secondary-axis-end", (endPosition) + "");
         }
 
         @Override
         void absGroupPosition(IsElement element, Long positionInGridPixels, Viewport viewport) {
             Long endPosition = positionInGridPixels + getGroupSize(element);
             element.getElement().style.set("grid-column-start", (positionInGridPixels + 1) + "");
-            element.getElement().style.set("--grid-column-start", (positionInGridPixels) + "");
+            element.getElement().setAttribute("data-grid-secondary-axis-start", (positionInGridPixels) + "");
             element.getElement().style.set("grid-column-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-column-end", (endPosition) + "");
+            element.getElement().setAttribute("data-grid-secondary-axis-end", (endPosition) + "");
         }
 
         @Override
@@ -67,43 +67,14 @@ public enum Orientation {
             Long startPosition = getStartPosition(element);
             Long endPosition = clamp(startPosition + sizeInGridPixels, viewport.getHeaderColumns(), viewport.getHeaderColumns() + viewport.getScale().getEndInGridPixels());
             element.getElement().style.set("grid-row-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-row-end", (startPosition + sizeInGridPixels) + "");
+            element.getElement().setAttribute("data-grid-main-axis-end", (startPosition + sizeInGridPixels) + "");
         }
 
         @Override
         void groupScale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport) {
             Long startPosition = getGroupStartPosition(element);
             element.getElement().style.set("grid-column-end", (startPosition + sizeInGridPixels + 1) + "");
-            element.getElement().style.set("--grid-column-end", (startPosition + sizeInGridPixels) + "");
-        }
-
-        @Override
-        public Long getSize(final IsElement element) {
-            return getEndPosition(element) - getStartPosition(element);
-        }
-
-        public Long getGroupSize(final IsElement element) {
-            return getGroupEndPosition(element) - getGroupStartPosition(element);
-        }
-
-        private Long getStartPosition(final IsElement element) {
-            final String position = element.getElement().style.get("--grid-row-start");
-            return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
-        }
-
-        private Long getEndPosition(final IsElement element) {
-            final String position = element.getElement().style.get("--grid-row-end");
-            return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
-        }
-
-        private Long getGroupStartPosition(final IsElement element) {
-            final String position = element.getElement().style.get("--grid-column-start");
-            return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
-        }
-
-        private Long getGroupEndPosition(final IsElement element) {
-            final String position = element.getElement().style.get("--grid-column-end");
-            return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
+            element.getElement().setAttribute("data-grid-secondary-axis-end", (startPosition + sizeInGridPixels) + "");
         }
 
     },
@@ -116,9 +87,9 @@ public enum Orientation {
             Long size = getSize(element);
             Long endPosition = clamp(positionInGridPixels + viewport.getHeaderColumns() + size, viewport.getHeaderColumns(), viewport.getScale().getEndInGridPixels() + viewport.getHeaderColumns());
             element.getElement().style.set("grid-column-start", (position + 1) + "");
-            element.getElement().style.set("--grid-column-start", (positionInGridPixels + viewport.getHeaderColumns()) + "");
+            element.getElement().setAttribute("data-grid-main-axis-start", (positionInGridPixels + viewport.getHeaderColumns()) + "");
             element.getElement().style.set("grid-column-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-column-end", (positionInGridPixels + size + viewport.getHeaderColumns()) + "");
+            element.getElement().setAttribute("data-grid-main-axis-end", (positionInGridPixels + size + viewport.getHeaderColumns()) + "");
         }
 
         @Override
@@ -126,9 +97,9 @@ public enum Orientation {
             Long size = getSize(element);
             Long endPosition = clamp(positionInGridPixels + size, viewport.getHeaderColumns(), viewport.getScale().getEndInGridPixels() + viewport.getHeaderColumns());
             element.getElement().style.set("grid-column-start", (positionInGridPixels + 1) + "");
-            element.getElement().style.set("--grid-column-start", (positionInGridPixels) + "");
+            element.getElement().setAttribute("data-grid-main-axis-start", (positionInGridPixels) + "");
             element.getElement().style.set("grid-column-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-column-end", (positionInGridPixels + size) + "");
+            element.getElement().setAttribute("data-grid-main-axis-end", (positionInGridPixels + size) + "");
         }
 
         @Override
@@ -136,18 +107,18 @@ public enum Orientation {
             Long position = clamp(positionInGridPixels + viewport.getHeaderRows(), viewport.getHeaderRows(), Long.MAX_VALUE);
             Long endPosition = positionInGridPixels + getGroupSize(element) + viewport.getHeaderRows();
             element.getElement().style.set("grid-row-start", (position + 1) + "");
-            element.getElement().style.set("--grid-row-start", (positionInGridPixels + viewport.getHeaderRows()) + "");
+            element.getElement().setAttribute("data-grid-secondary-axis-start", (positionInGridPixels + viewport.getHeaderRows()) + "");
             element.getElement().style.set("grid-row-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-row-end", (endPosition) + "");
+            element.getElement().setAttribute("data-grid-secondary-axis-end", (endPosition) + "");
         }
 
         @Override
         void absGroupPosition(IsElement element, Long positionInGridPixels, Viewport viewport) {
             Long endPosition = positionInGridPixels + getGroupSize(element);
             element.getElement().style.set("grid-row-start", (positionInGridPixels + 1) + "");
-            element.getElement().style.set("--grid-row-start", (positionInGridPixels) + "");
+            element.getElement().setAttribute("data-grid-secondary-axis-start", (positionInGridPixels) + "");
             element.getElement().style.set("grid-row-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-row-end", (endPosition) + "");
+            element.getElement().setAttribute("data-grid-secondary-axis-end", (endPosition) + "");
         }
 
         @Override
@@ -155,44 +126,16 @@ public enum Orientation {
             Long startPosition = getStartPosition(element);
             Long endPosition = clamp(startPosition + sizeInGridPixels, viewport.getHeaderColumns(), viewport.getHeaderColumns() + viewport.getScale().getEndInGridPixels());
             element.getElement().style.set("grid-column-end", (endPosition + 1) + "");
-            element.getElement().style.set("--grid-column-end", (startPosition + sizeInGridPixels) + "");
+            element.getElement().setAttribute("data-grid-main-axis-end", (startPosition + sizeInGridPixels) + "");
         }
 
         @Override
         void groupScale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport) {
             Long startPosition = getGroupStartPosition(element);
             element.getElement().style.set("grid-row-end", (startPosition + sizeInGridPixels + 1) + "");
-            element.getElement().style.set("--grid-row-end", (startPosition + sizeInGridPixels) + "");
+            element.getElement().setAttribute("data-grid-secondary-axis-end", (startPosition + sizeInGridPixels) + "");
         }
 
-        @Override
-        public Long getSize(final IsElement element) {
-            return getEndPosition(element) - getStartPosition(element);
-        }
-
-        public Long getGroupSize(final IsElement element) {
-            return getGroupEndPosition(element) - getGroupStartPosition(element);
-        }
-
-        private Long getStartPosition(final IsElement element) {
-            final String position = element.getElement().style.get("--grid-column-start");
-            return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
-        }
-
-        private Long getEndPosition(final IsElement element) {
-            final String position = element.getElement().style.get("--grid-column-end");
-            return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
-        }
-
-        private Long getGroupStartPosition(final IsElement element) {
-            final String position = element.getElement().style.get("--grid-row-start");
-            return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
-        }
-
-        private Long getGroupEndPosition(final IsElement element) {
-            final String position = element.getElement().style.get("--grid-row-end");
-            return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
-        }
     };
 
     private static Long clamp(Long value, Long min, Long max) {
@@ -264,5 +207,31 @@ public enum Orientation {
      * @param element Element to get the size of.
      * @return The size across the main axis for element, in grid pixels.
      */
-    public abstract Long getSize(final IsElement element);
+    public Long getSize(final IsElement element) {
+        return getEndPosition(element) - getStartPosition(element);
+    }
+
+    public Long getGroupSize(final IsElement element) {
+        return getGroupEndPosition(element) - getGroupStartPosition(element);
+    }
+
+    public Long getStartPosition(final IsElement element) {
+        final String position = element.getElement().getAttribute("data-grid-main-axis-start");
+        return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
+    }
+
+    public Long getEndPosition(final IsElement element) {
+        final String position = element.getElement().getAttribute("data-grid-main-axis-end");
+        return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
+    }
+
+    public Long getGroupStartPosition(final IsElement element) {
+        final String position = element.getElement().getAttribute("data-grid-secondary-axis-start");
+        return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
+    }
+
+    public Long getGroupEndPosition(final IsElement element) {
+        final String position = element.getElement().getAttribute("data-grid-secondary-axis-end");
+        return position == null || position.isEmpty() ? 0 : Long.parseLong(position);
+    }
 }

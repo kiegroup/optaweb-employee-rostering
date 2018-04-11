@@ -126,7 +126,7 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     @EventHandler("blob")
     public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
         if (blob.getEmployeeAvailability() != null) {
-            page.getBlobPopover().showFor(this);
+            page.getBlobPopover().showFor(viewport, this);
         }
     }
 
