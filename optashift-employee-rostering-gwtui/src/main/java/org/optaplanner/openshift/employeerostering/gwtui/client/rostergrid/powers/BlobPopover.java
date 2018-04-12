@@ -20,7 +20,6 @@ import java.util.function.Function;
 
 import javax.inject.Inject;
 
-import elemental2.dom.CSSProperties.WidthUnionType;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
@@ -29,6 +28,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 
 @Templated
@@ -60,7 +60,7 @@ public class BlobPopover implements IsElement {
         this.content = content.withPopover(this);
     }
 
-    public void showFor(final BlobView<?, ?> blobView) {
+    public void showFor(final Viewport viewport, final BlobView<?, ?> blobView) {
         content.init(blobView);
 
         contentContainer.innerHTML = "";
@@ -78,10 +78,13 @@ public class BlobPopover implements IsElement {
         content.getElement().style.top = top(offsetTop, blobElement);
         content.getElement().style.left = left(offsetLeft, blobElement);
 
-        blobHighlightBorder.style.left = px(offsetLeft);
-        blobHighlightBorder.style.top = px(offsetTop);
-        blobHighlightBorder.style.width = WidthUnionType.of(px(blobElement.offsetWidth));
-
+        blobHighlightBorder.remove();
+        blobHighlightBorder.classList.remove("hidden");
+        blobElement.parentNode.appendChild(blobHighlightBorder);
+        viewport.setPositionInScreenPixels(() -> blobHighlightBorder, blobView.getBlob().getPositionInGridPixels());
+        viewport.setSizeInScreenPixels(() -> blobHighlightBorder, blobView.getBlob().getSizeInGridPixels());
+        viewport.setAbsGroupPosition(() -> blobHighlightBorder, viewport.getOrientation().getGroupStartPosition(blobView));
+        viewport.setGroupSizeInScreenPixels(() -> blobHighlightBorder, 1L);
         getElement().style.visibility = "";
     }
 
@@ -116,6 +119,7 @@ public class BlobPopover implements IsElement {
     }
 
     public void hide() {
+        blobHighlightBorder.classList.add("hidden");
         getElement().classList.add("hidden");
     }
 

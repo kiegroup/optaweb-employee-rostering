@@ -29,19 +29,24 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
+import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PageUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
@@ -63,10 +68,6 @@ public class RotationPage implements Page {
     private ViewportView<OffsetDateTime> viewportView;
 
     @Inject
-    @DataField("configuration")
-    private RotationConfigurationView rotationsConfigurationView;
-
-    @Inject
     @DataField("save-button")
     private HTMLButtonElement saveButton;
 
@@ -86,15 +87,44 @@ public class RotationPage implements Page {
     @Inject
     private PromiseUtils promiseUtils;
 
+    @Inject
+    private PageUtils pageUtils;
+
+    private Pages.Id pageId;
+
     private Viewport<OffsetDateTime> viewport;
 
+    private IsElement topToolbar;
+
     @Override
-    public Promise<Void> beforeOpen() {
+    public Promise<Void> onOpen() {
+        topToolbar = () -> (HTMLElement) getElement().firstElementChild;
+        pageUtils.appendHeightConsumingElements(topToolbar)
+                .appendWidthFillingElements(topToolbar);
         return refresh();
     }
 
-    public void onTenantChanged(final @Observes TenantStore.TenantChange tenant) {
-        refresh();
+    @Override
+    public Promise<Void> onClose() {
+        pageUtils.removeHeightConsumingElements(topToolbar)
+                .removeWidthFillingElements(topToolbar);
+        viewportView.onClose();
+        return promiseUtils.resolve();
+    }
+
+    @Override
+    public Promise<Void> beforeOpen() {
+        return promiseUtils.resolve();
+    }
+
+    public void onPageChanged(final @Observes PageChange pageChange) {
+        pageId = pageChange.getPageId();
+    }
+
+    public void onTenantChanged(@Observes final TenantStore.TenantChange tenant) {
+        if (pageId == Pages.Id.ROTATION) {
+            refresh();
+        }
     }
 
     public Promise<Void> refresh() {
@@ -106,6 +136,7 @@ public class RotationPage implements Page {
                 return promiseUtils.manage(fetchRosterState().then(rosterState -> {
                     final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate, rosterState).stream()
                             .collect(groupingBy(Shift::getSpot));
+                    viewportView.onClose();
                     viewport = rotationViewportFactory.getViewport(rosterState, shiftsBySpot, spotList);
                     viewportView.setViewport(viewport);
                     loadingSpinner.hideFor("rotation-page");

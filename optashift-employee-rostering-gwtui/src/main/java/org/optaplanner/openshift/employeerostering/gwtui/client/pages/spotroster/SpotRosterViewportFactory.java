@@ -40,6 +40,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.power
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -93,8 +94,9 @@ public class SpotRosterViewportFactory {
             return new SpotRosterViewport(tenantStore.getCurrentTenantId(),
                     shiftBlobViewPool::get,
                     scale,
-                    cssGridLinesFactory.newWithSteps(2L, 12L),
-                    ticksFactory.newTicks(scale, 2L, 12L),
+                    cssGridLinesFactory.newWithSteps(2L, 12L, (long) -GwtJavaTimeWorkaroundUtil.getOffsetInMinutes(GwtJavaTimeWorkaroundUtil.toLocalDate(scale.toScaleUnits(0L)), ZoneOffset.UTC) / 120),
+                    ticksFactory.newTicks(scale, "date-tick", 0L, 12L, (long) -GwtJavaTimeWorkaroundUtil.getOffsetInMinutes(GwtJavaTimeWorkaroundUtil.toLocalDate(scale.toScaleUnits(0L)), ZoneOffset.UTC) / 120),
+                    ticksFactory.newTicks(scale, "time-tick", 1L, 2L, 0L),
                     lanes);
         });
     }
@@ -122,7 +124,7 @@ public class SpotRosterViewportFactory {
         //FIXME: Handle overlapping blobs and discover why some TimeSlots are null
 
         if (timeSlotsByShift.isEmpty()) {
-            return new ArrayList<>(singletonList(new SubLane<>()));
+            return new ArrayList<>(singletonList(new SubLane<>(spot.getName())));
         }
 
         final Stream<Blob<OffsetDateTime>> blobs = timeSlotsByShift
@@ -134,7 +136,7 @@ public class SpotRosterViewportFactory {
                     return buildShiftBlob(spot, shiftView, employee);
                 });
 
-        return conflictFreeSubLanesFactory.createSubLanes(blobs);
+        return conflictFreeSubLanesFactory.createSubLanes(spot.getName(), blobs);
     }
 
     private ShiftBlob buildShiftBlob(final Spot spot,

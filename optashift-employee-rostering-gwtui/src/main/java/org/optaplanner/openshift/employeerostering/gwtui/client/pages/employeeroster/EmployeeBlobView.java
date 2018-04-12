@@ -56,14 +56,14 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     private EmployeeRosterPage page;
 
     private Viewport<OffsetDateTime> viewport;
-    private ListView<EmployeeBlob> blobViews;
+    private ListView<SubLane<OffsetDateTime>, EmployeeBlob> blobViews;
     private Runnable onDestroy;
 
     private EmployeeBlob blob;
 
     @Override
-    public ListElementView<EmployeeBlob> setup(final EmployeeBlob blob,
-                                               final ListView<EmployeeBlob> blobViews) {
+    public ListElementView<SubLane<OffsetDateTime>, EmployeeBlob> setup(final EmployeeBlob blob,
+                                                                        final ListView<SubLane<OffsetDateTime>, EmployeeBlob> blobViews) {
 
         this.blobViews = blobViews;
         this.blob = blob;
@@ -91,8 +91,8 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
             setClassProperty("draft", rosterState.isDraft(blob.getEmployeeAvailability().getStartDateTime()));
         }
 
-        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels());
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels());
 
         updateLabel();
     }
@@ -126,7 +126,7 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     @EventHandler("blob")
     public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
         if (blob.getEmployeeAvailability() != null) {
-            page.getBlobPopover().showFor(this);
+            page.getBlobPopover().showFor(viewport, this);
         }
     }
 
@@ -142,6 +142,7 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
 
     @Override
     public BlobView<OffsetDateTime, EmployeeBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
+        this.viewport.setGroupPosition(this, viewport.getSubLanePosition(subLaneView));
         return this;
     }
 

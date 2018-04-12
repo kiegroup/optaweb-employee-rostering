@@ -40,6 +40,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantSto
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
@@ -100,8 +101,9 @@ public class EmployeeRosterViewportFactory {
             return new EmployeeRosterViewport(tenantStore.getCurrentTenantId(),
                     shiftBlobViewPool::get,
                     scale,
-                    cssGridLinesFactory.newWithSteps(2L, 12L),
-                    ticksFactory.newTicks(scale, 2L, 12L),
+                    cssGridLinesFactory.newWithSteps(2L, 12L, (long) -GwtJavaTimeWorkaroundUtil.getOffsetInMinutes(GwtJavaTimeWorkaroundUtil.toLocalDate(scale.toScaleUnits(0L)), ZoneOffset.UTC) / 120),
+                    ticksFactory.newTicks(scale, "date-tick", 0L, 12L, (long) -GwtJavaTimeWorkaroundUtil.getOffsetInMinutes(GwtJavaTimeWorkaroundUtil.toLocalDate(scale.toScaleUnits(0L)), ZoneOffset.UTC) / 120),
+                    ticksFactory.newTicks(scale, "time-tick", 1L, 2L, 0L),
                     lanes);
         });
     }
@@ -136,7 +138,7 @@ public class EmployeeRosterViewportFactory {
                                                         final Map<Long, Spot> spotIdToSpot) {
 
         if (employeeIdToAvailabilityViewList.isEmpty()) {
-            return new ArrayList<>(singletonList(new SubLane<>()));
+            return new ArrayList<>(singletonList(new SubLane<>(employee.getName())));
         }
 
         List<EmployeeAvailabilityView> employeeAvailabilities = new ArrayList<>();
@@ -162,7 +164,7 @@ public class EmployeeRosterViewportFactory {
                     return buildEmployeeShiftBlob(employee, spotIdToSpot.get(s.getSpotId()), s);
                 }).collect(Collectors.toList());
         // Impossible for an employee to have two employee availabilities at the same time
-        return new ArrayList<>(Arrays.asList(new SubLane<>(employeeAvailabilitiesBlobs), new SubLane<>(employeeShiftsBlobs)));//conflictFreeSubLanesFactory.createSubLanes(blobs);
+        return new ArrayList<>(Arrays.asList(new SubLane<>(employee.getName(), employeeAvailabilitiesBlobs), new SubLane<>(employee.getName(), employeeShiftsBlobs)));//conflictFreeSubLanesFactory.createSubLanes(blobs);
     }
 
     private EmployeeBlob buildEmployeeAvailabilityBlob(final Employee employee,

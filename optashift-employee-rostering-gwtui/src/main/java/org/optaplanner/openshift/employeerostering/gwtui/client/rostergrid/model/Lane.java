@@ -43,6 +43,6 @@ public class Lane<T> {
         return getSubLanes().subList(getSubLanes().indexOf(subLane), getSubLanes().size())
                 .stream()
                 .filter(s -> !s.anyCollide(newBlobs))
-                .findFirst().orElseGet(SubLane::new);
+                .findFirst().orElseGet(() -> new SubLane<T>(getTitle()));
     }
 }

@@ -21,7 +21,6 @@ import java.time.OffsetDateTime;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -44,7 +43,8 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     @Inject
     @DataField("blob")
-    private HTMLDivElement root;
+    @Named("span")
+    private HTMLElement root;
 
     @Inject
     @Named("span")
@@ -55,14 +55,14 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     private SpotRosterPage page;
 
     private Viewport<OffsetDateTime> viewport;
-    private ListView<ShiftBlob> blobViews;
+    private ListView<SubLane<OffsetDateTime>, ShiftBlob> blobViews;
     private Runnable onDestroy;
 
     private ShiftBlob blob;
 
     @Override
-    public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
-                                            final ListView<ShiftBlob> blobViews) {
+    public ListElementView<SubLane<OffsetDateTime>, ShiftBlob> setup(final ShiftBlob blob,
+                                                                     final ListView<SubLane<OffsetDateTime>, ShiftBlob> blobViews) {
 
         this.blobViews = blobViews;
         this.blob = blob;
@@ -83,8 +83,8 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
         setClassProperty("published", rosterState.isPublished(blob.getShift()));
         setClassProperty("draft", rosterState.isDraft(blob.getShift()));
 
-        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
-        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
+        viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels());
+        viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels());
 
         updateLabel();
     }
@@ -117,7 +117,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     @EventHandler("blob")
     public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
-        page.getBlobPopover().showFor(this);
+        page.getBlobPopover().showFor(viewport, this);
     }
 
     private void updateLabel() {
@@ -132,6 +132,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     @Override
     public BlobView<OffsetDateTime, ShiftBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
+        viewport.setGroupPosition(this, viewport.getSubLanePosition(subLaneView));
         return this;
     }
 

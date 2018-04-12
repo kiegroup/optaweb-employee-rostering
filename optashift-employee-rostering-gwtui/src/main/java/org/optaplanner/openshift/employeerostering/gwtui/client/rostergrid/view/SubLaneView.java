@@ -36,33 +36,37 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import static java.util.stream.Collectors.toList;
 
 @Templated
-public class SubLaneView<T> implements ListElementView<SubLane<T>> {
+public class SubLaneView<T> implements ListElementView<Lane<T>, SubLane<T>> {
 
     @Inject
     @DataField("sub-lane")
     public HTMLDivElement root;
 
     @Inject
-    private ListView<Blob<T>> blobs;
+    private ListView<SubLane<T>, Blob<T>> blobs;
 
     private SubLane<T> subLane;
-    private ListView<SubLane<T>> subLaneViews;
+    private ListView<Lane<T>, SubLane<T>> subLaneViews;
 
     private Viewport<T> viewport;
 
     private Lane<T> lane;
-    private ListView<Lane<T>> lanes;
+    private ListView<Viewport<T>, Lane<T>> lanes;
 
     @Override
     @SuppressWarnings("unchecked")
-    public ListElementView<SubLane<T>> setup(final SubLane<T> subLane,
-                                             final ListView<SubLane<T>> subLaneViews) {
+    public ListElementView<Lane<T>, SubLane<T>> setup(final SubLane<T> subLane,
+                                                      final ListView<Lane<T>, SubLane<T>> subLaneViews) {
 
         this.subLaneViews = subLaneViews;
         this.subLane = subLane;
 
+        viewport.setPositionInScreenPixels(this, 0L);
+        viewport.setSizeInScreenPixels(this, viewport.getScale().getEndInGridPixels());
+        viewport.setGroupPosition(this, viewport.getSubLanePosition(subLane));
+
         //FIXME: Generics issue
-        blobs.init(getElement(), subLane.getBlobs(), () -> (BlobView) viewport.newBlobView()
+        blobs.init(subLaneViews.getHTMLParentElement(), subLane, subLane.getBlobs(), () -> (BlobView) viewport.newBlobView()
                 .withViewport(viewport)
                 .withSubLane(subLane));
 
@@ -81,25 +85,13 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
             return;
         }
 
-        // Remove SubLane (SHIFT + ALT + CLICK)
-        if (e.shiftKey && e.altKey) {
-            subLaneViews.remove(subLane);
-            if (subLaneViews.isEmpty()) {
-                lanes.remove(lane);
-            }
-        }
+        // Add Blob (CLICK)
+        final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
+        final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
+        final T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
 
-        // Add Blob (ALT + CLICK)
-        else if (e.altKey) {
-            final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
-            final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
-            final T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
-
-            final List<Blob<T>> newBlobs = viewport.newBlob(lane, positionInScaleUnits).collect(toList());
-            final SubLane<T> nextSubLaneWithAvailableSpace = lane.getNextSubLaneWithSpaceForBlobsStartingFrom(subLane, newBlobs);
-
-            subLaneViews.addOrReplace(nextSubLaneWithAvailableSpace, nextSubLaneWithAvailableSpace.withMore(newBlobs));
-        }
+        final List<Blob<T>> newBlobs = viewport.newBlob(lane, positionInScaleUnits).collect(toList());
+        newBlobs.forEach((b) -> blobs.add(b));
     }
 
     public SubLaneView<T> withViewport(final Viewport<T> viewport) {
@@ -107,8 +99,8 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
         return this;
     }
 
-    public ListElementView<SubLane<T>> withParent(final Lane<T> parentLane,
-                                                  final ListView<Lane<T>> parentList) {
+    public ListElementView<Lane<T>, SubLane<T>> withParent(final Lane<T> parentLane,
+                                                           final ListView<Viewport<T>, Lane<T>> parentList) {
 
         this.lane = parentLane;
         this.lanes = parentList;

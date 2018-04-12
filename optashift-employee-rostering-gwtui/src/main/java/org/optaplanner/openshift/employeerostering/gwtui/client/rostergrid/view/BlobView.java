@@ -21,7 +21,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 
-public interface BlobView<Y, T extends Blob<Y>> extends ListElementView<T> {
+public interface BlobView<Y, T extends Blob<Y>> extends ListElementView<SubLane<Y>, T> {
 
     BlobView<Y, T> withViewport(final Viewport<Y> viewport);
 
