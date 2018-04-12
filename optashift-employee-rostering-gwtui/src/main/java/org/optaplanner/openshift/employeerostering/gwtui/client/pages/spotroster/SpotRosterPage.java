@@ -76,10 +76,6 @@ public class SpotRosterPage implements Page {
     private HTMLButtonElement publishButton;
 
     @Inject
-    @DataField("viewport-frame")
-    private HTMLDivElement viewportFrame;
-
-    @Inject
     @DataField("viewport")
     private ViewportView<OffsetDateTime> viewportView;
 
@@ -292,16 +288,6 @@ public class SpotRosterPage implements Page {
 
     //FIXME: Improve horizontal navigation. Probably snap to fixed dates with animation.
     private static final Integer TIME_SCROLL_SIZE = 300;
-
-    @EventHandler("forward-in-time-button")
-    public void onForwardInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        viewportFrame.scrollLeft += TIME_SCROLL_SIZE;
-    }
-
-    @EventHandler("back-in-time-button")
-    public void onBackInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        viewportFrame.scrollLeft -= TIME_SCROLL_SIZE;
-    }
 
     public SpotRosterView getCurrentSpotRosterView() {
         return currentSpotRosterView;

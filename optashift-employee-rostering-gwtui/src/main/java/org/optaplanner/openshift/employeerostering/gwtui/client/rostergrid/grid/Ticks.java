@@ -27,18 +27,15 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 public class Ticks<T> {
 
     private final LinearScale<T> scale;
-    private final Long softStepSize;
-    private final Long harshStepSize;
+    private final Long stepSize;
     private final Supplier<HTMLDivElement> divFactory;
 
     Ticks(final LinearScale<T> scale,
-          final Long softStepSize,
-          final Long harshStepSize,
+          final Long stepSize,
           final Supplier<HTMLDivElement> divFactory) {
 
         this.scale = scale;
-        this.softStepSize = softStepSize;
-        this.harshStepSize = harshStepSize;
+        this.stepSize = stepSize;
         this.divFactory = divFactory;
     }
 
@@ -48,14 +45,12 @@ public class Ticks<T> {
 
         target.getElement().innerHTML = "";
 
-        for (Long i = 0L; i <= scale.getEndInGridPixels(); i += softStepSize) {
+        for (Long i = 0L; i < scale.getEndInGridPixels(); i += stepSize) {
 
             final HTMLDivElement tick = divFactory.get();
-            if (i % harshStepSize == 0) {
-                tick.classList.add("harsh");
-            }
             tick.textContent = tickText.apply(scale.toScaleUnits(i));
             viewport.setPositionInScreenPixels(() -> tick, i, -2L);
+            viewport.setSizeInScreenPixels(() -> tick, stepSize, -2L);
             target.getElement().appendChild(tick);
         }
     }
