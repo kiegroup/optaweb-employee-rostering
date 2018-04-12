@@ -110,14 +110,6 @@ public class SpotRosterPage implements Page {
     private HTMLAnchorElement previousPageButton;
 
     @Inject
-    @DataField("back-in-time-button")
-    private HTMLAnchorElement backInTimeButton;
-
-    @Inject
-    @DataField("forward-in-time-button")
-    private HTMLAnchorElement forwardInTimeButton;
-
-    @Inject
     @DataField("shift-blob-popover")
     private BlobPopover shiftBlobPopover;
 
@@ -309,15 +301,6 @@ public class SpotRosterPage implements Page {
         spotsPagination = spotsPagination.nextPage();
         refreshWithLoadingSpinner();
     }
-
-    //FIXME: Improve horizontal navigation. Probably snap to fixed dates with animation.
-    private static final Integer TIME_SCROLL_SIZE = 300;
-
-    @EventHandler("forward-in-time-button")
-    public void onForwardInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {}
-
-    @EventHandler("back-in-time-button")
-    public void onBackInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {}
 
     public SpotRosterView getCurrentSpotRosterView() {
         return currentSpotRosterView;

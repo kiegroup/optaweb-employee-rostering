@@ -69,14 +69,6 @@ public class EmployeeRosterPage implements Page {
     private HTMLAnchorElement previousPageButton;
 
     @Inject
-    @DataField("back-in-time-button")
-    private HTMLAnchorElement backInTimeButton;
-
-    @Inject
-    @DataField("forward-in-time-button")
-    private HTMLAnchorElement forwardInTimeButton;
-
-    @Inject
     @DataField("availability-blob-popover")
     private BlobPopover availabilityBlobPopover;
 
@@ -192,19 +184,6 @@ public class EmployeeRosterPage implements Page {
     public void onNextPageButtonClicked(@ForEvent("click") final MouseEvent e) {
         employeePagination = employeePagination.nextPage();
         refreshWithLoadingSpinner();
-    }
-
-    //FIXME: Improve horizontal navigation. Probably snap to fixed dates with animation.
-    private static final Integer TIME_SCROLL_SIZE = 300;
-
-    @EventHandler("forward-in-time-button")
-    public void onForwardInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        //viewportFrame.scrollLeft += TIME_SCROLL_SIZE;
-    }
-
-    @EventHandler("back-in-time-button")
-    public void onBackInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        //viewportFrame.scrollLeft -= TIME_SCROLL_SIZE;
     }
 
     //API calls
