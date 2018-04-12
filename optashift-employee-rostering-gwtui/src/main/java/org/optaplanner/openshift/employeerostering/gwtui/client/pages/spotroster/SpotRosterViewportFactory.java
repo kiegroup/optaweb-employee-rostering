@@ -94,7 +94,8 @@ public class SpotRosterViewportFactory {
                     shiftBlobViewPool::get,
                     scale,
                     cssGridLinesFactory.newWithSteps(2L, 12L),
-                    ticksFactory.newTicks(scale, 2L, 12L),
+                    ticksFactory.newTicks(scale, "date-tick", 12L),
+                    ticksFactory.newTicks(scale, "time-tick", 2L),
                     lanes);
         });
     }

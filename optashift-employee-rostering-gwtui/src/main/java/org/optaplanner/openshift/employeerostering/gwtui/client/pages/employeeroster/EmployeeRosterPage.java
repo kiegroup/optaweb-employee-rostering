@@ -25,7 +25,6 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLDivElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -51,10 +50,6 @@ public class EmployeeRosterPage implements Page {
     @Inject
     @DataField("refresh-button")
     private HTMLButtonElement refreshButton;
-
-    @Inject
-    @DataField("viewport-frame")
-    private HTMLDivElement viewportFrame;
 
     @Inject
     @DataField("viewport")
@@ -170,21 +165,7 @@ public class EmployeeRosterPage implements Page {
         refreshWithLoadingSpinner();
     }
 
-    //FIXME: Improve horizontal navigation. Probably snap to fixed dates with animation.
-    private static final Integer TIME_SCROLL_SIZE = 300;
-
-    @EventHandler("forward-in-time-button")
-    public void onForwardInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        viewportFrame.scrollLeft += TIME_SCROLL_SIZE;
-    }
-
-    @EventHandler("back-in-time-button")
-    public void onBackInTimeButtonClicked(@ForEvent("click") final MouseEvent e) {
-        viewportFrame.scrollLeft -= TIME_SCROLL_SIZE;
-    }
-
     //API calls
-
     private Promise<EmployeeRosterView> fetchEmployeeRosterView() {
         return new Promise<>((resolve, reject) -> {
             RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantStore.getCurrentTenantId(), employeePagination.getPageNumber(), employeePagination.getNumberOfItemsPerPage(),

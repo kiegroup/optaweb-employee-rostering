@@ -26,7 +26,9 @@ public abstract class Viewport<T> {
 
     public abstract void drawGridLinesAt(final IsElement target);
 
-    public abstract void drawTicksAt(final IsElement target);
+    public abstract void drawDateTicksAt(IsElement target);
+
+    public abstract void drawTimeTicksAt(IsElement target);
 
     public abstract Lane<T> newLane();
 

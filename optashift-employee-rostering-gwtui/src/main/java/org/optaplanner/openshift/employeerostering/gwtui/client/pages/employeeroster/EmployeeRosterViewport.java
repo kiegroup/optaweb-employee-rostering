@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.Ticks;
@@ -47,21 +49,24 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
     private final Supplier<EmployeeBlobView> blobViewSupplier;
     private final LinearScale<OffsetDateTime> scale;
     private final CssGridLines gridLines;
-    private final Ticks<OffsetDateTime> ticks;
+    private final Ticks<OffsetDateTime> dateTicks;
+    private final Ticks<OffsetDateTime> timeTicks;
     private final List<Lane<OffsetDateTime>> lanes;
 
     EmployeeRosterViewport(final Integer tenantId,
                            final Supplier<EmployeeBlobView> blobViewSupplier,
                            final LinearScale<OffsetDateTime> scale,
                            final CssGridLines gridLines,
-                           final Ticks<OffsetDateTime> ticks,
+                           final Ticks<OffsetDateTime> dateTicks,
+                           final Ticks<OffsetDateTime> timeTicks,
                            final List<Lane<OffsetDateTime>> lanes) {
 
         this.tenantId = tenantId;
         this.blobViewSupplier = blobViewSupplier;
         this.scale = scale;
         this.gridLines = gridLines;
-        this.ticks = ticks;
+        this.dateTicks = dateTicks;
+        this.timeTicks = dateTicks;
         this.lanes = lanes;
     }
 
@@ -71,18 +76,22 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
     }
 
     @Override
-    public void drawTicksAt(final IsElement target) {
-        //FIXME: Make it18n
-        ticks.drawAt(target, this, date -> {
-            final int hours = date.getHour();
-            if (hours == 0) {
-                final String lowerDayOfTheWeek = date.getDayOfWeek().toString().toLowerCase();
-                final String dayOfTheWeek = lowerDayOfTheWeek.substring(0, 1).toUpperCase() + lowerDayOfTheWeek.substring(1);
-                int month = date.getMonth().getValue();
-                return ((month < 10 ? "0" : "") + month) + "/" + date.getDayOfMonth() + " " + dayOfTheWeek.substring(0, 1);
-            } else {
-                return (hours < 10 ? "0" : "") + hours + ":00";
+    public void drawDateTicksAt(IsElement target) {
+        DateTimeFormat dateFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);
+        dateTicks.drawAt(target, this, date -> {
+            return dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
+        });
+    }
+
+    @Override
+    public void drawTimeTicksAt(IsElement target) {
+        DateTimeFormat timeFormat = DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT);
+        timeTicks.drawAt(target, this, date -> {
+            if (date.plusMinutes(GwtJavaTimeWorkaroundUtil.getOffsetInMinutes(
+                    GwtJavaTimeWorkaroundUtil.toLocalDate(date), date.getOffset())).getHour() == 0) {
+                return "";
             }
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
         });
     }
 

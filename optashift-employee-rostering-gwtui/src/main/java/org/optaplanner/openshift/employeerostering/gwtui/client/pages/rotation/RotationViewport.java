@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.Ticks;
@@ -34,6 +36,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
+import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
@@ -47,7 +50,8 @@ public class RotationViewport extends Viewport<OffsetDateTime> {
     private final Supplier<ShiftBlobView> blobViewFactory;
     private final LinearScale<OffsetDateTime> scale;
     private final CssGridLines gridLines;
-    private final Ticks<OffsetDateTime> ticks;
+    private final Ticks<OffsetDateTime> dateTicks;
+    private final Ticks<OffsetDateTime> timeTicks;
     private final List<Lane<OffsetDateTime>> lanes;
 
     RotationViewport(final Integer tenantId,
@@ -55,14 +59,16 @@ public class RotationViewport extends Viewport<OffsetDateTime> {
                      final Supplier<ShiftBlobView> blobViewFactory,
                      final LinearScale<OffsetDateTime> scale,
                      final CssGridLines gridLines,
-                     final Ticks<OffsetDateTime> ticks,
+                     final Ticks<OffsetDateTime> dateTicks,
+                     final Ticks<OffsetDateTime> timeTicks,
                      final List<Lane<OffsetDateTime>> lanes) {
 
         this.tenantId = tenantId;
         this.baseDate = baseDate;
         this.blobViewFactory = blobViewFactory;
         this.scale = scale;
-        this.ticks = ticks;
+        this.dateTicks = dateTicks;
+        this.timeTicks = timeTicks;
         this.lanes = lanes;
         this.gridLines = gridLines;
     }
@@ -73,15 +79,22 @@ public class RotationViewport extends Viewport<OffsetDateTime> {
     }
 
     @Override
-    public void drawTicksAt(final IsElement target) {
-        //FIXME: Make it18n
-        ticks.drawAt(target, this, date -> {
-            final int hours = date.getHour();
-            if (hours == 0) {
-                return "Day " + (Duration.between(scale.toScaleUnits(0L), date).getSeconds() / 60 / 60 / 24);
-            } else {
-                return (hours < 10 ? "0" : "") + hours + ":00";
+    public void drawDateTicksAt(IsElement target) {
+        // TODO: i18n
+        dateTicks.drawAt(target, this, date -> {
+            return "Day " + (Duration.between(scale.toScaleUnits(0L), date).getSeconds() / 60 / 60 / 24 + 1);
+        });
+    }
+
+    @Override
+    public void drawTimeTicksAt(IsElement target) {
+        DateTimeFormat timeFormat = DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT);
+        timeTicks.drawAt(target, this, date -> {
+            if (date.plusMinutes(GwtJavaTimeWorkaroundUtil.getOffsetInMinutes(
+                    GwtJavaTimeWorkaroundUtil.toLocalDate(date), date.getOffset())).getHour() == 0) {
+                return "";
             }
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
         });
     }
 
