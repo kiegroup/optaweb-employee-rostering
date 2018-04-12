@@ -59,11 +59,11 @@ public class CssGridLines {
             if (i % strongLineStepInGridPixels == offset) {
                 gridLine.classList.add("strong-grid-line");
                 viewport.setAbsGroupPosition(() -> gridLine, 0L);
-                viewport.setGroupSizeInScreenPixels(() -> gridLine, viewport.getHeaderColumns() + viewport.getGroupEndPosition() + 1);
+                viewport.setGroupSizeInScreenPixels(() -> gridLine, viewport.getHeaderRows() + viewport.getGroupEndPosition() + 1);
             } else {
                 gridLine.classList.add("soft-grid-line");
-                viewport.setGroupPosition(() -> gridLine, 0L);
-                viewport.setGroupSizeInScreenPixels(() -> gridLine, viewport.getGroupEndPosition() + 1);
+                viewport.setAbsGroupPosition(() -> gridLine, 0L);
+                viewport.setGroupSizeInScreenPixels(() -> gridLine, viewport.getHeaderRows() + viewport.getGroupEndPosition() + 1);
             }
             viewport.setPositionInScreenPixels(() -> gridLine, i);
             viewport.setSizeInScreenPixels(() -> gridLine, 1L);

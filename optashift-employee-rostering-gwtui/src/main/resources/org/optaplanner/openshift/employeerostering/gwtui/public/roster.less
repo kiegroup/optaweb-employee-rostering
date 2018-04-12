@@ -176,11 +176,11 @@
     opacity: 1;
 }
 
-.tick:hover {
+.time-tick:hover {
     color: red;
 }
 
-.tick:hover::before {
+.time-tick:hover::before {
     height: 1000px;
     display: block;
     background-color: red;
@@ -190,6 +190,8 @@
     position: absolute;
     opacity: 1;
     content: "";
+    transform-origin: top;
+    transform: rotate(60deg) translateY(30px) translateX(-10px);
 }
 
 .viewport-frame > .viewport.horizontal > .lane > .sub-lane {
