@@ -1,6 +1,7 @@
 package org.optaplanner.openshift.employeerostering.shared.common;
 
 import java.time.OffsetDateTime;
+import java.util.Optional;
 
 public class OutOfDateException extends RuntimeException {
 
@@ -19,16 +20,24 @@ public class OutOfDateException extends RuntimeException {
         this.lastUpdateDateTime = lastUpdateDateTime;
     }
 
+    public OutOfDateException(Object outOfDateObj) {
+        // TODO: word better
+        super("Calculated object [" + outOfDateObj + "] is out of date");
+        this.outOfDateObj = outOfDateObj;
+        objUpdateDateTime = null;
+        lastUpdateDateTime = null;
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getOutOfDateObject() {
         return (T) outOfDateObj;
     }
 
-    public OffsetDateTime getObjUpdateDateTime() {
-        return objUpdateDateTime;
+    public Optional<OffsetDateTime> getObjUpdateDateTime() {
+        return Optional.ofNullable(objUpdateDateTime);
     }
 
-    public OffsetDateTime getLastUpdateDateTime() {
-        return lastUpdateDateTime;
+    public Optional<OffsetDateTime> getLastUpdateDateTime() {
+        return Optional.ofNullable(lastUpdateDateTime);
     }
 }

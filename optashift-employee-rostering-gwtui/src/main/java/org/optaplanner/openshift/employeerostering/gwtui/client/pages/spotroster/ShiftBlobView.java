@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
 import java.time.OffsetDateTime;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,6 +38,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.IndictmentView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.RosterConstraintType;
 
 @Templated
 public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
@@ -140,8 +142,9 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
         setClassProperty("undesired-timeslot", false);
 
         if (null != indictment) {
-            setBlobColorAccordingToScore(indictment.getScoreList().stream().reduce((a, b) -> a.add(b)).get());
-            for (IndictmentView.Constraint constraint : indictment.getConstraintMatchedList()) {
+            setBlobColorAccordingToScore(indictment.getConstraintMatchList().stream().map(cm -> cm.getScore()).reduce((a, b) -> a.add(b)).get());
+            for (RosterConstraintType constraint : indictment.getConstraintMatchList().stream()
+                    .map(cm -> cm.getConstraintMatched()).collect(Collectors.toList())) {
                 switch (constraint) {
                     case DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE:
                         setClassProperty("desired-time-slot-for-an-employee", true);

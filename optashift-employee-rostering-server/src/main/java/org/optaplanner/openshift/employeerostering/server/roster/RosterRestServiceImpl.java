@@ -17,8 +17,8 @@
 package org.optaplanner.openshift.employeerostering.server.roster;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -79,8 +79,8 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     private Map<Integer, Map<Shift, IndictmentView>> tenantIdToShiftIndictmentMap = new ConcurrentHashMap<>();
     private Map<Integer, Map<Employee, IndictmentView>> tenantIdToEmployeeIndictmentMap = new ConcurrentHashMap<>();
-    private Map<Integer, OffsetDateTime> tenantIdToShiftIndictmentMapUpdateTime = new ConcurrentHashMap<>();
-    private Map<Integer, OffsetDateTime> tenantIdToEmployeeIndictmentMapUpdateTime = new ConcurrentHashMap<>();
+    private Map<Integer, List<List<Long>>> tenantIdToShiftIndictmentMapUpdateTime = new ConcurrentHashMap<>();
+    private Map<Integer, List<List<Long>>> tenantIdToEmployeeIndictmentMapUpdateTime = new ConcurrentHashMap<>();
 
     // ************************************************************************
     // SpotRosterView
@@ -475,17 +475,16 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                     }
                 });
                 tenantIdToShiftIndictmentMap.put(tenantId, indictmentMap);
-                tenantIdToShiftIndictmentMapUpdateTime.put(tenantId, OffsetDateTime.now());
+                tenantIdToShiftIndictmentMapUpdateTime.put(tenantId, getLastUpdateTime(tenantId));
                 return indictmentMap;
             }
         } else {
-            OffsetDateTime lastUpdateTime = getLastUpdateTime(tenantId);
-            OffsetDateTime lastMapUpdateTime = tenantIdToShiftIndictmentMapUpdateTime.getOrDefault(tenantId, OffsetDateTime.MIN);
-            if (lastUpdateTime.isBefore(lastMapUpdateTime)) {
+            List<List<Long>> lastUpdateTime = getLastUpdateTime(tenantId);
+            List<List<Long>> lastMapUpdateTime = tenantIdToShiftIndictmentMapUpdateTime.getOrDefault(tenantId, Collections.emptyList());
+            if (lastUpdateTime.equals(lastMapUpdateTime)) {
                 return tenantIdToShiftIndictmentMap.get(tenantId);
             }
-            throw new OutOfDateException(tenantIdToShiftIndictmentMap.getOrDefault(tenantId, Collections.emptyMap()),
-                    lastMapUpdateTime, lastUpdateTime);
+            throw new OutOfDateException(tenantIdToShiftIndictmentMap.get(tenantId));
         }
     }
 
@@ -503,30 +502,21 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                     }
                 });
                 tenantIdToEmployeeIndictmentMap.put(tenantId, indictmentMap);
-                tenantIdToEmployeeIndictmentMapUpdateTime.put(tenantId, OffsetDateTime.now());
+                tenantIdToEmployeeIndictmentMapUpdateTime.put(tenantId, getLastUpdateTime(tenantId));
                 return indictmentMap;
             }
         } else {
-            OffsetDateTime lastUpdateTime = getLastUpdateTime(tenantId);
-            OffsetDateTime lastMapUpdateTime = tenantIdToEmployeeIndictmentMapUpdateTime.getOrDefault(tenantId, OffsetDateTime.MIN);
-            if (lastUpdateTime.isBefore(lastMapUpdateTime)) {
+            List<List<Long>> lastUpdateTime = getLastUpdateTime(tenantId);
+            List<List<Long>> lastMapUpdateTime = tenantIdToEmployeeIndictmentMapUpdateTime.getOrDefault(tenantId, Collections.emptyList());
+            if (lastUpdateTime.equals(lastMapUpdateTime)) {
                 return tenantIdToEmployeeIndictmentMap.get(tenantId);
             }
-            throw new OutOfDateException(tenantIdToEmployeeIndictmentMap.getOrDefault(tenantId, Collections.emptyMap()),
-                    lastMapUpdateTime, lastUpdateTime);
+            throw new OutOfDateException(tenantIdToEmployeeIndictmentMap.get(tenantId));
         }
     }
 
-    private OffsetDateTime getLastUpdateTime(int tenantId) {
-        OffsetDateTime lastUpdateTime = OffsetDateTime.MIN;
-        OffsetDateTime possible = super.getLastUpdateDateTime(tenantId, entityManager, Shift.class);
-        if (possible != null && possible.isAfter(lastUpdateTime)) {
-            lastUpdateTime = possible;
-        }
-        possible = super.getLastUpdateDateTime(tenantId, entityManager, EmployeeAvailability.class);
-        if (possible != null && possible.isAfter(lastUpdateTime)) {
-            lastUpdateTime = possible;
-        }
-        return lastUpdateTime;
+    private List<List<Long>> getLastUpdateTime(int tenantId) {
+        return Arrays.asList(super.getTableCountAndVersionSum(tenantId, entityManager, Shift.class),
+                super.getTableCountAndVersionSum(tenantId, entityManager, EmployeeAvailability.class));
     }
 }
