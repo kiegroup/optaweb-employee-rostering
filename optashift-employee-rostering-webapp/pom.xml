@@ -228,6 +228,13 @@
                     <cargo.jboss.configuration>standalone</cargo.jboss.configuration>
                     <cargo.jvmargs>-Xmx512m</cargo.jvmargs>
                   </properties>
+                        <xmlReplacements>
+                          <xmlReplacement>
+                            <file>configuration/standalone.xml</file>
+                            <xpathExpression>//spec-descriptor-property-replacement</xpathExpression>
+                            <value>true</value>
+                          </xmlReplacement>
+                        </xmlReplacements>
                 </configuration>
               </configuration>
             </plugin>
