@@ -50,7 +50,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.view.Employee
                            query = "select distinct ea from EmployeeAvailability ea" +
                                    " left join fetch ea.employee e" +
                                    " where ea.tenantId = :tenantId" +
-                                   " and ea.employee IN :employees" +
+                                   " and ea.employee IN :employeeSet" +
                                    " and ea.endDateTime >= :startDateTime" +
                                    " and ea.startDateTime < :endDateTime" +
                                    " order by e.name, ea.startDateTime")
