@@ -16,14 +16,21 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.MutationObserver;
 import elemental2.dom.MutationObserver.MutationObserverCallbackFn;
 import elemental2.dom.MutationObserverInit;
 import elemental2.dom.MutationRecord;
+import elemental2.dom.Node;
+import jsinterop.base.Js;
+import jsinterop.base.JsArrayLike;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -32,6 +39,9 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
+
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
 
 @Templated
 public class ViewportView<T> implements IsElement {
@@ -82,17 +92,29 @@ public class ViewportView<T> implements IsElement {
     }
 
     public void setViewport(final Viewport<T> viewport) {
-
         timingUtils.time("Viewport assemble", () -> {
+
+            final String orientation = viewport.decideBasedOnOrientation("vertical", "horizontal");
+
+            dateTicksLane.classList.remove("vertical", "horizontal");
+            dateTicksLane.classList.add(orientation);
+
+            timeTicksLane.classList.remove("vertical", "horizontal");
+            timeTicksLane.classList.add(orientation);
+
+            getElement().classList.add(orientation);
+
             if (domObserver != null) {
                 domObserver.disconnect();
             }
-            dateTicksLane.classList.remove("vertical", "horizontal");
-            dateTicksLane.classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
-            timeTicksLane.classList.remove("vertical", "horizontal");
-            timeTicksLane.classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
-            domObserver = getMutationObserver(getCallback(viewport));
-            getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
+
+            domObserver = getMutationObserver((records, mutationObserver) -> {
+                addOrientation(orientation, stream(records)
+                        .flatMap(record -> stream(asArray(record.addedNodes)))
+                        .collect(toList()));
+                return null;
+            });
+
             domObserver.observe(getElement(), domObserverConfig);
 
             viewport.setSizeInScreenPixels(this, viewport.getSizeInGridPixels(), 12L);
@@ -101,7 +123,7 @@ public class ViewportView<T> implements IsElement {
             viewport.drawTimeTicksAt(() -> timeTicksLane);
 
             lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get().withViewport(viewport));
-        });
+});
     }
 
     private MutationObserverCallbackFn getCallback(final Viewport<T> viewport) {
@@ -118,4 +140,17 @@ public class ViewportView<T> implements IsElement {
             }
         };
     }
+    
+    private void addOrientation(final String orientation, final List<Node> nodes) {
+        nodes.stream()
+                .filter(node -> node instanceof HTMLElement)
+                .map(node -> (HTMLElement) node)
+                .peek(element -> element.classList.add(orientation))
+                .map(element -> Arrays.asList(asArray(element.childNodes)))
+                .forEach(childNodes -> addOrientation(orientation, childNodes));
+    }
+
+    private Node[] asArray(final JsArrayLike<Node> jsArrayLike) {
+        return Js.uncheckedCast(jsArrayLike);
+}
 }
