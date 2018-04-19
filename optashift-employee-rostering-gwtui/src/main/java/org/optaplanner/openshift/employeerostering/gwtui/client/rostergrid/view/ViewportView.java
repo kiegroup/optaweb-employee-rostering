@@ -27,7 +27,6 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.MutationObserver;
 import elemental2.dom.MutationObserver.MutationObserverCallbackFn;
 import elemental2.dom.MutationObserverInit;
-import elemental2.dom.MutationRecord;
 import elemental2.dom.Node;
 import jsinterop.base.Js;
 import jsinterop.base.JsArrayLike;
@@ -68,16 +67,6 @@ public class ViewportView<T> implements IsElement {
     private MutationObserverInit domObserverConfig;
 
     // In an ideal world we wouldn't need these, but alas this isn't an ideal world
-    private static native void addClassToElement(Object element, String className) /*-{
-        if (element.classList) {
-            element.classList.add(className);
-            var children = element.children;
-            for (var i = 0; i < children.length; i++) {
-                @org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView::addClassToElement(Ljava/lang/Object;Ljava/lang/String;)(children[i],className);
-            }
-        }
-    }-*/;
-
     private static native MutationObserverInit getMutationObserverInit() /*-{
         return {subtree: true, childList: true};
     }-*/;
@@ -123,24 +112,8 @@ public class ViewportView<T> implements IsElement {
             viewport.drawTimeTicksAt(() -> timeTicksLane);
 
             lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get().withViewport(viewport));
-});
+        });
     }
-
-    private MutationObserverCallbackFn getCallback(final Viewport<T> viewport) {
-        return new MutationObserverCallbackFn() {
-
-            @Override
-            public Object onInvoke(MutationRecord[] records, MutationObserver observers) {
-                for (MutationRecord record : records) {
-                    for (int i = 0; i < record.addedNodes.length; i++) {
-                        addClassToElement(record.addedNodes.getAt(i), viewport.decideBasedOnOrientation("vertical", "horizontal"));
-                    }
-                }
-                return null;
-            }
-        };
-    }
-    
     private void addOrientation(final String orientation, final List<Node> nodes) {
         nodes.stream()
                 .filter(node -> node instanceof HTMLElement)
