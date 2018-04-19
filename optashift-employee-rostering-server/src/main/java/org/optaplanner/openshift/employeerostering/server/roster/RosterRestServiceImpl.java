@@ -135,7 +135,6 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .getResultList();
         spotRosterView.setEmployeeList(employeeList);
 
-        Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
         Set<Spot> spotSet = new HashSet<>(spotList);
         TenantConfiguration tenantConfig = entityManager.createNamedQuery("TenantConfiguration.find",
                 TenantConfiguration.class)
@@ -143,13 +142,12 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.filterWithSpots", Shift.class)
                 .setParameter("tenantId", tenantId)
-                .setParameter("spots", spotSet)
+                .setParameter("spotSet", spotSet)
                 .setParameter("startDateTime", startDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
                 .setParameter("endDateTime", endDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
                 .getResultList();
 
         Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
-        Set<Spot> spotSet = new HashSet<>(spotList);
         for (Shift shift : shiftList) {
             spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>()).add(
                     new ShiftView(
@@ -239,7 +237,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .setParameter("tenantId", tenantId)
                 .setParameter("startDateTime", startDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
                 .setParameter("endDateTime", endDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
-                .setParameter("employees", employeeSet)
+                .setParameter("employeeSet", employeeSet)
                 .getResultList();
 
         for (Shift shift : shiftList) {
@@ -260,7 +258,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .setParameter("tenantId", tenantId)
                 .setParameter("startDateTime", startDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
                 .setParameter("endDateTime", endDate.atStartOfDay(tenantConfig.getTimeZone()).toOffsetDateTime())
-                .setParameter("employees", employeeSet)
+                .setParameter("employeeSet", employeeSet)
                 .getResultList();
         for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
             employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),

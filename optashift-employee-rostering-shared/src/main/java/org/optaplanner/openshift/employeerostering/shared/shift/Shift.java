@@ -56,7 +56,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
                                    " left join fetch sa.rotationEmployee re" +
                                    " left join fetch sa.employee e" +
                                    " where sa.tenantId = :tenantId" +
-                                   " and sa.employee IN :employees" +
+                                   " and sa.employee IN :employeeSet" +
                                    " and sa.endDateTime >= :startDateTime" +
                                    " and sa.startDateTime < :endDateTime" +
                                    " order by sa.startDateTime, s.name, e.name"),
@@ -66,7 +66,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
                                    " left join fetch sa.rotationEmployee re" +
                                    " left join fetch sa.employee e" +
                                    " where sa.tenantId = :tenantId" +
-                                   " and sa.spot IN :spots" +
+                                   " and sa.spot IN :spotSet" +
                                    " and sa.endDateTime >= :startDateTime" +
                                    " and sa.startDateTime < :endDateTime" +
                                    " order by sa.startDateTime, s.name, e.name")
