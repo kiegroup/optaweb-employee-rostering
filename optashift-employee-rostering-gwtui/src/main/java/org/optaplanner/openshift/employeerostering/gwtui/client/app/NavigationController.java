@@ -52,6 +52,7 @@ public class NavigationController {
         final Page page = pages.get(pageChange.getPageId());
         headerView.removeStickyElements();
 
+        headerView.removeStickyElements();
         page.beforeOpen().then(i -> {
             appView.goTo(page);
             return page.onOpen();

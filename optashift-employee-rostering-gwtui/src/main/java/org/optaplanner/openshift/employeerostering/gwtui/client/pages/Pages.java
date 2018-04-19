@@ -27,11 +27,11 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.admin.AdminPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster.EmployeeRosterPage;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.RotationPage;
-import org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster.SpotRosterPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.employeeroster.EmployeeRosterPage;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.rotation.RotationPage;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.spotroster.SpotRosterPage;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ADMIN;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
@@ -45,14 +45,20 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pag
 public class Pages {
 
     public enum Id {
-        SKILLS,
         SPOT_ROSTER,
         EMPLOYEE_ROSTER,
         ROTATION,
+        SKILLS,
         SPOTS,
         EMPLOYEES,
         ADMIN;
     }
+
+    @Inject
+    private ManagedInstance<SpotRosterPage> spotRosterPage;
+
+    @Inject
+    private ManagedInstance<RotationPage> rotationPage;
 
     @Inject
     private ManagedInstance<SkillListPanel> skillsPage;
@@ -64,13 +70,7 @@ public class Pages {
     private ManagedInstance<EmployeeListPanel> employeesPage;
 
     @Inject
-    private ManagedInstance<SpotRosterPage> spotRosterPage;
-
-    @Inject
     private ManagedInstance<EmployeeRosterPage> employeeRosterPage;
-
-    @Inject
-    private ManagedInstance<RotationPage> rotationPage;
 
     @Inject
     private ManagedInstance<AdminPage> adminPage;

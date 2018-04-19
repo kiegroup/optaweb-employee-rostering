@@ -28,10 +28,10 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
 
     @Inject
     private TenantStore tenantStore;
-    
+
     @Inject
     private PromiseUtils promiseUtils;
-    
+
     private Map<String, Skill> skillMap;
 
     @SuppressWarnings("unchecked")
@@ -90,7 +90,7 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
         }
         MessageBuilder.createMessage()
                 .toSubject("SkillMapListener")
-                .with("Map", getSkillMap())
+                .withValue(getSkillMap())
                 .noErrorHandling().sendNowWith(ErraiBus.getDispatcher());
     }
 

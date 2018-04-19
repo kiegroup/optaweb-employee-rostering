@@ -10,9 +10,8 @@
 	width: 100vw;
 	height: 100vh;
 	background-color:#8b8d8f;
-	opacity:0.45;
-	mozOpacity:0.45;
-	z-index: 8191;
+	opacity:0.2;
+	z-index: 1001;
 }
 
 .singleValueTagInput {
