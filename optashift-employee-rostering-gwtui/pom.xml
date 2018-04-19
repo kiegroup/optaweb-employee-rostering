@@ -119,6 +119,13 @@
       <artifactId>hibernate-validator</artifactId>
       <classifier>sources</classifier>
      </dependency>
+     
+     <!-- TESTS -->
+     <dependency>
+      <groupId>com.google.gwt.gwtmockito</groupId>
+      <artifactId>gwtmockito</artifactId>
+      <scope>test</scope>
+     </dependency>
   </dependencies>
 
   <build>
@@ -128,6 +135,9 @@
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
           <moduleName>org.optaplanner.openshift.employeerostering.gwtui.WorkerRosteringWebapp</moduleName>
+          <includes>
+            <include>**/*Test.java</include>
+          </includes>
         </configuration>
       </plugin>
 

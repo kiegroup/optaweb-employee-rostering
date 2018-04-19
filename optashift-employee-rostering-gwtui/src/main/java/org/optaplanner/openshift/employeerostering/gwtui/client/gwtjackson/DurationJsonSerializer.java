@@ -11,8 +11,6 @@ public class DurationJsonSerializer extends JsonSerializer<Duration> {
 
     @Override
     protected void doSerialize(JsonWriter writer, Duration value, JsonSerializationContext ctx, JsonSerializerParameters params) {
-        // TODO the super source of DateTimeFormatter is broken
-        // writer.value(value.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         writer.value(value.toString());
     }
 

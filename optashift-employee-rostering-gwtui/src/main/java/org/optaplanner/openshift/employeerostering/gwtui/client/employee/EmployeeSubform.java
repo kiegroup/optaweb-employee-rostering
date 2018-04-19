@@ -85,7 +85,7 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
             employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(commonUtils.delimitCollection(e.getNewValue(),
                     (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
-        subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.get(Map.class, "Map")));
+        subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.getValue(Map.class)));
     }
 
     public void reset() {

@@ -1,0 +1,52 @@
+/*
+ * Copyright (C) 2018 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid;
+
+public interface LinearScale<T> {
+
+    double toGridUnits(final T valueInScaleUnits);
+
+    T toScaleUnits(final double valueInGridPixels);
+
+    default T getStartInScaleUnits() {
+        return toScaleUnits(getStartInGridPixels());
+    }
+
+    T getEndInScaleUnits();
+
+    default double getStartInGridPixels() {
+        return 0L;
+    }
+
+    default double getEndInGridPixels() {
+        return toGridUnits(getEndInScaleUnits());
+    }
+
+    default double toGridUnitsFromScreenPixels(double screenPixels) {
+        return screenPixels / getScreenPixelsPerGridUnit();
+    }
+
+    default T toScaleUnitsFromScreenPixels(double screenPixels) {
+        return toScaleUnits(toGridUnitsFromScreenPixels(screenPixels));
+    }
+
+    default double toScreenPixels(double gridUnits) {
+        return gridUnits * getScreenPixelsPerGridUnit();
+    }
+
+    int getScreenPixelsPerGridUnit();
+}

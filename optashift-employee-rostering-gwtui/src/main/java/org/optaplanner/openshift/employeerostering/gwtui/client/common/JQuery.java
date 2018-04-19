@@ -11,7 +11,18 @@ public class JQuery {
     @JsMethod(name = "$", namespace = JsPackage.GLOBAL)
     public static native JQuery get(HTMLElement element);
 
+    public native Object data(String owner);
+
     public native double width();
 
     public native double height();
+
+    public native Offset offset();
+
+    @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
+    public static class Offset {
+
+        public double top;
+        public double left;
+    }
 }

@@ -86,7 +86,7 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
                     .getNewValue(),
                     (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
-        subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.get(Map.class, "Map")));
+        subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.getValue(Map.class)));
     }
 
     public void reset() {

@@ -73,9 +73,9 @@ public class MenuView implements IsElement {
 
     @PostConstruct
     private void initMenu() {
-        pageChangeEvent.fire(new PageChange(Pages.Id.SKILLS));
+        pageChangeEvent.fire(new PageChange(Pages.Id.SPOT_ROSTER));
         setInactive(skills, spots, employees, rotation, spotRoster, employeeRoster);
-        setActive(skills);
+        setActive(spotRoster);
     }
 
     @EventHandler("skills")

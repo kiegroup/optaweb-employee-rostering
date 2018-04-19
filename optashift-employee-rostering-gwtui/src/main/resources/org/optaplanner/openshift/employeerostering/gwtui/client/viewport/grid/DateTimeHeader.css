@@ -1,0 +1,26 @@
+.date-tick {
+     font-size: 1.0em;
+     height: 25px;
+     border: 1px solid lightgray;
+     border-right: none;
+     opacity: 0.7;
+     text-overflow: ellipsis;
+     overflow: hidden;
+     text-align: center;
+     grid-row: 1;
+}
+
+.date-change-tick {
+	border-left: 1px solid lightgray;
+	grid-row: 2;
+}
+
+.time-tick {
+     text-indent: -1.25em;
+     font-size: 0.8em;
+     opacity: 0.7;
+     transform-origin: left;
+     height: 40px;
+     transform: translateX(2em) translateY(6px) rotate(-60deg);
+     grid-row: 2;
+}
