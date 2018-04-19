@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
+import org.optaplanner.openshift.employeerostering.gwtui.client.header.HeaderView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
@@ -31,6 +32,9 @@ public class NavigationController {
 
     @Inject
     private AppView appView;
+
+    @Inject
+    private HeaderView headerView;
 
     @Inject
     private Pages pages;
@@ -46,6 +50,7 @@ public class NavigationController {
         loadingSpinner.showFor("page-change");
 
         final Page page = pages.get(pageChange.getPageId());
+        headerView.removeStickyElements();
 
         page.beforeOpen().then(i -> {
             appView.goTo(page);

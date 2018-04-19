@@ -25,6 +25,7 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -32,6 +33,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
+import org.optaplanner.openshift.employeerostering.gwtui.client.header.HeaderView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
@@ -46,6 +48,10 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.common.Fa
 @Templated
 @ApplicationScoped
 public class EmployeeRosterPage implements Page {
+
+    @Inject
+    @DataField("toolbar")
+    private HTMLDivElement toolbar;
 
     @Inject
     @DataField("refresh-button")
@@ -82,6 +88,9 @@ public class EmployeeRosterPage implements Page {
     private EmployeeRosterViewportFactory employeeRosterViewportFactory;
 
     @Inject
+    private HeaderView headerView;
+
+    @Inject
     private TenantStore tenantStore;
 
     @Inject
@@ -110,6 +119,12 @@ public class EmployeeRosterPage implements Page {
     @Override
     public Promise<Void> beforeOpen() {
         return refreshWithLoadingSpinner();
+    }
+
+    @Override
+    public Promise<Void> onOpen() {
+        headerView.addStickyElement(() -> toolbar);
+        return promiseUtils.resolve();
     }
 
     public void onTenantChanged(@Observes final TenantStore.TenantChange tenant) {
