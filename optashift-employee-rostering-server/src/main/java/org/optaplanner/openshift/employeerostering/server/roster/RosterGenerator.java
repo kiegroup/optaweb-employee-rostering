@@ -71,14 +71,14 @@ public class RosterGenerator {
         private final BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator;
 
         public GeneratorType(String tenantNamePrefix, StringDataGenerator skillNameGenerator, StringDataGenerator spotNameGenerator,
-                             List<Pair<LocalTime, LocalTime>> timeslotRangeList, int rotationLength, int RotationEmployeeListSize,
+                             List<Pair<LocalTime, LocalTime>> timeslotRangeList, int rotationLength, int rotationEmployeeListSize,
                              BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator) {
             this.tenantNamePrefix = tenantNamePrefix;
             this.skillNameGenerator = skillNameGenerator;
             this.spotNameGenerator = spotNameGenerator;
             this.timeslotRangeList = timeslotRangeList;
             this.rotationLength = rotationLength;
-            rotationEmployeeListSize = RotationEmployeeListSize;
+            this.rotationEmployeeListSize = rotationEmployeeListSize;
             this.rotationEmployeeIndexCalculator = rotationEmployeeIndexCalculator;
         }
 
@@ -281,8 +281,8 @@ public class RosterGenerator {
             // Day:   A A A B B B B C C C A A A A B B B C C C C
             // Night: C C C A A A A B B B C C C C A A A B B B B
             21, 3, (startDayOffset, timeslotRangesIndex) -> {
-                int offset = timeslotRangesIndex == 0 ? startDayOffset : (startDayOffset + 14) % 21;
-                return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 3 : offset < 14 ? 0 : offset < 17 ? 1 : offset < 21 ? 3 : -1;
+                int offset = timeslotRangesIndex == 0 ? startDayOffset : (startDayOffset + 7) % 21;
+                return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 2 : offset < 14 ? 0 : offset < 17 ? 1 : offset < 21 ? 2 : -1;
             });
 
     private Random random = new Random(37);
@@ -423,7 +423,7 @@ public class RosterGenerator {
         int employeeStart = 0;
         for (Spot spot : spotList) {
             List<Employee> rotationEmployeeList = employeeList.subList(Math.min(employeeList.size(), employeeStart),
-                    Math.min(employeeList.size(), employeeStart + rotationLength));
+                    Math.min(employeeList.size(), employeeStart + generatorType.rotationEmployeeListSize));
             // For every day in the rotation (independent of publishLength and draftLength)
             for (int startDayOffset = 0; startDayOffset < rotationLength; startDayOffset++) {
                 // Fill the offset day with shift templates
@@ -436,6 +436,13 @@ public class RosterGenerator {
                         endDayOffset = (startDayOffset + 1) % rotationLength;
                     }
                     int rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator.apply(startDayOffset, timeslotRangesIndex);
+                    if (rotationEmployeeIndex < 0 || rotationEmployeeIndex >= generatorType.rotationEmployeeListSize) {
+                        throw new IllegalStateException(
+                                "The rotationEmployeeIndexCalculator for generatorType (" + generatorType.tenantNamePrefix
+                                + ") returns an invalid rotationEmployeeIndex (" + rotationEmployeeIndex
+                                + ") for startDayOffset (" + startDayOffset + ") and timeslotRangesIndex (" + timeslotRangesIndex + ").");
+                    }
+                    // There might be less employees than we need (overconstrained planning)
                     Employee rotationEmployee = rotationEmployeeIndex >= rotationEmployeeList.size() ? null : rotationEmployeeList.get(rotationEmployeeIndex);
                     ShiftTemplate shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, rotationEmployee);
                     entityManager.persist(shiftTemplate);
