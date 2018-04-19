@@ -285,7 +285,7 @@ public class RosterGenerator {
                 return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 2 : offset < 14 ? 0 : offset < 17 ? 1 : offset < 21 ? 2 : -1;
             });
 
-    private Random random = new Random(37);
+    private Random random;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -303,6 +303,7 @@ public class RosterGenerator {
 
     @PostConstruct
     public void setUpGeneratedData() {
+        random = new Random(37);
         tenantNameGenerator.predictMaximumSizeAndReset(12);
         generateRoster(10, 7, hospitalGeneratorType);
         generateRoster(10, 7, factoryAssemblyGeneratorType);

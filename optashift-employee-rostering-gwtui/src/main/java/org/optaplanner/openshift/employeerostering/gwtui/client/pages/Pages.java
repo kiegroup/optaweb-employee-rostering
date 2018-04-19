@@ -25,6 +25,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.optaplanner.openshift.employeerostering.gwtui.client.admin.AdminPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster.EmployeeRosterPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation.RotationPage;
@@ -32,6 +33,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
 
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ADMIN;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATION;
@@ -48,7 +50,8 @@ public class Pages {
         EMPLOYEE_ROSTER,
         ROTATION,
         SPOTS,
-        EMPLOYEES;
+        EMPLOYEES,
+        ADMIN;
     }
 
     @Inject
@@ -69,6 +72,9 @@ public class Pages {
     @Inject
     private ManagedInstance<RotationPage> rotationPage;
 
+    @Inject
+    private ManagedInstance<AdminPage> adminPage;
+
     private final Map<Id, LazyInit<? extends Page>> mapping = new HashMap<>();
 
     @PostConstruct
@@ -79,6 +85,7 @@ public class Pages {
         mapping.put(SPOT_ROSTER, lazyInit(spotRosterPage));
         mapping.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
         mapping.put(ROTATION, lazyInit(rotationPage));
+        mapping.put(ADMIN, lazyInit(adminPage));
     }
 
     public Page get(final Id id) {
