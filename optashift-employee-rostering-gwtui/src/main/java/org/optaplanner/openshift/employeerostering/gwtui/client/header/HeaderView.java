@@ -17,16 +17,22 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.header;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.MouseEvent;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
 @Templated
 @ApplicationScoped
@@ -35,6 +41,10 @@ public class HeaderView implements IsElement {
     @Inject
     @DataField("rest-api")
     private HTMLAnchorElement restApi;
+
+    @Inject
+    @DataField("admin")
+    private HTMLAnchorElement admin;
 
     @Inject
     @DataField("menu")
@@ -47,6 +57,9 @@ public class HeaderView implements IsElement {
     @Inject
     @DataField("container")
     private HTMLDivElement container;
+    
+    @Inject
+    private Event<PageChange> pageChangeEvent;
 
     @Inject
     @DataField("header")
@@ -58,6 +71,11 @@ public class HeaderView implements IsElement {
 
     public void addStickyElement(org.jboss.errai.common.client.api.elemental2.IsElement element) {
         container.appendChild(element.getElement());
+    }
+
+    @EventHandler("admin")
+    private void gotoAdminPage(@ForEvent("click") MouseEvent e) {
+        pageChangeEvent.fire(new PageChange(Pages.Id.ADMIN));
     }
 
     public void removeStickyElements() {
