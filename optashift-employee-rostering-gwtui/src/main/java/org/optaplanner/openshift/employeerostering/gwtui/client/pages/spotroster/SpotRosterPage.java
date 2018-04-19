@@ -39,6 +39,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.header.HeaderView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
@@ -58,6 +59,10 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.common.Fa
 public class SpotRosterPage implements Page {
 
     private static final Integer SOLVE_TIME_IN_SECONDS = 30;
+
+    @Inject
+    @DataField("toolbar")
+    private HTMLDivElement toolbar;
 
     @Inject
     @DataField("solve-button")
@@ -133,6 +138,9 @@ public class SpotRosterPage implements Page {
     @Inject
     private PromiseUtils promiseUtils;
 
+    @Inject
+    private HeaderView headerView;
+
     private double solveTaskId;
     private double updateRemainingTimeTaskId;
     private double stopSolvingTaskId;
@@ -153,6 +161,12 @@ public class SpotRosterPage implements Page {
     @Override
     public Promise<Void> beforeOpen() {
         return refreshWithLoadingSpinner();
+    }
+
+    @Override
+    public Promise<Void> onOpen() {
+        headerView.addStickyElement(() -> toolbar);
+        return promiseUtils.resolve();
     }
 
     public void onTenantChanged(@Observes final TenantStore.TenantChange tenant) {

@@ -97,32 +97,53 @@
     width: 130%;
 }
 
-.lane.horizontal {
-    position: relative;
-    margin: 24px 0 5px 0;
-}
-
 .title.horizontal {
     max-height: 22px;
     display: inline;
-    position: absolute;
-    top: -21px;
+    position: sticky;
+    left: 0;
     padding: 0 0 0 5px;
 }
 
+.spot-roster-page-viewport > .date-ticks {
+    top: 180px;
+}
 
+.employee-roster-page-viewport > .date-ticks {
+    top: 180px;
+}
+
+.rotation-page-viewport > .date-ticks {
+    top: 120px;
+}
+
+.spot-roster-page-viewport > .time-ticks {
+    top: 205px;
+}
+
+.employee-roster-page-viewport > .time-ticks {
+    top: 205px;
+}
+
+.rotation-page-viewport > .time-ticks {
+    top: 150px;
+}
 .date-ticks {
+    position: sticky;
     height: 30px;
     border: none;
-    background: transparent;
+    background: white;
+    z-index: 20;
     margin: 0;
     margin-bottom: 0;
 }
 
 .time-ticks {
+    position: sticky;
     height: 30px;
     border: none;
-    background: transparent;
+    background: white;
+    z-index: 20;
     margin: 0;
     margin-bottom: 24px;
 }

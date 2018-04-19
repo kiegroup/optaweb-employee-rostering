@@ -58,14 +58,13 @@ public class ViewportView<T> implements IsElement {
     private MutationObserverInit domObserverConfig;
 
     // In an ideal world we wouldn't need these, but alas this isn't an ideal world
-    private static native <Y> Y cast(Object obj) /*-{
-        return obj;
-    }-*/;
     private static native void addClassToElement(Object element, String className) /*-{
-        element.classList.add(className);
-        var children = element.children;
-        for (var i = 0; i < children.length; i++) {
-            @org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView::addClassToElement(Ljava/lang/Object;Ljava/lang/String;)(children[i],className);
+        if (element.classList) {
+            element.classList.add(className);
+            var children = element.children;
+            for (var i = 0; i < children.length; i++) {
+                @org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView::addClassToElement(Ljava/lang/Object;Ljava/lang/String;)(children[i],className);
+            }
         }
     }-*/;
 

@@ -16,14 +16,17 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.header;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-import javax.inject.Inject;
-
 @Templated
+@ApplicationScoped
 public class HeaderView implements IsElement {
 
     @Inject
@@ -37,4 +40,19 @@ public class HeaderView implements IsElement {
     @Inject
     @DataField("tenant-selector")
     private TenantSelectorView tenantSelectorView;
+
+    @Inject
+    @DataField("container")
+    private HTMLDivElement container;
+
+    public void addStickyElement(org.jboss.errai.common.client.api.elemental2.IsElement element) {
+        container.appendChild(element.getElement());
+    }
+
+    public void removeStickyElements() {
+        while (container.childElementCount > 1) {
+            container.lastElementChild.remove();
+        }
+    }
+
 }

@@ -66,7 +66,7 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
         this.scale = scale;
         this.gridLines = gridLines;
         this.dateTicks = dateTicks;
-        this.timeTicks = dateTicks;
+        this.timeTicks = timeTicks;
         this.lanes = lanes;
     }
 
@@ -87,11 +87,10 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
     public void drawTimeTicksAt(IsElement target) {
         DateTimeFormat timeFormat = DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT);
         timeTicks.drawAt(target, this, date -> {
-            if (date.plusMinutes(GwtJavaTimeWorkaroundUtil.getOffsetInMinutes(
-                    GwtJavaTimeWorkaroundUtil.toLocalDate(date), date.getOffset())).getHour() == 0) {
+            if (date.getHour() == 0) {
                 return "";
             }
-            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDateAsLocalTime(date));
         });
     }
 

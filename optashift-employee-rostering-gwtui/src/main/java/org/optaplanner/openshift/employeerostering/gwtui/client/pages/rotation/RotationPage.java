@@ -63,10 +63,6 @@ public class RotationPage implements Page {
     private ViewportView<OffsetDateTime> viewportView;
 
     @Inject
-    @DataField("configuration")
-    private RotationConfigurationView rotationsConfigurationView;
-
-    @Inject
     @DataField("save-button")
     private HTMLButtonElement saveButton;
 
