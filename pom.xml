@@ -47,6 +47,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <wildfly.parent>${project.basedir}/local/appserver</wildfly.parent>
+    <wildfly.server.config>wildfly-standalone-config.xml</wildfly.server.config>
     <wildfly.home>${wildfly.parent}/wildfly-${version.org.wildfly.wildfly-dist}</wildfly.home>
     <wildfly.launchdir>${project.basedir}/local/appserver/wildfly-${version.org.wildfly.wildfly-dist}</wildfly.launchdir>
     <wildfly.install.skip>false</wildfly.install.skip>
@@ -304,6 +305,10 @@
                   link="${wildfly.launchdir}/standalone/deployments/${deployment.name}.war"
                   resource="${deployment.parent}/${deployment.name}"
                   overwrite="true" />
+                <copy
+                  tofile="${wildfly.launchdir}/standalone/configuration/optashift-employee-rostering-standalone.xml"
+                  file="${wildfly.server.config}"
+                  overwrite="true" />
               </target>
             </configuration>
           </execution>
@@ -335,6 +340,7 @@
               <targetDir>${wildfly.launchdir}/standalone/deployments</targetDir>
               <name>optashift-employee-rostering.war</name>
               <checkPackaging>false</checkPackaging>
+              <serverConfig>optashift-employee-rostering-standalone.xml</serverConfig>
             </configuration>
           </execution>
         </executions>
