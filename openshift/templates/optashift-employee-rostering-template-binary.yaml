@@ -32,7 +32,8 @@ objects:
       sourceStrategy:
         from:
           kind: ImageStreamTag
-          name: wildfly:11.0
+          # TODO Change to wildfly:11.0 once it is available
+          name: wildfly:10.1
           namespace: openshift
       type: Source
     resources:

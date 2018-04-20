@@ -18,7 +18,8 @@ To copy-paste your command, go to https://manage.openshift.com/[the OpenShift On
 . `oc cluster up`
 . `oc login`, enter "developer" for both username and password when prompted
 . `oc new-project <your-project-name>` (ex: "openshift", must consist of only lowercase letters, numbers and hypens)
-. `oc new-app --image-stream="openshift/wildfly:11.0" https://github.com/kiegroup/optashift-employee-rostering.git#master`
+// TODO Change to wildfly:11.0 once it is available
+. `oc new-app --image-stream="openshift/wildfly:10.1" https://github.com/kiegroup/optashift-employee-rostering.git#master`
 
 To trigger a new build with the latest updates from the master branch, run
 
@@ -41,7 +42,8 @@ To delete the OpenShift application and project, run
 `oc login <https://api.your-openshift-server.com> --token=<tokenID>`
 
 . `oc new-project <your-project-name>` (ex: "openshift", must consist of only lowercase letters, numbers and hypens)
-. `oc new-app --image-stream="openshift/wildfly:11.0" https://github.com/kiegroup/optashift-employee-rostering.git#master`
+// TODO Change to wildfly:11.0 once it is available
+. `oc new-app --image-stream="openshift/wildfly:10.1" https://github.com/kiegroup/optashift-employee-rostering.git#master`
 
 To trigger a new build with the latest updates from the master branch, run
 
