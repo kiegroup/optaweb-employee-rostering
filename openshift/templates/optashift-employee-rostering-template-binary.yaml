@@ -136,7 +136,7 @@ parameters:
   displayName: Git source repository
   name: GIT_URI
   required: true
-  value: https://github.com/ge0ffrey/optashift-employee-rostering
+  value: https://github.com/kiegroup/optashift-employee-rostering
 - description: Git branch/tag reference
   displayName: Git branch/tag reference
   name: GIT_REF
