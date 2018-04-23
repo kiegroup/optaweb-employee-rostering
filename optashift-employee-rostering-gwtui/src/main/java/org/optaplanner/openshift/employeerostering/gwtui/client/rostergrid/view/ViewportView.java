@@ -16,20 +16,14 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
 import elemental2.dom.MutationObserver;
 import elemental2.dom.MutationObserver.MutationObserverCallbackFn;
 import elemental2.dom.MutationObserverInit;
-import elemental2.dom.Node;
-import jsinterop.base.Js;
-import jsinterop.base.JsArrayLike;
+import elemental2.dom.MutationRecord;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -38,9 +32,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.list.
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
-
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
 
 @Templated
 public class ViewportView<T> implements IsElement {
@@ -67,6 +58,16 @@ public class ViewportView<T> implements IsElement {
     private MutationObserverInit domObserverConfig;
 
     // In an ideal world we wouldn't need these, but alas this isn't an ideal world
+    private static native void addClassToElement(Object element, String className) /*-{
+        if (element.classList) {
+            element.classList.add(className);
+            var children = element.children;
+            for (var i = 0; i < children.length; i++) {
+                @org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView::addClassToElement(Ljava/lang/Object;Ljava/lang/String;)(children[i],className);
+            }
+        }
+    }-*/;
+
     private static native MutationObserverInit getMutationObserverInit() /*-{
         return {subtree: true, childList: true};
     }-*/;
@@ -81,29 +82,17 @@ public class ViewportView<T> implements IsElement {
     }
 
     public void setViewport(final Viewport<T> viewport) {
+
         timingUtils.time("Viewport assemble", () -> {
-
-            final String orientation = viewport.decideBasedOnOrientation("vertical", "horizontal");
-
-            dateTicksLane.classList.remove("vertical", "horizontal");
-            dateTicksLane.classList.add(orientation);
-
-            timeTicksLane.classList.remove("vertical", "horizontal");
-            timeTicksLane.classList.add(orientation);
-
-            getElement().classList.add(orientation);
-
             if (domObserver != null) {
                 domObserver.disconnect();
             }
-
-            domObserver = getMutationObserver((records, mutationObserver) -> {
-                addOrientation(orientation, stream(records)
-                        .flatMap(record -> stream(asArray(record.addedNodes)))
-                        .collect(toList()));
-                return null;
-            });
-
+            dateTicksLane.classList.remove("vertical", "horizontal");
+            dateTicksLane.classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
+            timeTicksLane.classList.remove("vertical", "horizontal");
+            timeTicksLane.classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
+            domObserver = getMutationObserver(getCallback(viewport));
+            getElement().classList.add(viewport.decideBasedOnOrientation("vertical", "horizontal"));
             domObserver.observe(getElement(), domObserverConfig);
 
             viewport.setSizeInScreenPixels(this, viewport.getSizeInGridPixels(), 12L);
@@ -114,16 +103,19 @@ public class ViewportView<T> implements IsElement {
             lanes.init(getElement(), viewport.getLanes(), () -> laneViewInstances.get().withViewport(viewport));
         });
     }
-    private void addOrientation(final String orientation, final List<Node> nodes) {
-        nodes.stream()
-                .filter(node -> node instanceof HTMLElement)
-                .map(node -> (HTMLElement) node)
-                .peek(element -> element.classList.add(orientation))
-                .map(element -> Arrays.asList(asArray(element.childNodes)))
-                .forEach(childNodes -> addOrientation(orientation, childNodes));
-    }
 
-    private Node[] asArray(final JsArrayLike<Node> jsArrayLike) {
-        return Js.uncheckedCast(jsArrayLike);
-}
+    private MutationObserverCallbackFn getCallback(final Viewport<T> viewport) {
+        return new MutationObserverCallbackFn() {
+
+            @Override
+            public Object onInvoke(MutationRecord[] records, MutationObserver observers) {
+                for (MutationRecord record : records) {
+                    for (int i = 0; i < record.addedNodes.length; i++) {
+                        addClassToElement(record.addedNodes.getAt(i), viewport.decideBasedOnOrientation("vertical", "horizontal"));
+                    }
+                }
+                return null;
+            }
+        };
+    }
 }

@@ -22,9 +22,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.MouseEvent;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -57,9 +57,6 @@ public class HeaderView implements IsElement {
     @Inject
     @DataField("container")
     private HTMLDivElement container;
-    
-    @Inject
-    private Event<PageChange> pageChangeEvent;
 
     @Inject
     @DataField("header")
@@ -68,6 +65,9 @@ public class HeaderView implements IsElement {
 
     @Inject
     private Elemental2DomUtil domUtils;
+
+    @Inject
+    private Event<PageChange> pageChangeEvent;
 
     public void addStickyElement(org.jboss.errai.common.client.api.elemental2.IsElement element) {
         container.appendChild(element.getElement());
