@@ -327,13 +327,9 @@ public abstract class ZoneId {
 
   // -----------------------------------------------------------------------
   /**
-   * Constructor only accessible within the package.
+   * Constructor (Overwritten so it can be subclassed)
    */
-  ZoneId() {
-
-    if (getClass() != ZoneOffset.class) {
-      throw new AssertionError("Invalid subclass");
-    }
+  public ZoneId() {
   }
 
   // -----------------------------------------------------------------------

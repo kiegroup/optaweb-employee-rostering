@@ -25,19 +25,18 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.DateTimeSelector;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopoverContent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
@@ -55,16 +54,12 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
     private HTMLButtonElement closeButton;
 
     @Inject
-    @DataField("day")
-    private HTMLInputElement day;
+    @DataField("start-date-time")
+    private DateTimeSelector startDateTimeSelector;
 
     @Inject
-    @DataField("from-hour")
-    private HTMLInputElement fromHour;
-
-    @Inject
-    @DataField("to-hour")
-    private HTMLInputElement toHour;
+    @DataField("end-date-time")
+    private DateTimeSelector endDateTimeSelector;
 
     @Inject
     @DataField("employee")
@@ -111,16 +106,17 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
             employeeSelect.setSelectedIndex(employees.indexOf(availability.getEmployee()) + 1);
         }));
 
-        // TODO: Indifferent = NULL case
-        Arrays.asList(EmployeeAvailabilityState.values()).forEach((e) -> {
-            availabilitySelect.addItem(e.toString());
-        });
+        if (availabilitySelect.getItemCount() == 0) {
+            Arrays.asList(EmployeeAvailabilityState.values()).forEach((e) -> {
+                availabilitySelect.addItem(e.toString());
+            });
+        }
+
         int availabilityIndex = Arrays.asList(EmployeeAvailabilityState.values()).indexOf(availability.getState());
         availabilitySelect.setSelectedIndex((availabilityIndex > -1) ? availabilityIndex : 0);
 
-        day.value = GwtJavaTimeWorkaroundUtil.toLocalDate(availability.getStartDateTime()).getMonth().toString() + " " + GwtJavaTimeWorkaroundUtil.toLocalDate(availability.getStartDateTime()).getDayOfMonth(); //FIXME: i18n
-        fromHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getStartDateTime()) + "";
-        toHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getEndDateTime()) + "";
+        startDateTimeSelector.setValue(availability.getStartDateTime());
+        endDateTimeSelector.setValue(availability.getEndDateTime());
     }
 
     @EventHandler("root")

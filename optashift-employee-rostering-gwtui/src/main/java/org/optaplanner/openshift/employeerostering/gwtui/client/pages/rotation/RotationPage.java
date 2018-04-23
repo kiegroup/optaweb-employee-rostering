@@ -91,6 +91,9 @@ public class RotationPage implements Page {
     @Inject
     private PromiseUtils promiseUtils;
 
+    @Inject
+    private DateTimeUtils dateTimeUtils;
+
     private Viewport<OffsetDateTime> viewport;
 
     @Override
@@ -191,11 +194,11 @@ public class RotationPage implements Page {
     }
 
     private int getOffsetStartDay(Shift shift) {
-        return DateTimeUtils.daysBetween(getBaseDate(), shift.getStartDateTime());
+        return dateTimeUtils.daysBetween(getBaseDate(), shift.getStartDateTime());
     }
 
     private int getOffsetEndDay(Shift shift) {
-        return DateTimeUtils.daysBetween(getBaseDate(), shift.getEndDateTime());
+        return dateTimeUtils.daysBetween(getBaseDate(), shift.getEndDateTime());
     }
 
     @EventHandler("save-button")
@@ -228,8 +231,8 @@ public class RotationPage implements Page {
 
     private ShiftTemplate newShiftTemplate(final Shift shift) {
         return new ShiftTemplate(tenantStore.getCurrentTenantId(),
-                shift.getSpot(), getOffsetStartDay(shift), DateTimeUtils.getLocalTimeOf(shift.getStartDateTime()),
-                getOffsetEndDay(shift), DateTimeUtils.getLocalTimeOf(shift.getEndDateTime()), shift.getRotationEmployee());
+                shift.getSpot(), getOffsetStartDay(shift), dateTimeUtils.getLocalTimeOf(shift.getStartDateTime()),
+                getOffsetEndDay(shift), dateTimeUtils.getLocalTimeOf(shift.getEndDateTime()), shift.getRotationEmployee());
     }
 
     private Promise<List<Spot>> fetchSpotList() {

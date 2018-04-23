@@ -70,4 +70,15 @@ public class GwtJavaTimeWorkaroundUtil {
     public static int getOffsetInMinutes(LocalDate date, ZoneOffset offset) {
         return (offset.getTotalSeconds() / 60) - JsDate.create(date.getYear(), date.getMonthValue(), date.getDayOfMonth()).getTimezoneOffset();
     }
+
+    public static String toOffsetDateTime(Date value) {
+        String dateAsString = value.toString();
+        return dateAsString;
+    }
+
+    public static LocalDateTime toLocalDateTime(Date date) {
+        DateTimeFormat localDateTimeConvertor = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
+        return LocalDateTime.parse(localDateTimeConvertor.format(date));
+
+    }
 }

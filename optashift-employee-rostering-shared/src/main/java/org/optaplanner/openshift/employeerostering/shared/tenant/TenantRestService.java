@@ -59,7 +59,7 @@ public interface TenantRestService {
      */
     @ApiOperation("Get a tenant configuration")
     @GET
-    @Path("/{id}")
+    @Path("/config/{id}")
     TenantConfiguration getTenantConfiguration(@ApiParam(required = true) @PathParam("id") Integer id);
 
     @ApiOperation("Update a tenant configuration")

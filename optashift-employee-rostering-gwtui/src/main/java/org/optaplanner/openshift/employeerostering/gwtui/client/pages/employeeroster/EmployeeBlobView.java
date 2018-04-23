@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,11 +34,12 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Templated
-public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> {
+public class EmployeeBlobView implements BlobView<LocalDateTime, EmployeeBlob> {
 
     private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
     private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
@@ -55,7 +56,10 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     @Inject
     private EmployeeRosterPage page;
 
-    private Viewport<OffsetDateTime> viewport;
+    @Inject
+    private DateTimeUtils dateTimeUtils;
+
+    private Viewport<LocalDateTime> viewport;
     private ListView<EmployeeBlob> blobViews;
     private Runnable onDestroy;
 
@@ -66,7 +70,7 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
                                                final ListView<EmployeeBlob> blobViews) {
 
         this.blobViews = blobViews;
-        this.blob = blob;
+        this.blob = blob.withZoneId(dateTimeUtils.getTenantZoneId());
 
         refresh();
 
@@ -135,13 +139,13 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     }
 
     @Override
-    public BlobView<OffsetDateTime, EmployeeBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
+    public BlobView<LocalDateTime, EmployeeBlob> withViewport(final Viewport<LocalDateTime> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<OffsetDateTime, EmployeeBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
+    public BlobView<LocalDateTime, EmployeeBlob> withSubLane(final SubLane<LocalDateTime> subLaneView) {
         return this;
     }
 
@@ -160,7 +164,7 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     }
 
     @Override
-    public Blob<OffsetDateTime> getBlob() {
+    public Blob<LocalDateTime> getBlob() {
         return blob;
     }
 }

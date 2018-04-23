@@ -16,8 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +37,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.TimingUtils;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -68,7 +68,7 @@ public class EmployeeRosterViewportFactory {
     private CssGridLinesFactory cssGridLinesFactory;
 
     @Inject
-    private TicksFactory<OffsetDateTime> ticksFactory;
+    private TicksFactory<LocalDateTime> ticksFactory;
 
     @Inject
     private TimingUtils timingUtils;
@@ -76,11 +76,14 @@ public class EmployeeRosterViewportFactory {
     @Inject
     private CommonUtils commonUtils;
 
+    @Inject
+    private DateTimeUtils dateTimeUtils;
+
     private Map<Employee, List<ShiftView>> employeeShiftRosterModel;
 
     private Map<Employee, List<EmployeeAvailabilityView>> employeeAvailabilityRosterModel;
 
-    private LinearScale<OffsetDateTime> scale;
+    private LinearScale<LocalDateTime> scale;
 
     public EmployeeRosterViewport getViewport(final EmployeeRosterView employeeRosterView) {
 
@@ -92,10 +95,10 @@ public class EmployeeRosterViewportFactory {
 
             employeeShiftRosterModel = buildEmployeeShiftRosterModel(employeeRosterView);
 
-            scale = new Positive2HoursScale(OffsetDateTime.of(employeeRosterView.getStartDate().atTime(0, 0), ZoneOffset.UTC),
-                    OffsetDateTime.of(employeeRosterView.getEndDate().atTime(0, 0), ZoneOffset.UTC));
+            scale = new Positive2HoursScale(employeeRosterView.getStartDate().atTime(0, 0),
+                    employeeRosterView.getEndDate().atTime(0, 0));
 
-            final List<Lane<OffsetDateTime>> lanes = buildLanes(employeeRosterView);
+            final List<Lane<LocalDateTime>> lanes = buildLanes(employeeRosterView);
 
             return new EmployeeRosterViewport(tenantStore.getCurrentTenantId(),
                     shiftBlobViewPool::get,
@@ -103,6 +106,7 @@ public class EmployeeRosterViewportFactory {
                     cssGridLinesFactory.newWithSteps(2L, 12L),
                     ticksFactory.newTicks(scale, "date-tick", 12L),
                     ticksFactory.newTicks(scale, "time-tick", 2L),
+                    dateTimeUtils.getTenantZoneId(),
                     lanes);
         });
     }
@@ -119,7 +123,7 @@ public class EmployeeRosterViewportFactory {
                         (employee) -> employeeRosterView.getEmployeeIdToShiftViewListMap().get(employee.getId())));
     }
 
-    private List<Lane<OffsetDateTime>> buildLanes(final EmployeeRosterView employeeRosterView) {
+    private List<Lane<LocalDateTime>> buildLanes(final EmployeeRosterView employeeRosterView) {
 
         final Map<Long, Employee> employeesById = indexById(employeeRosterView.getEmployeeList());
         final Map<Long, Spot> spotsById = indexById(employeeRosterView.getSpotList());
@@ -130,11 +134,11 @@ public class EmployeeRosterViewportFactory {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private List<SubLane<OffsetDateTime>> buildSubLanes(final Employee employee,
-                                                        final Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewList,
-                                                        final Map<Long, List<ShiftView>> employeeIdToShiftViewList,
-                                                        final Map<Long, Employee> employeeIdToEmployee,
-                                                        final Map<Long, Spot> spotIdToSpot) {
+    private List<SubLane<LocalDateTime>> buildSubLanes(final Employee employee,
+                                                       final Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewList,
+                                                       final Map<Long, List<ShiftView>> employeeIdToShiftViewList,
+                                                       final Map<Long, Employee> employeeIdToEmployee,
+                                                       final Map<Long, Spot> spotIdToSpot) {
 
         if (employeeIdToAvailabilityViewList.isEmpty()) {
             return new ArrayList<>(singletonList(new SubLane<>()));
@@ -149,14 +153,14 @@ public class EmployeeRosterViewportFactory {
             employeeShifts.add(sv);
         }
 
-        final List<Blob<OffsetDateTime>> employeeAvailabilitiesBlobs = employeeAvailabilities
+        final List<Blob<LocalDateTime>> employeeAvailabilitiesBlobs = employeeAvailabilities
                 .stream()
                 .filter(a -> a.getEmployeeId().equals(employee.getId()))
                 .map(a -> {
                     return buildEmployeeAvailabilityBlob(employee, a);
                 }).collect(Collectors.toList());
 
-        final List<Blob<OffsetDateTime>> employeeShiftsBlobs = employeeShifts
+        final List<Blob<LocalDateTime>> employeeShiftsBlobs = employeeShifts
                 .stream()
                 .filter(s -> s.getEmployeeId().equals(employee.getId()))
                 .map(s -> {

@@ -16,67 +16,71 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils.MomentZoneId;
+import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
-public class EmployeeBlob implements Blob<OffsetDateTime> {
+public class EmployeeBlob implements Blob<LocalDateTime> {
 
-    private final LinearScale<OffsetDateTime> scale;
+    private final LinearScale<LocalDateTime> scale;
     private EmployeeAvailability employeeAvailability;
     private Shift shift;
     private Long sizeInGridPixels;
 
     private Long positionInGridPixelsCache = null;
     private Long endPositionInGridPixelsCache = null;
+    private MomentZoneId zoneId;
 
-    public EmployeeBlob(final LinearScale<OffsetDateTime> scale, final Shift shift) {
+    public EmployeeBlob(final LinearScale<LocalDateTime> scale, final Shift shift) {
         this(scale, null, shift);
     }
 
-    public EmployeeBlob(final LinearScale<OffsetDateTime> scale, final EmployeeAvailability employeeAvailability) {
+    public EmployeeBlob(final LinearScale<LocalDateTime> scale, final EmployeeAvailability employeeAvailability) {
         this(scale, employeeAvailability, null);
     }
 
-    private EmployeeBlob(final LinearScale<OffsetDateTime> scale, final EmployeeAvailability employeeAvailability, final Shift shift) {
+    private EmployeeBlob(final LinearScale<LocalDateTime> scale, final EmployeeAvailability employeeAvailability, final Shift shift) {
         this.employeeAvailability = employeeAvailability;
         this.shift = shift;
         this.scale = scale;
         this.sizeInGridPixels = scale.toGridPixels(getEndDateTime()) - scale.toGridPixels(getStartDateTime());
     }
 
-    private OffsetDateTime getStartDateTime() {
+    private LocalDateTime getStartDateTime() {
         if (null != shift) {
-            return shift.getStartDateTime();
+            return GwtJavaTimeWorkaroundUtil.toLocalDateTime(shift.getStartDateTime());
         } else {
-            return employeeAvailability.getStartDateTime();
+            return GwtJavaTimeWorkaroundUtil.toLocalDateTime(employeeAvailability.getStartDateTime());
         }
     }
 
-    private OffsetDateTime getEndDateTime() {
+    private LocalDateTime getEndDateTime() {
         if (null != shift) {
-            return shift.getEndDateTime();
+            return GwtJavaTimeWorkaroundUtil.toLocalDateTime(shift.getEndDateTime());
         } else {
-            return employeeAvailability.getEndDateTime();
+            return GwtJavaTimeWorkaroundUtil.toLocalDateTime(employeeAvailability.getEndDateTime());
         }
     }
 
-    private void setStartDateTime(OffsetDateTime startDateTime) {
+    private void setStartDateTime(LocalDateTime startDateTime) {
         if (null != shift) {
-            shift.setStartDateTime(startDateTime);
+            shift.setStartDateTime(OffsetDateTime.of(startDateTime, zoneId.getRules().getOffset(startDateTime)));
         } else {
-            employeeAvailability.setStartDateTime(startDateTime);
+            employeeAvailability.setStartDateTime(OffsetDateTime.of(startDateTime, zoneId.getRules().getOffset(startDateTime)));
         }
     }
 
-    private void setEndDateTime(OffsetDateTime endDateTime) {
+    private void setEndDateTime(LocalDateTime endDateTime) {
         if (null != shift) {
-            shift.setEndDateTime(endDateTime);
+            shift.setEndDateTime(OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime)));
         } else {
-            employeeAvailability.setEndDateTime(endDateTime);
+            employeeAvailability.setEndDateTime(OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime)));
         }
     }
 
@@ -86,7 +90,7 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
     }
 
     @Override
-    public OffsetDateTime getPositionInScaleUnits() {
+    public LocalDateTime getPositionInScaleUnits() {
         return getStartDateTime();
     }
 
@@ -113,7 +117,7 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
     }
 
     @Override
-    public void setPositionInScaleUnits(final OffsetDateTime start) {
+    public void setPositionInScaleUnits(final LocalDateTime start) {
         positionInGridPixelsCache = null;
         endPositionInGridPixelsCache = null;
         setStartDateTime(start);
@@ -122,7 +126,7 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
     @Override
     public void setSizeInGridPixels(final long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
-        OffsetDateTime end = getEndPositionInScaleUnits();
+        LocalDateTime end = getEndPositionInScaleUnits();
         setEndDateTime(end);
     }
 
@@ -130,7 +134,7 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
         if (shift != null) {
             return shift.getSpot().toString() + ": " + getStartDateTime() + "-" + getEndDateTime();
         } else {
-            return employeeAvailability.getState().toString() + ":" + getStartDateTime() + "-" + getEndDateTime();
+            return employeeAvailability.getState().toString();
         }
 
     }
@@ -152,7 +156,12 @@ public class EmployeeBlob implements Blob<OffsetDateTime> {
     }
 
     @Override
-    public LinearScale<OffsetDateTime> getScale() {
+    public LinearScale<LocalDateTime> getScale() {
         return scale;
+    }
+
+    public EmployeeBlob withZoneId(MomentZoneId zoneId) {
+        this.zoneId = zoneId;
+        return this;
     }
 }

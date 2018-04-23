@@ -81,25 +81,14 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
             return;
         }
 
-        // Remove SubLane (SHIFT + ALT + CLICK)
-        if (e.shiftKey && e.altKey) {
-            subLaneViews.remove(subLane);
-            if (subLaneViews.isEmpty()) {
-                lanes.remove(lane);
-            }
-        }
+        final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
+        final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
+        final T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
 
-        // Add Blob (ALT + CLICK)
-        else if (e.altKey) {
-            final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
-            final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
-            final T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
+        final List<Blob<T>> newBlobs = viewport.newBlob(lane, positionInScaleUnits).collect(toList());
+        final SubLane<T> nextSubLaneWithAvailableSpace = lane.getNextSubLaneWithSpaceForBlobsStartingFrom(subLane, newBlobs);
 
-            final List<Blob<T>> newBlobs = viewport.newBlob(lane, positionInScaleUnits).collect(toList());
-            final SubLane<T> nextSubLaneWithAvailableSpace = lane.getNextSubLaneWithSpaceForBlobsStartingFrom(subLane, newBlobs);
-
-            subLaneViews.addOrReplace(nextSubLaneWithAvailableSpace, nextSubLaneWithAvailableSpace.withMore(newBlobs));
-        }
+        subLaneViews.addOrReplace(nextSubLaneWithAvailableSpace, nextSubLaneWithAvailableSpace.withMore(newBlobs));
     }
 
     public SubLaneView<T> withViewport(final Viewport<T> viewport) {

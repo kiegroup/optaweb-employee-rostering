@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import com.github.nmorel.gwtjackson.rest.api.RestRequestBuilder;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.event.shared.UmbrellaException;
 import com.google.gwt.logging.impl.StackTracePrintStream;
 import com.google.gwt.user.client.Window;
@@ -17,6 +18,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationCo
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.resources.js.MomentBundle;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
@@ -64,7 +66,13 @@ public class OptaShiftRosteringEntryPoint {
                 return e;
             }
         });
+        injectScripts();
         healthCheck();
+    }
+
+    private void injectScripts() {
+        ScriptInjector.fromString(MomentBundle.INSTANCE.moment().getText()).setWindow(ScriptInjector.TOP_WINDOW).inject();
+        ScriptInjector.fromString(MomentBundle.INSTANCE.momentTimezoneWithData().getText()).setWindow(ScriptInjector.TOP_WINDOW).inject();
     }
 
     public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
