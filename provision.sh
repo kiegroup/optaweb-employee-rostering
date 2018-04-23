@@ -13,28 +13,22 @@ command -v oc >/dev/null 2>&1 || {
 function usage() {
     echo
     echo "Usage:"
-    echo " $0 [command] [app-name] [options]"
+    echo " $0 [command] [options]"
     echo " $0 --help"
     echo
     echo "Example:"
-    echo " $0 setup --maven-mirror-url http://nexus.repo.com/content/groups/public/ --project-suffix s40d"
+    echo " $0 setup --project-suffix myDemo"
     echo
     echo "COMMANDS:"
-    echo "   setup                    Set up the projects and deploy the apps"
-    echo "   deploy                   Deploy the apps"
-    echo "   delete                   Clean up and remove projects and objects"
+    echo "   setup                    Set up the project and deploy the app"
+    echo "   deploy                   Deploy the app"
+    echo "   delete                   Clean up and remove project and objects"
     echo "   verify                   Verify the app is deployed correctly"
-    echo "   idle                     Make all services idle"
-    echo
-    echo "APPS:"
-    echo "   employee-rostering       OptaShift Employee Rostering"
     echo
     echo "OPTIONS:"
-    echo "   --binary                  Performs an OpenShift 'binary-build', which builds the WAR file locally and sends it to the OpenShift BuildConfig. Requires less memory in OpenShift."
     echo "   --user [username]         The admin user for the project. mandatory if logged in as system:admin"
     echo "   --project-suffix [suffix] Suffix to be added to project names e.g. ci-SUFFIX. If empty, user will be used as suffix."
     echo "   --run-verify              Run verify after provisioning"
-    # TODO support --maven-mirror-url
     echo
 }
 
@@ -42,45 +36,20 @@ ARG_USERNAME=
 ARG_PROJECT_SUFFIX=
 ARG_COMMAND=
 ARG_RUN_VERIFY=false
-ARG_BINARY_BUILD=false
-ARG_APP=
 
 while :; do
     case $1 in
         setup)
             ARG_COMMAND=setup
-            if [ -n "$2" ]; then
-                ARG_APP=$2
-                shift
-            fi
             ;;
         deploy)
             ARG_COMMAND=deploy
-            if [ -n "$2" ]; then
-                ARG_APP=$2
-                shift
-            fi
             ;;
         delete)
             ARG_COMMAND=delete
-            if [ -n "$2" ]; then
-                ARG_APP=$2
-                shift
-            fi
             ;;
         verify)
             ARG_COMMAND=verify
-            if [ -n "$2" ]; then
-                ARG_APP=$2
-                shift
-            fi
-            ;;
-        idle)
-            ARG_COMMAND=idle
-            if [ -n "$2" ]; then
-                ARG_APP=$2
-                shift
-            fi
             ;;
         --user)
             if [ -n "$2" ]; then
@@ -104,9 +73,6 @@ while :; do
             ;;
         --run-verify)
             ARG_RUN_VERIFY=true
-            ;;
-        --binary)
-            ARG_BINARY_BUILD=true
             ;;
         -h|--help)
             usage
@@ -137,6 +103,7 @@ OPENSHIFT_USER=${ARG_USERNAME:-$LOGGEDIN_USER}
 # project
 PRJ_SUFFIX=${ARG_PROJECT_SUFFIX:-`echo $OPENSHIFT_USER | sed -e 's/[-@].*//g'`}
 PRJ=optashift-$PRJ_SUFFIX
+ARG_APP=employee-rostering
 
 PRJ_DISPLAY_NAME="OptaShift Employee Rostering"
 PRJ_DESCRIPTION="Employee Rostering with OptaPlanner on OpenShift"
@@ -145,20 +112,6 @@ PRJ_DESCRIPTION="Employee Rostering with OptaPlanner on OpenShift"
 GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-kiegroup}
 GIT_REF=${GITHUB_REF:-master}
 GIT_URI=https://github.com/$GITHUB_ACCOUNT/optashift-employee-rostering
-
-################################################################################
-# APP MATRIX                                                                  #
-################################################################################
-case $ARG_APP in
-    employee-rostering)
-	   # No need to set anything here anymore.
-	;;
-    *)
-        echo "ERROR: Invalid app name: \"$ARG_APP\"."
-        usage
-        exit 255
-        ;;
-esac
 
 
 ################################################################################
@@ -217,19 +170,9 @@ function create_projects() {
 }
 
 
-function create_application() {
-  echo_header "Creating OptaShift Build and Deployment config."
-  oc process -f openshift/templates/optashift-employee-rostering-template.yaml -p GIT_URI="$GIT_URI" -p GIT_REF="$GIT_REF" -n $PRJ | oc create -f - -n $PRJ
-}
-
 function create_application_binary() {
   echo_header "Creating OptaShift Build and Deployment config."
   oc process -f openshift/templates/optashift-employee-rostering-template-binary.yaml -p GIT_URI="$GIT_URI" -p GIT_REF="$GIT_REF" -n $PRJ | oc create -f - -n $PRJ
-}
-
-function build_and_deploy() {
-  echo_header "Starting OpenShift build and deploy..."
-  oc start-build employee-rostering
 }
 
 function build_and_deploy_binary() {
@@ -275,12 +218,6 @@ function verify_build_and_deployments() {
   done
 }
 
-function make_idle() {
-  echo_header "Idling Services"
-  oc idle -n $PRJ_CI --all
-  oc idle -n $PRJ_TRAVEL_AGENCY_PROD --all
-}
-
 # GPTE convention
 function set_default_project() {
   if [ $LOGGEDIN_USER == 'system:admin' ] ; then
@@ -321,25 +258,13 @@ case "$ARG_COMMAND" in
         verify_build_and_deployments
         ;;
 
-    idle)
-        echo "Idling $PRJ_DISPLAY_NAME ($ARG_APP)..."
-        print_info
-        make_idle
-        ;;
-
     setup)
         echo "Setting up and deploying $PRJ_DISPLAY_NAME ($ARG_APP)..."
 
         print_info
         create_projects
-
-        if [ "$ARG_BINARY_BUILD" = true ] ; then
-            create_application_binary
-            build_and_deploy_binary
-        else
-            create_application
-            build_and_deploy
-        fi
+        create_application_binary
+        build_and_deploy_binary
 
         if [ "$ARG_RUN_VERIFY" = true ] ; then
           echo "Waiting for deployments to finish..."
@@ -352,12 +277,7 @@ case "$ARG_COMMAND" in
         echo "Deploying $PRJ_DISPLAY_NAME ($ARG_APP)..."
 
         print_info
-
-        if [ "$ARG_BINARY_BUILD" = true ] ; then
-            build_and_deploy_binary
-        else
-            build_and_deploy
-        fi
+        build_and_deploy_binary
 
         if [ "$ARG_RUN_VERIFY" = true ] ; then
           echo "Waiting for deployments to finish..."

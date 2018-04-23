@@ -1,10 +1,10 @@
 = Employee Rostering Optimization as a Service
 
-An example https://www.optaplanner.org/[OptaPlanner] webapp ready to deploy on https://www.openshift.com/[OpenShift 3].
+An end-to-end https://www.optaplanner.org/[OptaPlanner] web application ready to deploy on https://www.openshift.com/[OpenShift 3].
 
 See https://www.youtube.com/watch?v=sOWC4qrXxFk[the video demo].
 
-== Running on OpenShift
+== Running on OpenShift Dedicated (paid edition)
 
 === Prerequisites
 
@@ -12,74 +12,67 @@ See https://www.youtube.com/watch?v=sOWC4qrXxFk[the video demo].
 
 To copy-paste your command, go to https://manage.openshift.com/[the OpenShift Online web console] and look for _Help_ > _Command line tools_.
 
-=== Locally with OpenShift Origin
+=== Setup
+
+. Login to OpenShift Dedicated from command line:
++
+----
+oc login https://api.YOUR_SERVER.openshift.com --token=<tokenId>
+----
++
+If you don't know your `<tokenId>`, log in at https://manage.openshift.com/[the OpenShift web console]
+and look for _Help_ > _Command Line Tools_.
+
+. Create, build and deploy the project.
++
+----
+./provision.sh setup --project-suffix myDemo
+----
++
+The `--project-suffix` is optional.
+
+. It should now be building the pod and running it on OpenShift.
+Go to https://manage.openshift.com/[the OpenShift Online web console]
+to get the `*.openshiftapps.com` URL to visit.
+
+=== Updates
+
+To build and deploy new changes, use:
+----
+./provision.sh deploy
+----
+
+=== Deletion
+
+To delete the OpenShift application and project, run:
+----
+./provision.sh delete
+----
+
+== Running on OpenShift Online (free edition)
+
+This is not possible to due to resource limitations.
+
+== Running on a local OpenShift Origin
 
 . If you just installed oc client tools, follow the https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md[OpenShift Local Cluster Management] docs to get `oc cluster (up|down)` working.
 . `oc cluster up`
-. `oc login`, enter "developer" for both username and password when prompted
-. `oc new-project <your-project-name>` (ex: "openshift", must consist of only lowercase letters, numbers and hypens)
+. `oc login`, enter `developer` for both username and password when prompted
+. `oc new-project optashift-employee-rostering`
 // TODO Change to wildfly:11.0 once it is available
 . `oc new-app --image-stream="openshift/wildfly:10.1" https://github.com/kiegroup/optashift-employee-rostering.git#master`
 
 To trigger a new build with the latest updates from the master branch, run
 
-`oc start-build optashift-employee-rostering`
+----
+oc start-build optashift-employee-rostering
+----
 
 To delete the OpenShift application and project, run
 
-`oc delete project <your-project-name>`
-
-=== OpenShift Dedicated
-
-. Login to OpenShift Dedicated from command line
-+
-(With username and password)
-+
-`oc login -u=<username> -p=<password> --server=<your-openshift-server> --insecure-skip-tls-verify`
-+
-(With OAuth token)
-+
-`oc login <https://api.your-openshift-server.com> --token=<tokenID>`
-
-. `oc new-project <your-project-name>` (ex: "openshift", must consist of only lowercase letters, numbers and hypens)
-// TODO Change to wildfly:11.0 once it is available
-. `oc new-app --image-stream="openshift/wildfly:10.1" https://github.com/kiegroup/optashift-employee-rostering.git#master`
-
-To trigger a new build with the latest updates from the master branch, run
-
-`oc start-build optashift-employee-rostering`
-
-To delete the OpenShift application and project, run
-
-`oc delete project <your-project-name>`
-
-=== OpenShift Online
-
-Login to OpenShift Online from command line
-
-(With username and password)
-
-`oc login -u=<username> -p=<password> --server=<your-openshift-server> --insecure-skip-tls-verify`
-
-(With OAuth token)
-
-`oc login <https://api.your-openshift-server.com> --token=<tokenID>`
-
-Create the project, build the `war` file locally and provision it on OpenShift:
-
-`./provision.sh setup employee-rostering --binary`
-
-That's it, it should now be running on the web.
-Go to https://manage.openshift.com/[the OpenShift Online web console]
-to get the `*.openshiftapps.com` URL.
-
-Later, you can just run this command to deploy new code changes:
-
-`./provision.sh deploy employee-rostering --binary`
-
-Or this command to delete the OpenShift Online application and project:
-
-`./provision.sh delete employee-rostering`
+----
+oc delete project optashift-employee-rostering
+----
 
 == Development
 
