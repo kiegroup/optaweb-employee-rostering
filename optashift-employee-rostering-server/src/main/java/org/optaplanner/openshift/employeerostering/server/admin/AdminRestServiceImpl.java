@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.server.admin;
 
+import java.time.ZoneId;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -31,12 +32,14 @@ public class AdminRestServiceImpl extends AbstractRestServiceImpl implements Adm
     @Override
     @Transactional
     public void resetApplication() {
+        // TODO receive zoneId as a parameter instead
+        ZoneId zoneId = ZoneId.systemDefault();
         // IMPORTANT: Delete entries that has Many-to-One relations first,
         // otherwise we break referential integrity
         deleteAllEntities(Shift.class, EmployeeAvailability.class, ShiftTemplate.class,
                 Employee.class, Spot.class, Skill.class,
                 TenantConfiguration.class, RosterState.class, Tenant.class);
-        rosterGenerator.setUpGeneratedData();
+        rosterGenerator.setUpGeneratedData(zoneId);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
