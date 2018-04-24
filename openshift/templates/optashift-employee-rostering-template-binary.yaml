@@ -1,23 +1,29 @@
 apiVersion: v1
 kind: Template
+metadata:
+  name: optashift-employee-rostering-template
+  annotations:
+    description: "Employee rostering web application and REST service based on OptaPlanner."
+    iconClass: "icon-wildfly"
+    tags: "optaplanner,wildfly,java"
 labels:
   app: employee-rostering
-metadata:
-  annotations:
-    description: Employee Rostering with OptaPlanner on OpenShift
-    iconClass: icon-java
-    tags: optaplanner,jboss
-  name: employee-rostering-builds
+parameters:
+- name: SOURCE_REPOSITORY_URL
+  description: "The URL of the repository with the application source code."
+  required: true
+  value: https://github.com/kiegroup/optashift-employee-rostering
+  # TODO add datasource, JPA dialect, etc
 objects:
-- apiVersion: v1
-  kind: ImageStream
+- kind: ImageStream
+  apiVersion: v1
   metadata:
     name: employee-rostering
   spec:
     tags:
       - name: latest
-- apiVersion: v1
-  kind: BuildConfig
+- kind: BuildConfig
+  apiVersion: v1
   metadata:
     name: employee-rostering
   spec:
@@ -44,8 +50,8 @@ objects:
         cpu: "1"
         memory: 1Gi
     runPolicy: Serial
-- apiVersion: v1
-  kind: DeploymentConfig
+- kind: DeploymentConfig
+  apiVersion: v1
   metadata:
     creationTimestamp: null
     generation: 1
@@ -58,6 +64,7 @@ objects:
       app: employee-rostering
       deploymentconfig: employee-rostering
     strategy:
+      type: Rolling
       activeDeadlineSeconds: 21600
       resources: {}
       rollingParams:
@@ -66,7 +73,6 @@ objects:
         maxUnavailable: 25%
         timeoutSeconds: 600
         updatePeriodSeconds: 1
-      type: Rolling
     template:
       metadata:
         creationTimestamp: null
@@ -90,14 +96,14 @@ objects:
     test: false
     triggers:
     - type: ConfigChange
-    - imageChangeParams:
+    - type: ImageChange
+      imageChangeParams:
         automatic: true
         containerNames:
         - employee-rostering
         from:
           kind: ImageStreamTag
           name: employee-rostering:latest
-      type: ImageChange
   status:
     availableReplicas: 0
     latestVersion: 0
@@ -105,11 +111,12 @@ objects:
     replicas: 0
     unavailableReplicas: 0
     updatedReplicas: 0
-- apiVersion: v1
-  kind: Service
+- kind: Service
+  apiVersion: v1
   metadata:
     name: employee-rostering
   spec:
+    type: ClusterIP
     ports:
     - name: 8080-tcp
       port: 8080
@@ -118,11 +125,10 @@ objects:
     selector:
       deploymentconfig: employee-rostering
     sessionAffinity: None
-    type: ClusterIP
   status:
     loadBalancer: {}
-- apiVersion: v1
-  kind: Route
+- kind: Route
+  apiVersion: v1
   metadata:
     name: employee-rostering
   spec:
@@ -132,14 +138,3 @@ objects:
       kind: Service
       name: employee-rostering
       weight: 100
-parameters:
-- description: Git source URI for application
-  displayName: Git source repository
-  name: GIT_URI
-  required: true
-  value: https://github.com/kiegroup/optashift-employee-rostering
-- description: Git branch/tag reference
-  displayName: Git branch/tag reference
-  name: GIT_REF
-  required: true
-  value: master

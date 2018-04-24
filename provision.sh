@@ -110,8 +110,7 @@ PRJ_DESCRIPTION="Employee Rostering with OptaPlanner on OpenShift"
 
 # config
 GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-kiegroup}
-GIT_REF=${GITHUB_REF:-master}
-GIT_URI=https://github.com/$GITHUB_ACCOUNT/optashift-employee-rostering
+SOURCE_REPOSITORY_URL=https://github.com/$GITHUB_ACCOUNT/optashift-employee-rostering
 
 
 ################################################################################
@@ -134,7 +133,7 @@ function print_info() {
   echo "OpenShift master:    $OPENSHIFT_MASTER"
   echo "Current user:        $LOGGEDIN_USER"
   echo "Project suffix:      $PRJ_SUFFIX"
-  echo "GitHub repo:         $GIT_URI"
+  echo "GitHub repo:         $SOURCE_REPOSITORY_URL"
   echo "GitHub branch/tag:   $GITHUB_REF"
 }
 
@@ -172,7 +171,7 @@ function create_projects() {
 
 function create_application_binary() {
   echo_header "Creating OptaShift Build and Deployment config."
-  oc process -f openshift/templates/optashift-employee-rostering-template-binary.yaml -p GIT_URI="$GIT_URI" -p GIT_REF="$GIT_REF" -n $PRJ | oc create -f - -n $PRJ
+  oc process -f openshift/templates/optashift-employee-rostering-template-binary.yaml -p SOURCE_REPOSITORY_URL="$SOURCE_REPOSITORY_URL" -n $PRJ | oc create -f - -n $PRJ
 }
 
 function build_and_deploy_binary() {
