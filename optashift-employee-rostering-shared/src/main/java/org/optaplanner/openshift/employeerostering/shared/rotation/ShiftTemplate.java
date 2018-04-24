@@ -77,7 +77,6 @@ public class ShiftTemplate extends AbstractPersistable {
         }
         LocalDateTime endDateTime = endDate.atTime(getEndTime());
 
-        // TODO Can this and RosterGenerator.createEmployeeAvailabilityList() be simplified and be DST spring/fall compatible?
         OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime, zoneId.getRules().getOffset(startDateTime));
         OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime));
         Shift shift = new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, rotationEmployee);

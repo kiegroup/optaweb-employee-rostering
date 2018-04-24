@@ -24,7 +24,8 @@ public class TenantConfiguration extends AbstractPersistable {
     private Integer desiredTimeSlotWeight = 10;
     @NotNull
     private Integer rotationEmployeeMatchWeight = 500;
-    private ZoneId timeZone = ZoneId.of("UTC");
+    @NotNull
+    private ZoneId timeZone;
 
     @SuppressWarnings("unused")
     public TenantConfiguration() {

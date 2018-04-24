@@ -18,8 +18,11 @@ package org.optaplanner.openshift.employeerostering.server.roster;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.TemporalAdjusters;
 import java.time.zone.ZoneRules;
@@ -303,34 +306,40 @@ public class RosterGenerator {
 
     @PostConstruct
     public void setUpGeneratedData() {
+        ZoneId zoneId = ZoneId.systemDefault();
+        setUpGeneratedData(zoneId);
+    }
+
+    public void setUpGeneratedData(ZoneId zoneId) {
         random = new Random(37);
         tenantNameGenerator.predictMaximumSizeAndReset(12);
-        generateRoster(10, 7, hospitalGeneratorType);
-        generateRoster(10, 7, factoryAssemblyGeneratorType);
-        generateRoster(10, 7, guardSecurityGeneratorType);
-        generateRoster(10, 7 * 4, factoryAssemblyGeneratorType);
-        generateRoster(20, 7 * 4, factoryAssemblyGeneratorType);
-        generateRoster(40, 7 * 2, factoryAssemblyGeneratorType);
-        generateRoster(80, 7 * 4, factoryAssemblyGeneratorType);
-        generateRoster(10, 7 * 4, factoryAssemblyGeneratorType);
-        generateRoster(20, 7 * 4, factoryAssemblyGeneratorType);
-        generateRoster(40, 7 * 2, factoryAssemblyGeneratorType);
-        generateRoster(80, 7 * 4, factoryAssemblyGeneratorType);
+        generateRoster(10, 7, hospitalGeneratorType, zoneId);
+        generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(10, 7, guardSecurityGeneratorType, zoneId);
+        generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
     }
 
     public Roster generateRoster(int spotListSize, int lengthInDays) {
-        return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType);
+        ZoneId zoneId = ZoneId.systemDefault();
+        return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId);
     }
 
     @Transactional
     public Roster generateRoster(int spotListSize,
-                                 int lengthInDays, GeneratorType generatorType) {
+                                 int lengthInDays, GeneratorType generatorType, ZoneId zoneId) {
         int employeeListSize = spotListSize * 7 / 2;
         int skillListSize = (spotListSize + 4) / 5;
 
         Tenant tenant = createTenant(generatorType, employeeListSize);
         int tenantId = tenant.getId();
-        TenantConfiguration tenantConfiguration = createTenantConfiguration(generatorType, tenantId);
+        TenantConfiguration tenantConfiguration = createTenantConfiguration(generatorType, tenantId, zoneId);
         RosterState rosterState = createRosterState(generatorType, tenantId, lengthInDays);
 
         List<Skill> skillList = createSkillList(generatorType, tenantId, skillListSize);
@@ -353,9 +362,10 @@ public class RosterGenerator {
         return tenant;
     }
 
-    private TenantConfiguration createTenantConfiguration(GeneratorType generatorType, Integer tenantId) {
+    private TenantConfiguration createTenantConfiguration(GeneratorType generatorType, Integer tenantId, ZoneId zoneId) {
         TenantConfiguration tenantConfiguration = new TenantConfiguration();
         tenantConfiguration.setTenantId(tenantId);
+        tenantConfiguration.setTimeZone(zoneId);
         entityManager.persist(tenantConfiguration);
         return tenantConfiguration;
     }
@@ -458,6 +468,7 @@ public class RosterGenerator {
     private List<Shift> createShiftList(GeneratorType generatorType, Integer tenantId,
                                         TenantConfiguration tenantConfiguration, RosterState rosterState, List<Spot> spotList,
                                         List<ShiftTemplate> shiftTemplateList) {
+        ZoneId zoneId = tenantConfiguration.getTimeZone();
         int rotationLength = rosterState.getRotationLength();
         LocalDate date = rosterState.getLastHistoricDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate firstDraftDate = rosterState.getFirstDraftDate();
@@ -473,7 +484,7 @@ public class RosterGenerator {
                 for (ShiftTemplate shiftTemplate : subShiftTemplateList) {
                     boolean defaultToRotationEmployee = date.compareTo(firstDraftDate) < 0;
                     Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
-                            tenantConfiguration.getTimeZone(), defaultToRotationEmployee);
+                            zoneId, defaultToRotationEmployee);
                     entityManager.persist(shift);
                     shiftList.add(shift);
                 }
@@ -482,7 +493,7 @@ public class RosterGenerator {
                     for (int i = 0; i < extraShiftCount; i++) {
                         ShiftTemplate shiftTemplate = extractRandomElement(subShiftTemplateList);
                         Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
-                                tenantConfiguration.getTimeZone(), false);
+                                zoneId, false);
                         entityManager.persist(shift);
                         shiftList.add(shift);
                     }
@@ -497,7 +508,7 @@ public class RosterGenerator {
 
     private List<EmployeeAvailability> createEmployeeAvailabilityList(GeneratorType generatorType, Integer tenantId,
                                                                       TenantConfiguration tenantConfiguration, RosterState rosterState, List<Employee> employeeList, List<Shift> shiftList) {
-        ZoneRules zoneRules = tenantConfiguration.getTimeZone().getRules();
+        ZoneId zoneId = tenantConfiguration.getTimeZone();
         LocalDate date = rosterState.getFirstDraftDate();
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
         List<EmployeeAvailability> employeeAvailabilityList = new ArrayList<>();
@@ -515,9 +526,12 @@ public class RosterGenerator {
             for (EmployeeAvailabilityState state : EmployeeAvailabilityState.values()) {
                 for (int i = 0; i < stateCount; i++) {
                     Employee employee = availableEmployeeList.remove(random.nextInt(availableEmployeeList.size()));
-                    // TODO Can this and ShiftTemplate.createShiftOnDate() be simplified and be DST spring/fall compatible?
-                    EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee, date.atTime(OffsetTime.of(LocalTime.MIN, ZoneOffset.UTC)),
-                            date.plusDays(1).atTime(OffsetTime.of(LocalTime.MIN, ZoneOffset.UTC)));
+                    LocalDateTime startDateTime = date.atTime(LocalTime.MIN);
+                    LocalDateTime endDateTime = date.plusDays(1).atTime(LocalTime.MIN);
+                    OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime, zoneId.getRules().getOffset(startDateTime));
+                    OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime));
+                    EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee,
+                            startOffsetDateTime, endOffsetDateTime);
                     employeeAvailability.setState(state);
                     entityManager.persist(employeeAvailability);
                     employeeAvailabilityList.add(employeeAvailability);
