@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.server.roster;
 
+import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -62,6 +63,8 @@ import static java.util.stream.Collectors.groupingBy;
 @Singleton
 @Startup
 public class RosterGenerator {
+
+    public static final String ZONE_ID_SYSTEM_PROPERTY = "optashift.generator.timeZoneId";
 
     private static class GeneratorType {
 
@@ -306,8 +309,21 @@ public class RosterGenerator {
 
     @PostConstruct
     public void setUpGeneratedData() {
-        ZoneId zoneId = ZoneId.systemDefault();
+        ZoneId zoneId = determineZoneId();
         setUpGeneratedData(zoneId);
+    }
+
+    private ZoneId determineZoneId() {
+        String zoneIdProperty = System.getProperty(ZONE_ID_SYSTEM_PROPERTY);
+        if (zoneIdProperty != null) {
+            try {
+                return ZoneId.of(zoneIdProperty);
+            } catch (DateTimeException e) {
+                throw new IllegalStateException("The system property (" + ZONE_ID_SYSTEM_PROPERTY
+                        + ") has an invalid value (" + zoneIdProperty + ").", e);
+            }
+        }
+        return ZoneId.systemDefault();
     }
 
     public void setUpGeneratedData(ZoneId zoneId) {
@@ -327,7 +343,7 @@ public class RosterGenerator {
     }
 
     public Roster generateRoster(int spotListSize, int lengthInDays) {
-        ZoneId zoneId = ZoneId.systemDefault();
+        ZoneId zoneId = determineZoneId();
         return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId);
     }
 
