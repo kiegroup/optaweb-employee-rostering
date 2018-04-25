@@ -16,17 +16,13 @@
 
 package org.optaplanner.openshift.employeerostering.server.roster;
 
-import java.time.DateTimeException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
-import java.time.OffsetTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.temporal.TemporalAdjusters;
-import java.time.zone.ZoneRules;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +41,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.optaplanner.openshift.employeerostering.server.admin.SystemPropertiesRetriever;
 import org.optaplanner.openshift.employeerostering.server.common.generator.StringDataGenerator;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
@@ -63,8 +60,6 @@ import static java.util.stream.Collectors.groupingBy;
 @Singleton
 @Startup
 public class RosterGenerator {
-
-    public static final String ZONE_ID_SYSTEM_PROPERTY = "optashift.generator.timeZoneId";
 
     private static class GeneratorType {
 
@@ -309,21 +304,8 @@ public class RosterGenerator {
 
     @PostConstruct
     public void setUpGeneratedData() {
-        ZoneId zoneId = determineZoneId();
+        ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
         setUpGeneratedData(zoneId);
-    }
-
-    private ZoneId determineZoneId() {
-        String zoneIdProperty = System.getProperty(ZONE_ID_SYSTEM_PROPERTY);
-        if (zoneIdProperty != null) {
-            try {
-                return ZoneId.of(zoneIdProperty);
-            } catch (DateTimeException e) {
-                throw new IllegalStateException("The system property (" + ZONE_ID_SYSTEM_PROPERTY
-                        + ") has an invalid value (" + zoneIdProperty + ").", e);
-            }
-        }
-        return ZoneId.systemDefault();
     }
 
     public void setUpGeneratedData(ZoneId zoneId) {
@@ -343,7 +325,7 @@ public class RosterGenerator {
     }
 
     public Roster generateRoster(int spotListSize, int lengthInDays) {
-        ZoneId zoneId = determineZoneId();
+        ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
         return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId);
     }
 
