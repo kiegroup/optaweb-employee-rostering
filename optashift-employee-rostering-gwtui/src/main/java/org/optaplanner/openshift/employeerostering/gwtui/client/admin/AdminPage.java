@@ -22,7 +22,7 @@ public class AdminPage implements Page {
 
     @EventHandler("reset-application-button")
     private void resetApplication(@ForEvent("click") MouseEvent e) {
-        AdminRestServiceBuilder.resetApplication(FailureShownRestCallback.onSuccess((success) -> {
+        AdminRestServiceBuilder.resetApplication(null, FailureShownRestCallback.onSuccess((success) -> {
             ErrorPopup.show("Application was successfully reset");
         }));
     }

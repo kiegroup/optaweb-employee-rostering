@@ -31,9 +31,10 @@ public class AdminRestServiceImpl extends AbstractRestServiceImpl implements Adm
 
     @Override
     @Transactional
-    public void resetApplication() {
-        // TODO receive zoneId as a parameter instead
-        ZoneId zoneId = ZoneId.systemDefault();
+    public void resetApplication(ZoneId zoneId) {
+        if (zoneId == null){
+            zoneId = SystemPropertiesRetriever.determineZoneId();
+        }
         // IMPORTANT: Delete entries that has Many-to-One relations first,
         // otherwise we break referential integrity
         deleteAllEntities(Shift.class, EmployeeAvailability.class, ShiftTemplate.class,
