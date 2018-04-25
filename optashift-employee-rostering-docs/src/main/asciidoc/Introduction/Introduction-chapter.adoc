@@ -8,3 +8,4 @@
 :experimental:
 
 include::WhatIsOptaShift/WhatIsOptaShift-section.adoc[leveloffset=+1]
+include::SystemProperties/SystemProperties-section.adoc[leveloffset=+1]
