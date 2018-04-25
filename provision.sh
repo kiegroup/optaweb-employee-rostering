@@ -36,6 +36,7 @@ ARG_USERNAME=
 ARG_PROJECT_SUFFIX=
 ARG_COMMAND=
 ARG_RUN_VERIFY=false
+ARG_SKIP_MVN=false
 
 while :; do
     case $1 in
@@ -74,6 +75,9 @@ while :; do
         --run-verify)
             ARG_RUN_VERIFY=true
             ;;
+        --skip-mvn)
+            ARG_SKIP_MVN=true
+            ;;
         -h|--help)
             usage
             exit 0
@@ -102,8 +106,7 @@ OPENSHIFT_USER=${ARG_USERNAME:-$LOGGEDIN_USER}
 
 # project
 PRJ_SUFFIX=${ARG_PROJECT_SUFFIX:-`echo $OPENSHIFT_USER | sed -e 's/[-@].*//g'`}
-PRJ=optashift-$PRJ_SUFFIX
-ARG_APP=employee-rostering
+PRJ=optashift-employee-rostering-$PRJ_SUFFIX
 
 PRJ_DISPLAY_NAME="OptaShift Employee Rostering"
 PRJ_DESCRIPTION="Employee Rostering with OptaPlanner on OpenShift"
@@ -127,14 +130,13 @@ function echo_header() {
 function print_info() {
   echo_header "Configuration"
 
-  OPENSHIFT_MASTER=$(oc status | head -1 | sed 's#.*\(https://[^ ]*\)#\1#g') # must run after projects are created
+  # TODO Don't run this during setup because then fails with Forbidden
+  OPENSHIFT_MASTER=$(oc status | head -1 | sed 's#.*\(https://[^ ]*\)#\1#g')
 
-  echo "App name:            $ARG_APP"
   echo "OpenShift master:    $OPENSHIFT_MASTER"
   echo "Current user:        $LOGGEDIN_USER"
   echo "Project suffix:      $PRJ_SUFFIX"
   echo "GitHub repo:         $SOURCE_REPOSITORY_URL"
-  echo "GitHub branch/tag:   $GITHUB_REF"
 }
 
 # waits while the condition is true until it becomes false or it times out
@@ -175,10 +177,13 @@ function create_application_binary() {
 }
 
 function build_and_deploy_binary() {
-  start_maven_build
+
+  if [ "$ARG_SKIP_MVN" = false ] ; then
+    start_maven_build
+  fi
   
   echo_header "Starting OpenShift binary deploy..."
-  oc start-build employee-rostering --from-file=target/ROOT.war
+  oc start-build "webapp-build" --from-file=target/ROOT.war
 }
 
 function start_maven_build() {
@@ -200,7 +205,7 @@ function verify_build_and_deployments() {
   do
     if [ -n "$(oc get builds -n $PRJ | grep $buildconfig | grep Failed)" ] && [ -z "$(oc get builds -n $PRJ | grep $buildconfig | grep Complete)" ]; then
       _BUILDS_FAILED=true
-      echo "WARNING: Build $project/$buildconfig has failed..."
+      echo "WARNING: Build $buildconfig has failed..."
     fi
   done
 
@@ -247,18 +252,18 @@ echo_header "$PRJ_DISPLAY_NAME ($(date))"
 
 case "$ARG_COMMAND" in
     delete)
-        echo "Delete $PRJ_DISPLAY_NAME ($ARG_APP)..."
+        echo "Delete $PRJ_DISPLAY_NAME..."
         oc delete project $PRJ
         ;;
 
     verify)
-        echo "Verifying $PRJ_DISPLAY_NAME ($ARG_APP)..."
+        echo "Verifying $PRJ_DISPLAY_NAME..."
         print_info
         verify_build_and_deployments
         ;;
 
     setup)
-        echo "Setting up and deploying $PRJ_DISPLAY_NAME ($ARG_APP)..."
+        echo "Setting up and deploying $PRJ_DISPLAY_NAME..."
 
         print_info
         create_projects
@@ -273,7 +278,7 @@ case "$ARG_COMMAND" in
         ;;
 
     deploy)
-        echo "Deploying $PRJ_DISPLAY_NAME ($ARG_APP)..."
+        echo "Deploying $PRJ_DISPLAY_NAME..."
 
         print_info
         build_and_deploy_binary
