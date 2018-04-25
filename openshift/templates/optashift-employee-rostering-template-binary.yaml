@@ -7,134 +7,108 @@ metadata:
     iconClass: "icon-wildfly"
     tags: "optaplanner,wildfly,java"
 labels:
-  app: employee-rostering
+  app: "employee-rostering"
 parameters:
-- name: SOURCE_REPOSITORY_URL
-  description: "The URL of the repository with the application source code."
-  required: true
-  value: https://github.com/kiegroup/optashift-employee-rostering
-  # TODO add datasource, JPA dialect, etc
+  - name: SOURCE_REPOSITORY_URL
+    description: "The URL of the repository with the application source code."
+    required: true
+    value: "https://github.com/kiegroup/optashift-employee-rostering"
+    # TODO add datasource, JPA dialect, etc
+
 objects:
-- kind: ImageStream
-  apiVersion: v1
-  metadata:
-    name: employee-rostering
-  spec:
-    tags:
-      - name: latest
-- kind: BuildConfig
-  apiVersion: v1
-  metadata:
-    name: employee-rostering
-  spec:
-    output:
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      name: "webapp-image"
+    spec:
+      tags:
+        - name: latest
+
+  - kind: BuildConfig
+    apiVersion: v1
+    metadata:
+      name: "webapp-build"
+    spec:
+      triggers:
+        - type: ImageChange
+      source:
+        type: Binary
+      strategy:
+        sourceStrategy:
+          from:
+            kind: ImageStreamTag
+            namespace: "openshift"
+            # TODO Change to wildfly:11.0 once it is available
+            name: "wildfly:10.1"
+      output:
+        to:
+          kind: ImageStreamTag
+          name: "webapp-image:latest"
+      resources:
+        limits:
+          cpu: 1
+          memory: 1Gi
+        requests:
+          cpu: 1
+          memory: 1Gi
+
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      name: "webapp-deployment"
+    spec:
+      template:
+        metadata:
+          labels:
+            deploymentconfig: "webapp-deployment"
+        spec:
+          containers:
+          - name: "webapp-container"
+            image: "webapp-image"
+            ports:
+              - containerPort: 8080
+                protocol: TCP
+            resources:
+              limits:
+                cpu: 2
+                memory: 2Gi
+              requests:
+                cpu: 2
+                memory: 2Gi
+      replicas: 1
+      selector:
+        deploymentconfig: "webapp-deployment"
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            from:
+              kind: ImageStreamTag
+              name: "webapp-image:latest"
+            containerNames:
+              - "webapp-container"
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      name: "webapp-service"
+    spec:
+      selector:
+        deploymentconfig: "webapp-deployment"
+      ports:
+      - port: 8080
+        protocol: TCP
+        targetPort: 8080
+
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: "webapp"
+    spec:
+      # host: employee-rostering.optaplanner.org
+      port:
+        targetPort: 8080
       to:
-        kind: ImageStreamTag
-        name: employee-rostering:latest
-    source:
-      binary: {}
-      type: Binary
-    strategy:
-      sourceStrategy:
-        from:
-          kind: ImageStreamTag
-          # TODO Change to wildfly:11.0 once it is available
-          name: wildfly:10.1
-          namespace: openshift
-      type: Source
-    resources:
-      limits:
-        cpu: "1"
-        memory: 1Gi
-      requests:
-        cpu: "1"
-        memory: 1Gi
-    runPolicy: Serial
-- kind: DeploymentConfig
-  apiVersion: v1
-  metadata:
-    creationTimestamp: null
-    generation: 1
-    labels:
-      app: employee-rostering
-    name: employee-rostering
-  spec:
-    replicas: 1
-    selector:
-      app: employee-rostering
-      deploymentconfig: employee-rostering
-    strategy:
-      type: Rolling
-      activeDeadlineSeconds: 21600
-      resources: {}
-      rollingParams:
-        intervalSeconds: 1
-        maxSurge: 25%
-        maxUnavailable: 25%
-        timeoutSeconds: 600
-        updatePeriodSeconds: 1
-    template:
-      metadata:
-        creationTimestamp: null
-        labels:
-          app: employee-rostering
-          deploymentconfig: employee-rostering
-      spec:
-        containers:
-        - image: employee-rostering
-          imagePullPolicy: Always
-          name: employee-rostering
-          ports:
-          - containerPort: 8080
-            protocol: TCP
-          resources: {}
-          terminationMessagePath: /dev/termination-log
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        securityContext: {}
-        terminationGracePeriodSeconds: 30
-    test: false
-    triggers:
-    - type: ConfigChange
-    - type: ImageChange
-      imageChangeParams:
-        automatic: true
-        containerNames:
-        - employee-rostering
-        from:
-          kind: ImageStreamTag
-          name: employee-rostering:latest
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
-- kind: Service
-  apiVersion: v1
-  metadata:
-    name: employee-rostering
-  spec:
-    type: ClusterIP
-    ports:
-    - name: 8080-tcp
-      port: 8080
-      protocol: TCP
-      targetPort: 8080
-    selector:
-      deploymentconfig: employee-rostering
-    sessionAffinity: None
-  status:
-    loadBalancer: {}
-- kind: Route
-  apiVersion: v1
-  metadata:
-    name: employee-rostering
-  spec:
-    port:
-      targetPort: 8080
-    to:
-      kind: Service
-      name: employee-rostering
-      weight: 100
+        kind: Service
+        name: "webapp-service"
