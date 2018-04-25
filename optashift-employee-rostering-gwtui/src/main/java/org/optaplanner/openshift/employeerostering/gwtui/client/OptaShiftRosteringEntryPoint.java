@@ -10,6 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.event.shared.UmbrellaException;
 import com.google.gwt.logging.impl.StackTracePrintStream;
+import com.google.gwt.resources.client.TextResource;
 import com.google.gwt.user.client.Window;
 import elemental2.dom.DomGlobal;
 import org.jboss.errai.ioc.client.api.EntryPoint;
@@ -18,6 +19,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationCo
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.resources.js.BootscrapDateRangePickerBundle;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.js.MomentBundle;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
@@ -71,8 +73,15 @@ public class OptaShiftRosteringEntryPoint {
     }
 
     private void injectScripts() {
-        ScriptInjector.fromString(MomentBundle.INSTANCE.moment().getText()).setWindow(ScriptInjector.TOP_WINDOW).inject();
-        ScriptInjector.fromString(MomentBundle.INSTANCE.momentTimezoneWithData().getText()).setWindow(ScriptInjector.TOP_WINDOW).inject();
+        injectScripts(MomentBundle.INSTANCE.moment(), MomentBundle.INSTANCE.momentTimezoneWithData(),
+                BootscrapDateRangePickerBundle.INSTANCE.dateRangePicker());
+    }
+
+    private void injectScripts(TextResource... scripts) {
+        for (TextResource script : scripts) {
+            ScriptInjector.fromString(script.getText()).setWindow(ScriptInjector.TOP_WINDOW).inject();
+        }
+
     }
 
     public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
@@ -91,4 +100,5 @@ public class OptaShiftRosteringEntryPoint {
             tenantStore.init(); //FIXME: Shouldn't this call be made by the Container once it's annotated with @PostConstruct?
         }));
     }
+
 }

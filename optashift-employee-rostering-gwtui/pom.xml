@@ -169,11 +169,11 @@
                 </artifactItem>
                 <artifactItem>
                     <groupId>org.webjars</groupId>
-                    <artifactId>bootstrap-datetimepicker</artifactId>
-                    <version>${version.org.webjars.bootstrap-datetimepicker}</version>
+                    <artifactId>bootstrap-daterangepicker</artifactId>
+                    <version>${version.org.webjars.bootstrap-daterangepicker}</version>
                     <type>jar</type>
                     <overWrite>true</overWrite>
-                    <outputDirectory>${project.build.directory}/bootstrap-datetimepicker</outputDirectory>
+                    <outputDirectory>${project.build.directory}/bootstrap-daterangepicker</outputDirectory>
                 </artifactItem>
               </artifactItems>
               <overWriteReleases>false</overWriteReleases>
@@ -224,18 +224,18 @@
                 </resource>
                 <resource>
                   <directory>
-                    ${project.build.directory}/bootstrap-datetimepicker/META-INF/resources/webjars/bootstrap-datetimepicker/${version.org.webjars.bootstrap-datetimepicker}
+                    ${project.build.directory}/bootstrap-daterangepicker/META-INF/resources/webjars/bootstrap-daterangepicker/${version.org.webjars.bootstrap-daterangepicker}
                   </directory>
                   <includes>
-                    <include>js/bootstrap-datetimepicker.min.js</include>
-                    <include>css/bootstrap-datetimepicker.min.css</include>
+                    <include>js/bootstrap-daterangepicker.js</include>
+                    <include>css/bootstrap-daterangepicker.css</include>
                   </includes>
                 </resource>
               </resources>
             </configuration>
           </execution>
           <execution>
-            <id>copy-moment-to-gwt</id>
+            <id>copy-javascript-to-gwt</id>
             <phase>process-resources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -257,6 +257,14 @@
                   </directory>
                   <includes>
                     <include>moment-timezone-with-data.js</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>
+                    ${project.build.directory}/bootstrap-daterangepicker/META-INF/resources/webjars/bootstrap-daterangepicker/${version.org.webjars.bootstrap-daterangepicker}/js
+                  </directory>
+                  <includes>
+                    <include>bootstrap-daterangepicker.js</include>
                   </includes>
                 </resource>
               </resources>

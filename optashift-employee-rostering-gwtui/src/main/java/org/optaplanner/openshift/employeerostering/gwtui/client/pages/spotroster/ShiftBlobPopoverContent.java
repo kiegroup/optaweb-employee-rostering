@@ -35,6 +35,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.DateTimeRange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.DateTimeSelector;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
@@ -63,12 +64,8 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     private HTMLButtonElement closeButton;
 
     @Inject
-    @DataField("start-date-time-picker")
-    private DateTimeSelector startDateTimePicker;
-
-    @Inject
-    @DataField("end-date-time-picker")
-    private DateTimeSelector endDateTimePicker;
+    @DataField("shift-date-time-picker")
+    private DateTimeSelector shiftDateTimePicker;
 
     @Inject
     @DataField("spot")
@@ -130,8 +127,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
             employeeSelect.setSelectedIndex((shift.getEmployee() == null) ? 0 : employees.indexOf(shift.getEmployee()) + 1);
         }));
 
-        startDateTimePicker.setValue(shift.getStartDateTime());
-        endDateTimePicker.setValue(shift.getEndDateTime());
+        shiftDateTimePicker.setValue(new DateTimeRange(shift.getStartDateTime(), shift.getEndDateTime()));
 
         pinned.checked = shift.isPinnedByUser();
 
@@ -175,8 +171,9 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         final boolean oldLockedByUser = shift.isPinnedByUser();
         final Employee oldEmployee = shift.getEmployee();
 
-        shift.setStartDateTime(startDateTimePicker.getValue());
-        shift.setEndDateTime(endDateTimePicker.getValue());
+        final DateTimeRange shiftDateTime = shiftDateTimePicker.getValue();
+        shift.setStartDateTime(shiftDateTime.getStartDateTime());
+        shift.setEndDateTime(shiftDateTime.getEndDateTime());
         shift.setPinnedByUser(pinned.checked);
         shift.setEmployee(employeesById.get(parseLong(employeeSelect.getSelectedValue())));
 

@@ -16,11 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.admin;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -39,10 +34,7 @@ public class TenantPopupForm implements IsElement, TakesValue<Tenant> {
     private DateTimeSelector date;
 
     @PostConstruct
-    private void init() {
-        date.setValue(OffsetDateTime.of(LocalDate.of(2000, 1, 2), LocalTime.of(12, 30), ZoneOffset.UTC));
-        date.getValue();
-    }
+    private void init() {}
 
     @Override
     public void setValue(Tenant value) {

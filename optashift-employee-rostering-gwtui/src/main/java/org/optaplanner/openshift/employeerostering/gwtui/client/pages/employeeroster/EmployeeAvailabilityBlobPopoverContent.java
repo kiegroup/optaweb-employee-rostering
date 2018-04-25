@@ -31,6 +31,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.DateTimeRange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.DateTimeSelector;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
@@ -54,12 +55,8 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
     private HTMLButtonElement closeButton;
 
     @Inject
-    @DataField("start-date-time")
-    private DateTimeSelector startDateTimeSelector;
-
-    @Inject
-    @DataField("end-date-time")
-    private DateTimeSelector endDateTimeSelector;
+    @DataField("availability-date-time")
+    private DateTimeSelector availabilityDateTimeSelector;
 
     @Inject
     @DataField("employee")
@@ -115,8 +112,8 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
         int availabilityIndex = Arrays.asList(EmployeeAvailabilityState.values()).indexOf(availability.getState());
         availabilitySelect.setSelectedIndex((availabilityIndex > -1) ? availabilityIndex : 0);
 
-        startDateTimeSelector.setValue(availability.getStartDateTime());
-        endDateTimeSelector.setValue(availability.getEndDateTime());
+        availabilityDateTimeSelector.setValue(new DateTimeRange(availability.getStartDateTime(),
+                availability.getEndDateTime()));
     }
 
     @EventHandler("root")

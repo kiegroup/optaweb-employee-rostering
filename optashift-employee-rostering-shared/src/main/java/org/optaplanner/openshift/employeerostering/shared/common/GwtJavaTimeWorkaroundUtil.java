@@ -79,6 +79,5 @@ public class GwtJavaTimeWorkaroundUtil {
     public static LocalDateTime toLocalDateTime(Date date) {
         DateTimeFormat localDateTimeConvertor = DateTimeFormat.getFormat("yyyy-MM-dd'T'HH:mm:ss");
         return LocalDateTime.parse(localDateTimeConvertor.format(date));
-
     }
 }
