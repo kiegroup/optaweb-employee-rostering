@@ -16,7 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -36,12 +35,13 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.DateTimeRange;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.DateTimeSelector;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopoverContent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -64,20 +64,8 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     private HTMLButtonElement closeButton;
 
     @Inject
-    @DataField("from-day")
-    private HTMLInputElement fromDay;
-
-    @Inject
-    @DataField("from-hour")
-    private HTMLInputElement fromHour;
-
-    @Inject
-    @DataField("to-day")
-    private HTMLInputElement toDay;
-
-    @Inject
-    @DataField("to-hour")
-    private HTMLInputElement toHour;
+    @DataField("shift-date-time-picker")
+    private DateTimeSelector shiftDateTimePicker;
 
     @Inject
     @DataField("spot")
@@ -139,13 +127,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
             employeeSelect.setSelectedIndex((shift.getEmployee() == null) ? 0 : employees.indexOf(shift.getEmployee()) + 1);
         }));
 
-        final OffsetDateTime start = shift.getStartDateTime();
-        fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth(); //FIXME: i18n
-        fromHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(start) + "";
-
-        final OffsetDateTime end = shift.getEndDateTime();
-        toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth(); //FIXME: i18n
-        toHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(end) + "";
+        shiftDateTimePicker.setValue(new DateTimeRange(shift.getStartDateTime(), shift.getEndDateTime()));
 
         pinned.checked = shift.isPinnedByUser();
 
@@ -189,6 +171,9 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         final boolean oldLockedByUser = shift.isPinnedByUser();
         final Employee oldEmployee = shift.getEmployee();
 
+        final DateTimeRange shiftDateTime = shiftDateTimePicker.getValue();
+        shift.setStartDateTime(shiftDateTime.getStartDateTime());
+        shift.setEndDateTime(shiftDateTime.getEndDateTime());
         shift.setPinnedByUser(pinned.checked);
         shift.setEmployee(employeesById.get(parseLong(employeeSelect.getSelectedValue())));
 

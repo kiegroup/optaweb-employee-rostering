@@ -14,6 +14,7 @@
   <inherits name="com.github.nmorel.gwtjackson.rest.GwtJacksonRest" />
   <inherits name="com.google.gwt.resources.Resources" />
   <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
+  <inherits name="org.gwtbootstrap3.extras.datetimepicker.DateTimePicker"/>
   <inherits name="org.gwtbootstrap3.extras.select.Select"/>
   <inherits name="org.gwtbootstrap3.extras.tagsinput.TagsInput"/>
   <inherits name="org.gwtbootstrap3.extras.typeahead.Typeahead"/>
@@ -35,6 +36,7 @@
   <set-configuration-property name="compiler.emulatedStack.recordFileNames" value="true" />
   <set-configuration-property name="compiler.emulatedStack.recordLineNumbers" value="true" />
   
+  <stylesheet src="css/bootstrap-daterangepicker.css"/>
   <stylesheet src="css/patternfly.min.css"/>
   <stylesheet src="css/patternfly-additions.min.css"/>
 </module>

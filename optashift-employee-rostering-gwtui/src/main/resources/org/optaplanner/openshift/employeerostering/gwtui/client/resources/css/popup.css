@@ -7,14 +7,14 @@
     left: 15%;
     width: 50%;
     height: 50%;
-    z-index: 8192;
+    z-index: 100;
 }
 
 .glass {
 	background-color:#8b8d8f;
 	opacity:0.45;
 	mozOpacity:0.45;
-	z-index: 8191;
+	z-index: 100;
 }
 
 .singleValueTagInput {

@@ -16,27 +16,31 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils.MomentZoneId;
+import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
-public class ShiftBlob implements Blob<OffsetDateTime> {
+public class ShiftBlob implements Blob<LocalDateTime> {
 
-    private final LinearScale<OffsetDateTime> scale;
+    private final LinearScale<LocalDateTime> scale;
     private Shift shift;
     private Long sizeInGridPixels;
 
     private Long positionInGridPixelsCache = null;
     private Long endPositionInGridPixelsCache = null;
+    private MomentZoneId zoneId;
 
-    ShiftBlob(final LinearScale<OffsetDateTime> scale, final Shift shift) {
+    ShiftBlob(final LinearScale<LocalDateTime> scale, final Shift shift) {
         this.shift = shift;
         this.scale = scale;
-        this.sizeInGridPixels = scale.toGridPixels(shift.getEndDateTime()) - scale.toGridPixels(getPositionInScaleUnits());
+        this.sizeInGridPixels = scale.toGridPixels(GwtJavaTimeWorkaroundUtil.toLocalDateTime(shift.getEndDateTime())) - scale.toGridPixels(getPositionInScaleUnits());
     }
 
     @Override
@@ -45,8 +49,8 @@ public class ShiftBlob implements Blob<OffsetDateTime> {
     }
 
     @Override
-    public OffsetDateTime getPositionInScaleUnits() {
-        return shift.getStartDateTime();
+    public LocalDateTime getPositionInScaleUnits() {
+        return GwtJavaTimeWorkaroundUtil.toLocalDateTime(shift.getStartDateTime());
     }
 
     @Override
@@ -72,16 +76,17 @@ public class ShiftBlob implements Blob<OffsetDateTime> {
     }
 
     @Override
-    public void setPositionInScaleUnits(final OffsetDateTime start) {
+    public void setPositionInScaleUnits(final LocalDateTime start) {
         positionInGridPixelsCache = null;
         endPositionInGridPixelsCache = null;
-        shift.setStartDateTime(start);
+        shift.setStartDateTime(OffsetDateTime.of(start, zoneId.getRules().getOffset(start)));
     }
 
     @Override
     public void setSizeInGridPixels(final long sizeInGridPixels) {
         this.sizeInGridPixels = sizeInGridPixels;
-        shift.setEndDateTime(getEndPositionInScaleUnits());
+        LocalDateTime end = getEndPositionInScaleUnits();
+        shift.setEndDateTime(OffsetDateTime.of(end, zoneId.getRules().getOffset(end)));
     }
 
     public String getLabel() {
@@ -99,7 +104,12 @@ public class ShiftBlob implements Blob<OffsetDateTime> {
     }
 
     @Override
-    public LinearScale<OffsetDateTime> getScale() {
+    public LinearScale<LocalDateTime> getScale() {
         return scale;
+    }
+
+    public ShiftBlob withZoneId(MomentZoneId zoneId) {
+        this.zoneId = zoneId;
+        return this;
     }
 }
