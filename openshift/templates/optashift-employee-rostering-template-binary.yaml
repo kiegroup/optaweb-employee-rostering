@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: optashift-employee-rostering-template
+  name: optashift-employee-rostering
   annotations:
     description: "Employee rostering web application and REST service based on OptaPlanner."
     iconClass: "icon-wildfly"
     tags: "optaplanner,wildfly,java"
+
 labels:
   app: "employee-rostering"
+
 parameters:
   - name: SOURCE_REPOSITORY_URL
     description: "The URL of the repository with the application source code."
@@ -36,19 +38,15 @@ objects:
       strategy:
         sourceStrategy:
           from:
-            kind: ImageStreamTag
-            namespace: "openshift"
-            # TODO Change to wildfly:11.0 once it is available
-            name: "wildfly:10.1"
+            kind: DockerImage
+            # Uses WildFly 11.0
+            name: "openshift/wildfly-110-centos7:latest"
       output:
         to:
           kind: ImageStreamTag
           name: "webapp-image:latest"
       resources:
         limits:
-          cpu: 1
-          memory: 1Gi
-        requests:
           cpu: 1
           memory: 1Gi
 
@@ -60,7 +58,7 @@ objects:
       template:
         metadata:
           labels:
-            deploymentconfig: "webapp-deployment"
+            myId: "webapp-template"
         spec:
           containers:
           - name: "webapp-container"
@@ -72,12 +70,9 @@ objects:
               limits:
                 cpu: 2
                 memory: 2Gi
-              requests:
-                cpu: 2
-                memory: 2Gi
       replicas: 1
       selector:
-        deploymentconfig: "webapp-deployment"
+        myId: "webapp-template"
       triggers:
         - type: ConfigChange
         - type: ImageChange
@@ -95,11 +90,11 @@ objects:
       name: "webapp-service"
     spec:
       selector:
-        deploymentconfig: "webapp-deployment"
+        myId: "webapp-template"
       ports:
-      - port: 8080
-        protocol: TCP
-        targetPort: 8080
+        - port: 8080
+          protocol: TCP
+          targetPort: 8080
 
   - kind: Route
     apiVersion: v1
