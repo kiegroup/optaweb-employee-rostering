@@ -61,6 +61,8 @@ import static java.util.stream.Collectors.groupingBy;
 @Startup
 public class RosterGenerator {
 
+    private static final double[] EXTRA_SHIFT_THRESHOLDS = {0.5, 0.8, 0.95};
+
     private static class GeneratorType {
 
         private final String tenantNamePrefix;
@@ -332,7 +334,9 @@ public class RosterGenerator {
     @Transactional
     public Roster generateRoster(int spotListSize,
                                  int lengthInDays, GeneratorType generatorType, ZoneId zoneId) {
-        int employeeListSize = spotListSize * 7 / 2;
+        int maxShiftSizePerDay = generatorType.timeslotRangeList.size() + EXTRA_SHIFT_THRESHOLDS.length;
+        // The average employee works 5 days out of 7
+        int employeeListSize = spotListSize * maxShiftSizePerDay * 7 / 5;
         int skillListSize = (spotListSize + 4) / 5;
 
         Tenant tenant = createTenant(generatorType, employeeListSize);
@@ -404,7 +408,7 @@ public class RosterGenerator {
         for (int i = 0; i < size; i++) {
             String name = generatorType.spotNameGenerator.generateNextValue();
             Set<Skill> requiredSkillSet = new HashSet<>(
-                    extractRandomSubListOfSize(skillList, random.nextInt(skillList.size())));
+                    extractRandomSubList(skillList, 0.5, 0.9, 1.0));
             Spot spot = new Spot(tenantId, name, requiredSkillSet);
             entityManager.persist(spot);
             spotList.add(spot);
@@ -417,8 +421,9 @@ public class RosterGenerator {
         employeeNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = employeeNameGenerator.generateNextValue();
+            HashSet<Skill> skillProficiencySet = new HashSet<>(extractRandomSubList(generalSkillList, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0));
             Employee employee = new Employee(tenantId, name);
-            employee.setSkillProficiencySet(new HashSet<>(extractRandomSubList(generalSkillList, 1.0)));
+            employee.setSkillProficiencySet(skillProficiencySet);
             entityManager.persist(employee);
             employeeList.add(employee);
         }
@@ -487,7 +492,7 @@ public class RosterGenerator {
                     shiftList.add(shift);
                 }
                 if (date.compareTo(firstDraftDate) >= 0) {
-                    int extraShiftCount = generateRandomIntFromThresholds(0.5, 0.8, 0.95);
+                    int extraShiftCount = generateRandomIntFromThresholds(EXTRA_SHIFT_THRESHOLDS);
                     for (int i = 0; i < extraShiftCount; i++) {
                         ShiftTemplate shiftTemplate = extractRandomElement(subShiftTemplateList);
                         Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
@@ -544,8 +549,11 @@ public class RosterGenerator {
         return list.get(random.nextInt(list.size()));
     }
 
-    private <E> List<E> extractRandomSubList(List<E> list, double maxRelativeSize) {
-        int size = random.nextInt((int) (list.size() * maxRelativeSize)) + 1;
+    private <E> List<E> extractRandomSubList(List<E> list, double... thresholds) {
+        int size = generateRandomIntFromThresholds(thresholds);
+        if (size > list.size()) {
+            size = list.size();
+        }
         return extractRandomSubListOfSize(list, size);
     }
 

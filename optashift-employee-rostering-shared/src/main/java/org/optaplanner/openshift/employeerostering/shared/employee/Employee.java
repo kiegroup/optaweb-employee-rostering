@@ -54,7 +54,6 @@ public class Employee extends AbstractPersistable {
     //@JsonManagedReference
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER) // TODO Eager fetching bloats the EmployeeAvailability.findAll query
-    @Size(min = 1)
     private Set<Skill> skillProficiencySet;
 
     @SuppressWarnings("unused")
