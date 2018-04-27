@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.rebind;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,6 +10,8 @@ import java.time.ZoneId;
 
 import com.github.nmorel.gwtjackson.client.AbstractConfiguration;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.DurationJsonDeserializer;
+import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.DurationJsonSerializer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.HardSoftScoreJsonDeserializer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.HardSoftScoreJsonSerializer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.LocalDateJsonDeserializer;
@@ -35,6 +38,7 @@ public class OptaShiftRosteringGwtJacksonConfiguration extends AbstractConfigura
         type(ZoneId.class).serializer(ZoneIdJsonSerializer.class).deserializer(ZoneIdJsonDeserializer.class);
         type(OffsetDateTime.class).serializer(OffsetDateTimeJsonSerializer.class).deserializer(OffsetDateTimeJsonDeserializer.class);
         type(OffsetTime.class).serializer(OffsetTimeJsonSerializer.class).deserializer(OffsetTimeJsonDeserializer.class);
+        type(Duration.class).serializer(DurationJsonSerializer.class).deserializer(DurationJsonDeserializer.class);
     }
 
 }

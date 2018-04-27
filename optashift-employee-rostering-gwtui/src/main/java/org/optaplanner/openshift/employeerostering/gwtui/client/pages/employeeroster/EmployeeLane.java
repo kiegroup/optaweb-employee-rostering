@@ -16,20 +16,20 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 
-public class EmployeeLane extends Lane<OffsetDateTime> {
+public class EmployeeLane extends Lane<LocalDateTime> {
 
     private final Employee employee;
 
     // Changing the parameter name to 'availabilityState' leads to an error, because GWT compiler uses the field instead of the parameter.
     public EmployeeLane(final Employee employeeParam,
-                        final List<SubLane<OffsetDateTime>> subLanes) {
+                        final List<SubLane<LocalDateTime>> subLanes) {
 
         super(employeeParam.toString(), subLanes);
         this.employee = employeeParam;

@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
@@ -62,6 +63,28 @@ public class ShiftTemplate extends AbstractPersistable {
         this.endDayOffset = endDayOffset;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public ShiftTemplate(Integer rotationLength, ShiftTemplateView shiftTemplateView, Spot spot, Employee rotationEmployee) {
+        super(shiftTemplateView);
+        this.spot = spot;
+        this.rotationEmployee = rotationEmployee;
+        this.startDayOffset = (int) (shiftTemplateView
+                .getDurationBetweenRotationStartAndTemplateStart()
+                .toDays());
+        this.startTime = LocalTime.ofSecondOfDay(shiftTemplateView
+                .getDurationBetweenReferenceAndStart().minusDays(startDayOffset)
+                .getSeconds());
+        int endDayAfterStartDay = ((int) (shiftTemplateView
+                .getDurationBetweenRotationStartAndTemplateStart()
+                .plus(shiftTemplateView.getShiftTemplateDuration())
+                .minusSeconds(startTime.toSecondOfDay()).toDays()));
+        this.endTime = LocalTime.ofSecondOfDay(shiftTemplateView
+                .getDurationBetweenRotationStartAndTemplateStart()
+                .plus(shiftTemplateView.getDurationOfTimeslot())
+                .minusDays(endDayAfterStartDay).minusSeconds(startTime.toSecondOfDay())
+                .getSeconds());
+        this.endDayOffset = endDayAfterStartDay % rotationLength;
     }
 
     public Shift createShiftOnDate(LocalDate startDate, int rotationLength, ZoneId zoneId, boolean defaultToRotationEmployee) {

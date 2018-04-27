@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.shared.employee;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -80,11 +81,13 @@ public class EmployeeAvailability extends AbstractPersistable {
         this.endDateTime = endDateTime;
     }
 
-    public EmployeeAvailability(EmployeeAvailabilityView employeeAvailabilityView, Employee employee) {
+    public EmployeeAvailability(ZoneId zoneId, EmployeeAvailabilityView employeeAvailabilityView, Employee employee) {
         super(employeeAvailabilityView);
         this.employee = employee;
-        this.startDateTime = employeeAvailabilityView.getStartDateTime();
-        this.endDateTime = employeeAvailabilityView.getEndDateTime();
+        this.startDateTime = OffsetDateTime.of(employeeAvailabilityView.getStartDateTime(),
+                zoneId.getRules().getOffset(employeeAvailabilityView.getStartDateTime()));
+        this.endDateTime = OffsetDateTime.of(employeeAvailabilityView.getEndDateTime(),
+                zoneId.getRules().getOffset(employeeAvailabilityView.getEndDateTime()));
     }
 
     @AssertTrue

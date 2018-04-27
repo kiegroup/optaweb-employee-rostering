@@ -16,143 +16,103 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
+import java.util.Map;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.TimeslotBlob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.common.HasTimeslot;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-public class EmployeeBlob implements Blob<OffsetDateTime> {
+public class EmployeeBlob extends TimeslotBlob {
 
-    private final LinearScale<OffsetDateTime> scale;
-    private EmployeeAvailability employeeAvailability;
-    private Shift shift;
-    private Long sizeInGridPixels;
+    private EmployeeAvailabilityView employeeAvailabilityView;
+    private ShiftView shiftView;
+    private Map<Long, Spot> spotIdToSpotMap;
+    private Map<Long, Employee> employeeIdToEmployeeMap;
 
-    private Long positionInGridPixelsCache = null;
-    private Long endPositionInGridPixelsCache = null;
-
-    public EmployeeBlob(final LinearScale<OffsetDateTime> scale, final Shift shift) {
-        this(scale, null, shift);
+    public EmployeeBlob(final LinearScale<LocalDateTime> scale, Map<Long, Spot> spotIdToSpotMap,
+                        Map<Long, Employee> employeeIdToEmployeeMap, final ShiftView shiftView) {
+        this(scale, spotIdToSpotMap, employeeIdToEmployeeMap, null, shiftView);
     }
 
-    public EmployeeBlob(final LinearScale<OffsetDateTime> scale, final EmployeeAvailability employeeAvailability) {
-        this(scale, employeeAvailability, null);
+    public EmployeeBlob(final LinearScale<LocalDateTime> scale, Map<Long, Spot> spotIdToSpotMap,
+                        Map<Long, Employee> employeeIdToEmployeeMap, final EmployeeAvailabilityView employeeAvailabilityView) {
+        this(scale, spotIdToSpotMap, employeeIdToEmployeeMap, employeeAvailabilityView, null);
     }
 
-    private EmployeeBlob(final LinearScale<OffsetDateTime> scale, final EmployeeAvailability employeeAvailability, final Shift shift) {
-        this.employeeAvailability = employeeAvailability;
-        this.shift = shift;
-        this.scale = scale;
-        this.sizeInGridPixels = scale.toGridPixels(getEndDateTime()) - scale.toGridPixels(getStartDateTime());
-    }
-
-    private OffsetDateTime getStartDateTime() {
-        if (null != shift) {
-            return shift.getStartDateTime();
-        } else {
-            return employeeAvailability.getStartDateTime();
-        }
-    }
-
-    private OffsetDateTime getEndDateTime() {
-        if (null != shift) {
-            return shift.getEndDateTime();
-        } else {
-            return employeeAvailability.getEndDateTime();
-        }
-    }
-
-    private void setStartDateTime(OffsetDateTime startDateTime) {
-        if (null != shift) {
-            shift.setStartDateTime(startDateTime);
-        } else {
-            employeeAvailability.setStartDateTime(startDateTime);
-        }
-    }
-
-    private void setEndDateTime(OffsetDateTime endDateTime) {
-        if (null != shift) {
-            shift.setEndDateTime(endDateTime);
-        } else {
-            employeeAvailability.setEndDateTime(endDateTime);
-        }
-    }
-
-    @Override
-    public long getSizeInGridPixels() {
-        return sizeInGridPixels;
-    }
-
-    @Override
-    public OffsetDateTime getPositionInScaleUnits() {
-        return getStartDateTime();
-    }
-
-    @Override
-    public long getEndPositionInGridPixels() {
-
-        //Collision performance optimization
-        if (endPositionInGridPixelsCache == null) {
-            endPositionInGridPixelsCache = Blob.super.getEndPositionInGridPixels();
-        }
-
-        return endPositionInGridPixelsCache;
-    }
-
-    @Override
-    public long getPositionInGridPixels() {
-
-        //Collision performance optimization
-        if (positionInGridPixelsCache == null) {
-            positionInGridPixelsCache = Blob.super.getPositionInGridPixels();
-        }
-
-        return positionInGridPixelsCache;
-    }
-
-    @Override
-    public void setPositionInScaleUnits(final OffsetDateTime start) {
-        positionInGridPixelsCache = null;
-        endPositionInGridPixelsCache = null;
-        setStartDateTime(start);
-    }
-
-    @Override
-    public void setSizeInGridPixels(final long sizeInGridPixels) {
-        this.sizeInGridPixels = sizeInGridPixels;
-        OffsetDateTime end = getEndPositionInScaleUnits();
-        setEndDateTime(end);
+    private EmployeeBlob(final LinearScale<LocalDateTime> scale, Map<Long, Spot> spotIdToSpotMap,
+                         Map<Long, Employee> employeeIdToEmployeeMap, final EmployeeAvailabilityView employeeAvailabilityView, final ShiftView shiftView) {
+        this.employeeAvailabilityView = employeeAvailabilityView;
+        this.shiftView = shiftView;
+        this.spotIdToSpotMap = spotIdToSpotMap;
+        this.employeeIdToEmployeeMap = employeeIdToEmployeeMap;
+        setScale(scale);
     }
 
     public String getLabel() {
-        if (shift != null) {
-            return shift.getSpot().toString() + ": " + getStartDateTime() + "-" + getEndDateTime();
+        if (shiftView != null) {
+            return getSpot().toString() + ": " + shiftView.getStartDateTime() + "-" + shiftView.getEndDateTime();
         } else {
-            return employeeAvailability.getState().toString() + ":" + getStartDateTime() + "-" + getEndDateTime();
+            return employeeAvailabilityView.getState().toString() + ":" + employeeAvailabilityView.getStartDateTime() + "-" + employeeAvailabilityView.getEndDateTime();
         }
-
     }
 
-    public Shift getShift() {
-        return shift;
+    public ShiftView getShiftView() {
+        return shiftView;
     }
 
-    public void setShift(final Shift shift) {
-        this.shift = shift;
+    public void setShiftView(final ShiftView shiftView) {
+        this.shiftView = shiftView;
     }
 
-    public EmployeeAvailability getEmployeeAvailability() {
-        return employeeAvailability;
+    public EmployeeAvailabilityView getEmployeeAvailabilityView() {
+        return employeeAvailabilityView;
     }
 
-    public void setEmployeeAvailability(final EmployeeAvailability employeeAvailability) {
-        this.employeeAvailability = employeeAvailability;
+    public void setEmployeeAvailabilityView(final EmployeeAvailabilityView employeeAvailabilityView) {
+        this.employeeAvailabilityView = employeeAvailabilityView;
+    }
+
+    public Spot getSpot() {
+        return spotIdToSpotMap.get(shiftView.getSpotId());
+    }
+
+    public Employee getEmployee() {
+        if (shiftView != null) {
+            return employeeIdToEmployeeMap.get(shiftView.getEmployeeId());
+        } else {
+            return employeeIdToEmployeeMap.get(employeeAvailabilityView.getEmployeeId());
+        }
     }
 
     @Override
-    public LinearScale<OffsetDateTime> getScale() {
-        return scale;
+    public void setPositionInScaleUnits(LocalDateTime position) {
+        if (shiftView != null) {
+            shiftView.setStartDateTime(position);
+        } else {
+            employeeAvailabilityView.setStartDateTime(position);
+        }
     }
+
+    @Override
+    public void setSizeInGridPixels(long sizeInGridPixels) {
+        LocalDateTime newEndDateTime = getScale().toScaleUnits(getScale()
+                .toGridPixels(getPositionInScaleUnits()) + sizeInGridPixels);
+        if (shiftView != null) {
+            shiftView.setEndDateTime(newEndDateTime);
+        } else {
+            employeeAvailabilityView.setEndDateTime(newEndDateTime);
+        }
+    }
+
+    @Override
+    public HasTimeslot getTimeslot() {
+        // TODO Auto-generated method stub
+        return (shiftView != null) ? shiftView : employeeAvailabilityView;
+    }
+
 }

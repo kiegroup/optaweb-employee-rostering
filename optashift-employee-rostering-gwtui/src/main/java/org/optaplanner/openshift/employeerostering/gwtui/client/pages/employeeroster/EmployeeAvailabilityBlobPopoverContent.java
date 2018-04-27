@@ -37,11 +37,10 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.power
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopoverContent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 
 @Templated
 public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverContent {
@@ -100,27 +99,28 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
 
         this.blobView = (EmployeeBlobView) blobView;
         final EmployeeBlob blob = (EmployeeBlob) blobView.getBlob();
-        final EmployeeAvailability availability = blob.getEmployeeAvailability();
+        final EmployeeAvailabilityView availabilityView = blob.getEmployeeAvailabilityView();
 
         employeeSelect.clear();
+        availabilitySelect.clear();
         employeeSelect.addItem("Unassigned", "-1"); //FIXME: i18n
 
         EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
             this.employeesById = employees.stream().collect(Collectors.toMap(Employee::getId, Function.identity()));
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
-            employeeSelect.setSelectedIndex(employees.indexOf(availability.getEmployee()) + 1);
+            employeeSelect.setSelectedIndex(employees.indexOf(blob.getEmployee()) + 1);
         }));
 
         // TODO: Indifferent = NULL case
         Arrays.asList(EmployeeAvailabilityState.values()).forEach((e) -> {
             availabilitySelect.addItem(e.toString());
         });
-        int availabilityIndex = Arrays.asList(EmployeeAvailabilityState.values()).indexOf(availability.getState());
+        int availabilityIndex = Arrays.asList(EmployeeAvailabilityState.values()).indexOf(availabilityView.getState());
         availabilitySelect.setSelectedIndex((availabilityIndex > -1) ? availabilityIndex : 0);
 
-        day.value = GwtJavaTimeWorkaroundUtil.toLocalDate(availability.getStartDateTime()).getMonth().toString() + " " + GwtJavaTimeWorkaroundUtil.toLocalDate(availability.getStartDateTime()).getDayOfMonth(); //FIXME: i18n
-        fromHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getStartDateTime()) + "";
-        toHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(availability.getEndDateTime()) + "";
+        day.value = availabilityView.getStartDateTime().getMonth().toString() + " " + availabilityView.getStartDateTime().getDayOfMonth(); //FIXME: i18n
+        fromHour.value = availabilityView.getStartDateTime().toLocalTime() + "";
+        toHour.value = availabilityView.getEndDateTime().toLocalTime() + "";
     }
 
     @EventHandler("root")
@@ -144,9 +144,9 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
 
         final EmployeeBlob blob = (EmployeeBlob) blobView.getBlob();
-        final EmployeeAvailability availability = blob.getEmployeeAvailability();
+        final EmployeeAvailabilityView availability = blob.getEmployeeAvailabilityView();
 
-        final Employee oldEmployee = availability.getEmployee();
+        final Long oldEmployeeId = availability.getEmployeeId();
 
         // TODO: Update the availability using a REST call
 

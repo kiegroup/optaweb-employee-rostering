@@ -1,6 +1,5 @@
 package org.optaplanner.openshift.employeerostering.shared.shift;
 
-import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -15,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
 import io.swagger.annotations.Api;
-import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
+import org.optaplanner.openshift.employeerostering.shared.rotation.view.RotationView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
 @Api(tags = {"Shift"})
@@ -62,12 +61,13 @@ public interface ShiftRestService {
     @Path("/{id}")
     Boolean removeShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
+    // TODO /update should update a single item. Use /bulkUpdate for list
     @PUT
-    @Path("/template/update") // TODO /update should update a single item. Use /bulkUpdate for list
-    void updateShiftTemplate(@PathParam("tenantId") Integer tenantId, List<ShiftTemplate> shiftTemplateList);
+    @Path("/template/update")
+    void updateRotation(@PathParam("tenantId") Integer tenantId, RotationView rotationView);
 
     @GET
     @Path("/template")
-    List<ShiftTemplate> getShiftTemplateList(@PathParam("tenantId") Integer tenantId);
+    RotationView getRotation(@PathParam("tenantId") Integer tenantId);
 
 }

@@ -16,20 +16,20 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Lane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.SubLane;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-public class SpotLane extends Lane<OffsetDateTime> {
+public class SpotLane extends Lane<LocalDateTime> {
 
     private final Spot spot;
 
     // Changing the parameter name to 'spot' leads to an error, because it uses the field instead of the parameter.
     public SpotLane(final Spot spotParam,
-                    final List<SubLane<OffsetDateTime>> subLanes) {
+                    final List<SubLane<LocalDateTime>> subLanes) {
 
         super(spotParam.getName(), subLanes);
         this.spot = spotParam;

@@ -16,24 +16,28 @@
 
 package org.optaplanner.openshift.employeerostering.shared.shift.view;
 
-import java.time.OffsetDateTime;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
+import org.optaplanner.openshift.employeerostering.shared.common.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-public class ShiftView extends AbstractPersistable {
+public class ShiftView extends AbstractPersistable implements HasTimeslot {
 
     private Long rotationEmployeeId;
     @NotNull
     private Long spotId;
     @NotNull
-    private OffsetDateTime startDateTime;
+    private LocalDateTime startDateTime;
     @NotNull
-    private OffsetDateTime endDateTime;
+    private LocalDateTime endDateTime;
 
     private boolean pinnedByUser = false;
 
@@ -42,11 +46,11 @@ public class ShiftView extends AbstractPersistable {
     @SuppressWarnings("unused")
     public ShiftView() {}
 
-    public ShiftView(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
+    public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this(tenantId, spot, startDateTime, endDateTime, null);
     }
 
-    public ShiftView(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime, Employee rotationEmployee) {
+    public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime, Employee rotationEmployee) {
         super(tenantId);
         this.spotId = spot.getId();
         this.startDateTime = startDateTime;
@@ -57,8 +61,8 @@ public class ShiftView extends AbstractPersistable {
     public ShiftView(Shift shift) {
         super(shift);
         this.spotId = shift.getSpot().getId();
-        this.startDateTime = shift.getStartDateTime();
-        this.endDateTime = shift.getEndDateTime();
+        this.startDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTime(shift.getStartDateTime());
+        this.endDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTime(shift.getEndDateTime());
         this.pinnedByUser = shift.isPinnedByUser();
         this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
@@ -81,19 +85,19 @@ public class ShiftView extends AbstractPersistable {
         this.spotId = spotId;
     }
 
-    public OffsetDateTime getStartDateTime() {
+    public LocalDateTime getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(OffsetDateTime startDateTime) {
+    public void setStartDateTime(LocalDateTime startDateTime) {
         this.startDateTime = startDateTime;
     }
 
-    public OffsetDateTime getEndDateTime() {
+    public LocalDateTime getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(OffsetDateTime endDateTime) {
+    public void setEndDateTime(LocalDateTime endDateTime) {
         this.endDateTime = endDateTime;
     }
 
@@ -119,6 +123,18 @@ public class ShiftView extends AbstractPersistable {
 
     public void setRotationEmployeeId(Long rotationEmployeeId) {
         this.rotationEmployeeId = rotationEmployeeId;
+    }
+
+    @Override
+    @JsonIgnore
+    public Duration getDurationBetweenReferenceAndStart() {
+        return Duration.between(HasTimeslot.EPOCH, getStartDateTime());
+    }
+
+    @Override
+    @JsonIgnore
+    public Duration getDurationOfTimeslot() {
+        return Duration.between(getStartDateTime(), getEndDateTime());
     }
 
 }

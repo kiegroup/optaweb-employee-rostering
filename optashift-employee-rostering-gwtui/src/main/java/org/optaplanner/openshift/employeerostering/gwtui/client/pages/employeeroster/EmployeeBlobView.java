@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,7 +38,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Templated
-public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> {
+public class EmployeeBlobView implements BlobView<LocalDateTime, EmployeeBlob> {
 
     private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
     private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
@@ -55,7 +55,7 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     @Inject
     private EmployeeRosterPage page;
 
-    private Viewport<OffsetDateTime> viewport;
+    private Viewport<LocalDateTime> viewport;
     private ListView<EmployeeBlob> blobViews;
     private Runnable onDestroy;
 
@@ -78,17 +78,17 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     public void refresh() {
         RosterState rosterState = page.getCurrentEmployeeRosterView().getRosterState();
 
-        if (blob.getShift() != null) {
-            setClassProperty("historic", rosterState.isHistoric(blob.getShift()));
-            setClassProperty("published", rosterState.isPublished(blob.getShift()));
-            setClassProperty("draft", rosterState.isDraft(blob.getShift()));
-        } else if (blob.getEmployeeAvailability() != null) {
-            setClassProperty("desired", blob.getEmployeeAvailability().getState() == EmployeeAvailabilityState.DESIRED);
-            setClassProperty("undesired", blob.getEmployeeAvailability().getState() == EmployeeAvailabilityState.UNDESIRED);
-            setClassProperty("unavailable", blob.getEmployeeAvailability().getState() == EmployeeAvailabilityState.UNAVAILABLE);
-            setClassProperty("historic", rosterState.isHistoric(blob.getEmployeeAvailability().getStartDateTime()));
-            setClassProperty("published", rosterState.isPublished(blob.getEmployeeAvailability().getStartDateTime()));
-            setClassProperty("draft", rosterState.isDraft(blob.getEmployeeAvailability().getStartDateTime()));
+        if (blob.getShiftView() != null) {
+            setClassProperty("historic", rosterState.isHistoric(blob.getShiftView()));
+            setClassProperty("published", rosterState.isPublished(blob.getShiftView()));
+            setClassProperty("draft", rosterState.isDraft(blob.getShiftView()));
+        } else if (blob.getEmployeeAvailabilityView() != null) {
+            setClassProperty("desired", blob.getEmployeeAvailabilityView().getState() == EmployeeAvailabilityState.DESIRED);
+            setClassProperty("undesired", blob.getEmployeeAvailabilityView().getState() == EmployeeAvailabilityState.UNDESIRED);
+            setClassProperty("unavailable", blob.getEmployeeAvailabilityView().getState() == EmployeeAvailabilityState.UNAVAILABLE);
+            setClassProperty("historic", rosterState.isHistoric(blob.getEmployeeAvailabilityView().getStartDateTime()));
+            setClassProperty("published", rosterState.isPublished(blob.getEmployeeAvailabilityView().getStartDateTime()));
+            setClassProperty("draft", rosterState.isDraft(blob.getEmployeeAvailabilityView().getStartDateTime()));
         }
 
         viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
@@ -125,7 +125,7 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
 
     @EventHandler("blob")
     public void onBlobClicked(final @ForEvent("click") MouseEvent e) {
-        if (blob.getEmployeeAvailability() != null) {
+        if (blob.getEmployeeAvailabilityView() != null) {
             page.getBlobPopover().showFor(this);
         }
     }
@@ -135,13 +135,13 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     }
 
     @Override
-    public BlobView<OffsetDateTime, EmployeeBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
+    public BlobView<LocalDateTime, EmployeeBlob> withViewport(final Viewport<LocalDateTime> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<OffsetDateTime, EmployeeBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
+    public BlobView<LocalDateTime, EmployeeBlob> withSubLane(final SubLane<LocalDateTime> subLaneView) {
         return this;
     }
 
@@ -160,7 +160,7 @@ public class EmployeeBlobView implements BlobView<OffsetDateTime, EmployeeBlob> 
     }
 
     @Override
-    public Blob<OffsetDateTime> getBlob() {
+    public Blob<LocalDateTime> getBlob() {
         return blob;
     }
 }

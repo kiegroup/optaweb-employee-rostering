@@ -16,10 +16,11 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -37,29 +38,34 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation.HORIZONTAL;
 
-public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
+public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
 
     private final Integer tenantId;
     private final Supplier<EmployeeBlobView> blobViewSupplier;
-    private final LinearScale<OffsetDateTime> scale;
+    private final LinearScale<LocalDateTime> scale;
     private final CssGridLines gridLines;
-    private final Ticks<OffsetDateTime> dateTicks;
-    private final Ticks<OffsetDateTime> timeTicks;
-    private final List<Lane<OffsetDateTime>> lanes;
+    private final Ticks<LocalDateTime> dateTicks;
+    private final Ticks<LocalDateTime> timeTicks;
+    private final List<Lane<LocalDateTime>> lanes;
+    private Map<Long, Spot> spotIdToSpotMap;
+    private Map<Long, Employee> employeeIdToEmployeeMap;
 
     EmployeeRosterViewport(final Integer tenantId,
                            final Supplier<EmployeeBlobView> blobViewSupplier,
-                           final LinearScale<OffsetDateTime> scale,
+                           final LinearScale<LocalDateTime> scale,
                            final CssGridLines gridLines,
-                           final Ticks<OffsetDateTime> dateTicks,
-                           final Ticks<OffsetDateTime> timeTicks,
-                           final List<Lane<OffsetDateTime>> lanes) {
+                           final Ticks<LocalDateTime> dateTicks,
+                           final Ticks<LocalDateTime> timeTicks,
+                           final List<Lane<LocalDateTime>> lanes,
+                           Map<Long, Spot> spotIdToSpotMap,
+                           Map<Long, Employee> employeeIdToEmployeeMap) {
 
         this.tenantId = tenantId;
         this.blobViewSupplier = blobViewSupplier;
@@ -68,6 +74,8 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
         this.dateTicks = dateTicks;
         this.timeTicks = timeTicks;
         this.lanes = lanes;
+        this.spotIdToSpotMap = spotIdToSpotMap;
+        this.employeeIdToEmployeeMap = employeeIdToEmployeeMap;
     }
 
     @Override
@@ -90,36 +98,36 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
             if (date.getHour() == 0) {
                 return "";
             }
-            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDateAsLocalTime(date));
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
         });
     }
 
     @Override
-    public Lane<OffsetDateTime> newLane() {
+    public Lane<LocalDateTime> newLane() {
         return new EmployeeLane(new Employee(tenantId, "New Employee"),
                 new ArrayList<>(singletonList(new SubLane<>())));
     }
 
     @Override
-    public Stream<Blob<OffsetDateTime>> newBlob(final Lane<OffsetDateTime> lane, final OffsetDateTime start) {
+    public Stream<Blob<LocalDateTime>> newBlob(final Lane<LocalDateTime> lane, final LocalDateTime start) {
 
         // Casting is preferable to avoid over-use of generics in the Viewport class
         final EmployeeLane employeeLane = (EmployeeLane) lane;
 
-        OffsetDateTime startOfDay = OffsetDateTime.of(GwtJavaTimeWorkaroundUtil.toLocalDate(start), LocalTime.of(0, 0), start.getOffset());
-        final EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employeeLane.getEmployee(), startOfDay, startOfDay.plusDays(1));
-        employeeAvailability.setState(EmployeeAvailabilityState.UNAVAILABLE);
+        LocalDateTime startOfDay = start.toLocalDate().atTime(LocalTime.of(0, 0));
+        final EmployeeAvailabilityView employeeAvailabilityView = new EmployeeAvailabilityView(tenantId, employeeLane.getEmployee(),
+                startOfDay, startOfDay.plusDays(1), EmployeeAvailabilityState.UNAVAILABLE);
 
-        return Stream.of(new EmployeeBlob(scale, employeeAvailability));
+        return Stream.of(new EmployeeBlob(scale, spotIdToSpotMap, employeeIdToEmployeeMap, employeeAvailabilityView));
     }
 
     @Override
-    public BlobView<OffsetDateTime, ?> newBlobView() {
+    public BlobView<LocalDateTime, ?> newBlobView() {
         return blobViewSupplier.get();
     }
 
     @Override
-    public List<Lane<OffsetDateTime>> getLanes() {
+    public List<Lane<LocalDateTime>> getLanes() {
         return lanes;
     }
 
@@ -134,7 +142,7 @@ public class EmployeeRosterViewport extends Viewport<OffsetDateTime> {
     }
 
     @Override
-    public LinearScale<OffsetDateTime> getScale() {
+    public LinearScale<LocalDateTime> getScale() {
         return scale;
     }
 }

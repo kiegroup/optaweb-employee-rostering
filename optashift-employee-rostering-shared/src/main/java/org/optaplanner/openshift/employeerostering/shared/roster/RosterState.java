@@ -1,6 +1,7 @@
 package org.optaplanner.openshift.employeerostering.shared.roster;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.common.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 
 @Entity
@@ -63,13 +65,28 @@ public class RosterState extends AbstractPersistable {
     }
 
     @JsonIgnore
-    public boolean isHistoric(Shift shift) {
-        return isHistoric(shift.getStartDateTime());
+    public boolean isPublished(OffsetDateTime dateTime) {
+        return !isHistoric(dateTime) && !isDraft(dateTime);
     }
 
     @JsonIgnore
-    public boolean isPublished(OffsetDateTime dateTime) {
+    public boolean isHistoric(LocalDateTime dateTime) {
+        return dateTime.isBefore(getFirstPublishedDate().atTime(LocalTime.MIDNIGHT));
+    }
+
+    @JsonIgnore
+    public boolean isDraft(LocalDateTime dateTime) {
+        return dateTime.isAfter(getFirstDraftDate().atTime(LocalTime.MIDNIGHT));
+    }
+
+    @JsonIgnore
+    public boolean isPublished(LocalDateTime dateTime) {
         return !isHistoric(dateTime) && !isDraft(dateTime);
+    }
+
+    @JsonIgnore
+    public boolean isHistoric(Shift shift) {
+        return isHistoric(shift.getStartDateTime());
     }
 
     @JsonIgnore
@@ -80,6 +97,21 @@ public class RosterState extends AbstractPersistable {
     @JsonIgnore
     public boolean isPublished(Shift shift) {
         return isPublished(shift.getStartDateTime());
+    }
+
+    @JsonIgnore
+    public boolean isHistoric(HasTimeslot shift) {
+        return isHistoric(HasTimeslot.EPOCH.plus(shift.getDurationBetweenReferenceAndStart()));
+    }
+
+    @JsonIgnore
+    public boolean isDraft(HasTimeslot shift) {
+        return isDraft(HasTimeslot.EPOCH.plus(shift.getDurationBetweenReferenceAndStart()));
+    }
+
+    @JsonIgnore
+    public boolean isPublished(HasTimeslot shift) {
+        return isPublished(HasTimeslot.EPOCH.plus(shift.getDurationBetweenReferenceAndStart()));
     }
 
     @JsonIgnore

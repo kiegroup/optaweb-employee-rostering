@@ -480,6 +480,10 @@ public final class LocalDateTime extends DefaultInterfaceChronoLocalDateTime<ISO
 
     if (field instanceof ChronoField) {
       ChronoField f = (ChronoField) field;
+      if (f.equals(ChronoField.INSTANT_SECONDS)) {
+          return this.time.getSecond() + this.time.getMinute() * 60 + this.time.getHour() * 60 * 60 +
+                  this.date.toEpochDay() * 60 * 60 * 24;
+      }
       return (f.isTimeField() ? this.time.getLong(field) : this.date.getLong(field));
     }
     return field.doGet(this);
@@ -721,6 +725,9 @@ public final class LocalDateTime extends DefaultInterfaceChronoLocalDateTime<ISO
 
     if (field instanceof ChronoField) {
       ChronoField f = (ChronoField) field;
+      if (f.equals(ChronoField.INSTANT_SECONDS)) {
+          return LocalDateTime.ofEpochSecond(newValue, 0, ZoneOffset.UTC);
+      }
       if (f.isTimeField()) {
         return with(this.date, this.time.with(field, newValue));
       } else {
