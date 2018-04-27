@@ -55,7 +55,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 
 @Singleton
 @Startup
@@ -434,10 +434,12 @@ public class RosterGenerator {
                                                         RosterState rosterState, List<Spot> spotList, List<Employee> employeeList) {
         int rotationLength = rosterState.getRotationLength();
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength * generatorType.timeslotRangeList.size());
-        int employeeStart = 0;
+        List<Employee> remainingEmployeeList = new ArrayList<>(employeeList);
         for (Spot spot : spotList) {
-            List<Employee> rotationEmployeeList = employeeList.subList(Math.min(employeeList.size(), employeeStart),
-                    Math.min(employeeList.size(), employeeStart + generatorType.rotationEmployeeListSize));
+            List<Employee> rotationEmployeeList = remainingEmployeeList.stream()
+                    .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()))
+                    .limit(generatorType.rotationEmployeeListSize).collect(toList());
+            remainingEmployeeList.removeAll(rotationEmployeeList);
             // For every day in the rotation (independent of publishLength and draftLength)
             for (int startDayOffset = 0; startDayOffset < rotationLength; startDayOffset++) {
                 // Fill the offset day with shift templates
@@ -463,7 +465,6 @@ public class RosterGenerator {
                     shiftTemplateList.add(shiftTemplate);
                 }
             }
-            employeeStart += generatorType.rotationEmployeeListSize;
         }
         return shiftTemplateList;
     }
