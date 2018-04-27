@@ -513,7 +513,9 @@ public class RosterGenerator {
     private List<EmployeeAvailability> createEmployeeAvailabilityList(GeneratorType generatorType, Integer tenantId,
                                                                       TenantConfiguration tenantConfiguration, RosterState rosterState, List<Employee> employeeList, List<Shift> shiftList) {
         ZoneId zoneId = tenantConfiguration.getTimeZone();
-        LocalDate date = rosterState.getFirstDraftDate();
+        // Generate a feasible published schedule: no EmployeeAvailability instancer during the published period
+        // nor on the first draft day (because they might overlap with shift on the last published day)
+        LocalDate date = rosterState.getFirstDraftDate().plusDays(1);
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
         List<EmployeeAvailability> employeeAvailabilityList = new ArrayList<>();
         Map<LocalDate, List<Shift>> startDayToShiftListMap = shiftList.stream()
