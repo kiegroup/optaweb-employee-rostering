@@ -17,24 +17,23 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages;
 
 import java.time.Duration;
-import java.time.Instant;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
 
-public class Positive2HoursScale implements LinearScale<OffsetDateTime> {
+public class Positive2HoursScale implements LinearScale<LocalDateTime> {
 
-    private final OffsetDateTime start;
-    private final OffsetDateTime end;
+    private final LocalDateTime start;
+    private final LocalDateTime end;
 
-    public Positive2HoursScale(final OffsetDateTime start, final OffsetDateTime end) {
+    public Positive2HoursScale(final LocalDateTime start, final LocalDateTime end) {
         this.start = start;
         this.end = end;
     }
 
     @Override
-    public Long toGridPixelsWithFactor1(final OffsetDateTime valueInScaleUnits) {
-        final OffsetDateTime dateTime;
+    public Long toGridPixelsWithFactor1(final LocalDateTime valueInScaleUnits) {
+        final LocalDateTime dateTime;
 
         if (valueInScaleUnits.isBefore(start)) {
             dateTime = start;
@@ -45,13 +44,13 @@ public class Positive2HoursScale implements LinearScale<OffsetDateTime> {
         }
 
         // .get(ChronoUnit.HOURS) does not work
-        return Duration.between(instantOf(start), instantOf(dateTime)).getSeconds() / 60 / 60;
+        return Duration.between(start, dateTime).getSeconds() / 60 / 60;
     }
 
     @Override
-    public OffsetDateTime toScaleUnitsWithFactor1(final Long valueInGridPixels) {
+    public LocalDateTime toScaleUnitsWithFactor1(final Long valueInGridPixels) {
 
-        final OffsetDateTime date = start.plusHours(valueInGridPixels);
+        final LocalDateTime date = start.plusHours(valueInGridPixels);
 
         if (date.isBefore(start)) {
             return start;
@@ -63,7 +62,7 @@ public class Positive2HoursScale implements LinearScale<OffsetDateTime> {
     }
 
     @Override
-    public OffsetDateTime getEndInScaleUnits() {
+    public LocalDateTime getEndInScaleUnits() {
         return end;
     }
 
@@ -72,7 +71,4 @@ public class Positive2HoursScale implements LinearScale<OffsetDateTime> {
         return 2L;
     }
 
-    private Instant instantOf(final OffsetDateTime value) {
-        return value.toInstant();
-    }
 }

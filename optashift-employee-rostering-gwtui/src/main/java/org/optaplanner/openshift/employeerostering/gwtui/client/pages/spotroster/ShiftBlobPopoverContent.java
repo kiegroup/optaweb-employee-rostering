@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -41,7 +41,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.power
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopoverContent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -122,7 +121,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
         this.blobView = (ShiftBlobView) blobView;
         final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
-        final Shift shift = blob.getShift();
+        final ShiftView shift = blob.getShiftView();
 
         employeeSelect.clear();
         employeeSelect.addItem("Unassigned", "-1"); //FIXME: i18n
@@ -130,27 +129,27 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         // TODO: Do rest call
         SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spots -> {
             spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
-            spotSelect.setSelectedIndex(spots.indexOf(shift.getSpot()));
+            spotSelect.setSelectedIndex(spots.indexOf(blob.getSpot()));
         }));
 
         EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
             this.employeesById = employees.stream().collect(Collectors.toMap(Employee::getId, Function.identity()));
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
-            employeeSelect.setSelectedIndex((shift.getEmployee() == null) ? 0 : employees.indexOf(shift.getEmployee()) + 1);
+            employeeSelect.setSelectedIndex((blob.getEmployee() == null) ? 0 : employees.indexOf(blob.getEmployee()) + 1);
         }));
 
-        final OffsetDateTime start = shift.getStartDateTime();
+        final LocalDateTime start = shift.getStartDateTime();
         fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth(); //FIXME: i18n
-        fromHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(start) + "";
+        fromHour.value = start + "";
 
-        final OffsetDateTime end = shift.getEndDateTime();
+        final LocalDateTime end = shift.getEndDateTime();
         toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth(); //FIXME: i18n
-        toHour.value = GwtJavaTimeWorkaroundUtil.toLocalTime(end) + "";
+        toHour.value = end + "";
 
         pinned.checked = shift.isPinnedByUser();
 
         updateEmployeeSelect();
-        rotationEmployee.textContent = Optional.ofNullable(shift.getRotationEmployee()).map(Employee::getName).orElse("-");
+        rotationEmployee.textContent = Optional.ofNullable(blob.getRotationEmployee()).map(Employee::getName).orElse("-");
     }
 
     private void updateEmployeeSelect() {
@@ -184,24 +183,24 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
 
         final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
-        final Shift shift = blob.getShift();
+        final ShiftView shiftView = blob.getShiftView();
 
-        final boolean oldLockedByUser = shift.isPinnedByUser();
-        final Employee oldEmployee = shift.getEmployee();
+        final boolean oldLockedByUser = shiftView.isPinnedByUser();
+        final Long oldEmployee = shiftView.getEmployeeId();
 
-        shift.setPinnedByUser(pinned.checked);
-        shift.setEmployee(employeesById.get(parseLong(employeeSelect.getSelectedValue())));
+        shiftView.setPinnedByUser(pinned.checked);
+        shiftView.setEmployeeId(parseLong(employeeSelect.getSelectedValue()));
 
-        ShiftRestServiceBuilder.updateShift(shift.getTenantId(), new ShiftView(shift), onSuccess((final Shift updatedShift) -> {
-            blob.setShift(updatedShift);
+        ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, onSuccess((final Shift updatedShift) -> {
+            blob.setShiftView(new ShiftView(updatedShift));
             blobView.refresh();
             popover.hide();
         }).onFailure(i -> {
-            shift.setPinnedByUser(oldLockedByUser);
-            shift.setEmployee(oldEmployee);
+            shiftView.setPinnedByUser(oldLockedByUser);
+            shiftView.setEmployeeId(oldEmployee);
         }).onError(i -> {
-            shift.setPinnedByUser(oldLockedByUser);
-            shift.setEmployee(oldEmployee);
+            shiftView.setPinnedByUser(oldLockedByUser);
+            shiftView.setEmployeeId(oldEmployee);
         }));
 
         e.stopPropagation();

@@ -346,7 +346,9 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         // Publish
         rosterState.setFirstDraftDate(rosterState.getFirstDraftDate().plusDays(rosterState.getPublishLength()));
         // Provision
-        List<ShiftTemplate> shiftTemplateList = shiftRestService.getShiftTemplateList(tenantId);
+        List<ShiftTemplate> shiftTemplateList = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         Map<Integer, List<ShiftTemplate>> dayOffsetToShiftTemplateListMap = shiftTemplateList.stream()
                 .collect(groupingBy(ShiftTemplate::getStartDayOffset));
         int dayOffset = rosterState.getUnplannedRotationOffset();

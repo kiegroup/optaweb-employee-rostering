@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.CollisionState.COLLIDING;
 
 @Templated
-public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
+public class ShiftTemplateBlobView implements BlobView<LocalDateTime, ShiftTemplateBlob> {
 
     private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
     private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
@@ -57,24 +57,24 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     private HTMLElement label;
 
     @Inject
-    private CircularDraggability<OffsetDateTime, ShiftBlob> draggability;
+    private CircularDraggability<LocalDateTime, ShiftTemplateBlob> draggability;
 
     @Inject
-    private CircularResizability<OffsetDateTime, ShiftBlob> resizability;
+    private CircularResizability<LocalDateTime, ShiftTemplateBlob> resizability;
 
     @Inject
     private Logger logger;
 
-    private Viewport<OffsetDateTime> viewport;
-    private SubLane<OffsetDateTime> subLane;
-    private ListView<ShiftBlob> blobViews;
+    private Viewport<LocalDateTime> viewport;
+    private SubLane<LocalDateTime> subLane;
+    private ListView<ShiftTemplateBlob> blobViews;
     private Runnable onDestroy;
 
-    private ShiftBlob blob;
+    private ShiftTemplateBlob blob;
 
     @Override
-    public ListElementView<ShiftBlob> setup(final ShiftBlob blob,
-                                            final ListView<ShiftBlob> blobViews) {
+    public ListElementView<ShiftTemplateBlob> setup(final ShiftTemplateBlob blob,
+                                                    final ListView<ShiftTemplateBlob> blobViews) {
 
         this.blob = blob;
         this.blobViews = blobViews;
@@ -101,7 +101,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     }
 
     private void updateLabel() {
-        label.textContent = (blob.getShift().getRotationEmployee() != null) ? blob.getShift().getRotationEmployee().getName() : "Unassigned";
+        label.textContent = (blob.getShiftTemplateView().getRotationEmployeeId() != null) ? blob.getRotationEmployee().getName() : "Unassigned";
     }
 
     private void onResize(final Long newSizeInGridPixels,
@@ -129,8 +129,8 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     private void refreshTwinIfAny() {
         blob.getTwin()
                 .map(blobViews::getView)
-                .map(view -> (ShiftBlobView) view)
-                .ifPresent(ShiftBlobView::refresh);
+                .map(view -> (ShiftTemplateBlobView) view)
+                .ifPresent(ShiftTemplateBlobView::refresh);
     }
 
     @EventHandler("blob")
@@ -146,13 +146,13 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     }
 
     @Override
-    public BlobView<OffsetDateTime, ShiftBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
+    public BlobView<LocalDateTime, ShiftTemplateBlob> withViewport(final Viewport<LocalDateTime> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<OffsetDateTime, ShiftBlob> withSubLane(final SubLane<OffsetDateTime> subLane) {
+    public BlobView<LocalDateTime, ShiftTemplateBlob> withSubLane(final SubLane<LocalDateTime> subLane) {
         this.subLane = subLane;
         return this;
     }
@@ -169,7 +169,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     }
 
     @Override
-    public Blob<OffsetDateTime> getBlob() {
+    public Blob<LocalDateTime> getBlob() {
         return blob;
     }
 }

@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -59,7 +59,7 @@ public class EmployeeRosterPage implements Page {
 
     @Inject
     @DataField("viewport")
-    private ViewportView<OffsetDateTime> viewportView;
+    private ViewportView<LocalDateTime> viewportView;
 
     @Inject
     @DataField("next-page-button")

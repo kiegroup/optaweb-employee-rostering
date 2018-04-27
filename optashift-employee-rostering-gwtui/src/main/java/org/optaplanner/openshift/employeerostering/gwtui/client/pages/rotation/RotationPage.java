@@ -16,14 +16,11 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Collection;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -37,24 +34,16 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.header.HeaderView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
-import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
-import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.rotation.view.RotationView;
+import org.optaplanner.openshift.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 
 @Templated
@@ -62,7 +51,7 @@ public class RotationPage implements Page {
 
     @Inject
     @DataField("viewport")
-    private ViewportView<OffsetDateTime> viewportView;
+    private ViewportView<LocalDateTime> viewportView;
 
     @Inject
     @DataField("save-button")
@@ -91,7 +80,7 @@ public class RotationPage implements Page {
     @Inject
     private PromiseUtils promiseUtils;
 
-    private Viewport<OffsetDateTime> viewport;
+    private Viewport<LocalDateTime> viewport;
 
     @Override
     public Promise<Void> beforeOpen() {
@@ -112,17 +101,11 @@ public class RotationPage implements Page {
 
         loadingSpinner.showFor("rotation-page");
 
-        return fetchShiftTemplate().then(shiftTemplate -> {
-            return promiseUtils.manage(fetchSpotList().then((spotList) -> {
-                return promiseUtils.manage(fetchRosterState().then(rosterState -> {
-                    final Map<Spot, List<Shift>> shiftsBySpot = buildShiftList(shiftTemplate, rosterState).stream()
-                            .collect(groupingBy(Shift::getSpot));
-                    viewport = rotationViewportFactory.getViewport(rosterState, shiftsBySpot, spotList);
-                    viewportView.setViewport(viewport);
-                    loadingSpinner.hideFor("rotation-page");
-                    return promiseUtils.resolve();
-                }));
-            }));
+        return fetchRotationView().then(rotationView -> {
+            viewport = rotationViewportFactory.getViewport(rotationView);
+            viewportView.setViewport(viewport);
+            loadingSpinner.hideFor("rotation-page");
+            return promiseUtils.resolve();
 
         }).catch_(i -> {
             promiseUtils.getDefaultCatch().onInvoke(i);
@@ -131,71 +114,10 @@ public class RotationPage implements Page {
         });
     }
 
-    private Promise<Collection<ShiftTemplate>> fetchShiftTemplate() {
+    private Promise<RotationView> fetchRotationView() {
         return promiseUtils.promise((resolve, reject) -> {
-            ShiftRestServiceBuilder.getShiftTemplateList(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
+            ShiftRestServiceBuilder.getRotation(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
         });
-    }
-
-    private Promise<RosterState> fetchRosterState() {
-        return new Promise<>((resolve, reject) -> {
-            RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
-        });
-    }
-
-    private List<Shift> buildShiftList(final Collection<ShiftTemplate> shiftTemplate, final RosterState rosterState) {
-        final AtomicLong id = new AtomicLong(0L);
-        return shiftTemplate.stream()
-                .map(shiftInfo -> newShift(id.getAndIncrement(), shiftInfo, rosterState)).collect(toList());
-    }
-
-    private Shift newShift(final Long id,
-                           final ShiftTemplate shift,
-                           final RosterState rosterState) {
-        final Shift newShift = new Shift(
-                tenantStore.getCurrentTenantId(),
-                shift.getSpot(),
-                getStartDateTime(shift),
-                getEndDateTime(shift, rosterState.getRotationLength()),
-                shift.getRotationEmployee());
-
-        newShift.setId(id);
-
-        return newShift;
-    }
-
-    public static LocalDate getBaseDate() {
-        return LocalDate.of(0, 1, 1);
-    }
-
-    public static OffsetDateTime getBaseDateTime() {
-        return OffsetDateTime.of(getBaseDate().atTime(LocalTime.MIDNIGHT), ZoneOffset.UTC);
-    }
-
-    private OffsetDateTime getStartDateTime(ShiftTemplate shift) {
-        return OffsetDateTime.of(getBaseDate()
-                .plusDays(shift.getStartDayOffset())
-                .atTime(shift.getStartTime()), ZoneOffset.UTC);
-    }
-
-    private OffsetDateTime getEndDateTime(ShiftTemplate shift, int rotationLength) {
-        if (shift.getEndDayOffset() < shift.getStartDayOffset()) {
-            return OffsetDateTime.of(getBaseDate().plusDays(rotationLength)
-                    .plusDays(shift.getEndDayOffset())
-                    .atTime(shift.getEndTime()), ZoneOffset.UTC);
-        } else {
-            return OffsetDateTime.of(getBaseDate()
-                    .plusDays(shift.getEndDayOffset())
-                    .atTime(shift.getEndTime()), ZoneOffset.UTC);
-        }
-    }
-
-    private int getOffsetStartDay(Shift shift) {
-        return DateTimeUtils.daysBetween(getBaseDate(), shift.getStartDateTime());
-    }
-
-    private int getOffsetEndDay(Shift shift) {
-        return DateTimeUtils.daysBetween(getBaseDate(), shift.getEndDateTime());
     }
 
     @EventHandler("save-button")
@@ -212,29 +134,29 @@ public class RotationPage implements Page {
 
     private void save() {
 
-        final List<ShiftTemplate> newShiftInfoList = viewport.getLanes().stream()
-                .flatMap(lane -> lane.getSubLanes().stream())
-                .flatMap(subLane -> subLane.getBlobs().stream())
-                .filter(blob -> blob.getPositionInGridPixels() >= 0) //Removes left-most twins
-                .map(blob -> ((ShiftBlob) blob).getShift())
-                .map(this::newShiftTemplate)
-                .collect(toList());
+        final Map<Long, List<ShiftTemplateView>> newSpotIdToShiftTemplateViewListMap = viewport.getLanes().stream()
+                .collect(Collectors.toMap(lane -> ((SpotLane) lane).getSpot().getId(),
+                        lane -> {
+                            List<ShiftTemplateView> shiftTemplates = new ArrayList<>();
+                            lane.getSubLanes().forEach(sublane -> {
+                                sublane.getBlobs().forEach(blob -> {
+                                    ShiftTemplateBlob shiftTemplateBlob = (ShiftTemplateBlob) blob;
+                                    if (!shiftTemplateBlob.getTwin().isPresent() ||
+                                            shiftTemplateBlob.getTwin().get().getPositionInGridPixels() < shiftTemplateBlob.getPositionInGridPixels()) {
+                                        shiftTemplates.add(shiftTemplateBlob.getShiftTemplateView());
+                                    }
+                                });
+                            });
+                            return shiftTemplates;
+                        }));
 
-        ShiftRestServiceBuilder.updateShiftTemplate(
+        RotationView out = new RotationView();
+        out.setTenantId(tenantStore.getCurrentTenantId());
+        out.setSpotIdToShiftTemplateViewListMap(newSpotIdToShiftTemplateViewListMap);
+
+        ShiftRestServiceBuilder.updateRotation(
                 tenantStore.getCurrentTenantId(),
-                newShiftInfoList,
+                out,
                 onSuccess(i -> refresh()));
-    }
-
-    private ShiftTemplate newShiftTemplate(final Shift shift) {
-        return new ShiftTemplate(tenantStore.getCurrentTenantId(),
-                shift.getSpot(), getOffsetStartDay(shift), DateTimeUtils.getLocalTimeOf(shift.getStartDateTime()),
-                getOffsetEndDay(shift), DateTimeUtils.getLocalTimeOf(shift.getEndDateTime()), shift.getRotationEmployee());
-    }
-
-    private Promise<List<Spot>> fetchSpotList() {
-        return promiseUtils.promise((res, rej) -> {
-            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spotList -> res.onInvoke(spotList)));
-        });
     }
 }

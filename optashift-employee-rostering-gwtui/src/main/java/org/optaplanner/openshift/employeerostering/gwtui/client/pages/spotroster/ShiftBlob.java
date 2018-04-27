@@ -16,90 +16,73 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
-import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
+import org.optaplanner.openshift.employeerostering.gwtui.client.pages.TimeslotBlob;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.LinearScale;
+import org.optaplanner.openshift.employeerostering.shared.common.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
-public class ShiftBlob implements Blob<OffsetDateTime> {
+public class ShiftBlob extends TimeslotBlob {
 
-    private final LinearScale<OffsetDateTime> scale;
-    private Shift shift;
-    private Long sizeInGridPixels;
+    private ShiftView shift;
+    private Map<Long, Spot> spotIdToSpotMap;
+    private Map<Long, Employee> employeeIdToEmployeeMap;
 
-    private Long positionInGridPixelsCache = null;
-    private Long endPositionInGridPixelsCache = null;
-
-    ShiftBlob(final LinearScale<OffsetDateTime> scale, final Shift shift) {
+    ShiftBlob(final LinearScale<LocalDateTime> scale,
+              Map<Long, Spot> spotIdToSpotMap,
+              Map<Long, Employee> employeeIdToEmployeeMap,
+              final ShiftView shift) {
         this.shift = shift;
-        this.scale = scale;
-        this.sizeInGridPixels = scale.toGridPixels(shift.getEndDateTime()) - scale.toGridPixels(getPositionInScaleUnits());
+        this.spotIdToSpotMap = spotIdToSpotMap;
+        this.employeeIdToEmployeeMap = employeeIdToEmployeeMap;
+        setScale(scale);
     }
 
     @Override
-    public long getSizeInGridPixels() {
-        return sizeInGridPixels;
-    }
-
-    @Override
-    public OffsetDateTime getPositionInScaleUnits() {
-        return shift.getStartDateTime();
-    }
-
-    @Override
-    public long getEndPositionInGridPixels() {
-
-        //Collision performance optimization
-        if (endPositionInGridPixelsCache == null) {
-            endPositionInGridPixelsCache = Blob.super.getEndPositionInGridPixels();
-        }
-
-        return endPositionInGridPixelsCache;
-    }
-
-    @Override
-    public long getPositionInGridPixels() {
-
-        //Collision performance optimization
-        if (positionInGridPixelsCache == null) {
-            positionInGridPixelsCache = Blob.super.getPositionInGridPixels();
-        }
-
-        return positionInGridPixelsCache;
-    }
-
-    @Override
-    public void setPositionInScaleUnits(final OffsetDateTime start) {
-        positionInGridPixelsCache = null;
-        endPositionInGridPixelsCache = null;
+    public void setPositionInScaleUnits(final LocalDateTime start) {
         shift.setStartDateTime(start);
     }
 
     @Override
     public void setSizeInGridPixels(final long sizeInGridPixels) {
-        this.sizeInGridPixels = sizeInGridPixels;
-        shift.setEndDateTime(getEndPositionInScaleUnits());
+        shift.setEndDateTime(getScale().toScaleUnits(getScale()
+                .toGridPixels(getPositionInScaleUnits()) + sizeInGridPixels));
     }
 
     public String getLabel() {
-        return Optional.ofNullable(shift.getEmployee())
+        return Optional.ofNullable(getEmployee())
                 .map(Employee::getName)
                 .orElse("Unassigned");
     }
 
-    public Shift getShift() {
+    public ShiftView getShiftView() {
         return shift;
     }
 
-    public void setShift(final Shift shift) {
+    public void setShiftView(final ShiftView shift) {
         this.shift = shift;
     }
 
-    @Override
-    public LinearScale<OffsetDateTime> getScale() {
-        return scale;
+    public Spot getSpot() {
+        return spotIdToSpotMap.get(shift.getSpotId());
     }
+
+    public Employee getEmployee() {
+        return employeeIdToEmployeeMap.get(shift.getEmployeeId());
+    }
+
+    public Employee getRotationEmployee() {
+        return employeeIdToEmployeeMap.get(shift.getRotationEmployeeId());
+    }
+
+    @Override
+    public HasTimeslot getTimeslot() {
+        return shift;
+    }
+
 }

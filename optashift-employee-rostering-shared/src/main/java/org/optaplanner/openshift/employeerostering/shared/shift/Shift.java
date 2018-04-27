@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.shared.shift;
 
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -107,14 +108,16 @@ public class Shift extends AbstractPersistable {
         this.rotationEmployee = rotationEmployee;
     }
 
-    public Shift(ShiftView shiftView, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
-        this(shiftView, spot, startDateTime, endDateTime, null);
+    public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot) {
+        this(zoneId, shiftView, spot, null);
     }
 
-    public Shift(ShiftView shiftView, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime, Employee rotationEmployee) {
+    public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee) {
         super(shiftView);
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
+        this.startDateTime = OffsetDateTime.of(shiftView.getStartDateTime(),
+                zoneId.getRules().getOffset(shiftView.getStartDateTime()));
+        this.endDateTime = OffsetDateTime.of(shiftView.getEndDateTime(),
+                zoneId.getRules().getOffset(shiftView.getEndDateTime()));
         this.spot = spot;
         this.pinnedByUser = shiftView.isPinnedByUser();
         this.rotationEmployee = rotationEmployee;

@@ -16,31 +16,35 @@
 
 package org.optaplanner.openshift.employeerostering.shared.employee.view;
 
-import java.time.OffsetDateTime;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
+import org.optaplanner.openshift.employeerostering.shared.common.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 
-public class EmployeeAvailabilityView extends AbstractPersistable {
+public class EmployeeAvailabilityView extends AbstractPersistable implements HasTimeslot {
 
     @NotNull
     private Long employeeId;
 
     @NotNull
-    private OffsetDateTime startDateTime;
+    private LocalDateTime startDateTime;
     @NotNull
-    private OffsetDateTime endDateTime;
+    private LocalDateTime endDateTime;
 
     private EmployeeAvailabilityState state;
 
     @SuppressWarnings("unused")
     public EmployeeAvailabilityView() {}
 
-    public EmployeeAvailabilityView(Integer tenantId, Employee employee, OffsetDateTime startDateTime, OffsetDateTime endDateTime, EmployeeAvailabilityState state) {
+    public EmployeeAvailabilityView(Integer tenantId, Employee employee, LocalDateTime startDateTime, LocalDateTime endDateTime, EmployeeAvailabilityState state) {
         super(tenantId);
         this.employeeId = employee.getId();
         this.startDateTime = startDateTime;
@@ -51,8 +55,8 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
     public EmployeeAvailabilityView(EmployeeAvailability employeeAvailability) {
         super(employeeAvailability);
         this.employeeId = employeeAvailability.getEmployee().getId();
-        this.startDateTime = employeeAvailability.getStartDateTime();
-        this.endDateTime = employeeAvailability.getEndDateTime();
+        this.startDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTime(employeeAvailability.getStartDateTime());
+        this.endDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTime(employeeAvailability.getEndDateTime());
         this.state = employeeAvailability.getState();
     }
 
@@ -73,19 +77,19 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.employeeId = employeeId;
     }
 
-    public OffsetDateTime getStartDateTime() {
+    public LocalDateTime getStartDateTime() {
         return startDateTime;
     }
 
-    public void setStartDateTime(OffsetDateTime startDateTime) {
+    public void setStartDateTime(LocalDateTime startDateTime) {
         this.startDateTime = startDateTime;
     }
 
-    public OffsetDateTime getEndDateTime() {
+    public LocalDateTime getEndDateTime() {
         return endDateTime;
     }
 
-    public void setEndDateTime(OffsetDateTime endDateTime) {
+    public void setEndDateTime(LocalDateTime endDateTime) {
         this.endDateTime = endDateTime;
     }
 
@@ -95,6 +99,18 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
 
     public void setState(EmployeeAvailabilityState state) {
         this.state = state;
+    }
+
+    @Override
+    @JsonIgnore
+    public Duration getDurationBetweenReferenceAndStart() {
+        return Duration.between(HasTimeslot.EPOCH, getStartDateTime());
+    }
+
+    @Override
+    @JsonIgnore
+    public Duration getDurationOfTimeslot() {
+        return Duration.between(getStartDateTime(), getEndDateTime());
     }
 
 }

@@ -19,6 +19,7 @@ package org.optaplanner.openshift.employeerostering.server.employee;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -29,11 +30,14 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
+import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestService;
 
 public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements EmployeeRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
+    @Inject
+    private TenantRestService tenantRestService;
 
     @Override
     @Transactional
@@ -107,7 +111,9 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
         validateTenantIdParameter(tenantId, employeeAvailabilityView);
         Employee employee = entityManager.find(Employee.class, employeeAvailabilityView.getEmployeeId());
         validateTenantIdParameter(tenantId, employee);
-        EmployeeAvailability employeeAvailability = new EmployeeAvailability(employeeAvailabilityView, employee);
+        EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantRestService
+                .getTenantConfiguration(tenantId).getTimeZone(), employeeAvailabilityView,
+                employee);
         employeeAvailability.setState(employeeAvailabilityView.getState());
         return employeeAvailability;
     }

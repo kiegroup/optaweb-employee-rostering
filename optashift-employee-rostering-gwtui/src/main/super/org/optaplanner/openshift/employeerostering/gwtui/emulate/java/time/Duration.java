@@ -295,67 +295,56 @@ public final class Duration implements PlusAdjuster, MinusAdjuster, Comparable<D
    * @throws DateTimeParseException if the text cannot be parsed to a {@code Duration}
    */
   public static Duration parse(final CharSequence text) {
-
     Jdk7Methods.Objects_requireNonNull(text, "text");
-    int len = text.length();
-    if (len < 4 || (text.charAt(0) != 'P' && text.charAt(0) != 'p') || (text.charAt(1) != 'T' && text.charAt(1) != 't')
-        || (text.charAt(len - 1) != 'S' && text.charAt(len - 1) != 's')
-        || (len == 5 && text.charAt(2) == '-' && text.charAt(3) == '0')) {
-      throw new DateTimeParseException("Duration could not be parsed: " + text, text, 0);
-    }
-    String numberText = text.subSequence(2, len - 1).toString().replace(',', '.');
-    if (numberText.charAt(0) == '+') {
-      throw new DateTimeParseException("Duration could not be parsed: " + text, text, 2);
-    }
-    int dot = numberText.indexOf('.');
+    //PTnHnMnS,
     try {
-      if (dot == -1) {
-        // no decimal places
-        if (numberText.startsWith("-0")) {
-          throw new DateTimeParseException("Duration could not be parsed: " + text, text, 2);
+        if (Character.toUpperCase(text.charAt(0)) != 'P' && Character.toUpperCase(text.charAt(1)) != 'T') {
+            throw new DateTimeParseException("Duration could not be parsed: " + text, text, 0); 
         }
-        return create(Long.parseLong(numberText), 0);
-      }
-      // decimal places
-      boolean negative = false;
-      if (numberText.charAt(0) == '-') {
-        negative = true;
-      }
-      long secs = Long.parseLong(numberText.substring(0, dot));
-      numberText = numberText.substring(dot + 1);
-      len = numberText.length();
-      if (len == 0 || len > 9 || numberText.charAt(0) == '-' || numberText.charAt(0) == '+') {
-        throw new DateTimeParseException("Duration could not be parsed: " + text, text, 2);
-      }
-      int nanos = Integer.parseInt(numberText);
-      switch (len) {
-        case 1:
-          nanos *= 100000000;
-          break;
-        case 2:
-          nanos *= 10000000;
-          break;
-        case 3:
-          nanos *= 1000000;
-          break;
-        case 4:
-          nanos *= 100000;
-          break;
-        case 5:
-          nanos *= 10000;
-          break;
-        case 6:
-          nanos *= 1000;
-          break;
-        case 7:
-          nanos *= 100;
-          break;
-        case 8:
-          nanos *= 10;
-          break;
-      }
-      return negative ? ofSeconds(secs, -nanos) : create(secs, nanos);
-
+        Duration out = Duration.ZERO;
+        StringBuilder number = new StringBuilder();
+        int state = 0;
+        for (int i = 2; i < text.length(); i++) {
+            char next = Character.toUpperCase(text.charAt(i));
+            switch (next) {
+                case 'H':
+                    if (state > 0) {
+                        throw new DateTimeParseException("Duration could not be parsed: " + text, text, i);
+                    }
+                    out = out.plusHours(Long.parseLong(number.toString()));
+                    number.setLength(0);
+                    state = 1;
+                    break;
+                case 'M':
+                    if (state > 1) {    
+                        throw new DateTimeParseException("Duration could not be parsed: " + text, text, i);
+                    }
+                    out = out.plusMinutes(Long.parseLong(number.toString()));
+                    number.setLength(0);
+                    state = 2;
+                    break;
+                case 'S':
+                    if (state > 2) {    
+                        throw new DateTimeParseException("Duration could not be parsed: " + text, text, i);
+                    }
+                    double parseNumber = Double.parseDouble(number.toString());
+                    long seconds = (long) Math.floor(parseNumber);
+                    long nanos = Math.round(parseNumber - seconds);
+                    out = out.plusSeconds(seconds).plusNanos(nanos);
+                    number.setLength(0);
+                    state = 3;
+                    break;
+                case ',':
+                    number.append('.');
+                    break;
+                default:
+                   number.append(next);
+            }
+        }
+        if (number.length() > 0) {
+            throw new DateTimeParseException("Duration could not be parsed: " + text, text, text.length());
+        }
+        return out;
     } catch (ArithmeticException ex) {
       throw new DateTimeParseException("Duration could not be parsed: " + text, text, 2, ex);
     } catch (NumberFormatException ex) {
@@ -541,6 +530,21 @@ public final class Duration implements PlusAdjuster, MinusAdjuster, Comparable<D
 
     return plus(secondsToAdd, 0);
   }
+  
+  public Duration plusMinutes(long minutesToAdd) {
+
+      return plusSeconds(minutesToAdd * 60);
+  }
+  
+  public Duration plusHours(long hoursToAdd) {
+
+      return plusMinutes(hoursToAdd * 60);
+  }
+  
+  public Duration plusDays(long daysToAdd) {
+
+      return plusHours(daysToAdd * 24);
+  }
 
   /**
    * Returns a copy of this duration with the specified duration in milliseconds added.
@@ -648,6 +652,21 @@ public final class Duration implements PlusAdjuster, MinusAdjuster, Comparable<D
         ? plusSeconds(Long.MAX_VALUE).plusSeconds(1)
         : plusSeconds(-secondsToSubtract));
   }
+  
+  public Duration minusMinutes(long minutesToAdd) {
+
+      return minusSeconds(minutesToAdd * 60);
+  }
+  
+  public Duration minusHours(long hoursToAdd) {
+
+      return minusMinutes(hoursToAdd * 60);
+  }
+  
+  public Duration minusDays(long daysToAdd) {
+
+      return minusHours(daysToAdd * 24);
+  }
 
   /**
    * Returns a copy of this duration with the specified duration in milliseconds subtracted.
@@ -730,6 +749,18 @@ public final class Duration implements PlusAdjuster, MinusAdjuster, Comparable<D
   private BigDecimal toSeconds() {
 
     return BigDecimal.valueOf(this.seconds).add(BigDecimal.valueOf(this.nanos, 9));
+  }
+  
+  public long toDays() {
+      return getSeconds() / 86400;
+  }
+  
+  public long toHours() {
+      return getSeconds() / 3600;
+  }
+  
+  public long toMinutes() {
+      return getSeconds() / 60;
   }
 
   /**

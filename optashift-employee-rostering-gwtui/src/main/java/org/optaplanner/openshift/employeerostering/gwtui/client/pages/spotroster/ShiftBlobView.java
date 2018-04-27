@@ -16,7 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +37,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Templated
-public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
+public class ShiftBlobView implements BlobView<LocalDateTime, ShiftBlob> {
 
     private static final Long BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS = 3L;
     private static final Long BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS = -5L;
@@ -54,7 +54,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     @Inject
     private SpotRosterPage page;
 
-    private Viewport<OffsetDateTime> viewport;
+    private Viewport<LocalDateTime> viewport;
     private ListView<ShiftBlob> blobViews;
     private Runnable onDestroy;
 
@@ -76,12 +76,12 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
 
     public void refresh() {
 
-        setClassProperty("pinned", blob.getShift().isPinnedByUser());
-        setClassProperty("unassigned", blob.getShift().getEmployee() == null);
+        setClassProperty("pinned", blob.getShiftView().isPinnedByUser());
+        setClassProperty("unassigned", blob.getEmployee() == null);
         RosterState rosterState = page.getCurrentSpotRosterView().getRosterState();
-        setClassProperty("historic", rosterState.isHistoric(blob.getShift()));
-        setClassProperty("published", rosterState.isPublished(blob.getShift()));
-        setClassProperty("draft", rosterState.isDraft(blob.getShift()));
+        setClassProperty("historic", rosterState.isHistoric(blob.getShiftView()));
+        setClassProperty("published", rosterState.isPublished(blob.getShiftView()));
+        setClassProperty("draft", rosterState.isDraft(blob.getShiftView()));
 
         viewport.setPositionInScreenPixels(this, blob.getPositionInGridPixels(), BLOB_POSITION_DISPLACEMENT_IN_SCREEN_PIXELS);
         viewport.setSizeInScreenPixels(this, blob.getSizeInGridPixels(), BLOB_SIZE_DISPLACEMENT_IN_SCREEN_PIXELS);
@@ -125,13 +125,13 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     }
 
     @Override
-    public BlobView<OffsetDateTime, ShiftBlob> withViewport(final Viewport<OffsetDateTime> viewport) {
+    public BlobView<LocalDateTime, ShiftBlob> withViewport(final Viewport<LocalDateTime> viewport) {
         this.viewport = viewport;
         return this;
     }
 
     @Override
-    public BlobView<OffsetDateTime, ShiftBlob> withSubLane(final SubLane<OffsetDateTime> subLaneView) {
+    public BlobView<LocalDateTime, ShiftBlob> withSubLane(final SubLane<LocalDateTime> subLaneView) {
         return this;
     }
 
@@ -150,7 +150,7 @@ public class ShiftBlobView implements BlobView<OffsetDateTime, ShiftBlob> {
     }
 
     @Override
-    public Blob<OffsetDateTime> getBlob() {
+    public Blob<LocalDateTime> getBlob() {
         return blob;
     }
 }
