@@ -17,6 +17,8 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -47,6 +49,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantSto
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.IndictmentView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 
 import static elemental2.dom.DomGlobal.setInterval;
@@ -148,10 +151,12 @@ public class SpotRosterPage implements Page {
     private SpotRosterViewport viewport;
     private Pagination spotsPagination = Pagination.of(0, 10);
     private SpotRosterView currentSpotRosterView;
+    private Map<Long, IndictmentView> currentShiftIndictmentMap;
 
     @PostConstruct
     public void init() {
         shiftBlobPopover.init(this, shiftBlobPopoverContent);
+        currentShiftIndictmentMap = Collections.emptyMap();
     }
 
     public BlobPopover getBlobPopover() {
@@ -178,26 +183,30 @@ public class SpotRosterPage implements Page {
             currentSpotRosterView = spotRosterView;
             final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
 
-            if (score.isPresent()) {
-                scores.classList.remove("hidden");
-                hardScore.textContent = score.get().getHardScore() + "";
-                softScore.textContent = score.get().getSoftScore() + "";
-                terminateEarlyButton.classList.remove("hidden");
-                solveButton.classList.add("hidden");
-            } else {
-                scores.classList.add("hidden");
-                terminateEarlyButton.classList.add("hidden");
-                solveButton.classList.remove("hidden");
-            }
+            return promiseUtils.manage(fetchShiftIndictmentMap().then(shiftIndictmentMap -> {
+                this.currentShiftIndictmentMap = shiftIndictmentMap;
 
-            if (spotRosterView.getSpotList().isEmpty()) {
-                spotsPagination = spotsPagination.previousPage();
-                return promiseUtils.resolve();
-            } else {
-                viewport = spotRosterViewportFactory.getViewport(spotRosterView);
-                viewportView.setViewport(viewport);
-                return promiseUtils.resolve();
-            }
+                if (score.isPresent()) {
+                    scores.classList.remove("hidden");
+                    hardScore.textContent = score.get().getHardScore() + "";
+                    softScore.textContent = score.get().getSoftScore() + "";
+                    terminateEarlyButton.classList.remove("hidden");
+                    solveButton.classList.add("hidden");
+                } else {
+                    scores.classList.add("hidden");
+                    terminateEarlyButton.classList.add("hidden");
+                    solveButton.classList.remove("hidden");
+                }
+
+                if (spotRosterView.getSpotList().isEmpty()) {
+                    spotsPagination = spotsPagination.previousPage();
+                    return promiseUtils.resolve();
+                } else {
+                    viewport = spotRosterViewportFactory.getViewport(spotRosterView);
+                    viewportView.setViewport(viewport);
+                    return promiseUtils.resolve();
+                }
+            }));
         }));
     }
 
@@ -307,6 +316,10 @@ public class SpotRosterPage implements Page {
         return currentSpotRosterView;
     }
 
+    public Map<Long, IndictmentView> getCurrentShiftIndictmentMap() {
+        return currentShiftIndictmentMap;
+    }
+
     //API calls
 
     private Promise<Void> triggerRosterSolve() {
@@ -326,6 +339,23 @@ public class SpotRosterPage implements Page {
             RosterRestServiceBuilder.getCurrentSpotRosterView(tenantStore.getCurrentTenantId(),
                     spotsPagination.getPageNumber(),
                     spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));
+        });
+    }
+
+    @SuppressWarnings("unchecked")
+    private Promise<Map<Long, IndictmentView>> fetchShiftIndictmentMap() {
+        return promiseUtils.promise((resolve, reject) -> {
+            RosterRestServiceBuilder.getCurrentShiftIndictmentMap(tenantStore.getCurrentTenantId(),
+                    spotsPagination.getPageNumber(),
+                    spotsPagination.getNumberOfItemsPerPage(), onSuccess((indictmentMap) -> {
+                        if (indictmentMap == null) {
+                            RosterRestServiceBuilder.getLatestShiftIndictmentMap(tenantStore.getCurrentTenantId(),
+                                    spotsPagination.getPageNumber(),
+                                    spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));
+                        } else {
+                            resolve.onInvoke(indictmentMap);
+                        }
+                    }));
         });
     }
 }

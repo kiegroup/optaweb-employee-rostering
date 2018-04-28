@@ -1,6 +1,7 @@
 package org.optaplanner.openshift.employeerostering.shared.roster;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -18,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.IndictmentView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
@@ -49,6 +51,20 @@ public interface RosterRestService {
                                             @ApiParam @QueryParam("p") Integer pageNumber,
                                             @ApiParam @QueryParam("n") Integer numberOfItemsPerPage);
 
+    @ApiOperation("Get the current shift indictments. Null if out of date")
+    @GET
+    @Path("/spotRosterView/current/indictments")
+    Map<Long, IndictmentView> getCurrentShiftIndictmentMap(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                                           @ApiParam(required = true) @QueryParam("p") @DefaultValue("0") Integer pageNumber,
+                                                           @ApiParam(required = true) @QueryParam("n") @DefaultValue(MAX_VALUE + "") Integer numberOfItemsPerPage);
+
+    @ApiOperation("Get the latest shift indictment map calculated")
+    @GET
+    @Path("/spotRosterView/latest/indictments")
+    Map<Long, IndictmentView> getLatestShiftIndictmentMap(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                                          @ApiParam(required = true) @QueryParam("p") @DefaultValue("0") Integer pageNumber,
+                                                          @ApiParam(required = true) @QueryParam("n") @DefaultValue(MAX_VALUE + "") Integer numberOfItemsPerPage);
+
     @ApiOperation("Get a spot roster view between 2 dates")
     @GET
     @Path("/spotRosterView")
@@ -76,6 +92,20 @@ public interface RosterRestService {
     EmployeeRosterView getCurrentEmployeeRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                                                     @ApiParam @QueryParam("p") Integer pageNumber,
                                                     @ApiParam @QueryParam("n") Integer numberOfItemsPerPage);
+
+    @ApiOperation("Get the current employee indictments. Null if out of date")
+    @GET
+    @Path("/employeeRosterView/current/indictments")
+    Map<Long, IndictmentView> getCurrentEmployeeIndictmentMap(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                                              @ApiParam(required = true) @QueryParam("p") @DefaultValue("0") Integer pageNumber,
+                                                              @ApiParam(required = true) @QueryParam("n") @DefaultValue(MAX_VALUE + "") Integer numberOfItemsPerPage);
+
+    @ApiOperation("Get the latest employee indictments map calculated")
+    @GET
+    @Path("/employeeRosterView/latest/indictments")
+    Map<Long, IndictmentView> getLatestEmployeeIndictmentMap(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                                             @ApiParam(required = true) @QueryParam("p") @DefaultValue("0") Integer pageNumber,
+                                                             @ApiParam(required = true) @QueryParam("n") @DefaultValue(MAX_VALUE + "") Integer numberOfItemsPerPage);
 
     @ApiOperation("Get an employee roster view between 2 dates")
     @GET

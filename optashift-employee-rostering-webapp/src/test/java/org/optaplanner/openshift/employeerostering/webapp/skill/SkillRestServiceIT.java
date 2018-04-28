@@ -72,7 +72,7 @@ public class SkillRestServiceIT extends AbstractRestServiceIT {
 
         Skill retrievedSkill = skillRestService.getSkill(TENANT_ID, testUpdateSkill.getId());
         assertClientResponseOk();
-        assertThat(retrievedSkill).isNotNull().isEqualToIgnoringGivenFields(testUpdateSkill, "version");
+        assertThat(retrievedSkill).isNotNull().isEqualToIgnoringGivenFields(testUpdateSkill, "lastUpdateDateTime");
 
         boolean result = skillRestService.removeSkill(TENANT_ID, retrievedSkill.getId());
         assertThat(result).isTrue();

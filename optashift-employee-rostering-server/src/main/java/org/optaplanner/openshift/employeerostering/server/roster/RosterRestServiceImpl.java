@@ -18,21 +18,29 @@ package org.optaplanner.openshift.employeerostering.server.roster;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.optaplanner.core.api.solver.Solver;
+import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverManager;
+import org.optaplanner.openshift.employeerostering.shared.common.OutOfDateException;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
@@ -41,6 +49,7 @@ import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.IndictmentView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
@@ -53,6 +62,7 @@ import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServi
 
 import static java.util.stream.Collectors.groupingBy;
 
+@ApplicationScoped
 public class RosterRestServiceImpl extends AbstractRestServiceImpl implements RosterRestService {
 
     @PersistenceContext
@@ -66,6 +76,11 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Inject
     private ShiftRestService shiftRestService;
+
+    private Map<Integer, Map<Shift, IndictmentView>> tenantIdToShiftIndictmentMap = new ConcurrentHashMap<>();
+    private Map<Integer, Map<Employee, IndictmentView>> tenantIdToEmployeeIndictmentMap = new ConcurrentHashMap<>();
+    private Map<Integer, List<List<Long>>> tenantIdToShiftIndictmentMapUpdateTime = new ConcurrentHashMap<>();
+    private Map<Integer, List<List<Long>>> tenantIdToEmployeeIndictmentMapUpdateTime = new ConcurrentHashMap<>();
 
     // ************************************************************************
     // SpotRosterView
@@ -157,7 +172,8 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
         // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched,
         // so the score might be inaccurate.
-        Roster roster = solverManager.getRoster(tenantId);
+        Solver<Roster> solver = solverManager.getSolver(tenantId);
+        Roster roster = (solver != null) ? solver.getBestSolution() : null;
         spotRosterView.setScore(roster == null ? null : roster.getScore());
         spotRosterView.setRosterState(getRosterState(tenantId));
 
@@ -269,7 +285,8 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
         // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched,
         // so the score might be inaccurate.
-        Roster roster = solverManager.getRoster(tenantId);
+        Solver<Roster> solver = solverManager.getSolver(tenantId);
+        Roster roster = (solver != null) ? solver.getBestSolution() : null;
         employeeRosterView.setScore(roster == null ? null : roster.getScore());
         employeeRosterView.setRosterState(getRosterState(tenantId));
         return employeeRosterView;
@@ -370,4 +387,136 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 .getSingleResult();
     }
 
+    @Override
+    public Map<Long, IndictmentView> getCurrentShiftIndictmentMap(Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage) {
+        final Pagination pagination = Pagination.of(pageNumber, numberOfItemsPerPage);
+        final Set<Spot> spots = new HashSet<>(entityManager.createNamedQuery("Spot.findAll", Spot.class)
+                .setParameter("tenantId", tenantId)
+                .setMaxResults(pagination.getNumberOfItemsPerPage())
+                .setFirstResult(pagination.getFirstResultIndex())
+                .getResultList());
+
+        try {
+            final Map<Shift, IndictmentView> shiftIndictmentMap = getShiftIndictmentMap(tenantId);
+            return shiftIndictmentMap.entrySet().stream()
+                    .filter((e) -> spots.contains(e.getKey().getSpot()))
+                    .collect(Collectors.toMap((e) -> e.getKey().getId(),
+                            (e) -> e.getValue()));
+        } catch (OutOfDateException e) {
+            // Since there is no way to pass this exception to client-side...
+            return null;
+        }
+    }
+
+    @Override
+    public Map<Long, IndictmentView> getCurrentEmployeeIndictmentMap(Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage) {
+        final Pagination pagination = Pagination.of(pageNumber, numberOfItemsPerPage);
+        final Set<Employee> employees = new HashSet<>(entityManager.createNamedQuery("Employee.findAll", Employee.class)
+                .setParameter("tenantId", tenantId)
+                .setMaxResults(pagination.getNumberOfItemsPerPage())
+                .setFirstResult(pagination.getFirstResultIndex())
+                .getResultList());
+
+        try {
+            final Map<Employee, IndictmentView> employeeIndictmentMap = getEmployeeIndictmentMap(tenantId);
+            return employeeIndictmentMap.entrySet().stream()
+                    .filter((e) -> employees.contains(e.getKey()))
+                    .collect(Collectors.toMap((e) -> e.getKey().getId(),
+                            (e) -> e.getValue()));
+        } catch (OutOfDateException e) {
+            // Since there is no way to pass this exception to client-side...
+            return null;
+        }
+    }
+
+    @Override
+    public Map<Long, IndictmentView> getLatestShiftIndictmentMap(Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage) {
+        final Pagination pagination = Pagination.of(pageNumber, numberOfItemsPerPage);
+        final Set<Spot> spots = new HashSet<>(entityManager.createNamedQuery("Spot.findAll", Spot.class)
+                .setParameter("tenantId", tenantId)
+                .setMaxResults(pagination.getNumberOfItemsPerPage())
+                .setFirstResult(pagination.getFirstResultIndex())
+                .getResultList());
+
+        final Map<Shift, IndictmentView> shiftIndictmentMap = tenantIdToShiftIndictmentMap.getOrDefault(tenantId, Collections.emptyMap());
+        return shiftIndictmentMap.entrySet().stream()
+                .filter((e) -> spots.contains(e.getKey().getSpot()))
+                .collect(Collectors.toMap((e) -> e.getKey().getId(),
+                        (e) -> e.getValue()));
+    }
+
+    @Override
+    public Map<Long, IndictmentView> getLatestEmployeeIndictmentMap(Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage) {
+        final Pagination pagination = Pagination.of(pageNumber, numberOfItemsPerPage);
+        final Set<Employee> employees = new HashSet<>(entityManager.createNamedQuery("Employee.findAll", Employee.class)
+                .setParameter("tenantId", tenantId)
+                .setMaxResults(pagination.getNumberOfItemsPerPage())
+                .setFirstResult(pagination.getFirstResultIndex())
+                .getResultList());
+
+        final Map<Employee, IndictmentView> employeeIndictmentMap = tenantIdToEmployeeIndictmentMap.getOrDefault(tenantId, Collections.emptyMap());
+        return employeeIndictmentMap.entrySet().stream()
+                .filter((e) -> employees.contains(e.getKey()))
+                .collect(Collectors.toMap((e) -> e.getKey().getId(),
+                        (e) -> e.getValue()));
+    }
+
+    private Map<Shift, IndictmentView> getShiftIndictmentMap(int tenantId) {
+        Solver<Roster> solver = solverManager.getSolver(tenantId);
+        if (null != solver) {
+            Roster roster = solver.getBestSolution();
+            try (ScoreDirector<Roster> scoreDirector = solver.getScoreDirectorFactory()
+                    .buildScoreDirector()) {
+                scoreDirector.setWorkingSolution(roster);
+                Map<Shift, IndictmentView> indictmentMap = new HashMap<>();
+                scoreDirector.getIndictmentMap().forEach((k, v) -> {
+                    if (k instanceof Shift) {
+                        indictmentMap.put((Shift) k, new IndictmentView(v));
+                    }
+                });
+                tenantIdToShiftIndictmentMap.put(tenantId, indictmentMap);
+                tenantIdToShiftIndictmentMapUpdateTime.put(tenantId, getLastUpdateTime(tenantId));
+                return indictmentMap;
+            }
+        } else {
+            List<List<Long>> lastUpdateTime = getLastUpdateTime(tenantId);
+            List<List<Long>> lastMapUpdateTime = tenantIdToShiftIndictmentMapUpdateTime.getOrDefault(tenantId, Collections.emptyList());
+            if (lastUpdateTime.equals(lastMapUpdateTime)) {
+                return tenantIdToShiftIndictmentMap.get(tenantId);
+            }
+            throw new OutOfDateException(tenantIdToShiftIndictmentMap.get(tenantId));
+        }
+    }
+
+    private Map<Employee, IndictmentView> getEmployeeIndictmentMap(int tenantId) {
+        Solver<Roster> solver = solverManager.getSolver(tenantId);
+        if (null != solver) {
+            Roster roster = solver.getBestSolution();
+            try (ScoreDirector<Roster> scoreDirector = solver.getScoreDirectorFactory()
+                    .buildScoreDirector()) {
+                scoreDirector.setWorkingSolution(roster);
+                Map<Employee, IndictmentView> indictmentMap = new HashMap<>();
+                scoreDirector.getIndictmentMap().forEach((k, v) -> {
+                    if (k instanceof Employee) {
+                        indictmentMap.put((Employee) k, new IndictmentView(v));
+                    }
+                });
+                tenantIdToEmployeeIndictmentMap.put(tenantId, indictmentMap);
+                tenantIdToEmployeeIndictmentMapUpdateTime.put(tenantId, getLastUpdateTime(tenantId));
+                return indictmentMap;
+            }
+        } else {
+            List<List<Long>> lastUpdateTime = getLastUpdateTime(tenantId);
+            List<List<Long>> lastMapUpdateTime = tenantIdToEmployeeIndictmentMapUpdateTime.getOrDefault(tenantId, Collections.emptyList());
+            if (lastUpdateTime.equals(lastMapUpdateTime)) {
+                return tenantIdToEmployeeIndictmentMap.get(tenantId);
+            }
+            throw new OutOfDateException(tenantIdToEmployeeIndictmentMap.get(tenantId));
+        }
+    }
+
+    private List<List<Long>> getLastUpdateTime(int tenantId) {
+        return Arrays.asList(super.getTableCountAndVersionSum(tenantId, entityManager, Shift.class),
+                super.getTableCountAndVersionSum(tenantId, entityManager, EmployeeAvailability.class));
+    }
 }

@@ -42,8 +42,7 @@ public abstract class AbstractPersistable implements Serializable {
     protected Long version;
 
     @SuppressWarnings("unused")
-    public AbstractPersistable() {
-    }
+    public AbstractPersistable() {}
 
     protected AbstractPersistable(Integer tenantId) {
         this(null, tenantId);

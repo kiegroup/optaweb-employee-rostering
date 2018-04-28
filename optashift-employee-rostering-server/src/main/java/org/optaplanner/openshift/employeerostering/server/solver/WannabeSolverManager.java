@@ -16,7 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.server.solver;
 
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -47,6 +46,7 @@ public class WannabeSolverManager {
     @Inject
     private RosterRestService rosterRestService;
 
+    // Do we need this?
     private ConcurrentMap<Integer, SolverStatus> tenantIdToSolverStateMap = new ConcurrentHashMap<>();
     private ConcurrentMap<Integer, Solver<Roster>> tenantIdToSolverMap = new ConcurrentHashMap<>();
 
@@ -61,8 +61,7 @@ public class WannabeSolverManager {
         if (null != solver) {
             solver.terminateEarly();
         } else {
-            throw new IllegalStateException("The roster with tenantId (" + tenantId
-                                                    + ") is not being solved currently.");
+            throw new IllegalStateException("The roster with tenantId (" + tenantId + ") is not being solved currently.");
         }
     }
 
@@ -71,8 +70,7 @@ public class WannabeSolverManager {
         // No 2 solve() calls of the same dataset in parallel
         tenantIdToSolverStateMap.compute(tenantId, (k, solverStatus) -> {
             if (solverStatus != null && solverStatus != SolverStatus.TERMINATED) {
-                throw new IllegalStateException("The roster with tenantId (" + tenantId
-                                                        + ") is already solving with solverStatus (" + solverStatus + ").");
+                throw new IllegalStateException("The roster with tenantId (" + tenantId + ") is already solving with solverStatus (" + solverStatus + ").");
             }
             return SolverStatus.SCHEDULED;
         });
@@ -104,8 +102,8 @@ public class WannabeSolverManager {
         });
     }
 
-    public Roster getRoster(final Integer tenantId) {
-        Solver<Roster> solver = tenantIdToSolverMap.get(tenantId);
-        return solver == null ? null : solver.getBestSolution();
+    public Solver<Roster> getSolver(final Integer tenantId) {
+        return tenantIdToSolverMap.get(tenantId);
     }
+
 }

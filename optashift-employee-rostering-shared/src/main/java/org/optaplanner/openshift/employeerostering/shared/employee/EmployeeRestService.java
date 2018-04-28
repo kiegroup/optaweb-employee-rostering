@@ -57,7 +57,7 @@ public interface EmployeeRestService {
 
     /**
      * @param employee never null
-     * @return never null, with an updated {@link AbstractPersistable#getVersion()}
+     * @return never null, with an updated {@link AbstractPersistable#getLastUpdateDateTime()}
      */
     @ApiOperation("Update an employee")
     @POST
