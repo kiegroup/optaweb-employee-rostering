@@ -18,6 +18,8 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroste
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -55,7 +58,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     private final List<Lane<LocalDateTime>> lanes;
     private final Map<Long, Spot> spotIdToSpotMap;
     private final Map<Long, Employee> employeeIdToEmployeeMap;
-
+    private final RosterState rosterState;
     SpotRosterViewport(final Integer tenantId,
                        final Supplier<ShiftBlobView> blobViewSupplier,
                        final LinearScale<LocalDateTime> scale,
@@ -64,7 +67,8 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
                        final Ticks<LocalDateTime> timeTicks,
                        final List<Lane<LocalDateTime>> lanes,
                        final Map<Long, Spot> spotIdToSpotMap,
-                       final Map<Long, Employee> employeeIdToEmployeeMap) {
+                       final Map<Long, Employee> employeeIdToEmployeeMap,
+                       final RosterState rosterState) {
 
         this.tenantId = tenantId;
         this.blobViewSupplier = blobViewSupplier;
@@ -75,6 +79,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
         this.lanes = lanes;
         this.spotIdToSpotMap = spotIdToSpotMap;
         this.employeeIdToEmployeeMap = employeeIdToEmployeeMap;
+        this.rosterState = rosterState;
     }
 
     @Override
@@ -129,7 +134,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
         DateTimeFormat dateFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);
         dateTicks.drawAt(target, this, date -> {
             return dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
-        });
+        }, date -> (rosterState.isPublished(date)) ? Arrays.asList("fa", "fa-check") : (rosterState.isDraft(date)) ? Arrays.asList("fa", "fa-list-alt") : Collections.emptyList());
     }
 
     @Override
@@ -139,7 +144,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
             if (date.getHour() == 0) {
                 return "";
             }
-            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
-        });
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDateAsLocalTime(date));
+        }, date -> Collections.emptyList());
     }
 }

@@ -16,6 +16,7 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -41,14 +42,15 @@ public class Ticks<T> {
 
     public void drawAt(final IsElement target,
                        final Viewport<T> viewport,
-                       final Function<T, String> tickText) {
+                       final Function<T, String> tickText,
+                       final Function<T, List<String>> classesToAdd) {
 
         target.getElement().innerHTML = "";
 
         for (Long i = 0L; i < scale.getEndInGridPixels(); i += stepSize) {
-
             final HTMLDivElement tick = divFactory.get();
             tick.textContent = tickText.apply(scale.toScaleUnits(i));
+            classesToAdd.apply(scale.toScaleUnits(i)).forEach((clazz) -> tick.classList.add(clazz));
             viewport.setPositionInScreenPixels(() -> tick, i, -2L);
             viewport.setSizeInScreenPixels(() -> tick, stepSize, -2L);
             target.getElement().appendChild(tick);

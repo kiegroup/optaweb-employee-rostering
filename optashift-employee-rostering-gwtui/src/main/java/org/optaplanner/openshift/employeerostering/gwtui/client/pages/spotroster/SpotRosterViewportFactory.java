@@ -98,7 +98,8 @@ public class SpotRosterViewportFactory {
                     ticksFactory.newTicks(scale, "time-tick", 2L),
                     lanes,
                     spotsById,
-                    employeesById);
+                    employeesById,
+                    spotRosterView.getRosterState());
         });
     }
 

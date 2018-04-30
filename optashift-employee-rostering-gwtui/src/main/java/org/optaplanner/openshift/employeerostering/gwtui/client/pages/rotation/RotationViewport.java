@@ -19,6 +19,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +92,7 @@ public class RotationViewport extends Viewport<LocalDateTime> {
         // TODO: i18n
         dateTicks.drawAt(target, this, date -> {
             return "Day " + (Duration.between(scale.toScaleUnits(0L), date).getSeconds() / 60 / 60 / 24 + 1);
-        });
+        }, date -> Collections.emptyList());
     }
 
     @Override
@@ -102,7 +103,7 @@ public class RotationViewport extends Viewport<LocalDateTime> {
                 return "";
             }
             return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
-        });
+        }, date -> Collections.emptyList());
     }
 
     @Override
