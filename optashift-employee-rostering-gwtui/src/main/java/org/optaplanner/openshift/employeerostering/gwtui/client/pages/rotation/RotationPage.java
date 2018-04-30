@@ -150,13 +150,13 @@ public class RotationPage implements Page {
                             return shiftTemplates;
                         }));
 
-        RotationView out = new RotationView();
-        out.setTenantId(tenantStore.getCurrentTenantId());
-        out.setSpotIdToShiftTemplateViewListMap(newSpotIdToShiftTemplateViewListMap);
+        RotationView rotationView = new RotationView();
+        rotationView.setTenantId(tenantStore.getCurrentTenantId());
+        rotationView.setSpotIdToShiftTemplateViewListMap(newSpotIdToShiftTemplateViewListMap);
 
         ShiftRestServiceBuilder.updateRotation(
                 tenantStore.getCurrentTenantId(),
-                out,
+                rotationView,
                 onSuccess(i -> refresh()));
     }
 }

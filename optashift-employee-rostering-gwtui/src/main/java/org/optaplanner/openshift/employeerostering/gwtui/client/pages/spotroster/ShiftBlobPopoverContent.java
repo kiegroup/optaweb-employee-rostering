@@ -140,11 +140,11 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
         final LocalDateTime start = shift.getStartDateTime();
         fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth(); //FIXME: i18n
-        fromHour.value = start + "";
+        fromHour.value = start.toString();
 
         final LocalDateTime end = shift.getEndDateTime();
         toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth(); //FIXME: i18n
-        toHour.value = end + "";
+        toHour.value = end.toString();
 
         pinned.checked = shift.isPinnedByUser();
 
