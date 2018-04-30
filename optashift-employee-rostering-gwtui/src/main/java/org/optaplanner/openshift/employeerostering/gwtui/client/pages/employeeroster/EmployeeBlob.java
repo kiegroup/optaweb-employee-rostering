@@ -111,7 +111,6 @@ public class EmployeeBlob extends TimeslotBlob {
 
     @Override
     public HasTimeslot getTimeslot() {
-        // TODO Auto-generated method stub
         return (shiftView != null) ? shiftView : employeeAvailabilityView;
     }
 

@@ -134,21 +134,21 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         List<ShiftTemplate> shiftTemplateList = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
-        RotationView out = new RotationView();
-        out.setTenantId(tenantId);
-        out.setSpotList(spotRestService.getSpotList(tenantId));
-        out.setEmployeeList(employeeRestService.getEmployeeList(tenantId));
-        out.setRotationLength(entityManager.createNamedQuery("RosterState.find", RosterState.class)
+        RotationView rotationView = new RotationView();
+        rotationView.setTenantId(tenantId);
+        rotationView.setSpotList(spotRestService.getSpotList(tenantId));
+        rotationView.setEmployeeList(employeeRestService.getEmployeeList(tenantId));
+        rotationView.setRotationLength(entityManager.createNamedQuery("RosterState.find", RosterState.class)
                 .setParameter("tenantId", tenantId)
                 .getSingleResult().getRotationLength());
         Map<Long, List<ShiftTemplateView>> spotIdToShiftTemplateViewListMap = new HashMap<>();
         shiftTemplateList.forEach((shiftTemplate) -> {
             spotIdToShiftTemplateViewListMap.computeIfAbsent(shiftTemplate.getSpot().getId(),
                     (k) -> new ArrayList<>())
-                    .add(new ShiftTemplateView(out.getRotationLength(), shiftTemplate));
+                    .add(new ShiftTemplateView(rotationView.getRotationLength(), shiftTemplate));
         });
-        out.setSpotIdToShiftTemplateViewListMap(spotIdToShiftTemplateViewListMap);
-        return out;
+        rotationView.setSpotIdToShiftTemplateViewListMap(spotIdToShiftTemplateViewListMap);
+        return rotationView;
     }
 
     @Override

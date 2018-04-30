@@ -12,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ShiftTemplateTest {
 
-    final int ROTATION_LENGTH = 7;
+    private static final int ROTATION_LENGTH = 7;
 
     @Test
     public void testConversionFromToView() {
