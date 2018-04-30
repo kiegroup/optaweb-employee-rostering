@@ -1,7 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.rotation;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,8 +14,8 @@ public class Infinite60MinutesScaleTest {
     @Test
     public void test() {
 
-        final OffsetDateTime start = OffsetDateTime.of(2018, 2, 7, 0, 0, 0, 0, ZoneOffset.UTC);
-        final OffsetDateTime end = start.plusDays(7);
+        final LocalDateTime start = LocalDateTime.of(2018, 2, 7, 0, 0, 0, 0);
+        final LocalDateTime end = start.plusDays(7);
         final Long startInGridPixels = 0L;
         final Long endInGridPixels = 24L * 7L;
 
@@ -35,7 +34,7 @@ public class Infinite60MinutesScaleTest {
         Assert.assertEquals(end.plusMinutes(60L), scale.toScaleUnits(endInGridPixels + 1));
 
         // 3 Days and 4 Hours after
-        final OffsetDateTime d = start.plus(3, DAYS).plus(4, HOURS);
+        final LocalDateTime d = start.plus(3, DAYS).plus(4, HOURS);
         Assert.assertEquals((Long) (24L * 3 + 4L), scale.toGridPixels(d));
         Assert.assertEquals(d, scale.toScaleUnits(24L * 3 + 4L));
     }

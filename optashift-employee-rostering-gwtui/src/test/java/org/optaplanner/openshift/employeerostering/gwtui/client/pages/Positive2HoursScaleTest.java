@@ -1,7 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages;
 
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,8 +14,8 @@ public class Positive2HoursScaleTest {
     @Test
     public void test() {
 
-        final OffsetDateTime start = OffsetDateTime.of(2018, 2, 7, 0, 0, 0, 0, ZoneOffset.UTC);
-        final OffsetDateTime end = start.plusDays(7);
+        final LocalDateTime start = LocalDateTime.of(2018, 2, 7, 0, 0, 0, 0);
+        final LocalDateTime end = start.plusDays(7);
 
         final Positive2HoursScale scale = new Positive2HoursScale(start, end);
 
@@ -33,7 +32,7 @@ public class Positive2HoursScaleTest {
         Assert.assertEquals(end, scale.toScaleUnits(10000000L));
 
         // 3 Days and 4 Hours after
-        final OffsetDateTime d = start.plus(3, DAYS).plus(4, HOURS);
+        final LocalDateTime d = start.plus(3, DAYS).plus(4, HOURS);
         Assert.assertEquals((Long) 38L, scale.toGridPixels(d));
         Assert.assertEquals(d, scale.toScaleUnits(38L));
     }
