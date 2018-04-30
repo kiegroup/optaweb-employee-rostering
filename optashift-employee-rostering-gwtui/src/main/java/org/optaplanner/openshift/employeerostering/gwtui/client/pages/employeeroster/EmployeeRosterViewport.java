@@ -19,6 +19,8 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeer
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -40,8 +42,8 @@ import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWork
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
-import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation.HORIZONTAL;
@@ -58,6 +60,7 @@ public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
     private Map<Long, Spot> spotIdToSpotMap;
     private Map<Long, Employee> employeeIdToEmployeeMap;
     private final RosterState rosterState;
+
     EmployeeRosterViewport(final Integer tenantId,
                            final Supplier<EmployeeBlobView> blobViewSupplier,
                            final LinearScale<LocalDateTime> scale,
@@ -101,7 +104,7 @@ public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
             if (date.getHour() == 0) {
                 return "";
             }
-            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDateAsLocalTime(date));
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
         }, date -> Collections.emptyList());
     }
 
