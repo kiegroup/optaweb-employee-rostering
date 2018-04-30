@@ -41,6 +41,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 import static java.util.Collections.singletonList;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Orientation.HORIZONTAL;
@@ -56,7 +57,7 @@ public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
     private final List<Lane<LocalDateTime>> lanes;
     private Map<Long, Spot> spotIdToSpotMap;
     private Map<Long, Employee> employeeIdToEmployeeMap;
-
+    private final RosterState rosterState;
     EmployeeRosterViewport(final Integer tenantId,
                            final Supplier<EmployeeBlobView> blobViewSupplier,
                            final LinearScale<LocalDateTime> scale,
@@ -65,7 +66,8 @@ public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
                            final Ticks<LocalDateTime> timeTicks,
                            final List<Lane<LocalDateTime>> lanes,
                            Map<Long, Spot> spotIdToSpotMap,
-                           Map<Long, Employee> employeeIdToEmployeeMap) {
+                           Map<Long, Employee> employeeIdToEmployeeMap,
+                           final RosterState rosterState) {
 
         this.tenantId = tenantId;
         this.blobViewSupplier = blobViewSupplier;
@@ -76,6 +78,7 @@ public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
         this.lanes = lanes;
         this.spotIdToSpotMap = spotIdToSpotMap;
         this.employeeIdToEmployeeMap = employeeIdToEmployeeMap;
+        this.rosterState = rosterState;
     }
 
     @Override
@@ -88,7 +91,7 @@ public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
         DateTimeFormat dateFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);
         dateTicks.drawAt(target, this, date -> {
             return dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
-        });
+        }, date -> (rosterState.isPublished(date)) ? Arrays.asList("fa", "fa-check") : (rosterState.isDraft(date)) ? Arrays.asList("fa", "fa-list-alt") : Collections.emptyList());
     }
 
     @Override
@@ -98,8 +101,8 @@ public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
             if (date.getHour() == 0) {
                 return "";
             }
-            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
-        });
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDateAsLocalTime(date));
+        }, date -> Collections.emptyList());
     }
 
     @Override
