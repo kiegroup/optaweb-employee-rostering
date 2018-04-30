@@ -39,8 +39,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Viewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
-import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
@@ -59,6 +59,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
     private final Map<Long, Spot> spotIdToSpotMap;
     private final Map<Long, Employee> employeeIdToEmployeeMap;
     private final RosterState rosterState;
+
     SpotRosterViewport(final Integer tenantId,
                        final Supplier<ShiftBlobView> blobViewSupplier,
                        final LinearScale<LocalDateTime> scale,
@@ -144,7 +145,7 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
             if (date.getHour() == 0) {
                 return "";
             }
-            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDateAsLocalTime(date));
+            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
         }, date -> Collections.emptyList());
     }
 }
