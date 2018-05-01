@@ -24,13 +24,13 @@ public interface Blob<T> {
 
     void setPositionInScaleUnits(final T position);
 
-    long getSizeInGridPixels();
+    double getSizeInGridPixels();
 
-    void setSizeInGridPixels(final long sizeInGridPixels);
+    void setSizeInGridPixels(final double sizeInGridPixels);
 
     LinearScale<T> getScale();
 
-    default long getPositionInGridPixels() {
+    default double getPositionInGridPixels() {
         return getScale().toGridPixels(getPositionInScaleUnits());
     }
 
@@ -38,13 +38,12 @@ public interface Blob<T> {
         return getScale().toScaleUnits(getEndPositionInGridPixels());
     }
 
-    default long getEndPositionInGridPixels() {
+    default double getEndPositionInGridPixels() {
         return getPositionInGridPixels() + getSizeInGridPixels();
     }
 
     default boolean collidesWith(final Blob<?> other) {
-        return getEndPositionInGridPixels() > other.getPositionInGridPixels()
-                && other.getEndPositionInGridPixels() > getPositionInGridPixels();
+        return getEndPositionInGridPixels() > other.getPositionInGridPixels() && other.getEndPositionInGridPixels() > getPositionInGridPixels();
     }
 
     default Stream<Blob<T>> toStream() {

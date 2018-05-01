@@ -21,13 +21,14 @@ import org.jboss.errai.common.client.api.elemental2.IsElement;
 
 public enum Orientation {
     VERTICAL {
+
         @Override
-        void position(final IsElement element, final Long positionInGridPixels, final Viewport viewport, Long offsetInScreenPixels) {
+        void position(final IsElement element, final Double positionInGridPixels, final Viewport viewport, Long offsetInScreenPixels) {
             element.getElement().style.top = viewport.toScreenPixels(positionInGridPixels) + offsetInScreenPixels + "px";
         }
 
         @Override
-        void scale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
+        void scale(final IsElement element, final Double sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
             element.getElement().style.height = CSSProperties.HeightUnionType.of(viewport.toScreenPixels(sizeInGridPixels) + offsetInScreenPixels + "px");
         }
 
@@ -38,13 +39,14 @@ public enum Orientation {
         }
     },
     HORIZONTAL {
+
         @Override
-        void position(final IsElement element, final Long positionInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
+        void position(final IsElement element, final Double positionInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
             element.getElement().style.left = viewport.toScreenPixels(positionInGridPixels) + offsetInScreenPixels + "px";
         }
 
         @Override
-        void scale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
+        void scale(final IsElement element, final Double sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels) {
             element.getElement().style.width = CSSProperties.WidthUnionType.of(viewport.toScreenPixels(sizeInGridPixels) + offsetInScreenPixels + "px");
         }
 
@@ -55,9 +57,9 @@ public enum Orientation {
         }
     };
 
-    abstract void position(final IsElement element, final Long positionInGridPixels, final Viewport viewport, final Long offsetInScreenPixels);
+    abstract void position(final IsElement element, final Double positionInGridPixels, final Viewport viewport, final Long offsetInScreenPixels);
 
-    abstract void scale(final IsElement element, final Long sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels);
+    abstract void scale(final IsElement element, final Double sizeInGridPixels, final Viewport viewport, final Long offsetInScreenPixels);
 
     public abstract Long getSize(final IsElement element);
 }

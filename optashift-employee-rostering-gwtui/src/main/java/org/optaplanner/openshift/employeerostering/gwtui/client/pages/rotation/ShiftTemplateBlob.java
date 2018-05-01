@@ -67,7 +67,7 @@ public class ShiftTemplateBlob extends TimeslotBlob implements BlobWithTwin<Loca
     }
 
     @Override
-    public void setSizeInGridPixels(final long sizeInGridPixels) {
+    public void setSizeInGridPixels(final double sizeInGridPixels) {
         shift.setShiftTemplateDuration(
                 Duration.between(getPositionInScaleUnits(), getScale()
                         .toScaleUnits(getPositionInGridPixels() + sizeInGridPixels)));
@@ -83,13 +83,13 @@ public class ShiftTemplateBlob extends TimeslotBlob implements BlobWithTwin<Loca
 
         if (hasAnyPartOffTheGrid) {
             final ShiftTemplateBlob twin = getTwin().orElseGet(this::newTwin);
-            long duration = getEndPositionInGridPixels() - getPositionInGridPixels();
+            double duration = getEndPositionInGridPixels() - getPositionInGridPixels();
             if (getPositionInScaleUnits().isBefore(HasTimeslot.EPOCH)) {
-                long durationBeforeStart = -getPositionInGridPixels();
+                double durationBeforeStart = -getPositionInGridPixels();
                 twin.setPositionInScaleUnits(getScale().toScaleUnits(getScale().getEndInGridPixels() - durationBeforeStart));
                 twin.setSizeInGridPixels(duration);
             } else {
-                long durationAfterEnd = getEndPositionInGridPixels() - getScale().getEndInGridPixels();
+                double durationAfterEnd = getEndPositionInGridPixels() - getScale().getEndInGridPixels();
                 twin.setPositionInScaleUnits(getScale().toScaleUnits(durationAfterEnd - duration));
                 twin.setSizeInGridPixels(duration);
             }

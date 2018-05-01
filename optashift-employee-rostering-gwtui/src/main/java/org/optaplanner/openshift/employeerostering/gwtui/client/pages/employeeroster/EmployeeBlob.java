@@ -99,7 +99,7 @@ public class EmployeeBlob extends TimeslotBlob {
     }
 
     @Override
-    public void setSizeInGridPixels(long sizeInGridPixels) {
+    public void setSizeInGridPixels(double sizeInGridPixels) {
         LocalDateTime newEndDateTime = getScale().toScaleUnits(getScale()
                 .toGridPixels(getPositionInScaleUnits()) + sizeInGridPixels);
         if (shiftView != null) {

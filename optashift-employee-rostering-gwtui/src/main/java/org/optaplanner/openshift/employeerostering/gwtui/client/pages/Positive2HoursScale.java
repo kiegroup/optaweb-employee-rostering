@@ -32,7 +32,7 @@ public class Positive2HoursScale implements LinearScale<LocalDateTime> {
     }
 
     @Override
-    public Long toGridPixelsWithFactor1(final LocalDateTime valueInScaleUnits) {
+    public double toGridPixelsWithFactor1(final LocalDateTime valueInScaleUnits) {
         final LocalDateTime dateTime;
 
         if (valueInScaleUnits.isBefore(start)) {
@@ -44,13 +44,13 @@ public class Positive2HoursScale implements LinearScale<LocalDateTime> {
         }
 
         // .get(ChronoUnit.HOURS) does not work
-        return Duration.between(start, dateTime).getSeconds() / 60 / 60;
+        return Duration.between(start, dateTime).getSeconds() / 60f / 60f;
     }
 
     @Override
-    public LocalDateTime toScaleUnitsWithFactor1(final Long valueInGridPixels) {
+    public LocalDateTime toScaleUnitsWithFactor1(final double valueInGridPixels) {
 
-        final LocalDateTime date = start.plusHours(valueInGridPixels);
+        final LocalDateTime date = start.plusSeconds(Math.round(valueInGridPixels * 60 * 60));
 
         if (date.isBefore(start)) {
             return start;
@@ -67,7 +67,7 @@ public class Positive2HoursScale implements LinearScale<LocalDateTime> {
     }
 
     @Override
-    public Long factor() {
+    public double factor() {
         return 2L;
     }
 

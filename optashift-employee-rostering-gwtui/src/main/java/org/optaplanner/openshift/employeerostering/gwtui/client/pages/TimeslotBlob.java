@@ -18,7 +18,7 @@ public abstract class TimeslotBlob implements Blob<LocalDateTime> {
     }
 
     @Override
-    public long getSizeInGridPixels() {
+    public double getSizeInGridPixels() {
         return scale.toGridPixels(getPositionInScaleUnits()
                 .plus(getTimeslot().getDurationOfTimeslot())) - scale.toGridPixels(getPositionInScaleUnits());
     }

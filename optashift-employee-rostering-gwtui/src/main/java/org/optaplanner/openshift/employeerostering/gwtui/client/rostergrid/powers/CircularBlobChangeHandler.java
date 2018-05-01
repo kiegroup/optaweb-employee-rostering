@@ -33,7 +33,7 @@ public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
     private final CollisionDetector<Blob<T>> collisionDetector;
     private final Viewport<T> viewport;
 
-    private BiConsumer<Long, CollisionState> onChange;
+    private BiConsumer<Double, CollisionState> onChange;
 
     CircularBlobChangeHandler(final Y blob,
                               final ListView<Y> blobViews,
@@ -46,7 +46,7 @@ public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
         this.blobViews = blobViews;
     }
 
-    public void handle(final long newPositionInGridPixels, final long newSizeInGridPixels) {
+    public void handle(final double newPositionInGridPixels, final double newSizeInGridPixels) {
 
         blob.setPositionInScaleUnits(viewport.getScale().toScaleUnits(newPositionInGridPixels));
         blob.setSizeInGridPixels(newSizeInGridPixels);
@@ -74,7 +74,7 @@ public class CircularBlobChangeHandler<T, Y extends BlobWithTwin<T, Y>> {
         blob.getTwin().map(blobViews::getView).ifPresent(view -> view.getElement().style.backgroundColor = backgroundColor);
     }
 
-    public void onChange(final BiConsumer<Long, CollisionState> onChange) {
+    public void onChange(final BiConsumer<Double, CollisionState> onChange) {
         this.onChange = onChange;
     }
 }

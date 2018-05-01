@@ -32,13 +32,13 @@ public class Infinite60MinutesScale implements LinearScale<LocalDateTime> {
     }
 
     @Override
-    public Long toGridPixelsWithFactor1(final LocalDateTime valueInScaleUnits) {
-        return Duration.between(startDateTime, valueInScaleUnits).getSeconds() / 60;
+    public double toGridPixelsWithFactor1(final LocalDateTime valueInScaleUnits) {
+        return Duration.between(startDateTime, valueInScaleUnits).getSeconds() / 60f;
     }
 
     @Override
-    public LocalDateTime toScaleUnitsWithFactor1(final Long valueInGridPixels) {
-        return startDateTime.plusMinutes(valueInGridPixels);
+    public LocalDateTime toScaleUnitsWithFactor1(final double valueInGridPixels) {
+        return startDateTime.plusSeconds(Math.round(60 * valueInGridPixels));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Infinite60MinutesScale implements LinearScale<LocalDateTime> {
     }
 
     @Override
-    public Long factor() {
+    public double factor() {
         return 60L;
     }
 }
