@@ -1,9 +1,9 @@
 package org.optaplanner.openshift.employeerostering.shared.roster;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -20,8 +20,6 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-
-import static java.lang.Integer.MAX_VALUE;
 
 @Api(tags = {"Roster"})
 @Path("/tenant/{tenantId}/roster")
@@ -110,7 +108,7 @@ public interface RosterRestService {
     @ApiOperation("Publishes the next set of draft shifts and creates new draft shift from the rotation template.")
     @POST
     @Path("/publishAndProvision")
-    void publishAndProvision(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
+    List<LocalDate> publishAndProvision(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
 
     // Not a REST method
     Roster buildRoster(Integer tenantId);
