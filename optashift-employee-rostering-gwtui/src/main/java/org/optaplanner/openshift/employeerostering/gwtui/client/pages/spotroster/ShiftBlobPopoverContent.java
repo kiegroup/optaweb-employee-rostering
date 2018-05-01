@@ -182,8 +182,13 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
     @EventHandler("delete-button")
     public void onDeleteButtonClick(@ForEvent("click") final MouseEvent e) {
-        blobView.remove();
-        popover.hide();
+        final ShiftBlob blob = (ShiftBlob) blobView.getBlob();
+        final ShiftView shiftView = blob.getShiftView();
+
+        ShiftRestServiceBuilder.removeShift(shiftView.getTenantId(), shiftView.getId(), onSuccess(v -> {
+            blobView.remove();
+            popover.hide();
+        }));
         e.stopPropagation();
     }
 

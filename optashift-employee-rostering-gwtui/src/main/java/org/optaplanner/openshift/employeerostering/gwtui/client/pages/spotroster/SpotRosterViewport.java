@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.Ticks;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
@@ -41,6 +42,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
@@ -101,6 +103,11 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
         final SpotLane spotLane = (SpotLane) lane;
 
         final ShiftView shift = new ShiftView(tenantId, spotLane.getSpot(), start, start.plusHours(8L));
+
+        ShiftRestServiceBuilder.addShift(tenantId, shift,
+                FailureShownRestCallback.onSuccess((id) -> {
+                    shift.setId(id);
+                }));
 
         return Stream.of(new ShiftBlob(scale, spotIdToSpotMap, employeeIdToEmployeeMap, shift));
     }

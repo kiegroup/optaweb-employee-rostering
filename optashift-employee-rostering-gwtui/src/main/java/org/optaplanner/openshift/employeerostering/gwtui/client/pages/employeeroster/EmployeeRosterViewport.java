@@ -29,6 +29,7 @@ import java.util.stream.Stream;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.common.client.api.elemental2.IsElement;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.CssGridLines;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.grid.Ticks;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.model.Blob;
@@ -41,6 +42,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -123,6 +125,11 @@ public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
         LocalDateTime startOfDay = start.toLocalDate().atTime(LocalTime.of(0, 0));
         final EmployeeAvailabilityView employeeAvailabilityView = new EmployeeAvailabilityView(tenantId, employeeLane.getEmployee(),
                 startOfDay, startOfDay.plusDays(1), EmployeeAvailabilityState.UNAVAILABLE);
+
+        EmployeeRestServiceBuilder.addEmployeeAvailability(tenantId, employeeAvailabilityView,
+                FailureShownRestCallback.onSuccess((id) -> {
+                    employeeAvailabilityView.setId(id);
+                }));
 
         return Stream.of(new EmployeeBlob(scale, spotIdToSpotMap, employeeIdToEmployeeMap, employeeAvailabilityView));
     }

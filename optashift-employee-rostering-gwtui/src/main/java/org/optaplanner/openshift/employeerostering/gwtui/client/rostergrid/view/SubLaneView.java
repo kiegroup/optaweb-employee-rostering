@@ -53,6 +53,8 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
     private Lane<T> lane;
     private ListView<Lane<T>> lanes;
 
+    private boolean hasMouseMoved = false;
+
     @Override
     @SuppressWarnings("unchecked")
     public ListElementView<SubLane<T>> setup(final SubLane<T> subLane,
@@ -75,31 +77,36 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
     }
 
     @EventHandler("sub-lane")
-    public void onClick(final @ForEvent("click") MouseEvent e) {
+    public void onMouseDown(final @ForEvent("mousedown") MouseEvent e) {
+        hasMouseMoved = false;
+    }
+
+    @EventHandler("sub-lane")
+    public void onMouseMove(final @ForEvent("mousemove") MouseEvent e) {
+        hasMouseMoved = true;
+    }
+
+    @EventHandler("sub-lane")
+    public void onMouseUp(final @ForEvent("mouseup") MouseEvent e) {
+        if (!hasMouseMoved) {
+            onClick(e);
+        }
+    }
+
+    private void onClick(final @ForEvent("click") MouseEvent e) {
 
         if (!e.target.equals(e.currentTarget)) {
             return;
         }
 
-        // Remove SubLane (SHIFT + ALT + CLICK)
-        if (e.shiftKey && e.altKey) {
-            subLaneViews.remove(subLane);
-            if (subLaneViews.isEmpty()) {
-                lanes.remove(lane);
-            }
-        }
+        final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
+        final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
+        final T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
 
-        // Add Blob (ALT + CLICK)
-        else if (e.altKey) {
-            final double offset = viewport.decideBasedOnOrientation(e.offsetY, e.offsetX);
-            final Long positionInGridPixels = viewport.toGridPixels(new Double(offset).longValue());
-            final T positionInScaleUnits = viewport.getScale().toScaleUnits(positionInGridPixels);
+        final List<Blob<T>> newBlobs = viewport.newBlob(lane, positionInScaleUnits).collect(toList());
+        final SubLane<T> nextSubLaneWithAvailableSpace = lane.getNextSubLaneWithSpaceForBlobsStartingFrom(subLane, newBlobs);
 
-            final List<Blob<T>> newBlobs = viewport.newBlob(lane, positionInScaleUnits).collect(toList());
-            final SubLane<T> nextSubLaneWithAvailableSpace = lane.getNextSubLaneWithSpaceForBlobsStartingFrom(subLane, newBlobs);
-
-            subLaneViews.addOrReplace(nextSubLaneWithAvailableSpace, nextSubLaneWithAvailableSpace.withMore(newBlobs));
-        }
+        subLaneViews.addOrReplace(nextSubLaneWithAvailableSpace, nextSubLaneWithAvailableSpace.withMore(newBlobs));
     }
 
     public SubLaneView<T> withViewport(final Viewport<T> viewport) {
