@@ -1,0 +1,4 @@
+.local-date-time-picker {
+	display: inline-grid;
+	grid-template-columns: 2fr 1fr;
+}
