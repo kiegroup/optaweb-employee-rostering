@@ -17,15 +17,19 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -39,6 +43,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.power
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.ViewportView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
+import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
@@ -70,16 +76,18 @@ public class EmployeeRosterPage implements Page {
     private HTMLAnchorElement previousPageButton;
 
     @Inject
-    @DataField("back-in-time-button")
-    private HTMLAnchorElement backInTimeButton;
-
-    @Inject
-    @DataField("forward-in-time-button")
-    private HTMLAnchorElement forwardInTimeButton;
-
-    @Inject
     @DataField("availability-blob-popover")
     private BlobPopover availabilityBlobPopover;
+
+    @Inject
+    @DataField("current-pagination-range")
+    @Named("span")
+    private HTMLElement currentRange;
+
+    @Inject
+    @DataField("num-of-employees")
+    @Named("span")
+    private HTMLElement rowCount;
 
     @Inject
     private EmployeeAvailabilityBlobPopoverContent availabilityBlobPopoverContent;
@@ -132,15 +140,22 @@ public class EmployeeRosterPage implements Page {
     }
 
     private Promise<Void> refreshWithoutLoadingSpinner() {
-        return fetchEmployeeRosterView().then(employeeRosterView -> {
-            if (employeeRosterView.getEmployeeList().isEmpty()) {
-                employeePagination = employeePagination.previousPage();
-                return promiseUtils.resolve();
-            } else {
-                viewport = employeeRosterViewportFactory.getViewport(employeeRosterView);
-                viewportView.setViewport(viewport);
-                return promiseUtils.resolve();
-            }
+        return getEmployeeList().then(employeeList -> {
+            rowCount.innerHTML = Integer.toString(employeeList.size());
+            currentRange.innerHTML = new SafeHtmlBuilder().append(employeePagination.getFirstResultIndex() + 1)
+                    .append('-').append(Math.min(employeePagination.getFirstResultIndex() + employeePagination.getNumberOfItemsPerPage(),
+                            employeeList.size()))
+                    .toSafeHtml().asString();
+            return fetchEmployeeRosterView().then(employeeRosterView -> {
+                if (employeeRosterView.getEmployeeList().isEmpty()) {
+                    employeePagination = employeePagination.previousPage();
+                    return promiseUtils.resolve();
+                } else {
+                    viewport = employeeRosterViewportFactory.getViewport(employeeRosterView);
+                    viewportView.setViewport(viewport);
+                    return promiseUtils.resolve();
+                }
+            });
         });
     }
 
@@ -188,6 +203,13 @@ public class EmployeeRosterPage implements Page {
                         currentEmployeeRosterView = v;
                         resolve.onInvoke(v);
                     }));
+        });
+    }
+
+    private Promise<List<Employee>> getEmployeeList() {
+        return promiseUtils.promise((resolve, reject) -> {
+            EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(),
+                    onSuccess(resolve::onInvoke));
         });
     }
 }
