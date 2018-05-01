@@ -1,16 +1,14 @@
 .main{}
 
 .panel {
-    position:fixed;
     padding: 10px;
-    top: 25%;
-    left: 15%;
-    width: 50%;
-    height: 50%;
     z-index: 8192;
 }
 
 .glass {
+	position: fixed;
+	width: 100vw;
+	height: 100vh;
 	background-color:#8b8d8f;
 	opacity:0.45;
 	mozOpacity:0.45;

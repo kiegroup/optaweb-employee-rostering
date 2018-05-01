@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.server.roster;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -339,12 +340,14 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Override
     @Transactional
-    public void publishAndProvision(Integer tenantId) {
+    public List<LocalDate> publishAndProvision(Integer tenantId) {
         TenantConfiguration tenantConfiguration = tenantRestService.getTenantConfiguration(tenantId);
         RosterState rosterState = getRosterState(tenantId);
+        LocalDate publishFrom = rosterState.getFirstDraftDate();
+        LocalDate publishTo = publishFrom.plusDays(rosterState.getPublishLength());
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
         // Publish
-        rosterState.setFirstDraftDate(rosterState.getFirstDraftDate().plusDays(rosterState.getPublishLength()));
+        rosterState.setFirstDraftDate(publishTo);
         // Provision
         List<ShiftTemplate> shiftTemplateList = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class)
                 .setParameter("tenantId", tenantId)
@@ -363,6 +366,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             dayOffset = (dayOffset + 1) % rosterState.getRotationLength();
         }
         rosterState.setUnplannedRotationOffset(dayOffset);
+        return Arrays.asList(publishFrom, publishTo);
     }
 
     @Override

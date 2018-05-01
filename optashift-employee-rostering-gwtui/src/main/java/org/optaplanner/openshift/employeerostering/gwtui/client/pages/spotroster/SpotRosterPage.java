@@ -41,6 +41,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.NotificationSystem;
 import org.optaplanner.openshift.employeerostering.gwtui.client.header.HeaderView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
@@ -146,6 +147,8 @@ public class SpotRosterPage implements Page {
     @DataField("num-of-spots")
     @Named("span")
     private HTMLElement rowCount;
+    @Inject
+    private NotificationSystem notificationSystem;
 
     private double solveTaskId;
     private double updateRemainingTimeTaskId;
@@ -293,8 +296,12 @@ public class SpotRosterPage implements Page {
 
     @EventHandler("publish-button")
     public void onPublishButtonClicked(@ForEvent("click") final MouseEvent e) {
-        RosterRestServiceBuilder.publishAndProvision(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(v -> refreshWithLoadingSpinner()));
-        refreshWithLoadingSpinner();
+        RosterRestServiceBuilder.publishAndProvision(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(d -> {
+            notificationSystem.notify("Published Week of " + d.get(0).toString(),
+                    "Shifts started after " + d.get(0).toString() + " and before " +
+                            d.get(1).toString() + " published.");
+            refreshWithLoadingSpinner();
+        }));
     }
 
     @EventHandler("previous-page-button")
