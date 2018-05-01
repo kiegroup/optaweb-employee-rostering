@@ -17,18 +17,12 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.validation.ValidationException;
 
-import elemental2.dom.Event;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.ListBox;
@@ -37,11 +31,11 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.LocalDateTimePicker;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopoverContent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
@@ -63,20 +57,12 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     private HTMLButtonElement closeButton;
 
     @Inject
-    @DataField("from-day")
-    private HTMLInputElement fromDay;
+    @DataField("from")
+    private LocalDateTimePicker from;
 
     @Inject
-    @DataField("from-hour")
-    private HTMLInputElement fromHour;
-
-    @Inject
-    @DataField("to-day")
-    private HTMLInputElement toDay;
-
-    @Inject
-    @DataField("to-hour")
-    private HTMLInputElement toHour;
+    @DataField("to")
+    private LocalDateTimePicker to;
 
     @Inject
     @DataField("spot")
@@ -89,11 +75,6 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     @Inject
     @DataField("pinned")
     private HTMLInputElement pinned;
-
-    @Inject
-    @Named("p")
-    @DataField("rotation-employee")
-    private HTMLElement rotationEmployee;
 
     @Inject
     @DataField("delete-button")
@@ -114,8 +95,6 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
     private ShiftBlobView blobView;
 
-    private Map<Long, Employee> employeesById;
-
     @Override
     public void init(final BlobView<?, ?> blobView) {
 
@@ -133,27 +112,13 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         }));
 
         EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
-            this.employeesById = employees.stream().collect(Collectors.toMap(Employee::getId, Function.identity()));
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
             employeeSelect.setSelectedIndex((blob.getEmployee() == null) ? 0 : employees.indexOf(blob.getEmployee()) + 1);
         }));
 
-        final LocalDateTime start = shift.getStartDateTime();
-        fromDay.value = start.getMonth().toString() + " " + start.getDayOfMonth(); //FIXME: i18n
-        fromHour.value = start.toString();
-
-        final LocalDateTime end = shift.getEndDateTime();
-        toDay.value = end.getMonth().toString() + " " + end.getDayOfMonth(); //FIXME: i18n
-        toHour.value = end.toString();
-
+        from.setValue(shift.getStartDateTime());
+        to.setValue(shift.getEndDateTime());
         pinned.checked = shift.isPinnedByUser();
-
-        updateEmployeeSelect();
-        rotationEmployee.textContent = Optional.ofNullable(blob.getRotationEmployee()).map(Employee::getName).orElse("-");
-    }
-
-    private void updateEmployeeSelect() {
-        employeeSelect.setEnabled(pinned.checked);
     }
 
     @EventHandler("root")
@@ -173,12 +138,6 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         e.stopPropagation();
     }
 
-    @EventHandler("pinned")
-    public void onPinnedCheckboxClick(@ForEvent("change") final Event e) {
-        updateEmployeeSelect();
-        e.stopPropagation();
-    }
-
     @EventHandler("apply-button")
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
 
@@ -187,9 +146,21 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
         final boolean oldLockedByUser = shiftView.isPinnedByUser();
         final Long oldEmployee = shiftView.getEmployeeId();
+        final LocalDateTime oldStartDateTime = shiftView.getStartDateTime();
+        final LocalDateTime oldEndDateTime = shiftView.getEndDateTime();
 
-        shiftView.setPinnedByUser(pinned.checked);
-        shiftView.setEmployeeId(parseLong(employeeSelect.getSelectedValue()));
+        try {
+            shiftView.setPinnedByUser(pinned.checked);
+            shiftView.setEmployeeId(parseLong(employeeSelect.getSelectedValue()));
+            shiftView.setStartDateTime(from.getValue());
+            shiftView.setEndDateTime(to.getValue());
+        } catch (ValidationException invalidField) {
+            shiftView.setPinnedByUser(oldLockedByUser);
+            shiftView.setEmployeeId(oldEmployee);
+            shiftView.setStartDateTime(oldStartDateTime);
+            shiftView.setEndDateTime(oldEndDateTime);
+            return;
+        }
 
         ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, onSuccess((final Shift updatedShift) -> {
             blob.setShiftView(new ShiftView(updatedShift));
@@ -198,9 +169,13 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         }).onFailure(i -> {
             shiftView.setPinnedByUser(oldLockedByUser);
             shiftView.setEmployeeId(oldEmployee);
+            shiftView.setStartDateTime(oldStartDateTime);
+            shiftView.setEndDateTime(oldEndDateTime);
         }).onError(i -> {
             shiftView.setPinnedByUser(oldLockedByUser);
             shiftView.setEmployeeId(oldEmployee);
+            shiftView.setStartDateTime(oldStartDateTime);
+            shiftView.setEndDateTime(oldEndDateTime);
         }));
 
         e.stopPropagation();

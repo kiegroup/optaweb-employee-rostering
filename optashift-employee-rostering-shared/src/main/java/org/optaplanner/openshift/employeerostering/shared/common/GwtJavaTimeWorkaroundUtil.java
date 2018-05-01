@@ -70,4 +70,5 @@ public class GwtJavaTimeWorkaroundUtil {
     public static int getOffsetInMinutes(LocalDate date, ZoneOffset offset) {
         return (offset.getTotalSeconds() / 60) - JsDate.create(date.getYear(), date.getMonthValue(), date.getDayOfMonth()).getTimezoneOffset();
     }
+
 }
