@@ -47,8 +47,8 @@ public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
         this.changeHandler = new CircularBlobChangeHandler<>(blob, blobViews, collisionDetector, viewport);
 
         makeDraggable(blobView.getElement(),
-                      viewport.getGridPixelSizeInScreenPixels().intValue(),
-                      viewport.decideBasedOnOrientation("y", "x"));
+                viewport.getGridPixelSizeInScreenPixels().intValue(),
+                viewport.decideBasedOnOrientation("y", "x"));
     }
 
     private native void makeDraggable(final HTMLElement blob,
@@ -98,7 +98,7 @@ public class CircularDraggability<T, Y extends BlobWithTwin<T, Y>> {
         return true;
     }
 
-    public void onDrag(final BiConsumer<Long, CollisionState> onDrag) {
+    public void onDrag(final BiConsumer<Double, CollisionState> onDrag) {
         changeHandler.onChange(onDrag);
     }
 }

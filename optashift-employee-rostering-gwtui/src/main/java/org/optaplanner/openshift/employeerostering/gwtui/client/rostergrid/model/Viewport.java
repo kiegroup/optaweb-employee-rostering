@@ -56,19 +56,19 @@ public abstract class Viewport<T> {
         return screenPixels / getGridPixelSizeInScreenPixels();
     }
 
-    public Long toScreenPixels(final Long gridPixels) {
-        return gridPixels * getGridPixelSizeInScreenPixels();
+    public Long toScreenPixels(final Number gridPixels) {
+        return Math.round(gridPixels.doubleValue() * getGridPixelSizeInScreenPixels());
     }
 
-    public void setSizeInScreenPixels(final IsElement element, final Long sizeInGridPixels, final Long offsetInScreenPixels) {
-        getOrientation().scale(element, sizeInGridPixels, this, offsetInScreenPixels);
+    public void setSizeInScreenPixels(final IsElement element, final Number sizeInGridPixels, final Long offsetInScreenPixels) {
+        getOrientation().scale(element, sizeInGridPixels.doubleValue(), this, offsetInScreenPixels);
     }
 
-    public void setPositionInScreenPixels(final IsElement element, final Long positionInGridPixels, final Long offsetInScreenPixels) {
-        getOrientation().position(element, positionInGridPixels, this, offsetInScreenPixels);
+    public void setPositionInScreenPixels(final IsElement element, final Number positionInGridPixels, final Long offsetInScreenPixels) {
+        getOrientation().position(element, positionInGridPixels.doubleValue(), this, offsetInScreenPixels);
     }
 
-    public Long getSizeInGridPixels() {
+    public double getSizeInGridPixels() {
         return getScale().getEndInGridPixels();
     }
 }

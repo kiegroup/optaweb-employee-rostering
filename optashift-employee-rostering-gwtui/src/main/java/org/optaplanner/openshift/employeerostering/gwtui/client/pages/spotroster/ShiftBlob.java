@@ -49,7 +49,7 @@ public class ShiftBlob extends TimeslotBlob {
     }
 
     @Override
-    public void setSizeInGridPixels(final long sizeInGridPixels) {
+    public void setSizeInGridPixels(final double sizeInGridPixels) {
         shift.setEndDateTime(getScale().toScaleUnits(getScale()
                 .toGridPixels(getPositionInScaleUnits()) + sizeInGridPixels));
     }

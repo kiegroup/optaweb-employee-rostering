@@ -18,26 +18,26 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.mode
 
 public interface LinearScale<T> {
 
-    default Long toGridPixels(final T valueInScaleUnits) {
+    default double toGridPixels(final T valueInScaleUnits) {
         return toGridPixelsWithFactor1(valueInScaleUnits) / factor();
     }
 
-    default T toScaleUnits(final Long valueInGridPixels) {
+    default T toScaleUnits(final double valueInGridPixels) {
         return toScaleUnitsWithFactor1(valueInGridPixels * factor());
     }
 
-    Long toGridPixelsWithFactor1(final T valueInScaleUnits);
+    double toGridPixelsWithFactor1(final T valueInScaleUnits);
 
-    T toScaleUnitsWithFactor1(final Long valueInGridPixels);
+    T toScaleUnitsWithFactor1(final double valueInGridPixels);
 
     T getEndInScaleUnits();
 
-    default Long getEndInGridPixels() {
+    default double getEndInGridPixels() {
         return toGridPixels(getEndInScaleUnits());
     }
 
     /**
      * @return How many scale units correspond to one grid pixel
      */
-    Long factor();
+    double factor();
 }

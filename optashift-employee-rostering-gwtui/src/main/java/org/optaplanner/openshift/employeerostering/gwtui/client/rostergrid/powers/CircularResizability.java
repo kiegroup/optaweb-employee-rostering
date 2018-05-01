@@ -45,8 +45,8 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
         this.changeHandler = new CircularBlobChangeHandler<>(blob, list, collisionDetector, viewport);
 
         makeResizable(blobView.getElement(),
-                      viewport.getGridPixelSizeInScreenPixels().intValue(),
-                      viewport.decideBasedOnOrientation("s", "e"));
+                viewport.getGridPixelSizeInScreenPixels().intValue(),
+                viewport.decideBasedOnOrientation("s", "e"));
     }
 
     private native void makeResizable(final HTMLElement blob,
@@ -84,7 +84,7 @@ public class CircularResizability<T, Y extends BlobWithTwin<T, Y>> {
         return true;
     }
 
-    public void onResize(final BiConsumer<Long, CollisionState> onResize) {
+    public void onResize(final BiConsumer<Double, CollisionState> onResize) {
         changeHandler.onChange(onResize);
     }
 }

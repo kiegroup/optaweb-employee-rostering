@@ -104,7 +104,7 @@ public class ShiftTemplateBlobView implements BlobView<LocalDateTime, ShiftTempl
         label.textContent = (blob.getShiftTemplateView().getRotationEmployeeId() != null) ? blob.getRotationEmployee().getName() : "Unassigned";
     }
 
-    private void onResize(final Long newSizeInGridPixels,
+    private void onResize(final double newSizeInGridPixels,
                           final CollisionState dragState) {
 
         refresh();
@@ -115,7 +115,7 @@ public class ShiftTemplateBlobView implements BlobView<LocalDateTime, ShiftTempl
         }
     }
 
-    private void onDrag(final Long newPositionInGridPixels,
+    private void onDrag(final double newPositionInGridPixels,
                         final CollisionState dragState) {
 
         refresh();
