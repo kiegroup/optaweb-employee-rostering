@@ -42,7 +42,6 @@ import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
-import static java.lang.Long.parseLong;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 
 @Templated
@@ -151,7 +150,7 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
 
         try {
             shiftView.setPinnedByUser(pinned.checked);
-            shiftView.setEmployeeId(parseLong(employeeSelect.getSelectedValue()));
+            shiftView.setEmployeeId(parseId(employeeSelect.getSelectedValue()));
             shiftView.setStartDateTime(from.getValue());
             shiftView.setEndDateTime(to.getValue());
         } catch (ValidationException invalidField) {
@@ -192,5 +191,13 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
     public BlobPopoverContent withPopover(final BlobPopover popover) {
         this.popover = popover;
         return this;
+    }
+
+    private Long parseId(String text) {
+        Long id = Long.parseLong(text);
+        if (id < 0) {
+            return null;
+        }
+        return id;
     }
 }
