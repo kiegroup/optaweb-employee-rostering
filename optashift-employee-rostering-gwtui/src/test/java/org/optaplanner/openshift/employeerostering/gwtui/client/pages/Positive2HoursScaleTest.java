@@ -22,20 +22,20 @@ public class Positive2HoursScaleTest {
         final Positive2HoursScale scale = new Positive2HoursScale(start, end);
 
         // Boundaries
-        Assert.assertEquals((Double) 0d, scale.toGridPixels(start), ACCEPTED_ERROR);
-        Assert.assertEquals((Double) 84d, scale.toGridPixels(end), ACCEPTED_ERROR);
-        Assert.assertEquals(start, scale.toScaleUnits(0L));
-        Assert.assertEquals(end, scale.toScaleUnits(168L));
+        Assert.assertEquals(0d, scale.toGridPixels(start), ACCEPTED_ERROR);
+        Assert.assertEquals(84d, scale.toGridPixels(end), ACCEPTED_ERROR);
+        Assert.assertEquals(start, scale.toScaleUnits(0d));
+        Assert.assertEquals(end, scale.toScaleUnits(168d));
 
         // Over-boundaries
-        Assert.assertEquals((Double) 0d, scale.toGridPixels(start.minus(1, YEARS)), ACCEPTED_ERROR);
-        Assert.assertEquals((Double) 84d, scale.toGridPixels(end.plus(1, YEARS)), ACCEPTED_ERROR);
-        Assert.assertEquals(start, scale.toScaleUnits(-1000L));
-        Assert.assertEquals(end, scale.toScaleUnits(10000000L));
+        Assert.assertEquals(0d, scale.toGridPixels(start.minus(1, YEARS)), ACCEPTED_ERROR);
+        Assert.assertEquals(84d, scale.toGridPixels(end.plus(1, YEARS)), ACCEPTED_ERROR);
+        Assert.assertEquals(start, scale.toScaleUnits(-1000d));
+        Assert.assertEquals(end, scale.toScaleUnits(10000000d));
 
         // 3 Days and 4 Hours after
         final LocalDateTime d = start.plus(3, DAYS).plus(4, HOURS);
-        Assert.assertEquals((Double) 38d, scale.toGridPixels(d), ACCEPTED_ERROR);
-        Assert.assertEquals(d, scale.toScaleUnits(38L));
+        Assert.assertEquals(38d, scale.toGridPixels(d), ACCEPTED_ERROR);
+        Assert.assertEquals(d, scale.toScaleUnits(38d));
     }
 }

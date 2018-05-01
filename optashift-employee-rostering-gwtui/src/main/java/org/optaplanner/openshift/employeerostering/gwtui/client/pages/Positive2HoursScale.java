@@ -44,7 +44,7 @@ public class Positive2HoursScale implements LinearScale<LocalDateTime> {
         }
 
         // .get(ChronoUnit.HOURS) does not work
-        return Duration.between(start, dateTime).getSeconds() / 60f / 60f;
+        return Duration.between(start, dateTime).getSeconds() / 60d / 60d;
     }
 
     @Override
@@ -68,7 +68,7 @@ public class Positive2HoursScale implements LinearScale<LocalDateTime> {
 
     @Override
     public double factor() {
-        return 2L;
+        return 2d;
     }
 
 }
