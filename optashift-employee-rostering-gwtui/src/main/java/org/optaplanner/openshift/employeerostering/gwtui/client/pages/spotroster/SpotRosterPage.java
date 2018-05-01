@@ -17,6 +17,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.spotroster;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
@@ -48,6 +50,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtil
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 import static elemental2.dom.DomGlobal.setInterval;
 import static elemental2.dom.DomGlobal.setTimeout;
@@ -112,14 +116,6 @@ public class SpotRosterPage implements Page {
     private HTMLAnchorElement previousPageButton;
 
     @Inject
-    @DataField("back-in-time-button")
-    private HTMLAnchorElement backInTimeButton;
-
-    @Inject
-    @DataField("forward-in-time-button")
-    private HTMLAnchorElement forwardInTimeButton;
-
-    @Inject
     @DataField("shift-blob-popover")
     private BlobPopover shiftBlobPopover;
 
@@ -141,6 +137,16 @@ public class SpotRosterPage implements Page {
     @Inject
     private HeaderView headerView;
 
+    @Inject
+    @DataField("current-pagination-range")
+    @Named("span")
+    private HTMLElement currentRange;
+
+    @Inject
+    @DataField("num-of-spots")
+    @Named("span")
+    private HTMLElement rowCount;
+
     private double solveTaskId;
     private double updateRemainingTimeTaskId;
     private double stopSolvingTaskId;
@@ -152,6 +158,8 @@ public class SpotRosterPage implements Page {
     @PostConstruct
     public void init() {
         shiftBlobPopover.init(this, shiftBlobPopoverContent);
+        currentRange.innerHTML = new SafeHtmlBuilder().appendEscaped(spotsPagination.toString())
+                .toSafeHtml().asString();
     }
 
     public BlobPopover getBlobPopover() {
@@ -174,30 +182,36 @@ public class SpotRosterPage implements Page {
     }
 
     private Promise<Void> refreshWithoutLoadingSpinner() {
-        return promiseUtils.manage(fetchSpotRosterView().then(spotRosterView -> {
-            currentSpotRosterView = spotRosterView;
-            final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
+        return promiseUtils.manage(getSpotList().then(spotList -> {
+            rowCount.innerHTML = Integer.toString(spotList.size());
+            currentRange.innerHTML = new SafeHtmlBuilder().append(spotsPagination.getFirstResultIndex() + 1)
+                    .append('-').append(Math.min(spotsPagination.getFirstResultIndex() + spotsPagination.getNumberOfItemsPerPage(), spotList.size()))
+                    .toSafeHtml().asString();
+            return promiseUtils.manage(fetchSpotRosterView().then(spotRosterView -> {
+                currentSpotRosterView = spotRosterView;
+                final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
 
-            if (score.isPresent()) {
-                scores.classList.remove("hidden");
-                hardScore.textContent = score.get().getHardScore() + "";
-                softScore.textContent = score.get().getSoftScore() + "";
-                terminateEarlyButton.classList.remove("hidden");
-                solveButton.classList.add("hidden");
-            } else {
-                scores.classList.add("hidden");
-                terminateEarlyButton.classList.add("hidden");
-                solveButton.classList.remove("hidden");
-            }
+                if (score.isPresent()) {
+                    scores.classList.remove("hidden");
+                    hardScore.textContent = score.get().getHardScore() + "";
+                    softScore.textContent = score.get().getSoftScore() + "";
+                    terminateEarlyButton.classList.remove("hidden");
+                    solveButton.classList.add("hidden");
+                } else {
+                    scores.classList.add("hidden");
+                    terminateEarlyButton.classList.add("hidden");
+                    solveButton.classList.remove("hidden");
+                }
 
-            if (spotRosterView.getSpotList().isEmpty()) {
-                spotsPagination = spotsPagination.previousPage();
-                return promiseUtils.resolve();
-            } else {
-                viewport = spotRosterViewportFactory.getViewport(spotRosterView);
-                viewportView.setViewport(viewport);
-                return promiseUtils.resolve();
-            }
+                if (spotRosterView.getSpotList().isEmpty()) {
+                    spotsPagination = spotsPagination.previousPage();
+                    return promiseUtils.resolve();
+                } else {
+                    viewport = spotRosterViewportFactory.getViewport(spotRosterView);
+                    viewportView.setViewport(viewport);
+                    return promiseUtils.resolve();
+                }
+            }));
         }));
     }
 
@@ -300,9 +314,6 @@ public class SpotRosterPage implements Page {
         refreshWithLoadingSpinner();
     }
 
-    //FIXME: Improve horizontal navigation. Probably snap to fixed dates with animation.
-    private static final Integer TIME_SCROLL_SIZE = 300;
-
     public SpotRosterView getCurrentSpotRosterView() {
         return currentSpotRosterView;
     }
@@ -326,6 +337,12 @@ public class SpotRosterPage implements Page {
             RosterRestServiceBuilder.getCurrentSpotRosterView(tenantStore.getCurrentTenantId(),
                     spotsPagination.getPageNumber(),
                     spotsPagination.getNumberOfItemsPerPage(), onSuccess(resolve::onInvoke));
+        });
+    }
+
+    private Promise<List<Spot>> getSpotList() {
+        return promiseUtils.promise((resolve, reject) -> {
+            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), onSuccess(resolve::onInvoke));
         });
     }
 }

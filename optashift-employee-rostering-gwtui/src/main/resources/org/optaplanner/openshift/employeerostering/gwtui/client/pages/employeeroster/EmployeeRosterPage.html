@@ -31,16 +31,21 @@
                         </button>
                     </div>
                     <div class="form-group">
-                        <ul class="pagination pagination-pf-back kie-pagination--optaplanner" style="vertical-align: middle;">
-                            <li>
-                                <a href="#" data-field="back-in-time-button" title="Previous Page"><span class="i fa fa-angle-left"></span></a>
-                            </li>
-                        </ul>
-                        <ul class="pagination pagination-pf-forward kie-pagination--optaplanner" style="vertical-align: middle;">
-                            <li>
-                                <a href="#" data-field="forward-in-time-button" title="Next Page"><span class="i fa fa-angle-right"></span></a>
-                            </li>
-                        </ul>
+                      <span>
+                        <span data-field="current-pagination-range" class="pagination-pf-items-current">1-10</span>
+                          of
+                        <span data-field="num-of-employees" class="pagination-pf-items-total">24</span>
+                      </span>&nbsp;&nbsp;
+                      <ul class="pagination pagination-pf-back kie-pagination--optaplanner">
+                        <li>
+                          <a href="#" data-field="previous-page-button" title="Previous Page"><span class="i fa fa-angle-left"></span></a>
+                        </li>
+                      </ul>
+                      <ul class="pagination pagination-pf-forward kie-pagination--optaplanner">
+                        <li>
+                          <a href="#" data-field="next-page-button" title="Next Page"><span class="i fa fa-angle-right"></span></a>
+                        </li>
+                      </ul>
                     </div>
                 </div>                
             </div>
@@ -52,18 +57,5 @@
     <div data-field="availability-blob-popover"></div>
 
     <div data-field="viewport" class="viewport employee-roster-page-viewport"></div>
-
-    <div>
-        <ul class="pagination pagination-pf-back kie-pagination--optaplanner">
-            <li>
-                <a href="#" data-field="previous-page-button" title="Previous Page"><span class="i fa fa-angle-left"></span></a>
-            </li>
-        </ul>
-        <ul class="pagination pagination-pf-forward kie-pagination--optaplanner">
-            <li>
-                <a href="#" data-field="next-page-button" title="Next Page"><span class="i fa fa-angle-right"></span></a>
-            </li>
-        </ul>
-    </div>
 
 </div>

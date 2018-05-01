@@ -34,12 +34,10 @@ public class Pagination {
             if (numberOfItemsPerPage == null) {
                 return new Pagination(0, Integer.MAX_VALUE);
             } else {
-                throw new IllegalStateException("When pageNumber (" + pageNumber
-                        + ") is null, then numberOfItemsPerPage (" + numberOfItemsPerPage + ") must be null too.");
+                throw new IllegalStateException("When pageNumber (" + pageNumber + ") is null, then numberOfItemsPerPage (" + numberOfItemsPerPage + ") must be null too.");
             }
         } else if (numberOfItemsPerPage == null) {
-            throw new IllegalStateException("When numberOfItemsPerPage (" + numberOfItemsPerPage
-                    + ") is null, then pageNumber (" + pageNumber + ") must be null too.");
+            throw new IllegalStateException("When numberOfItemsPerPage (" + numberOfItemsPerPage + ") is null, then pageNumber (" + pageNumber + ") must be null too.");
         }
         return new Pagination(pageNumber, numberOfItemsPerPage);
     }
@@ -77,4 +75,5 @@ public class Pagination {
     public boolean isOnFirstPage() {
         return pageNumber == 0;
     }
+
 }
