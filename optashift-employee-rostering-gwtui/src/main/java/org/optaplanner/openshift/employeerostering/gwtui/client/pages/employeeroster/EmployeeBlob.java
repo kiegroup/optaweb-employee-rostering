@@ -57,7 +57,7 @@ public class EmployeeBlob extends TimeslotBlob {
         if (shiftView != null) {
             return getSpot().toString() + ": " + shiftView.getStartDateTime() + "-" + shiftView.getEndDateTime();
         } else {
-            return employeeAvailabilityView.getState().toString() + ":" + employeeAvailabilityView.getStartDateTime() + "-" + employeeAvailabilityView.getEndDateTime();
+            return employeeAvailabilityView.getState().toString();
         }
     }
 
