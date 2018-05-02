@@ -1,0 +1,10 @@
+[[architecture]]
+= Architecture
+:doctype: book
+:imagesdir: ..
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+
+image::Architecture/optaShiftEmployeeRosteringArchitecture.png[align="center"]
