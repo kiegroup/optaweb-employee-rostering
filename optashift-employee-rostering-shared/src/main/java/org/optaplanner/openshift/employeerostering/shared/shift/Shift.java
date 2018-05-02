@@ -18,12 +18,15 @@ package org.optaplanner.openshift.employeerostering.shared.shift;
 
 import java.time.OffsetDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
 import org.optaplanner.core.api.domain.entity.PlanningPin;
 import org.optaplanner.core.api.domain.variable.PlanningVariable;
@@ -80,8 +83,12 @@ public class Shift extends AbstractPersistable {
     @ManyToOne
     private Spot spot;
 
+    @Type(type = "org.optaplanner.openshift.employeerostering.server.common.jpa.OffsetDateTimeHibernateType")
+    @Columns(columns = {@Column(name = "startDateTime"), @Column(name="startDateTimeOffset")})
     @NotNull
     private OffsetDateTime startDateTime;
+    @Type(type = "org.optaplanner.openshift.employeerostering.server.common.jpa.OffsetDateTimeHibernateType")
+    @Columns(columns = {@Column(name = "endDateTime"), @Column(name="endDateTimeOffset")})
     @NotNull
     private OffsetDateTime endDateTime;
 

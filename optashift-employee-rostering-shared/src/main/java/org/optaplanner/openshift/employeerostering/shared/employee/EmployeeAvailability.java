@@ -19,6 +19,7 @@ package org.optaplanner.openshift.employeerostering.shared.employee;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -29,6 +30,9 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Columns;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 
@@ -62,8 +66,12 @@ public class EmployeeAvailability extends AbstractPersistable {
     @ManyToOne(fetch = FetchType.EAGER)
     private Employee employee;
 
+    @Type(type = "org.optaplanner.openshift.employeerostering.server.common.jpa.OffsetDateTimeHibernateType")
+    @Columns(columns = {@Column(name = "startDateTime"), @Column(name="startDateTimeOffset")})
     @NotNull
     private OffsetDateTime startDateTime;
+    @Type(type = "org.optaplanner.openshift.employeerostering.server.common.jpa.OffsetDateTimeHibernateType")
+    @Columns(columns = {@Column(name = "endDateTime"), @Column(name="endDateTimeOffset")})
     @NotNull
     private OffsetDateTime endDateTime;
 
