@@ -85,7 +85,7 @@ public interface EmployeeRestService {
      */
     @POST
     @Path("/availability/add")
-    Long addEmployeeAvailability(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+    EmployeeAvailabilityView addEmployeeAvailability(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                                  @ApiParam(value = "with no id", required = true) EmployeeAvailabilityView employeeAvailability);
 
     /**
@@ -93,7 +93,7 @@ public interface EmployeeRestService {
      */
     @PUT
     @Path("/availability/update")
-    void updateEmployeeAvailability(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+    EmployeeAvailabilityView updateEmployeeAvailability(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                                     @ApiParam(required = true) EmployeeAvailabilityView employeeAvailability);
 
     /**

@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.FlushModeType;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
@@ -29,6 +30,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestService;
 
@@ -94,17 +96,26 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
 
     @Override
     @Transactional
-    public Long addEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
+    public EmployeeAvailabilityView addEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability employeeAvailability = convertFromView(tenantId, employeeAvailabilityView);
         entityManager.persist(employeeAvailability);
-        return employeeAvailability.getId();
+        return new EmployeeAvailabilityView(employeeAvailability);
     }
 
     @Override
     @Transactional
-    public void updateEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
+    public EmployeeAvailabilityView updateEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability employeeAvailability = convertFromView(tenantId, employeeAvailabilityView);
         entityManager.merge(employeeAvailability);
+        // employeeAvailability is detached, cannot get version from it
+        entityManager.flush();
+        return getEmployeeAvailability(tenantId, employeeAvailability.getId());
+    }
+    
+    private EmployeeAvailabilityView getEmployeeAvailability(Integer tenantId, Long id) {
+        EmployeeAvailability employeeAvailability = entityManager.find(EmployeeAvailability.class, id);
+        validateTenantIdParameter(tenantId, employeeAvailability);
+        return new EmployeeAvailabilityView(employeeAvailability);
     }
 
     private EmployeeAvailability convertFromView(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {

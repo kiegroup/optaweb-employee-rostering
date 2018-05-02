@@ -44,14 +44,14 @@ public interface ShiftRestService {
      */
     @POST
     @Path("/add")
-    Long addShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
+    ShiftView addShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
 
     /**
      * @param shift never null
      */
     @PUT
     @Path("/update")
-    Shift updateShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
+    ShiftView updateShift(@PathParam("tenantId") Integer tenantId, ShiftView shift);
 
     /**
      * @param id never null

@@ -103,13 +103,13 @@ public class SpotRosterViewport extends Viewport<LocalDateTime> {
         final SpotLane spotLane = (SpotLane) lane;
 
         final ShiftView shift = new ShiftView(tenantId, spotLane.getSpot(), start, start.plusHours(8L));
-
+        final ShiftBlob out = new ShiftBlob(scale, spotIdToSpotMap, employeeIdToEmployeeMap, shift);
         ShiftRestServiceBuilder.addShift(tenantId, shift,
-                FailureShownRestCallback.onSuccess((id) -> {
-                    shift.setId(id);
+                FailureShownRestCallback.onSuccess((shiftView) -> {
+                    out.setShiftView(shiftView);
                 }));
 
-        return Stream.of(new ShiftBlob(scale, spotIdToSpotMap, employeeIdToEmployeeMap, shift));
+        return Stream.of(out);
     }
 
     @Override
