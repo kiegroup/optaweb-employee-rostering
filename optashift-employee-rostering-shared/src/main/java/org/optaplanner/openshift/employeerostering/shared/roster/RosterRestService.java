@@ -108,7 +108,7 @@ public interface RosterRestService {
     @ApiOperation("Publishes the next set of draft shifts and creates new draft shift from the rotation template.")
     @POST
     @Path("/publishAndProvision")
-    List<LocalDate> publishAndProvision(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
+    PublishResult publishAndProvision(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
 
     // Not a REST method
     Roster buildRoster(Integer tenantId);

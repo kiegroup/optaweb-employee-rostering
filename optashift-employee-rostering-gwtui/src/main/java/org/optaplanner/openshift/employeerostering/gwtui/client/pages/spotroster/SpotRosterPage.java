@@ -296,10 +296,10 @@ public class SpotRosterPage implements Page {
 
     @EventHandler("publish-button")
     public void onPublishButtonClicked(@ForEvent("click") final MouseEvent e) {
-        RosterRestServiceBuilder.publishAndProvision(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(d -> {
-            notificationSystem.notify("Published Week of " + d.get(0).toString(),
-                    "Shifts started after " + d.get(0).toString() + " and before " +
-                            d.get(1).toString() + " published.");
+        RosterRestServiceBuilder.publishAndProvision(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(pr -> {
+            notificationSystem.notify("Published Week of " + pr.getPublishedFromInclusive().toString(),
+                    "Shifts started after " + pr.getPublishedFromInclusive().toString() + " and before " +
+                            pr.getPublishedToExclusive().toString() + " published.");
             refreshWithLoadingSpinner();
         }));
     }

@@ -61,7 +61,7 @@ public class RosterState extends AbstractPersistable {
 
     @JsonIgnore
     public boolean isDraft(OffsetDateTime dateTime) {
-        return dateTime.isAfter(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT), dateTime.getOffset()));
+        return !dateTime.isBefore(OffsetDateTime.of(getFirstDraftDate().atTime(LocalTime.MIDNIGHT), dateTime.getOffset()));
     }
 
     @JsonIgnore
@@ -76,7 +76,7 @@ public class RosterState extends AbstractPersistable {
 
     @JsonIgnore
     public boolean isDraft(LocalDateTime dateTime) {
-        return dateTime.isAfter(getFirstDraftDate().atTime(LocalTime.MIDNIGHT));
+        return !dateTime.isBefore(getFirstDraftDate().atTime(LocalTime.MIDNIGHT));
     }
 
     @JsonIgnore

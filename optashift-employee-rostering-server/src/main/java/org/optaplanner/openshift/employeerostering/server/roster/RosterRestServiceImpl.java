@@ -38,6 +38,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
+import org.optaplanner.openshift.employeerostering.shared.roster.PublishResult;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
@@ -340,7 +341,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Override
     @Transactional
-    public List<LocalDate> publishAndProvision(Integer tenantId) {
+    public PublishResult publishAndProvision(Integer tenantId) {
         TenantConfiguration tenantConfiguration = tenantRestService.getTenantConfiguration(tenantId);
         RosterState rosterState = getRosterState(tenantId);
         LocalDate publishFrom = rosterState.getFirstDraftDate();
@@ -366,7 +367,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             dayOffset = (dayOffset + 1) % rosterState.getRotationLength();
         }
         rosterState.setUnplannedRotationOffset(dayOffset);
-        return Arrays.asList(publishFrom, publishTo);
+        return new PublishResult(publishFrom, publishTo);
     }
 
     @Override
