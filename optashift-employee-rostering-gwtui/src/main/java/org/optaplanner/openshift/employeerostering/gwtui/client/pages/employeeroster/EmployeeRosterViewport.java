@@ -125,13 +125,14 @@ public class EmployeeRosterViewport extends Viewport<LocalDateTime> {
         LocalDateTime startOfDay = start.toLocalDate().atTime(LocalTime.of(0, 0));
         final EmployeeAvailabilityView employeeAvailabilityView = new EmployeeAvailabilityView(tenantId, employeeLane.getEmployee(),
                 startOfDay, startOfDay.plusDays(1), EmployeeAvailabilityState.UNAVAILABLE);
-
+        
+        final EmployeeBlob out = new EmployeeBlob(scale, spotIdToSpotMap, employeeIdToEmployeeMap, employeeAvailabilityView);
         EmployeeRestServiceBuilder.addEmployeeAvailability(tenantId, employeeAvailabilityView,
-                FailureShownRestCallback.onSuccess((id) -> {
-                    employeeAvailabilityView.setId(id);
+                FailureShownRestCallback.onSuccess(view -> {
+                    out.setEmployeeAvailabilityView(view);
                 }));
 
-        return Stream.of(new EmployeeBlob(scale, spotIdToSpotMap, employeeIdToEmployeeMap, employeeAvailabilityView));
+        return Stream.of(out);
     }
 
     @Override

@@ -63,17 +63,20 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Override
     @Transactional
-    public Long addShift(Integer tenantId, ShiftView shiftView) {
+    public ShiftView addShift(Integer tenantId, ShiftView shiftView) {
         Shift shift = convertFromView(tenantId, shiftView);
         entityManager.persist(shift);
-        return shift.getId();
+        return new ShiftView(shift);
     }
 
     @Override
     @Transactional
-    public Shift updateShift(Integer tenantId, ShiftView shiftView) {
+    public ShiftView updateShift(Integer tenantId, ShiftView shiftView) {
         Shift shift = convertFromView(tenantId, shiftView);
-        return entityManager.merge(shift);
+        entityManager.merge(shift);
+        // shift is detached, cannot get version from it
+        entityManager.flush();
+        return getShift(tenantId, shiftView.getId());
     }
 
     private Shift convertFromView(Integer tenantId, ShiftView shiftView) {
@@ -103,6 +106,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
             validateTenantIdParameter(tenantId, employee);
             shift.setEmployee(employee);
         }
+        
         return shift;
     }
 

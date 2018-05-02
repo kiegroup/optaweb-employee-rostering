@@ -1,5 +1,5 @@
 .undesired {
-	 background-color: rgba(139, 0, 0, 0.4) !important;
+	 background-color: rgba(240, 171, 0, 0.4) !important;
 }
 
 .desired {
@@ -7,5 +7,5 @@
 }
 
 .unavailable {
-	 background-color: rgba(3, 3, 3, 0.4) !important;
+	 background-color: rgba(139, 0, 0, 0.4) !important;
 }

@@ -104,7 +104,6 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
         employeeSelect.clear();
         employeeSelect.addItem("Unassigned", "-1"); //FIXME: i18n
 
-        // TODO: Do rest call
         SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spots -> {
             spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
             spotSelect.setSelectedIndex(spots.indexOf(blob.getSpot()));
@@ -161,8 +160,8 @@ public class ShiftBlobPopoverContent implements BlobPopoverContent {
             return;
         }
 
-        ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, onSuccess((final Shift updatedShift) -> {
-            blob.setShiftView(new ShiftView(updatedShift));
+        ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, onSuccess((final ShiftView updatedShift) -> {
+            blob.setShiftView(updatedShift);
             blobView.refresh();
             popover.hide();
         }).onFailure(i -> {

@@ -16,12 +16,14 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages.employeeroster;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.validation.ValidationException;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
@@ -33,14 +35,21 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.LocalDateTimePicker;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopover;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.powers.BlobPopoverContent;
 import org.optaplanner.openshift.employeerostering.gwtui.client.rostergrid.view.BlobView;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
+import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
+
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 
 @Templated
 public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverContent {
@@ -54,16 +63,12 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
     private HTMLButtonElement closeButton;
 
     @Inject
-    @DataField("day")
-    private HTMLInputElement day;
+    @DataField("from")
+    private LocalDateTimePicker from;
 
     @Inject
-    @DataField("from-hour")
-    private HTMLInputElement fromHour;
-
-    @Inject
-    @DataField("to-hour")
-    private HTMLInputElement toHour;
+    @DataField("to")
+    private LocalDateTimePicker to;
 
     @Inject
     @DataField("employee")
@@ -117,10 +122,10 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
         });
         int availabilityIndex = Arrays.asList(EmployeeAvailabilityState.values()).indexOf(availabilityView.getState());
         availabilitySelect.setSelectedIndex((availabilityIndex > -1) ? availabilityIndex : 0);
+        employeeSelect.setEnabled(false);
 
-        day.value = availabilityView.getStartDateTime().getMonth().toString() + " " + availabilityView.getStartDateTime().getDayOfMonth(); //FIXME: i18n
-        fromHour.value = availabilityView.getStartDateTime().toLocalTime() + "";
-        toHour.value = availabilityView.getEndDateTime().toLocalTime() + "";
+        from.setValue(availabilityView.getStartDateTime());
+        to.setValue(availabilityView.getEndDateTime());
     }
 
     @EventHandler("root")
@@ -144,9 +149,36 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
 
         final EmployeeBlob blob = (EmployeeBlob) blobView.getBlob();
-        final EmployeeAvailabilityView availability = blob.getEmployeeAvailabilityView();
+        final EmployeeAvailabilityView availabilityView = blob.getEmployeeAvailabilityView();
 
-        final Long oldEmployeeId = availability.getEmployeeId();
+        final EmployeeAvailabilityState oldState = availabilityView.getState();
+        final LocalDateTime oldStartDateTime = availabilityView.getStartDateTime();
+        final LocalDateTime oldEndDateTime = availabilityView.getEndDateTime();
+        
+        try {
+            availabilityView.setState(EmployeeAvailabilityState.values()[availabilitySelect.getSelectedIndex()]);
+            availabilityView.setStartDateTime(from.getValue());
+            availabilityView.setEndDateTime(to.getValue());
+        } catch (ValidationException invalidField) {
+            availabilityView.setState(oldState);
+            availabilityView.setStartDateTime(oldStartDateTime);
+            availabilityView.setEndDateTime(oldEndDateTime);
+            return;
+        }
+
+        EmployeeRestServiceBuilder.updateEmployeeAvailability(availabilityView.getTenantId(), availabilityView, onSuccess((EmployeeAvailabilityView updatedView) -> {
+            blob.setEmployeeAvailabilityView(updatedView);
+            blobView.refresh();
+            popover.hide();
+        }).onFailure(i -> {
+            availabilityView.setState(oldState);
+            availabilityView.setStartDateTime(oldStartDateTime);
+            availabilityView.setEndDateTime(oldEndDateTime);
+        }).onError(i -> {
+            availabilityView.setState(oldState);
+            availabilityView.setStartDateTime(oldStartDateTime);
+            availabilityView.setEndDateTime(oldEndDateTime);
+        }));
 
         // TODO: Update the availability using a REST call
 
@@ -155,8 +187,15 @@ public class EmployeeAvailabilityBlobPopoverContent implements BlobPopoverConten
 
     @EventHandler("delete-button")
     public void onDeleteButtonClick(@ForEvent("click") final MouseEvent e) {
-        blobView.remove();
-        popover.hide();
+        
+        final EmployeeBlob blob = (EmployeeBlob) blobView.getBlob();
+        final EmployeeAvailabilityView availabilityView = blob.getEmployeeAvailabilityView();
+        
+        EmployeeRestServiceBuilder.removeEmployeeAvailability(availabilityView.getTenantId(), availabilityView.getId(), onSuccess((Boolean v) -> {
+            blobView.remove();
+            popover.hide();
+        }));
+        
         e.stopPropagation();
     }
 
