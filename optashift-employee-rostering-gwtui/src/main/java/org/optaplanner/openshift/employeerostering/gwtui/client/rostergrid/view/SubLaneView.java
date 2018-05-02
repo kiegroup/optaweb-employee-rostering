@@ -93,7 +93,7 @@ public class SubLaneView<T> implements ListElementView<SubLane<T>> {
         }
     }
 
-    private void onClick(final @ForEvent("click") MouseEvent e) {
+    private void onClick(final MouseEvent e) {
 
         if (!e.target.equals(e.currentTarget)) {
             return;
