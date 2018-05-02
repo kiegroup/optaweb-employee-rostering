@@ -3,35 +3,35 @@ package org.optaplanner.openshift.employeerostering.shared.roster;
 import java.time.LocalDate;
 
 public class PublishResult {
-    private LocalDate publishedFromInclusive;
-    private LocalDate publishedToExclusive;
+    private LocalDate publishedFromDate; // Inclusive
+    private LocalDate publishedToDate; // Exclusive
     
     @SuppressWarnings("unused")
     public PublishResult() {
         
     }
     
-    public PublishResult(LocalDate publishedFromInclusive, LocalDate publishedToExclusive) {
-        this.publishedFromInclusive = publishedFromInclusive;
-        this.publishedToExclusive = publishedToExclusive;
+    public PublishResult(LocalDate publishedFromDate, LocalDate publishedToDate) {
+        this.publishedFromDate = publishedFromDate;
+        this.publishedToDate = publishedToDate;
     }
 
-    public LocalDate getPublishedFromInclusive() {
-        return publishedFromInclusive;
-    }
-
-    
-    public void setPublishedFromInclusive(LocalDate publishedFromInclusive) {
-        this.publishedFromInclusive = publishedFromInclusive;
+    public LocalDate getPublishedFromDate() {
+        return publishedFromDate;
     }
 
     
-    public LocalDate getPublishedToExclusive() {
-        return publishedToExclusive;
+    public void setPublishedFromDate(LocalDate publishedFromDate) {
+        this.publishedFromDate = publishedFromDate;
     }
 
     
-    public void setPublishedToExclusive(LocalDate publishedToExclusive) {
-        this.publishedToExclusive = publishedToExclusive;
+    public LocalDate getPublishedToDate() {
+        return publishedToDate;
+    }
+
+    
+    public void setPublishedToDate(LocalDate publishedToDate) {
+        this.publishedToDate = publishedToDate;
     }
 }
