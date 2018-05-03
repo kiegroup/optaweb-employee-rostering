@@ -287,6 +287,41 @@ public class RosterGenerator {
                 int offset = timeslotRangesIndex == 0 ? startDayOffset : (startDayOffset + 7) % 21;
                 return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 2 : offset < 14 ? 0 : offset < 17 ? 1 : offset < 21 ? 2 : -1;
             });
+    private final GeneratorType callCenterGeneratorType = new GeneratorType(
+            "Call center",
+            new StringDataGenerator()
+                    .addPart(
+                            "English",
+                            "Spanish",
+                            "French",
+                            "German",
+                            "Japanese",
+                            "Chinese",
+                            "Dutch",
+                            "Portuguese",
+                            "Italian"),
+            new StringDataGenerator()
+                    .addPart("Business loans",
+                            "Checking accounts",
+                            "Debit and credit cards",
+                            "Insurances",
+                            "Merchant services",
+                            "Cash management",
+                            "Tax management",
+                            "Wealth management",
+                            "Mortgages",
+                            "Personal loans",
+                            "Online payment"),
+            Arrays.asList(
+                    Pair.of(LocalTime.of(7, 0), LocalTime.of(16, 0)),
+                    Pair.of(LocalTime.of(11, 0), LocalTime.of(20, 0))),
+            // Morning:   B A A A A A B
+            // Afternoon: C C B B C C C
+            7, 3, (startDayOffset, timeslotRangesIndex) -> {
+                return timeslotRangesIndex == 0
+                        ? startDayOffset < 1 ? 1 : startDayOffset < 6 ? 0 : startDayOffset < 7 ? 1 : -1
+                        : startDayOffset < 2 ? 2 : startDayOffset < 4 ? 1 : startDayOffset < 7 ? 2 : -1;
+            });
 
     private Random random;
 
@@ -316,6 +351,7 @@ public class RosterGenerator {
         generateRoster(10, 7, hospitalGeneratorType, zoneId);
         generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
         generateRoster(10, 7, guardSecurityGeneratorType, zoneId);
+        generateRoster(10, 7, callCenterGeneratorType, zoneId);
         generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
         generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
         generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
