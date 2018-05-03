@@ -186,10 +186,6 @@ public class SpotRosterPage implements Page {
 
     private Promise<Void> refreshWithoutLoadingSpinner() {
         return promiseUtils.manage(getSpotList().then(spotList -> {
-            rowCount.innerHTML = Integer.toString(spotList.size());
-            currentRange.innerHTML = new SafeHtmlBuilder().append(spotsPagination.getFirstResultIndex() + 1)
-                    .append('-').append(Math.min(spotsPagination.getFirstResultIndex() + spotsPagination.getNumberOfItemsPerPage(), spotList.size()))
-                    .toSafeHtml().asString();
             return promiseUtils.manage(fetchSpotRosterView().then(spotRosterView -> {
                 currentSpotRosterView = spotRosterView;
                 final Optional<HardSoftScore> score = Optional.ofNullable(spotRosterView.getScore());
@@ -208,12 +204,15 @@ public class SpotRosterPage implements Page {
 
                 if (spotRosterView.getSpotList().isEmpty()) {
                     spotsPagination = spotsPagination.previousPage();
-                    return promiseUtils.resolve();
                 } else {
                     viewport = spotRosterViewportFactory.getViewport(spotRosterView);
                     viewportView.setViewport(viewport);
-                    return promiseUtils.resolve();
                 }
+                rowCount.innerHTML = Integer.toString(spotList.size());
+                currentRange.innerHTML = new SafeHtmlBuilder().append(spotsPagination.getFirstResultIndex() + 1)
+                        .append('-').append(Math.min(spotsPagination.getFirstResultIndex() + spotsPagination.getNumberOfItemsPerPage(), spotList.size()))
+                        .toSafeHtml().asString();
+                return promiseUtils.resolve();
             }));
         }));
     }

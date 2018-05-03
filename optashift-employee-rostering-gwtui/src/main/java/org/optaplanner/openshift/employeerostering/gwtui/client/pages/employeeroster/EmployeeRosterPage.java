@@ -141,20 +141,19 @@ public class EmployeeRosterPage implements Page {
 
     private Promise<Void> refreshWithoutLoadingSpinner() {
         return getEmployeeList().then(employeeList -> {
-            rowCount.innerHTML = Integer.toString(employeeList.size());
-            currentRange.innerHTML = new SafeHtmlBuilder().append(employeePagination.getFirstResultIndex() + 1)
-                    .append('-').append(Math.min(employeePagination.getFirstResultIndex() + employeePagination.getNumberOfItemsPerPage(),
-                            employeeList.size()))
-                    .toSafeHtml().asString();
             return fetchEmployeeRosterView().then(employeeRosterView -> {
                 if (employeeRosterView.getEmployeeList().isEmpty()) {
                     employeePagination = employeePagination.previousPage();
-                    return promiseUtils.resolve();
                 } else {
                     viewport = employeeRosterViewportFactory.getViewport(employeeRosterView);
                     viewportView.setViewport(viewport);
-                    return promiseUtils.resolve();
                 }
+                rowCount.innerHTML = Integer.toString(employeeList.size());
+                currentRange.innerHTML = new SafeHtmlBuilder().append(employeePagination.getFirstResultIndex() + 1)
+                        .append('-').append(Math.min(employeePagination.getFirstResultIndex() + employeePagination.getNumberOfItemsPerPage(),
+                                employeeList.size()))
+                        .toSafeHtml().asString();
+                return promiseUtils.resolve();
             });
         });
     }
