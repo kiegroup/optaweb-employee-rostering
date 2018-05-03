@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.shared.shift.view;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import javax.validation.constraints.NotNull;
 
@@ -58,11 +59,11 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
         this.rotationEmployeeId = (rotationEmployee == null) ? null : rotationEmployee.getId();
     }
 
-    public ShiftView(Shift shift) {
+    public ShiftView(ZoneId zoneId, Shift shift) {
         super(shift);
         this.spotId = shift.getSpot().getId();
-        this.startDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTime(shift.getStartDateTime());
-        this.endDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTime(shift.getEndDateTime());
+        this.startDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTimeInZone(shift.getStartDateTime(), zoneId);
+        this.endDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTimeInZone(shift.getEndDateTime(), zoneId);
         this.pinnedByUser = shift.isPinnedByUser();
         this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();

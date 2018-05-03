@@ -18,7 +18,6 @@ package org.optaplanner.openshift.employeerostering.server.roster;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,7 +45,6 @@ import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRo
 import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
-import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
@@ -65,9 +63,6 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Inject
     private TenantRestService tenantRestService;
-
-    @Inject
-    private ShiftRestService shiftRestService;
 
     // ************************************************************************
     // SpotRosterView
@@ -152,7 +147,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
         for (Shift shift : shiftList) {
             spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>()).add(
-                    new ShiftView(
+                    new ShiftView(tenantConfig.getTimeZone(),
                             shift));
         }
         spotRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
@@ -246,9 +241,9 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             if (shift.getEmployee() != null) {
                 employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(),
                         k -> new ArrayList<>())
-                        .add(new ShiftView(shift));
+                        .add(new ShiftView(tenantConfig.getTimeZone(), shift));
             } else {
-                unassignedShiftViewList.add(new ShiftView(shift));
+                unassignedShiftViewList.add(new ShiftView(tenantConfig.getTimeZone(), shift));
             }
         }
         employeeRosterView.setEmployeeIdToShiftViewListMap(employeeIdToShiftViewListMap);
@@ -265,7 +260,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
             employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),
                     k -> new ArrayList<>())
-                    .add(new EmployeeAvailabilityView(employeeAvailability));
+                    .add(new EmployeeAvailabilityView(tenantConfig.getTimeZone(), employeeAvailability));
         }
         employeeRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
 

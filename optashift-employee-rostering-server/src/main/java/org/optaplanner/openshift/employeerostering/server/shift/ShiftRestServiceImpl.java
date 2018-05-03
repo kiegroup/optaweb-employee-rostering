@@ -31,6 +31,7 @@ import javax.transaction.Transactional;
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
+import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.rotation.view.RotationView;
@@ -58,7 +59,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     public ShiftView getShift(Integer tenantId, Long id) {
         Shift shift = entityManager.find(Shift.class, id);
         validateTenantIdParameter(tenantId, shift);
-        return new ShiftView(shift);
+        return new ShiftView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), shift);
     }
 
     @Override
@@ -66,17 +67,18 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     public ShiftView addShift(Integer tenantId, ShiftView shiftView) {
         Shift shift = convertFromView(tenantId, shiftView);
         entityManager.persist(shift);
-        return new ShiftView(shift);
+        return new ShiftView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), shift);
     }
 
     @Override
     @Transactional
     public ShiftView updateShift(Integer tenantId, ShiftView shiftView) {
         Shift shift = convertFromView(tenantId, shiftView);
-        entityManager.merge(shift);
-        // shift is detached, cannot get version from it
+        shift = entityManager.merge(shift);
+        
+        // Flush to increase version number before we duplicate it to ShiftView
         entityManager.flush();
-        return getShift(tenantId, shiftView.getId());
+        return new ShiftView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), shift);
     }
 
     private Shift convertFromView(Integer tenantId, ShiftView shiftView) {
@@ -124,7 +126,9 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Override
     public List<ShiftView> getShifts(Integer tenantId) {
-        return getAllShifts(tenantId).stream().map(ShiftView::new).collect(Collectors.toList());
+        return getAllShifts(tenantId).stream()
+                .map(s -> new ShiftView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), s))
+                .collect(Collectors.toList());
     }
 
     private List<Shift> getAllShifts(Integer tenantId) {
