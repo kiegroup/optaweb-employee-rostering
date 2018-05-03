@@ -65,16 +65,12 @@ public class MenuView implements IsElement {
     private HTMLAnchorElement spotRoster;
 
     @Inject
-    @DataField("rotation")
-    private HTMLAnchorElement rotation;
-
-    @Inject
     private Event<PageChange> pageChangeEvent;
 
     @PostConstruct
     private void initMenu() {
         pageChangeEvent.fire(new PageChange(Pages.Id.SKILLS));
-        setInactive(skills, spots, employees, rotation, spotRoster, employeeRoster);
+        setInactive(skills, spots, employees, spotRoster, employeeRoster);
         setActive(skills);
     }
 
@@ -103,11 +99,6 @@ public class MenuView implements IsElement {
         goTo(SPOT_ROSTER, e);
     }
 
-    @EventHandler("rotation")
-    public void rotations(final @ForEvent("click") MouseEvent e) {
-        goTo(ROTATION, e);
-    }
-
     private void goTo(final Pages.Id pageId,
                       final @ForEvent("click") MouseEvent event) {
 
@@ -116,7 +107,7 @@ public class MenuView implements IsElement {
     }
 
     private void handleActiveLink(final HTMLElement target) {
-        setInactive(skills, spots, employees, employeeRoster, rotation, spotRoster);
+        setInactive(skills, spots, employees, employeeRoster, spotRoster);
         setActive(target);
     }
 
