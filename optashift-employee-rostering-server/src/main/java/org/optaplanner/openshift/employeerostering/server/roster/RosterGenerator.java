@@ -302,7 +302,7 @@ public class RosterGenerator {
                             "Italian"),
             new StringDataGenerator()
                     .addPart("Business loans",
-                            "Checking accounts",
+                            "Checking and savings accounts",
                             "Debit and credit cards",
                             "Insurances",
                             "Merchant services",
