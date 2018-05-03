@@ -18,6 +18,7 @@ package org.optaplanner.openshift.employeerostering.shared.employee.view;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 import javax.validation.constraints.NotNull;
 
@@ -52,11 +53,11 @@ public class EmployeeAvailabilityView extends AbstractPersistable implements Has
         this.state = state;
     }
 
-    public EmployeeAvailabilityView(EmployeeAvailability employeeAvailability) {
+    public EmployeeAvailabilityView(ZoneId zoneId, EmployeeAvailability employeeAvailability) {
         super(employeeAvailability);
         this.employeeId = employeeAvailability.getEmployee().getId();
-        this.startDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTime(employeeAvailability.getStartDateTime());
-        this.endDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTime(employeeAvailability.getEndDateTime());
+        this.startDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTimeInZone(employeeAvailability.getStartDateTime(), zoneId);
+        this.endDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTimeInZone(employeeAvailability.getEndDateTime(), zoneId);
         this.state = employeeAvailability.getState();
     }
 

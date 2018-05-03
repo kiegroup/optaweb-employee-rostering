@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Date;
 
@@ -19,6 +20,11 @@ public class GwtJavaTimeWorkaroundUtil {
 
     public static LocalDateTime toLocalDateTime(OffsetDateTime time) {
         return LocalDateTime.of(toLocalDate(time), toLocalTime(time));
+    }
+    
+    public static LocalDateTime toLocalDateTimeInZone(OffsetDateTime dateTime, ZoneId zoneId) {
+        return LocalDateTime.ofEpochSecond(dateTime.toEpochSecond(), dateTime.getNano(),
+                                           zoneId.getRules().getOffset(dateTime.toInstant()));
     }
 
     public static LocalDate toLocalDate(OffsetDateTime time) {
