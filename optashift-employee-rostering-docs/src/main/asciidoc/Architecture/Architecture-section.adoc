@@ -8,3 +8,5 @@
 :experimental:
 
 image::Architecture/optaShiftEmployeeRosteringArchitecture.png[align="center"]
+
+image::Architecture/optaShiftEmployeeRosteringClassDiagram.png[align="center"]

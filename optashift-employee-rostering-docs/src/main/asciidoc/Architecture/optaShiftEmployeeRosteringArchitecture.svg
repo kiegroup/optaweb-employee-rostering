@@ -3339,10 +3339,10 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="1.2783333"
-     inkscape:cx="400"
+     inkscape:cx="401.56454"
      inkscape:cy="300"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="layer5"
      showgrid="true"
      width="800px"
      borderlayer="true"
@@ -4175,7 +4175,7 @@
              y="33.777069"
              style="font-size:20px" /></flowRegion><flowPara
            style="font-size:20px;line-height:1.25"
-           id="flowPara997">REST service (http)</flowPara></flowRoot>    </g>
+           id="flowPara997">REST service</flowPara></flowRoot>    </g>
     <g
        transform="matrix(0.2,0,0,0.2,133.8564,422.9696)"
        id="g623"
