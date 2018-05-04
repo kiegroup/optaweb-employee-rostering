@@ -16,34 +16,29 @@
 
 package org.optaplanner.openshift.employeerostering.shared.employee;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Employee.findAll",
-                query = "select distinct e from Employee e left join fetch e.skillProficiencySet s"
-                        + " where e.tenantId = :tenantId"
-                        + " order by e.name, s.name"),
+               @NamedQuery(name = "Employee.findAll",
+                           query = "select e from Employee e" +
+                                   " where e.tenantId = :tenantId" +
+                                   " order by LOWER(e.name)"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Employee extends AbstractPersistable {
@@ -57,8 +52,7 @@ public class Employee extends AbstractPersistable {
     private Set<Skill> skillProficiencySet;
 
     @SuppressWarnings("unused")
-    public Employee() {
-    }
+    public Employee() {}
 
     public Employee(Integer tenantId, String name) {
         super(tenantId);

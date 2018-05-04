@@ -16,7 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.shared.spot;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -34,13 +33,13 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Spot.findAll",
-                query = "select distinct s from Spot s left join fetch s.requiredSkillSet" +
-                        " where s.tenantId = :tenantId" +
-                        " order by s.name"),
+               @NamedQuery(name = "Spot.findAll",
+                           query = "select s from Spot s" +
+                                   " where s.tenantId = :tenantId" +
+                                   " order by LOWER(s.name)"),
 })
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}), @UniqueConstraint(columnNames = {
-        "id"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}),
+                            @UniqueConstraint(columnNames = {"id"})})
 public class Spot extends AbstractPersistable {
 
     @NotNull
@@ -51,8 +50,7 @@ public class Spot extends AbstractPersistable {
     private Set<Skill> requiredSkillSet;
 
     @SuppressWarnings("unused")
-    public Spot() {
-    }
+    public Spot() {}
 
     public Spot(Integer tenantId, String name, Set<Skill> requiredSkillSet) {
         super(tenantId);
