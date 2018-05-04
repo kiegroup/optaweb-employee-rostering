@@ -16,7 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.shared.skill;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -29,10 +28,10 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Skill.findAll",
-                query = "select s from Skill s" +
-                        " where s.tenantId = :tenantId" +
-                        " order by s.name"),
+               @NamedQuery(name = "Skill.findAll",
+                           query = "select s from Skill s" +
+                                   " where s.tenantId = :tenantId" +
+                                   " order by LOWER(s.name)"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Skill extends AbstractPersistable {
@@ -42,8 +41,7 @@ public class Skill extends AbstractPersistable {
     private String name;
 
     @SuppressWarnings("unused")
-    public Skill() {
-    }
+    public Skill() {}
 
     public Skill(Integer tenantId, String name) {
         super(tenantId);
