@@ -36,23 +36,23 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 @Entity
 @NamedQueries({
                @NamedQuery(name = "Shift.findAll",
-                           query = "select distinct sa from Shift sa" +
+                           query = "select sa from Shift sa" +
                                    " left join fetch sa.spot s" +
                                    " left join fetch sa.rotationEmployee re" +
                                    " left join fetch sa.employee e" +
                                    " where sa.tenantId = :tenantId" +
-                                   " order by sa.startDateTime, s.name, e.name"),
+                                   " order by sa.startDateTime, upper(s.name), upper(e.name)"),
                @NamedQuery(name = "Shift.filter",
-                           query = "select distinct sa from Shift sa" +
+                           query = "select sa from Shift sa" +
                                    " left join fetch sa.spot s" +
                                    " left join fetch sa.rotationEmployee re" +
                                    " left join fetch sa.employee e" +
                                    " where sa.tenantId = :tenantId" +
                                    " and sa.endDateTime >= :startDateTime" +
                                    " and sa.startDateTime < :endDateTime" +
-                                   " order by sa.startDateTime, s.name, e.name"),
+                                   " order by sa.startDateTime, upper(s.name), upper(e.name)"),
                @NamedQuery(name = "Shift.filterWithEmployees",
-                           query = "select distinct sa from Shift sa" +
+                           query = "select sa from Shift sa" +
                                    " left join fetch sa.spot s" +
                                    " left join fetch sa.rotationEmployee re" +
                                    " left join fetch sa.employee e" +
@@ -60,9 +60,9 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
                                    " and sa.employee IN :employeeSet" +
                                    " and sa.endDateTime >= :startDateTime" +
                                    " and sa.startDateTime < :endDateTime" +
-                                   " order by sa.startDateTime, s.name, e.name"),
+                                   " order by sa.startDateTime, upper(s.name), upper(e.name)"),
                @NamedQuery(name = "Shift.filterWithSpots",
-                           query = "select distinct sa from Shift sa" +
+                           query = "select sa from Shift sa" +
                                    " left join fetch sa.spot s" +
                                    " left join fetch sa.rotationEmployee re" +
                                    " left join fetch sa.employee e" +
@@ -70,7 +70,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
                                    " and sa.spot IN :spotSet" +
                                    " and sa.endDateTime >= :startDateTime" +
                                    " and sa.startDateTime < :endDateTime" +
-                                   " order by sa.startDateTime, s.name, e.name")
+                                   " order by sa.startDateTime, upper(s.name), upper(e.name)")
 })
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftFilter.class)
 public class Shift extends AbstractPersistable {

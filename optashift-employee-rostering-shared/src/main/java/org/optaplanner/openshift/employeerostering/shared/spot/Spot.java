@@ -35,9 +35,10 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Spot.findAll",
-                query = "select distinct s from Spot s left join fetch s.requiredSkillSet" +
+                query = "select s from Spot s" +
+                        " left join fetch s.requiredSkillSet" +
                         " where s.tenantId = :tenantId" +
-                        " order by s.name"),
+                        " order by upper(s.name)"),
 })
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}), @UniqueConstraint(columnNames = {
         "id"})})
@@ -47,7 +48,7 @@ public class Spot extends AbstractPersistable {
     @Size(min = 1, max = 120)
     private String name;
     @NotNull
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     private Set<Skill> requiredSkillSet;
 
     @SuppressWarnings("unused")
