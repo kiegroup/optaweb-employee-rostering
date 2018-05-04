@@ -11,8 +11,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.OneWayMap
 public class CommonUtils {
 
     public int stringWithIntCompareTo(String a, String b) {
-        Iterator<Integer> aIter = a.chars().iterator();
-        Iterator<Integer> bIter = b.chars().iterator();
+        Iterator<Integer> aIter = a.toLowerCase().chars().iterator();
+        Iterator<Integer> bIter = b.toLowerCase().chars().iterator();
 
         while (true) {
             if (!aIter.hasNext() && !bIter.hasNext()) {

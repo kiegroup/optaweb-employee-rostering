@@ -1,7 +1,6 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.employee;
 
 import java.util.Collections;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -23,7 +22,6 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInval
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.KiePager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.KieSearchBar;
-import org.optaplanner.openshift.employeerostering.gwtui.client.interfaces.Updatable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
@@ -106,10 +104,10 @@ public class EmployeeListPanel implements IsElement,
         }
         return promiseUtils.promise((res, rej) -> {
             EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
-                    .onSuccess(newEmployeeList -> {
-                        searchBar.setListToFilter(newEmployeeList);
-                        res.onInvoke(promiseUtils.resolve());
-                    }));
+                                                                                                                 .onSuccess(newEmployeeList -> {
+                                                                                                                     searchBar.setListToFilter(newEmployeeList);
+                                                                                                                     res.onInvoke(promiseUtils.resolve());
+                                                                                                                 }));
         });
     }
 
@@ -127,7 +125,7 @@ public class EmployeeListPanel implements IsElement,
 
     @EventHandler("name-header")
     public void spotNameHeaderClick(final @ForEvent("click") MouseEvent e) {
-        pager.sortBy((a, b) -> commonUtils.stringWithIntCompareTo(a.getName(), b.getName()));
+        pager.sortBy((a, b) -> a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
     }
 
     @EventHandler("skill-set-header")
