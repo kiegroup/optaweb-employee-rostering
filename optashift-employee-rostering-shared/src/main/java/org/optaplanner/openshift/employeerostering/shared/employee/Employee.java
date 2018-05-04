@@ -41,9 +41,10 @@ import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 @Entity
 @NamedQueries({
         @NamedQuery(name = "Employee.findAll",
-                query = "select distinct e from Employee e left join fetch e.skillProficiencySet s"
+                query = "select e from Employee e"
+                        + " left join fetch e.skillProficiencySet s"
                         + " where e.tenantId = :tenantId"
-                        + " order by e.name, s.name"),
+                        + " order by upper(e.name), upper(s.name)"),
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Employee extends AbstractPersistable {
@@ -53,7 +54,7 @@ public class Employee extends AbstractPersistable {
     private String name;
     //@JsonManagedReference
     @NotNull
-    @ManyToMany(fetch = FetchType.EAGER) // TODO Eager fetching bloats the EmployeeAvailability.findAll query
+    @ManyToMany
     private Set<Skill> skillProficiencySet;
 
     @SuppressWarnings("unused")

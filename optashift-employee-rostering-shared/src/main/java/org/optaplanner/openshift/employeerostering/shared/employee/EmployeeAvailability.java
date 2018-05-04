@@ -36,25 +36,25 @@ import org.optaplanner.openshift.employeerostering.shared.employee.view.Employee
 @Entity
 @NamedQueries({
                @NamedQuery(name = "EmployeeAvailability.findAll",
-                           query = "select distinct ea from EmployeeAvailability ea" +
+                           query = "select ea from EmployeeAvailability ea" +
                                    " left join fetch ea.employee e" +
                                    " where ea.tenantId = :tenantId" +
-                                   " order by e.name, ea.startDateTime"),
+                                   " order by upper(e.name), ea.startDateTime"),
                @NamedQuery(name = "EmployeeAvailability.filter",
-                           query = "select distinct ea from EmployeeAvailability ea" +
+                           query = "select ea from EmployeeAvailability ea" +
                                    " left join fetch ea.employee e" +
                                    " where ea.tenantId = :tenantId" +
                                    " and ea.endDateTime >= :startDateTime" +
                                    " and ea.startDateTime < :endDateTime" +
-                                   " order by e.name, ea.startDateTime"),
+                                   " order by upper(e.name), ea.startDateTime"),
                @NamedQuery(name = "EmployeeAvailability.filterWithEmployee",
-                           query = "select distinct ea from EmployeeAvailability ea" +
+                           query = "select ea from EmployeeAvailability ea" +
                                    " left join fetch ea.employee e" +
                                    " where ea.tenantId = :tenantId" +
                                    " and ea.employee IN :employeeSet" +
                                    " and ea.endDateTime >= :startDateTime" +
                                    " and ea.startDateTime < :endDateTime" +
-                                   " order by e.name, ea.startDateTime")
+                                   " order by upper(e.name), ea.startDateTime")
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "employee_id", "startDateTime", "endDateTime"}))
 public class EmployeeAvailability extends AbstractPersistable {

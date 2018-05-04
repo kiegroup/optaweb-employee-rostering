@@ -21,11 +21,11 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 @Entity
 @NamedQueries({
                @NamedQuery(name = "ShiftTemplate.findAll",
-                           query = "select distinct sa from ShiftTemplate sa" +
+                           query = "select sa from ShiftTemplate sa" +
                                    " left join fetch sa.spot s" +
                                    " left join fetch sa.rotationEmployee re" +
                                    " where sa.tenantId = :tenantId" +
-                                   " order by sa.startDayOffset, sa.startTime, s.name, re.name"),
+                                   " order by sa.startDayOffset, sa.startTime, upper(s.name), upper(re.name)"),
 })
 public class ShiftTemplate extends AbstractPersistable {
 
