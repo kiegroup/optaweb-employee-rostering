@@ -14,7 +14,13 @@ public class DynamicScale implements LinearScale<LocalDateTime> {
     public DynamicScale(LocalDateTime start, LocalDateTime end, Duration durationPerGridUnit) {
         this.startDateTime = start;
         this.endDateTime = end;
-        this.secondsPerGridUnit = durationPerGridUnit.getSeconds();
+        // TODO: Warn the user they are viewing too large a slice, or limit the slice size
+        this.secondsPerGridUnit = Math.max(getMinDurationForRange(start,end).getSeconds(), durationPerGridUnit.getSeconds());
+    }
+
+    private Duration getMinDurationForRange(LocalDateTime start, LocalDateTime end) {
+        // Chrome has a 1000 row limit (see https://github.com/w3c/csswg-drafts/issues/1009)
+        return Duration.between(start, end).dividedBy(1000);
     }
 
     @Override

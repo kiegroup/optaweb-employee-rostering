@@ -28,6 +28,7 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.common.Ev
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.EMPLOYEE_ROSTER_UPDATE;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_END;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_START;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.EMPLOYEE_ROSTER_INVALIDATE;
 
 @Singleton
 public class EmployeeRosterPageViewportBuilder {
@@ -67,6 +68,9 @@ public class EmployeeRosterPageViewportBuilder {
         eventManager.subscribeToEvent(SOLVE_END, (m) -> this.onSolveEnd());
         eventManager.subscribeToEvent(EMPLOYEE_ROSTER_PAGINATION, (pagination) -> {
             this.pagination = pagination;
+            buildEmployeeRosterViewport(viewport);
+        });
+        eventManager.subscribeToEvent(EMPLOYEE_ROSTER_INVALIDATE, (nil) -> {
             buildEmployeeRosterViewport(viewport);
         });
     }

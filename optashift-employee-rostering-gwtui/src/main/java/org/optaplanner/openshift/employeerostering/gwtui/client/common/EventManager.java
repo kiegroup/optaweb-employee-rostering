@@ -49,10 +49,12 @@ public class EventManager {
 
         // Spot Roster Events
         public static Event<SpotRosterView> SPOT_ROSTER_UPDATE = new Event<>("SpotRosterUpdate", SpotRosterView.class);
+        public static Event<Void> SPOT_ROSTER_INVALIDATE = new Event<>("SpotRosterInvalidate", Void.class);
         public static Event<Pagination> SPOT_ROSTER_PAGINATION = new Event<>("SpotRosterPagination", Pagination.class);
 
         // Employee Roster Events
         public static Event<EmployeeRosterView> EMPLOYEE_ROSTER_UPDATE = new Event<>("EmployeeRosterUpdate", EmployeeRosterView.class);
+        public static Event<Void> EMPLOYEE_ROSTER_INVALIDATE = new Event<>("EmployeeRosterInvalidate", Void.class);
         public static Event<Pagination> EMPLOYEE_ROSTER_PAGINATION = new Event<>("EmployeeRosterPagination", Pagination.class);
 
         // Rotation Events

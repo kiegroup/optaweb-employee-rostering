@@ -32,6 +32,14 @@ public abstract class RosterToolbar {
     @Inject
     @DataField("solve-button")
     private HTMLButtonElement solveButton;
+    
+    @Inject
+    @DataField("publish-button")
+    private HTMLButtonElement publishButton;
+    
+    @Inject
+    @DataField("refresh-button")
+    private HTMLButtonElement refreshButton;
 
     @Inject
     @DataField("terminate-early-button")
@@ -78,6 +86,8 @@ public abstract class RosterToolbar {
     private int timeRemaining;
 
     protected abstract Event<? extends AbstractRosterView> getViewRefreshEvent();
+    
+    protected abstract Event<Void> getViewInvalidateEvent();
 
     protected abstract Event<Pagination> getPageChangeEvent();
 
@@ -152,6 +162,21 @@ public abstract class RosterToolbar {
                                                           terminateSolvingTimer.cancel();
                                                           terminateSolving();
                                                       }));
+
+    }
+    
+    @EventHandler("publish-button")
+    public void onPublishButtonClick(@ForEvent("click") MouseEvent e) {
+        RosterRestServiceBuilder.publishAndProvision(tenantStore.getCurrentTenantId(),
+                                             FailureShownRestCallback.onSuccess(a -> {
+                                                 eventManager.fireEvent(getViewInvalidateEvent());
+                                             }));
+
+    }
+    
+    @EventHandler("refresh-button")
+    public void onRefreshButtonClick(@ForEvent("click") MouseEvent e) {
+         eventManager.fireEvent(getViewInvalidateEvent());
 
     }
 

@@ -26,6 +26,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_END;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_START;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SPOT_ROSTER_PAGINATION;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SPOT_ROSTER_INVALIDATE;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SPOT_ROSTER_UPDATE;
 
 @Singleton
@@ -63,6 +64,9 @@ public class SpotRosterPageViewportBuilder {
         eventManager.subscribeToEvent(SOLVE_END, (m) -> this.onSolveEnd());
         eventManager.subscribeToEvent(SPOT_ROSTER_PAGINATION, (pagination) -> {
             this.pagination = pagination;
+            buildSpotRosterViewport(viewport);
+        });
+        eventManager.subscribeToEvent(SPOT_ROSTER_INVALIDATE, (nil) -> {
             buildSpotRosterViewport(viewport);
         });
     }
