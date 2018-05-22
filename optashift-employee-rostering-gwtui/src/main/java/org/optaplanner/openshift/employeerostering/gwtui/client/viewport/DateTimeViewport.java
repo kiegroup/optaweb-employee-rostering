@@ -94,6 +94,7 @@ public abstract class DateTimeViewport<T, M> {
                 laneMap.put(laneId, lane);
                 laneContainer.appendChild(lane.getElement());
             } else {
+                laneMap.get(laneId).withScale(scale);
                 lanesToRemove.remove(laneId);
             }
         }
