@@ -93,11 +93,48 @@ To reproduce locally, add it explicitly (the `provision.sh` script already does 
 mvn clean package -P openshift
 ```
 
-=== IntelliJ IDEA 2017.3 (and above)
+=== IntelliJ IDEA Ultimate 2018.1
 
-. https://youtrack.jetbrains.com/issue/IDEA-171158[IntelliJ 2017.3 now supports the new GWT plugin]
-. `TODO: Test and document`
+To run SuperDevMode and debug both backend and client code from IDEA
+you need to create two separate run configurations.
 
+==== CodeServer run configuration
+
+. Create Maven configuration and set following parameters:
+  * Working directory: `/absolute/path/optashift-employee-rostering`
+  * Command line: `gwt:codeserver`
+. Make sure `launcherDir` is configured to point to
+  `optashift-employee-rostering-webapp/target/optashift-employee-rostering-webapp-${version}/`.
++
+The `launcherDir` property can be set in `pom.xml` or via system property.
+
+==== AppServer run configuration
+
+. Add local JBoss Server configuration.
+. Configure the *Application server* field to point to a local WildFly 11 installation.
+. Click *Fix* button at the bottom of the dialogue and select `optashift-employee-rostering-webbab:war exploded`.
+. Remove any steps that were automatically added to the *Before launch* phase.
+. Configure JavaScript debugger:
+  * Check *After launch* and select Chrome browser.
+  * Check *with JavaScript debugger*.
+  * Set start page to `http://localhost:8080/gwtui/gwtui.html`.
+  * Set both *On Update action* and *On frame deactivation* to *Update classes and resources*.
+
+==== Run SuperDevMode in IDEA
+
+. Do a clean build:
++
+```
+mvn clean install -DskipTests
+```
+. Run the CodeServer configuration in normal mode.
+. Run the AppServer configuration in debug mode.
+
+You get live update for backend code.
+You can see client code changes after refreshing the browser or *Rerunning* the JavaScript debugger.
+And you can debug both client and backend code in IDEA.
+
+If something goes wrong, do a clean build and click *Maven Projects > Reimport All Maven Projects*.
 
 === IntelliJ IDEA 2017.2 (and below) + CLI
 
