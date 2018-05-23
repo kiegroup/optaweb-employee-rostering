@@ -1,0 +1,7 @@
+<div>
+  <!-- Ideally by the year 9999 all browser support input type date so we don't need pattern -->
+  <!-- TODO: Load pattern from i18n (pattern is ignored by browser, so no way to set
+       date format on browsers that do support input type date) -->
+  <input class="form-control" data-field="date-picker" type="date"
+  pattern="(0[1-9]|1[0-9]|2[0-9]|3[01])/(0[1-9]|1[012])/[0-9]{4}" required></input>
+</div>

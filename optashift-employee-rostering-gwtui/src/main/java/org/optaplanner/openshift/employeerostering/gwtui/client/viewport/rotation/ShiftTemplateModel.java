@@ -59,11 +59,22 @@ public class ShiftTemplateModel implements HasGridObjects<LocalDateTime, Rotatio
     }
 
     public void refreshTwin(ShiftTemplateGridObject view) {
+        if (view != earilerTwin && view.getStartPositionInScaleUnits().isBefore(view.getLane().getScale().getStartInScaleUnits())) {
+            laterTwin = earilerTwin;
+            earilerTwin = view;
+        } 
+        else if (view != laterTwin && !view.getStartPositionInScaleUnits().isBefore(view.getLane().getScale().getStartInScaleUnits())) {
+            earilerTwin = laterTwin;
+            laterTwin = view;
+        }
+        
         if (view == earilerTwin) {
             laterTwin.updateStartDateTimeWithoutRefresh(view.getStartPositionInScaleUnits().plusDays(view.getDaysInRotation()));
             laterTwin.updateEndDateTimeWithoutRefresh(view.getEndPositionInScaleUnits().plusDays(view.getDaysInRotation()));
             laterTwin.reposition();
         } else {
+            shiftTemplateView.setDurationBetweenRotationStartAndTemplateStart(view.getTimeslot().getDurationBetweenReferenceAndStart());
+            shiftTemplateView.setShiftTemplateDuration(view.getTimeslot().getDurationOfTimeslot());
             earilerTwin.updateStartDateTimeWithoutRefresh(view.getStartPositionInScaleUnits().minusDays(view.getDaysInRotation()));
             earilerTwin.updateEndDateTimeWithoutRefresh(view.getEndPositionInScaleUnits().minusDays(view.getDaysInRotation()));
             earilerTwin.reposition();

@@ -32,7 +32,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
+import org.optaplanner.openshift.employeerostering.shared.tenant.RosterParametrization;
 
 @PlanningSolution
 public class Roster extends AbstractPersistable {
@@ -48,7 +48,7 @@ public class Roster extends AbstractPersistable {
     private List<EmployeeAvailability> employeeAvailabilityList;
 
     @ProblemFactProperty
-    private TenantConfiguration tenantConfiguration;
+    private RosterParametrization rosterParametrization;
     @ProblemFactProperty
     private RosterState rosterState;
 
@@ -62,13 +62,13 @@ public class Roster extends AbstractPersistable {
     public Roster() {}
 
     public Roster(Long id, Integer tenantId, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
-                  List<EmployeeAvailability> employeeAvailabilityList, TenantConfiguration tenantConfiguration, RosterState rosterState, List<Shift> shiftList) {
+                  List<EmployeeAvailability> employeeAvailabilityList, RosterParametrization rosterParametrization, RosterState rosterState, List<Shift> shiftList) {
         super(id, tenantId);
         this.skillList = skillList;
         this.spotList = spotList;
         this.employeeList = employeeList;
         this.employeeAvailabilityList = employeeAvailabilityList;
-        this.tenantConfiguration = tenantConfiguration;
+        this.rosterParametrization = rosterParametrization;
         this.rosterState = rosterState;
         this.shiftList = shiftList;
     }
@@ -109,12 +109,12 @@ public class Roster extends AbstractPersistable {
         this.employeeAvailabilityList = employeeAvailabilityList;
     }
 
-    public TenantConfiguration getTenantConfiguration() {
-        return tenantConfiguration;
+    public RosterParametrization getRosterParametrization() {
+        return rosterParametrization;
     }
 
-    public void setTenantConfiguration(TenantConfiguration tenantConfiguration) {
-        this.tenantConfiguration = tenantConfiguration;
+    public void setRosterParametrization(RosterParametrization rosterParametrization) {
+        this.rosterParametrization = rosterParametrization;
     }
 
     public RosterState getRosterState() {

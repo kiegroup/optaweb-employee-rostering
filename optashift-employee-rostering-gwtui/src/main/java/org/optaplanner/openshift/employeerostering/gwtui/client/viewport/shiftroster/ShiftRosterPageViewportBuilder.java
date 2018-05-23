@@ -84,7 +84,7 @@ public class ShiftRosterPageViewportBuilder {
     public RepeatingCommand getWorkerCommand(final ShiftRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, ShiftRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         currentWorkerStartTime = timeWhenInvoked;
 
-        if (view.getSpotList().isEmpty()) {
+        if (view.getSpotList().isEmpty() && !pagination.isOnFirstPage()) {
             eventManager.fireEvent(SHIFT_ROSTER_PAGINATION, pagination.previousPage());
             return () -> false;
         }

@@ -29,22 +29,22 @@ import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestService;
 
 public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements EmployeeRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
     @Inject
-    private TenantRestService tenantRestService;
+    private RosterRestService rosterRestService;
 
     @Override
     @Transactional
     public List<Employee> getEmployeeList(Integer tenantId) {
         return entityManager.createNamedQuery("Employee.findAll", Employee.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList();
+                            .setParameter("tenantId", tenantId)
+                            .getResultList();
     }
 
     @Override
@@ -97,7 +97,7 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
     public EmployeeAvailabilityView addEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability employeeAvailability = convertFromView(tenantId, employeeAvailabilityView);
         entityManager.persist(employeeAvailability);
-        return new EmployeeAvailabilityView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), employeeAvailability);
+        return new EmployeeAvailabilityView(rosterRestService.getRosterState(tenantId).getTimeZone(), employeeAvailability);
     }
 
     @Override
@@ -105,19 +105,18 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
     public EmployeeAvailabilityView updateEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability employeeAvailability = convertFromView(tenantId, employeeAvailabilityView);
         employeeAvailability = entityManager.merge(employeeAvailability);
-        
+
         // Flush to increase version number before we duplicate it to EmployeeAvailableView
         entityManager.flush();
-        return new EmployeeAvailabilityView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), employeeAvailability);
+        return new EmployeeAvailabilityView(rosterRestService.getRosterState(tenantId).getTimeZone(), employeeAvailability);
     }
-    
+
     private EmployeeAvailability convertFromView(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
         validateTenantIdParameter(tenantId, employeeAvailabilityView);
         Employee employee = entityManager.find(Employee.class, employeeAvailabilityView.getEmployeeId());
         validateTenantIdParameter(tenantId, employee);
-        EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantRestService
-                .getTenantConfiguration(tenantId).getTimeZone(), employeeAvailabilityView,
-                employee);
+        EmployeeAvailability employeeAvailability = new EmployeeAvailability(rosterRestService.getRosterState(tenantId).getTimeZone(), employeeAvailabilityView,
+                                                                             employee);
         employeeAvailability.setState(employeeAvailabilityView.getState());
         return employeeAvailability;
     }
