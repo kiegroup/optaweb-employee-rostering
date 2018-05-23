@@ -16,15 +16,18 @@
 
 package org.optaplanner.openshift.employeerostering.server.tenant;
 
+import java.time.ZoneId;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
+import org.optaplanner.openshift.employeerostering.shared.tenant.RosterParametrization;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestService;
 
 public class TenantRestServiceImpl extends AbstractRestServiceImpl implements TenantRestService {
@@ -36,7 +39,7 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
     @Transactional
     public List<Tenant> getTenantList() {
         return entityManager.createNamedQuery("Tenant.findAll", Tenant.class)
-                .getResultList();
+                            .getResultList();
     }
 
     @Override
@@ -48,22 +51,34 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
 
     @Override
     @Transactional
-    public Tenant addTenant(Tenant tenant) {
-        entityManager.persist(tenant);
-        return tenant;
+    public Tenant addTenant(RosterState intialRosterState) {
+        entityManager.persist(intialRosterState.getTenant());
+        intialRosterState.setTenantId(intialRosterState.getTenant().getId());
+        RosterParametrization rosterParametriation = new RosterParametrization();
+        rosterParametriation.setTenantId(intialRosterState.getTenant().getId());
+        entityManager.persist(intialRosterState);
+        entityManager.persist(rosterParametriation);
+        return intialRosterState.getTenant();
     }
 
     @Override
     @Transactional
-    public TenantConfiguration updateTenantConfiguration(TenantConfiguration tenantConfiguration) {
-        return entityManager.merge(tenantConfiguration);
+    public RosterParametrization updateRosterParametrization(RosterParametrization rosterParametrization) {
+        return entityManager.merge(rosterParametrization);
     }
 
     @Override
-    public TenantConfiguration getTenantConfiguration(Integer tenantId) {
-        return entityManager.createNamedQuery("TenantConfiguration.find", TenantConfiguration.class)
-                .setParameter("tenantId", tenantId)
-                .getSingleResult();
+    public RosterParametrization getRosterParametrization(Integer tenantId) {
+        return entityManager.createNamedQuery("RosterParametrization.find", RosterParametrization.class)
+                            .setParameter("tenantId", tenantId)
+                            .getSingleResult();
+    }
+
+    @Override
+    public List<ZoneId> getSupportedTimezones() {
+        return ZoneId.getAvailableZoneIds().stream()
+                     .sorted().map(zoneId -> ZoneId.of(zoneId))
+                     .collect(Collectors.toList());
     }
 
 }

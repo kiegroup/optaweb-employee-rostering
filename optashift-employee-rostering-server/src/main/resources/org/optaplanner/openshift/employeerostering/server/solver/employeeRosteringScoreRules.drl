@@ -27,7 +27,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
+import org.optaplanner.openshift.employeerostering.shared.tenant.RosterParametrization;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 
 global HardMediumSoftLongScoreHolder scoreHolder;
@@ -107,7 +107,7 @@ end
 
 rule "Undesired time slot for an employee"
     when
-    	$tenantConfiguration : TenantConfiguration(undesiredTimeSlotWeight != 0)
+    	$rosterParametrization : RosterParametrization(undesiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNDESIRED,
                 $e : employee,
@@ -118,12 +118,12 @@ rule "Undesired time slot for an employee"
                 GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -$tenantConfiguration.getUndesiredTimeSlotWeight());
+        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getUndesiredTimeSlotWeight());
 end
 
 rule "Desired time slot for an employee"
     when
-        $tenantConfiguration : TenantConfiguration(desiredTimeSlotWeight != 0)
+        $rosterParametrization : RosterParametrization(desiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.DESIRED,
                 $e : employee,
@@ -134,14 +134,14 @@ rule "Desired time slot for an employee"
                 GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, +$tenantConfiguration.getDesiredTimeSlotWeight());
+        scoreHolder.addSoftConstraintMatch(kcontext, +$rosterParametrization.getDesiredTimeSlotWeight());
 end
 
 rule "Employee is not rotation employee"
     when
-    	$tenantConfiguration : TenantConfiguration(rotationEmployeeMatchWeight != 0)
+    	$rosterParametrization : RosterParametrization(rotationEmployeeMatchWeight != 0)
         Shift(  
                 rotationEmployee != null && employee != rotationEmployee)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -$tenantConfiguration.getRotationEmployeeMatchWeight());
+        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getRotationEmployeeMatchWeight());
 end

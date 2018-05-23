@@ -12,6 +12,7 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
@@ -21,6 +22,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.La
 import org.optaplanner.openshift.employeerostering.shared.rotation.view.RotationView;
 import org.optaplanner.openshift.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
+
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.ROTATION_INVALIDATE;
 
 @Singleton
 public class RotationPageViewportBuilder {
@@ -37,6 +40,8 @@ public class RotationPageViewportBuilder {
     @Inject
     private ManagedInstance<ShiftTemplateModel> shiftTemplateModelInstances;
     
+    @Inject
+    private EventManager eventManager;
     
     @Inject
     private LoadingSpinner loadingSpinner;
@@ -49,6 +54,7 @@ public class RotationPageViewportBuilder {
 
     @PostConstruct
     private void init() {
+        eventManager.subscribeToEvent(ROTATION_INVALIDATE, e -> buildRotationViewport(viewport));
     }
 
     public RotationPageViewportBuilder withViewport(RotationPageViewport viewport) {

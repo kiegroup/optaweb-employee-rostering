@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.MouseEvent;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
@@ -12,6 +13,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.Load
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.NotificationSystem;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Page;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.NewTenantForm;
 import org.optaplanner.openshift.employeerostering.shared.admin.AdminRestServiceBuilder;
 
 @Templated
@@ -19,13 +21,20 @@ public class AdminPage implements Page {
 
     @Inject
     @DataField("reset-application-button")
-    HTMLButtonElement resetApplicationButton;
+    private HTMLButtonElement resetApplicationButton;
+    
+    @Inject
+    @DataField("add-tenant-button")
+    private HTMLButtonElement addTenantButton;
     
     @Inject
     private LoadingSpinner loadingSpinner;
     
     @Inject
     private NotificationSystem notificationSystem;
+    
+    @Inject
+    private ManagedInstance<NewTenantForm> newTenantForm;
 
     @EventHandler("reset-application-button")
     private void resetApplication(@ForEvent("click") MouseEvent e) {
@@ -34,5 +43,11 @@ public class AdminPage implements Page {
             loadingSpinner.hideFor("reset-application");
             notificationSystem.notify("Application was reset successfully", "Application was reset successfully, please refresh the page.");
         }));
+    }
+    
+
+    @EventHandler("add-tenant-button")
+    private void addTenant(@ForEvent("click") MouseEvent e) {
+        newTenantForm.get();
     }
 }
