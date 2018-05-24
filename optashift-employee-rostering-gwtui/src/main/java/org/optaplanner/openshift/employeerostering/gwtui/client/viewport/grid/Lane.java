@@ -15,14 +15,17 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
+import elemental2.promise.Promise;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 
 @Templated
 public class Lane<T, M> implements IsElement {
@@ -52,6 +55,7 @@ public class Lane<T, M> implements IsElement {
     private Set<HasGridObjects<T, M>> notUpdatedGridObjects;
 
     private boolean mouseMoved = false;
+    private boolean isLocked = false;
 
     @PostConstruct
     private void init() {

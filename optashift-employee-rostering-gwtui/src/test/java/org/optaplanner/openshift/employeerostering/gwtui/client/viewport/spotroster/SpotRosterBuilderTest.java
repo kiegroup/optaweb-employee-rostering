@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -24,6 +25,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
@@ -57,14 +59,25 @@ public class SpotRosterBuilderTest extends AbstractViewportTest {
 
     @Mock
     private EventManager eventManager;
+    
+    @Mock
+    private Lockable<Map<Long, Lane<LocalDateTime, SpotRosterMetadata>>> lockableLaneMap;
+    
+    private Map<Long, Lane<LocalDateTime, SpotRosterMetadata>> laneMap;
 
     private SpotRosterView spotRosterView;
-    private Map<Long, Lane<LocalDateTime, SpotRosterMetadata>> laneMap;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-
+        Mockito.when(lockableLaneMap.acquireIfPossible(Mockito.any())).thenAnswer( new Answer<Boolean>() {
+            @Override
+            public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                Consumer arg = invocation.getArgument(0);
+                arg.accept(laneMap);
+                return true;
+                }
+            });
         Mockito.when(tenantStore.getCurrentTenantId()).thenReturn(0);
         Mockito.when(commonUtils.flatten(Mockito.any())).thenCallRealMethod();
         Mockito.when(promiseUtils.promise(Mockito.any())).thenAnswer(new Answer<Promise>() {
@@ -81,7 +94,7 @@ public class SpotRosterBuilderTest extends AbstractViewportTest {
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
                 SpotRosterView spv = invocation.getArgument(0);
-                RepeatingCommand rc = builder.getWorkerCommand(spv, laneMap, 0);
+                RepeatingCommand rc = builder.getWorkerCommand(spv, lockableLaneMap, 0);
                 while (rc.execute()) {
                     // Wait for worker to finish
                 }
@@ -99,6 +112,7 @@ public class SpotRosterBuilderTest extends AbstractViewportTest {
                 });
             }
         }).when(builder).getSpotRosterView();
+         
     }
 
     @Test
@@ -135,7 +149,7 @@ public class SpotRosterBuilderTest extends AbstractViewportTest {
         spotIdToShiftViewMap.put(spotA.getId(), Collections.singletonList(spotAShiftView));
         spotIdToShiftViewMap.put(spotB.getId(), Collections.singletonList(spotBShiftView));
         spotRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewMap);
-
+        
         laneMap = new HashMap<>();
         Lane<LocalDateTime, SpotRosterMetadata> laneAMock = Mockito.mock(Lane.class);
         Lane<LocalDateTime, SpotRosterMetadata> laneBMock = Mockito.mock(Lane.class);

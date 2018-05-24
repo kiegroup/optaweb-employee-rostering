@@ -14,6 +14,7 @@ import elemental2.promise.Promise;
 import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
@@ -57,7 +58,7 @@ public class RotationPageViewportBuilder {
         return this;
     }
 
-    public RepeatingCommand getWorkerCommand(final RotationView view, final Map<Long, Lane<LocalDateTime, RotationMetadata>> laneMap, final long timeWhenInvoked) {
+    public RepeatingCommand getWorkerCommand(final RotationView view, final Lockable<Map<Long, Lane<LocalDateTime, RotationMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         currentWorkerStartTime = timeWhenInvoked;
         final Iterator<ShiftTemplateView> shiftTemplateViewsToAdd = commonUtils.flatten(view.getSpotIdToShiftTemplateViewListMap().values()).iterator();
         setUpdatingRoster(true);
@@ -71,25 +72,27 @@ public class RotationPageViewportBuilder {
                 if (timeWhenStarted != getCurrentWorkerStartTime()) {
                     return false;
                 }
-                int workDone = 0;
-                while (shiftTemplateViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
-                    ShiftTemplateView toAdd = shiftTemplateViewsToAdd.next();
-                    laneMap.get(toAdd.getSpotId()).addOrUpdateGridObject(
-                            ShiftTemplateModel.class, toAdd.getId(), () -> {
-                                ShiftTemplateModel out = shiftTemplateModelInstances.get();
-                                out.withShiftTemplateView(toAdd);
-                                return out;
-                            }, (s) -> {
-                                s.withShiftTemplateView(toAdd);
-                                return null;
-                            });
-                    workDone++;
-                }
-
-                if (!shiftTemplateViewsToAdd.hasNext()) {
-                    laneMap.forEach((l, lane) -> lane.endModifying());
-                    setUpdatingRoster(false);
-                }
+                lockableLaneMap.acquireIfPossible(laneMap -> {
+                    int workDone = 0;
+                    while (shiftTemplateViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
+                        ShiftTemplateView toAdd = shiftTemplateViewsToAdd.next();
+                        laneMap.get(toAdd.getSpotId()).addOrUpdateGridObject(
+                                ShiftTemplateModel.class, toAdd.getId(), () -> {
+                                    ShiftTemplateModel out = shiftTemplateModelInstances.get();
+                                    out.withShiftTemplateView(toAdd);
+                                    return out;
+                                }, (s) -> {
+                                    s.withShiftTemplateView(toAdd);
+                                    return null;
+                                });
+                        workDone++;
+                    }
+    
+                    if (!shiftTemplateViewsToAdd.hasNext()) {
+                        laneMap.forEach((l, lane) -> lane.endModifying());
+                        setUpdatingRoster(false);
+                    }
+                });
                 return shiftTemplateViewsToAdd.hasNext();
             }
         };
