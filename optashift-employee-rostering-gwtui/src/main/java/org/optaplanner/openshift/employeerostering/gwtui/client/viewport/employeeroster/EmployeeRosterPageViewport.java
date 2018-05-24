@@ -20,6 +20,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.DateTimeViewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.HasGridObjects;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.Lane;
@@ -60,10 +61,11 @@ public class EmployeeRosterPageViewport extends DateTimeViewport<EmployeeRosterV
 
     @Override
     protected LinearScale<LocalDateTime> getScaleFor(EmployeeRosterView view) {
-        return new DynamicScale(LocalDateTime.of(view.getStartDate(),
-                                                 LocalTime.of(0, 0, 0)),
-                                LocalDateTime.of(view.getEndDate(),
-                                                 LocalTime.of(0, 0, 0)), Duration.ofHours(1));
+        LocalDateTime endDateTime = LocalDateTime.of(view.getEndDate(),
+                                                     LocalTime.of(0, 0, 0));
+        LocalDateTime startDateTime = view.getEndDate().minusDays(20).isAfter(view.getStartDate())? endDateTime.minusDays(20) : LocalDateTime.of(view.getStartDate(),
+                                                                                                                                                 LocalTime.of(0, 0, 0));
+        return new DynamicScale(startDateTime, endDateTime, Duration.ofHours(1));
     }
 
     @Override
@@ -72,8 +74,8 @@ public class EmployeeRosterPageViewport extends DateTimeViewport<EmployeeRosterV
     }
 
     @Override
-    protected RepeatingCommand getViewportBuilderCommand(EmployeeRosterView view, Map<Long, Lane<LocalDateTime, EmployeeRosterMetadata>> laneMap) {
-        return viewportBuilder.getWorkerCommand(view, laneMap, System.currentTimeMillis());
+    protected RepeatingCommand getViewportBuilderCommand(EmployeeRosterView view, Lockable<Map<Long, Lane<LocalDateTime, EmployeeRosterMetadata>>> lockableLaneMap) {
+        return viewportBuilder.getWorkerCommand(view, lockableLaneMap, System.currentTimeMillis());
     }
 
     @Override

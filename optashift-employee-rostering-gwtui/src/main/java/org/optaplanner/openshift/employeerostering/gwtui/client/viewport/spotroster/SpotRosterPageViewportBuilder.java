@@ -14,6 +14,7 @@ import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
@@ -76,7 +77,7 @@ public class SpotRosterPageViewportBuilder {
         return this;
     }
 
-    public RepeatingCommand getWorkerCommand(final SpotRosterView view, final Map<Long, Lane<LocalDateTime, SpotRosterMetadata>> laneMap, final long timeWhenInvoked) {
+    public RepeatingCommand getWorkerCommand(final SpotRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, SpotRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         if (view.getSpotList().isEmpty()) {
             eventManager.fireEvent(SPOT_ROSTER_PAGINATION, pagination.previousPage());
             return () -> false;
@@ -97,25 +98,27 @@ public class SpotRosterPageViewportBuilder {
                 if (timeWhenStarted != getCurrentWorkerStartTime()) {
                     return false;
                 }
-                int workDone = 0;
-                while (shiftViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
-                    ShiftView toAdd = shiftViewsToAdd.next();
-                    laneMap.get(toAdd.getSpotId()).addOrUpdateGridObject(
-                                                                         ShiftGridObject.class, toAdd.getId(), () -> {
-                                                                             ShiftGridObject out = shiftGridObjectInstances.get();
-                                                                             out.withShiftView(toAdd);
-                                                                             return out;
-                                                                         }, (s) -> {
-                                                                             s.withShiftView(toAdd);
-                                                                             return null;
-                                                                         });
-                    workDone++;
-                }
-
-                if (!shiftViewsToAdd.hasNext()) {
-                    laneMap.forEach((l, lane) -> lane.endModifying());
-                    setUpdatingRoster(false);
-                }
+                lockableLaneMap.acquireIfPossible(laneMap -> {
+                    int workDone = 0;
+                    while (shiftViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
+                        ShiftView toAdd = shiftViewsToAdd.next();
+                        laneMap.get(toAdd.getSpotId()).addOrUpdateGridObject(
+                                                                             ShiftGridObject.class, toAdd.getId(), () -> {
+                                                                                 ShiftGridObject out = shiftGridObjectInstances.get();
+                                                                                 out.withShiftView(toAdd);
+                                                                                 return out;
+                                                                             }, (s) -> {
+                                                                                 s.withShiftView(toAdd);
+                                                                                 return null;
+                                                                             });
+                        workDone++;
+                    }
+    
+                    if (!shiftViewsToAdd.hasNext()) {
+                        laneMap.forEach((l, lane) -> lane.endModifying());
+                        setUpdatingRoster(false);
+                    }
+                });
                 return shiftViewsToAdd.hasNext();
             }
         };

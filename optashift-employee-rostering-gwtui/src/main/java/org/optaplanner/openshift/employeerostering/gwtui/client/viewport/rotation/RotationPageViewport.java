@@ -22,7 +22,9 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.DateTimeViewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.HasGridObjects;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.Lane;
@@ -49,6 +51,8 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     private TenantStore tenantStore;
     @Inject
     private EventManager eventManager;
+    @Inject
+    private PromiseUtils promiseUtils;
 
     private Map<Long, Spot> spotIdToSpotMap;
     private Map<Long, Employee> employeeIdToEmployeeMap;
@@ -80,8 +84,8 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     }
 
     @Override
-    protected RepeatingCommand getViewportBuilderCommand(RotationView view, Map<Long, Lane<LocalDateTime, RotationMetadata>> laneMap) {
-        return viewportBuilder.getWorkerCommand(view, laneMap, System.currentTimeMillis());
+    protected RepeatingCommand getViewportBuilderCommand(RotationView view, Lockable<Map<Long, Lane<LocalDateTime, RotationMetadata>>> lockableLaneMap) {
+        return viewportBuilder.getWorkerCommand(view, lockableLaneMap, System.currentTimeMillis());
     }
 
     @Override
@@ -126,23 +130,25 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     }
 
     private void saveRotation() {
-        Map<Long, Lane<LocalDateTime, RotationMetadata>> laneMap = getLaneMap();
-        Map<Long, List<ShiftTemplateView>> newSpotIdToShiftTemplateViewListMap = new HashMap<>();
+        getLockableLaneMap().acquire().then(laneMap -> {
+            Map<Long, List<ShiftTemplateView>> newSpotIdToShiftTemplateViewListMap = new HashMap<>();
 
-        for (Long spotId : laneMap.keySet()) {
-            Lane<LocalDateTime, RotationMetadata> lane = laneMap.get(spotId);
-            Collection<ShiftTemplateModel> shiftTemplateMap = lane.getGridObjects(ShiftTemplateModel.class);
-            List<ShiftTemplateView> shiftTemplateList = new ArrayList<>();
-            shiftTemplateMap.forEach((template) -> shiftTemplateList.add(template.getShiftTemplateView()));
-            newSpotIdToShiftTemplateViewListMap.put(spotId, shiftTemplateList);
-        }
-        RotationView rotationView = new RotationView();
-        rotationView.setTenantId(tenantStore.getCurrentTenantId());
-        rotationView.setSpotIdToShiftTemplateViewListMap(newSpotIdToShiftTemplateViewListMap);
-        ShiftRestServiceBuilder.updateRotation(tenantStore.getCurrentTenantId(), rotationView,
-                                               FailureShownRestCallback.onSuccess(e -> {
-                                                   viewportBuilder.buildRotationViewport(this);
-                                               }));
+            for (Long spotId : laneMap.keySet()) {
+                Lane<LocalDateTime, RotationMetadata> lane = laneMap.get(spotId);
+                Collection<ShiftTemplateModel> shiftTemplateMap = lane.getGridObjects(ShiftTemplateModel.class);
+                List<ShiftTemplateView> shiftTemplateList = new ArrayList<>();
+                shiftTemplateMap.forEach((template) -> shiftTemplateList.add(template.getShiftTemplateView()));
+                newSpotIdToShiftTemplateViewListMap.put(spotId, shiftTemplateList);
+            }
+            RotationView rotationView = new RotationView();
+            rotationView.setTenantId(tenantStore.getCurrentTenantId());
+            rotationView.setSpotIdToShiftTemplateViewListMap(newSpotIdToShiftTemplateViewListMap);
+            ShiftRestServiceBuilder.updateRotation(tenantStore.getCurrentTenantId(), rotationView,
+                                                   FailureShownRestCallback.onSuccess(e -> {
+                                                       viewportBuilder.buildRotationViewport(this);
+                                                   }));
+            return promiseUtils.resolve();
+        });  
     }
 
 }

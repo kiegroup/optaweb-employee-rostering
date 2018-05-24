@@ -14,8 +14,16 @@ public class DynamicScale implements LinearScale<LocalDateTime> {
     public DynamicScale(LocalDateTime start, LocalDateTime end, Duration durationPerGridUnit) {
         this.startDateTime = start;
         this.endDateTime = end;
-        // TODO: Warn the user they are viewing too large a slice, or limit the slice size
-        this.secondsPerGridUnit = Math.max(getMinDurationForRange(start,end).getSeconds(), durationPerGridUnit.getSeconds());
+        Duration minDuration = getMinDurationForRange(start,end);
+        this.secondsPerGridUnit = durationPerGridUnit.getSeconds();
+        
+        if (secondsPerGridUnit < minDuration.getSeconds()) {
+            throw new IllegalArgumentException("durationPerGridUnit (" + 
+                                               durationPerGridUnit + ") is to small for timeframe between start (" + 
+                                               start + ") and end (" +
+                                               end + "). The minimum duration allowed for this timeframe is (" + 
+                                               minDuration + ") since the grid is limited to 1000 grid units.");
+        }
     }
 
     private Duration getMinDurationForRange(LocalDateTime start, LocalDateTime end) {

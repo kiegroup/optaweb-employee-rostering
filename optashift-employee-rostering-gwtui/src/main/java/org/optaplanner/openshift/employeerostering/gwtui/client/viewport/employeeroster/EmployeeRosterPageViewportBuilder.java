@@ -14,6 +14,7 @@ import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
@@ -80,7 +81,7 @@ public class EmployeeRosterPageViewportBuilder {
         return this;
     }
 
-    public RepeatingCommand getWorkerCommand(final EmployeeRosterView view, final Map<Long, Lane<LocalDateTime, EmployeeRosterMetadata>> laneMap, final long timeWhenInvoked) {
+    public RepeatingCommand getWorkerCommand(final EmployeeRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, EmployeeRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         if (view.getEmployeeList().isEmpty()) {
             eventManager.fireEvent(EMPLOYEE_ROSTER_PAGINATION, pagination.previousPage());
             return () -> false;
@@ -103,39 +104,41 @@ public class EmployeeRosterPageViewportBuilder {
                 if (timeWhenStarted != getCurrentWorkerStartTime()) {
                     return false;
                 }
-                int workDone = 0;
-                while (shiftViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
-                    ShiftView toAdd = shiftViewsToAdd.next();
-                    laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
-                            ShiftGridObject.class, toAdd.getId(), () -> {
-                                ShiftGridObject out = shiftGridObjectInstances.get();
-                                out.withShiftView(toAdd);
-                                return out;
-                            }, (s) -> {
-                                s.withShiftView(toAdd);
-                                return null;
-                            });
-                    workDone++;
-                }
-
-                while (employeeAvaliabilitiesViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
-                    EmployeeAvailabilityView toAdd = employeeAvaliabilitiesViewsToAdd.next();
-                    laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
-                            EmployeeAvailabilityGridObject.class, toAdd.getId(), () -> {
-                                EmployeeAvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get();
-                                out.withEmployeeAvailabilityView(toAdd);
-                                return out;
-                            }, (a) -> {
-                                a.withEmployeeAvailabilityView(toAdd);
-                                return null;
-                            });
-                    workDone++;
-                }
-
-                if (!shiftViewsToAdd.hasNext() && !employeeAvaliabilitiesViewsToAdd.hasNext()) {
-                    laneMap.forEach((l, lane) -> lane.endModifying());
-                    setUpdatingRoster(false);
-                }
+                lockableLaneMap.acquireIfPossible(laneMap -> {
+                    int workDone = 0;
+                    while (shiftViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
+                        ShiftView toAdd = shiftViewsToAdd.next();
+                        laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
+                                ShiftGridObject.class, toAdd.getId(), () -> {
+                                    ShiftGridObject out = shiftGridObjectInstances.get();
+                                    out.withShiftView(toAdd);
+                                    return out;
+                                }, (s) -> {
+                                    s.withShiftView(toAdd);
+                                    return null;
+                                });
+                        workDone++;
+                    }
+    
+                    while (employeeAvaliabilitiesViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
+                        EmployeeAvailabilityView toAdd = employeeAvaliabilitiesViewsToAdd.next();
+                        laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
+                                EmployeeAvailabilityGridObject.class, toAdd.getId(), () -> {
+                                    EmployeeAvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get();
+                                    out.withEmployeeAvailabilityView(toAdd);
+                                    return out;
+                                }, (a) -> {
+                                    a.withEmployeeAvailabilityView(toAdd);
+                                    return null;
+                                });
+                        workDone++;
+                    }
+    
+                    if (!shiftViewsToAdd.hasNext() && !employeeAvaliabilitiesViewsToAdd.hasNext()) {
+                        laneMap.forEach((l, lane) -> lane.endModifying());
+                        setUpdatingRoster(false);
+                    }
+                });
                 return shiftViewsToAdd.hasNext();
             }
         };

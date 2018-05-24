@@ -13,10 +13,30 @@ public class DynamicScaleTest {
     private static final Double ACCEPTED_ERROR = Double.MIN_VALUE;
 
     @Test
-    public void test() {
+    public void testValidScale() {
         testScale(LocalDateTime.of(LocalDate.of(2005, 4, 4), LocalTime.MIDNIGHT), Duration.ofDays(14), Duration.ofHours(4));
-        testScale(LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.MIDNIGHT), Duration.ofDays(7), Duration.ofHours(6));
-        testScale(LocalDateTime.of(LocalDate.of(2002, 1, 2), LocalTime.MIDNIGHT), Duration.ofDays(21), Duration.ofMinutes(30));
+        testScale(LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.MIDNIGHT), Duration.ofDays(7), Duration.ofHours(6));  
+    }
+    
+    @Test
+    public void testInvalidScale() {
+        LocalDateTime startDateTime = LocalDateTime.of(LocalDate.of(2005, 4, 4), LocalTime.MIDNIGHT);
+        LocalDateTime endDateTime = startDateTime.plusDays(21);
+        Duration gridPixelLength = Duration.ofMinutes(30);
+        
+        try { 
+            // 48 grid units per day, 48 * 21 = 1008, which is greater than 1000 (CSS grid limit)
+            final DynamicScale scale = new DynamicScale(startDateTime, endDateTime, gridPixelLength);
+            Assert.fail("scale is invalid; an IllegalArgumentException should have been thrown.");
+        }
+        catch (IllegalArgumentException e) {
+            Assert.assertTrue(e.getMessage().contains(startDateTime.toString()));
+            Assert.assertTrue(e.getMessage().contains(endDateTime.toString()));
+            Assert.assertTrue(e.getMessage().contains(gridPixelLength.toString()));
+        }
+        catch (Throwable e) {
+            Assert.fail("Expected an IllegalArgumentException, but got (" + e + ").");
+        }
     }
 
     private void testScale(LocalDateTime start, Duration scaleLength, Duration gridPixelLength) {
