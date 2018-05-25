@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.employeeroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.availabilityroster;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -32,16 +32,16 @@ import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvail
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.AvailabilityRosterView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 @Templated
-public class EmployeeRosterPageViewport extends DateTimeViewport<EmployeeRosterView, EmployeeRosterMetadata> implements IsElement {
+public class AvailabilityRosterPageViewport extends DateTimeViewport<AvailabilityRosterView, AvailabilityRosterMetadata> implements IsElement {
 
     @Inject
-    private EmployeeRosterPageViewportBuilder viewportBuilder;
+    private AvailabilityRosterPageViewportBuilder viewportBuilder;
     @Inject
-    private ManagedInstance<EmployeeAvailabilityGridObject> employeeAvailabilityGridObjectInstances;
+    private ManagedInstance<AvailabilityGridObject> employeeAvailabilityGridObjectInstances;
 
     private RosterState rosterState;
     private Map<Long, Spot> spotIdToSpotMap;
@@ -53,14 +53,14 @@ public class EmployeeRosterPageViewport extends DateTimeViewport<EmployeeRosterV
     }
 
     @Override
-    protected void withView(EmployeeRosterView view) {
+    protected void withView(AvailabilityRosterView view) {
         rosterState = view.getRosterState();
         spotIdToSpotMap = super.getIdMapFor(view.getSpotList(), (s) -> s.getId());
         employeeIdToEmployeeMap = super.getIdMapFor(view.getEmployeeList(), (e) -> e.getId());
     }
 
     @Override
-    protected LinearScale<LocalDateTime> getScaleFor(EmployeeRosterView view) {
+    protected LinearScale<LocalDateTime> getScaleFor(AvailabilityRosterView view) {
         LocalDateTime endDateTime = LocalDateTime.of(view.getEndDate(),
                                                      LocalTime.of(0, 0, 0));
         LocalDateTime startDateTime = view.getEndDate().minusDays(20).isAfter(view.getStartDate())? endDateTime.minusDays(20) : LocalDateTime.of(view.getStartDate(),
@@ -69,17 +69,17 @@ public class EmployeeRosterPageViewport extends DateTimeViewport<EmployeeRosterV
     }
 
     @Override
-    protected Map<Long, String> getLaneTitlesFor(EmployeeRosterView view) {
+    protected Map<Long, String> getLaneTitlesFor(AvailabilityRosterView view) {
         return view.getEmployeeList().stream().collect(Collectors.toMap((s) -> s.getId(), (s) -> s.getName()));
     }
 
     @Override
-    protected RepeatingCommand getViewportBuilderCommand(EmployeeRosterView view, Lockable<Map<Long, Lane<LocalDateTime, EmployeeRosterMetadata>>> lockableLaneMap) {
+    protected RepeatingCommand getViewportBuilderCommand(AvailabilityRosterView view, Lockable<Map<Long, Lane<LocalDateTime, AvailabilityRosterMetadata>>> lockableLaneMap) {
         return viewportBuilder.getWorkerCommand(view, lockableLaneMap, System.currentTimeMillis());
     }
 
     @Override
-    protected Function<LocalDateTime, HasGridObjects<LocalDateTime, EmployeeRosterMetadata>> getInstanceCreator(EmployeeRosterView view, Long laneId) {
+    protected Function<LocalDateTime, HasGridObjects<LocalDateTime, AvailabilityRosterMetadata>> getInstanceCreator(AvailabilityRosterView view, Long laneId) {
         final Employee employee = employeeIdToEmployeeMap.get(laneId);
         final Integer tenantId = view.getTenantId();
         return (t) -> {
@@ -87,7 +87,7 @@ public class EmployeeRosterPageViewport extends DateTimeViewport<EmployeeRosterV
             LocalDateTime endDateTime = startDateTime.plusDays(1);
             EmployeeAvailabilityView availability = new EmployeeAvailabilityView(tenantId, employee, startDateTime, endDateTime,
                                                                                  EmployeeAvailabilityState.UNAVAILABLE);
-            EmployeeAvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get().withEmployeeAvailabilityView(availability);
+            AvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get().withEmployeeAvailabilityView(availability);
             EmployeeRestServiceBuilder.addEmployeeAvailability(tenantId, availability, FailureShownRestCallback.onSuccess(av -> {
                 out.withEmployeeAvailabilityView(av);
             }));
@@ -96,8 +96,8 @@ public class EmployeeRosterPageViewport extends DateTimeViewport<EmployeeRosterV
     }
 
     @Override
-    protected EmployeeRosterMetadata getMetadata() {
-        return new EmployeeRosterMetadata(rosterState, spotIdToSpotMap, employeeIdToEmployeeMap);
+    protected AvailabilityRosterMetadata getMetadata() {
+        return new AvailabilityRosterMetadata(rosterState, spotIdToSpotMap, employeeIdToEmployeeMap);
     }
 
     @Override

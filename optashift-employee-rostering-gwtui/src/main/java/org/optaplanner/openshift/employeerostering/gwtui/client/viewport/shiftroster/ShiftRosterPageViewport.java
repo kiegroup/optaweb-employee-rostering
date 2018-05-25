@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -29,16 +29,16 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.impl.Dy
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.ShiftRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 @Templated
-public class SpotRosterPageViewport extends DateTimeViewport<SpotRosterView, SpotRosterMetadata> implements IsElement {
+public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, ShiftRosterMetadata> implements IsElement {
 
     @Inject
-    private SpotRosterPageViewportBuilder viewportBuilder;
+    private ShiftRosterPageViewportBuilder viewportBuilder;
     @Inject
     private ManagedInstance<ShiftGridObject> shiftGridObjectInstances;
 
@@ -52,14 +52,14 @@ public class SpotRosterPageViewport extends DateTimeViewport<SpotRosterView, Spo
     }
 
     @Override
-    protected void withView(SpotRosterView view) {
+    protected void withView(ShiftRosterView view) {
         rosterState = view.getRosterState();
         spotIdToSpotMap = super.getIdMapFor(view.getSpotList(), (s) -> s.getId());
         employeeIdToEmployeeMap = super.getIdMapFor(view.getEmployeeList(), (s) -> s.getId());
     }
 
     @Override
-    protected LinearScale<LocalDateTime> getScaleFor(SpotRosterView view) {
+    protected LinearScale<LocalDateTime> getScaleFor(ShiftRosterView view) {
         LocalDateTime endDateTime = LocalDateTime.of(view.getEndDate(),
                                                      LocalTime.of(0, 0, 0));
         LocalDateTime startDateTime = view.getEndDate().minusDays(20).isAfter(view.getStartDate())? endDateTime.minusDays(20) : LocalDateTime.of(view.getStartDate(),
@@ -68,17 +68,17 @@ public class SpotRosterPageViewport extends DateTimeViewport<SpotRosterView, Spo
     }
 
     @Override
-    protected Map<Long, String> getLaneTitlesFor(SpotRosterView view) {
+    protected Map<Long, String> getLaneTitlesFor(ShiftRosterView view) {
         return view.getSpotList().stream().collect(Collectors.toMap((s) -> s.getId(), (s) -> s.getName()));
     }
 
     @Override
-    protected RepeatingCommand getViewportBuilderCommand(SpotRosterView view, Lockable<Map<Long, Lane<LocalDateTime, SpotRosterMetadata>>> lockableLaneMap) {
+    protected RepeatingCommand getViewportBuilderCommand(ShiftRosterView view, Lockable<Map<Long, Lane<LocalDateTime, ShiftRosterMetadata>>> lockableLaneMap) {
         return viewportBuilder.getWorkerCommand(view, lockableLaneMap, System.currentTimeMillis());
     }
 
     @Override
-    protected Function<LocalDateTime, HasGridObjects<LocalDateTime, SpotRosterMetadata>> getInstanceCreator(SpotRosterView view, Long laneId) {
+    protected Function<LocalDateTime, HasGridObjects<LocalDateTime, ShiftRosterMetadata>> getInstanceCreator(ShiftRosterView view, Long laneId) {
         final Spot spot = spotIdToSpotMap.get(laneId);
         final Integer tenantId = view.getTenantId();
         return (t) -> {
@@ -92,8 +92,8 @@ public class SpotRosterPageViewport extends DateTimeViewport<SpotRosterView, Spo
     }
 
     @Override
-    protected SpotRosterMetadata getMetadata() {
-        return new SpotRosterMetadata(rosterState, spotIdToSpotMap, employeeIdToEmployeeMap);
+    protected ShiftRosterMetadata getMetadata() {
+        return new ShiftRosterMetadata(rosterState, spotIdToSpotMap, employeeIdToEmployeeMap);
     }
 
     @Override

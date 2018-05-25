@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.employeeroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.availabilityroster;
 
 import java.time.LocalDateTime;
 
@@ -25,7 +25,7 @@ import org.optaplanner.openshift.employeerostering.shared.employee.view.Employee
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Templated
-public class EmployeeAvailabilityGridObject extends AbstractHasTimeslotGridObject<EmployeeRosterMetadata> implements SingleGridObject<LocalDateTime, EmployeeRosterMetadata> {
+public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<AvailabilityRosterMetadata> implements SingleGridObject<LocalDateTime, AvailabilityRosterMetadata> {
 
     @Inject
     @DataField("label")
@@ -33,11 +33,11 @@ public class EmployeeAvailabilityGridObject extends AbstractHasTimeslotGridObjec
     private HTMLElement label;
 
     @Inject
-    private ManagedInstance<EmployeeAvailabilityBlobPopoverContent> popoverInstances;
+    private ManagedInstance<AvailabilityGridObjectPopup> popoverInstances;
 
     private EmployeeAvailabilityView employeeAvailabilityView;
 
-    public EmployeeAvailabilityGridObject withEmployeeAvailabilityView(EmployeeAvailabilityView employeeAvailabilityView) {
+    public AvailabilityGridObject withEmployeeAvailabilityView(EmployeeAvailabilityView employeeAvailabilityView) {
         this.employeeAvailabilityView = employeeAvailabilityView;
         refresh();
         return this;
@@ -97,7 +97,7 @@ public class EmployeeAvailabilityGridObject extends AbstractHasTimeslotGridObjec
     }
 
     @Override
-    protected void init(Lane<LocalDateTime, EmployeeRosterMetadata> lane) {
+    protected void init(Lane<LocalDateTime, AvailabilityRosterMetadata> lane) {
         refresh();
     }
 

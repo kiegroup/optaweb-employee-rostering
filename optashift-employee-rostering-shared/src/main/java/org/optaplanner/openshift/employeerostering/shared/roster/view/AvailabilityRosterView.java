@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
-public class EmployeeRosterView extends AbstractRosterView {
+public class AvailabilityRosterView extends AbstractRosterView {
 
     @NotNull
     // The list in each entry is sorted by startTime
@@ -38,13 +38,13 @@ public class EmployeeRosterView extends AbstractRosterView {
     protected List<ShiftView> unassignedShiftViewList;
 
     @SuppressWarnings("unused")
-    public EmployeeRosterView() {}
+    public AvailabilityRosterView() {}
 
-    public EmployeeRosterView(Integer tenantId) {
+    public AvailabilityRosterView(Integer tenantId) {
         this.tenantId = tenantId;
     }
 
-    public EmployeeRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate) {
+    public AvailabilityRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate) {
         this(tenantId);
         this.startDate = startDate;
         this.endDate = endDate;

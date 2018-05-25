@@ -5,8 +5,8 @@ import javax.enterprise.context.ApplicationScoped;
 import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.AvailabilityRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.ShiftRosterView;
 
 // This can probably also be done with @Observes, but then we need to create classes/use annotations
 // for a bunch of events, most of which carry either one or no values
@@ -48,14 +48,14 @@ public class EventManager {
         public static Event<Void> SOLVE_END = new Event<>("SolveEnd", Void.class);
 
         // Spot Roster Events
-        public static Event<SpotRosterView> SPOT_ROSTER_UPDATE = new Event<>("SpotRosterUpdate", SpotRosterView.class);
-        public static Event<Void> SPOT_ROSTER_INVALIDATE = new Event<>("SpotRosterInvalidate", Void.class);
-        public static Event<Pagination> SPOT_ROSTER_PAGINATION = new Event<>("SpotRosterPagination", Pagination.class);
+        public static Event<ShiftRosterView> SHIFT_ROSTER_UPDATE = new Event<>("ShiftRosterUpdate", ShiftRosterView.class);
+        public static Event<Void> SHIFT_ROSTER_INVALIDATE = new Event<>("ShiftRosterInvalidate", Void.class);
+        public static Event<Pagination> SHIFT_ROSTER_PAGINATION = new Event<>("ShiftRosterPagination", Pagination.class);
 
         // Employee Roster Events
-        public static Event<EmployeeRosterView> EMPLOYEE_ROSTER_UPDATE = new Event<>("EmployeeRosterUpdate", EmployeeRosterView.class);
-        public static Event<Void> EMPLOYEE_ROSTER_INVALIDATE = new Event<>("EmployeeRosterInvalidate", Void.class);
-        public static Event<Pagination> EMPLOYEE_ROSTER_PAGINATION = new Event<>("EmployeeRosterPagination", Pagination.class);
+        public static Event<AvailabilityRosterView> AVAILABILITY_ROSTER_UPDATE = new Event<>("AvailabilityRosterUpdate", AvailabilityRosterView.class);
+        public static Event<Void> AVAILABILITY_ROSTER_INVALIDATE = new Event<>("AvailabilityRosterInvalidate", Void.class);
+        public static Event<Pagination> AVAILABILITY_ROSTER_PAGINATION = new Event<>("AvailabilityRosterPagination", Pagination.class);
 
         // Rotation Events
         public static Event<Void> ROTATION_SAVE = new Event<>("RotationSave", Void.class);

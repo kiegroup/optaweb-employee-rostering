@@ -29,24 +29,24 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.admin.AdminPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.employee.EmployeeListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.skill.SkillListPanel;
 import org.optaplanner.openshift.employeerostering.gwtui.client.spot.SpotListPanel;
-import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.employeeroster.EmployeeRosterPage;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.availabilityroster.AvailabilityRosterPage;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.rotation.RotationPage;
-import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.spotroster.SpotRosterPage;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster.ShiftRosterPage;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ADMIN;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEE_ROSTER;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.AVAILABILITY_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.ROTATION;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOT_ROSTER;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SHIFT_ROSTER;
 
 @Dependent
 public class Pages {
 
     public enum Id {
-        SPOT_ROSTER,
-        EMPLOYEE_ROSTER,
+        SHIFT_ROSTER,
+        AVAILABILITY_ROSTER,
         ROTATION,
         SKILLS,
         SPOTS,
@@ -55,7 +55,7 @@ public class Pages {
     }
 
     @Inject
-    private ManagedInstance<SpotRosterPage> spotRosterPage;
+    private ManagedInstance<ShiftRosterPage> shiftRosterPage;
 
     @Inject
     private ManagedInstance<RotationPage> rotationPage;
@@ -70,7 +70,7 @@ public class Pages {
     private ManagedInstance<EmployeeListPanel> employeesPage;
 
     @Inject
-    private ManagedInstance<EmployeeRosterPage> employeeRosterPage;
+    private ManagedInstance<AvailabilityRosterPage> availabilityRosterPage;
 
     @Inject
     private ManagedInstance<AdminPage> adminPage;
@@ -82,8 +82,8 @@ public class Pages {
         mapping.put(SKILLS, lazyInit(skillsPage));
         mapping.put(SPOTS, lazyInit(spotsPage));
         mapping.put(EMPLOYEES, lazyInit(employeesPage));
-        mapping.put(SPOT_ROSTER, lazyInit(spotRosterPage));
-        mapping.put(EMPLOYEE_ROSTER, lazyInit(employeeRosterPage));
+        mapping.put(SHIFT_ROSTER, lazyInit(shiftRosterPage));
+        mapping.put(AVAILABILITY_ROSTER, lazyInit(availabilityRosterPage));
         mapping.put(ROTATION, lazyInit(rotationPage));
         mapping.put(ADMIN, lazyInit(adminPage));
     }

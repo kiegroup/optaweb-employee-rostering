@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,19 +31,23 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.AbstractViewportTest;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster.ShiftGridObject;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster.ShiftRosterMetadata;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster.ShiftRosterPageViewport;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster.ShiftRosterPageViewportBuilder;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.ShiftRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class SpotRosterBuilderTest extends AbstractViewportTest {
+public class ShiftRosterBuilderTest extends AbstractViewportTest {
 
     @InjectMocks
-    private SpotRosterPageViewportBuilder builder;
+    private ShiftRosterPageViewportBuilder builder;
 
     @Mock
-    private SpotRosterPageViewport viewport;
+    private ShiftRosterPageViewport viewport;
 
     @Mock
     private PromiseUtils promiseUtils;
@@ -61,11 +65,11 @@ public class SpotRosterBuilderTest extends AbstractViewportTest {
     private EventManager eventManager;
     
     @Mock
-    private Lockable<Map<Long, Lane<LocalDateTime, SpotRosterMetadata>>> lockableLaneMap;
+    private Lockable<Map<Long, Lane<LocalDateTime, ShiftRosterMetadata>>> lockableLaneMap;
     
-    private Map<Long, Lane<LocalDateTime, SpotRosterMetadata>> laneMap;
+    private Map<Long, Lane<LocalDateTime, ShiftRosterMetadata>> laneMap;
 
-    private SpotRosterView spotRosterView;
+    private ShiftRosterView shiftRosterView;
 
     @Before
     public void setup() {
@@ -93,7 +97,7 @@ public class SpotRosterBuilderTest extends AbstractViewportTest {
 
             @Override
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                SpotRosterView spv = invocation.getArgument(0);
+                ShiftRosterView spv = invocation.getArgument(0);
                 RepeatingCommand rc = builder.getWorkerCommand(spv, lockableLaneMap, 0);
                 while (rc.execute()) {
                     // Wait for worker to finish
@@ -106,28 +110,28 @@ public class SpotRosterBuilderTest extends AbstractViewportTest {
         Mockito.doAnswer(new Answer() {
 
             @SuppressWarnings("unchecked")
-            public Promise<SpotRosterView> answer(InvocationOnMock invocation) {
+            public Promise<ShiftRosterView> answer(InvocationOnMock invocation) {
                 return promise((res, rej) -> {
-                    res.onInvoke(resolveValue(spotRosterView));
+                    res.onInvoke(resolveValue(shiftRosterView));
                 });
             }
-        }).when(builder).getSpotRosterView();
+        }).when(builder).getShiftRosterView();
          
     }
 
     @Test
     public void testBuildingSimpleRoster() {
-        spotRosterView = new SpotRosterView();
+        shiftRosterView = new ShiftRosterView();
         Spot spotA = new Spot(0, "A", Collections.emptySet());
         spotA.setId(0L);
         Spot spotB = new Spot(0, "B", Collections.emptySet());
         spotA.setId(1L);
 
-        spotRosterView.setSpotList(Arrays.asList(spotA, spotB));
-        spotRosterView.setEmployeeList(Collections.emptyList());
-        spotRosterView.setStartDate(LocalDate.of(2000, 1, 1));
-        spotRosterView.setEndDate(LocalDate.of(2000, 1, 8));
-        spotRosterView.setTenantId(0);
+        shiftRosterView.setSpotList(Arrays.asList(spotA, spotB));
+        shiftRosterView.setEmployeeList(Collections.emptyList());
+        shiftRosterView.setStartDate(LocalDate.of(2000, 1, 1));
+        shiftRosterView.setEndDate(LocalDate.of(2000, 1, 8));
+        shiftRosterView.setTenantId(0);
 
         RosterState rosterState = new RosterState();
         rosterState.setDraftLength(7);
@@ -137,7 +141,7 @@ public class SpotRosterBuilderTest extends AbstractViewportTest {
         rosterState.setPublishNotice(7);
         rosterState.setRotationLength(7);
         rosterState.setUnplannedRotationOffset(0);
-        spotRosterView.setRosterState(rosterState);
+        shiftRosterView.setRosterState(rosterState);
 
         Map<Long, List<ShiftView>> spotIdToShiftViewMap = new HashMap<>();
         ShiftView spotAShiftView = new ShiftView(0, spotA,
@@ -148,16 +152,16 @@ public class SpotRosterBuilderTest extends AbstractViewportTest {
                                                  LocalDateTime.of(LocalDate.of(2000, 1, 2), LocalTime.MIDNIGHT.plusHours(8)));
         spotIdToShiftViewMap.put(spotA.getId(), Collections.singletonList(spotAShiftView));
         spotIdToShiftViewMap.put(spotB.getId(), Collections.singletonList(spotBShiftView));
-        spotRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewMap);
+        shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewMap);
         
         laneMap = new HashMap<>();
-        Lane<LocalDateTime, SpotRosterMetadata> laneAMock = Mockito.mock(Lane.class);
-        Lane<LocalDateTime, SpotRosterMetadata> laneBMock = Mockito.mock(Lane.class);
+        Lane<LocalDateTime, ShiftRosterMetadata> laneAMock = Mockito.mock(Lane.class);
+        Lane<LocalDateTime, ShiftRosterMetadata> laneBMock = Mockito.mock(Lane.class);
 
         laneMap.put(spotA.getId(), laneAMock);
         laneMap.put(spotB.getId(), laneBMock);
 
-        builder.buildSpotRosterViewport(viewport).then((v) -> {
+        builder.buildShiftRosterViewport(viewport).then((v) -> {
             Mockito.verify(laneAMock).addOrUpdateGridObject(Mockito.eq(ShiftGridObject.class), Mockito.isNull(), Mockito.any(), Mockito.any());
             Mockito.verify(laneBMock).addOrUpdateGridObject(Mockito.eq(ShiftGridObject.class), Mockito.isNull(), Mockito.any(), Mockito.any());
             // TODO: Add more verification tests
