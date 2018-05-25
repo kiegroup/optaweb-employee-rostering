@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.employeeroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.availabilityroster;
 
 import java.time.LocalDateTime;
 
@@ -18,9 +18,8 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
-// TODO: Use this as a base class for SpotRoster ShiftGridObject
 @Templated
-public class ShiftGridObject extends AbstractHasTimeslotGridObject<EmployeeRosterMetadata> implements SingleGridObject<LocalDateTime, EmployeeRosterMetadata> {
+public class ShiftGridObject extends AbstractHasTimeslotGridObject<AvailabilityRosterMetadata> implements SingleGridObject<LocalDateTime, AvailabilityRosterMetadata> {
 
     @Inject
     @DataField("label")
@@ -58,8 +57,8 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<EmployeeRoste
         if (getLane() != null) {
             getLane().positionGridObject(this);
             label.innerHTML = new SafeHtmlBuilder().appendEscaped(getLane().getMetadata()
-                    .getSpotIdToSpotMap().get(shiftView.getSpotId()).getName())
-                    .toSafeHtml().asString();
+                                                                           .getSpotIdToSpotMap().get(shiftView.getSpotId()).getName())
+                                                   .toSafeHtml().asString();
             RosterState rosterState = getLane().getMetadata().getRosterState();
             setClassProperty("historic", rosterState.isHistoric(shiftView));
             setClassProperty("published", rosterState.isPublished(shiftView));
@@ -73,16 +72,16 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<EmployeeRoste
     }
 
     @Override
-    protected void init(Lane<LocalDateTime, EmployeeRosterMetadata> lane) {
+    protected void init(Lane<LocalDateTime, AvailabilityRosterMetadata> lane) {
         refresh();
     }
 
-    // Note: Should not be called, since shifts are modified in SpotRosterView and not EmployeeRosterView
+    // Note: Should not be called, since shifts are modified in ShiftRosterView and not in AvailabilityRosterView
     @Override
     public void save() {
         ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView,
-                FailureShownRestCallback.onSuccess(sv -> {
-                    withShiftView(sv);
-                }));
+                                            FailureShownRestCallback.onSuccess(sv -> {
+                                                withShiftView(sv);
+                                            }));
     }
 }

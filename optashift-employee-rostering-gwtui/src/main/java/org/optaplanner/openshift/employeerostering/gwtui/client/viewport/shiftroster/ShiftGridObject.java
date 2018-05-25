@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster;
 
 import java.time.LocalDateTime;
 
@@ -24,7 +24,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 @Templated
-public class ShiftGridObject extends AbstractHasTimeslotGridObject<SpotRosterMetadata> implements SingleGridObject<LocalDateTime, SpotRosterMetadata> {
+public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMetadata> implements SingleGridObject<LocalDateTime, ShiftRosterMetadata> {
 
     @Inject
     @DataField("label")
@@ -32,11 +32,11 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<SpotRosterMet
     private HTMLElement label;
 
     @Inject
-    private Draggability<LocalDateTime, SpotRosterMetadata> draggability;
+    private Draggability<LocalDateTime, ShiftRosterMetadata> draggability;
     @Inject
-    private Resizability<LocalDateTime, SpotRosterMetadata> resizability;
+    private Resizability<LocalDateTime, ShiftRosterMetadata> resizability;
     @Inject
-    private ManagedInstance<ShiftBlobPopoverContent> popoverInstances;
+    private ManagedInstance<ShiftGridObjectPopup> popoverInstances;
 
     private ShiftView shiftView;
 
@@ -94,7 +94,7 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<SpotRosterMet
     }
 
     @Override
-    protected void init(Lane<LocalDateTime, SpotRosterMetadata> lane) {
+    protected void init(Lane<LocalDateTime, ShiftRosterMetadata> lane) {
         draggability.applyFor(this, lane.getScale());
         resizability.applyFor(this, lane.getScale());
         refresh();

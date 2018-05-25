@@ -1,6 +1,5 @@
 package org.optaplanner.openshift.employeerostering.shared.roster;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -17,8 +16,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.AvailabilityRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.ShiftRosterView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
 @Api(tags = {"Roster"})
@@ -37,59 +36,59 @@ public interface RosterRestService {
     RosterState getRosterState(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
 
     // ************************************************************************
-    // SpotRosterView
+    // ShiftRosterView
     // ************************************************************************
 
-    @ApiOperation("Get the current spot roster view")
+    @ApiOperation("Get the current shift roster view")
     @GET
-    @Path("/spotRosterView/current")
-    SpotRosterView getCurrentSpotRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                            @ApiParam @QueryParam("p") Integer pageNumber,
-                                            @ApiParam @QueryParam("n") Integer numberOfItemsPerPage);
+    @Path("/shiftRosterView/current")
+    ShiftRosterView getCurrentShiftRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                              @ApiParam @QueryParam("p") Integer pageNumber,
+                                              @ApiParam @QueryParam("n") Integer numberOfItemsPerPage);
 
-    @ApiOperation("Get a spot roster view between 2 dates")
+    @ApiOperation("Get a shift roster view between 2 dates")
     @GET
-    @Path("/spotRosterView")
-    SpotRosterView getSpotRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                     @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
-                                     @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString);
+    @Path("/shiftRosterView")
+    ShiftRosterView getShiftRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                       @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
+                                       @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString);
 
     //TODO: find out if there a way to pass lists in GET requests
-    @ApiOperation("Get a spot roster view between 2 dates for a subset of the spots")
+    @ApiOperation("Get a shift roster view between 2 dates for a subset of the spots")
     @POST
-    @Path("/spotRosterView/for")
+    @Path("/shiftRosterView/for")
     // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
-    SpotRosterView getSpotRosterViewFor(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                        @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
-                                        @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString,
-                                        @ApiParam(required = true) List<Spot> spots);
+    ShiftRosterView getShiftRosterViewFor(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                          @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
+                                          @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString,
+                                          @ApiParam(required = true) List<Spot> spots);
 
     // ************************************************************************
-    // EmployeeRosterView
+    // AvailabilityRosterView
     // ************************************************************************
 
-    @ApiOperation("Get the current employee roster view")
+    @ApiOperation("Get the current availability roster view")
     @GET
-    @Path("/employeeRosterView/current")
-    EmployeeRosterView getCurrentEmployeeRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                                    @ApiParam @QueryParam("p") Integer pageNumber,
-                                                    @ApiParam @QueryParam("n") Integer numberOfItemsPerPage);
+    @Path("/availabilityRosterView/current")
+    AvailabilityRosterView getCurrentAvailabilityRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                                            @ApiParam @QueryParam("p") Integer pageNumber,
+                                                            @ApiParam @QueryParam("n") Integer numberOfItemsPerPage);
 
-    @ApiOperation("Get an employee roster view between 2 dates")
+    @ApiOperation("Get an availability roster view between 2 dates")
     @GET
-    @Path("/employeeRosterView")
-    EmployeeRosterView getEmployeeRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                             @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
-                                             @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString);
+    @Path("/availabilityRosterView")
+    AvailabilityRosterView getAvailabilityRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                                     @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
+                                                     @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString);
 
-    @ApiOperation("Get an employee roster view between 2 dates for a subset of the employees")
+    @ApiOperation("Get an availability roster view between 2 dates for a subset of the employees")
     @POST
-    @Path("/employeeRosterView/for")
+    @Path("/availabilityRosterView/for")
     // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
-    EmployeeRosterView getEmployeeRosterViewFor(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
-                                                @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
-                                                @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString,
-                                                @ApiParam(required = true) List<Employee> employees);
+    AvailabilityRosterView getAvailabilityRosterViewFor(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                                        @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
+                                                        @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString,
+                                                        @ApiParam(required = true) List<Employee> employees);
 
     // ************************************************************************
     // Solver methods

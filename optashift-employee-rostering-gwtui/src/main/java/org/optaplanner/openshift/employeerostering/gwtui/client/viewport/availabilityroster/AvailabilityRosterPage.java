@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.availabilityroster;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -16,8 +16,8 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlob
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle.GridVariables;
 
 @Templated
-public class SpotRosterPage implements IsElement,
-                            Page {
+public class AvailabilityRosterPage implements IsElement,
+                                   Page {
 
     @Inject
     TenantStore tenantStore;
@@ -27,16 +27,16 @@ public class SpotRosterPage implements IsElement,
 
     @Inject
     @DataField("viewport")
-    SpotRosterPageViewport viewport;
+    AvailabilityRosterPageViewport viewport;
 
     @Inject
-    SpotRosterPageViewportBuilder viewportBuilder;
+    AvailabilityRosterPageViewportBuilder viewportBuilder;
 
     @Inject
     HeaderView headerView;
 
     @Inject
-    SpotRosterToolbar toolbar;
+    AvailabilityRosterToolbar toolbar;
 
     @Inject
     CSSGlobalStyle cssGlobalStyle;
@@ -60,6 +60,6 @@ public class SpotRosterPage implements IsElement,
     }
 
     private Promise<Void> refresh() {
-        return viewportBuilder.buildSpotRosterViewport(viewport);
+        return viewportBuilder.buildAvailabilityRosterViewport(viewport);
     }
 }

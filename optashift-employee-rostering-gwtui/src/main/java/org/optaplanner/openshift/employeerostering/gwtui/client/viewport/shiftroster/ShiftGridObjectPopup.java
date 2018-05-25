@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.employeeroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 import javax.inject.Inject;
 import javax.validation.ValidationException;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
@@ -35,14 +35,15 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureSh
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.LocalDateTimePicker;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
+import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
+import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 
 @Templated
-public class EmployeeAvailabilityBlobPopoverContent implements IsElement {
+public class ShiftGridObjectPopup implements IsElement {
 
     @Inject
     @DataField("root")
@@ -61,12 +62,16 @@ public class EmployeeAvailabilityBlobPopoverContent implements IsElement {
     private LocalDateTimePicker to;
 
     @Inject
+    @DataField("spot")
+    private ListBox spotSelect; //FIXME: Don't use GWT widget
+
+    @Inject
     @DataField("employee")
     private ListBox employeeSelect; //FIXME: Don't use GWT widget
 
     @Inject
-    @DataField("availability")
-    private ListBox availabilitySelect; //FIXME: Don't use GWT widget
+    @DataField("pinned")
+    private HTMLInputElement pinned;
 
     @Inject
     @DataField("delete-button")
@@ -85,36 +90,33 @@ public class EmployeeAvailabilityBlobPopoverContent implements IsElement {
 
     private FormPopup formPopup;
 
-    private EmployeeAvailabilityGridObject employeeAvailabilityGridObject;
+    private ShiftGridObject shiftGridObject;
 
-    public void init(final EmployeeAvailabilityGridObject employeeAvailabilityGridObject) {
+    public void init(final ShiftGridObject shiftGridObject) {
 
-        this.employeeAvailabilityGridObject = employeeAvailabilityGridObject;
-        employeeAvailabilityGridObject.getElement().classList.add("selected");
-        final EmployeeAvailabilityView availabilityView = employeeAvailabilityGridObject.getEmployeeAvailabilityView();
+        this.shiftGridObject = (ShiftGridObject) shiftGridObject;
+        shiftGridObject.getElement().classList.add("selected");
+        final ShiftView shift = shiftGridObject.getShiftView();
 
         employeeSelect.clear();
-        availabilitySelect.clear();
         employeeSelect.addItem("Unassigned", "-1"); //FIXME: i18n
+
+        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spots -> {
+            spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
+            spotSelect.setSelectedIndex(spots.indexOf(shiftGridObject.getSpot()));
+        }));
 
         EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
-            employeeSelect.setSelectedIndex(employees.indexOf(employeeAvailabilityGridObject.getEmployee()) + 1);
+            employeeSelect.setSelectedIndex((shiftGridObject.getEmployee() == null) ? 0 : employees.indexOf(shiftGridObject.getEmployee()) + 1);
         }));
 
-        // TODO: Indifferent = NULL case
-        Arrays.asList(EmployeeAvailabilityState.values()).forEach((e) -> {
-            availabilitySelect.addItem(e.toString());
-        });
-        int availabilityIndex = Arrays.asList(EmployeeAvailabilityState.values()).indexOf(availabilityView.getState());
-        availabilitySelect.setSelectedIndex((availabilityIndex > -1) ? availabilityIndex : 0);
-        employeeSelect.setEnabled(false);
-
-        from.setValue(availabilityView.getStartDateTime());
-        to.setValue(availabilityView.getEndDateTime());
+        from.setValue(shift.getStartDateTime());
+        to.setValue(shift.getEndDateTime());
+        pinned.checked = shift.isPinnedByUser();
 
         formPopup = FormPopup.getFormPopup(this);
-        formPopup.showFor(employeeAvailabilityGridObject);
+        formPopup.showFor(shiftGridObject);
     }
 
     @EventHandler("root")
@@ -125,48 +127,54 @@ public class EmployeeAvailabilityBlobPopoverContent implements IsElement {
     @EventHandler("cancel-button")
     public void onCancelButtonClick(@ForEvent("click") final MouseEvent e) {
         formPopup.hide();
-        employeeAvailabilityGridObject.getElement().classList.remove("selected");
+        shiftGridObject.getElement().classList.remove("selected");
         e.stopPropagation();
     }
 
     @EventHandler("close-button")
     public void onCloseButtonClick(@ForEvent("click") final MouseEvent e) {
         formPopup.hide();
-        employeeAvailabilityGridObject.getElement().classList.remove("selected");
+        shiftGridObject.getElement().classList.remove("selected");
         e.stopPropagation();
     }
 
     @EventHandler("apply-button")
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
-        final EmployeeAvailabilityView availabilityView = employeeAvailabilityGridObject.getEmployeeAvailabilityView();
 
-        final EmployeeAvailabilityState oldState = availabilityView.getState();
-        final LocalDateTime oldStartDateTime = availabilityView.getStartDateTime();
-        final LocalDateTime oldEndDateTime = availabilityView.getEndDateTime();
+        final ShiftView shiftView = shiftGridObject.getShiftView();
+
+        final boolean oldLockedByUser = shiftView.isPinnedByUser();
+        final Long oldEmployee = shiftView.getEmployeeId();
+        final LocalDateTime oldStartDateTime = shiftView.getStartDateTime();
+        final LocalDateTime oldEndDateTime = shiftView.getEndDateTime();
 
         try {
-            availabilityView.setState(EmployeeAvailabilityState.values()[availabilitySelect.getSelectedIndex()]);
-            availabilityView.setStartDateTime(from.getValue());
-            availabilityView.setEndDateTime(to.getValue());
+            shiftView.setPinnedByUser(pinned.checked);
+            shiftView.setEmployeeId(parseId(employeeSelect.getSelectedValue()));
+            shiftView.setStartDateTime(from.getValue());
+            shiftView.setEndDateTime(to.getValue());
         } catch (ValidationException invalidField) {
-            availabilityView.setState(oldState);
-            availabilityView.setStartDateTime(oldStartDateTime);
-            availabilityView.setEndDateTime(oldEndDateTime);
+            shiftView.setPinnedByUser(oldLockedByUser);
+            shiftView.setEmployeeId(oldEmployee);
+            shiftView.setStartDateTime(oldStartDateTime);
+            shiftView.setEndDateTime(oldEndDateTime);
             return;
         }
 
-        EmployeeRestServiceBuilder.updateEmployeeAvailability(availabilityView.getTenantId(), availabilityView, onSuccess((EmployeeAvailabilityView updatedView) -> {
-            employeeAvailabilityGridObject.withEmployeeAvailabilityView(updatedView);
-            employeeAvailabilityGridObject.getElement().classList.remove("selected");
+        ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, onSuccess((final ShiftView updatedShift) -> {
+            shiftGridObject.withShiftView(updatedShift);
+            shiftGridObject.getElement().classList.remove("selected");
             formPopup.hide();
         }).onFailure(i -> {
-            availabilityView.setState(oldState);
-            availabilityView.setStartDateTime(oldStartDateTime);
-            availabilityView.setEndDateTime(oldEndDateTime);
+            shiftView.setPinnedByUser(oldLockedByUser);
+            shiftView.setEmployeeId(oldEmployee);
+            shiftView.setStartDateTime(oldStartDateTime);
+            shiftView.setEndDateTime(oldEndDateTime);
         }).onError(i -> {
-            availabilityView.setState(oldState);
-            availabilityView.setStartDateTime(oldStartDateTime);
-            availabilityView.setEndDateTime(oldEndDateTime);
+            shiftView.setPinnedByUser(oldLockedByUser);
+            shiftView.setEmployeeId(oldEmployee);
+            shiftView.setStartDateTime(oldStartDateTime);
+            shiftView.setEndDateTime(oldEndDateTime);
         }));
 
         e.stopPropagation();
@@ -174,15 +182,20 @@ public class EmployeeAvailabilityBlobPopoverContent implements IsElement {
 
     @EventHandler("delete-button")
     public void onDeleteButtonClick(@ForEvent("click") final MouseEvent e) {
+        final ShiftView shiftView = shiftGridObject.getShiftView();
 
-        final EmployeeAvailabilityView availabilityView = employeeAvailabilityGridObject.getEmployeeAvailabilityView();
-
-        EmployeeRestServiceBuilder.removeEmployeeAvailability(availabilityView.getTenantId(), availabilityView.getId(), onSuccess((Boolean v) -> {
-            employeeAvailabilityGridObject.getLane().removeGridObject(employeeAvailabilityGridObject);
+        ShiftRestServiceBuilder.removeShift(shiftView.getTenantId(), shiftView.getId(), onSuccess(v -> {
+            shiftGridObject.getLane().removeGridObject(shiftGridObject);
             formPopup.hide();
         }));
-
         e.stopPropagation();
     }
 
+    private Long parseId(String text) {
+        Long id = Long.parseLong(text);
+        if (id < 0) {
+            return null;
+        }
+        return id;
+    }
 }

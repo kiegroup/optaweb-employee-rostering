@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.employeeroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.availabilityroster;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -22,17 +22,17 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.La
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.EmployeeRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.AvailabilityRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.EMPLOYEE_ROSTER_PAGINATION;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.EMPLOYEE_ROSTER_UPDATE;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_INVALIDATE;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_PAGINATION;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_UPDATE;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_END;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_START;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.EMPLOYEE_ROSTER_INVALIDATE;
 
 @Singleton
-public class EmployeeRosterPageViewportBuilder {
+public class AvailabilityRosterPageViewportBuilder {
 
     @Inject
     private PromiseUtils promiseUtils;
@@ -47,12 +47,12 @@ public class EmployeeRosterPageViewportBuilder {
     private ManagedInstance<ShiftGridObject> shiftGridObjectInstances;
 
     @Inject
-    private ManagedInstance<EmployeeAvailabilityGridObject> employeeAvailabilityGridObjectInstances;
+    private ManagedInstance<AvailabilityGridObject> employeeAvailabilityGridObjectInstances;
 
     @Inject
     private EventManager eventManager;
 
-    private EmployeeRosterPageViewport viewport;
+    private AvailabilityRosterPageViewport viewport;
 
     private boolean isUpdatingRoster;
     private boolean isSolving;
@@ -67,23 +67,23 @@ public class EmployeeRosterPageViewportBuilder {
         pagination = Pagination.of(0, 10);
         eventManager.subscribeToEvent(SOLVE_START, (m) -> this.onSolveStart());
         eventManager.subscribeToEvent(SOLVE_END, (m) -> this.onSolveEnd());
-        eventManager.subscribeToEvent(EMPLOYEE_ROSTER_PAGINATION, (pagination) -> {
+        eventManager.subscribeToEvent(AVAILABILITY_ROSTER_PAGINATION, (pagination) -> {
             this.pagination = pagination;
-            buildEmployeeRosterViewport(viewport);
+            buildAvailabilityRosterViewport(viewport);
         });
-        eventManager.subscribeToEvent(EMPLOYEE_ROSTER_INVALIDATE, (nil) -> {
-            buildEmployeeRosterViewport(viewport);
+        eventManager.subscribeToEvent(AVAILABILITY_ROSTER_INVALIDATE, (nil) -> {
+            buildAvailabilityRosterViewport(viewport);
         });
     }
 
-    public EmployeeRosterPageViewportBuilder withViewport(EmployeeRosterPageViewport viewport) {
+    public AvailabilityRosterPageViewportBuilder withViewport(AvailabilityRosterPageViewport viewport) {
         this.viewport = viewport;
         return this;
     }
 
-    public RepeatingCommand getWorkerCommand(final EmployeeRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, EmployeeRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
+    public RepeatingCommand getWorkerCommand(final AvailabilityRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, AvailabilityRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         if (view.getEmployeeList().isEmpty()) {
-            eventManager.fireEvent(EMPLOYEE_ROSTER_PAGINATION, pagination.previousPage());
+            eventManager.fireEvent(AVAILABILITY_ROSTER_PAGINATION, pagination.previousPage());
             return () -> false;
         }
 
@@ -93,7 +93,7 @@ public class EmployeeRosterPageViewportBuilder {
         final Iterator<EmployeeAvailabilityView> employeeAvaliabilitiesViewsToAdd = commonUtils.flatten(view.getEmployeeIdToAvailabilityViewListMap().values()).iterator();
 
         setUpdatingRoster(true);
-        eventManager.fireEvent(EMPLOYEE_ROSTER_UPDATE, view);
+        eventManager.fireEvent(AVAILABILITY_ROSTER_UPDATE, view);
 
         return new RepeatingCommand() {
 
@@ -109,31 +109,31 @@ public class EmployeeRosterPageViewportBuilder {
                     while (shiftViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
                         ShiftView toAdd = shiftViewsToAdd.next();
                         laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
-                                ShiftGridObject.class, toAdd.getId(), () -> {
-                                    ShiftGridObject out = shiftGridObjectInstances.get();
-                                    out.withShiftView(toAdd);
-                                    return out;
-                                }, (s) -> {
-                                    s.withShiftView(toAdd);
-                                    return null;
-                                });
+                                                                                 ShiftGridObject.class, toAdd.getId(), () -> {
+                                                                                     ShiftGridObject out = shiftGridObjectInstances.get();
+                                                                                     out.withShiftView(toAdd);
+                                                                                     return out;
+                                                                                 }, (s) -> {
+                                                                                     s.withShiftView(toAdd);
+                                                                                     return null;
+                                                                                 });
                         workDone++;
                     }
-    
+
                     while (employeeAvaliabilitiesViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
                         EmployeeAvailabilityView toAdd = employeeAvaliabilitiesViewsToAdd.next();
                         laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
-                                EmployeeAvailabilityGridObject.class, toAdd.getId(), () -> {
-                                    EmployeeAvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get();
-                                    out.withEmployeeAvailabilityView(toAdd);
-                                    return out;
-                                }, (a) -> {
-                                    a.withEmployeeAvailabilityView(toAdd);
-                                    return null;
-                                });
+                                                                                 AvailabilityGridObject.class, toAdd.getId(), () -> {
+                                                                                     AvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get();
+                                                                                     out.withEmployeeAvailabilityView(toAdd);
+                                                                                     return out;
+                                                                                 }, (a) -> {
+                                                                                     a.withEmployeeAvailabilityView(toAdd);
+                                                                                     return null;
+                                                                                 });
                         workDone++;
                     }
-    
+
                     if (!shiftViewsToAdd.hasNext() && !employeeAvaliabilitiesViewsToAdd.hasNext()) {
                         laneMap.forEach((l, lane) -> lane.endModifying());
                         setUpdatingRoster(false);
@@ -161,7 +161,7 @@ public class EmployeeRosterPageViewportBuilder {
         Scheduler.get().scheduleFixedPeriod(() -> {
             if (!isUpdatingRoster) {
                 setUpdatingRoster(true);
-                getEmployeeRosterView().then(srv -> {
+                getAvailabilityRosterView().then(srv -> {
                     viewport.refresh(srv);
                     return promiseUtils.resolve();
                 });
@@ -174,19 +174,19 @@ public class EmployeeRosterPageViewportBuilder {
         isSolving = false;
     }
 
-    public Promise<Void> buildEmployeeRosterViewport(final EmployeeRosterPageViewport toBuild) {
-        return getEmployeeRosterView().then((erv) -> {
+    public Promise<Void> buildAvailabilityRosterViewport(final AvailabilityRosterPageViewport toBuild) {
+        return getAvailabilityRosterView().then((erv) -> {
             toBuild.refresh(erv);
             return promiseUtils.resolve();
         });
     }
 
-    public Promise<EmployeeRosterView> getEmployeeRosterView() {
+    public Promise<AvailabilityRosterView> getAvailabilityRosterView() {
         return promiseUtils.promise((res, rej) -> {
-            RosterRestServiceBuilder.getCurrentEmployeeRosterView(tenantStore.getCurrentTenantId(), pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
-                    FailureShownRestCallback.onSuccess((s) -> {
-                        res.onInvoke(s);
-                    }));
+            RosterRestServiceBuilder.getCurrentAvailabilityRosterView(tenantStore.getCurrentTenantId(), pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
+                                                                      FailureShownRestCallback.onSuccess((s) -> {
+                                                                          res.onInvoke(s);
+                                                                      }));
         });
     }
 }

@@ -5,7 +5,7 @@ import org.jboss.errai.ui.shared.api.annotations.TranslationKey;
 public interface OptaShiftUIConstants {
 
     @TranslationKey(
-            defaultValue = "The server returned an empty result which is impossible.\nMaybe the server is using the wrong WildFly version.")
+                    defaultValue = "The server returned an empty result which is impossible.\nMaybe the server is using the wrong WildFly version.")
     final String AbstractRosterViewPanel_emptyResult = "AbstractRosterViewPanel.emptyResult";
 
     @TranslationKey(defaultValue = "Finished solving")
@@ -68,8 +68,8 @@ public interface OptaShiftUIConstants {
     @TranslationKey(defaultValue = "Skills")
     final String General_skills = "General.skills";
 
-    @TranslationKey(defaultValue = "Employee Roster")
-    final String MenuPanel_employeeRoster = "MenuPanel.employeeRoster";
+    @TranslationKey(defaultValue = "Availability Roster")
+    final String MenuPanel_availabilityRoster = "MenuPanel.availabilityRoster";
 
     @TranslationKey(defaultValue = "Employees")
     final String MenuPanel_employees = "MenuPanel.employees";
@@ -77,8 +77,8 @@ public interface OptaShiftUIConstants {
     @TranslationKey(defaultValue = "Rest API")
     final String MenuPanel_restAPI = "MenuPanel.restAPI";
 
-    @TranslationKey(defaultValue = "Spot Roster")
-    final String MenuPanel_spotRoster = "MenuPanel.spotRoster";
+    @TranslationKey(defaultValue = "Shift Roster")
+    final String MenuPanel_shiftRoster = "MenuPanel.shiftRoster";
 
     @TranslationKey(defaultValue = "Spots")
     final String MenuPanel_spots = "MenuPanel.spots";
@@ -89,6 +89,9 @@ public interface OptaShiftUIConstants {
     @TranslationKey(defaultValue = "Toggle navigation")
     final String MenuPanel_toggleNavigation = "MenuPanel.toggleNavigation";
 
+    @TranslationKey(defaultValue = "Spot")
+    final String ShiftRosterView_spot = "ShiftRosterView.spot";
+
     @TranslationKey(defaultValue = "Skill name")
     final String SkillListPanel_skillName = "SkillListPanel.skillName";
 
@@ -97,8 +100,5 @@ public interface OptaShiftUIConstants {
 
     @TranslationKey(defaultValue = "Spot name")
     final String SpotListPanel_spotName = "SpotListPanel.spotName";
-
-    @TranslationKey(defaultValue = "Spot")
-    final String SpotRosterView_spot = "SpotRosterView.spot";
 
 }

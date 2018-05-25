@@ -1,4 +1,4 @@
-package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.spotroster;
+package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster;
 
 import java.time.LocalDateTime;
 import java.util.Iterator;
@@ -21,17 +21,17 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtil
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServiceBuilder;
-import org.optaplanner.openshift.employeerostering.shared.roster.view.SpotRosterView;
+import org.optaplanner.openshift.employeerostering.shared.roster.view.ShiftRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_END;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_START;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SPOT_ROSTER_PAGINATION;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SPOT_ROSTER_INVALIDATE;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SPOT_ROSTER_UPDATE;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_PAGINATION;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_UPDATE;
 
 @Singleton
-public class SpotRosterPageViewportBuilder {
+public class ShiftRosterPageViewportBuilder {
 
     @Inject
     private PromiseUtils promiseUtils;
@@ -48,7 +48,7 @@ public class SpotRosterPageViewportBuilder {
     @Inject
     private EventManager eventManager;
 
-    private SpotRosterPageViewport viewport;
+    private ShiftRosterPageViewport viewport;
 
     private boolean isUpdatingRoster;
     private boolean isSolving;
@@ -63,30 +63,30 @@ public class SpotRosterPageViewportBuilder {
         pagination = Pagination.of(0, 10);
         eventManager.subscribeToEvent(SOLVE_START, (m) -> this.onSolveStart());
         eventManager.subscribeToEvent(SOLVE_END, (m) -> this.onSolveEnd());
-        eventManager.subscribeToEvent(SPOT_ROSTER_PAGINATION, (pagination) -> {
+        eventManager.subscribeToEvent(SHIFT_ROSTER_PAGINATION, (pagination) -> {
             this.pagination = pagination;
-            buildSpotRosterViewport(viewport);
+            buildShiftRosterViewport(viewport);
         });
-        eventManager.subscribeToEvent(SPOT_ROSTER_INVALIDATE, (nil) -> {
-            buildSpotRosterViewport(viewport);
+        eventManager.subscribeToEvent(SHIFT_ROSTER_INVALIDATE, (nil) -> {
+            buildShiftRosterViewport(viewport);
         });
     }
 
-    public SpotRosterPageViewportBuilder withViewport(SpotRosterPageViewport viewport) {
+    public ShiftRosterPageViewportBuilder withViewport(ShiftRosterPageViewport viewport) {
         this.viewport = viewport;
         return this;
     }
 
-    public RepeatingCommand getWorkerCommand(final SpotRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, SpotRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
+    public RepeatingCommand getWorkerCommand(final ShiftRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, ShiftRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         if (view.getSpotList().isEmpty()) {
-            eventManager.fireEvent(SPOT_ROSTER_PAGINATION, pagination.previousPage());
+            eventManager.fireEvent(SHIFT_ROSTER_PAGINATION, pagination.previousPage());
             return () -> false;
         }
 
         currentWorkerStartTime = timeWhenInvoked;
 
         final Iterator<ShiftView> shiftViewsToAdd = commonUtils.flatten(view.getSpotIdToShiftViewListMap().values()).iterator();
-        eventManager.fireEvent(SPOT_ROSTER_UPDATE, view);
+        eventManager.fireEvent(SHIFT_ROSTER_UPDATE, view);
         setUpdatingRoster(true);
 
         return new RepeatingCommand() {
@@ -113,7 +113,7 @@ public class SpotRosterPageViewportBuilder {
                                                                              });
                         workDone++;
                     }
-    
+
                     if (!shiftViewsToAdd.hasNext()) {
                         laneMap.forEach((l, lane) -> lane.endModifying());
                         setUpdatingRoster(false);
@@ -141,7 +141,7 @@ public class SpotRosterPageViewportBuilder {
         Scheduler.get().scheduleFixedPeriod(() -> {
             if (!isUpdatingRoster) {
                 setUpdatingRoster(true);
-                getSpotRosterView().then(srv -> {
+                getShiftRosterView().then(srv -> {
                     viewport.refresh(srv);
                     return promiseUtils.resolve();
                 });
@@ -154,19 +154,19 @@ public class SpotRosterPageViewportBuilder {
         isSolving = false;
     }
 
-    public Promise<Void> buildSpotRosterViewport(final SpotRosterPageViewport toBuild) {
-        return getSpotRosterView().then((srv) -> {
+    public Promise<Void> buildShiftRosterViewport(final ShiftRosterPageViewport toBuild) {
+        return getShiftRosterView().then((srv) -> {
             toBuild.refresh(srv);
             return promiseUtils.resolve();
         });
     }
 
-    public Promise<SpotRosterView> getSpotRosterView() {
+    public Promise<ShiftRosterView> getShiftRosterView() {
         return promiseUtils.promise((res, rej) -> {
-            RosterRestServiceBuilder.getCurrentSpotRosterView(tenantStore.getCurrentTenantId(), pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
-                                                              FailureShownRestCallback.onSuccess((s) -> {
-                                                                  res.onInvoke(s);
-                                                              }));
+            RosterRestServiceBuilder.getCurrentShiftRosterView(tenantStore.getCurrentTenantId(), pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
+                                                               FailureShownRestCallback.onSuccess((s) -> {
+                                                                   res.onInvoke(s);
+                                                               }));
         });
     }
 }
