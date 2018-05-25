@@ -15,17 +15,14 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
-import elemental2.promise.Promise;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 
 @Templated
 public class Lane<T, M> implements IsElement {
@@ -127,7 +124,7 @@ public class Lane<T, M> implements IsElement {
     // TODO: Should existing and new grid objects be received via different methods?
     public <Y extends HasGridObjects<T, M>> Collection<Y> getGridObjects(Class<? extends Y> clazz) {
         List<Y> out = new ArrayList<>();
-        out.addAll(((Map<Long, Y>) gridObjectMap.get(clazz.getName())).values());
+        out.addAll(((Map<Long, Y>) gridObjectMap.getOrDefault(clazz.getName(), Collections.emptyMap())).values());
         out.addAll((Collection<Y>) addedGridObjects.getOrDefault(clazz.getName(), Collections.emptyList()));
         return out;
     }
