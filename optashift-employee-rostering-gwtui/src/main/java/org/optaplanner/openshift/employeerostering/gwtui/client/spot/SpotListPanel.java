@@ -2,6 +2,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.spot;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -132,5 +133,10 @@ public class SpotListPanel implements IsElement,
     @EventHandler("skill-set-header")
     public void skillSetHeaderClick(final @ForEvent("click") MouseEvent e) {
         pager.sortBy((a, b) -> b.getRequiredSkillSet().size() - a.getRequiredSkillSet().size());
+    }
+
+    @Override
+    public void restoreFromHistory(Map<String, String> params) {
+        tenantStore.setCurrentTenantId(Integer.parseInt(params.get("tenantId")));
     }
 }

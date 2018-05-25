@@ -16,23 +16,27 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.header;
 
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
-import jsinterop.base.Js;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.HistoryManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
+import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.AVAILABILITY_ROSTER;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
@@ -42,6 +46,7 @@ import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pag
 import static org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
 
 @Templated
+@Singleton
 public class MenuView implements IsElement {
 
     @Inject
@@ -71,60 +76,77 @@ public class MenuView implements IsElement {
     @Inject
     private Event<PageChange> pageChangeEvent;
 
+    @Inject
+    private TenantStore tenantStore;
+
+    @Inject
+    private HistoryManager historyManager;
+
+    private Map<Pages.Id, HTMLAnchorElement> pageIdToAnchor;
+
     @PostConstruct
     private void initMenu() {
+        pageIdToAnchor = new HashMap<>();
+        pageIdToAnchor.put(SKILLS, skills);
+        pageIdToAnchor.put(SPOTS, spots);
+        pageIdToAnchor.put(EMPLOYEES, employees);
+        pageIdToAnchor.put(ROTATION, rotation);
+        pageIdToAnchor.put(AVAILABILITY_ROSTER, availabilityRoster);
+        pageIdToAnchor.put(SHIFT_ROSTER, shiftRoster);
         pageChangeEvent.fire(new PageChange(Pages.Id.SHIFT_ROSTER));
-        setInactive(skills, spots, employees, rotation, shiftRoster, availabilityRoster);
+        setAllInactive();
         setActive(shiftRoster);
     }
 
     @EventHandler("skills")
     public void skills(final @ForEvent("click") MouseEvent e) {
-        goTo(SKILLS, e);
+        goTo(SKILLS);
     }
 
     @EventHandler("spots")
     public void spots(final @ForEvent("click") MouseEvent e) {
-        goTo(SPOTS, e);
+        goTo(SPOTS);
     }
 
     @EventHandler("employees")
     public void employees(final @ForEvent("click") MouseEvent e) {
-        goTo(EMPLOYEES, e);
+        goTo(EMPLOYEES);
     }
 
     @EventHandler("availability-roster")
     public void availabilityRoster(final @ForEvent("click") MouseEvent e) {
-        goTo(AVAILABILITY_ROSTER, e);
+        goTo(AVAILABILITY_ROSTER);
     }
 
     @EventHandler("shift-roster")
     public void shiftRoster(final @ForEvent("click") MouseEvent e) {
-        goTo(SHIFT_ROSTER, e);
+        goTo(SHIFT_ROSTER);
     }
 
     @EventHandler("rotation")
     public void rotations(final @ForEvent("click") MouseEvent e) {
-        goTo(ROTATION, e);
+        goTo(ROTATION);
     }
 
-    private void goTo(final Pages.Id pageId,
-                      final @ForEvent("click") MouseEvent event) {
-
+    public void goTo(final Pages.Id pageId) {
+        Map<String, String> params = new HashMap<>();
+        params.put("tenantId", tenantStore.getCurrentTenantId().toString());
+        historyManager.updateHistory(pageId, params);
         pageChangeEvent.fire(new PageChange(pageId));
-        handleActiveLink(Js.cast(event.target));
     }
 
-    private void handleActiveLink(final HTMLElement target) {
-        setInactive(skills, spots, employees, availabilityRoster, rotation, shiftRoster);
-        setActive(target);
+    public void handleActiveLink(@Observes PageChange pageChange) {
+        setAllInactive();
+        if (pageIdToAnchor.containsKey(pageChange.getPageId())) {
+            setActive(pageIdToAnchor.get(pageChange.getPageId()));
+        }
     }
 
     private void setActive(final HTMLElement element) {
         ((HTMLElement) element.parentNode).classList.add("active");
     }
 
-    private void setInactive(final HTMLElement... elements) {
-        Arrays.asList(elements).forEach(e -> ((HTMLElement) e.parentNode).classList.remove("active"));
+    private void setAllInactive(final HTMLElement... elements) {
+        pageIdToAnchor.values().forEach(e -> ((HTMLElement) e.parentNode).classList.remove("active"));
     }
 }

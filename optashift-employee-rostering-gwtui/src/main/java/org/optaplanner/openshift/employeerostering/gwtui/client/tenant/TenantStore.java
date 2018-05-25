@@ -23,7 +23,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore.TenantsReady;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
@@ -52,6 +51,16 @@ public class TenantStore {
     public void setCurrentTenant(final Tenant newTenant) {
         current = newTenant;
         tenantChangeEvent.fire(new TenantChange());
+    }
+
+    public void setCurrentTenantId(final Integer tenantId) {
+        for (int i = 0; i < tenantList.size(); i++) {
+            if (tenantList.get(i).getId().equals(tenantId)) {
+                setCurrentTenant(tenantList.get(i));
+                return;
+            }
+        }
+        throw new IllegalArgumentException("tenantList (" + tenantList + ") does not contain a tenant with tenantId (" + tenantId + ").");
     }
 
     public Integer getCurrentTenantId() {

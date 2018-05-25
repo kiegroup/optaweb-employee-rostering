@@ -1,5 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -17,7 +19,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlob
 
 @Templated
 public class ShiftRosterPage implements IsElement,
-                            Page {
+                             Page {
 
     @Inject
     TenantStore tenantStore;
@@ -61,5 +63,10 @@ public class ShiftRosterPage implements IsElement,
 
     private Promise<Void> refresh() {
         return viewportBuilder.buildShiftRosterViewport(viewport);
+    }
+
+    @Override
+    public void restoreFromHistory(Map<String, String> params) {
+        tenantStore.setCurrentTenantId(Integer.parseInt(params.get("tenantId")));
     }
 }

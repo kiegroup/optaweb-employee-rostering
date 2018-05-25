@@ -1,5 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.rotation;
 
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -32,6 +34,9 @@ public class RotationPage implements IsElement,
     private RotationToolbar toolbar;
 
     @Inject
+    private TenantStore tenantStore;
+
+    @Inject
     private CSSGlobalStyle cssGlobalStyle;
 
     @PostConstruct
@@ -54,5 +59,10 @@ public class RotationPage implements IsElement,
 
     private Promise<Void> refresh() {
         return viewportBuilder.buildRotationViewport(viewport);
+    }
+
+    @Override
+    public void restoreFromHistory(Map<String, String> params) {
+        tenantStore.setCurrentTenantId(Integer.parseInt(params.get("tenantId")));
     }
 }

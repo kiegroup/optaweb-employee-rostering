@@ -16,6 +16,8 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.pages;
 
+import java.util.Map;
+
 import elemental2.promise.Promise;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 
@@ -28,4 +30,6 @@ public interface Page extends IsElement {
     default Promise<Void> onOpen() {
         return Promise.resolve((Promise<Void>) null);
     }
+
+    void restoreFromHistory(Map<String, String> params);
 }

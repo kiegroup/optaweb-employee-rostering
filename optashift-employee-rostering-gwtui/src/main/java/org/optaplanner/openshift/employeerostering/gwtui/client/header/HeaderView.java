@@ -16,6 +16,8 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.header;
 
+import java.util.Collections;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -32,6 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.HistoryManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.pages.Pages;
 
 @Templated
@@ -67,6 +70,9 @@ public class HeaderView implements IsElement {
     private Elemental2DomUtil domUtils;
 
     @Inject
+    private HistoryManager historyManager;
+
+    @Inject
     private Event<PageChange> pageChangeEvent;
 
     public void addStickyElement(org.jboss.errai.common.client.api.elemental2.IsElement element) {
@@ -75,6 +81,7 @@ public class HeaderView implements IsElement {
 
     @EventHandler("admin")
     private void gotoAdminPage(@ForEvent("click") MouseEvent e) {
+        historyManager.updateHistory(Pages.Id.ADMIN, Collections.emptyMap());
         pageChangeEvent.fire(new PageChange(Pages.Id.ADMIN));
     }
 

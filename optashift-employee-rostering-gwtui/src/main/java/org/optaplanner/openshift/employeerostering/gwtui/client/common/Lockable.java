@@ -4,19 +4,20 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import elemental2.promise.Promise;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtils;
 
 public class Lockable<T> {
-    
+
     @Inject
     private PromiseUtils promiseUtils;
-    
+
     private boolean isLocked = false;
-    
+
     private T instance;
-    
+
     /**
      * Waits for instance to be available, and acquire a Lock. The Lock is released when the promise is resolved or rejected.
      * @return A promise returning the Lockable instance
@@ -28,8 +29,9 @@ public class Lockable<T> {
                     isLocked = true;
                     try {
                         res.onInvoke(instance);
-                    }
-                    finally {
+                    } catch (Throwable e) {
+                        GWT.getUncaughtExceptionHandler().onUncaughtException(e);
+                    } finally {
                         isLocked = false;
                     }
                     return false;
@@ -38,11 +40,11 @@ public class Lockable<T> {
             }, 10);
         });
     }
-    
+
     public boolean isLocked() {
         return isLocked;
     }
-    
+
     /**
      * Consumes the instance if it is not locked and return true, else returns false
      * @return true iff the instance was consumed
@@ -50,19 +52,19 @@ public class Lockable<T> {
     public boolean acquireIfPossible(Consumer<T> consumer) {
         if (isLocked) {
             return false;
-        }
-        else {
+        } else {
             isLocked = true;
             try {
                 consumer.accept(instance);
-            }
-            finally {
+            } catch (Throwable e) {
+                GWT.getUncaughtExceptionHandler().onUncaughtException(e);
+            } finally {
                 isLocked = false;
             }
             return true;
         }
     }
-    
+
     public void setInstance(T instance) {
         this.instance = instance;
     }

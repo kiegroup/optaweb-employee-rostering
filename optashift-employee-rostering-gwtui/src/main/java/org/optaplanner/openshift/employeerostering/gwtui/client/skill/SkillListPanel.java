@@ -1,6 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.skill;
 
 import java.util.Collections;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
@@ -120,5 +121,10 @@ public class SkillListPanel implements IsElement,
     @EventHandler("name-header")
     public void spotNameHeaderClick(final @ForEvent("click") MouseEvent e) {
         pager.sortBy((a, b) -> a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
+    }
+
+    @Override
+    public void restoreFromHistory(Map<String, String> params) {
+        tenantStore.setCurrentTenantId(Integer.parseInt(params.get("tenantId")));
     }
 }

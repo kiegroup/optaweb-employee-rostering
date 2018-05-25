@@ -9,6 +9,7 @@ import com.github.nmorel.gwtjackson.rest.api.RestRequestBuilder;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.UmbrellaException;
 import com.google.gwt.logging.impl.StackTracePrintStream;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import elemental2.dom.DomGlobal;
 import org.jboss.errai.ioc.client.api.EntryPoint;
@@ -16,6 +17,7 @@ import org.jboss.errai.ui.shared.api.annotations.Bundle;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.HistoryManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantRestServiceBuilder;
@@ -40,8 +42,14 @@ public class OptaShiftRosteringEntryPoint {
     @Inject
     private TenantStore tenantStore;
 
+    @Inject
+    private HistoryManager historyManager;
+
+    private boolean wasLoaded;
+
     @PostConstruct
     public void onModuleLoad() {
+        wasLoaded = false;
         final GWT.UncaughtExceptionHandler javascriptLoggerExceptionHandler = GWT.getUncaughtExceptionHandler();
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
 
@@ -68,11 +76,19 @@ public class OptaShiftRosteringEntryPoint {
     }
 
     public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
-        //FIXME: We should probably have a better 'home page' than the skills table, but since it's the lightest one to load, that was the chosen one
-        pageChangeEvent.fire(new PageChange(SHIFT_ROSTER, () -> {
-            DomGlobal.document.getElementById("initial-loading-message").remove();
-            DomGlobal.document.body.appendChild(navigationController.getAppElement());
-        }));
+        if (!wasLoaded) {
+            wasLoaded = true;
+            if (!History.getToken().isEmpty()) {
+                historyManager.restoreFromHistory(History.getToken());
+                DomGlobal.document.getElementById("initial-loading-message").remove();
+                DomGlobal.document.body.appendChild(navigationController.getAppElement());
+            } else {
+                pageChangeEvent.fire(new PageChange(SHIFT_ROSTER, () -> {
+                    DomGlobal.document.getElementById("initial-loading-message").remove();
+                    DomGlobal.document.body.appendChild(navigationController.getAppElement());
+                }));
+            }
+        }
     }
 
     private void healthCheck() {

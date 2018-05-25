@@ -1,5 +1,7 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.admin;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLButtonElement;
@@ -20,10 +22,10 @@ public class AdminPage implements Page {
     @Inject
     @DataField("reset-application-button")
     HTMLButtonElement resetApplicationButton;
-    
+
     @Inject
     private LoadingSpinner loadingSpinner;
-    
+
     @Inject
     private NotificationSystem notificationSystem;
 
@@ -35,4 +37,7 @@ public class AdminPage implements Page {
             notificationSystem.notify("Application was reset successfully", "Application was reset successfully, please refresh the page.");
         }));
     }
+
+    @Override
+    public void restoreFromHistory(Map<String, String> params) {}
 }
