@@ -24,6 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
@@ -58,6 +59,9 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
     @Mock
     private TenantStore tenantStore;
 
+    @Mock
+    private LoadingSpinner loadingSpinner;
+    
     @Mock
     private ManagedInstance<ShiftGridObject> shiftGridObjectInstances;
 
