@@ -105,12 +105,6 @@ public abstract class AbstractViewportTest {
         public Double getEndInScaleUnits() {
             return end;
         }
-
-        @Override
-        public int getScreenPixelsPerGridUnit() {
-            return 1;
-        }
-
     }
 
     private static class MockGridObject implements SingleGridObject<Double, Object> {
