@@ -82,12 +82,12 @@ public class AvailabilityRosterPageViewportBuilder {
     }
 
     public RepeatingCommand getWorkerCommand(final AvailabilityRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, AvailabilityRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
+        currentWorkerStartTime = timeWhenInvoked;
+        
         if (view.getEmployeeList().isEmpty()) {
             eventManager.fireEvent(AVAILABILITY_ROSTER_PAGINATION, pagination.previousPage());
             return () -> false;
         }
-
-        currentWorkerStartTime = timeWhenInvoked;
 
         final Iterator<ShiftView> shiftViewsToAdd = commonUtils.flatten(view.getEmployeeIdToShiftViewListMap().values()).iterator();
         final Iterator<EmployeeAvailabilityView> employeeAvaliabilitiesViewsToAdd = commonUtils.flatten(view.getEmployeeIdToAvailabilityViewListMap().values()).iterator();

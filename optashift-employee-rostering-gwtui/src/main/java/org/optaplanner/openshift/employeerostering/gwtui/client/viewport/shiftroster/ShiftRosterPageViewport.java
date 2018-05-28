@@ -86,6 +86,10 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
             ShiftGridObject out = shiftGridObjectInstances.get().withShiftView(shift);
             ShiftRestServiceBuilder.addShift(tenantId, shift, FailureShownRestCallback.onSuccess(sv -> {
                 out.withShiftView(sv);
+                getLockableLaneMap().acquire().then(laneMap -> {
+                    laneMap.get(laneId).moveAddedGridObjectToIdMap(out);
+                    return promiseUtils.resolve();
+                });
             }));
             return out;
         };

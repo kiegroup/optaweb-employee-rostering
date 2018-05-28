@@ -106,6 +106,12 @@ public class Lane<T, M> implements IsElement {
         gridObject.withLane(this);
         positionGridObject(gridObject);
     }
+    
+    public void moveAddedGridObjectToIdMap(HasGridObjects<T, M> addedGridObject) {
+        addedGridObjects.get(addedGridObject.getClass().getName()).remove(addedGridObject);
+        gridObjectMap.computeIfAbsent(addedGridObject.getClass().getName(),
+                                      (k) -> new HashMap<>()).put(addedGridObject.getId(), addedGridObject);
+    }
 
     @SuppressWarnings("unchecked")
     /**

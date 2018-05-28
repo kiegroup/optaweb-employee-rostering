@@ -46,7 +46,7 @@ public abstract class DateTimeViewport<T, M> {
     private HeaderView headerView;
     
     @Inject
-    private PromiseUtils promiseUtils;
+    protected PromiseUtils promiseUtils;
     
     @Inject
     private Lockable<Map<Long, Lane<LocalDateTime, M>>> lockableLaneMap;

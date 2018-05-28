@@ -90,6 +90,10 @@ public class AvailabilityRosterPageViewport extends DateTimeViewport<Availabilit
             AvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get().withEmployeeAvailabilityView(availability);
             EmployeeRestServiceBuilder.addEmployeeAvailability(tenantId, availability, FailureShownRestCallback.onSuccess(av -> {
                 out.withEmployeeAvailabilityView(av);
+                getLockableLaneMap().acquire().then(laneMap -> {
+                    laneMap.get(laneId).moveAddedGridObjectToIdMap(out);
+                    return promiseUtils.resolve();
+                });
             }));
             return out;
         };

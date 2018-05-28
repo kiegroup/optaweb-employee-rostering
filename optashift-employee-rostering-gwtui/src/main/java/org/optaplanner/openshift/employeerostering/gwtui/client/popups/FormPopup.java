@@ -12,9 +12,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.Cs
 
 public class FormPopup extends PopupPanel {
 
-    private static FormPopup formPopup = null;
-
-    private FormPopup(IsElement content) {
+    protected FormPopup(IsElement content) {
         super(false);
 
         setStyleName(getStyles().panel());
@@ -24,8 +22,6 @@ public class FormPopup extends PopupPanel {
         Div container = new Div();
         container.getElement().appendChild(Js.cast(content.getElement()));
         setWidget(container);
-
-        formPopup = this;
     }
 
     public void showFor(IsElement isElement) {
@@ -57,19 +53,11 @@ public class FormPopup extends PopupPanel {
     @Override
     public void hide() {
         super.hide();
-        formPopup = null;
     }
 
     public static CssResources.PopupCss getStyles() {
         CssResources.INSTANCE.popup().ensureInjected();
         return CssResources.INSTANCE.popup();
-    }
-
-    public static FormPopup getFormPopup(IsElement content) {
-        if (null != formPopup) {
-            throw new IllegalStateException("Cannot have two form popups at once!");
-        }
-        return new FormPopup(content);
     }
 
 }
