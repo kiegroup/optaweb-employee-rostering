@@ -4,8 +4,12 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
+import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -24,6 +28,11 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     private ShiftTemplateView shiftTemplateView;
 
     @Inject
+    @DataField("label")
+    @Named("span")
+    private HTMLElement label;
+
+    @Inject
     private Draggability<LocalDateTime, RotationMetadata> draggability;
     @Inject
     private Resizability<LocalDateTime, RotationMetadata> resizability;
@@ -34,7 +43,12 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
         newShift.setId(model.getShiftTemplateView().getId());
         newShift.setRotationEmployeeId(model.getShiftTemplateView().getRotationEmployeeId());
         this.shiftTemplateView = newShift;
+
         if (getLane() != null) {
+            label.innerHTML = (newShift.getRotationEmployeeId() != null) ? new SafeHtmlBuilder().appendEscaped(getLane().getMetadata()
+                                                                                                                        .getEmployeeIdToEmployeeMap()
+                                                                                                                        .get(newShift.getRotationEmployeeId())
+                                                                                                                        .getName()).toSafeHtml().asString() : "Unassigned";
             updatePositionInLane();
         }
     }
@@ -59,6 +73,12 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     @Override
     public void init(Lane<LocalDateTime, RotationMetadata> lane) {
         updatePositionInLane();
+        if (shiftTemplateView != null) {
+            label.innerHTML = (shiftTemplateView.getRotationEmployeeId() != null) ? new SafeHtmlBuilder().appendEscaped(getLane().getMetadata()
+                                                                                                                                 .getEmployeeIdToEmployeeMap()
+                                                                                                                                 .get(shiftTemplateView.getRotationEmployeeId())
+                                                                                                                                 .getName()).toSafeHtml().asString() : "Unassigned";
+        }
         draggability.applyFor(this, lane.getScale());
         resizability.applyFor(this, lane.getScale());
     }
