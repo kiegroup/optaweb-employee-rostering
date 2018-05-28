@@ -28,5 +28,5 @@ public class ShiftRosterToolbar extends RosterToolbar implements IsElement {
     protected Event<Void> getViewInvalidateEvent() {
         return SHIFT_ROSTER_INVALIDATE;
     }
-
+    
 }

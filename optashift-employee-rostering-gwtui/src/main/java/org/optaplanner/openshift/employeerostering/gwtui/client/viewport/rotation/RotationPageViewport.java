@@ -151,4 +151,9 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
         });  
     }
 
+    @Override
+    protected String getLoadingTaskId() {
+        return "rotation";
+    }
+
 }

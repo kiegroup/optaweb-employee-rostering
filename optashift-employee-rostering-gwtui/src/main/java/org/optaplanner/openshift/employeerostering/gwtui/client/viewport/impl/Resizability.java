@@ -16,13 +16,18 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.impl;
 
+import javax.inject.Inject;
+
 import elemental2.dom.Event;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.JQuery;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle.GridVariables;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.GridObject;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.LinearScale;
 
@@ -32,18 +37,19 @@ public class Resizability<T, M> {
     private LinearScale<T> scale;
     private double start;
 
+    @Inject
+    private CSSGlobalStyle cssGlobalStyle;
+
     public void applyFor(final GridObject<T, M> gridObject, final LinearScale<T> scale) {
 
         this.gridObject = gridObject;
         this.scale = scale;
 
         makeResizable(gridObject.getElement(),
-                      scale.getScreenPixelsPerGridUnit(),
                       "e"); // TODO: Add support for "w" (jquery doesn't like snapping on west but like it on east
     }
 
     private void makeResizable(final HTMLElement blob,
-                               final int pixelSize,
                                final String orientation) {
         JQueryResizabilityOptions options = new JQueryResizabilityOptions();
         JQueryResizability resizableBlob = JQueryResizability.get(blob);
@@ -52,13 +58,14 @@ public class Resizability<T, M> {
         options.start = (e, ui) -> onResizeStart(cast(JQueryResiabilityData.class, resizableBlob.data("ui-resizable")).axis, ui.size.height, ui.size.width);
         options.stop = (e, ui) -> onResizeEnd(cast(JQueryResiabilityData.class, resizableBlob.data("ui-resizable")).axis, ui.size.height, ui.size.width);
         options.resize = (e, ui) -> {
-            ui.size.width = snapToGrid(ui.size.width + 2 * pixelSize, pixelSize);
+            ui.size.width = snapToGrid(ui.size.width);
             onResize(cast(JQueryResiabilityData.class, resizableBlob.data("ui-resizable")).axis, ui.size.height, ui.size.width);
         };
         resizableBlob.resizable(options);
     }
 
-    private int snapToGrid(double coordinate, int pixelSize) {
+    private int snapToGrid(double coordinate) {
+        double pixelSize = cssGlobalStyle.getGridVariableValue(GridVariables.GRID_UNIT_SIZE).intValue();
         return (int) Math.floor(coordinate - (coordinate % pixelSize));
     }
 
@@ -89,12 +96,12 @@ public class Resizability<T, M> {
         double newGridPos;
         switch (orientation) {
             case "e":
-                newGridPos = start + scale.toGridUnitsFromScreenPixels(width);
+                newGridPos = start + cssGlobalStyle.toGridUnits(width);
                 gridObject.setEndPositionInScaleUnits(scale.toScaleUnits(newGridPos));
                 break;
 
             case "w":
-                newGridPos = start - scale.toGridUnitsFromScreenPixels(width);
+                newGridPos = start - cssGlobalStyle.toGridUnits(width);
                 gridObject.setStartPositionInScaleUnits(scale.toScaleUnits(newGridPos));
                 break;
         }
@@ -108,8 +115,9 @@ public class Resizability<T, M> {
 
         @JsMethod
         public native void resizable(JQueryResizabilityOptions options);
-
-    }
+        @JsMethod
+        public native void resizable(String method);
+   }
 
     @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
     private static class JQueryResiabilityData {

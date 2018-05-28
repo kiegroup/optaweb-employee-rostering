@@ -5,9 +5,12 @@ import java.util.Map;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLStyleElement;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle.GridVariables;
 
 @ApplicationScoped
 public class CSSGlobalStyle {
@@ -25,30 +28,6 @@ public class CSSGlobalStyle {
     public void setGridVariable(GridVariables variable, Number value) {
         setCSSVariable(variable.getCssPropertyName(), variable.getCssPropertyValueOf(value));
         gridVariableValueMap.put(variable, value);
-    }
-
-    public void unsetGridVariable(GridVariables variable) {
-        unsetCSSVariable(variable.getCssPropertyName());
-        gridVariableValueMap.remove(variable);
-    }
-
-    public void unsetCSSVariable(String variableName) {
-        String[] properties = styleElement.innerHTML.substring(styleElement.innerHTML.indexOf('{') + 1,
-                styleElement.innerHTML.lastIndexOf('}')).split(";");
-
-        StringBuilder newStyle = new StringBuilder(className).append(" {");
-
-        for (String property : properties) {
-            if (property.isEmpty()) {
-                continue;
-            }
-            String name = property.substring(property.indexOf('-'), property.indexOf(':'));
-            if (!name.equals(variableName)) {
-                newStyle.append(property).append(";");
-            }
-        }
-        newStyle.append("}");
-        styleElement.innerHTML = newStyle.toString();
     }
 
     private void setCSSVariable(String variableName, String value) {
@@ -84,6 +63,15 @@ public class CSSGlobalStyle {
 
     public Number getGridVariableValue(GridVariables variable) {
         return gridVariableValueMap.getOrDefault(variable, 0);
+    }
+    
+    public double toGridUnits(double screenPixels) {
+        return screenPixels / getGridVariableValue(GridVariables.GRID_UNIT_SIZE).doubleValue();
+    }
+    
+    
+    public double toScreenPixels(double gridUnits) {
+        return gridUnits * getGridVariableValue(GridVariables.GRID_UNIT_SIZE).doubleValue();
     }
 
     private static native HTMLStyleElement createStyleSheet(String className, HTMLElement root) /*-{

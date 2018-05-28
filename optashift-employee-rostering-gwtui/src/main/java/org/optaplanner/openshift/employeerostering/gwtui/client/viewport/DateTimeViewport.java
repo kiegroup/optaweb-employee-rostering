@@ -19,6 +19,7 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import elemental2.dom.HTMLDivElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.JQuery;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.header.HeaderView;
@@ -50,6 +51,9 @@ public abstract class DateTimeViewport<T, M> {
     
     @Inject
     private Lockable<Map<Long, Lane<LocalDateTime, M>>> lockableLaneMap;
+    
+    @Inject
+    private LoadingSpinner loadingSpinner;
 
     private GridObjectPlacer gridObjectPlacer;
     private LinearScale<LocalDateTime> scale;
@@ -71,6 +75,8 @@ public abstract class DateTimeViewport<T, M> {
     protected abstract Function<LocalDateTime, String> getTimeHeaderFunction();
 
     protected abstract Function<LocalDateTime, List<String>> getDateHeaderAdditionalClassesFunction();
+    
+    protected abstract String getLoadingTaskId();
 
     @PostConstruct
     private void init() {
@@ -79,6 +85,7 @@ public abstract class DateTimeViewport<T, M> {
     }
 
     public void refresh(T view) {
+        loadingSpinner.showFor(getLoadingTaskId());
         lockableLaneMap.acquire().then(laneMap -> {
             withView(view);
             // Need to defer it so we have height information

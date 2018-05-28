@@ -12,6 +12,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
@@ -51,6 +52,10 @@ public class AvailabilityRosterPageViewportBuilder {
 
     @Inject
     private EventManager eventManager;
+    
+    
+    @Inject
+    private LoadingSpinner loadingSpinner;
 
     private AvailabilityRosterPageViewport viewport;
 
@@ -136,10 +141,11 @@ public class AvailabilityRosterPageViewportBuilder {
 
                     if (!shiftViewsToAdd.hasNext() && !employeeAvaliabilitiesViewsToAdd.hasNext()) {
                         laneMap.forEach((l, lane) -> lane.endModifying());
+                        loadingSpinner.hideFor(viewport.getLoadingTaskId());
                         setUpdatingRoster(false);
                     }
                 });
-                return shiftViewsToAdd.hasNext();
+                return shiftViewsToAdd.hasNext() || employeeAvaliabilitiesViewsToAdd.hasNext();
             }
         };
     }

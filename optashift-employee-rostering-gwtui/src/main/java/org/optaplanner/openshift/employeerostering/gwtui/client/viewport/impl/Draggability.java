@@ -16,13 +16,18 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.impl;
 
+import javax.inject.Inject;
+
 import elemental2.dom.Event;
 import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.JQuery;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle.GridVariables;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.GridObject;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.LinearScale;
 
@@ -31,29 +36,38 @@ public class Draggability<T, M> {
     private GridObject<T, M> gridObject;
     private LinearScale<T> scale;
     private double dragStart;
+    
+    @Inject
+    private CSSGlobalStyle cssGlobalStyle;
 
     public void applyFor(final GridObject<T, M> gridObject, final LinearScale<T> scale) {
         this.gridObject = gridObject;
         this.scale = scale;
 
         makeDraggable(gridObject.getElement(),
-                      scale.getScreenPixelsPerGridUnit(),
                       "x");
+        
     }
 
     private void makeDraggable(final HTMLElement blob,
-                               final int pixelSize,
                                final String orientation) {
         JQueryDraggabilityOptions options = new JQueryDraggabilityOptions();
         options.addClasses = false;
         options.cancel = ".blob div";
         options.axis = orientation;
-        options.grid = new int[]{pixelSize, pixelSize};
         options.start = (e, ui) -> onDragStart(ui.position.top, ui.position.left);
         options.stop = (e, ui) -> onDragEnd(ui.position.top, ui.position.left);
-        options.drag = (e, ui) -> onDrag(ui.position.top, ui.position.left);
+        options.drag = (e, ui) -> {
+            ui.position.left = snapToGrid(ui.position.left);
+            onDrag(ui.position.top, ui.position.left);
+        };
         options.scroll = false;
         JQueryDraggability.get(blob).draggable(options);
+    }
+    
+    private int snapToGrid(double coordinate) {
+        double pixelSize = cssGlobalStyle.getGridVariableValue(GridVariables.GRID_UNIT_SIZE).intValue();
+        return (int) Math.floor(coordinate - (coordinate % pixelSize));
     }
 
     private boolean onDragStart(final int top, final int left) {
@@ -69,7 +83,7 @@ public class Draggability<T, M> {
     }
 
     private boolean onDrag(final int top, final int left) {
-        double startPositionInGridUnits = scale.toGridUnitsFromScreenPixels(left) + dragStart;
+        double startPositionInGridUnits = cssGlobalStyle.toGridUnits(left) + dragStart;
         double endPositionInGridUnits = scale.toGridUnits(gridObject.getEndPositionInScaleUnits()) - scale.toGridUnits(gridObject.getStartPositionInScaleUnits()) + startPositionInGridUnits;
 
         gridObject.setStartPositionInScaleUnits(scale.toScaleUnits(startPositionInGridUnits));
@@ -84,6 +98,7 @@ public class Draggability<T, M> {
         public static native JQueryDraggability get(HTMLElement element);
 
         public native void draggable(JQueryDraggabilityOptions options);
+        public native void draggable(String method);
     }
 
     @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
