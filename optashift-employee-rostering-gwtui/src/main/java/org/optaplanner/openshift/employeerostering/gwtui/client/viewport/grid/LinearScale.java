@@ -36,17 +36,4 @@ public interface LinearScale<T> {
         return toGridUnits(getEndInScaleUnits());
     }
 
-    default double toGridUnitsFromScreenPixels(double screenPixels) {
-        return screenPixels / getScreenPixelsPerGridUnit();
-    }
-
-    default T toScaleUnitsFromScreenPixels(double screenPixels) {
-        return toScaleUnits(toGridUnitsFromScreenPixels(screenPixels));
-    }
-
-    default double toScreenPixels(double gridUnits) {
-        return gridUnits * getScreenPixelsPerGridUnit();
-    }
-
-    int getScreenPixelsPerGridUnit();
 }

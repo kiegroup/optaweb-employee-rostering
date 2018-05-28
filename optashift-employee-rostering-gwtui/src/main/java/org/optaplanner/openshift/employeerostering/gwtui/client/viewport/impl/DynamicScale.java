@@ -50,8 +50,4 @@ public class DynamicScale implements LinearScale<LocalDateTime> {
         return secondsPerGridUnit;
     }
 
-    public int getScreenPixelsPerGridUnit() {
-        return 20;
-    }
-
 }

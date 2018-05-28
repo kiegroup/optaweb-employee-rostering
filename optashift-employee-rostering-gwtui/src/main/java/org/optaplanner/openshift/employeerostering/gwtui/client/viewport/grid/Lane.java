@@ -23,6 +23,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle;
 
 @Templated
 public class Lane<T, M> implements IsElement {
@@ -41,6 +42,9 @@ public class Lane<T, M> implements IsElement {
     @DataField("dummy")
     @Named("span")
     private HTMLElement dummy;
+    
+    @Inject
+    private CSSGlobalStyle cssGlobalStyle;
 
     private LinearScale<T> scale;
     private GridObjectPlacer gridObjectPlacer;
@@ -193,7 +197,7 @@ public class Lane<T, M> implements IsElement {
 
     protected void onMouseClick(MouseEvent e) {
         if (e.target == laneContent) {
-            T positionInScaleUnits = scale.toScaleUnits(Math.round(scale.toGridUnitsFromScreenPixels(e.offsetX)));
+            T positionInScaleUnits = scale.toScaleUnits(Math.round(cssGlobalStyle.toGridUnits(e.offsetX)));
             addGridObject(gridObjectCreator.apply(positionInScaleUnits));
         }
     }

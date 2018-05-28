@@ -122,4 +122,9 @@ public class AvailabilityRosterPageViewport extends DateTimeViewport<Availabilit
         return (date) -> (rosterState.isHistoric(date)) ? Collections.emptyList() : (rosterState.isPublished(date)) ? Arrays.asList("fa", "fa-check") : Arrays.asList("fa", "fa-list-alt");
     }
 
+    @Override
+    protected String getLoadingTaskId() {
+        return "availability-roster";
+    }
+
 }

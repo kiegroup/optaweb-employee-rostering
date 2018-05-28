@@ -12,6 +12,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
@@ -47,6 +48,9 @@ public class ShiftRosterPageViewportBuilder {
 
     @Inject
     private EventManager eventManager;
+    
+    @Inject
+    private LoadingSpinner loadingSpinner;
 
     private ShiftRosterPageViewport viewport;
 
@@ -116,6 +120,7 @@ public class ShiftRosterPageViewportBuilder {
 
                     if (!shiftViewsToAdd.hasNext()) {
                         laneMap.forEach((l, lane) -> lane.endModifying());
+                        loadingSpinner.hideFor(viewport.getLoadingTaskId());
                         setUpdatingRoster(false);
                     }
                 });
