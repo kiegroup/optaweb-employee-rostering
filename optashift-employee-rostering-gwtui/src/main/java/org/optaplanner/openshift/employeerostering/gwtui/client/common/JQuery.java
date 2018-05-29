@@ -11,6 +11,10 @@ public class JQuery {
     @JsMethod(name = "$", namespace = JsPackage.GLOBAL)
     public static native JQuery get(HTMLElement element);
 
+    public native JQuery children(String selector);
+
+    public native JQuery css(String propertyName, String propertyValue);
+
     public native Object data(String owner);
 
     public native double width();

@@ -2,6 +2,7 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.viewport;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -83,6 +84,8 @@ public abstract class DateTimeViewport<T, M> {
 
     protected abstract boolean showLoadingSpinner();
 
+    protected abstract Lane.DummySublane getDummySublane();
+
     @PostConstruct
     private void init() {
         viewportOverlay.hidden = true;
@@ -111,8 +114,9 @@ public abstract class DateTimeViewport<T, M> {
             Map<Long, String> viewLanes = getLaneTitlesFor(view);
             for (Long laneId : viewLanes.keySet()) {
                 if (!laneMap.containsKey(laneId)) {
-                    Lane<LocalDateTime, M> lane = laneInstance.get().withGridObjectPlacer(gridObjectPlacer)
-                                                              .withScale(scale).withTitle(viewLanes.get(laneId)).withGridObjectCreator(getInstanceCreator(view, laneId));
+                    Lane<LocalDateTime, M> lane = laneInstance.get().withDummySublane(getDummySublane()).withGridObjectPlacer(gridObjectPlacer)
+                                                              .withScale(scale).withTitle(viewLanes.get(laneId))
+                                                              .withGridObjectCreator(getInstanceCreator(view, laneId));
                     laneMap.put(laneId, lane);
                     laneContainer.appendChild(lane.getElement());
                 } else {

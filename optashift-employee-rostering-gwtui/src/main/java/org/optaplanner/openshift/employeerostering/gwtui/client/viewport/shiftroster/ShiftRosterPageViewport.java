@@ -24,6 +24,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.DateTimeViewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.HasGridObjects;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.Lane.DummySublane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.impl.DynamicScale;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
@@ -62,8 +63,8 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
     protected LinearScale<LocalDateTime> getScaleFor(ShiftRosterView view) {
         LocalDateTime endDateTime = LocalDateTime.of(view.getEndDate(),
                                                      LocalTime.of(0, 0, 0));
-        LocalDateTime startDateTime = view.getEndDate().minusDays(20).isAfter(view.getStartDate())? endDateTime.minusDays(20) : LocalDateTime.of(view.getStartDate(),
-                                                                                                                                                 LocalTime.of(0, 0, 0));
+        LocalDateTime startDateTime = view.getEndDate().minusDays(20).isAfter(view.getStartDate()) ? endDateTime.minusDays(20) : LocalDateTime.of(view.getStartDate(),
+                                                                                                                                                  LocalTime.of(0, 0, 0));
         return new DynamicScale(startDateTime, endDateTime, Duration.ofHours(1));
     }
 
@@ -130,6 +131,11 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
     @Override
     protected boolean showLoadingSpinner() {
         return !viewportBuilder.isSolving();
+    }
+
+    @Override
+    protected DummySublane getDummySublane() {
+        return DummySublane.BOTTOM;
     }
 
 }
