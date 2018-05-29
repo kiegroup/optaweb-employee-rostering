@@ -15,7 +15,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
@@ -54,6 +53,11 @@ public abstract class RosterToolbar {
     @Named("span")
     @DataField("hard-score")
     private HTMLElement hardScore;
+    
+    @Inject
+    @Named("span")
+    @DataField("medium-score")
+    private HTMLElement mediumScore;
 
     @Inject
     @Named("span")
@@ -121,7 +125,7 @@ public abstract class RosterToolbar {
             if (score.isPresent()) {
                 scores.classList.remove("hidden");
                 hardScore.textContent = score.get().getHardScore() + "";
-                // TODO show medium score
+                mediumScore.textContent = score.get().getMediumScore() + "";
                 softScore.textContent = score.get().getSoftScore() + "";
             } else {
                 scores.classList.add("hidden");

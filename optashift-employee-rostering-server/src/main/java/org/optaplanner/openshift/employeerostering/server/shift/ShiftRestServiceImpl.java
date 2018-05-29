@@ -28,10 +28,14 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
+import org.optaplanner.openshift.employeerostering.server.common.IndictmentUtils;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestService;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 import org.optaplanner.openshift.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaplanner.openshift.employeerostering.shared.rotation.view.RotationView;
@@ -53,13 +57,19 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     private SpotRestService spotRestService;
     @Inject
     private EmployeeRestService employeeRestService;
+    @Inject
+    private RosterRestService rosterRestService;
+    @Inject
+    private IndictmentUtils indictmentUtils;
 
     @Override
     @Transactional
     public ShiftView getShift(Integer tenantId, Long id) {
         Shift shift = entityManager.find(Shift.class, id);
         validateTenantIdParameter(tenantId, shift);
-        return new ShiftView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), shift);
+        Indictment indictment = indictmentUtils.getIndictmentMapForRoster(rosterRestService.buildRoster(tenantId)).get(shift);
+        return indictmentUtils.getShiftViewWithIndictment(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(),
+                                                          shift, indictment);
     }
 
     @Override
@@ -67,7 +77,9 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     public ShiftView addShift(Integer tenantId, ShiftView shiftView) {
         Shift shift = convertFromView(tenantId, shiftView);
         entityManager.persist(shift);
-        return new ShiftView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), shift);
+        Indictment indictment = indictmentUtils.getIndictmentMapForRoster(rosterRestService.buildRoster(tenantId)).get(shift);
+        return indictmentUtils.getShiftViewWithIndictment(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(),
+                                                          shift, indictment);
     }
 
     @Override
@@ -78,7 +90,9 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
         
         // Flush to increase version number before we duplicate it to ShiftView
         entityManager.flush();
-        return new ShiftView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), shift);
+        Indictment indictment = indictmentUtils.getIndictmentMapForRoster(rosterRestService.buildRoster(tenantId)).get(shift);
+        return indictmentUtils.getShiftViewWithIndictment(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(),
+                                                          shift, indictment);
     }
 
     private Shift convertFromView(Integer tenantId, ShiftView shiftView) {
@@ -126,8 +140,10 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
 
     @Override
     public List<ShiftView> getShifts(Integer tenantId) {
+        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(rosterRestService.buildRoster(tenantId));
         return getAllShifts(tenantId).stream()
-                .map(s -> new ShiftView(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(), s))
+                .map(s -> indictmentUtils.getShiftViewWithIndictment(tenantRestService.getTenantConfiguration(tenantId).getTimeZone(),
+                                                                     s, indictmentMap.get(s)))
                 .collect(Collectors.toList());
     }
 

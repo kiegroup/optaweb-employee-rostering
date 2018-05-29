@@ -30,6 +30,7 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 
@@ -85,16 +86,18 @@ public class EmployeeAvailability extends AbstractPersistable {
         super(employeeAvailabilityView);
         this.employee = employee;
         this.startDateTime = OffsetDateTime.of(employeeAvailabilityView.getStartDateTime(),
-                zoneId.getRules().getOffset(employeeAvailabilityView.getStartDateTime()));
+                                               zoneId.getRules().getOffset(employeeAvailabilityView.getStartDateTime()));
         this.endDateTime = OffsetDateTime.of(employeeAvailabilityView.getEndDateTime(),
-                zoneId.getRules().getOffset(employeeAvailabilityView.getEndDateTime()));
+                                             zoneId.getRules().getOffset(employeeAvailabilityView.getEndDateTime()));
     }
 
     @AssertTrue
+    @JsonIgnore
     public boolean isValid() {
         return getDuration().getSeconds() / (60 * 60) < 28;
     }
 
+    @JsonIgnore
     public Duration getDuration() {
         return Duration.between(startDateTime, endDateTime);
     }
