@@ -17,7 +17,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlob
 
 @Templated
 public class AvailabilityRosterPage implements IsElement,
-                                   Page {
+                                    Page {
 
     @Inject
     TenantStore tenantStore;
@@ -44,6 +44,7 @@ public class AvailabilityRosterPage implements IsElement,
     @PostConstruct
     public void init() {
         cssGlobalStyle.setGridVariable(GridVariables.GRID_UNIT_SIZE, 10);
+        cssGlobalStyle.setGridVariable(GridVariables.GRID_ROW_SIZE, 50);
         cssGlobalStyle.setGridVariable(GridVariables.GRID_SOFT_LINE_INTERVAL, 4);
         cssGlobalStyle.setGridVariable(GridVariables.GRID_HARD_LINE_INTERVAL, 24);
         cssGlobalStyle.setGridVariable(GridVariables.GRID_HEADER_COLUMN_WIDTH, 120);

@@ -23,6 +23,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.JQuery;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle;
 
 @Templated
@@ -56,17 +57,29 @@ public class Lane<T, M> implements IsElement {
     private Set<HasGridObjects<T, M>> notUpdatedGridObjects;
 
     private boolean mouseMoved = false;
-    private boolean isLocked = false;
+    private DummySublane dummySublane;
+    private long rowCount;
 
     @PostConstruct
     private void init() {
         gridObjectMap = new HashMap<>();
         addedGridObjects = new HashMap<>();
         notUpdatedGridObjects = new HashSet<>();
+        rowCount = 1;
     }
 
     public Lane<T, M> withTitle(String title) {
         laneTitleLabel.innerHTML = new SafeHtmlBuilder().appendEscaped(title).toSafeHtml().asString();
+        return this;
+    }
+
+    public Lane<T, M> withDummySublane(DummySublane dummySublane) {
+        this.dummySublane = dummySublane;
+        if (dummySublane == DummySublane.NONE) {
+            dummy.hidden = true;
+        } else {
+            dummy.hidden = false;
+        }
         return this;
     }
 
@@ -106,9 +119,21 @@ public class Lane<T, M> implements IsElement {
     }
 
     public void addGridObjectElement(GridObject<T, M> gridObject) {
-        laneContent.insertBefore(gridObject.getElement(), dummy);
+        switch (dummySublane) {
+            case BOTTOM:
+                laneContent.insertBefore(gridObject.getElement(), dummy);
+                break;
+            case TOP:
+            case NONE:
+                laneContent.appendChild(gridObject.getElement());
+                break;
+            default:
+                throw new IllegalStateException("No case for " + dummySublane + " in addGridObjectElement.");
+        }
+
         gridObject.withLane(this);
         positionGridObject(gridObject);
+        refreshSpanningElements();
     }
     
     public void moveAddedGridObjectToIdMap(HasGridObjects<T, M> addedGridObject) {
@@ -153,6 +178,12 @@ public class Lane<T, M> implements IsElement {
 
     public void removeGridObjectElement(GridObject<T, M> gridObject) {
         laneContent.removeChild(gridObject.getElement());
+        refreshSpanningElements();
+    }
+
+    private void refreshSpanningElements() {
+        rowCount = Math.round(JQuery.get(getElement()).height() / cssGlobalStyle.getGridVariableValue(CSSGlobalStyle.GridVariables.GRID_ROW_SIZE).doubleValue());
+        JQuery.get(getElement()).children(".spanning-blob").css("grid-row-end", rowCount + "");
     }
 
     public GridObjectPlacer getGridObjectPlacer() {
@@ -161,6 +192,7 @@ public class Lane<T, M> implements IsElement {
 
     public void positionGridObject(GridObject<T, M> gridObject) {
         gridObjectPlacer.positionObjectOnGrid(gridObject, scale);
+        refreshSpanningElements();
     }
 
     public void makeSpanning(HTMLElement element) {
@@ -226,5 +258,11 @@ public class Lane<T, M> implements IsElement {
 
     public void setMetadata(M metadata) {
         this.metadata = metadata;
+    }
+
+    public static enum DummySublane {
+        TOP,
+        BOTTOM,
+        NONE;
     }
 }

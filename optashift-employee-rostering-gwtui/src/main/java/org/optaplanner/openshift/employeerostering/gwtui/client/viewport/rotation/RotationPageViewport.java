@@ -28,6 +28,7 @@ import org.optaplanner.openshift.employeerostering.gwtui.client.util.PromiseUtil
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.DateTimeViewport;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.HasGridObjects;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.Lane;
+import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.Lane.DummySublane;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.grid.LinearScale;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.impl.DynamicScale;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
@@ -148,7 +149,12 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
                                                        viewportBuilder.buildRotationViewport(this);
                                                    }));
             return promiseUtils.resolve();
-        });  
+        });
+    }
+
+    @Override
+    protected DummySublane getDummySublane() {
+        return DummySublane.BOTTOM;
     }
 
     @Override

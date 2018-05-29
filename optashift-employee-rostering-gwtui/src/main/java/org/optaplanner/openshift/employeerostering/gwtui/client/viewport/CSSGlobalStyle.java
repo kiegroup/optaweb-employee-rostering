@@ -5,12 +5,9 @@ import java.util.Map;
 import java.util.function.Function;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLStyleElement;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
-import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle.GridVariables;
 
 @ApplicationScoped
 public class CSSGlobalStyle {
@@ -84,6 +81,7 @@ public class CSSGlobalStyle {
     
     public static enum GridVariables {
         GRID_UNIT_SIZE("--grid-unit-size", p -> p + "px"),
+        GRID_ROW_SIZE("--grid-row-size", p -> p + "px"),
         GRID_SOFT_LINE_INTERVAL("--grid-soft-line-interval", 
                 p -> "calc(" + GRID_UNIT_SIZE.get() + "*" + p.doubleValue() + ")"),
         GRID_HARD_LINE_INTERVAL("--grid-hard-line-interval", 
