@@ -1,8 +1,11 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.shiftroster;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -15,6 +18,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
@@ -25,6 +29,7 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServi
 import org.optaplanner.openshift.employeerostering.shared.roster.view.ShiftRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_DATE_RANGE;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_PAGINATION;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_UPDATE;
@@ -60,6 +65,7 @@ public class ShiftRosterPageViewportBuilder {
     private final int WORK_LIMIT_PER_CYCLE = 50;
 
     private Pagination pagination;
+    private LocalDateRange localDateRange;
     private long currentWorkerStartTime;
 
     @PostConstruct
@@ -71,9 +77,20 @@ public class ShiftRosterPageViewportBuilder {
             this.pagination = pagination;
             buildShiftRosterViewport(viewport);
         });
+
         eventManager.subscribeToEvent(SHIFT_ROSTER_INVALIDATE, (nil) -> {
             buildShiftRosterViewport(viewport);
         });
+
+        eventManager.subscribeToEvent(SHIFT_ROSTER_DATE_RANGE, dr -> {
+            localDateRange = dr;
+            buildShiftRosterViewport(viewport);
+        });
+
+        RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(),
+                                                FailureShownRestCallback.onSuccess((rs) -> {
+                                                    eventManager.fireEvent(SHIFT_ROSTER_DATE_RANGE, new LocalDateRange(rs.getFirstDraftDate(), rs.getFirstDraftDate().plusDays(7)));
+                                                }));
     }
 
     public ShiftRosterPageViewportBuilder withViewport(ShiftRosterPageViewport viewport) {
@@ -96,6 +113,7 @@ public class ShiftRosterPageViewportBuilder {
         return new RepeatingCommand() {
 
             final long timeWhenStarted = timeWhenInvoked;
+            final Set<Long> laneIdFilteredSet = new HashSet<>();
 
             @Override
             public boolean execute() {
@@ -106,6 +124,12 @@ public class ShiftRosterPageViewportBuilder {
                     int workDone = 0;
                     while (shiftViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
                         ShiftView toAdd = shiftViewsToAdd.next();
+                        if (!laneIdFilteredSet.contains(toAdd.getSpotId())) {
+                            Set<Long> shiftViewsId = view.getSpotIdToShiftViewListMap().get(toAdd.getSpotId()).stream().map(sv -> sv.getId()).collect(Collectors.toSet());
+                            laneMap.get(toAdd.getSpotId()).filterGridObjects(ShiftGridObject.class,
+                                                                             (sv) -> shiftViewsId.contains(sv.getId()));
+                            laneIdFilteredSet.add(toAdd.getSpotId());
+                        }
                         laneMap.get(toAdd.getSpotId()).addOrUpdateGridObject(
                                                                              ShiftGridObject.class, toAdd.getId(), () -> {
                                                                                  ShiftGridObject out = shiftGridObjectInstances.get();
@@ -170,11 +194,19 @@ public class ShiftRosterPageViewportBuilder {
     }
 
     public Promise<ShiftRosterView> getShiftRosterView() {
-        return promiseUtils.promise((res, rej) -> {
-            RosterRestServiceBuilder.getCurrentShiftRosterView(tenantStore.getCurrentTenantId(), pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
-                                                               FailureShownRestCallback.onSuccess((s) -> {
-                                                                   res.onInvoke(s);
-                                                               }));
-        });
+        return promiseUtils
+                           .promise(
+                                    (res, rej) -> {
+                                        RosterRestServiceBuilder
+                                                                .getShiftRosterView(tenantStore.getCurrentTenantId(),
+                                                                                    pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
+                                                                                    localDateRange
+                                                                                                  .getStartDate()
+                                                                                                  .toString(),
+                                                                                    localDateRange.getEndDate().toString(),
+                                                                                    FailureShownRestCallback.onSuccess((s) -> {
+                                                                                        res.onInvoke(s);
+                                                                                    }));
+                                    });
     }
 }

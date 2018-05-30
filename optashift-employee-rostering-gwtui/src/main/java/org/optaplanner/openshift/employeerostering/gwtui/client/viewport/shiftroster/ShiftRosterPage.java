@@ -20,26 +20,26 @@ public class ShiftRosterPage implements IsElement,
                              Page {
 
     @Inject
-    TenantStore tenantStore;
+    private TenantStore tenantStore;
 
     @Inject
-    PromiseUtils promiseUtils;
+    private PromiseUtils promiseUtils;
 
     @Inject
     @DataField("viewport")
-    ShiftRosterPageViewport viewport;
+    private ShiftRosterPageViewport viewport;
 
     @Inject
-    ShiftRosterPageViewportBuilder viewportBuilder;
+    private ShiftRosterPageViewportBuilder viewportBuilder;
 
     @Inject
-    HeaderView headerView;
+    private HeaderView headerView;
 
     @Inject
-    ShiftRosterToolbar toolbar;
+    private ShiftRosterToolbar toolbar;
 
     @Inject
-    CSSGlobalStyle cssGlobalStyle;
+    private CSSGlobalStyle cssGlobalStyle;
 
     @PostConstruct
     public void init() {
@@ -53,7 +53,7 @@ public class ShiftRosterPage implements IsElement,
     @Override
     public Promise<Void> onOpen() {
         headerView.addStickyElement(toolbar);
-        return refresh();
+        return promiseUtils.resolve();
     }
 
     public void onTenantChanged(@Observes final TenantStore.TenantChange tenant) {

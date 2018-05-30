@@ -1,8 +1,12 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.availabilityroster;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -15,6 +19,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.util.CommonUtils;
@@ -26,6 +31,7 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServi
 import org.optaplanner.openshift.employeerostering.shared.roster.view.AvailabilityRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_DATE_RANGE;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_INVALIDATE;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_PAGINATION;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_UPDATE;
@@ -65,6 +71,7 @@ public class AvailabilityRosterPageViewportBuilder {
 
     private long currentWorkerStartTime;
     private Pagination pagination;
+    private LocalDateRange localDateRange;
 
     @PostConstruct
     private void init() {
@@ -78,6 +85,14 @@ public class AvailabilityRosterPageViewportBuilder {
         eventManager.subscribeToEvent(AVAILABILITY_ROSTER_INVALIDATE, (nil) -> {
             buildAvailabilityRosterViewport(viewport);
         });
+        eventManager.subscribeToEvent(AVAILABILITY_ROSTER_DATE_RANGE, dr -> {
+            localDateRange = dr;
+            buildAvailabilityRosterViewport(viewport);
+        });
+        RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(),
+                                                FailureShownRestCallback.onSuccess((rs) -> {
+                                                    eventManager.fireEvent(AVAILABILITY_ROSTER_DATE_RANGE, new LocalDateRange(rs.getFirstDraftDate(), rs.getFirstDraftDate().plusDays(7)));
+                                                }));
     }
 
     public AvailabilityRosterPageViewportBuilder withViewport(AvailabilityRosterPageViewport viewport) {
@@ -102,6 +117,7 @@ public class AvailabilityRosterPageViewportBuilder {
         return new RepeatingCommand() {
 
             final long timeWhenStarted = timeWhenInvoked;
+            final Set<Long> laneIdFilteredSet = new HashSet<>();
 
             @Override
             public boolean execute() {
@@ -112,6 +128,16 @@ public class AvailabilityRosterPageViewportBuilder {
                     int workDone = 0;
                     while (shiftViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
                         ShiftView toAdd = shiftViewsToAdd.next();
+                        if (!laneIdFilteredSet.contains(toAdd.getEmployeeId())) {
+                            Set<Long> shiftViewsId = view.getEmployeeIdToShiftViewListMap().getOrDefault(toAdd.getEmployeeId(), Collections.emptyList()).stream().map(sv -> sv.getId()).collect(Collectors.toSet());
+                            Set<Long> availabilityViewsId = view.getEmployeeIdToAvailabilityViewListMap().getOrDefault(toAdd.getEmployeeId(), Collections.emptyList()).stream().map(sv -> sv.getId()).collect(Collectors
+                                                                                                                                                                                                                        .toSet());
+                            laneMap.get(toAdd.getEmployeeId()).filterGridObjects(ShiftGridObject.class,
+                                                                                 (sv) -> shiftViewsId.contains(sv.getId()));
+                            laneMap.get(toAdd.getEmployeeId()).filterGridObjects(AvailabilityGridObject.class,
+                                                                                 (sv) -> availabilityViewsId.contains(sv.getId()));
+                            laneIdFilteredSet.add(toAdd.getEmployeeId());
+                        }
                         laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
                                                                                  ShiftGridObject.class, toAdd.getId(), () -> {
                                                                                      ShiftGridObject out = shiftGridObjectInstances.get();
@@ -126,6 +152,16 @@ public class AvailabilityRosterPageViewportBuilder {
 
                     while (employeeAvaliabilitiesViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
                         EmployeeAvailabilityView toAdd = employeeAvaliabilitiesViewsToAdd.next();
+                        if (!laneIdFilteredSet.contains(toAdd.getEmployeeId())) {
+                            Set<Long> shiftViewsId = view.getEmployeeIdToShiftViewListMap().getOrDefault(toAdd.getEmployeeId(), Collections.emptyList()).stream().map(sv -> sv.getId()).collect(Collectors.toSet());
+                            Set<Long> availabilityViewsId = view.getEmployeeIdToAvailabilityViewListMap().getOrDefault(toAdd.getEmployeeId(), Collections.emptyList()).stream().map(sv -> sv.getId()).collect(Collectors
+                                                                                                                                                                                                                        .toSet());
+                            laneMap.get(toAdd.getEmployeeId()).filterGridObjects(ShiftGridObject.class,
+                                                                                 (sv) -> shiftViewsId.contains(sv.getId()));
+                            laneMap.get(toAdd.getEmployeeId()).filterGridObjects(AvailabilityGridObject.class,
+                                                                                 (sv) -> availabilityViewsId.contains(sv.getId()));
+                            laneIdFilteredSet.add(toAdd.getEmployeeId());
+                        }
                         laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
                                                                                  AvailabilityGridObject.class, toAdd.getId(), () -> {
                                                                                      AvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get();
@@ -189,11 +225,15 @@ public class AvailabilityRosterPageViewportBuilder {
     }
 
     public Promise<AvailabilityRosterView> getAvailabilityRosterView() {
-        return promiseUtils.promise((res, rej) -> {
-            RosterRestServiceBuilder.getCurrentAvailabilityRosterView(tenantStore.getCurrentTenantId(), pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
-                                                                      FailureShownRestCallback.onSuccess((s) -> {
-                                                                          res.onInvoke(s);
-                                                                      }));
-        });
+        return promiseUtils
+                           .promise(
+                                    (res, rej) -> RosterRestServiceBuilder.getAvailabilityRosterView(tenantStore.getCurrentTenantId(), pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
+                                                                                                     localDateRange
+                                                                                                                   .getStartDate()
+                                                                                                                   .toString(),
+                                                                                                     localDateRange.getEndDate().toString(),
+                                                                                                     FailureShownRestCallback.onSuccess((s) -> {
+                                                                                                         res.onInvoke(s);
+                                                                                                     })));
     }
 }

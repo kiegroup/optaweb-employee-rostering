@@ -51,11 +51,13 @@ public class EventManager {
         public static Event<ShiftRosterView> SHIFT_ROSTER_UPDATE = new Event<>("ShiftRosterUpdate", ShiftRosterView.class);
         public static Event<Void> SHIFT_ROSTER_INVALIDATE = new Event<>("ShiftRosterInvalidate", Void.class);
         public static Event<Pagination> SHIFT_ROSTER_PAGINATION = new Event<>("ShiftRosterPagination", Pagination.class);
+        public static Event<LocalDateRange> SHIFT_ROSTER_DATE_RANGE = new Event<>("ShiftRosterDateRange", LocalDateRange.class);
 
         // Employee Roster Events
         public static Event<AvailabilityRosterView> AVAILABILITY_ROSTER_UPDATE = new Event<>("AvailabilityRosterUpdate", AvailabilityRosterView.class);
         public static Event<Void> AVAILABILITY_ROSTER_INVALIDATE = new Event<>("AvailabilityRosterInvalidate", Void.class);
         public static Event<Pagination> AVAILABILITY_ROSTER_PAGINATION = new Event<>("AvailabilityRosterPagination", Pagination.class);
+        public static Event<LocalDateRange> AVAILABILITY_ROSTER_DATE_RANGE = new Event<>("AvailabilityRosterDateRange", LocalDateRange.class);
 
         // Rotation Events
         public static Event<Void> ROTATION_SAVE = new Event<>("RotationSave", Void.class);

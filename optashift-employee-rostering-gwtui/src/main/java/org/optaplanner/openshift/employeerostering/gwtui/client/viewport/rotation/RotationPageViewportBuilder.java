@@ -1,8 +1,11 @@
 package org.optaplanner.openshift.employeerostering.gwtui.client.viewport.rotation;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -42,7 +45,7 @@ public class RotationPageViewportBuilder {
     
     @Inject
     private EventManager eventManager;
-    
+
     @Inject
     private LoadingSpinner loadingSpinner;
 
@@ -69,6 +72,7 @@ public class RotationPageViewportBuilder {
         return new RepeatingCommand() {
 
             final long timeWhenStarted = timeWhenInvoked;
+            final Set<Long> laneIdFilteredSet = new HashSet<>();
 
             @Override
             public boolean execute() {
@@ -79,18 +83,24 @@ public class RotationPageViewportBuilder {
                     int workDone = 0;
                     while (shiftTemplateViewsToAdd.hasNext() && workDone < WORK_LIMIT_PER_CYCLE) {
                         ShiftTemplateView toAdd = shiftTemplateViewsToAdd.next();
+                        if (!laneIdFilteredSet.contains(toAdd.getSpotId())) {
+                            Set<Long> shiftTemplateModelId = view.getSpotIdToShiftTemplateViewListMap().get(toAdd.getSpotId()).stream().map(sv -> sv.getId()).collect(Collectors.toSet());
+                            laneMap.get(toAdd.getSpotId()).filterGridObjects(ShiftTemplateModel.class,
+                                                                             (sv) -> shiftTemplateModelId.contains(sv.getId()));
+                            laneIdFilteredSet.add(toAdd.getSpotId());
+                        }
                         laneMap.get(toAdd.getSpotId()).addOrUpdateGridObject(
-                                ShiftTemplateModel.class, toAdd.getId(), () -> {
-                                    ShiftTemplateModel out = shiftTemplateModelInstances.get();
-                                    out.withShiftTemplateView(toAdd);
-                                    return out;
-                                }, (s) -> {
-                                    s.withShiftTemplateView(toAdd);
-                                    return null;
-                                });
+                                                                             ShiftTemplateModel.class, toAdd.getId(), () -> {
+                                                                                 ShiftTemplateModel out = shiftTemplateModelInstances.get();
+                                                                                 out.withShiftTemplateView(toAdd);
+                                                                                 return out;
+                                                                             }, (s) -> {
+                                                                                 s.withShiftTemplateView(toAdd);
+                                                                                 return null;
+                                                                             });
                         workDone++;
                     }
-    
+
                     if (!shiftTemplateViewsToAdd.hasNext()) {
                         laneMap.forEach((l, lane) -> lane.endModifying());
                         loadingSpinner.hideFor(viewport.getLoadingTaskId());
@@ -115,9 +125,9 @@ public class RotationPageViewportBuilder {
     public Promise<RotationView> getRotationView() {
         return promiseUtils.promise((res, rej) -> {
             ShiftRestServiceBuilder.getRotation(tenantStore.getCurrentTenantId(),
-                    FailureShownRestCallback.onSuccess((rv) -> {
-                        res.onInvoke(rv);
-                    }));
+                                                FailureShownRestCallback.onSuccess((rv) -> {
+                                                    res.onInvoke(rv);
+                                                }));
         });
     }
 }
