@@ -1,8 +1,8 @@
-<div class="header-part row toolbar-pf">
+<div class="header-part row toolbar-pf" style="padding-bottom: 0px;">
         <div class="col-sm-3">
             <h1>Availability Roster</h1>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-10" style="margin-top: -10px;">
             <h1></h1>
             <div class="toolbar-pf-actions search-pf kie-search-pf has-button">
                 <div class="toolbar-pf-action-right">
@@ -11,31 +11,22 @@
                         <div data-field="scores" class="scores">
                             <div class="btn btn-default" disabled>Hard score: <span data-field="hard-score"></span>
                             </div>
+                            <div class="btn btn-default" disabled>Medium score: <span data-field="medium-score"></span>
+                            </div>
                             <div class="btn btn-default" disabled>Soft score: <span data-field="soft-score"></span>
                             </div>
                             <div class="btn btn-default" disabled>Remaining time:
                                 <span data-field="remaining-time"></span> seconds
                             </div>
                         </div>
-                        
-                        <button data-field="publish-button" class="btn btn-success">
-                        <!-- TODO: i18n -->
-                            <span>Publish</span>
-                        </button>
-
-                        <button data-field="solve-button" class="btn btn-success">
-                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-                            <span data-i18n-key="General.solve">Solve</span>
-                        </button>
-
-                        <button data-field="terminate-early-button" class="btn btn-danger">
-                            <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
-                            <span data-i18n-key="General.terminateEarlier">Terminate earlier</span>
-                        </button>
 
                         <button data-field="refresh-button" class="btn btn-default">
                             <span data-i18n-key="General.refresh">Refresh</span>
                         </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div data-field="week-picker"></div>
                     </div>
 
                     <div class="form-group">

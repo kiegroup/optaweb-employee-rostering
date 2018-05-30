@@ -50,6 +50,8 @@ public interface RosterRestService {
     @GET
     @Path("/shiftRosterView")
     ShiftRosterView getShiftRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                       @ApiParam @QueryParam("p") Integer pageNumber,
+                                       @ApiParam @QueryParam("n") Integer numberOfItemsPerPage,
                                        @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
                                        @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString);
 
@@ -78,6 +80,8 @@ public interface RosterRestService {
     @GET
     @Path("/availabilityRosterView")
     AvailabilityRosterView getAvailabilityRosterView(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
+                                                     @ApiParam @QueryParam("p") Integer pageNumber,
+                                                     @ApiParam @QueryParam("n") Integer numberOfItemsPerPage,
                                                      @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
                                                      @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString);
 
