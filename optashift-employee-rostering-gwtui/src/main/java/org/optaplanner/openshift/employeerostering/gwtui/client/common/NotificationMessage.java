@@ -14,6 +14,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.PopupFactory;
 
 @Templated
 public class NotificationMessage implements IsElement {
@@ -34,7 +35,9 @@ public class NotificationMessage implements IsElement {
     @Inject
     @DataField("okay-button")
     private HTMLButtonElement okayButton;
-
+    
+    @Inject
+    private PopupFactory popupFactory;
     private FormPopup formPopup;
 
     public NotificationMessage withTitle(String title) {
@@ -48,8 +51,10 @@ public class NotificationMessage implements IsElement {
     }
 
     public void show() {
-        formPopup = FormPopup.getFormPopup(this);
-        formPopup.center((int) JQuery.get(getElement()).width(), (int) JQuery.get(getElement()).height());
+        popupFactory.getFormPopup(this).ifPresent((fp) -> {
+            formPopup = fp;
+            formPopup.center((int) JQuery.get(getElement()).width(), (int) JQuery.get(getElement()).height());
+        });
     }
 
     @EventHandler("okay-button")

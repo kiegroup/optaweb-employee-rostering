@@ -23,7 +23,7 @@ public class ErrorPopup extends PopupPanel {
 
     private HandlerRegistration windowResizeHandler;
 
-    public ErrorPopup(String msg) {
+    private ErrorPopup(String msg) {
         super(false);
 
         CssResources.INSTANCE.errorpopup().ensureInjected();

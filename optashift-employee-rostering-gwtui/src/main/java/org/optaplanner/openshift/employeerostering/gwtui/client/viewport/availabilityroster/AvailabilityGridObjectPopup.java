@@ -34,6 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.LocalDateTimePicker;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -82,6 +83,9 @@ public class AvailabilityGridObjectPopup implements IsElement {
 
     @Inject
     private TenantStore tenantStore;
+    
+    @Inject
+    private PopupFactory popupFactory;
 
     private FormPopup formPopup;
 
@@ -113,8 +117,10 @@ public class AvailabilityGridObjectPopup implements IsElement {
         from.setValue(availabilityView.getStartDateTime());
         to.setValue(availabilityView.getEndDateTime());
 
-        formPopup = FormPopup.getFormPopup(this);
-        formPopup.showFor(availabilityGridObject);
+        popupFactory.getFormPopup(this).ifPresent((fp) -> {
+            formPopup = fp;
+            formPopup.showFor(availabilityGridObject);
+        });
     }
 
     @EventHandler("root")

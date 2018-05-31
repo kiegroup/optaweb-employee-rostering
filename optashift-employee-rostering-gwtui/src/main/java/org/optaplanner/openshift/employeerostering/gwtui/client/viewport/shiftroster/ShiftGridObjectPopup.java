@@ -34,6 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.LocalDateTimePicker;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
+import org.optaplanner.openshift.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaplanner.openshift.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestServiceBuilder;
@@ -87,6 +88,9 @@ public class ShiftGridObjectPopup implements IsElement {
 
     @Inject
     private TenantStore tenantStore;
+    
+    @Inject
+    private PopupFactory popupFactory;
 
     private FormPopup formPopup;
 
@@ -115,8 +119,11 @@ public class ShiftGridObjectPopup implements IsElement {
         to.setValue(shift.getEndDateTime());
         pinned.checked = shift.isPinnedByUser();
 
-        formPopup = FormPopup.getFormPopup(this);
-        formPopup.showFor(shiftGridObject);
+        popupFactory.getFormPopup(this).ifPresent((fp) -> {
+            formPopup = fp;
+            formPopup.showFor(shiftGridObject);
+        });
+        
     }
 
     @EventHandler("root")
