@@ -16,8 +16,8 @@
 
 package org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 
@@ -28,7 +28,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 @ApplicationScoped
 public class LoadingSpinner implements IsElement {
 
-    private List<String> loadingTasks = new ArrayList<>();
+    private Set<String> loadingTasks = new HashSet<>();
 
     public void showFor(final String taskId) {
         loadingTasks.add(taskId);
