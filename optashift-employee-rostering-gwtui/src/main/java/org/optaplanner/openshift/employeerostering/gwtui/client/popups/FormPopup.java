@@ -7,7 +7,6 @@ import elemental2.dom.HTMLElement;
 import jsinterop.base.Js;
 import org.gwtbootstrap3.client.ui.html.Div;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.optaplanner.openshift.employeerostering.gwtui.client.common.JQuery;
 import org.optaplanner.openshift.employeerostering.gwtui.client.resources.css.CssResources;
 
 public class FormPopup extends PopupPanel {
@@ -27,8 +26,8 @@ public class FormPopup extends PopupPanel {
     public void showFor(IsElement isElement) {
         final HTMLElement element = isElement.getElement();
         setPopupPositionAndShow((w, h) -> {
-            final Integer offsetLeft = (int) Math.round(getOffsetRight(element));
-            final Integer offsetTop = (int) Math.round(getOffsetTop(element));
+            final Integer offsetLeft = (int) (Window.getScrollLeft() + Math.round(getOffsetRight(element, w)));
+            final Integer offsetTop = (int) (Window.getScrollTop() + Math.round(getOffsetTop(element, h)));
             setPopupPosition(offsetLeft, offsetTop);
         });
     }
@@ -37,17 +36,17 @@ public class FormPopup extends PopupPanel {
         this.getContainerElement().getStyle().setPosition(Position.FIXED);
         this.setPopupPositionAndShow((w, h) -> {
             this.setPopupPosition(Window.getClientWidth() / 2 - width / 2,
-                    Window.getClientHeight() / 2 - height / 2);
+                                  Window.getClientHeight() / 2 - height / 2);
         });
 
     }
 
-    private double getOffsetRight(HTMLElement element) {
-        return JQuery.get(element).offset().left + element.scrollWidth;
+    private double getOffsetRight(HTMLElement element, int w) {
+        return Math.max(0, Math.min(Window.getClientWidth() - w, element.getBoundingClientRect().left + element.scrollWidth));
     }
 
-    private double getOffsetTop(HTMLElement element) {
-        return JQuery.get(element).offset().top;
+    private double getOffsetTop(HTMLElement element, int h) {
+        return Math.max(0, Math.min(Window.getClientHeight() - h, element.getBoundingClientRect().top));
     }
 
     @Override
