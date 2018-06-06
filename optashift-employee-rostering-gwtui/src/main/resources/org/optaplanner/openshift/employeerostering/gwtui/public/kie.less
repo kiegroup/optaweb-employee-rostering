@@ -35,6 +35,13 @@
   padding-left: 0;
 }
 
+.kie-tablelist {
+  /* Firefox has a bug that cause border-collapse to not work, none of the solutions
+  in https://stackoverflow.com/questions/7517127/borders-not-shown-in-firefox-with-border-collapse-on-table-position-relative-o
+  worked. Bugzilla: https://bugzilla.mozilla.org/show_bug.cgi?id=688556 */
+  border-collapse: separate;
+}
+
 .kie-tablelist > thead > tr > th,
 .kie-tablelist > tbody > tr > th,
 .kie-tablelist > tfoot > tr > th,
@@ -44,6 +51,11 @@
   padding: 1.5rem;
   border-bottom: none;
 }
+
+.kie-tablelist > tbody+tbody {
+  border: none;
+}
+
 .kie-tablelist > thead > tr:last-of-type td,
 .kie-tablelist > tbody > tr:last-of-type td,
 .kie-tablelist > tfoot > tr:last-of-type td {
