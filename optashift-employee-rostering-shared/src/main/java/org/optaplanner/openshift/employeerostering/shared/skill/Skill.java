@@ -62,7 +62,7 @@ public class Skill extends AbstractPersistable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.trim();
     }
 
 }
