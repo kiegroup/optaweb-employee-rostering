@@ -28,6 +28,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
@@ -45,6 +46,7 @@ public class Employee extends AbstractPersistable {
 
     @NotNull
     @Size(min = 1, max = 120)
+    @Pattern(regexp = "^\\S.*\\S$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
     //@JsonManagedReference
     @NotNull
@@ -82,7 +84,7 @@ public class Employee extends AbstractPersistable {
     }
 
     public void setName(String name) {
-        this.name = name.trim();
+        this.name = name;
     }
 
     public Set<Skill> getSkillProficiencySet() {
