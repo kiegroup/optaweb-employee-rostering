@@ -77,6 +77,8 @@ public abstract class DateTimeViewport<T, M> {
     protected abstract Function<LocalDateTime, List<String>> getDateHeaderAdditionalClassesFunction();
     
     protected abstract String getLoadingTaskId();
+    
+    protected abstract boolean showLoadingSpinner();
 
     @PostConstruct
     private void init() {
@@ -85,7 +87,9 @@ public abstract class DateTimeViewport<T, M> {
     }
 
     public void refresh(T view) {
-        loadingSpinner.showFor(getLoadingTaskId());
+        if (showLoadingSpinner()) {
+            loadingSpinner.showFor(getLoadingTaskId());
+        }
         lockableLaneMap.acquire().then(laneMap -> {
             withView(view);
             // Need to defer it so we have height information

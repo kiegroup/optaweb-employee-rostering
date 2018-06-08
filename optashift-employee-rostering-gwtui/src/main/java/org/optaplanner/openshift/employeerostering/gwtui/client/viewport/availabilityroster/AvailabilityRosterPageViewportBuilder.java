@@ -154,7 +154,7 @@ public class AvailabilityRosterPageViewportBuilder {
         this.isUpdatingRoster = isUpdatingRoster;
     }
 
-    private boolean isSolving() {
+    public boolean isSolving() {
         return isSolving;
     }
 

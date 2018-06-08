@@ -127,4 +127,9 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
         return "shift-roster";
     }
 
+    @Override
+    protected boolean showLoadingSpinner() {
+        return !viewportBuilder.isSolving();
+    }
+
 }
