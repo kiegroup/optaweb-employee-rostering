@@ -133,7 +133,7 @@ public class ShiftRosterPageViewportBuilder {
         this.isUpdatingRoster = isUpdatingRoster;
     }
 
-    private boolean isSolving() {
+    public boolean isSolving() {
         return isSolving;
     }
 

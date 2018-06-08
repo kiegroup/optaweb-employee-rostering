@@ -8,10 +8,8 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import elemental2.promise.Promise;
-import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
@@ -45,17 +43,12 @@ public class RotationPageViewportBuilder {
 
     private RotationPageViewport viewport;
 
-    private boolean isUpdatingRoster;
-    private boolean isSolving;
-
     private final int WORK_LIMIT_PER_CYCLE = 50;
 
     private long currentWorkerStartTime;
 
     @PostConstruct
     private void init() {
-        ErraiBus.get().subscribe("SolveStart", (m) -> this.onSolveStart());
-        ErraiBus.get().subscribe("SolveEnd", (m) -> this.onSolveEnd());
     }
 
     public RotationPageViewportBuilder withViewport(RotationPageViewport viewport) {
@@ -66,7 +59,6 @@ public class RotationPageViewportBuilder {
     public RepeatingCommand getWorkerCommand(final RotationView view, final Lockable<Map<Long, Lane<LocalDateTime, RotationMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         currentWorkerStartTime = timeWhenInvoked;
         final Iterator<ShiftTemplateView> shiftTemplateViewsToAdd = commonUtils.flatten(view.getSpotIdToShiftTemplateViewListMap().values()).iterator();
-        setUpdatingRoster(true);
 
         return new RepeatingCommand() {
 
@@ -96,7 +88,6 @@ public class RotationPageViewportBuilder {
                     if (!shiftTemplateViewsToAdd.hasNext()) {
                         laneMap.forEach((l, lane) -> lane.endModifying());
                         loadingSpinner.hideFor(viewport.getLoadingTaskId());
-                        setUpdatingRoster(false);
                     }
                 });
                 return shiftTemplateViewsToAdd.hasNext();
@@ -104,34 +95,8 @@ public class RotationPageViewportBuilder {
         };
     }
 
-    private void setUpdatingRoster(boolean isUpdatingRoster) {
-        this.isUpdatingRoster = isUpdatingRoster;
-    }
-
-    private boolean isSolving() {
-        return isSolving;
-    }
-
     private long getCurrentWorkerStartTime() {
         return currentWorkerStartTime;
-    }
-
-    public void onSolveStart() {
-        isSolving = true;
-        Scheduler.get().scheduleFixedPeriod(() -> {
-            if (!isUpdatingRoster) {
-                setUpdatingRoster(true);
-                getRotationView().then(srv -> {
-                    viewport.refresh(srv);
-                    return promiseUtils.resolve();
-                });
-            }
-            return isSolving();
-        }, 2000);
-    }
-
-    public void onSolveEnd() {
-        isSolving = false;
     }
 
     public Promise<Void> buildRotationViewport(final RotationPageViewport toBuild) {

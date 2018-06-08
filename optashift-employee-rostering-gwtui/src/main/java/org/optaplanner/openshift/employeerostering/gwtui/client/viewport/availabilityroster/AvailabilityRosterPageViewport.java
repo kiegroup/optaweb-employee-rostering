@@ -131,4 +131,9 @@ public class AvailabilityRosterPageViewport extends DateTimeViewport<Availabilit
         return "availability-roster";
     }
 
+    @Override
+    protected boolean showLoadingSpinner() {
+        return !viewportBuilder.isSolving();
+    }
+
 }

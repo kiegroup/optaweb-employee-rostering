@@ -156,4 +156,9 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
         return "rotation";
     }
 
+    @Override
+    protected boolean showLoadingSpinner() {
+        return true;
+    }
+
 }
