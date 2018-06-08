@@ -2,7 +2,6 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.viewport;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,17 +40,21 @@ public abstract class DateTimeViewport<T, M> {
     private HTMLDivElement laneContainer;
 
     @Inject
+    @DataField("viewport-overlay")
+    private HTMLDivElement viewportOverlay;
+
+    @Inject
     private ManagedInstance<Lane<LocalDateTime, M>> laneInstance;
 
     @Inject
     private HeaderView headerView;
-    
+
     @Inject
     protected PromiseUtils promiseUtils;
-    
+
     @Inject
     private Lockable<Map<Long, Lane<LocalDateTime, M>>> lockableLaneMap;
-    
+
     @Inject
     private LoadingSpinner loadingSpinner;
 
@@ -75,13 +78,14 @@ public abstract class DateTimeViewport<T, M> {
     protected abstract Function<LocalDateTime, String> getTimeHeaderFunction();
 
     protected abstract Function<LocalDateTime, List<String>> getDateHeaderAdditionalClassesFunction();
-    
+
     protected abstract String getLoadingTaskId();
-    
+
     protected abstract boolean showLoadingSpinner();
 
     @PostConstruct
     private void init() {
+        viewportOverlay.hidden = true;
         gridObjectPlacer = GridObjectPlacer.HORIZONTAL;
         lockableLaneMap.setInstance(new HashMap<>());
     }
@@ -130,7 +134,15 @@ public abstract class DateTimeViewport<T, M> {
             Scheduler.get().scheduleIncremental(getViewportBuilderCommand(view, lockableLaneMap));
             return promiseUtils.resolve();
         });
-        
+
+    }
+
+    public void lock() {
+        viewportOverlay.hidden = false;
+    }
+
+    public void unlock() {
+        viewportOverlay.hidden = true;
     }
 
     public <X> Map<Long, X> getIdMapFor(Collection<X> collection, Function<X, Long> idMapper) {

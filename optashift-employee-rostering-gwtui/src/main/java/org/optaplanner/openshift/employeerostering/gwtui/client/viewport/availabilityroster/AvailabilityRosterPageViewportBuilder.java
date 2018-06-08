@@ -52,8 +52,7 @@ public class AvailabilityRosterPageViewportBuilder {
 
     @Inject
     private EventManager eventManager;
-    
-    
+
     @Inject
     private LoadingSpinner loadingSpinner;
 
@@ -88,7 +87,7 @@ public class AvailabilityRosterPageViewportBuilder {
 
     public RepeatingCommand getWorkerCommand(final AvailabilityRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, AvailabilityRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         currentWorkerStartTime = timeWhenInvoked;
-        
+
         if (view.getEmployeeList().isEmpty()) {
             eventManager.fireEvent(AVAILABILITY_ROSTER_PAGINATION, pagination.previousPage());
             return () -> false;
@@ -163,6 +162,7 @@ public class AvailabilityRosterPageViewportBuilder {
     }
 
     public void onSolveStart() {
+        viewport.lock();
         isSolving = true;
         Scheduler.get().scheduleFixedPeriod(() -> {
             if (!isUpdatingRoster) {
@@ -177,6 +177,7 @@ public class AvailabilityRosterPageViewportBuilder {
     }
 
     public void onSolveEnd() {
+        viewport.unlock();
         isSolving = false;
     }
 
