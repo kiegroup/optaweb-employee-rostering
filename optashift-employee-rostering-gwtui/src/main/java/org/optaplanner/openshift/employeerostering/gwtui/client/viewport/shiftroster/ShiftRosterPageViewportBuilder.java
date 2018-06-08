@@ -25,11 +25,11 @@ import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestServi
 import org.optaplanner.openshift.employeerostering.shared.roster.view.ShiftRosterView;
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 
-import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_END;
-import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_START;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_PAGINATION;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_UPDATE;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_END;
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_START;
 
 @Singleton
 public class ShiftRosterPageViewportBuilder {
@@ -48,7 +48,7 @@ public class ShiftRosterPageViewportBuilder {
 
     @Inject
     private EventManager eventManager;
-    
+
     @Inject
     private LoadingSpinner loadingSpinner;
 
@@ -83,7 +83,7 @@ public class ShiftRosterPageViewportBuilder {
 
     public RepeatingCommand getWorkerCommand(final ShiftRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, ShiftRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         currentWorkerStartTime = timeWhenInvoked;
-        
+
         if (view.getSpotList().isEmpty()) {
             eventManager.fireEvent(SHIFT_ROSTER_PAGINATION, pagination.previousPage());
             return () -> false;
@@ -142,6 +142,7 @@ public class ShiftRosterPageViewportBuilder {
     }
 
     public void onSolveStart() {
+        viewport.lock();
         isSolving = true;
         Scheduler.get().scheduleFixedPeriod(() -> {
             if (!isUpdatingRoster) {
@@ -156,6 +157,7 @@ public class ShiftRosterPageViewportBuilder {
     }
 
     public void onSolveEnd() {
+        viewport.unlock();
         isSolving = false;
     }
 
