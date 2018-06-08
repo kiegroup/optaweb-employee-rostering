@@ -45,7 +45,7 @@ public class Spot extends AbstractPersistable {
 
     @NotNull
     @Size(min = 1, max = 120)
-    @Pattern(regexp = "^\\S.*\\S$", message = "Name should not contain any leading or trailing whitespaces")
+    @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
