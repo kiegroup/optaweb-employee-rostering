@@ -26,7 +26,7 @@ and look for _Help_ > _Command Line Tools_.
 . Create, build and deploy the project.
 +
 ----
-./provision.sh setup --project-suffix myDemo
+./provision.sh setup --project-suffix mydemo
 ----
 +
 The `--project-suffix` is optional.
