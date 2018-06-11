@@ -67,6 +67,7 @@
     <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.net.ltgt.gwt.maven.gwt-maven-plugin>1.0-rc-9</version.net.ltgt.gwt.maven.gwt-maven-plugin>
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
+    <version.org.hibernate>5.1.10.Final</version.org.hibernate>
     <version.org.jboss.errai>4.1.2.Final</version.org.jboss.errai>
     <version.org.jboss.resteasy>3.1.4.Final</version.org.jboss.resteasy>
     <version.org.optaplanner>${project.version}</version.org.optaplanner>
@@ -144,6 +145,11 @@
         <groupId>javax</groupId>
         <artifactId>javaee-api</artifactId>
         <version>${version.javax.javaee-api}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${version.org.hibernate}</version>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
