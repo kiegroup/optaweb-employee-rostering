@@ -83,7 +83,7 @@ public abstract class DateTimeViewport<T, M> {
 
     protected abstract Function<LocalDateTime, String> getTimeHeaderFunction();
 
-    protected abstract Function<LocalDateTime, List<String>> getDateHeaderAdditionalClassesFunction();
+    protected abstract Function<LocalDateTime, List<String>> getDateHeaderIconClassesFunction();
 
     protected abstract String getLoadingTaskId();
 
@@ -114,7 +114,7 @@ public abstract class DateTimeViewport<T, M> {
             dateTimeHeader.generateTicks(gridObjectPlacer, scale, 0L,
                                          getDateHeaderFunction(),
                                          getTimeHeaderFunction(),
-                                         getDateHeaderAdditionalClassesFunction());
+                                         getDateHeaderIconClassesFunction());
 
             Map<Long, String> viewLanes = getLaneTitlesFor(view);
             domUtils.removeAllElementChildren(laneContainer);

@@ -123,7 +123,7 @@ public class AvailabilityRosterPageViewport extends DateTimeViewport<Availabilit
     }
 
     @Override
-    protected Function<LocalDateTime, List<String>> getDateHeaderAdditionalClassesFunction() {
+    protected Function<LocalDateTime, List<String>> getDateHeaderIconClassesFunction() {
         return (date) -> (rosterState.isHistoric(date)) ? Collections.emptyList() : (rosterState.isPublished(date)) ? Arrays.asList("fa", "fa-check") : Arrays.asList("fa", "fa-list-alt");
     }
 

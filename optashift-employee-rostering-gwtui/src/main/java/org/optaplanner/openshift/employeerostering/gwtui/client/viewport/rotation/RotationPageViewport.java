@@ -126,7 +126,7 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     }
 
     @Override
-    protected Function<LocalDateTime, List<String>> getDateHeaderAdditionalClassesFunction() {
+    protected Function<LocalDateTime, List<String>> getDateHeaderIconClassesFunction() {
         return (date) -> Collections.emptyList();
     }
 
