@@ -24,6 +24,7 @@ import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactProperty;
 import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
@@ -55,7 +56,7 @@ public class Roster extends AbstractPersistable {
     private List<Shift> shiftList;
 
     @PlanningScore
-    private HardSoftScore score = null;
+    private HardMediumSoftLongScore score = null;
 
     @SuppressWarnings("unused")
     public Roster() {}
@@ -132,11 +133,11 @@ public class Roster extends AbstractPersistable {
         this.shiftList = shiftList;
     }
 
-    public HardSoftScore getScore() {
+    public HardMediumSoftLongScore getScore() {
         return score;
     }
 
-    public void setScore(HardSoftScore score) {
+    public void setScore(HardMediumSoftLongScore score) {
         this.score = score;
     }
 

@@ -9,11 +9,11 @@ import java.time.OffsetTime;
 import java.time.ZoneId;
 
 import com.github.nmorel.gwtjackson.client.AbstractConfiguration;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.DurationJsonDeserializer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.DurationJsonSerializer;
-import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.HardSoftScoreJsonDeserializer;
-import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.HardSoftScoreJsonSerializer;
+import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.HardMediumSoftLongScoreJsonDeserializer;
+import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.HardMediumSoftLongScoreJsonSerializer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.LocalDateJsonDeserializer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.LocalDateJsonSerializer;
 import org.optaplanner.openshift.employeerostering.gwtui.client.gwtjackson.LocalDateTimeJsonDeserializer;
@@ -34,7 +34,7 @@ public class OptaShiftRosteringGwtJacksonConfiguration extends AbstractConfigura
         type(LocalDate.class).serializer(LocalDateJsonSerializer.class).deserializer(LocalDateJsonDeserializer.class);
         type(LocalDateTime.class).serializer(LocalDateTimeJsonSerializer.class).deserializer(LocalDateTimeJsonDeserializer.class);
         type(LocalTime.class).serializer(LocalTimeJsonSerializer.class).deserializer(LocalTimeJsonDeserializer.class);
-        type(HardSoftScore.class).serializer(HardSoftScoreJsonSerializer.class).deserializer(HardSoftScoreJsonDeserializer.class);
+        type(HardMediumSoftLongScore.class).serializer(HardMediumSoftLongScoreJsonSerializer.class).deserializer(HardMediumSoftLongScoreJsonDeserializer.class);
         type(ZoneId.class).serializer(ZoneIdJsonSerializer.class).deserializer(ZoneIdJsonDeserializer.class);
         type(OffsetDateTime.class).serializer(OffsetDateTimeJsonSerializer.class).deserializer(OffsetDateTimeJsonDeserializer.class);
         type(OffsetTime.class).serializer(OffsetTimeJsonSerializer.class).deserializer(OffsetTimeJsonDeserializer.class);

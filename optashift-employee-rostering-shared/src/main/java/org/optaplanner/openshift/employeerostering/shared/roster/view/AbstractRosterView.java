@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
@@ -26,7 +27,7 @@ public class AbstractRosterView implements Serializable {
     @NotNull
     protected RosterState rosterState;
 
-    private HardSoftScore score = null;
+    private HardMediumSoftLongScore score = null;
 
     @Override
     public String toString() {
@@ -77,11 +78,11 @@ public class AbstractRosterView implements Serializable {
         this.employeeList = employeeList;
     }
 
-    public HardSoftScore getScore() {
+    public HardMediumSoftLongScore getScore() {
         return score;
     }
 
-    public void setScore(HardSoftScore score) {
+    public void setScore(HardMediumSoftLongScore score) {
         this.score = score;
     }
 

@@ -14,6 +14,7 @@ import elemental2.dom.MouseEvent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event;
@@ -115,11 +116,12 @@ public abstract class RosterToolbar {
             }
         };
         eventManager.subscribeToEvent(getViewRefreshEvent(), (view) -> {
-            final Optional<HardSoftScore> score = Optional.ofNullable(view.getScore());
+            final Optional<HardMediumSoftLongScore> score = Optional.ofNullable(view.getScore());
 
             if (score.isPresent()) {
                 scores.classList.remove("hidden");
                 hardScore.textContent = score.get().getHardScore() + "";
+                // TODO show medium score
                 softScore.textContent = score.get().getSoftScore() + "";
             } else {
                 scores.classList.add("hidden");
