@@ -167,4 +167,9 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
         return true;
     }
 
+    @Override
+    protected List<Long> getLaneOrder(RotationView view) {
+        return view.getSpotList().stream().map(s -> s.getId()).collect(Collectors.toList());
+    }
+
 }
