@@ -2,7 +2,6 @@ package org.optaplanner.openshift.employeerostering.gwtui.client.viewport;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +16,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import elemental2.dom.HTMLDivElement;
+import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.optaplanner.openshift.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
@@ -59,6 +59,9 @@ public abstract class DateTimeViewport<T, M> {
     @Inject
     private LoadingSpinner loadingSpinner;
 
+    @Inject
+    private Elemental2DomUtil domUtils;
+
     private GridObjectPlacer gridObjectPlacer;
     private LinearScale<LocalDateTime> scale;
 
@@ -71,6 +74,8 @@ public abstract class DateTimeViewport<T, M> {
     protected abstract LinearScale<LocalDateTime> getScaleFor(T view);
 
     protected abstract Map<Long, String> getLaneTitlesFor(T view);
+
+    protected abstract List<Long> getLaneOrder(T view);
 
     protected abstract RepeatingCommand getViewportBuilderCommand(T view, Lockable<Map<Long, Lane<LocalDateTime, M>>> lockableLaneMap);
 
@@ -112,13 +117,13 @@ public abstract class DateTimeViewport<T, M> {
                                          getDateHeaderAdditionalClassesFunction());
 
             Map<Long, String> viewLanes = getLaneTitlesFor(view);
+            domUtils.removeAllElementChildren(laneContainer);
             for (Long laneId : viewLanes.keySet()) {
                 if (!laneMap.containsKey(laneId)) {
                     Lane<LocalDateTime, M> lane = laneInstance.get().withDummySublane(getDummySublane()).withGridObjectPlacer(gridObjectPlacer)
                                                               .withScale(scale).withTitle(viewLanes.get(laneId))
                                                               .withGridObjectCreator(getInstanceCreator(view, laneId));
                     laneMap.put(laneId, lane);
-                    laneContainer.appendChild(lane.getElement());
                 } else {
                     laneMap.get(laneId).withScale(scale);
                     lanesToRemove.remove(laneId);
@@ -126,9 +131,10 @@ public abstract class DateTimeViewport<T, M> {
             }
             lanesToRemove.forEach((id) -> {
                 Lane<LocalDateTime, M> toRemove = laneMap.remove(id);
-                toRemove.getElement().remove();
                 laneInstance.destroy(toRemove);
             });
+
+            getLaneOrder(view).forEach(laneId -> laneContainer.appendChild(laneMap.get(laneId).getElement()));
 
             final M metadata = getMetadata();
             laneMap.forEach((l, lane) -> {

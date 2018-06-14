@@ -138,4 +138,9 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
         return DummySublane.BOTTOM;
     }
 
+    @Override
+    protected List<Long> getLaneOrder(ShiftRosterView view) {
+        return view.getSpotList().stream().map(s -> s.getId()).collect(Collectors.toList());
+    }
+
 }

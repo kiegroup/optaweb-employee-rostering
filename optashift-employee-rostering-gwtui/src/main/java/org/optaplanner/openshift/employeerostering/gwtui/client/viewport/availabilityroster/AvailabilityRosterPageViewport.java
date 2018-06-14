@@ -142,4 +142,9 @@ public class AvailabilityRosterPageViewport extends DateTimeViewport<Availabilit
         return DummySublane.TOP;
     }
 
+    @Override
+    protected List<Long> getLaneOrder(AvailabilityRosterView view) {
+        return view.getEmployeeList().stream().map(e -> e.getId()).collect(Collectors.toList());
+    }
+
 }
