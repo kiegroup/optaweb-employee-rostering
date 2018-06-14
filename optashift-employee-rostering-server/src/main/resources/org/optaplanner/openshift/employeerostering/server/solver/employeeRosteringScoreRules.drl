@@ -19,7 +19,7 @@ package org.optaplanner.openshift.employeerostering.server.solver;
 
 import java.time.temporal.ChronoUnit;
 
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreHolder;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailabilityState;
@@ -30,7 +30,7 @@ import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 
-global HardSoftScoreHolder scoreHolder;
+global HardMediumSoftLongScoreHolder scoreHolder;
 
 // ############################################################################
 // Hard constraints
@@ -88,6 +88,18 @@ rule "No 2 shifts within 10 hours from each other"
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
+
+// ############################################################################
+// Medium constraints
+// ############################################################################
+
+rule "Assign every shift"
+    when
+        Shift(employee == null)
+    then
+        scoreHolder.addMediumConstraintMatch(kcontext, -1);
+end
+
 
 // ############################################################################
 // Soft constraints

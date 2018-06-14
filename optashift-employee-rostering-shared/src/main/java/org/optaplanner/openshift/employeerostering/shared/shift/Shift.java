@@ -90,7 +90,7 @@ public class Shift extends AbstractPersistable {
     private boolean pinnedByUser = false;
 
     @ManyToOne
-    @PlanningVariable(valueRangeProviderRefs = "employeeRange")
+    @PlanningVariable(valueRangeProviderRefs = "employeeRange", nullable = true)
     private Employee employee = null;
 
     @SuppressWarnings("unused")
