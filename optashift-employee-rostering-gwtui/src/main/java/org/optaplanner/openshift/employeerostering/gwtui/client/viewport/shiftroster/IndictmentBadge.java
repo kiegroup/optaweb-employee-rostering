@@ -26,6 +26,8 @@ public class IndictmentBadge implements IsElement {
     private HTMLElement content;
 
     private List<String> constraintMatchTooltipList;
+    
+    private final static int MAX_TOOLTIP_LENGTH = 200;
 
     @PostConstruct
     public void init() {
@@ -47,8 +49,8 @@ public class IndictmentBadge implements IsElement {
         content.innerHTML = constraintMatchTooltipList.size() + "";
         StringBuilder badgeTooltip = new StringBuilder();
         constraintMatchTooltipList.forEach(tt -> badgeTooltip.append(tt).append("\n"));
-        if (badgeTooltip.length() > 97) {
-            badgeTooltip.setLength(97);
+        if (badgeTooltip.length() > MAX_TOOLTIP_LENGTH - 3) {
+            badgeTooltip.setLength(MAX_TOOLTIP_LENGTH - 3);
             badgeTooltip.append("...");
         }
         getElement().title = badgeTooltip.toString();
