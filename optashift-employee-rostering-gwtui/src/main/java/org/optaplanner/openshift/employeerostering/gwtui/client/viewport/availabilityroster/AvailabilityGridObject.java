@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -31,6 +32,18 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
     @DataField("label")
     @Named("span")
     private HTMLElement label;
+
+    @Inject
+    @DataField("timeslot-desired")
+    private HTMLButtonElement timeslotDesiredButton;
+
+    @Inject
+    @DataField("timeslot-undesired")
+    private HTMLButtonElement timeslotUndesiredButton;
+
+    @Inject
+    @DataField("timeslot-unavailable")
+    private HTMLButtonElement timeslotUnavailableButton;
 
     @Inject
     private ManagedInstance<AvailabilityGridObjectPopup> popoverInstances;
@@ -77,6 +90,41 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
         }
     }
 
+    @EventHandler("delete")
+    private void onDeleteClick(@ForEvent("click") MouseEvent e) {
+        e.stopPropagation();
+        EmployeeRestServiceBuilder.removeEmployeeAvailability(employeeAvailabilityView.getTenantId(), employeeAvailabilityView.getId(),
+                                                              FailureShownRestCallback.onSuccess(success -> {
+                                                                  getLane().removeGridObject(this);
+                                                              }));
+    }
+
+    @EventHandler("timeslot-unavailable")
+    private void onTimeslotUnavailableButtonClick(@ForEvent("click") MouseEvent e) {
+        e.stopPropagation();
+        setEmployeeAvailabilityState(EmployeeAvailabilityState.UNAVAILABLE);
+    }
+
+    @EventHandler("timeslot-undesired")
+    private void onTimeslotUndesiredButtonClick(@ForEvent("click") MouseEvent e) {
+        e.stopPropagation();
+        setEmployeeAvailabilityState(EmployeeAvailabilityState.UNDESIRED);
+    }
+
+    @EventHandler("timeslot-desired")
+    private void onTimeslotDesiredButtonClick(@ForEvent("click") MouseEvent e) {
+        e.stopPropagation();
+        setEmployeeAvailabilityState(EmployeeAvailabilityState.DESIRED);
+    }
+
+    private void setEmployeeAvailabilityState(EmployeeAvailabilityState state) {
+        employeeAvailabilityView.setState(state);
+        EmployeeRestServiceBuilder.updateEmployeeAvailability(employeeAvailabilityView.getTenantId(), employeeAvailabilityView,
+                                                              FailureShownRestCallback.onSuccess(eav -> {
+                                                                  withEmployeeAvailabilityView(eav);
+                                                              }));
+    }
+
     @Override
     protected HasTimeslot getTimeslot() {
         return employeeAvailabilityView;
@@ -89,6 +137,27 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
             setClassProperty("desired", employeeAvailabilityView.getState() == EmployeeAvailabilityState.DESIRED);
             setClassProperty("undesired", employeeAvailabilityView.getState() == EmployeeAvailabilityState.UNDESIRED);
             setClassProperty("unavailable", employeeAvailabilityView.getState() == EmployeeAvailabilityState.UNAVAILABLE);
+            timeslotDesiredButton.removeAttribute("active");
+            timeslotUndesiredButton.removeAttribute("active");
+            timeslotUnavailableButton.removeAttribute("active");
+
+            switch (employeeAvailabilityView.getState()) {
+                case UNAVAILABLE:
+                    timeslotUnavailableButton.setAttribute("active", true);
+                    break;
+
+                case UNDESIRED:
+                    timeslotUndesiredButton.setAttribute("active", true);
+                    break;
+
+                case DESIRED:
+                    timeslotDesiredButton.setAttribute("active", true);
+                    break;
+
+                default:
+                    throw new IllegalStateException("No case for " + employeeAvailabilityView.getState() + ".");
+            }
+
             RosterState rosterState = getLane().getMetadata().getRosterState();
             setClassProperty("historic", rosterState.isHistoric(employeeAvailabilityView.getStartDateTime()));
             setClassProperty("published", rosterState.isPublished(employeeAvailabilityView.getStartDateTime()));

@@ -1,0 +1,16 @@
+.timeslot-availability {
+    float: left;
+    margin-right: 5px;
+}
+
+.active.timeslot-unavailable span {
+    color: red !important;
+}
+
+.active.timeslot-undesired span {
+    color: orange !important;
+}
+
+.active.timeslot-desired span {
+    color: green !important;
+}

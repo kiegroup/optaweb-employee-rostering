@@ -116,6 +116,17 @@
     border: 1px dashed black;
 }
 
+.show-on-hover {
+    display: none;
+}
+
+*:not(.selected):hover > .show-on-hover {
+    display: grid;
+}
+
+*:not(.selected) > .show-on-hover:hover {
+    display: grid;
+}
 
 .pinned:before {
 	font-family: FontAwesome;
