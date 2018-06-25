@@ -19,6 +19,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.Lockable;
 import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.DateTimeViewport;
@@ -35,6 +36,8 @@ import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
+
 @Templated
 public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, ShiftRosterMetadata> implements IsElement {
 
@@ -42,6 +45,8 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
     private ShiftRosterPageViewportBuilder viewportBuilder;
     @Inject
     private ManagedInstance<ShiftGridObject> shiftGridObjectInstances;
+    @Inject
+    private EventManager eventManager;
 
     private RosterState rosterState;
     private Map<Long, Spot> spotIdToSpotMap;
@@ -89,6 +94,7 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
                 out.withShiftView(sv);
                 getLockableLaneMap().acquire().then(laneMap -> {
                     laneMap.get(laneId).moveAddedGridObjectToIdMap(out);
+                    eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
                     return promiseUtils.resolve();
                 });
             }));
