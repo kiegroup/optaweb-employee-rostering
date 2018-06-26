@@ -5,10 +5,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
@@ -43,7 +46,7 @@ public class Lane<T, M> implements IsElement {
     @DataField("dummy")
     @Named("span")
     private HTMLElement dummy;
-    
+
     @Inject
     private CSSGlobalStyle cssGlobalStyle;
 
@@ -135,7 +138,7 @@ public class Lane<T, M> implements IsElement {
         positionGridObject(gridObject);
         refreshSpanningElements();
     }
-    
+
     public void moveAddedGridObjectToIdMap(HasGridObjects<T, M> addedGridObject) {
         addedGridObjects.get(addedGridObject.getClass().getName()).remove(addedGridObject);
         gridObjectMap.computeIfAbsent(addedGridObject.getClass().getName(),
@@ -174,6 +177,24 @@ public class Lane<T, M> implements IsElement {
             removeGridObjectElement(gridObject);
         }
         notUpdatedGridObjects.remove(gridObjects);
+    }
+
+    /**
+     * Removes grid objects of type clazz that does not match predicate
+     */
+    public <Y extends HasGridObjects<T, M>> void filterGridObjects(Class<Y> clazz, Predicate<Y> predicate) {
+        Iterator<Entry<Long, HasGridObjects<T, M>>> gridObjectIterator = gridObjectMap.getOrDefault(clazz.getName(), Collections.emptyMap()).entrySet().iterator();
+        while (gridObjectIterator.hasNext()) {
+            @SuppressWarnings("unchecked")
+            Y gridObject = (Y) gridObjectIterator.next().getValue();
+            if (!predicate.test(gridObject)) {
+                gridObjectIterator.remove();
+                for (GridObject<T, M> element : gridObject.getGridObjects()) {
+                    removeGridObjectElement(element);
+                }
+                notUpdatedGridObjects.remove(gridObject);
+            }
+        }
     }
 
     public void removeGridObjectElement(GridObject<T, M> gridObject) {

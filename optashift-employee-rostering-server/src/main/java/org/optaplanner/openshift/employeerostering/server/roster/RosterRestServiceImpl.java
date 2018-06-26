@@ -80,10 +80,12 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Override
     @Transactional
     public ShiftRosterView getShiftRosterView(final Integer tenantId,
+                                              Integer pageNumber,
+                                              Integer numberOfItemsPerPage,
                                               final String startDateString,
                                               final String endDateString) {
 
-        return getShiftRosterView(tenantId, LocalDate.parse(startDateString), LocalDate.parse(endDateString));
+        return getShiftRosterView(tenantId, LocalDate.parse(startDateString), LocalDate.parse(endDateString), Pagination.of(pageNumber, numberOfItemsPerPage));
     }
 
     private ShiftRosterView getShiftRosterView(final Integer tenantId,
@@ -178,13 +180,14 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Override
     @Transactional
-    public AvailabilityRosterView getAvailabilityRosterView(Integer tenantId, String startDateString, String endDateString) {
+    public AvailabilityRosterView getAvailabilityRosterView(Integer tenantId,
+                                                            Integer pageNumber,
+                                                            Integer numberOfItemsPerPage,
+                                                            String startDateString,
+                                                            String endDateString) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
-        return getAvailabilityRosterView(tenantId, startDate, endDate, entityManager.createNamedQuery("Employee.findAll",
-                                                                                                      Employee.class)
-                                                                                    .setParameter("tenantId", tenantId)
-                                                                                    .getResultList());
+        return getAvailabilityRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
     }
 
     @Override
