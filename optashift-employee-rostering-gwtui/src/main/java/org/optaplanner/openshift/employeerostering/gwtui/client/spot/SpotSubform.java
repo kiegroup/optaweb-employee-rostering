@@ -10,7 +10,6 @@ import javax.inject.Named;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.TakesValue;
-import com.google.gwt.user.client.ui.TextBox;
 import elemental2.dom.HTMLTableCellElement;
 import org.gwtbootstrap3.extras.select.client.ui.MultipleSelect;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
@@ -19,6 +18,7 @@ import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.AutoTrimWhitespaceTextBox;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.DataInvalidation;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
@@ -41,7 +41,7 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
 
     @Inject
     @DataField("spot-name-text-box")
-    private TextBox spotName;
+    private AutoTrimWhitespaceTextBox spotName;
 
     @Inject
     @DataField("spot-required-skill-set-select")
