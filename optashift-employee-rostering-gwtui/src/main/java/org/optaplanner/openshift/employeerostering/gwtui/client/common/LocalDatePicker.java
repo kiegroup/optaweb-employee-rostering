@@ -51,12 +51,7 @@ public class LocalDatePicker implements TakesValue<LocalDate>, HasValueChangeHan
     public LocalDate getValue() {
         Date date;
         if (reportValidity()) {
-            try {
-                date = datePicker.valueAsDate;
-            } catch (Exception e) {
-                // Browser does not support input type date/time; need to convert String to Date
-                date = new Date(Date.parse(datePicker.value));
-            }
+            date = datePicker.valueAsDate;
             return GwtJavaTimeWorkaroundUtil.toLocalDate(OffsetDateTime.parse(date.toISOString()));
         } else {
             throw new ValidationException(datePicker.validationMessage);

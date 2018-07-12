@@ -38,12 +38,7 @@ public class LocalDateTimePicker implements TakesValue<LocalDateTime> {
         datePicker.checkValidity();
         timePicker.checkValidity();
         if (datePicker.validity.valid && timePicker.validity.valid) {
-            try {
-                date = datePicker.valueAsDate;
-            } catch (Exception e) {
-                // Browser does not support input type date/time; need to convert String to Date
-                date = new Date(Date.parse(datePicker.value));
-            }
+            date = datePicker.valueAsDate;
             LocalTime localTime = LocalTime.parse(timePicker.value);
             LocalDate localDate = GwtJavaTimeWorkaroundUtil.toLocalDate(OffsetDateTime.parse(date.toISOString()));
             return localDate.atTime(localTime);
