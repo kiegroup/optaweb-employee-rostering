@@ -57,8 +57,6 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @Inject
     private EmployeeRestService employeeRestService;
     @Inject
-    private RosterRestService rosterRestService;
-    @Inject
     private IndictmentUtils indictmentUtils;
 
     @Override
