@@ -1,0 +1,18 @@
+.icon-container {
+    display: flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    flex-direction: row;
+    margin-top: -10px;
+}
+
+.indictment-badge {
+    height: min-content;
+    font-size: 9px;
+    min-width: 30px;
+}
+
+.indictment-icon {
+    color: white;
+}

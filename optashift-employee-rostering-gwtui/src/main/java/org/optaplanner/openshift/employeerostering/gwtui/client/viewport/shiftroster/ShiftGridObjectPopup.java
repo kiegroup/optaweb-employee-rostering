@@ -31,6 +31,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaplanner.openshift.employeerostering.gwtui.client.common.LocalDateTimePicker;
 import org.optaplanner.openshift.employeerostering.gwtui.client.popups.FormPopup;
@@ -41,6 +42,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.ShiftRestService
 import org.optaplanner.openshift.employeerostering.shared.shift.view.ShiftView;
 import org.optaplanner.openshift.employeerostering.shared.spot.SpotRestServiceBuilder;
 
+import static org.optaplanner.openshift.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
 import static org.optaplanner.openshift.employeerostering.gwtui.client.common.FailureShownRestCallback.onSuccess;
 
 @Templated
@@ -88,9 +90,12 @@ public class ShiftGridObjectPopup implements IsElement {
 
     @Inject
     private TenantStore tenantStore;
-    
+
     @Inject
     private PopupFactory popupFactory;
+
+    @Inject
+    private EventManager eventManager;
 
     private FormPopup formPopup;
 
@@ -123,7 +128,7 @@ public class ShiftGridObjectPopup implements IsElement {
             formPopup = fp;
             formPopup.showFor(shiftGridObject);
         });
-        
+
     }
 
     @EventHandler("root")
@@ -171,6 +176,7 @@ public class ShiftGridObjectPopup implements IsElement {
         ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, onSuccess((final ShiftView updatedShift) -> {
             shiftGridObject.withShiftView(updatedShift);
             shiftGridObject.getElement().classList.remove("selected");
+            eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
             formPopup.hide();
         }).onFailure(i -> {
             shiftView.setPinnedByUser(oldLockedByUser);

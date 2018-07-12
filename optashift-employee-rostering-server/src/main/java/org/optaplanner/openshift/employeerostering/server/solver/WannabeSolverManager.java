@@ -16,7 +16,6 @@
 
 package org.optaplanner.openshift.employeerostering.server.solver;
 
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -28,6 +27,8 @@ import javax.inject.Inject;
 
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
+import org.optaplanner.core.impl.score.director.ScoreDirector;
+import org.optaplanner.core.impl.score.director.ScoreDirectorFactory;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
 import org.optaplanner.openshift.employeerostering.shared.roster.RosterRestService;
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ public class WannabeSolverManager {
     protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     private SolverFactory<Roster> solverFactory;
+    private ScoreDirectorFactory<Roster> scoreDirectorFactory;
     // TODO Needs to default to size Math.max(1, Runtime.getRuntime().availableProcessors() - 2);
     @Resource(name = "DefaultManagedExecutorService")
     private ManagedExecutorService executorService;
@@ -53,16 +55,17 @@ public class WannabeSolverManager {
     @PostConstruct
     public void setUpSolverFactory() {
         solverFactory = SolverFactory.createFromXmlResource(
-                "org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringSolverConfig.xml");
+                                                            "org/optaplanner/openshift/employeerostering/server/solver/employeeRosteringSolverConfig.xml");
+        scoreDirectorFactory = solverFactory.buildSolver().getScoreDirectorFactory();
     }
 
     public void terminate(Integer tenantId) {
         Solver<Roster> solver = tenantIdToSolverMap.get(tenantId);
+
         if (null != solver) {
             solver.terminateEarly();
         } else {
-            throw new IllegalStateException("The roster with tenantId (" + tenantId
-                                                    + ") is not being solved currently.");
+            throw new IllegalStateException("The roster with tenantId (" + tenantId + ") is not being solved currently.");
         }
     }
 
@@ -71,8 +74,7 @@ public class WannabeSolverManager {
         // No 2 solve() calls of the same dataset in parallel
         tenantIdToSolverStateMap.compute(tenantId, (k, solverStatus) -> {
             if (solverStatus != null && solverStatus != SolverStatus.TERMINATED) {
-                throw new IllegalStateException("The roster with tenantId (" + tenantId
-                                                        + ") is already solving with solverStatus (" + solverStatus + ").");
+                throw new IllegalStateException("The roster with tenantId (" + tenantId + ") is already solving with solverStatus (" + solverStatus + ").");
             }
             return SolverStatus.SCHEDULED;
         });
@@ -107,5 +109,9 @@ public class WannabeSolverManager {
     public Roster getRoster(final Integer tenantId) {
         Solver<Roster> solver = tenantIdToSolverMap.get(tenantId);
         return solver == null ? null : solver.getBestSolution();
+    }
+
+    public ScoreDirector<Roster> getScoreDirector() {
+        return scoreDirectorFactory.buildScoreDirector();
     }
 }

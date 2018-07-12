@@ -33,7 +33,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.openshift.employeerostering.server.common.AbstractRestServiceImpl;
+import org.optaplanner.openshift.employeerostering.server.common.IndictmentUtils;
 import org.optaplanner.openshift.employeerostering.server.solver.WannabeSolverManager;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.employee.EmployeeAvailability;
@@ -64,6 +66,9 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
     @Inject
     private TenantRestService tenantRestService;
+
+    @Inject
+    private IndictmentUtils indictmentUtils;
 
     // ************************************************************************
     // ShiftRosterView
@@ -144,16 +149,21 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                                              .getResultList();
 
         Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
-        for (Shift shift : shiftList) {
-            spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>()).add(
-                                                                                                          new ShiftView(timeZone,
-                                                                                                                        shift));
-        }
-        shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
-
         // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched,
         // so the score might be inaccurate.
         Roster roster = solverManager.getRoster(tenantId);
+        if (roster == null) {
+            roster = buildRoster(tenantId);
+        }
+        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
+
+        for (Shift shift : shiftList) {
+            Indictment indictment = indictmentMap.get(shift);
+            spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>())
+                                    .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+        }
+        shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
+
         shiftRosterView.setScore(roster == null ? null : roster.getScore());
         shiftRosterView.setRosterState(getRosterState(tenantId));
 
@@ -239,13 +249,20 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                                              .setParameter("employeeSet", employeeSet)
                                              .getResultList();
 
+        Roster roster = solverManager.getRoster(tenantId);
+        if (roster == null) {
+            roster = buildRoster(tenantId);
+        }
+        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
+
         for (Shift shift : shiftList) {
+            Indictment indictment = indictmentMap.get(shift);
             if (shift.getEmployee() != null) {
                 employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(),
                                                              k -> new ArrayList<>())
-                                            .add(new ShiftView(timeZone, shift));
+                                            .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
             } else {
-                unassignedShiftViewList.add(new ShiftView(timeZone, shift));
+                unassignedShiftViewList.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
             }
         }
         availabilityRosterView.setEmployeeIdToShiftViewListMap(employeeIdToShiftViewListMap);
@@ -268,8 +285,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
 
         // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched,
         // so the score might be inaccurate.
-        Roster roster = solverManager.getRoster(tenantId);
-        availabilityRosterView.setScore(roster == null ? null : roster.getScore());
+        availabilityRosterView.setScore(roster.getScore());
         availabilityRosterView.setRosterState(getRosterState(tenantId));
         return availabilityRosterView;
     }

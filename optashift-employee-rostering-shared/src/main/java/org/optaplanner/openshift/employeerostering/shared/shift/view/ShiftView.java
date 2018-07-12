@@ -19,16 +19,25 @@ package org.optaplanner.openshift.employeerostering.shared.shift.view;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaplanner.openshift.employeerostering.shared.common.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.shared.employee.Employee;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
+import org.optaplanner.openshift.employeerostering.shared.violation.DesiredTimeslotForEmployeeReward;
+import org.optaplanner.openshift.employeerostering.shared.violation.RequiredSkillViolation;
+import org.optaplanner.openshift.employeerostering.shared.violation.RotationViolationPenalty;
+import org.optaplanner.openshift.employeerostering.shared.violation.ShiftEmployeeConflict;
+import org.optaplanner.openshift.employeerostering.shared.violation.UnassignedShiftPenalty;
+import org.optaplanner.openshift.employeerostering.shared.violation.UnavailableEmployeeViolation;
+import org.optaplanner.openshift.employeerostering.shared.violation.UndesiredTimeslotForEmployeePenalty;
 
 public class ShiftView extends AbstractPersistable implements HasTimeslot {
 
@@ -39,6 +48,15 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
     private LocalDateTime startDateTime;
     @NotNull
     private LocalDateTime endDateTime;
+
+    private List<RequiredSkillViolation> requiredSkillViolationList;
+    private List<UnavailableEmployeeViolation> unavailableEmployeeViolationList;
+    private List<ShiftEmployeeConflict> shiftEmployeeConflictList;
+    private List<DesiredTimeslotForEmployeeReward> desiredTimeslotForEmployeeRewardList;
+    private List<UndesiredTimeslotForEmployeePenalty> undesiredTimeslotForEmployeePenaltyList;
+    private List<RotationViolationPenalty> rotationViolationPenaltyList;
+    private List<UnassignedShiftPenalty> unassignedShiftPenaltyList;
+    private HardMediumSoftLongScore indictmentScore;
 
     private boolean pinnedByUser = false;
 
@@ -57,9 +75,27 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.rotationEmployeeId = (rotationEmployee == null) ? null : rotationEmployee.getId();
+
+        this.requiredSkillViolationList = null;
+        this.shiftEmployeeConflictList = null;
+        this.unavailableEmployeeViolationList = null;
+        this.desiredTimeslotForEmployeeRewardList = null;
+        this.undesiredTimeslotForEmployeePenaltyList = null;
+        this.rotationViolationPenaltyList = null;
+        this.indictmentScore = null;
     }
 
     public ShiftView(ZoneId zoneId, Shift shift) {
+        this(zoneId, shift, null, null, null, null, null, null, null, null);
+    }
+
+    public ShiftView(ZoneId zoneId, Shift shift, List<RequiredSkillViolation> requiredSkillViolationList,
+                     List<UnavailableEmployeeViolation> unavailableEmployeeViolationList, List<ShiftEmployeeConflict> shiftEmployeeConflictList,
+                     List<DesiredTimeslotForEmployeeReward> desiredTimeslotForEmployeeRewardList,
+                     List<UndesiredTimeslotForEmployeePenalty> undesiredTimeslotForEmployeePenaltyList,
+                     List<RotationViolationPenalty> rotationViolationPenaltyList,
+                     List<UnassignedShiftPenalty> unassignedShiftPenaltyList,
+                     HardMediumSoftLongScore indictmentScore) {
         super(shift);
         this.spotId = shift.getSpot().getId();
         this.startDateTime = GwtJavaTimeWorkaroundUtil.toLocalDateTimeInZone(shift.getStartDateTime(), zoneId);
@@ -67,6 +103,15 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
         this.pinnedByUser = shift.isPinnedByUser();
         this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
+
+        this.requiredSkillViolationList = requiredSkillViolationList;
+        this.shiftEmployeeConflictList = shiftEmployeeConflictList;
+        this.unavailableEmployeeViolationList = unavailableEmployeeViolationList;
+        this.desiredTimeslotForEmployeeRewardList = desiredTimeslotForEmployeeRewardList;
+        this.undesiredTimeslotForEmployeePenaltyList = undesiredTimeslotForEmployeePenaltyList;
+        this.rotationViolationPenaltyList = rotationViolationPenaltyList;
+        this.unassignedShiftPenaltyList = unassignedShiftPenaltyList;
+        this.indictmentScore = indictmentScore;
     }
 
     @Override
@@ -136,6 +181,70 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
     @JsonIgnore
     public Duration getDurationOfTimeslot() {
         return Duration.between(getStartDateTime(), getEndDateTime());
+    }
+
+    public List<RequiredSkillViolation> getRequiredSkillViolationList() {
+        return requiredSkillViolationList;
+    }
+
+    public void setRequiredSkillViolationList(List<RequiredSkillViolation> requiredSkillViolationList) {
+        this.requiredSkillViolationList = requiredSkillViolationList;
+    }
+
+    public List<UnavailableEmployeeViolation> getUnavailableEmployeeViolationList() {
+        return unavailableEmployeeViolationList;
+    }
+
+    public void setUnavailableEmployeeViolationList(List<UnavailableEmployeeViolation> unavailableEmployeeViolationList) {
+        this.unavailableEmployeeViolationList = unavailableEmployeeViolationList;
+    }
+
+    public List<ShiftEmployeeConflict> getShiftEmployeeConflictList() {
+        return shiftEmployeeConflictList;
+    }
+
+    public void setShiftEmployeeConflictList(List<ShiftEmployeeConflict> shiftEmployeeConflictList) {
+        this.shiftEmployeeConflictList = shiftEmployeeConflictList;
+    }
+
+    public HardMediumSoftLongScore getIndictmentScore() {
+        return indictmentScore;
+    }
+
+    public void setIndictmentScore(HardMediumSoftLongScore indictmentScore) {
+        this.indictmentScore = indictmentScore;
+    }
+
+    public List<DesiredTimeslotForEmployeeReward> getDesiredTimeslotForEmployeeRewardList() {
+        return desiredTimeslotForEmployeeRewardList;
+    }
+
+    public void setDesiredTimeslotForEmployeeRewardList(List<DesiredTimeslotForEmployeeReward> desiredTimeslotForEmployeeRewardList) {
+        this.desiredTimeslotForEmployeeRewardList = desiredTimeslotForEmployeeRewardList;
+    }
+
+    public List<UndesiredTimeslotForEmployeePenalty> getUndesiredTimeslotForEmployeePenaltyList() {
+        return undesiredTimeslotForEmployeePenaltyList;
+    }
+
+    public void setUndesiredTimeslotForEmployeePenaltyList(List<UndesiredTimeslotForEmployeePenalty> undesiredTimeslotForEmployeePenaltyList) {
+        this.undesiredTimeslotForEmployeePenaltyList = undesiredTimeslotForEmployeePenaltyList;
+    }
+
+    public List<RotationViolationPenalty> getRotationViolationPenaltyList() {
+        return rotationViolationPenaltyList;
+    }
+
+    public void setRotationViolationPenaltyList(List<RotationViolationPenalty> rotationViolationPenaltyList) {
+        this.rotationViolationPenaltyList = rotationViolationPenaltyList;
+    }
+    
+    public List<UnassignedShiftPenalty> getUnassignedShiftPenaltyList() {
+        return unassignedShiftPenaltyList;
+    }
+
+    public void setUnassignedShiftPenaltyList(List<UnassignedShiftPenalty> unassignedShiftPenaltyList) {
+        this.unassignedShiftPenaltyList = unassignedShiftPenaltyList;
     }
 
 }

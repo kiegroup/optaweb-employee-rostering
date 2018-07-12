@@ -159,6 +159,7 @@ public class ShiftRosterPageViewportBuilder {
     public void onSolveEnd() {
         viewport.unlock();
         isSolving = false;
+        eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
     }
 
     public Promise<Void> buildShiftRosterViewport(final ShiftRosterPageViewport toBuild) {
