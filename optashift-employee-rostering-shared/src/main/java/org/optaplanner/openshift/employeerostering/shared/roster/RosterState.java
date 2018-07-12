@@ -4,16 +4,20 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.common.HasTimeslot;
 import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 @Entity
 @NamedQueries({
@@ -34,16 +38,24 @@ public class RosterState extends AbstractPersistable {
     @NotNull
     private Integer unplannedRotationOffset; // In number of days from reference point
     @NotNull
+    @Min(2) // Min 2 since it is impossible to do wrapping shifts templates on single day rotations
     private Integer rotationLength; // In number of days
     @NotNull
     private LocalDate lastHistoricDate;
+    @NotNull
+    private ZoneId timeZone;
+
+    @OneToOne
+    @NotNull
+    private Tenant tenant;
 
     @SuppressWarnings("unused")
     public RosterState() {
         super(-1);
     }
 
-    public RosterState(Integer tenantId, Integer publishNotice, LocalDate firstDraftDate, Integer publishLength, Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength, LocalDate lastHistoricDate) {
+    public RosterState(Integer tenantId, Integer publishNotice, LocalDate firstDraftDate, Integer publishLength, Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength, LocalDate lastHistoricDate,
+                       ZoneId timeZone) {
         super(tenantId);
         this.publishNotice = publishNotice;
         this.firstDraftDate = firstDraftDate;
@@ -52,6 +64,7 @@ public class RosterState extends AbstractPersistable {
         this.unplannedRotationOffset = unplannedRotationOffset;
         this.rotationLength = rotationLength;
         this.lastHistoricDate = lastHistoricDate;
+        this.timeZone = timeZone;
     }
 
     @JsonIgnore
@@ -187,6 +200,22 @@ public class RosterState extends AbstractPersistable {
 
     public LocalDate getLastHistoricDate() {
         return lastHistoricDate;
+    }
+
+    public ZoneId getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(ZoneId timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    public Tenant getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(Tenant tenant) {
+        this.tenant = tenant;
     }
 
 }

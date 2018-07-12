@@ -4,7 +4,6 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
-import org.optaplanner.openshift.employeerostering.gwtui.client.viewport.CSSGlobalStyle;
 import org.optaplanner.openshift.employeerostering.shared.roster.Pagination;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.AvailabilityRosterView;
 import org.optaplanner.openshift.employeerostering.shared.roster.view.ShiftRosterView;
@@ -60,6 +59,7 @@ public class EventManager {
 
         // Rotation Events
         public static Event<Void> ROTATION_SAVE = new Event<>("RotationSave", Void.class);
+        public static Event<Void> ROTATION_INVALIDATE = new Event<>("RotationInvalidate", Void.class);
 
         private final String eventName;
         private final Class<? extends T> eventClass;

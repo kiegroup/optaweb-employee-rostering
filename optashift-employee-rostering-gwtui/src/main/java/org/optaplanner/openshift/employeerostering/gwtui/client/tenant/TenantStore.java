@@ -42,11 +42,7 @@ public class TenantStore {
 
     // @PostConstruct
     public void init() {
-        TenantRestServiceBuilder.getTenantList(FailureShownRestCallback.onSuccess(tenantList -> {
-            this.tenantList = tenantList;
-            setCurrentTenant(tenantList.get(0));
-            tenantsReadyEvent.fire(new TenantsReady());
-        }));
+        refresh();
     }
 
     public void setCurrentTenant(final Tenant newTenant) {
@@ -76,5 +72,13 @@ public class TenantStore {
 
     public static class TenantsReady {
 
+    }
+
+    public void refresh() {
+        TenantRestServiceBuilder.getTenantList(FailureShownRestCallback.onSuccess(tenantList -> {
+            this.tenantList = tenantList;
+            setCurrentTenant(tenantList.get(0));
+            tenantsReadyEvent.fire(new TenantsReady());
+        }));
     }
 }

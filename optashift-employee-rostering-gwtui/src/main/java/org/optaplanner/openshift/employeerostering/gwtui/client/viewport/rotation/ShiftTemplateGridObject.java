@@ -58,11 +58,6 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     @Override
     public void setStartPositionInScaleUnits(LocalDateTime newStartPosition) {
         updateStartDateTimeWithoutRefresh(newStartPosition);
-        if (isAfterMidpoint(newStartPosition)) {
-            model.setLaterTwin(this);
-        } else {
-            model.setEarilerTwin(this);
-        }
         model.refreshTwin(this);
     }
 
@@ -103,27 +98,13 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     protected void updateStartDateTimeWithoutRefresh(LocalDateTime newStartDateTime) {
         shiftTemplateView.setDurationBetweenRotationStartAndTemplateStart(Duration.between(getLane().getScale().getStartInScaleUnits(),
                                                                                            newStartDateTime));
-        if (model.isLaterTwin(this)) {
-            model.getShiftTemplateView()
-                 .setDurationBetweenRotationStartAndTemplateStart(shiftTemplateView.getDurationBetweenRotationStartAndTemplateStart());
-        }
     }
 
     protected void updateEndDateTimeWithoutRefresh(LocalDateTime newEndDateTime) {
         shiftTemplateView.setShiftTemplateDuration(Duration.between(getStartPositionInScaleUnits(),
                                                                     newEndDateTime));
-
-        if (model.isLaterTwin(this)) {
-            model.getShiftTemplateView()
-                 .setShiftTemplateDuration(shiftTemplateView.getShiftTemplateDuration());
-        }
     }
-
-    protected boolean isAfterMidpoint(LocalDateTime dateTime) {
-        // Note: Multiply by 12 instead of by 24 since we are doubling it to see if it is past the midpoint
-        return getDaysInRotation() < Duration.between(getLane().getScale().getStartInScaleUnits(), dateTime).getSeconds() / 60 / 60 / 12;
-    }
-
+    
     protected Long getDaysInRotation() {
         return Duration.between(getLane().getScale().getStartInScaleUnits(),
                                 getLane().getScale().getEndInScaleUnits()).getSeconds() / 60 / 60 / 24;

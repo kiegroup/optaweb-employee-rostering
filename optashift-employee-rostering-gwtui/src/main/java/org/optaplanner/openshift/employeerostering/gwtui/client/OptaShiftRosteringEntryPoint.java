@@ -40,8 +40,11 @@ public class OptaShiftRosteringEntryPoint {
     @Inject
     private TenantStore tenantStore;
 
+    private boolean isPageLoaded;
+
     @PostConstruct
     public void onModuleLoad() {
+        isPageLoaded = false;
         final GWT.UncaughtExceptionHandler javascriptLoggerExceptionHandler = GWT.getUncaughtExceptionHandler();
         GWT.setUncaughtExceptionHandler(new GWT.UncaughtExceptionHandler() {
 
@@ -69,10 +72,13 @@ public class OptaShiftRosteringEntryPoint {
 
     public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
         //FIXME: We should probably have a better 'home page' than the skills table, but since it's the lightest one to load, that was the chosen one
-        pageChangeEvent.fire(new PageChange(SHIFT_ROSTER, () -> {
-            DomGlobal.document.getElementById("initial-loading-message").remove();
-            DomGlobal.document.body.appendChild(navigationController.getAppElement());
-        }));
+        if (!isPageLoaded) {
+            isPageLoaded = true;
+            pageChangeEvent.fire(new PageChange(SHIFT_ROSTER, () -> {
+                DomGlobal.document.getElementById("initial-loading-message").remove();
+                DomGlobal.document.body.appendChild(navigationController.getAppElement());
+            }));
+        }
     }
 
     private void healthCheck() {

@@ -19,7 +19,7 @@ import org.optaplanner.openshift.employeerostering.shared.shift.Shift;
 import org.optaplanner.openshift.employeerostering.shared.skill.Skill;
 import org.optaplanner.openshift.employeerostering.shared.spot.Spot;
 import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
-import org.optaplanner.openshift.employeerostering.shared.tenant.TenantConfiguration;
+import org.optaplanner.openshift.employeerostering.shared.tenant.RosterParametrization;
 
 public class AdminRestServiceImpl extends AbstractRestServiceImpl implements AdminRestService {
 
@@ -39,7 +39,7 @@ public class AdminRestServiceImpl extends AbstractRestServiceImpl implements Adm
         // otherwise we break referential integrity
         deleteAllEntities(Shift.class, EmployeeAvailability.class, ShiftTemplate.class,
                 Employee.class, Spot.class, Skill.class,
-                TenantConfiguration.class, RosterState.class, Tenant.class);
+                RosterParametrization.class, RosterState.class, Tenant.class);
         rosterGenerator.setUpGeneratedData(zoneId);
     }
 

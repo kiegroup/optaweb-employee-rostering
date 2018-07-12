@@ -302,7 +302,19 @@ public abstract class ZoneId {
       }
       return ZoneOffset.of(zoneId.substring(3));
     }
-    throw new DateTimeParseException("Illegal zoneId (GWT) " + zoneId, zoneId, 0);
+    else {
+        return new ZoneId() {
+            
+            public String getId() {
+                return zoneId;
+            }
+            
+            public ZoneRules getRules() {
+                throw new UnsupportedOperationException("Zone rules are not avaliable for zoneId (" + zoneId + ") since it is not an offset.");
+            }
+            
+        };
+    }
   }
 
   // -----------------------------------------------------------------------
@@ -330,10 +342,6 @@ public abstract class ZoneId {
    * Constructor only accessible within the package.
    */
   ZoneId() {
-
-    if (getClass() != ZoneOffset.class) {
-      throw new AssertionError("Invalid subclass");
-    }
   }
 
   // -----------------------------------------------------------------------

@@ -1,5 +1,6 @@
 package org.optaplanner.openshift.employeerostering.shared.tenant;
 
+import java.time.ZoneId;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -15,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
+import org.optaplanner.openshift.employeerostering.shared.roster.RosterState;
 
 @Api(tags = {"Tenant"})
 @Path("/tenant")
@@ -48,23 +50,29 @@ public interface TenantRestService {
     @ApiOperation("Add a new tenant")
     @POST
     @Path("/add")
-    Tenant addTenant(@ApiParam(value = "with no id", required = true) Tenant tenant);
+    Tenant addTenant(@ApiParam(value = "with no id", required = true) RosterState intialRosterState);
 
     // ************************************************************************
-    // TenantConfiguration
+    // RosterParametrization
     // ************************************************************************
     /**
      * @param id never null
      * @return never null, the id
      */
-    @ApiOperation("Get a tenant configuration")
+    @ApiOperation("Get a tenant roster parametrization")
     @GET
     @Path("/{id}")
-    TenantConfiguration getTenantConfiguration(@ApiParam(required = true) @PathParam("id") Integer id);
+    RosterParametrization getRosterParametrization(@ApiParam(required = true) @PathParam("id") Integer id);
 
-    @ApiOperation("Update a tenant configuration")
+    @ApiOperation("Update a tenant roster parametrization")
     @POST
-    @Path("/config/update")
-    TenantConfiguration updateTenantConfiguration(@ApiParam(required = true) TenantConfiguration tenantConfiguration);
+    @Path("/parametrization/update")
+    RosterParametrization updateRosterParametrization(@ApiParam(required = true) RosterParametrization rosterParametrization);
+
+    // TODO: Where should this be?
+    @ApiOperation("Get supported timezones")
+    @GET
+    @Path("/supported/timezones")
+    List<ZoneId> getSupportedTimezones();
 
 }

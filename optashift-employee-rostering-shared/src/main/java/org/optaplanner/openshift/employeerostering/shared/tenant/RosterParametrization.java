@@ -1,7 +1,5 @@
 package org.optaplanner.openshift.employeerostering.shared.tenant;
 
-import java.time.ZoneId;
-
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -11,11 +9,11 @@ import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersist
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "TenantConfiguration.find",
-                           query = "select distinct c from TenantConfiguration c" +
-                                   " where c.tenantId = :tenantId")
+               @NamedQuery(name = "RosterParametrization.find",
+                           query = "select distinct rp from RosterParametrization rp" +
+                                   " where rp.tenantId = :tenantId")
 })
-public class TenantConfiguration extends AbstractPersistable {
+public class RosterParametrization extends AbstractPersistable {
 
     // TODO: Is 999 a reasonable max for the weights?
     @NotNull
@@ -24,22 +22,19 @@ public class TenantConfiguration extends AbstractPersistable {
     private Integer desiredTimeSlotWeight = 10;
     @NotNull
     private Integer rotationEmployeeMatchWeight = 500;
-    @NotNull
-    private ZoneId timeZone;
 
     @SuppressWarnings("unused")
-    public TenantConfiguration() {
+    public RosterParametrization() {
         super(-1);
     }
 
-    public TenantConfiguration(Integer tenantId,
-                               Integer undesiredTimeSlotWeight, Integer desiredTimeSlotWeight,
-                               Integer rotationEmployeeMatchWeight, ZoneId timeZone) {
+    public RosterParametrization(Integer tenantId,
+                                 Integer undesiredTimeSlotWeight, Integer desiredTimeSlotWeight,
+                                 Integer rotationEmployeeMatchWeight) {
         super(tenantId);
         this.undesiredTimeSlotWeight = undesiredTimeSlotWeight;
         this.desiredTimeSlotWeight = desiredTimeSlotWeight;
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
-        this.timeZone = timeZone;
     }
 
     public Integer getUndesiredTimeSlotWeight() {
@@ -64,14 +59,6 @@ public class TenantConfiguration extends AbstractPersistable {
 
     public void setRotationEmployeeMatchWeight(Integer rotationEmployeeMatchWeight) {
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
-    }
-
-    public ZoneId getTimeZone() {
-        return timeZone;
-    }
-
-    public void setTimeZone(ZoneId timeZone) {
-        this.timeZone = timeZone;
     }
 
 }

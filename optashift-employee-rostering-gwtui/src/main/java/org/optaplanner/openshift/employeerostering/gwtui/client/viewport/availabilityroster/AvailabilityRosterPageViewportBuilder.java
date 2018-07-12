@@ -88,7 +88,7 @@ public class AvailabilityRosterPageViewportBuilder {
     public RepeatingCommand getWorkerCommand(final AvailabilityRosterView view, final Lockable<Map<Long, Lane<LocalDateTime, AvailabilityRosterMetadata>>> lockableLaneMap, final long timeWhenInvoked) {
         currentWorkerStartTime = timeWhenInvoked;
 
-        if (view.getEmployeeList().isEmpty()) {
+        if (view.getEmployeeList().isEmpty() && !pagination.isOnFirstPage()) {
             eventManager.fireEvent(AVAILABILITY_ROSTER_PAGINATION, pagination.previousPage());
             return () -> false;
         }
