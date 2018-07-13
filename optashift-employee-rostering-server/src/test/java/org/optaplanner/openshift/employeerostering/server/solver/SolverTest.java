@@ -37,14 +37,17 @@ public class SolverTest {
     @Test(timeout = 600000)
     public void solve() {
         SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(WannabeSolverManager.SOLVER_CONFIG);
-        solverFactory.getSolverConfig().setTerminationConfig(new TerminationConfig().withBestScoreFeasible(true));
+        solverFactory.getSolverConfig().setTerminationConfig(new TerminationConfig().withMillisecondsSpentLimit(2000L));
         Solver<Roster> solver = solverFactory.buildSolver();
 
         RosterGenerator rosterGenerator = buildRosterGenerator();
         Roster roster = rosterGenerator.generateRoster(10, 7);
 
-        solver.solve(roster);
+        roster = solver.solve(roster);
         assertNotNull(roster.getScore());
+        // Due to overconstrained planning, the score is always feasible
+        assertTrue(roster.getScore().isFeasible());
+        assertFalse(roster.getShiftList().isEmpty());
     }
 
     protected RosterGenerator buildRosterGenerator() {
