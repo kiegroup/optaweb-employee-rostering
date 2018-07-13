@@ -379,7 +379,7 @@ public class RosterGenerator {
         int skillListSize = (spotListSize + 4) / 5;
 
         Tenant tenant = createTenant(generatorType, employeeListSize);
-        int tenantId = tenant.getId();
+        Integer tenantId = tenant.getId();
         RosterParametrization rosterParametrization = createTenantConfiguration(generatorType, tenantId, zoneId);
         RosterState rosterState = createRosterState(generatorType, tenant, zoneId, lengthInDays);
 
@@ -447,8 +447,7 @@ public class RosterGenerator {
         generatorType.spotNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = generatorType.spotNameGenerator.generateNextValue();
-            Set<Skill> requiredSkillSet = new HashSet<>(
-                                                        extractRandomSubList(skillList, 0.5, 0.9, 1.0));
+            Set<Skill> requiredSkillSet = new HashSet<>(extractRandomSubList(skillList, 0.5, 0.9, 1.0));
             Spot spot = new Spot(tenantId, name, requiredSkillSet);
             entityManager.persist(spot);
             spotList.add(spot);

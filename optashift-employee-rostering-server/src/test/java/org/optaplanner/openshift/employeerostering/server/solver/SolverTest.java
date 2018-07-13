@@ -16,14 +16,21 @@
 
 package org.optaplanner.openshift.employeerostering.server.solver;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import javax.persistence.EntityManager;
+
 import org.junit.Test;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.config.solver.termination.TerminationConfig;
 import org.optaplanner.openshift.employeerostering.server.roster.RosterGenerator;
+import org.optaplanner.openshift.employeerostering.shared.common.AbstractPersistable;
 import org.optaplanner.openshift.employeerostering.shared.roster.Roster;
+import org.optaplanner.openshift.employeerostering.shared.tenant.Tenant;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class SolverTest {
 
@@ -32,9 +39,32 @@ public class SolverTest {
         SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(WannabeSolverManager.SOLVER_CONFIG);
         solverFactory.getSolverConfig().setTerminationConfig(new TerminationConfig().withBestScoreFeasible(true));
         Solver<Roster> solver = solverFactory.buildSolver();
-        Roster roster = new RosterGenerator().generateRoster(10, 7);
+
+        RosterGenerator rosterGenerator = buildRosterGenerator();
+        Roster roster = rosterGenerator.generateRoster(10, 7);
+
         solver.solve(roster);
         assertNotNull(roster.getScore());
+    }
+
+    protected RosterGenerator buildRosterGenerator() {
+        EntityManager entityManager = mock(EntityManager.class);
+        AtomicInteger tenantIdGenerator = new AtomicInteger(0);
+        doAnswer(invocation -> {
+            Tenant tenant = (Tenant) invocation.getArgument(0);
+            tenant.setId(tenantIdGenerator.getAndIncrement());
+            return invocation;
+        }).when(entityManager).persist(any(Tenant.class));
+        AtomicLong idGenerator = new AtomicLong(0L);
+        doAnswer(invocation -> {
+            AbstractPersistable o = (AbstractPersistable) invocation.getArgument(0);
+            o.setId(idGenerator.getAndIncrement());
+            return invocation;
+        }).when(entityManager).persist(any(AbstractPersistable.class));
+
+        RosterGenerator rosterGenerator = new RosterGenerator(entityManager);
+        rosterGenerator.setUpGeneratedData();
+        return rosterGenerator;
     }
 
 }
