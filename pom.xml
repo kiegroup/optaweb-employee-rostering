@@ -49,7 +49,7 @@
     <wildfly.home>${wildfly.parent}/wildfly-${version.org.wildfly.wildfly-dist}</wildfly.home>
     <wildfly.launchdir>${project.basedir}/local/appserver/wildfly-${version.org.wildfly.wildfly-dist}</wildfly.launchdir>
     <wildfly.install.skip>false</wildfly.install.skip>
-    <deployment.parent>${project.basedir}/${project.artifactId}-webapp/target</deployment.parent>
+    <deployment.parent>${project.basedir}/employee-rostering-webapp/target</deployment.parent>
     <deployment.name>${project.artifactId}-webapp-${project.version}</deployment.name>
     <antrun.skip>false</antrun.skip>
 
