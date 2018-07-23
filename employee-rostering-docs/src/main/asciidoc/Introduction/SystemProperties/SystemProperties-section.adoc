@@ -7,7 +7,7 @@ for example as `-Doptaweb.generator.zoneId="America/New_York"` to WildFly.
 These system properties might also be exposed as OpenShift template parameters.
 
 
-* *optawe.generator.timeZoneId*:
+* *optaweb.generator.timeZoneId*:
 The time zone ID for the automatically generated tenants.
 For example `America/New_York`.
 This defaults to the system default Zone ID.
