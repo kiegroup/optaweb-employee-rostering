@@ -4,7 +4,6 @@
 
   <modelVersion>4.0.0</modelVersion>
   <!-- Use JBoss parent so all maven-plugins have a decent base version. -->
-  <!-- We don't use the -->
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
@@ -12,8 +11,8 @@
     <relativePath />
   </parent>
 
-  <groupId>org.optaplanner.openshift</groupId>
-  <artifactId>optashift-employee-rostering</artifactId>
+  <groupId>org.optaweb.employeerostering</groupId>
+  <artifactId>optaweb-employee-rostering</artifactId>
   <packaging>pom</packaging>
   <version>7.9.0-SNAPSHOT</version>
 
@@ -79,15 +78,15 @@
   </properties>
 
   <modules>
-    <module>optashift-employee-rostering-shared</module>
-    <!-- The modules optashift-employee-rostering-shared-gwt and optashift-employee-rostering-gwtui
+    <module>employee-rostering-shared</module>
+    <module>employee-rostering-server</module>
+    <module>employee-rostering-restclient</module>
+    <!-- The modules employee-rostering-shared-gwt and employee-rostering-gwtui
        are added by the maven profile withGwt (which is enabled by default) -->
-    <module>optashift-employee-rostering-server</module>
-    <module>optashift-employee-rostering-restclient</module>
-    <module>optashift-employee-rostering-webapp</module>
-    <module>optashift-employee-rostering-benchmark</module>
-    <module>optashift-employee-rostering-docs</module>
-    <module>optashift-employee-rostering-distribution</module>
+    <module>employee-rostering-webapp</module>
+    <module>employee-rostering-benchmark</module>
+    <module>employee-rostering-docs</module>
+    <module>employee-rostering-distribution</module>
   </modules>
 
   <dependencies>
@@ -106,48 +105,48 @@
     <dependencies>
       <!-- Internal -->
       <dependency>
-        <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optashift-employee-rostering-shared</artifactId>
+        <groupId>org.optaweb.employeerostering</groupId>
+        <artifactId>optaweb-employee-rostering-shared</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optashift-employee-rostering-shared</artifactId>
+        <groupId>org.optaweb.employeerostering</groupId>
+        <artifactId>optaweb-employee-rostering-shared</artifactId>
         <version>${project.version}</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
-        <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optashift-employee-rostering-shared-gwt</artifactId>
+        <groupId>org.optaweb.employeerostering</groupId>
+        <artifactId>optaweb-employee-rostering-shared-gwt</artifactId>
         <type>gwt-lib</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optashift-employee-rostering-gwtui</artifactId>
+        <groupId>org.optaweb.employeerostering</groupId>
+        <artifactId>optaweb-employee-rostering-gwtui</artifactId>
         <type>war</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optashift-employee-rostering-server</artifactId>
+        <groupId>org.optaweb.employeerostering</groupId>
+        <artifactId>optaweb-employee-rostering-server</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optashift-employee-rostering-webapp</artifactId>
+        <groupId>org.optaweb.employeerostering</groupId>
+        <artifactId>optaweb-employee-rostering-webapp</artifactId>
         <type>war</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optashift-employee-rostering-docs</artifactId>
+        <groupId>org.optaweb.employeerostering</groupId>
+        <artifactId>optaweb-employee-rostering-docs</artifactId>
         <type>zip</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.optaplanner.openshift</groupId>
-        <artifactId>optashift-employee-rostering-restclient</artifactId>
+        <groupId>org.optaweb.employeerostering</groupId>
+        <artifactId>optaweb-employee-rostering-restclient</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -345,7 +344,7 @@
               <jbossHome>${wildfly.launchdir}</jbossHome>
               <filename>${deployment.name}.war/</filename>
               <targetDir>${wildfly.launchdir}/standalone/deployments</targetDir>
-              <name>optashift-employee-rostering.war</name>
+              <name>optaweb-employee-rostering.war</name>
               <checkPackaging>false</checkPackaging>
             </configuration>
           </execution>
@@ -383,7 +382,7 @@
               <errai.jboss.home>${wildfly.home}</errai.jboss.home>
               <!-- Make IDE war run config and GWT Super Dev Mode use same 
                 deployment context to avoid duplicate, conflicting deployment -->
-              <errai.dev.context>optashift-employee-rostering</errai.dev.context>
+              <errai.dev.context>optaweb-employee-rostering</errai.dev.context>
             </systemProperties>
           </configuration>
         </plugin>
@@ -420,8 +419,8 @@
         </property>
       </activation>
       <modules>
-        <module>optashift-employee-rostering-shared-gwt</module>
-        <module>optashift-employee-rostering-gwtui</module>
+        <module>employee-rostering-shared-gwt</module>
+        <module>employee-rostering-gwtui</module>
       </modules>
     </profile>
 

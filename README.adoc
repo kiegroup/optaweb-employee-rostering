@@ -58,20 +58,20 @@ This is not possible to due to resource limitations.
 . If you just installed oc client tools, follow the https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md[OpenShift Local Cluster Management] docs to get `oc cluster (up|down)` working.
 . `oc cluster up`
 . `oc login`, enter `developer` for both username and password when prompted
-. `oc new-project optashift-employee-rostering`
+. `oc new-project optaweb-employee-rostering`
 // TODO Change to wildfly:11.0 once it is available
-. `oc new-app --image-stream="openshift/wildfly:10.1" https://github.com/kiegroup/optashift-employee-rostering.git#master`
+. `oc new-app --image-stream="openshift/wildfly:10.1" https://github.com/kiegroup/optaweb-employee-rostering.git#master`
 
 To trigger a new build with the latest updates from the master branch, run
 
 ----
-oc start-build optashift-employee-rostering
+oc start-build optaweb-employee-rostering
 ----
 
 To delete the OpenShift application and project, run
 
 ----
-oc delete project optashift-employee-rostering
+oc delete project optaweb-employee-rostering
 ----
 
 == Development
@@ -101,10 +101,10 @@ you need to create two separate run configurations.
 ==== CodeServer run configuration
 
 . Create Maven configuration and set following parameters:
-  * Working directory: `/absolute/path/optashift-employee-rostering`
+  * Working directory: `/absolute/path/optaweb-employee-rostering`
   * Command line: `gwt:codeserver`
 . Make sure `launcherDir` is configured to point to
-  `optashift-employee-rostering-webapp/target/optashift-employee-rostering-webapp-${version}/`.
+  `optaweb-employee-rostering-webapp/target/optaweb-employee-rostering-webapp-${version}/`.
 +
 The `launcherDir` property can be set in `pom.xml` or via system property.
 
@@ -112,7 +112,7 @@ The `launcherDir` property can be set in `pom.xml` or via system property.
 
 . Add local JBoss Server configuration.
 . Configure the *Application server* field to point to a local WildFly 11 installation.
-. Click *Fix* button at the bottom of the dialogue and select `optashift-employee-rostering-webbab:war exploded`.
+. Click *Fix* button at the bottom of the dialogue and select `optaweb-employee-rostering-webbab:war exploded`.
 . Remove any steps that were automatically added to the *Before launch* phase.
 . Configure JavaScript debugger:
   * Check *After launch* and select Chrome browser.

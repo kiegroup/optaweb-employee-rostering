@@ -106,14 +106,14 @@ OPENSHIFT_USER=${ARG_USERNAME:-$LOGGEDIN_USER}
 
 # project
 PRJ_SUFFIX=${ARG_PROJECT_SUFFIX:-`echo $OPENSHIFT_USER | sed -e 's/[-@].*//g'`}
-PRJ=optashift-employee-rostering-$PRJ_SUFFIX
+PRJ=optaweb-employee-rostering-$PRJ_SUFFIX
 
-PRJ_DISPLAY_NAME="OptaShift Employee Rostering"
+PRJ_DISPLAY_NAME="OptaWeb Employee Rostering"
 PRJ_DESCRIPTION="Employee Rostering with OptaPlanner on OpenShift"
 
 # config
 GITHUB_ACCOUNT=${GITHUB_ACCOUNT:-kiegroup}
-SOURCE_REPOSITORY_URL=https://github.com/$GITHUB_ACCOUNT/optashift-employee-rostering
+SOURCE_REPOSITORY_URL=https://github.com/$GITHUB_ACCOUNT/optaweb-employee-rostering
 
 
 ################################################################################
@@ -172,8 +172,8 @@ function create_projects() {
 
 
 function create_application_binary() {
-  echo_header "Creating OptaShift Build and Deployment config."
-  oc process -f openshift/templates/optashift-employee-rostering-template-binary.yaml -p SOURCE_REPOSITORY_URL="$SOURCE_REPOSITORY_URL" -n $PRJ | oc create -f - -n $PRJ
+  echo_header "Creating OptaWeb Build and Deployment config."
+  oc process -f openshift/templates/optaweb-employee-rostering-template-binary.yaml -p SOURCE_REPOSITORY_URL="$SOURCE_REPOSITORY_URL" -n $PRJ | oc create -f - -n $PRJ
 }
 
 function build_and_deploy_binary() {

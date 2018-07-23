@@ -1,0 +1,14 @@
+[[architecture]]
+= Architecture
+:doctype: book
+:imagesdir: ..
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+
+image::Architecture/optaWebEmployeeRosteringArchitecture.png[align="center"]
+
+image::Architecture/optaWebEmployeeRosteringClassDiagram.png[align="center"]
+
+image::Architecture/optaWebEmployeeRosteringSolverInputOutput.png[align="center"]

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+  <!--<environmentMode>FAST_ASSERT</environmentMode>-->
+  <solutionClass>org.optaweb.employeerostering.shared.roster.Roster</solutionClass>
+  <entityClass>org.optaweb.employeerostering.shared.shift.Shift</entityClass>
+
+  <scoreDirectorFactory>
+    <scoreDrl>org/optaweb/employeerostering/server/solver/employeeRosteringScoreRules.drl</scoreDrl>
+  </scoreDirectorFactory>
+
+  <termination>
+    <secondsSpentLimit>30</secondsSpentLimit>
+  </termination>
+</solver>

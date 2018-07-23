@@ -1,0 +1,9 @@
+[[whatIsOptaWeb]]
+= What is OptaWeb Employee Rostering?
+:imagesdir: ../..
+
+Every organization faces planning problems: providing products or services with a
+limited set of _constrained_ resources (employees, assets, time and money).
+One such planning problem is employee shift rostering: assigning shifts to employees.
+OptaWeb is a web application and REST service that solves employee shift rostering
+problems using the https://www.optaplanner.org[OptaPlanner engine].

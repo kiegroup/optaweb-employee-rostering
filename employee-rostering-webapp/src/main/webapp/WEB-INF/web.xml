@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+  <servlet-mapping>
+    <servlet-name>javax.ws.rs.core.Application</servlet-name>
+    <!-- Keep in sync with *EntryPoint -->
+    <url-pattern>/rest/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>SwaggerBootstrap</servlet-name>
+    <servlet-class>org.optaweb.employeerostering.web.SwaggerBootstrapServlet</servlet-class>
+    <load-on-startup>2</load-on-startup>
+  </servlet>
+  
+  <context-param>
+    <param-name>resteasy.provider</param-name>
+    <param-value>
+      io.swagger.jaxrs.listing.ApiListingResource,
+      io.swagger.jaxrs.listing.SwaggerSerializers,
+      package org.optaweb.employeerostering.server.common.jaxrs.OptaWebExceptionMapper
+    </param-value>
+    
+  </context-param>
+</web-app>
