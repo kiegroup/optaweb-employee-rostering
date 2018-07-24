@@ -12,6 +12,7 @@
     <class>org.optaweb.employeerostering.shared.roster.RosterState</class>
     <class>org.optaweb.employeerostering.shared.rotation.ShiftTemplate</class>
     <class>org.optaweb.employeerostering.shared.tenant.Tenant</class>
+    <class>org.optaweb.employeerostering.shared.tenant.RosterParametrization</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.driver" value="org.hsqldb.jdbcDriver"/>
