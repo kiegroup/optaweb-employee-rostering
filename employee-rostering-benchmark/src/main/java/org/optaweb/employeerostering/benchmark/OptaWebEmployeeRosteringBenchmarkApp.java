@@ -17,7 +17,9 @@
 package org.optaweb.employeerostering.benchmark;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -41,8 +43,18 @@ public class OptaWebEmployeeRosteringBenchmarkApp {
     }
 
     private static List<Roster> generateRosters() {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("javax.persistence.transactionType", "RESOURCE_LOCAL");
+        // Failed attempts to avoid persistence.xml duplication by overwriting jta-data-source
+        // TODO https://stackoverflow.com/questions/51514433/jpa-reuse-persistence-xml-with-jta-data-source-in-jse-and-junit-by-overriding-t
+//        properties.put("javax.persistence.jtaDataSource", "");
+//        properties.put("javax.persistence.nonJtaDataSource", "");
+        properties.put("javax.persistence.jdbc.driver", "org.hsqldb.jdbcDriver");
+        properties.put("javax.persistence.jdbc.url", "jdbc:hsqldb:mem:testdb");
+        properties.put("javax.persistence.jdbc.user", "sa");
+        properties.put("javax.persistence.jdbc.password", "");
         EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(
-                "optaweb-employee-rostering-persistence-unit");
+                "optaweb-employee-rostering-persistence-unit", properties);
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         RosterGenerator rosterGenerator = new RosterGenerator(entityManager);
 
