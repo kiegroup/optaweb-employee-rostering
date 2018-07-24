@@ -336,6 +336,7 @@ public class RosterGenerator {
      */
     public RosterGenerator(EntityManager entityManager) {
         this.entityManager = entityManager;
+        random = new Random(37);
     }
 
     @PostConstruct
