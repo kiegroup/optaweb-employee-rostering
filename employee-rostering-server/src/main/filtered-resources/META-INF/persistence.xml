@@ -3,7 +3,7 @@
              version="2.1" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="optaweb-employee-rostering-persistence-unit" transaction-type="JTA">
     <description>OptaWeb Employee Rostering Persistence Unit</description>
-    <jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+    <jta-data-source>${org.optaweb.employeerostering.persistence.datasource}</jta-data-source>
     <class>org.optaweb.employeerostering.shared.skill.Skill</class>
     <class>org.optaweb.employeerostering.shared.spot.Spot</class>
     <class>org.optaweb.employeerostering.shared.employee.Employee</class>
@@ -17,9 +17,9 @@
     <properties>
       <property name="hibernate.hbm2ddl.auto" value="create"/>
       <!-- <property name="hibernate.show_sql" value="true"/> -->
-      <property name="hibernate.format_sql" value="true"/>
+      <!-- <property name="hibernate.format_sql" value="true"/> -->
       <property name="hibernate.transaction.flush_before_completion" value="true"/>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+      <property name="hibernate.dialect" value="${org.optaweb.employeerostering.persistence.dialect}"/>
       <property name="hibernate.event.merge.entity_copy_observer" value="allow"/>
     </properties>
   </persistence-unit>
