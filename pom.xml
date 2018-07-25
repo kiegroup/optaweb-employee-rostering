@@ -472,7 +472,13 @@
       </build>
     </profile>
     <profile>
+      <!-- To activate use -DproductizedOpenshift (not -P) -->
       <id>productizedOpenshift</id>
+      <activation>
+        <property>
+          <name>productizedOpenshift</name>
+        </property>
+      </activation>
       <properties>
         <!-- Maven resource filtering -->
         <dollarSign>$</dollarSign><!-- HACK to escape maven property interpolation -->
