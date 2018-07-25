@@ -14,6 +14,23 @@
 
   <name>Employee Rostering as a Service Server</name>
 
+  <properties>
+    <org.optaweb.employeerostering.persistence.datasource>java:jboss/datasources/ExampleDS</org.optaweb.employeerostering.persistence.datasource>
+    <org.optaweb.employeerostering.persistence.dialect>org.hibernate.dialect.H2Dialect</org.optaweb.employeerostering.persistence.dialect>
+  </properties>
+  <build>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/filtered-resources</directory>
+      </resource>
+    </resources>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
@@ -42,4 +59,16 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>productizedOpenshift</id>
+      <properties>
+        <dollarSign>$</dollarSign><!-- HACK to escape maven property interpolation -->
+        <!-- The productized docker image have EAP <spec-descriptor-property-replacement> set to true -->
+        <!-- to dynamically configure the database type (mysql, postgresql, ...). -->
+        <org.optaweb.employeerostering.persistence.datasource>${dollarSign}{org.optaweb.employeerostering.persistence.datasource:java:jboss/datasources/ExampleDS}</org.optaweb.employeerostering.persistence.datasource>
+        <org.optaweb.employeerostering.persistence.dialect>${dollarSign}{org.optaweb.employeerostering.persistence.dialect:org.hibernate.dialect.H2Dialect}</org.optaweb.employeerostering.persistence.dialect>
+      </properties>
+    </profile>
+  </profiles>
 </project>
