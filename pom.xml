@@ -53,6 +53,10 @@
     <deployment.name>${project.artifactId}-webapp-${project.version}</deployment.name>
     <antrun.skip>false</antrun.skip>
 
+    <!-- Maven resource filtering -->
+    <org.optaweb.employeerostering.persistence.datasource>java:jboss/datasources/ExampleDS</org.optaweb.employeerostering.persistence.datasource>
+    <org.optaweb.employeerostering.persistence.dialect>org.hibernate.dialect.H2Dialect</org.optaweb.employeerostering.persistence.dialect>
+
     <!--
       It's recommended, but not required to align the versions as much as possible with
       https://github.com/jboss-integration/jboss-integration-platform-bom/blob/master/pom.xml
@@ -371,8 +375,7 @@
               <arg>gwtui/gwtui.html</arg>
             </devmodeArgs>
             <jvmArgs>
-              <!-- Remote debugger: uncomment this line to debug the WildFly 
-                backend -->
+              <!-- Remote debugger: uncomment this line to debug the WildFly backend -->
               <!--<arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</arg> -->
             </jvmArgs>
             <!-- GWT Super Dev Mode: deploy backend correctly -->
@@ -425,9 +428,13 @@
     </profile>
 
     <profile>
-      <!-- Use this profile for any OpenShift specific customization your 
-        app will need. -->
+      <!-- Magic profileId that is activated automatically in OpenShift S2I builds -->
       <id>openshift</id>
+      <activation>
+        <property>
+          <name>productizedOpenshift</name>
+        </property>
+      </activation>
       <properties>
         <wildfly.install.skip>true</wildfly.install.skip>
         <antrun.skip>true</antrun.skip>
@@ -440,17 +447,17 @@
             <artifactId>gwt-maven-plugin</artifactId>
             <configuration>
               <!-- Minify the JavaScript code to improve latency -->
-              <style>OBFUSCATED</style>
-              <!-- Remove warnings that only appear on OpenShift -->
+              <!--<style>OBFUSCATED</style>-->
               <compilerArgs>
+                <!-- Remove warnings that only appear on OpenShift -->
                 <arg>-XdisableUpdateCheck</arg>
               </compilerArgs>
               <!-- Avoid crash "error code 137" on OpenShift -->
-              <localWorkers>1</localWorkers>
-              <jvmArgs>
-                <arg>-Xmx1024m</arg>
-                <arg>-Xss256k</arg>
-              </jvmArgs>
+              <!--<localWorkers>1</localWorkers>-->
+              <!--<jvmArgs>-->
+                <!--<arg>-Xmx1024m</arg>-->
+                <!--<arg>-Xss256k</arg>-->
+              <!--</jvmArgs>-->
             </configuration>
           </plugin>
           <plugin>
@@ -463,6 +470,17 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+    <profile>
+      <id>productizedOpenshift</id>
+      <properties>
+        <!-- Maven resource filtering -->
+        <dollarSign>$</dollarSign><!-- HACK to escape maven property interpolation -->
+        <!-- The productized docker image have EAP <spec-descriptor-property-replacement> set to true -->
+        <!-- to dynamically configure the database type (mysql, postgresql, ...). -->
+        <org.optaweb.employeerostering.persistence.datasource>${dollarSign}{org.optaweb.employeerostering.persistence.datasource:java:jboss/datasources/ExampleDS}</org.optaweb.employeerostering.persistence.datasource>
+        <org.optaweb.employeerostering.persistence.dialect>${dollarSign}{org.optaweb.employeerostering.persistence.dialect:org.hibernate.dialect.H2Dialect}</org.optaweb.employeerostering.persistence.dialect>
+      </properties>
     </profile>
 
     <profile>
