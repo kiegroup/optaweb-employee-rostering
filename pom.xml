@@ -50,7 +50,7 @@
     <wildfly.launchdir>${project.basedir}/local/appserver/wildfly-${version.org.wildfly.wildfly-dist}</wildfly.launchdir>
     <wildfly.install.skip>false</wildfly.install.skip>
     <deployment.parent>${project.basedir}/employee-rostering-webapp/target</deployment.parent>
-    <deployment.name>${project.artifactId}-webapp-${project.version}</deployment.name>
+    <deployment.name>optaweb-${project.artifactId}-${project.version}</deployment.name>
     <antrun.skip>false</antrun.skip>
 
     <!-- Maven resource filtering -->
