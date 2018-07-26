@@ -31,7 +31,7 @@ import com.google.gwt.i18n.shared.DateTimeFormat.PredefinedFormat;
 
 // WORKAROUND: Our client-side emulated java.time library lacks many features. This class contains methods to work-around these lack of feature
 // REMOVE ME when GWT supports java.time or when we update our supersources at
-// "/optaweb-employee-rostering-gwtui/src/main/super/org/optaweb/employeerostering/gwtui/emulate"
+// "/employee-rostering-gwtui/src/main/super/org/optaweb/employeerostering/gwtui/emulate"
 public class GwtJavaTimeWorkaroundUtil {
 
     public static LocalDateTime toLocalDateTime(OffsetDateTime time) {

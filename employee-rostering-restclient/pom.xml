@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.optaweb.employeerostering</groupId>
-    <artifactId>optaweb-employee-rostering</artifactId>
+    <artifactId>employee-rostering</artifactId>
     <version>7.9.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>optaweb-employee-rostering-restclient</artifactId>
+  <artifactId>employee-rostering-restclient</artifactId>
   <packaging>jar</packaging>
 
   <name>Employee Rostering Service Java REST Client</name>
@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>optaweb-employee-rostering-shared</artifactId>
+      <artifactId>employee-rostering-shared</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.resteasy</groupId>

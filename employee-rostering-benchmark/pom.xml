@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.optaweb.employeerostering</groupId>
-    <artifactId>optaweb-employee-rostering</artifactId>
+    <artifactId>employee-rostering</artifactId>
     <version>7.9.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>optaweb-employee-rostering-benchmark</artifactId>
+  <artifactId>employee-rostering-benchmark</artifactId>
   <packaging>jar</packaging>
 
   <name>Employee Rostering as a Service Benchmark</name>
@@ -17,11 +17,11 @@
   <dependencies>
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>optaweb-employee-rostering-shared</artifactId>
+      <artifactId>employee-rostering-shared</artifactId>
     </dependency>
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>optaweb-employee-rostering-server</artifactId>
+      <artifactId>employee-rostering-server</artifactId>
     </dependency>
     <dependency>
       <groupId>org.optaplanner</groupId>

@@ -42,7 +42,7 @@
   <dependencySets>
     <dependencySet>
       <includes>
-        <include>org.optaweb.employeerostering:optaweb-employee-rostering-webapp:war</include>
+        <include>org.optaweb.employeerostering:employee-rostering-webapp:war</include>
       </includes>
       <outputDirectory>binaries</outputDirectory>
       <useStrictFiltering>true</useStrictFiltering>
@@ -51,7 +51,7 @@
     <!-- Reference manual -->
     <dependencySet>
       <includes>
-        <include>org.optaweb.employeerostering:optaweb-employee-rostering-docs:zip</include>
+        <include>org.optaweb.employeerostering:employee-rostering-docs:zip</include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>reference_manual</outputDirectory>
