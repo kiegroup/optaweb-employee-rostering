@@ -25,7 +25,7 @@
         </button>
     </div>
 
-    <div class="panel-body">
+    <div class="panel-body" data-field="form">
         <div>
             <form class="form">
                 <div class="row form-group">
@@ -66,7 +66,7 @@
                     <div class="col-md-6">
                         <label>Publish Length (days)</label>
                         <div>
-                        <input type="number" data-field="publish-length" min="1" required></input>
+                        <input type="number" data-field="publish-length" min="1" required disabled></input>
                         </div>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
                 <div class="form-group row last-form-group-row">
                     <div class="col-md-6 text-right">
                         <button type="button" class="btn btn-default" data-field="cancel-button">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-field="save-button">Save</button>
+                        <button type="button" class="btn btn-primary" data-field="save-button" disabled>Save</button>
                     </div>
                 </div>
             </form>

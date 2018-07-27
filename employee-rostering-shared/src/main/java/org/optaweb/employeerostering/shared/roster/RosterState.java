@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -47,7 +48,7 @@ public class RosterState extends AbstractPersistable {
     @NotNull
     private LocalDate firstDraftDate;
     @NotNull
-    private Integer publishLength; // In number of days
+    private final Integer publishLength; // In number of days
     @NotNull
     private Integer draftLength; // In number of days
     @NotNull
@@ -67,6 +68,7 @@ public class RosterState extends AbstractPersistable {
     @SuppressWarnings("unused")
     public RosterState() {
         super(-1);
+        publishLength = 7;
     }
 
     public RosterState(Integer tenantId, Integer publishNotice, LocalDate firstDraftDate, Integer publishLength, Integer draftLength, Integer unplannedRotationOffset, Integer rotationLength, LocalDate lastHistoricDate,
@@ -177,12 +179,9 @@ public class RosterState extends AbstractPersistable {
         this.draftLength = draftLength;
     }
 
+    @JsonIgnore
     public Integer getPublishLength() {
         return publishLength;
-    }
-
-    public void setPublishLength(Integer publishLength) {
-        this.publishLength = publishLength;
     }
 
     public Integer getRotationLength() {
