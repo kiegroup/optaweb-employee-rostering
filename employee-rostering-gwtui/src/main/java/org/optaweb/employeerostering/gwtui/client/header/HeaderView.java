@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.gwtui.client.header;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -25,6 +26,7 @@ import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
+import jsinterop.base.Js;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -33,6 +35,7 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaweb.employeerostering.gwtui.client.pages.Pages;
+import org.optaweb.employeerostering.gwtui.client.pages.Pages.Id;
 
 @Templated
 @ApplicationScoped
@@ -75,7 +78,14 @@ public class HeaderView implements IsElement {
 
     @EventHandler("admin")
     private void gotoAdminPage(@ForEvent("click") MouseEvent e) {
+        menu.handleActiveLink(Js.cast(e.target));
         pageChangeEvent.fire(new PageChange(Pages.Id.ADMIN));
+    }
+
+    public void onPageChange(@Observes PageChange event) {
+        if (admin != null && !event.getPageId().equals(Id.ADMIN)) {
+            ((HTMLElement) admin.parentNode).classList.remove("active");
+        }
     }
 
     public void removeStickyElements() {

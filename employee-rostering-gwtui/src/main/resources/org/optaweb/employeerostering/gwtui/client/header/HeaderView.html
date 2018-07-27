@@ -26,12 +26,16 @@
 
             <div class="nav navbar-nav navbar-right navbar-iconic">
                 <a href="/swagger/index.html" data-field="rest-api" data-i18n-key="Header.RestApi" class="btn btn-link rest-api-link"></a>
-                <a href="#" data-field="admin" data-i18n-key="Header.Admin" class="btn btn-link rest-api-link"></a>
             </div>
         </div>
 
         <div class="collapse navbar-collapse navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right navbar-iconic">
+        <!-- nav navbar-nav navbar-primary navbar-container -->
+        <!-- nav navbar-nav navbar-right navbar-iconic -->
+            <ul class="nav navbar-nav navbar-right navbar-iconic navbar-primary">
+                <li>
+                    <a data-field="admin" href="#" data-i18n-key="Header.Admin"></a>
+                </li>
                 <li>
                     <div data-field="tenant-selector"></div>
                 </li>

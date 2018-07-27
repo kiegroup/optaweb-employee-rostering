@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.gwtui.client.header;
 
 import java.util.Arrays;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -33,7 +34,12 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaweb.employeerostering.gwtui.client.pages.Pages;
 
-import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.*;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.AVAILABILITY_ROSTER;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.ROTATION;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.SHIFT_ROSTER;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
 
 @Templated
 public class MenuView implements IsElement {
@@ -109,7 +115,7 @@ public class MenuView implements IsElement {
         handleActiveLink(Js.cast(event.target));
     }
 
-    private void handleActiveLink(final HTMLElement target) {
+    public void handleActiveLink(final HTMLElement target) {
         setInactive(skills, spots, employees, availabilityRoster, rotation, shiftRoster);
         setActive(target);
     }

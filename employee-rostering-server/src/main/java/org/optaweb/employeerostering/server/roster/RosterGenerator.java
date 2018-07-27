@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -54,7 +55,8 @@ import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.tenant.RosterParametrization;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Singleton
 @Startup
@@ -418,7 +420,8 @@ public class RosterGenerator {
                                             .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
                                             .plusDays(publishNotice);
         rosterState.setFirstDraftDate(firstDraftDate);
-        rosterState.setPublishLength(7);
+        // publishLength is read-only and set to 7 days
+        //rosterState.setPublishLength(7); 
         rosterState.setDraftLength(14);
         rosterState.setUnplannedRotationOffset(0);
         rosterState.setRotationLength(generatorType.rotationLength);

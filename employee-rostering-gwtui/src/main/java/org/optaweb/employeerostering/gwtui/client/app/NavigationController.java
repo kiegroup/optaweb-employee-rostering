@@ -89,7 +89,7 @@ public class NavigationController {
             this.afterPageOpen = afterPageOpen;
         }
 
-        private Pages.Id getPageId() {
+        public Pages.Id getPageId() {
             return pageId;
         }
     }

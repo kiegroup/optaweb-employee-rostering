@@ -18,9 +18,11 @@ package org.optaweb.employeerostering.gwtui.client.tenant;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import elemental2.dom.Event;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
@@ -50,7 +52,7 @@ public class NewTenantForm implements IsElement {
     @Inject
     @DataField("schedule-start-date")
     private LocalDatePicker scheduleStartDate;
-    
+
     @Inject
     @DataField("schedule-start-weekday")
     private HTMLDivElement scheduleStartWeekday;
@@ -89,10 +91,10 @@ public class NewTenantForm implements IsElement {
 
     @Inject
     private TenantStore tenantStore;
-    
+
     @Inject
     private PopupFactory popupFactory;
-    
+
     private FormPopup formPopup;
 
     @PostConstruct
@@ -119,7 +121,7 @@ public class NewTenantForm implements IsElement {
             formPopup = popupFactory.getFormPopup(this).get();
             formPopup.center(600, 500);
         }));
-        
+
         scheduleStartWeekday.innerHTML = "Schedule will begin on " + LocalDate.now().getDayOfWeek() + ".";
         scheduleStartDate.addValueChangeHandler(e -> {
             scheduleStartWeekday.innerHTML = "Schedule will begin on " + e.getValue().getDayOfWeek().toString() + ".";
@@ -128,7 +130,8 @@ public class NewTenantForm implements IsElement {
     }
 
     public boolean isValid() {
-        return scheduleStartDate.reportValidity() &&
+        return tenantName.reportValidity() &&
+               scheduleStartDate.reportValidity() &&
                publishNotice.reportValidity() &&
                publishLength.reportValidity() &&
                rotationLength.reportValidity() &&
@@ -157,7 +160,8 @@ public class NewTenantForm implements IsElement {
             RosterState rosterState = new RosterState();
             rosterState.setFirstDraftDate(scheduleStartDate.getValue());
             rosterState.setLastHistoricDate(scheduleStartDate.getValue().minusDays(1));
-            rosterState.setPublishLength(valueAsInt(publishLength));
+            // publishLength is read-only and is set to 7
+            // rosterState.setPublishLength(valueAsInt(publishLength));
             rosterState.setPublishNotice(valueAsInt(publishNotice));
             rosterState.setDraftLength((valueAsInt(draftLength)));
             rosterState.setRotationLength((valueAsInt(rotationLength)));
@@ -171,6 +175,12 @@ public class NewTenantForm implements IsElement {
             }));
 
         }
+    }
+
+    // Exploits event bubbling
+    @EventHandler("form")
+    public void onFormInputChange(@ForEvent("change") Event e) {
+        saveTenantButton.disabled = !isValid();
     }
 
     private static int valueAsInt(HTMLInputElement inputElement) {
