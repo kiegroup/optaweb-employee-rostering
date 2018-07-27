@@ -20,3 +20,4 @@ ifndef::backend-pdf[]
 endif::[]
 
 include::Introduction/Introduction-chapter.adoc[leveloffset=+1]
+include::Architecture/Architecture-section.adoc[leveloffset=+1]
