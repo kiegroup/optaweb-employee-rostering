@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.gwtui.client.employee;
 
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -32,6 +33,8 @@ import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AutoTrimWhitespaceTextBox;
 import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
@@ -87,7 +90,7 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
     @PostConstruct
     protected void initWidget() {
         employeeName.getElement().setAttribute("placeholder", translationService.format(
-                OptaWebUIConstants.EmployeeListPanel_employeeName));
+                                                                                        OptaWebUIConstants.EmployeeListPanel_employeeName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         updateSkillMap(skillConvertor.getSkillMap());
         dataBinder.bind(employeeName, "name");
@@ -98,7 +101,7 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
         });
         dataBinder.<Set<Skill>> addPropertyChangeHandler("skillProficiencySet", (e) -> {
             employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(commonUtils.delimitCollection(e.getNewValue(),
-                    (s) -> s.getName(), ", ")).toSafeHtml().asString();
+                                                                                                                             (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
         subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.getValue(Map.class)));
     }
@@ -122,30 +125,30 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
     @Override
     protected void deleteRow(Employee employee) {
         EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), employee.getId(),
-                FailureShownRestCallback.onSuccess(success -> {
-                    dataInvalidationEvent.fire(new DataInvalidation<>());
-                }));
+                                                  FailureShownRestCallback.onSuccess(success -> {
+                                                      dataInvalidationEvent.fire(new DataInvalidation<>());
+                                                  }));
     }
 
     @Override
     protected void updateRow(Employee oldValue, Employee newValue) {
 
         EmployeeRestServiceBuilder.updateEmployee(tenantStore.getCurrentTenantId(), newValue,
-                FailureShownRestCallback.onSuccess(v -> {
-                    dataInvalidationEvent.fire(new DataInvalidation<>());
-                }));
+                                                  FailureShownRestCallback.onSuccess(v -> {
+                                                      dataInvalidationEvent.fire(new DataInvalidation<>());
+                                                  }));
     }
 
     @Override
     protected void createRow(Employee employee) {
         EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee,
-                FailureShownRestCallback.onSuccess(v -> {
-                    dataInvalidationEvent.fire(new DataInvalidation<>());
-                }));
+                                               FailureShownRestCallback.onSuccess(v -> {
+                                                   dataInvalidationEvent.fire(new DataInvalidation<>());
+                                               }));
     }
 
-    @Override
-    public void onUnload() {
+    @EventHandler("row")
+    public void onUnload(@ForEvent("unload") elemental2.dom.Event e) {
         subscription.remove();
     }
 

@@ -16,21 +16,36 @@
 
 package org.optaweb.employeerostering.gwtui.client.admin;
 
+import java.util.Collections;
+
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.MouseEvent;
+import elemental2.promise.Promise;
+import org.jboss.errai.databinding.client.components.ListComponent;
+import org.jboss.errai.databinding.client.components.ListContainer;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
+import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.KiePager;
+import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
 import org.optaweb.employeerostering.gwtui.client.common.NotificationSystem;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
 import org.optaweb.employeerostering.gwtui.client.tenant.NewTenantForm;
+import org.optaweb.employeerostering.gwtui.client.tenant.TenantTableRow;
+import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.shared.admin.AdminRestServiceBuilder;
+import org.optaweb.employeerostering.shared.employee.Employee;
+import org.optaweb.employeerostering.shared.tenant.Tenant;
+import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @Templated
 public class AdminPage implements Page {
@@ -38,19 +53,75 @@ public class AdminPage implements Page {
     @Inject
     @DataField("reset-application-button")
     private HTMLButtonElement resetApplicationButton;
-    
+
     @Inject
     @DataField("add-tenant-button")
     private HTMLButtonElement addTenantButton;
-    
+
+    @Inject
+    @DataField("refresh-button")
+    private HTMLButtonElement refreshButton;
+
     @Inject
     private LoadingSpinner loadingSpinner;
-    
+
     @Inject
     private NotificationSystem notificationSystem;
-    
+
     @Inject
     private ManagedInstance<NewTenantForm> newTenantForm;
+
+    @Inject
+    @DataField("pager")
+    private KiePager<Tenant> pager;
+
+    @Inject
+    @DataField("search-bar")
+    private KieSearchBar<Tenant> searchBar;
+
+    @Inject
+    @DataField("table")
+    @ListContainer("table")
+    private ListComponent<Tenant, TenantTableRow> table;
+
+    @Inject
+    private PromiseUtils promiseUtils;
+
+    @PostConstruct
+    protected void initWidget() {
+        initTable();
+    }
+
+    @Override
+    public Promise<Void> beforeOpen() {
+        return refresh();
+    }
+
+    public void onAnyInvalidationEvent(@Observes DataInvalidation<Employee> employee) {
+        refresh();
+    }
+
+    @EventHandler("refresh-button")
+    public void refresh(final @ForEvent("click") MouseEvent e) {
+        refresh();
+    }
+
+    private void initTable() {
+        searchBar.setListToFilter(Collections.emptyList());
+        pager.setPresenter(table);
+        searchBar.setElementToStringMapping((tenant) -> tenant.getName());
+        searchBar.addFilterListener(pager);
+    }
+
+    private Promise<Void> refresh() {
+        return promiseUtils.promise((res, rej) -> {
+            TenantRestServiceBuilder.getTenantList(FailureShownRestCallback
+                                                                           .onSuccess(newTenantList -> {
+                                                                               searchBar.setListToFilter(newTenantList);
+                                                                               res.onInvoke(promiseUtils.resolve());
+                                                                           }));
+        });
+    }
 
     @EventHandler("reset-application-button")
     private void resetApplication(@ForEvent("click") MouseEvent e) {
@@ -60,7 +131,6 @@ public class AdminPage implements Page {
             notificationSystem.notify("Application was reset successfully", "Application was reset successfully, please refresh the page.");
         }));
     }
-    
 
     @EventHandler("add-tenant-button")
     private void addTenant(@ForEvent("click") MouseEvent e) {

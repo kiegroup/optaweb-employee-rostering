@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.gwtui.client.common;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
@@ -25,7 +26,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 
 import com.google.gwt.user.client.TakesValue;
-import com.google.gwt.user.client.ui.Composite;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLTableRowElement;
@@ -33,13 +33,14 @@ import elemental2.dom.MouseEvent;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.jboss.errai.databinding.client.api.StateSync;
 import org.jboss.errai.databinding.client.components.ListComponent;
+import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.optaweb.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaweb.employeerostering.gwtui.client.util.CommonUtils;
 
-public abstract class TableRow<T> extends Composite implements TakesValue<T> {
+public abstract class TableRow<T> implements TakesValue<T>, IsElement {
 
     @Inject
     private Validator validator;

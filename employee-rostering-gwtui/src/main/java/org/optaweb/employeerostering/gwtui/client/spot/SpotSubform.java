@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.gwtui.client.spot;
 
 import java.util.Map;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -32,6 +33,8 @@ import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AutoTrimWhitespaceTextBox;
 import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
@@ -87,7 +90,7 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
     @PostConstruct
     protected void initWidget() {
         spotName.getElement().setAttribute("placeholder", translationService.format(
-                OptaWebUIConstants.SpotListPanel_spotName));
+                                                                                    OptaWebUIConstants.SpotListPanel_spotName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         updateSkillMap(skillConvertor.getSkillMap());
         dataBinder.bind(spotName, "name");
@@ -98,8 +101,8 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
         });
         dataBinder.<Set<Skill>> addPropertyChangeHandler("requiredSkillSet", (e) -> {
             spotRequiredSkillSetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(commonUtils.delimitCollection(e
-                    .getNewValue(),
-                    (s) -> s.getName(), ", ")).toSafeHtml().asString();
+                                                                                                                       .getNewValue(),
+                                                                                                                      (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
         subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.getValue(Map.class)));
     }
@@ -123,29 +126,29 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
     @Override
     protected void deleteRow(Spot spot) {
         SpotRestServiceBuilder.removeSpot(tenantStore.getCurrentTenantId(), spot.getId(),
-                FailureShownRestCallback.onSuccess(success -> {
-                    dataInvalidationEvent.fire(new DataInvalidation<>());
-                }));
+                                          FailureShownRestCallback.onSuccess(success -> {
+                                              dataInvalidationEvent.fire(new DataInvalidation<>());
+                                          }));
     }
 
     @Override
     protected void updateRow(Spot oldValue, Spot newValue) {
         SpotRestServiceBuilder.updateSpot(tenantStore.getCurrentTenantId(), newValue,
-                FailureShownRestCallback.onSuccess(v -> {
-                    dataInvalidationEvent.fire(new DataInvalidation<>());
-                }));
+                                          FailureShownRestCallback.onSuccess(v -> {
+                                              dataInvalidationEvent.fire(new DataInvalidation<>());
+                                          }));
     }
 
     @Override
     protected void createRow(Spot spot) {
         SpotRestServiceBuilder.addSpot(tenantStore.getCurrentTenantId(), spot,
-                FailureShownRestCallback.onSuccess(v -> {
-                    dataInvalidationEvent.fire(new DataInvalidation<>());
-                }));
+                                       FailureShownRestCallback.onSuccess(v -> {
+                                           dataInvalidationEvent.fire(new DataInvalidation<>());
+                                       }));
     }
 
-    @Override
-    public void onUnload() {
+    @EventHandler("row")
+    public void onUnload(@ForEvent("unload") elemental2.dom.Event e) {
         subscription.remove();
     }
 
