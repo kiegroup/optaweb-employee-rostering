@@ -16,6 +16,6 @@
 
 package org.optaweb.employeerostering.gwtui.client.common;
 
-public class DataInvalidation<T> {
+public class DataInvalidation {
 
 }

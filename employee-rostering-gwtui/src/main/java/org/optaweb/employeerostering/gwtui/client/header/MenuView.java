@@ -20,6 +20,7 @@ import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLAnchorElement;
@@ -33,6 +34,8 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.NavigationController.PageChange;
 import org.optaweb.employeerostering.gwtui.client.pages.Pages;
+import org.optaweb.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.AVAILABILITY_ROSTER;
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
@@ -74,8 +77,7 @@ public class MenuView implements IsElement {
     @PostConstruct
     private void initMenu() {
         pageChangeEvent.fire(new PageChange(Pages.Id.SHIFT_ROSTER));
-        setInactive(skills, spots, employees, rotation, shiftRoster, availabilityRoster);
-        setActive(shiftRoster);
+        setInactive(skills, spots, employees, rotation, shiftRoster, availabilityRoster, shiftRoster);
     }
 
     @EventHandler("skills")
@@ -110,14 +112,51 @@ public class MenuView implements IsElement {
 
     private void goTo(final Pages.Id pageId,
                       final @ForEvent("click") MouseEvent event) {
+        if (!isDisabled(Js.cast(event.target))) {
+            pageChangeEvent.fire(new PageChange(pageId));
+            handleActiveLink(Js.cast(event.target));
+        } else {
+            ErrorPopup.show("There are no Tenants currently. Add one in the Admin page first.");
+        }
+    }
 
-        pageChangeEvent.fire(new PageChange(pageId));
-        handleActiveLink(Js.cast(event.target));
+    public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
+        setEnabled(skills, spots, employees, rotation, shiftRoster, availabilityRoster);
+    }
+
+    public void onNoTenants(final @Observes TenantStore.NoTenants noTenants) {
+        setDisabled(skills, spots, employees, rotation, shiftRoster, availabilityRoster);
     }
 
     public void handleActiveLink(final HTMLElement target) {
         setInactive(skills, spots, employees, availabilityRoster, rotation, shiftRoster);
         setActive(target);
+    }
+
+    public void onPageChangeEvent(@Observes final PageChange pageChangeEvent) {
+        setInactive(skills, spots, employees, availabilityRoster, rotation, shiftRoster);
+        switch (pageChangeEvent.getPageId()) {
+            case AVAILABILITY_ROSTER:
+                setActive(availabilityRoster);
+                break;
+            case EMPLOYEES:
+                setActive(employees);
+                break;
+            case ROTATION:
+                setActive(rotation);
+                break;
+            case SHIFT_ROSTER:
+                setActive(shiftRoster);
+                break;
+            case SKILLS:
+                setActive(skills);
+                break;
+            case SPOTS:
+                setActive(spots);
+                break;
+            default:
+                break;
+        }
     }
 
     private void setActive(final HTMLElement element) {
@@ -127,4 +166,17 @@ public class MenuView implements IsElement {
     private void setInactive(final HTMLElement... elements) {
         Arrays.asList(elements).forEach(e -> ((HTMLElement) e.parentNode).classList.remove("active"));
     }
+
+    private void setEnabled(final HTMLElement... elements) {
+        Arrays.asList(elements).forEach(e -> e.setAttribute("data-is-disabled", "false"));
+    }
+
+    private void setDisabled(final HTMLElement... elements) {
+        Arrays.asList(elements).forEach(e -> e.setAttribute("data-is-disabled", "true"));
+    }
+
+    private boolean isDisabled(final HTMLElement element) {
+        return element.getAttribute("data-is-disabled").equals("true");
+    }
+
 }

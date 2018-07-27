@@ -17,10 +17,13 @@
 package org.optaweb.employeerostering.gwtui.client.tenant;
 
 import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
@@ -37,6 +40,9 @@ public class TenantStore {
 
     @Inject
     private Event<TenantsReady> tenantsReadyEvent;
+
+    @Inject
+    private Event<NoTenants> noTenantsEvent;
 
     // @PostConstruct
     public void init() {
@@ -72,11 +78,25 @@ public class TenantStore {
 
     }
 
-    public void refresh() {
+    public static class NoTenants {
+
+    }
+
+    public void onAnyDataInvalidation(@Observes DataInvalidation<Tenant> e) {
+        refresh();
+    }
+
+    private void refresh() {
         TenantRestServiceBuilder.getTenantList(FailureShownRestCallback.onSuccess(tenantList -> {
             this.tenantList = tenantList;
-            setCurrentTenant(tenantList.get(0));
-            tenantsReadyEvent.fire(new TenantsReady());
+            if (tenantList.isEmpty()) {
+                current = null;
+                noTenantsEvent.fire(new NoTenants());
+            } else {
+                setCurrentTenant(tenantList.get(0));
+                tenantsReadyEvent.fire(new TenantsReady());
+            }
+
         }));
     }
 }

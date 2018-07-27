@@ -83,7 +83,7 @@ public class HeaderView implements IsElement {
     }
 
     public void onPageChange(@Observes PageChange event) {
-        if (admin != null && !event.getPageId().equals(Id.ADMIN)) {
+        if (admin != null && admin.parentNode != null && !event.getPageId().equals(Id.ADMIN)) {
             ((HTMLElement) admin.parentNode).classList.remove("active");
         }
     }

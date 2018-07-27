@@ -95,6 +95,16 @@ public class OptaWebEntryPoint {
         }
     }
 
+    public void onNoTenants(final @Observes TenantStore.NoTenants noTenants) {
+        if (!isPageLoaded) {
+            isPageLoaded = true;
+            pageChangeEvent.fire(new NavigationController.PageChange(Pages.Id.ADMIN, () -> {
+                DomGlobal.document.getElementById("initial-loading-message").remove();
+                DomGlobal.document.body.appendChild(navigationController.getAppElement());
+            }));
+        }
+    }
+
     private void healthCheck() {
         TenantRestServiceBuilder.getTenantList(FailureShownRestCallback.onSuccess(tenantList -> {
             if (null == tenantList) {

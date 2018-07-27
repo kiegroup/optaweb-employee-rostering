@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.shared.tenant;
 
 import java.time.ZoneId;
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -66,6 +67,11 @@ public interface TenantRestService {
     @POST
     @Path("/add")
     Tenant addTenant(@ApiParam(value = "with no id", required = true) RosterState intialRosterState);
+
+    @ApiOperation("Removes a tenant")
+    @POST
+    @Path("/remove/{id}")
+    Boolean removeTenant(@ApiParam(required = true) @PathParam("id") Integer id);
 
     // ************************************************************************
     // RosterParametrization

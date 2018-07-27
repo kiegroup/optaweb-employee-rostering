@@ -19,12 +19,20 @@ package org.optaweb.employeerostering.server.tenant;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.server.common.AbstractRestServiceImpl;
+import org.optaweb.employeerostering.shared.common.AbstractPersistable;
+import org.optaweb.employeerostering.shared.employee.Employee;
+import org.optaweb.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.shared.roster.RosterState;
+import org.optaweb.employeerostering.shared.rotation.ShiftTemplate;
+import org.optaweb.employeerostering.shared.shift.Shift;
+import org.optaweb.employeerostering.shared.skill.Skill;
+import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.tenant.RosterParametrization;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestService;
@@ -58,6 +66,36 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
         entityManager.persist(intialRosterState);
         entityManager.persist(rosterParametriation);
         return intialRosterState.getTenant();
+    }
+
+    @Override
+    @Transactional
+    public Boolean removeTenant(Integer tenantId) {
+        // Dependency order: Shift, EmployeeAvailability, ShiftTemplate,
+        // Employee, Spot, Skill,
+        // RosterParametrization, RosterState
+        Tenant tenant = getTenant(tenantId);
+        if (tenant == null) {
+            throw new IllegalArgumentException("There is no tenant with id (" + tenantId + ").");
+        }
+        deleteAllEntitiesBelongingToTenantOfType(tenantId, Shift.class, "Shift.findAll");
+        deleteAllEntitiesBelongingToTenantOfType(tenantId, EmployeeAvailability.class, "EmployeeAvailability.findAll");
+        deleteAllEntitiesBelongingToTenantOfType(tenantId, ShiftTemplate.class, "ShiftTemplate.findAll");
+        deleteAllEntitiesBelongingToTenantOfType(tenantId, Employee.class, "Employee.findAll");
+        deleteAllEntitiesBelongingToTenantOfType(tenantId, Spot.class, "Spot.findAll");
+        deleteAllEntitiesBelongingToTenantOfType(tenantId, Skill.class, "Skill.findAll");
+        deleteAllEntitiesBelongingToTenantOfType(tenantId, RosterParametrization.class, "RosterParametrization.find");
+        deleteAllEntitiesBelongingToTenantOfType(tenantId, RosterState.class, "RosterState.find");
+        entityManager.remove(tenant);
+        return true;
+    }
+
+    private <T extends AbstractPersistable> void deleteAllEntitiesBelongingToTenantOfType(Integer tenantId, Class<T> type, String queryName) {
+        List<T> entitiesBelongingToTenant = entityManager.createNamedQuery(queryName, type).setParameter("tenantId", tenantId)
+                                                         .getResultList();
+        for (T entity : entitiesBelongingToTenant) {
+            entityManager.remove(entity);
+        }
     }
 
     @Override
