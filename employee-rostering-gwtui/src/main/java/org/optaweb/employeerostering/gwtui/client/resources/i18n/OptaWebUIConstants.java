@@ -48,6 +48,15 @@ public interface OptaWebUIConstants {
     @TranslationKey(defaultValue = "Week ending {0}/{1}/{2}")
     final String DateDisplay_WEEK_ENDING = "DateDisplay.WEEK_ENDING";
 
+    @TranslationKey(defaultValue = "Desired")
+    final String EmployeeAvailabilityState_DESIRED = "EmployeeAvailabilityState.DESIRED";
+
+    @TranslationKey(defaultValue = "Undesired")
+    final String EmployeeAvailabilityState_UNDESIRED = "EmployeeAvailabilityState.UNDESIRED";
+
+    @TranslationKey(defaultValue = "Unavailable")
+    final String EmployeeAvailabilityState_UNAVAILABLE = "EmployeeAvailabilityState.UNAVAILABLE";
+
     @TranslationKey(defaultValue = "Employee name")
     final String EmployeeListPanel_employeeName = "EmployeeListPanel.employeeName";
 
@@ -105,6 +114,9 @@ public interface OptaWebUIConstants {
     @TranslationKey(defaultValue = "Toggle navigation")
     final String MenuPanel_toggleNavigation = "MenuPanel.toggleNavigation";
 
+    @TranslationKey(defaultValue = "Unassigned")
+    final String Shift_unassigned = "Shift.unassigned";
+
     @TranslationKey(defaultValue = "Spot")
     final String ShiftRosterView_spot = "ShiftRosterView.spot";
 
@@ -116,5 +128,8 @@ public interface OptaWebUIConstants {
 
     @TranslationKey(defaultValue = "Spot name")
     final String SpotListPanel_spotName = "SpotListPanel.spotName";
+
+    @TranslationKey(defaultValue = "Day {1}")
+    final String Rotation_dateHeader = "Rotation.dateHeader";
 
 }

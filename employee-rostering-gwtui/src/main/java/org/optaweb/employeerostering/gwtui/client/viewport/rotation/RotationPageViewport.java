@@ -35,10 +35,12 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
+import org.optaweb.employeerostering.gwtui.client.resources.i18n.OptaWebUIConstants;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.DateTimeViewport;
@@ -70,6 +72,8 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     private EventManager eventManager;
     @Inject
     private PromiseUtils promiseUtils;
+    @Inject
+    private TranslationService translationService;
 
     private Map<Long, Spot> spotIdToSpotMap;
     private Map<Long, Employee> employeeIdToEmployeeMap;
@@ -126,8 +130,7 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
 
     @Override
     protected Function<LocalDateTime, String> getDateHeaderFunction() {
-        // TODO: i18n
-        return (date) -> "Day " + (Duration.between(BASE_DATE, date).toDays() + 1);
+        return (date) -> translationService.format(OptaWebUIConstants.Rotation_dateHeader, Duration.between(BASE_DATE, date).toDays() + 1);
     }
 
     @Override
