@@ -35,7 +35,7 @@ public class Draggability<T, M> {
     private GridObject<T, M> gridObject;
     private LinearScale<T> scale;
     private double dragStart;
-    
+
     @Inject
     private CSSGlobalStyle cssGlobalStyle;
 
@@ -45,7 +45,7 @@ public class Draggability<T, M> {
 
         makeDraggable(gridObject.getElement(),
                       "x");
-        
+
     }
 
     private void makeDraggable(final HTMLElement blob,
@@ -63,7 +63,7 @@ public class Draggability<T, M> {
         options.scroll = false;
         JQueryDraggability.get(blob).draggable(options);
     }
-    
+
     private int snapToGrid(double coordinate) {
         double pixelSize = cssGlobalStyle.getGridVariableValue(GridVariables.GRID_UNIT_SIZE).intValue();
         return (int) Math.floor(coordinate - (coordinate % pixelSize));
@@ -97,10 +97,12 @@ public class Draggability<T, M> {
         public static native JQueryDraggability get(HTMLElement element);
 
         public native void draggable(JQueryDraggabilityOptions options);
+
         public native void draggable(String method);
     }
 
     @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
+    @SuppressWarnings("unused")
     private static class JQueryDraggabilityOptions {
 
         public boolean addClasses;

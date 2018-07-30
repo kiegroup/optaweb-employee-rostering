@@ -20,10 +20,9 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
@@ -44,9 +43,13 @@ public class TenantStore {
     @Inject
     private Event<NoTenants> noTenantsEvent;
 
+    @Inject
+    private EventManager eventManager;
+
     // @PostConstruct
     public void init() {
         refresh();
+        eventManager.subscribeToEventForever(EventManager.Event.DATA_INVALIDATION, this::onAnyDataInvalidation);
     }
 
     public void setCurrentTenant(final Tenant newTenant) {
@@ -82,8 +85,10 @@ public class TenantStore {
 
     }
 
-    public void onAnyDataInvalidation(@Observes DataInvalidation<Tenant> e) {
-        refresh();
+    public void onAnyDataInvalidation(Class<?> dataInvalidated) {
+        if (dataInvalidated.equals(Tenant.class)) {
+            refresh();
+        }
     }
 
     private void refresh() {

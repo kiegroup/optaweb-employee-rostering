@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -41,7 +42,7 @@ import org.optaweb.employeerostering.shared.rotation.view.RotationView;
 import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.shared.shift.ShiftRestServiceBuilder;
 
-import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.*;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.ROTATION_INVALIDATE;
 
 @Singleton
 public class RotationPageViewportBuilder {
@@ -57,7 +58,7 @@ public class RotationPageViewportBuilder {
 
     @Inject
     private ManagedInstance<ShiftTemplateModel> shiftTemplateModelInstances;
-    
+
     @Inject
     private EventManager eventManager;
 
@@ -72,7 +73,7 @@ public class RotationPageViewportBuilder {
 
     @PostConstruct
     private void init() {
-        eventManager.subscribeToEvent(ROTATION_INVALIDATE, e -> buildRotationViewport(viewport));
+        eventManager.subscribeToEventForever(ROTATION_INVALIDATE, e -> buildRotationViewport(viewport));
     }
 
     public RotationPageViewportBuilder withViewport(RotationPageViewport viewport) {

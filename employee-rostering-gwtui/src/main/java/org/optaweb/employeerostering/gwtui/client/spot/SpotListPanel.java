@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.gwtui.client.spot;
 
 import java.util.Collections;
 import java.util.HashSet;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -34,20 +35,20 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaweb.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 @Templated
 public class SpotListPanel implements IsElement,
-        Page {
+                           Page {
 
     @Inject
     @DataField("refresh-button")
@@ -87,13 +88,14 @@ public class SpotListPanel implements IsElement,
     private PromiseUtils promiseUtils;
 
     @Inject
-    private CommonUtils commonUtils;
+    private EventManager eventManager;
 
     public SpotListPanel() {}
 
     @PostConstruct
     protected void initWidget() {
         initTable();
+        eventManager.subscribeToEventForever(Event.DATA_INVALIDATION, this::onAnyInvalidationEvent);
     }
 
     @Override
@@ -105,8 +107,10 @@ public class SpotListPanel implements IsElement,
         refresh();
     }
 
-    public void onAnyInvalidationEvent(@Observes DataInvalidation<Spot> spot) {
-        refresh();
+    public void onAnyInvalidationEvent(Class<?> dataInvalidated) {
+        if (dataInvalidated.equals(Spot.class)) {
+            refresh();
+        }
     }
 
     @EventHandler("refresh-button")

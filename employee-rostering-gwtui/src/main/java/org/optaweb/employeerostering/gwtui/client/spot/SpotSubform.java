@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -29,15 +28,11 @@ import com.google.gwt.user.client.TakesValue;
 import elemental2.dom.HTMLTableCellElement;
 import org.gwtbootstrap3.extras.select.client.ui.MultipleSelect;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
-import org.jboss.errai.bus.client.ErraiBus;
-import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
-import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AutoTrimWhitespaceTextBox;
-import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
 import org.optaweb.employeerostering.gwtui.client.common.TableRow;
@@ -76,17 +71,14 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
     private HTMLTableCellElement spotRequiredSkillSetDisplay;
 
     @Inject
-    private Event<DataInvalidation<Spot>> dataInvalidationEvent;
+    private EventManager eventManager;
 
     @Inject
     private TranslationService translationService;
 
-    private Subscription subscription;
-
     @Inject
     private CommonUtils commonUtils;
 
-    @SuppressWarnings("unchecked")
     @PostConstruct
     protected void initWidget() {
         spotName.getElement().setAttribute("placeholder", translationService.format(
@@ -104,7 +96,7 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
                                                                                                                        .getNewValue(),
                                                                                                                       (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
-        subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.getValue(Map.class)));
+        eventManager.subscribeToEventForElement(EventManager.Event.SKILL_MAP_INVALIDATION, this, this::updateSkillMap);
     }
 
     public void reset() {
@@ -127,7 +119,7 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
     protected void deleteRow(Spot spot) {
         SpotRestServiceBuilder.removeSpot(tenantStore.getCurrentTenantId(), spot.getId(),
                                           FailureShownRestCallback.onSuccess(success -> {
-                                              dataInvalidationEvent.fire(new DataInvalidation<>());
+                                              eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class);
                                           }));
     }
 
@@ -135,7 +127,7 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
     protected void updateRow(Spot oldValue, Spot newValue) {
         SpotRestServiceBuilder.updateSpot(tenantStore.getCurrentTenantId(), newValue,
                                           FailureShownRestCallback.onSuccess(v -> {
-                                              dataInvalidationEvent.fire(new DataInvalidation<>());
+                                              eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class);
                                           }));
     }
 
@@ -143,13 +135,8 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
     protected void createRow(Spot spot) {
         SpotRestServiceBuilder.addSpot(tenantStore.getCurrentTenantId(), spot,
                                        FailureShownRestCallback.onSuccess(v -> {
-                                           dataInvalidationEvent.fire(new DataInvalidation<>());
+                                           eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class);
                                        }));
-    }
-
-    @EventHandler("row")
-    public void onUnload(@ForEvent("unload") elemental2.dom.Event e) {
-        subscription.remove();
     }
 
     @Override

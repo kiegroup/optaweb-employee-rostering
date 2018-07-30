@@ -1,6 +1,5 @@
 package org.optaweb.employeerostering.gwtui.client.tenant;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -14,7 +13,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
@@ -34,7 +33,7 @@ public class TenantTableRow implements TakesValue<Tenant>, IsElement {
     private HTMLButtonElement deleteTenantButton;
 
     @Inject
-    private Event<DataInvalidation<Tenant>> dataInvalidationEvent;
+    private EventManager eventManager;
 
     @Override
     public void setValue(Tenant tenant) {
@@ -50,7 +49,7 @@ public class TenantTableRow implements TakesValue<Tenant>, IsElement {
     @EventHandler("delete-tenant-button")
     public void onDeleteTenantButtonClick(@ForEvent("click") MouseEvent e) {
         TenantRestServiceBuilder.removeTenant(tenant.getId(), FailureShownRestCallback.onSuccess(v -> {
-            dataInvalidationEvent.fire(new DataInvalidation<>());
+            eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Tenant.class);
         }));
     }
 

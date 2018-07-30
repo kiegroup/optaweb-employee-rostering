@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.gwtui.client.skill;
 
 import java.util.Collections;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -33,13 +34,13 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaweb.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.skill.SkillRestServiceBuilder;
@@ -80,13 +81,14 @@ public class SkillListPanel implements IsElement,
     private PromiseUtils promiseUtils;
 
     @Inject
-    private CommonUtils commonUtils;
+    private EventManager eventManager;
 
     public SkillListPanel() {}
 
     @PostConstruct
     protected void initWidget() {
         initTable();
+        eventManager.subscribeToEventForever(Event.DATA_INVALIDATION, this::onAnyInvalidationEvent);
     }
 
     @Override
@@ -98,8 +100,10 @@ public class SkillListPanel implements IsElement,
         refresh();
     }
 
-    public void onAnyInvalidationEvent(@Observes DataInvalidation<Skill> skill) {
-        refresh();
+    public void onAnyInvalidationEvent(Class<?> dataInvalidated) {
+        if (dataInvalidated.equals(Skill.class)) {
+            refresh();
+        }
     }
 
     @EventHandler("refresh-button")

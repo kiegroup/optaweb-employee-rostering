@@ -16,10 +16,15 @@
 
 package org.optaweb.employeerostering.gwtui.client.common;
 
+import java.util.Map;
+import java.util.function.Consumer;
+
 import javax.enterprise.context.ApplicationScoped;
 
 import org.jboss.errai.bus.client.ErraiBus;
+import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.optaweb.employeerostering.shared.roster.Pagination;
 import org.optaweb.employeerostering.shared.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.shared.roster.view.ShiftRosterView;
@@ -30,9 +35,9 @@ import org.optaweb.employeerostering.shared.roster.view.ShiftRosterView;
 public class EventManager {
 
     public <T> void subscribeToEvent(Event<T> event, Handler<T> handler) {
-        ErraiBus.get().subscribe(event.getEventName(), (m) -> {
+        handler.setupUnsubscribeListener(ErraiBus.get().subscribe(event.getEventName(), (m) -> {
             handler.handleEvent(m.getValue(event.getEventClass()));
-        });
+        }));
     }
 
     public <T> void fireEvent(Event<T> event, T data) {
@@ -50,7 +55,64 @@ public class EventManager {
                       .sendNowWith(ErraiBus.getDispatcher());
     }
 
+    public <T> void subscribeToEventForever(Event<T> event, Consumer<T> handler) {
+        subscribeToEvent(event, new Handler<T>() {
+
+            @Override
+            public void setupUnsubscribeListener(Subscription subscription) {}
+
+            @Override
+            public void handleEvent(T value) {
+                handler.accept(value);
+            }
+
+        });
+    }
+
+    public <T> void subscribeToEventForElement(Event<T> event, IsElement element, Consumer<T> handler) {
+        subscribeToEvent(event, new Handler<T>() {
+
+            @Override
+            public void setupUnsubscribeListener(Subscription subscription) {
+                element.getElement().addEventListener("unload", (e) -> {
+                    subscription.remove();
+                });
+            }
+
+            @Override
+            public void handleEvent(T value) {
+                handler.accept(value);
+            }
+
+        });
+    }
+
+    public <T> void subscribeToEventForElement(Event<T> event, org.jboss.errai.ui.client.local.api.IsElement element, Consumer<T> handler) {
+        subscribeToEvent(event, new Handler<T>() {
+
+            @SuppressWarnings("deprecation")
+            @Override
+            public void setupUnsubscribeListener(Subscription subscription) {
+                element.getElement().addEventListener("unload", (e) -> {
+                    subscription.remove();
+                }, true);
+            }
+
+            @Override
+            public void handleEvent(T value) {
+                handler.accept(value);
+            }
+
+        });
+    }
+
     public static interface Handler<T> {
+
+        /**
+         * Set up the unsubscribe event listener. By default, nothing happens
+         * @param subscription
+         */
+        void setupUnsubscribeListener(Subscription subscription);
 
         void handleEvent(T value);
     }
@@ -78,6 +140,12 @@ public class EventManager {
         // Rotation Events
         public static Event<Void> ROTATION_SAVE = new Event<>("RotationSave", Void.class);
         public static Event<Void> ROTATION_INVALIDATE = new Event<>("RotationInvalidate", Void.class);
+
+        // Invalidation Events
+        @SuppressWarnings("rawtypes")
+        public static Event<Class> DATA_INVALIDATION = new Event<>("DataInvalidation", Class.class);
+        @SuppressWarnings("rawtypes")
+        public static Event<Map> SKILL_MAP_INVALIDATION = new Event<>("SkillMapInvalidation", Map.class);
 
         private final String eventName;
         private final Class<? extends T> eventClass;
