@@ -19,7 +19,6 @@ package org.optaweb.employeerostering.gwtui.client.admin;
 import java.util.Collections;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLButtonElement;
@@ -33,7 +32,8 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
-import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
@@ -43,7 +43,6 @@ import org.optaweb.employeerostering.gwtui.client.tenant.NewTenantForm;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantTableRow;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.shared.admin.AdminRestServiceBuilder;
-import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
@@ -85,11 +84,15 @@ public class AdminPage implements Page {
     private ListComponent<Tenant, TenantTableRow> table;
 
     @Inject
+    private EventManager eventManager;
+
+    @Inject
     private PromiseUtils promiseUtils;
 
     @PostConstruct
     protected void initWidget() {
         initTable();
+        eventManager.subscribeToEventForever(Event.DATA_INVALIDATION, this::onAnyInvalidationEvent);
     }
 
     @Override
@@ -97,8 +100,10 @@ public class AdminPage implements Page {
         return refresh();
     }
 
-    public void onAnyInvalidationEvent(@Observes DataInvalidation<Employee> employee) {
-        refresh();
+    public void onAnyInvalidationEvent(Class<?> dataInvalidated) {
+        if (dataInvalidated.equals(Tenant.class)) {
+            refresh();
+        }
     }
 
     @EventHandler("refresh-button")

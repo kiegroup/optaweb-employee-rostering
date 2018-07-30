@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -54,7 +55,7 @@ import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaweb.employeerostering.shared.spot.Spot;
 
-import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.*;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.ROTATION_SAVE;
 
 @Templated
 public class RotationPageViewport extends DateTimeViewport<RotationView, RotationMetadata> implements IsElement {
@@ -78,7 +79,7 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     @PostConstruct
     private void init() {
         viewportBuilder.withViewport(this);
-        eventManager.subscribeToEvent(ROTATION_SAVE, (v) -> saveRotation());
+        eventManager.subscribeToEventForever(ROTATION_SAVE, (v) -> saveRotation());
     }
 
     @Override

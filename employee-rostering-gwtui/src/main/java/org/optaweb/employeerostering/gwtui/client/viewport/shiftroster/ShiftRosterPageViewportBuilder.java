@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -42,9 +43,17 @@ import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.shared.roster.Pagination;
 import org.optaweb.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaweb.employeerostering.shared.roster.view.ShiftRosterView;
+import org.optaweb.employeerostering.shared.shift.Shift;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
+import org.optaweb.employeerostering.shared.spot.Spot;
 
-import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.*;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.DATA_INVALIDATION;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_DATE_RANGE;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_PAGINATION;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_UPDATE;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_END;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_START;
 
 @Singleton
 public class ShiftRosterPageViewportBuilder {
@@ -81,18 +90,24 @@ public class ShiftRosterPageViewportBuilder {
     @PostConstruct
     public void init() {
         pagination = Pagination.of(0, 10);
-        eventManager.subscribeToEvent(SOLVE_START, (m) -> this.onSolveStart());
-        eventManager.subscribeToEvent(SOLVE_END, (m) -> this.onSolveEnd());
-        eventManager.subscribeToEvent(SHIFT_ROSTER_PAGINATION, (pagination) -> {
+        eventManager.subscribeToEventForever(SOLVE_START, (m) -> this.onSolveStart());
+        eventManager.subscribeToEventForever(SOLVE_END, (m) -> this.onSolveEnd());
+        eventManager.subscribeToEventForever(SHIFT_ROSTER_PAGINATION, (pagination) -> {
             this.pagination = pagination;
             buildShiftRosterViewport(viewport);
         });
 
-        eventManager.subscribeToEvent(SHIFT_ROSTER_INVALIDATE, (nil) -> {
+        eventManager.subscribeToEventForever(DATA_INVALIDATION, (dataInvalidated) -> {
+            if (dataInvalidated.equals(Spot.class) || dataInvalidated.equals(Shift.class)) {
+                buildShiftRosterViewport(viewport);
+            }
+        });
+
+        eventManager.subscribeToEventForever(SHIFT_ROSTER_INVALIDATE, (nil) -> {
             buildShiftRosterViewport(viewport);
         });
 
-        eventManager.subscribeToEvent(SHIFT_ROSTER_DATE_RANGE, dr -> {
+        eventManager.subscribeToEventForever(SHIFT_ROSTER_DATE_RANGE, dr -> {
             localDateRange = dr;
             buildShiftRosterViewport(viewport);
         });

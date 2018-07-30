@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.gwtui.client.viewport;
 
 import java.util.Optional;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -37,7 +38,9 @@ import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.roster.Pagination;
 import org.optaweb.employeerostering.shared.roster.view.AbstractRosterView;
 
-import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.*;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_END;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_START;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_TIME_UPDATE;
 
 public abstract class RosterToolbar {
 
@@ -104,22 +107,22 @@ public abstract class RosterToolbar {
         pagenation = Pagination.of(0, 10);
         remainingTime.classList.add("hidden");
 
-        eventManager.subscribeToEvent(getViewRefreshEvent(), (view) -> {
+        eventManager.subscribeToEventForever(getViewRefreshEvent(), (view) -> {
             onViewRefresh(view);
         });
-        eventManager.subscribeToEvent(SOLVE_TIME_UPDATE, (timeRemaining) -> {
+        eventManager.subscribeToEventForever(SOLVE_TIME_UPDATE, (timeRemaining) -> {
             remainingTime.innerHTML = timeRemaining + "s";
         });
-        eventManager.subscribeToEvent(SOLVE_START, (v) -> {
+        eventManager.subscribeToEventForever(SOLVE_START, (v) -> {
             remainingTime.classList.remove("hidden");
         });
-        eventManager.subscribeToEvent(SOLVE_END, (v) -> {
+        eventManager.subscribeToEventForever(SOLVE_END, (v) -> {
             remainingTime.classList.add("hidden");
         });
-        eventManager.subscribeToEvent(getPageChangeEvent(), (pagenation) -> {
+        eventManager.subscribeToEventForever(getPageChangeEvent(), (pagenation) -> {
             this.pagenation = pagenation;
         });
-        eventManager.subscribeToEvent(getDateRangeEvent(), (dateRange) -> {
+        eventManager.subscribeToEventForever(getDateRangeEvent(), (dateRange) -> {
             weekPicker.setValue(dateRange.getStartDate());
         });
         weekPicker.addValueChangeHandler((dateChangedEvent) -> {

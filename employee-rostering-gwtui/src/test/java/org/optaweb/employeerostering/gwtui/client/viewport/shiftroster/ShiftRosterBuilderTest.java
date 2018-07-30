@@ -73,16 +73,16 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
 
     @Mock
     private LoadingSpinner loadingSpinner;
-    
+
     @Mock
     private ManagedInstance<ShiftGridObject> shiftGridObjectInstances;
 
     @Mock
     private EventManager eventManager;
-    
+
     @Mock
     private Lockable<Map<Long, Lane<LocalDateTime, ShiftRosterMetadata>>> lockableLaneMap;
-    
+
     private Map<Long, Lane<LocalDateTime, ShiftRosterMetadata>> laneMap;
 
     private ShiftRosterView shiftRosterView;
@@ -90,14 +90,15 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        Mockito.when(lockableLaneMap.acquireIfPossible(Mockito.any())).thenAnswer( new Answer<Boolean>() {
+        Mockito.when(lockableLaneMap.acquireIfPossible(Mockito.any())).thenAnswer(new Answer<Boolean>() {
+
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 Consumer arg = invocation.getArgument(0);
                 arg.accept(laneMap);
                 return true;
-                }
-            });
+            }
+        });
         Mockito.when(tenantStore.getCurrentTenantId()).thenReturn(0);
         Mockito.when(commonUtils.flatten(Mockito.any())).thenCallRealMethod();
         Mockito.when(promiseUtils.promise(Mockito.any())).thenAnswer(new Answer<Promise>() {
@@ -132,7 +133,7 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
                 });
             }
         }).when(builder).getShiftRosterView();
-         
+
     }
 
     @Test
@@ -153,7 +154,6 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
         rosterState.setDraftLength(7);
         rosterState.setFirstDraftDate(LocalDate.of(2000, 1, 4));
         rosterState.setLastHistoricDate(LocalDate.of(2000, 1, 1));
-        rosterState.setPublishLength(7);
         rosterState.setPublishNotice(7);
         rosterState.setRotationLength(7);
         rosterState.setUnplannedRotationOffset(0);
@@ -169,7 +169,7 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
         spotIdToShiftViewMap.put(spotA.getId(), Collections.singletonList(spotAShiftView));
         spotIdToShiftViewMap.put(spotB.getId(), Collections.singletonList(spotBShiftView));
         shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewMap);
-        
+
         laneMap = new HashMap<>();
         Lane<LocalDateTime, ShiftRosterMetadata> laneAMock = Mockito.mock(Lane.class);
         Lane<LocalDateTime, ShiftRosterMetadata> laneBMock = Mockito.mock(Lane.class);

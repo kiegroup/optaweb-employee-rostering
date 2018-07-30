@@ -114,9 +114,10 @@ public class Resizability<T, M> {
 
         @JsMethod
         public native void resizable(JQueryResizabilityOptions options);
+
         @JsMethod
         public native void resizable(String method);
-   }
+    }
 
     @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
     private static class JQueryResiabilityData {
@@ -125,6 +126,7 @@ public class Resizability<T, M> {
     }
 
     @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
+    @SuppressWarnings("unused")
     private static class JQueryResizabilityOptions {
 
         public int minHeight;

@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.gwtui.client.employee;
 
 import java.util.Collections;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -33,13 +34,12 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
-import org.optaweb.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
@@ -86,13 +86,14 @@ public class EmployeeListPanel implements IsElement,
     private PromiseUtils promiseUtils;
 
     @Inject
-    private CommonUtils commonUtils;
+    private EventManager eventManager;
 
     public EmployeeListPanel() {}
 
     @PostConstruct
     protected void initWidget() {
         initTable();
+        eventManager.subscribeToEventForever(EventManager.Event.DATA_INVALIDATION, this::onAnyInvalidationEvent);
     }
 
     @Override
@@ -104,8 +105,10 @@ public class EmployeeListPanel implements IsElement,
         refresh();
     }
 
-    public void onAnyInvalidationEvent(@Observes DataInvalidation<Employee> employee) {
-        refresh();
+    public void onAnyInvalidationEvent(Class<?> dataInvalidated) {
+        if (dataInvalidated.equals(Employee.class)) {
+            refresh();
+        }
     }
 
     @EventHandler("refresh-button")

@@ -20,16 +20,13 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.TakesValue;
 import elemental2.dom.HTMLTableCellElement;
 import org.gwtbootstrap3.extras.select.client.ui.MultipleSelect;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
-import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -37,7 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AutoTrimWhitespaceTextBox;
-import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
 import org.optaweb.employeerostering.gwtui.client.common.TableRow;
@@ -49,7 +46,7 @@ import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaweb.employeerostering.shared.skill.Skill;
 
 @Templated("#row")
-public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Employee> {
+public class EmployeeSubform extends TableRow<Employee> {
 
     @Inject
     private TenantStore tenantStore;
@@ -76,9 +73,6 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
     private HTMLTableCellElement employeeSkillProficiencySetDisplay;
 
     @Inject
-    private Event<DataInvalidation<Employee>> dataInvalidationEvent;
-
-    @Inject
     private TranslationService translationService;
 
     private Subscription subscription;
@@ -86,7 +80,9 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
     @Inject
     private CommonUtils commonUtils;
 
-    @SuppressWarnings("unchecked")
+    @Inject
+    private EventManager eventManager;
+
     @PostConstruct
     protected void initWidget() {
         employeeName.getElement().setAttribute("placeholder", translationService.format(
@@ -103,7 +99,7 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
             employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(commonUtils.delimitCollection(e.getNewValue(),
                                                                                                                              (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
-        subscription = ErraiBus.get().subscribe("SkillMapListener", (m) -> updateSkillMap(m.getValue(Map.class)));
+        eventManager.subscribeToEventForElement(EventManager.Event.SKILL_MAP_INVALIDATION, this, this::updateSkillMap);
     }
 
     public void reset() {
@@ -126,7 +122,7 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
     protected void deleteRow(Employee employee) {
         EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), employee.getId(),
                                                   FailureShownRestCallback.onSuccess(success -> {
-                                                      dataInvalidationEvent.fire(new DataInvalidation<>());
+                                                      eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
                                                   }));
     }
 
@@ -135,7 +131,7 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
 
         EmployeeRestServiceBuilder.updateEmployee(tenantStore.getCurrentTenantId(), newValue,
                                                   FailureShownRestCallback.onSuccess(v -> {
-                                                      dataInvalidationEvent.fire(new DataInvalidation<>());
+                                                      eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
                                                   }));
     }
 
@@ -143,7 +139,7 @@ public class EmployeeSubform extends TableRow<Employee> implements TakesValue<Em
     protected void createRow(Employee employee) {
         EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee,
                                                FailureShownRestCallback.onSuccess(v -> {
-                                                   dataInvalidationEvent.fire(new DataInvalidation<>());
+                                                   eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
                                                }));
     }
 

@@ -34,7 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.DataInvalidation;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDatePicker;
 import org.optaweb.employeerostering.gwtui.client.popups.FormPopup;
@@ -94,7 +94,7 @@ public class NewTenantForm implements IsElement {
     private PopupFactory popupFactory;
 
     @Inject
-    private javax.enterprise.event.Event<DataInvalidation<Tenant>> dataInvalidationEvent;
+    private EventManager eventManager;
 
     private FormPopup formPopup;
 
@@ -171,7 +171,7 @@ public class NewTenantForm implements IsElement {
             rosterState.setTenant(newTenant);
 
             TenantRestServiceBuilder.addTenant(rosterState, FailureShownRestCallback.onSuccess(tenant -> {
-                dataInvalidationEvent.fire(new DataInvalidation<>());
+                eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Tenant.class);
                 formPopup.hide();
             }));
 

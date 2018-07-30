@@ -24,15 +24,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import elemental2.promise.Promise;
-import org.jboss.errai.bus.client.ErraiBus;
-import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.databinding.client.api.Converter;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.shared.skill.Skill;
@@ -47,13 +47,16 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
     @Inject
     private PromiseUtils promiseUtils;
 
+    @Inject
+    private EventManager eventManager;
+
     private Map<String, Skill> skillMap;
 
-    @SuppressWarnings("unchecked")
     @PostConstruct
     private void init() {
         skillMap = new HashMap<>();
         updateSkillMappings(Collections.emptyList());
+        eventManager.subscribeToEventForever(Event.DATA_INVALIDATION, this::onSkillListInvalidation);
     }
 
     @SuppressWarnings("unused")
@@ -62,8 +65,10 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
     }
 
     @SuppressWarnings("unused")
-    private void onSkillListInvalidation(@Observes DataInvalidation<Skill> event) {
-        fetchSkillListAndUpdateSkillMapping();
+    private void onSkillListInvalidation(Class<?> dataInvalidated) {
+        if (dataInvalidated.equals(Skill.class)) {
+            fetchSkillListAndUpdateSkillMapping();
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -103,17 +108,14 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
         for (Skill skill : skillList) {
             skillMap.put(skill.getName(), skill);
         }
-        MessageBuilder.createMessage()
-                .toSubject("SkillMapListener")
-                .withValue(getSkillMap())
-                .noErrorHandling().sendNowWith(ErraiBus.getDispatcher());
+        eventManager.fireEvent(Event.SKILL_MAP_INVALIDATION, skillMap);
     }
 
     private Promise<List<Skill>> getSkillList() {
         return new Promise<>((resolve, reject) -> SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
-                .onSuccess(newSkillList -> {
-                    resolve.onInvoke(newSkillList);
-                })));
+                                                                                                                                                 .onSuccess(newSkillList -> {
+                                                                                                                                                     resolve.onInvoke(newSkillList);
+                                                                                                                                                 })));
     }
 
     private void fetchSkillListAndUpdateSkillMapping() {

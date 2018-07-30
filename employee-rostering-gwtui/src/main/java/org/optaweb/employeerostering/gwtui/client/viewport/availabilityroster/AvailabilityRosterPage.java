@@ -33,10 +33,7 @@ import org.optaweb.employeerostering.gwtui.client.viewport.CSSGlobalStyle.GridVa
 
 @Templated
 public class AvailabilityRosterPage implements IsElement,
-        Page {
-
-    @Inject
-    private TenantStore tenantStore;
+                                    Page {
 
     @Inject
     private PromiseUtils promiseUtils;
