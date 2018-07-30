@@ -109,8 +109,7 @@ public class EventManager {
     public static interface Handler<T> {
 
         /**
-         * Set up the unsubscribe event listener. By default, nothing happens
-         * @param subscription
+         * Called when subscribed to an event. Use it to set up unsubscribe listeners.
          */
         void setupUnsubscribeListener(Subscription subscription);
 
