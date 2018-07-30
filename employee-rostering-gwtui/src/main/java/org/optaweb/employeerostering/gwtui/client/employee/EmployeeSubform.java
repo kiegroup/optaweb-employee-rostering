@@ -27,11 +27,8 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLTableCellElement;
 import org.gwtbootstrap3.extras.select.client.ui.MultipleSelect;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
-import org.jboss.errai.bus.client.api.Subscription;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
-import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AutoTrimWhitespaceTextBox;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
@@ -74,8 +71,6 @@ public class EmployeeSubform extends TableRow<Employee> {
 
     @Inject
     private TranslationService translationService;
-
-    private Subscription subscription;
 
     @Inject
     private CommonUtils commonUtils;
@@ -141,11 +136,6 @@ public class EmployeeSubform extends TableRow<Employee> {
                                                FailureShownRestCallback.onSuccess(v -> {
                                                    eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
                                                }));
-    }
-
-    @EventHandler("row")
-    public void onUnload(@ForEvent("unload") elemental2.dom.Event e) {
-        subscription.remove();
     }
 
     @Override
