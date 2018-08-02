@@ -39,7 +39,9 @@ import org.optaweb.employeerostering.shared.tenant.Tenant;
 @NamedQueries({
         @NamedQuery(name = "RosterState.find",
                 query = "select distinct rs from RosterState rs" +
-                        " where rs.tenantId = :tenantId")
+                        " where rs.tenantId = :tenantId"),
+        @NamedQuery(name = "RosterState.deleteForTenant",
+                query = "delete from RosterState rs where rs.tenantId = :tenantId")
 })
 public class RosterState extends AbstractPersistable {
 

@@ -29,10 +29,12 @@ import org.optaweb.employeerostering.shared.common.AbstractPersistable;
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "Skill.findAll",
-                           query = "select s from Skill s" +
-                                   " where s.tenantId = :tenantId" +
-                                   " order by LOWER(s.name)"),
+        @NamedQuery(name = "Skill.findAll",
+                query = "select s from Skill s" +
+                        " where s.tenantId = :tenantId" +
+                        " order by LOWER(s.name)"),
+        @NamedQuery(name = "Skill.deleteForTenant",
+                query = "delete from Skill s where s.tenantId = :tenantId")
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Skill extends AbstractPersistable {
@@ -43,7 +45,8 @@ public class Skill extends AbstractPersistable {
     private String name;
 
     @SuppressWarnings("unused")
-    public Skill() {}
+    public Skill() {
+    }
 
     public Skill(Integer tenantId, String name) {
         super(tenantId);
@@ -66,5 +69,4 @@ public class Skill extends AbstractPersistable {
     public void setName(String name) {
         this.name = name;
     }
-
 }

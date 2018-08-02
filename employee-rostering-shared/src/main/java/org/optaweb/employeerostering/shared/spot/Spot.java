@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.shared.spot;
 
 import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
@@ -33,13 +34,15 @@ import org.optaweb.employeerostering.shared.skill.Skill;
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "Spot.findAll",
-                           query = "select s from Spot s" +
-                                   " where s.tenantId = :tenantId" +
-                                   " order by LOWER(s.name)"),
+        @NamedQuery(name = "Spot.findAll",
+                query = "select s from Spot s" +
+                        " where s.tenantId = :tenantId" +
+                        " order by LOWER(s.name)"),
+        @NamedQuery(name = "Spot.deleteForTenant",
+                query = "delete from Spot s where s.tenantId = :tenantId")
 })
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}),
-                            @UniqueConstraint(columnNames = {"id"})})
+        @UniqueConstraint(columnNames = {"id"})})
 public class Spot extends AbstractPersistable {
 
     @NotNull
@@ -51,7 +54,8 @@ public class Spot extends AbstractPersistable {
     private Set<Skill> requiredSkillSet;
 
     @SuppressWarnings("unused")
-    public Spot() {}
+    public Spot() {
+    }
 
     public Spot(Integer tenantId, String name, Set<Skill> requiredSkillSet) {
         super(tenantId);
@@ -83,5 +87,4 @@ public class Spot extends AbstractPersistable {
     public void setRequiredSkillSet(Set<Skill> requiredSkillSet) {
         this.requiredSkillSet = requiredSkillSet;
     }
-
 }
