@@ -48,7 +48,7 @@ import org.optaweb.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 @Templated
 public class SpotListPanel implements IsElement,
-                           Page {
+                                      Page {
 
     @Inject
     @DataField("refresh-button")
@@ -90,7 +90,8 @@ public class SpotListPanel implements IsElement,
     @Inject
     private EventManager eventManager;
 
-    public SpotListPanel() {}
+    public SpotListPanel() {
+    }
 
     @PostConstruct
     protected void initWidget() {
@@ -124,10 +125,10 @@ public class SpotListPanel implements IsElement,
         }
         return promiseUtils.promise((res, rej) -> {
             SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
-                                                                                                         .onSuccess(newSpotList -> {
-                                                                                                             searchBar.setListToFilter(newSpotList);
-                                                                                                             res.onInvoke(promiseUtils.resolve());
-                                                                                                         }));
+                    .onSuccess(newSpotList -> {
+                        searchBar.setListToFilter(newSpotList);
+                        res.onInvoke(promiseUtils.resolve());
+                    }));
         });
     }
 

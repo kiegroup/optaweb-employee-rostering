@@ -155,7 +155,7 @@ public class AvailabilityRosterPageViewportBuilder {
                         if (!laneIdFilteredSet.contains(toAdd.getEmployeeId())) {
                             Set<Long> shiftViewsId = view.getEmployeeIdToShiftViewListMap().getOrDefault(toAdd.getEmployeeId(), Collections.emptyList()).stream().map(sv -> sv.getId()).collect(Collectors.toSet());
                             Set<Long> availabilityViewsId = view.getEmployeeIdToAvailabilityViewListMap().getOrDefault(toAdd.getEmployeeId(), Collections.emptyList()).stream().map(sv -> sv.getId()).collect(Collectors
-                                                                                                                                                                                                                        .toSet());
+                                                                                                                                                                                                                      .toSet());
                             laneMap.get(toAdd.getEmployeeId()).filterGridObjects(ShiftGridObject.class,
                                                                                  (sv) -> shiftViewsId.contains(sv.getId()));
                             laneMap.get(toAdd.getEmployeeId()).filterGridObjects(AvailabilityGridObject.class,
@@ -163,14 +163,14 @@ public class AvailabilityRosterPageViewportBuilder {
                             laneIdFilteredSet.add(toAdd.getEmployeeId());
                         }
                         laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
-                                                                                 ShiftGridObject.class, toAdd.getId(), () -> {
-                                                                                     ShiftGridObject out = shiftGridObjectInstances.get();
-                                                                                     out.withShiftView(toAdd);
-                                                                                     return out;
-                                                                                 }, (s) -> {
-                                                                                     s.withShiftView(toAdd);
-                                                                                     return null;
-                                                                                 });
+                                ShiftGridObject.class, toAdd.getId(), () -> {
+                                    ShiftGridObject out = shiftGridObjectInstances.get();
+                                    out.withShiftView(toAdd);
+                                    return out;
+                                }, (s) -> {
+                                    s.withShiftView(toAdd);
+                                    return null;
+                                });
                         workDone++;
                     }
 
@@ -179,7 +179,7 @@ public class AvailabilityRosterPageViewportBuilder {
                         if (!laneIdFilteredSet.contains(toAdd.getEmployeeId())) {
                             Set<Long> shiftViewsId = view.getEmployeeIdToShiftViewListMap().getOrDefault(toAdd.getEmployeeId(), Collections.emptyList()).stream().map(sv -> sv.getId()).collect(Collectors.toSet());
                             Set<Long> availabilityViewsId = view.getEmployeeIdToAvailabilityViewListMap().getOrDefault(toAdd.getEmployeeId(), Collections.emptyList()).stream().map(sv -> sv.getId()).collect(Collectors
-                                                                                                                                                                                                                        .toSet());
+                                                                                                                                                                                                                      .toSet());
                             laneMap.get(toAdd.getEmployeeId()).filterGridObjects(ShiftGridObject.class,
                                                                                  (sv) -> shiftViewsId.contains(sv.getId()));
                             laneMap.get(toAdd.getEmployeeId()).filterGridObjects(AvailabilityGridObject.class,
@@ -187,14 +187,14 @@ public class AvailabilityRosterPageViewportBuilder {
                             laneIdFilteredSet.add(toAdd.getEmployeeId());
                         }
                         laneMap.get(toAdd.getEmployeeId()).addOrUpdateGridObject(
-                                                                                 AvailabilityGridObject.class, toAdd.getId(), () -> {
-                                                                                     AvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get();
-                                                                                     out.withEmployeeAvailabilityView(toAdd);
-                                                                                     return out;
-                                                                                 }, (a) -> {
-                                                                                     a.withEmployeeAvailabilityView(toAdd);
-                                                                                     return null;
-                                                                                 });
+                                AvailabilityGridObject.class, toAdd.getId(), () -> {
+                                    AvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get();
+                                    out.withEmployeeAvailabilityView(toAdd);
+                                    return out;
+                                }, (a) -> {
+                                    a.withEmployeeAvailabilityView(toAdd);
+                                    return null;
+                                });
                         workDone++;
                     }
 
@@ -250,14 +250,14 @@ public class AvailabilityRosterPageViewportBuilder {
 
     public Promise<AvailabilityRosterView> getAvailabilityRosterView() {
         return promiseUtils
-                           .promise(
-                                    (res, rej) -> RosterRestServiceBuilder.getAvailabilityRosterView(tenantStore.getCurrentTenantId(), pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
-                                                                                                     localDateRange
-                                                                                                                   .getStartDate()
-                                                                                                                   .toString(),
-                                                                                                     localDateRange.getEndDate().toString(),
-                                                                                                     FailureShownRestCallback.onSuccess((s) -> {
-                                                                                                         res.onInvoke(s);
-                                                                                                     })));
+                .promise(
+                        (res, rej) -> RosterRestServiceBuilder.getAvailabilityRosterView(tenantStore.getCurrentTenantId(), pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
+                                                                                         localDateRange
+                                                                                                 .getStartDate()
+                                                                                                 .toString(),
+                                                                                         localDateRange.getEndDate().toString(),
+                                                                                         FailureShownRestCallback.onSuccess((s) -> {
+                                                                                             res.onInvoke(s);
+                                                                                         })));
     }
 }

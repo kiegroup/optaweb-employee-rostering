@@ -156,14 +156,14 @@ public class ShiftRosterPageViewportBuilder {
                             laneIdFilteredSet.add(toAdd.getSpotId());
                         }
                         laneMap.get(toAdd.getSpotId()).addOrUpdateGridObject(
-                                                                             ShiftGridObject.class, toAdd.getId(), () -> {
-                                                                                 ShiftGridObject out = shiftGridObjectInstances.get();
-                                                                                 out.withShiftView(toAdd);
-                                                                                 return out;
-                                                                             }, (s) -> {
-                                                                                 s.withShiftView(toAdd);
-                                                                                 return null;
-                                                                             });
+                                ShiftGridObject.class, toAdd.getId(), () -> {
+                                    ShiftGridObject out = shiftGridObjectInstances.get();
+                                    out.withShiftView(toAdd);
+                                    return out;
+                                }, (s) -> {
+                                    s.withShiftView(toAdd);
+                                    return null;
+                                });
                         workDone++;
                     }
 
@@ -220,18 +220,18 @@ public class ShiftRosterPageViewportBuilder {
 
     public Promise<ShiftRosterView> getShiftRosterView() {
         return promiseUtils
-                           .promise(
-                                    (res, rej) -> {
-                                        RosterRestServiceBuilder
-                                                                .getShiftRosterView(tenantStore.getCurrentTenantId(),
-                                                                                    pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
-                                                                                    localDateRange
-                                                                                                  .getStartDate()
-                                                                                                  .toString(),
-                                                                                    localDateRange.getEndDate().toString(),
-                                                                                    FailureShownRestCallback.onSuccess((s) -> {
-                                                                                        res.onInvoke(s);
-                                                                                    }));
-                                    });
+                .promise(
+                        (res, rej) -> {
+                            RosterRestServiceBuilder
+                                    .getShiftRosterView(tenantStore.getCurrentTenantId(),
+                                                        pagination.getPageNumber(), pagination.getNumberOfItemsPerPage(),
+                                                        localDateRange
+                                                                .getStartDate()
+                                                                .toString(),
+                                                        localDateRange.getEndDate().toString(),
+                                                        FailureShownRestCallback.onSuccess((s) -> {
+                                                            res.onInvoke(s);
+                                                        }));
+                        });
     }
 }

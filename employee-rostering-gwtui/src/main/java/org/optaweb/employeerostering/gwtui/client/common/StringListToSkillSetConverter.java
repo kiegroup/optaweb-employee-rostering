@@ -113,9 +113,9 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
 
     private Promise<List<Skill>> getSkillList() {
         return new Promise<>((resolve, reject) -> SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
-                                                                                                                                                 .onSuccess(newSkillList -> {
-                                                                                                                                                     resolve.onInvoke(newSkillList);
-                                                                                                                                                 })));
+                .onSuccess(newSkillList -> {
+                    resolve.onInvoke(newSkillList);
+                })));
     }
 
     private void fetchSkillListAndUpdateSkillMapping() {
@@ -124,5 +124,4 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
             return promiseUtils.resolve();
         });
     }
-
 }

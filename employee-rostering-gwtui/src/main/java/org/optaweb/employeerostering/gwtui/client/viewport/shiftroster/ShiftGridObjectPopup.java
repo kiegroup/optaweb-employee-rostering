@@ -132,7 +132,6 @@ public class ShiftGridObjectPopup implements IsElement {
             formPopup = fp;
             formPopup.showFor(shiftGridObject);
         });
-
     }
 
     @EventHandler("root")

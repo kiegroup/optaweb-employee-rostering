@@ -82,18 +82,18 @@ public class SpotSubform extends TableRow<Spot> implements TakesValue<Spot> {
     @PostConstruct
     protected void initWidget() {
         spotName.getElement().setAttribute("placeholder", translationService.format(
-                                                                                    OptaWebUIConstants.SpotListPanel_spotName));
+                OptaWebUIConstants.SpotListPanel_spotName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         updateSkillMap(skillConvertor.getSkillMap());
         dataBinder.bind(spotName, "name");
         dataBinder.bind(spotRequiredSkillSet, "requiredSkillSet", skillConvertor);
 
-        dataBinder.<String> addPropertyChangeHandler("name", (e) -> {
+        dataBinder.<String>addPropertyChangeHandler("name", (e) -> {
             spotNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
         });
-        dataBinder.<Set<Skill>> addPropertyChangeHandler("requiredSkillSet", (e) -> {
+        dataBinder.<Set<Skill>>addPropertyChangeHandler("requiredSkillSet", (e) -> {
             spotRequiredSkillSetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(commonUtils.delimitCollection(e
-                                                                                                                       .getNewValue(),
+                                                                                                                              .getNewValue(),
                                                                                                                       (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });
         eventManager.subscribeToEventForElement(EventManager.Event.SKILL_MAP_INVALIDATION, this, this::updateSkillMap);

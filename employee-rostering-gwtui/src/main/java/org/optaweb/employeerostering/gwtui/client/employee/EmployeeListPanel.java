@@ -46,7 +46,7 @@ import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 
 @Templated
 public class EmployeeListPanel implements IsElement,
-                               Page {
+                                          Page {
 
     @Inject
     @DataField("refresh-button")
@@ -88,7 +88,8 @@ public class EmployeeListPanel implements IsElement,
     @Inject
     private EventManager eventManager;
 
-    public EmployeeListPanel() {}
+    public EmployeeListPanel() {
+    }
 
     @PostConstruct
     protected void initWidget() {
@@ -122,10 +123,10 @@ public class EmployeeListPanel implements IsElement,
         }
         return promiseUtils.promise((res, rej) -> {
             EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
-                                                                                                                 .onSuccess(newEmployeeList -> {
-                                                                                                                     searchBar.setListToFilter(newEmployeeList);
-                                                                                                                     res.onInvoke(promiseUtils.resolve());
-                                                                                                                 }));
+                    .onSuccess(newEmployeeList -> {
+                        searchBar.setListToFilter(newEmployeeList);
+                        res.onInvoke(promiseUtils.resolve());
+                    }));
         });
     }
 

@@ -201,5 +201,4 @@ public class AvailabilityGridObjectPopup implements IsElement {
 
         e.stopPropagation();
     }
-
 }

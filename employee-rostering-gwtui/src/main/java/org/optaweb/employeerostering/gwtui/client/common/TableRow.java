@@ -40,7 +40,8 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.optaweb.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaweb.employeerostering.gwtui.client.util.CommonUtils;
 
-public abstract class TableRow<T> implements TakesValue<T>, IsElement {
+public abstract class TableRow<T> implements TakesValue<T>,
+                                             IsElement {
 
     @Inject
     private Validator validator;
@@ -170,7 +171,6 @@ public abstract class TableRow<T> implements TakesValue<T>, IsElement {
         } else {
             throw new ConstraintViolationException(validationErrorSet);
         }
-
     }
 
     public static <T> void createNewRow(T value, ListComponent<T, ? extends TableRow<T>> table, KiePager<T> pager) {

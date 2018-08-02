@@ -117,7 +117,7 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
             newInstance.setSpotId(spot.getId());
             newInstance.setTenantId(tenantStore.getCurrentTenantId());
             newInstance.setDurationBetweenRotationStartAndTemplateStart(
-                                                                        Duration.between(BASE_DATE, t));
+                    Duration.between(BASE_DATE, t));
             newInstance.setShiftTemplateDuration(Duration.ofHours(8));
             return shiftTemplateModelInstances.get().withShiftTemplateView(newInstance);
         };
@@ -190,5 +190,4 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     protected List<Long> getLaneOrder(RotationView view) {
         return view.getSpotList().stream().map(s -> s.getId()).collect(Collectors.toList());
     }
-
 }

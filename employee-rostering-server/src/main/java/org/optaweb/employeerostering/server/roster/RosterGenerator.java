@@ -85,244 +85,243 @@ public class RosterGenerator {
             this.rotationEmployeeListSize = rotationEmployeeListSize;
             this.rotationEmployeeIndexCalculator = rotationEmployeeIndexCalculator;
         }
-
     }
 
     private final StringDataGenerator tenantNameGenerator = StringDataGenerator.buildLocationNames();
     private final StringDataGenerator employeeNameGenerator = StringDataGenerator.buildFullNames();
 
     private final GeneratorType hospitalGeneratorType = new GeneratorType(
-                                                                          "Hospital",
-                                                                          new StringDataGenerator()
-                                                                                                   .addPart(
-                                                                                                            "Ambulatory care",
-                                                                                                            "Critical care",
-                                                                                                            "Midwife",
-                                                                                                            "Gastroenterology",
-                                                                                                            "Neuroscience",
-                                                                                                            "Oncology",
-                                                                                                            "Pediatric",
-                                                                                                            "Psychiatric",
-                                                                                                            "Geriatric",
-                                                                                                            "Radiology")
-                                                                                                   .addPart(
-                                                                                                            "nurse",
-                                                                                                            "physician",
-                                                                                                            "doctor",
-                                                                                                            "attendant",
-                                                                                                            "specialist",
-                                                                                                            "surgeon",
-                                                                                                            "medic",
-                                                                                                            "practitioner",
-                                                                                                            "pharmacist",
-                                                                                                            "researcher"),
-                                                                          new StringDataGenerator(true)
-                                                                                                       .addPart(false, 0,
-                                                                                                                "Basic",
-                                                                                                                "Advanced",
-                                                                                                                "Expert",
-                                                                                                                "Specialized",
-                                                                                                                "Elder",
-                                                                                                                "Child",
-                                                                                                                "Infant",
-                                                                                                                "Baby",
-                                                                                                                "Male",
-                                                                                                                "Female",
-                                                                                                                "Common",
-                                                                                                                "Uncommon",
-                                                                                                                "Research",
-                                                                                                                "Administrative",
-                                                                                                                "Regressing")
-                                                                                                       .addPart(true, 1,
-                                                                                                                "anaesthetics",
-                                                                                                                "cardiology",
-                                                                                                                "critical care",
-                                                                                                                "emergency",
-                                                                                                                "ear nose throat",
-                                                                                                                "gastroenterology",
-                                                                                                                "haematology",
-                                                                                                                "maternity",
-                                                                                                                "neurology",
-                                                                                                                "oncology",
-                                                                                                                "ophthalmology",
-                                                                                                                "orthopaedics",
-                                                                                                                "physiotherapy",
-                                                                                                                "radiotherapy",
-                                                                                                                "urology")
-                                                                                                       .addPart(false, 0,
-                                                                                                                "Alpha",
-                                                                                                                "Beta",
-                                                                                                                "Gamma",
-                                                                                                                "Delta",
-                                                                                                                "Epsilon",
-                                                                                                                "Zeta",
-                                                                                                                "Eta",
-                                                                                                                "Theta",
-                                                                                                                "Iota",
-                                                                                                                "Kappa",
-                                                                                                                "Lambda",
-                                                                                                                "Mu",
-                                                                                                                "Nu",
-                                                                                                                "Xi",
-                                                                                                                "Omicron"),
-                                                                          Arrays.asList(
-                                                                                        Pair.of(LocalTime.of(6, 0), LocalTime.of(14, 0)),
-                                                                                        Pair.of(LocalTime.of(9, 0), LocalTime.of(17, 0)),
-                                                                                        Pair.of(LocalTime.of(14, 0), LocalTime.of(22, 0)),
-                                                                                        Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))),
-                                                                          // Morning:   A A A A A D D B B B B B D D C C C C C D D
-                                                                          // Day:       F F B B B F F F F C C C F F F F A A A F F
-                                                                          // Afternoon: D D D E E E E D D D E E E E D D D E E E E
-                                                                          // Night:     E C C C C C C E A A A A A A E B B B B B B
-                                                                          21, 6, (startDayOffset, timeslotRangesIndex) -> {
-                                                                              switch (timeslotRangesIndex) {
-                                                                                  case 0:
-                                                                                      return startDayOffset % 7 >= 5 ? 3 : startDayOffset / 7;
-                                                                                  case 1:
-                                                                                      return (startDayOffset + 2) % 7 < 4 ? 5 : (startDayOffset - 16 + 21) % 21 / 7;
-                                                                                  case 2:
-                                                                                      return startDayOffset % 7 < 3 ? 3 : 4;
-                                                                                  case 3:
-                                                                                      return startDayOffset % 7 < 1 ? 4 : (startDayOffset - 8 + 21) % 21 / 7;
-                                                                                  default:
-                                                                                      throw new IllegalStateException("Impossible state for timeslotRangesIndex (" + timeslotRangesIndex + ").");
-                                                                              }
-                                                                          });
+            "Hospital",
+            new StringDataGenerator()
+                    .addPart(
+                            "Ambulatory care",
+                            "Critical care",
+                            "Midwife",
+                            "Gastroenterology",
+                            "Neuroscience",
+                            "Oncology",
+                            "Pediatric",
+                            "Psychiatric",
+                            "Geriatric",
+                            "Radiology")
+                    .addPart(
+                            "nurse",
+                            "physician",
+                            "doctor",
+                            "attendant",
+                            "specialist",
+                            "surgeon",
+                            "medic",
+                            "practitioner",
+                            "pharmacist",
+                            "researcher"),
+            new StringDataGenerator(true)
+                    .addPart(false, 0,
+                             "Basic",
+                             "Advanced",
+                             "Expert",
+                             "Specialized",
+                             "Elder",
+                             "Child",
+                             "Infant",
+                             "Baby",
+                             "Male",
+                             "Female",
+                             "Common",
+                             "Uncommon",
+                             "Research",
+                             "Administrative",
+                             "Regressing")
+                    .addPart(true, 1,
+                             "anaesthetics",
+                             "cardiology",
+                             "critical care",
+                             "emergency",
+                             "ear nose throat",
+                             "gastroenterology",
+                             "haematology",
+                             "maternity",
+                             "neurology",
+                             "oncology",
+                             "ophthalmology",
+                             "orthopaedics",
+                             "physiotherapy",
+                             "radiotherapy",
+                             "urology")
+                    .addPart(false, 0,
+                             "Alpha",
+                             "Beta",
+                             "Gamma",
+                             "Delta",
+                             "Epsilon",
+                             "Zeta",
+                             "Eta",
+                             "Theta",
+                             "Iota",
+                             "Kappa",
+                             "Lambda",
+                             "Mu",
+                             "Nu",
+                             "Xi",
+                             "Omicron"),
+            Arrays.asList(
+                    Pair.of(LocalTime.of(6, 0), LocalTime.of(14, 0)),
+                    Pair.of(LocalTime.of(9, 0), LocalTime.of(17, 0)),
+                    Pair.of(LocalTime.of(14, 0), LocalTime.of(22, 0)),
+                    Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))),
+            // Morning:   A A A A A D D B B B B B D D C C C C C D D
+            // Day:       F F B B B F F F F C C C F F F F A A A F F
+            // Afternoon: D D D E E E E D D D E E E E D D D E E E E
+            // Night:     E C C C C C C E A A A A A A E B B B B B B
+            21, 6, (startDayOffset, timeslotRangesIndex) -> {
+        switch (timeslotRangesIndex) {
+            case 0:
+                return startDayOffset % 7 >= 5 ? 3 : startDayOffset / 7;
+            case 1:
+                return (startDayOffset + 2) % 7 < 4 ? 5 : (startDayOffset - 16 + 21) % 21 / 7;
+            case 2:
+                return startDayOffset % 7 < 3 ? 3 : 4;
+            case 3:
+                return startDayOffset % 7 < 1 ? 4 : (startDayOffset - 8 + 21) % 21 / 7;
+            default:
+                throw new IllegalStateException("Impossible state for timeslotRangesIndex (" + timeslotRangesIndex + ").");
+        }
+    });
     private final GeneratorType factoryAssemblyGeneratorType = new GeneratorType(
-                                                                                 "Factory assembly",
-                                                                                 new StringDataGenerator()
-                                                                                                          .addPart(
-                                                                                                                   "Mechanical",
-                                                                                                                   "Electrical",
-                                                                                                                   "Safety",
-                                                                                                                   "Transportation",
-                                                                                                                   "Operational",
-                                                                                                                   "Physics",
-                                                                                                                   "Monitoring",
-                                                                                                                   "ICT")
-                                                                                                          .addPart(
-                                                                                                                   "bachelor",
-                                                                                                                   "engineer",
-                                                                                                                   "instructor",
-                                                                                                                   "coordinator",
-                                                                                                                   "manager",
-                                                                                                                   "expert",
-                                                                                                                   "inspector",
-                                                                                                                   "analyst"),
-                                                                                 StringDataGenerator.buildAssemblyLineNames(),
-                                                                                 Arrays.asList(
-                                                                                               Pair.of(LocalTime.of(6, 0), LocalTime.of(14, 0)),
-                                                                                               Pair.of(LocalTime.of(14, 0), LocalTime.of(22, 0)),
-                                                                                               Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))),
-                                                                                 // Morning:   A A A A A A A B B B B B B B C C C C C C C D D D D D D D
-                                                                                 // Afternoon: C C D D D D D D D A A A A A A A B B B B B B B C C C C C
-                                                                                 // Night:     B B B B C C C C C C C D D D D D D D A A A A A A A B B B
-                                                                                 28, 4, (startDayOffset, timeslotRangesIndex) -> (startDayOffset - (9 * timeslotRangesIndex) + 28) % 28 / 7);
+            "Factory assembly",
+            new StringDataGenerator()
+                    .addPart(
+                            "Mechanical",
+                            "Electrical",
+                            "Safety",
+                            "Transportation",
+                            "Operational",
+                            "Physics",
+                            "Monitoring",
+                            "ICT")
+                    .addPart(
+                            "bachelor",
+                            "engineer",
+                            "instructor",
+                            "coordinator",
+                            "manager",
+                            "expert",
+                            "inspector",
+                            "analyst"),
+            StringDataGenerator.buildAssemblyLineNames(),
+            Arrays.asList(
+                    Pair.of(LocalTime.of(6, 0), LocalTime.of(14, 0)),
+                    Pair.of(LocalTime.of(14, 0), LocalTime.of(22, 0)),
+                    Pair.of(LocalTime.of(22, 0), LocalTime.of(6, 0))),
+            // Morning:   A A A A A A A B B B B B B B C C C C C C C D D D D D D D
+            // Afternoon: C C D D D D D D D A A A A A A A B B B B B B B C C C C C
+            // Night:     B B B B C C C C C C C D D D D D D D A A A A A A A B B B
+            28, 4, (startDayOffset, timeslotRangesIndex) -> (startDayOffset - (9 * timeslotRangesIndex) + 28) % 28 / 7);
     private final GeneratorType guardSecurityGeneratorType = new GeneratorType(
-                                                                               "Guard security",
-                                                                               new StringDataGenerator()
-                                                                                                        .addPart(
-                                                                                                                 "Martial art",
-                                                                                                                 "Armed",
-                                                                                                                 "Surveillance",
-                                                                                                                 "Technical",
-                                                                                                                 "Computer")
-                                                                                                        .addPart(
-                                                                                                                 "basic",
-                                                                                                                 "advanced",
-                                                                                                                 "expert",
-                                                                                                                 "master",
-                                                                                                                 "novice"),
-                                                                               new StringDataGenerator()
-                                                                                                        .addPart("Airport",
-                                                                                                                 "Harbor",
-                                                                                                                 "Bank",
-                                                                                                                 "Office",
-                                                                                                                 "Warehouse",
-                                                                                                                 "Store",
-                                                                                                                 "Factory",
-                                                                                                                 "Station",
-                                                                                                                 "Museum",
-                                                                                                                 "Mansion",
-                                                                                                                 "Monument",
-                                                                                                                 "City hall",
-                                                                                                                 "Prison",
-                                                                                                                 "Mine",
-                                                                                                                 "Palace")
-                                                                                                        .addPart("north gate",
-                                                                                                                 "south gate",
-                                                                                                                 "east gate",
-                                                                                                                 "west gate",
-                                                                                                                 "roof",
-                                                                                                                 "cellar",
-                                                                                                                 "north west gate",
-                                                                                                                 "north east gate",
-                                                                                                                 "south west gate",
-                                                                                                                 "south east gate",
-                                                                                                                 "main door",
-                                                                                                                 "back door",
-                                                                                                                 "side door",
-                                                                                                                 "balcony",
-                                                                                                                 "patio")
-                                                                                                        .addPart("Alpha",
-                                                                                                                 "Beta",
-                                                                                                                 "Gamma",
-                                                                                                                 "Delta",
-                                                                                                                 "Epsilon",
-                                                                                                                 "Zeta",
-                                                                                                                 "Eta",
-                                                                                                                 "Theta",
-                                                                                                                 "Iota",
-                                                                                                                 "Kappa",
-                                                                                                                 "Lambda",
-                                                                                                                 "Mu",
-                                                                                                                 "Nu",
-                                                                                                                 "Xi",
-                                                                                                                 "Omicron"),
-                                                                               Arrays.asList(
-                                                                                             Pair.of(LocalTime.of(7, 0), LocalTime.of(19, 0)),
-                                                                                             Pair.of(LocalTime.of(19, 0), LocalTime.of(7, 0))),
-                                                                               // Day:   A A A B B B B C C C A A A A B B B C C C C
-                                                                               // Night: C C C A A A A B B B C C C C A A A B B B B
-                                                                               21, 3, (startDayOffset, timeslotRangesIndex) -> {
-                                                                                   int offset = timeslotRangesIndex == 0 ? startDayOffset : (startDayOffset + 7) % 21;
-                                                                                   return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 2 : offset < 14 ? 0 : offset < 17 ? 1 : offset < 21 ? 2 : -1;
-                                                                               });
+            "Guard security",
+            new StringDataGenerator()
+                    .addPart(
+                            "Martial art",
+                            "Armed",
+                            "Surveillance",
+                            "Technical",
+                            "Computer")
+                    .addPart(
+                            "basic",
+                            "advanced",
+                            "expert",
+                            "master",
+                            "novice"),
+            new StringDataGenerator()
+                    .addPart("Airport",
+                             "Harbor",
+                             "Bank",
+                             "Office",
+                             "Warehouse",
+                             "Store",
+                             "Factory",
+                             "Station",
+                             "Museum",
+                             "Mansion",
+                             "Monument",
+                             "City hall",
+                             "Prison",
+                             "Mine",
+                             "Palace")
+                    .addPart("north gate",
+                             "south gate",
+                             "east gate",
+                             "west gate",
+                             "roof",
+                             "cellar",
+                             "north west gate",
+                             "north east gate",
+                             "south west gate",
+                             "south east gate",
+                             "main door",
+                             "back door",
+                             "side door",
+                             "balcony",
+                             "patio")
+                    .addPart("Alpha",
+                             "Beta",
+                             "Gamma",
+                             "Delta",
+                             "Epsilon",
+                             "Zeta",
+                             "Eta",
+                             "Theta",
+                             "Iota",
+                             "Kappa",
+                             "Lambda",
+                             "Mu",
+                             "Nu",
+                             "Xi",
+                             "Omicron"),
+            Arrays.asList(
+                    Pair.of(LocalTime.of(7, 0), LocalTime.of(19, 0)),
+                    Pair.of(LocalTime.of(19, 0), LocalTime.of(7, 0))),
+            // Day:   A A A B B B B C C C A A A A B B B C C C C
+            // Night: C C C A A A A B B B C C C C A A A B B B B
+            21, 3, (startDayOffset, timeslotRangesIndex) -> {
+        int offset = timeslotRangesIndex == 0 ? startDayOffset : (startDayOffset + 7) % 21;
+        return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 2 : offset < 14 ? 0 : offset < 17 ? 1 : offset < 21 ? 2 : -1;
+    });
     private final GeneratorType callCenterGeneratorType = new GeneratorType(
-                                                                            "Call center",
-                                                                            new StringDataGenerator()
-                                                                                                     .addPart(
-                                                                                                              "English",
-                                                                                                              "Spanish",
-                                                                                                              "French",
-                                                                                                              "German",
-                                                                                                              "Japanese",
-                                                                                                              "Chinese",
-                                                                                                              "Dutch",
-                                                                                                              "Portuguese",
-                                                                                                              "Italian"),
-                                                                            new StringDataGenerator()
-                                                                                                     .addPart("Business loans",
-                                                                                                              "Checking and savings accounts",
-                                                                                                              "Debit and credit cards",
-                                                                                                              "Insurances",
-                                                                                                              "Merchant services",
-                                                                                                              "Cash management",
-                                                                                                              "Tax management",
-                                                                                                              "Wealth management",
-                                                                                                              "Mortgages",
-                                                                                                              "Personal loans",
-                                                                                                              "Online payment"),
-                                                                            Arrays.asList(
-                                                                                          Pair.of(LocalTime.of(7, 0), LocalTime.of(16, 0)),
-                                                                                          Pair.of(LocalTime.of(11, 0), LocalTime.of(20, 0))),
-                                                                            // Morning:   B A A A A A B
-                                                                            // Afternoon: C C B B C C C
-                                                                            7, 3, (startDayOffset, timeslotRangesIndex) -> {
-                                                                                return timeslotRangesIndex == 0
-                                                                                        ? startDayOffset < 1 ? 1 : startDayOffset < 6 ? 0 : startDayOffset < 7 ? 1 : -1
-                                                                                        : startDayOffset < 2 ? 2 : startDayOffset < 4 ? 1 : startDayOffset < 7 ? 2 : -1;
-                                                                            });
+            "Call center",
+            new StringDataGenerator()
+                    .addPart(
+                            "English",
+                            "Spanish",
+                            "French",
+                            "German",
+                            "Japanese",
+                            "Chinese",
+                            "Dutch",
+                            "Portuguese",
+                            "Italian"),
+            new StringDataGenerator()
+                    .addPart("Business loans",
+                             "Checking and savings accounts",
+                             "Debit and credit cards",
+                             "Insurances",
+                             "Merchant services",
+                             "Cash management",
+                             "Tax management",
+                             "Wealth management",
+                             "Mortgages",
+                             "Personal loans",
+                             "Online payment"),
+            Arrays.asList(
+                    Pair.of(LocalTime.of(7, 0), LocalTime.of(16, 0)),
+                    Pair.of(LocalTime.of(11, 0), LocalTime.of(20, 0))),
+            // Morning:   B A A A A A B
+            // Afternoon: C C B B C C C
+            7, 3, (startDayOffset, timeslotRangesIndex) -> {
+        return timeslotRangesIndex == 0
+                ? startDayOffset < 1 ? 1 : startDayOffset < 6 ? 0 : startDayOffset < 7 ? 1 : -1
+                : startDayOffset < 2 ? 2 : startDayOffset < 4 ? 1 : startDayOffset < 7 ? 2 : -1;
+    });
 
     private Random random;
 
@@ -330,7 +329,8 @@ public class RosterGenerator {
     private EntityManager entityManager;
 
     @SuppressWarnings("unused")
-    public RosterGenerator() {}
+    public RosterGenerator() {
+    }
 
     /**
      * For benchmark only
@@ -390,7 +390,7 @@ public class RosterGenerator {
         List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId, rosterState, spotList, employeeList);
         List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterParametrization, rosterState, spotList, shiftTemplateList);
         List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
-                                                                                             generatorType, tenantId, rosterParametrization, rosterState, employeeList, shiftList);
+                generatorType, tenantId, rosterParametrization, rosterState, employeeList, shiftList);
 
         return new Roster((long) tenantId, tenantId,
                           skillList, spotList, employeeList, employeeAvailabilityList,
@@ -417,8 +417,8 @@ public class RosterGenerator {
         int publishNotice = 14;
         rosterState.setPublishNotice(publishNotice);
         LocalDate firstDraftDate = LocalDate.now()
-                                            .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
-                                            .plusDays(publishNotice);
+                .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                .plusDays(publishNotice);
         rosterState.setFirstDraftDate(firstDraftDate);
         // publishLength is read-only and set to 7 days
         //rosterState.setPublishLength(7); 
@@ -481,8 +481,8 @@ public class RosterGenerator {
         List<Employee> remainingEmployeeList = new ArrayList<>(employeeList);
         for (Spot spot : spotList) {
             List<Employee> rotationEmployeeList = remainingEmployeeList.stream()
-                                                                       .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()))
-                                                                       .limit(generatorType.rotationEmployeeListSize).collect(toList());
+                    .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()))
+                    .limit(generatorType.rotationEmployeeListSize).collect(toList());
             remainingEmployeeList.removeAll(rotationEmployeeList);
             // For every day in the rotation (independent of publishLength and draftLength)
             for (int startDayOffset = 0; startDayOffset < rotationLength; startDayOffset++) {
@@ -498,8 +498,8 @@ public class RosterGenerator {
                     int rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator.apply(startDayOffset, timeslotRangesIndex);
                     if (rotationEmployeeIndex < 0 || rotationEmployeeIndex >= generatorType.rotationEmployeeListSize) {
                         throw new IllegalStateException(
-                                                        "The rotationEmployeeIndexCalculator for generatorType (" + generatorType.tenantNamePrefix + ") returns an invalid rotationEmployeeIndex (" +
-                                                        rotationEmployeeIndex + ") for startDayOffset (" + startDayOffset + ") and timeslotRangesIndex (" + timeslotRangesIndex + ").");
+                                "The rotationEmployeeIndexCalculator for generatorType (" + generatorType.tenantNamePrefix + ") returns an invalid rotationEmployeeIndex (" +
+                                        rotationEmployeeIndex + ") for startDayOffset (" + startDayOffset + ") and timeslotRangesIndex (" + timeslotRangesIndex + ").");
                     }
                     // There might be less employees than we need (overconstrained planning)
                     Employee rotationEmployee = rotationEmployeeIndex >= rotationEmployeeList.size() ? null : rotationEmployeeList.get(rotationEmployeeIndex);
@@ -526,7 +526,7 @@ public class RosterGenerator {
 
         List<Shift> shiftList = new ArrayList<>();
         Map<Pair<Integer, Spot>, List<ShiftTemplate>> dayOffsetAndSpotToShiftTemplateListMap = shiftTemplateList.stream()
-                                                                                                                .collect(groupingBy(shiftTemplate -> Pair.of(shiftTemplate.getStartDayOffset(), shiftTemplate.getSpot())));
+                .collect(groupingBy(shiftTemplate -> Pair.of(shiftTemplate.getStartDayOffset(), shiftTemplate.getSpot())));
         int dayOffset = 0;
         while (date.compareTo(firstUnplannedDate) < 0) {
             for (Spot spot : spotList) {
@@ -569,7 +569,7 @@ public class RosterGenerator {
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
         List<EmployeeAvailability> employeeAvailabilityList = new ArrayList<>();
         Map<LocalDate, List<Shift>> startDayToShiftListMap = shiftList.stream()
-                                                                      .collect(groupingBy(shift -> shift.getStartDateTime().toLocalDate()));
+                .collect(groupingBy(shift -> shift.getStartDateTime().toLocalDate()));
 
         while (date.compareTo(firstUnplannedDate) < 0) {
             List<Shift> dayShiftList = startDayToShiftListMap.get(date);
@@ -627,5 +627,4 @@ public class RosterGenerator {
         }
         return thresholds.length;
     }
-
 }

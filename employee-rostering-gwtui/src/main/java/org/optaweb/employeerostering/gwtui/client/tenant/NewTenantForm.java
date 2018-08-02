@@ -127,17 +127,16 @@ public class NewTenantForm implements IsElement {
         scheduleStartDate.addValueChangeHandler(e -> {
             scheduleStartWeekday.innerHTML = "Schedule will begin on " + e.getValue().getDayOfWeek().toString() + ".";
         });
-
     }
 
     public boolean isValid() {
         return tenantName.reportValidity() &&
-               scheduleStartDate.reportValidity() &&
-               publishNotice.reportValidity() &&
-               publishLength.reportValidity() &&
-               rotationLength.reportValidity() &&
-               draftLength.reportValidity() &&
-               timezoneSelect.getSelectedItem() != null;
+                scheduleStartDate.reportValidity() &&
+                publishNotice.reportValidity() &&
+                publishLength.reportValidity() &&
+                rotationLength.reportValidity() &&
+                draftLength.reportValidity() &&
+                timezoneSelect.getSelectedItem() != null;
     }
 
     @EventHandler("cancel-button")
@@ -174,7 +173,6 @@ public class NewTenantForm implements IsElement {
                 eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Tenant.class);
                 formPopup.hide();
             }));
-
         }
     }
 

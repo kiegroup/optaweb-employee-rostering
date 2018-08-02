@@ -37,9 +37,9 @@ import org.optaweb.employeerostering.shared.tenant.Tenant;
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "RosterState.find",
-                           query = "select distinct rs from RosterState rs" +
-                                   " where rs.tenantId = :tenantId")
+        @NamedQuery(name = "RosterState.find",
+                query = "select distinct rs from RosterState rs" +
+                        " where rs.tenantId = :tenantId")
 })
 public class RosterState extends AbstractPersistable {
 
@@ -231,5 +231,4 @@ public class RosterState extends AbstractPersistable {
     public void setTenant(Tenant tenant) {
         this.tenant = tenant;
     }
-
 }

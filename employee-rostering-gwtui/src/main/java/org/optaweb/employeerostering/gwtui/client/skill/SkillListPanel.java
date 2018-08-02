@@ -47,7 +47,7 @@ import org.optaweb.employeerostering.shared.skill.SkillRestServiceBuilder;
 
 @Templated
 public class SkillListPanel implements IsElement,
-                            Page {
+                                       Page {
 
     @Inject
     @DataField("refresh-button")
@@ -83,7 +83,8 @@ public class SkillListPanel implements IsElement,
     @Inject
     private EventManager eventManager;
 
-    public SkillListPanel() {}
+    public SkillListPanel() {
+    }
 
     @PostConstruct
     protected void initWidget() {
@@ -117,10 +118,10 @@ public class SkillListPanel implements IsElement,
         }
         return promiseUtils.promise((res, rej) -> {
             SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
-                                                                                                           .onSuccess(newSkillList -> {
-                                                                                                               searchBar.setListToFilter(newSkillList);
-                                                                                                               res.onInvoke(promiseUtils.resolve());
-                                                                                                           }));
+                    .onSuccess(newSkillList -> {
+                        searchBar.setListToFilter(newSkillList);
+                        res.onInvoke(promiseUtils.resolve());
+                    }));
         });
     }
 

@@ -21,7 +21,7 @@ import org.jboss.errai.ui.shared.api.annotations.TranslationKey;
 public interface OptaWebUIConstants {
 
     @TranslationKey(
-                    defaultValue = "The server returned an empty result which is impossible.\nMaybe the server is using the wrong WildFly version.")
+            defaultValue = "The server returned an empty result which is impossible.\nMaybe the server is using the wrong WildFly version.")
     final String AbstractRosterViewPanel_emptyResult = "AbstractRosterViewPanel.emptyResult";
 
     @TranslationKey(defaultValue = "Finished solving")
@@ -131,5 +131,4 @@ public interface OptaWebUIConstants {
 
     @TranslationKey(defaultValue = "Day {1}")
     final String Rotation_dateHeader = "Rotation.dateHeader";
-
 }
