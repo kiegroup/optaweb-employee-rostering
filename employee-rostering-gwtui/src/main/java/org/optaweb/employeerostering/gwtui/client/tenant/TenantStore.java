@@ -101,7 +101,6 @@ public class TenantStore {
                 setCurrentTenant(tenantList.get(0));
                 tenantsReadyEvent.fire(new TenantsReady());
             }
-
         }));
     }
 }

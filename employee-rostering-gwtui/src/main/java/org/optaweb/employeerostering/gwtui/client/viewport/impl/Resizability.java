@@ -161,5 +161,4 @@ public class Resizability<T, M> {
     private static <T> T cast(Class<? extends T> clazz, Object obj) {
         return (T) obj;
     }
-
 }

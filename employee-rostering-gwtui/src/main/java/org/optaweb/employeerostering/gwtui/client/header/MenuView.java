@@ -178,5 +178,4 @@ public class MenuView implements IsElement {
     private boolean isDisabled(final HTMLElement element) {
         return element.getAttribute("data-is-disabled").equals("true");
     }
-
 }

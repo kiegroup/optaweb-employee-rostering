@@ -146,7 +146,6 @@ public abstract class RosterToolbar {
     @EventHandler("refresh-button")
     public void onRefreshButtonClick(@ForEvent("click") MouseEvent e) {
         eventManager.fireEvent(getViewInvalidateEvent());
-
     }
 
     @EventHandler("previous-page-button")
@@ -160,5 +159,4 @@ public abstract class RosterToolbar {
         pagenation = pagenation.nextPage();
         eventManager.fireEvent(getPageChangeEvent(), pagenation);
     }
-
 }

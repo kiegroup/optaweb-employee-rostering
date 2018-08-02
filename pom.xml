@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <!-- Use JBoss parent so all maven-plugins have a decent base version. -->
@@ -8,7 +8,7 @@
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
     <version>25</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>org.optaweb.employeerostering</groupId>
@@ -230,7 +230,7 @@
         <artifactId>resteasy-jackson-provider</artifactId>
         <version>${version.org.jboss.resteasy}</version>
       </dependency>
-      
+
       <dependency>
         <!-- TODO remove me, workaround for https://github.com/errai/errai/issues/256 -->
         <groupId>xerces</groupId>
@@ -259,14 +259,14 @@
       </dependency>
       <!-- Swagger -->
       <dependency>
-      	<groupId>io.swagger</groupId>
-      	<artifactId>swagger-jaxrs</artifactId>
-      	<version>${version.io.swagger}</version>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-jaxrs</artifactId>
+        <version>${version.io.swagger}</version>
       </dependency>
       <dependency>
-      	<groupId>io.swagger</groupId>
-      	<artifactId>swagger-annotations</artifactId>
-      	<version>${version.io.swagger}</version>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-annotations</artifactId>
+        <version>${version.io.swagger}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -316,9 +316,9 @@
               <skip>${antrun.skip}</skip>
               <target>
                 <symlink
-                  link="${wildfly.launchdir}/standalone/deployments/${deployment.name}.war"
-                  resource="${deployment.parent}/${deployment.name}"
-                  overwrite="true" />
+                    link="${wildfly.launchdir}/standalone/deployments/${deployment.name}.war"
+                    resource="${deployment.parent}/${deployment.name}"
+                    overwrite="true"/>
               </target>
             </configuration>
           </execution>
@@ -455,8 +455,8 @@
               <!-- Avoid crash "error code 137" on OpenShift -->
               <!--<localWorkers>1</localWorkers>-->
               <!--<jvmArgs>-->
-                <!--<arg>-Xmx1024m</arg>-->
-                <!--<arg>-Xss256k</arg>-->
+              <!--<arg>-Xmx1024m</arg>-->
+              <!--<arg>-Xss256k</arg>-->
               <!--</jvmArgs>-->
             </configuration>
           </plugin>

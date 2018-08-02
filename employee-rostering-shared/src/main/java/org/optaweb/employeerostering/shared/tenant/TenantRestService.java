@@ -76,6 +76,7 @@ public interface TenantRestService {
     // ************************************************************************
     // RosterParametrization
     // ************************************************************************
+
     /**
      * @param id never null
      * @return never null, the id
@@ -95,5 +96,4 @@ public interface TenantRestService {
     @GET
     @Path("/supported/timezones")
     List<ZoneId> getSupportedTimezones();
-
 }

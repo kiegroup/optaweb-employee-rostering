@@ -106,14 +106,14 @@ public class RotationPageViewportBuilder {
                             laneIdFilteredSet.add(toAdd.getSpotId());
                         }
                         laneMap.get(toAdd.getSpotId()).addOrUpdateGridObject(
-                                                                             ShiftTemplateModel.class, toAdd.getId(), () -> {
-                                                                                 ShiftTemplateModel out = shiftTemplateModelInstances.get();
-                                                                                 out.withShiftTemplateView(toAdd);
-                                                                                 return out;
-                                                                             }, (s) -> {
-                                                                                 s.withShiftTemplateView(toAdd);
-                                                                                 return null;
-                                                                             });
+                                ShiftTemplateModel.class, toAdd.getId(), () -> {
+                                    ShiftTemplateModel out = shiftTemplateModelInstances.get();
+                                    out.withShiftTemplateView(toAdd);
+                                    return out;
+                                }, (s) -> {
+                                    s.withShiftTemplateView(toAdd);
+                                    return null;
+                                });
                         workDone++;
                     }
 

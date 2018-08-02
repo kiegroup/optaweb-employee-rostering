@@ -46,7 +46,7 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
     @Transactional
     public List<Tenant> getTenantList() {
         return entityManager.createNamedQuery("Tenant.findAll", Tenant.class)
-                            .getResultList();
+                .getResultList();
     }
 
     @Override
@@ -92,7 +92,7 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
 
     private <T extends AbstractPersistable> void deleteAllEntitiesBelongingToTenantOfType(Integer tenantId, Class<T> type, String queryName) {
         List<T> entitiesBelongingToTenant = entityManager.createNamedQuery(queryName, type).setParameter("tenantId", tenantId)
-                                                         .getResultList();
+                .getResultList();
         for (T entity : entitiesBelongingToTenant) {
             entityManager.remove(entity);
         }
@@ -107,15 +107,14 @@ public class TenantRestServiceImpl extends AbstractRestServiceImpl implements Te
     @Override
     public RosterParametrization getRosterParametrization(Integer tenantId) {
         return entityManager.createNamedQuery("RosterParametrization.find", RosterParametrization.class)
-                            .setParameter("tenantId", tenantId)
-                            .getSingleResult();
+                .setParameter("tenantId", tenantId)
+                .getSingleResult();
     }
 
     @Override
     public List<ZoneId> getSupportedTimezones() {
         return ZoneId.getAvailableZoneIds().stream()
-                     .sorted().map(zoneId -> ZoneId.of(zoneId))
-                     .collect(Collectors.toList());
+                .sorted().map(zoneId -> ZoneId.of(zoneId))
+                .collect(Collectors.toList());
     }
-
 }

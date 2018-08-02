@@ -92,5 +92,4 @@ public class HeaderView implements IsElement {
         domUtils.removeAllElementChildren(container);
         container.appendChild(header);
     }
-
 }

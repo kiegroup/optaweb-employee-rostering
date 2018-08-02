@@ -108,7 +108,6 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
                 PromiseExecutorCallbackFn arg = invocation.getArgument(0);
                 return promise(arg);
             }
-
         });
         Mockito.doAnswer(new Answer<Void>() {
 
@@ -133,7 +132,6 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
                 });
             }
         }).when(builder).getShiftRosterView();
-
     }
 
     @Test
@@ -184,5 +182,4 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
             return null;
         });
     }
-
 }

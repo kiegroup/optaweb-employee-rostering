@@ -42,30 +42,30 @@ public class EventManager {
 
     public <T> void fireEvent(Event<T> event, T data) {
         MessageBuilder.createMessage()
-                      .toSubject(event.getEventName())
-                      .withValue(data)
-                      .noErrorHandling()
-                      .sendNowWith(ErraiBus.getDispatcher());
+                .toSubject(event.getEventName())
+                .withValue(data)
+                .noErrorHandling()
+                .sendNowWith(ErraiBus.getDispatcher());
     }
 
     public void fireEvent(Event<Void> event) {
         MessageBuilder.createMessage()
-                      .toSubject(event.getEventName())
-                      .noErrorHandling()
-                      .sendNowWith(ErraiBus.getDispatcher());
+                .toSubject(event.getEventName())
+                .noErrorHandling()
+                .sendNowWith(ErraiBus.getDispatcher());
     }
 
     public <T> void subscribeToEventForever(Event<T> event, Consumer<T> handler) {
         subscribeToEvent(event, new Handler<T>() {
 
             @Override
-            public void setupUnsubscribeListener(Subscription subscription) {}
+            public void setupUnsubscribeListener(Subscription subscription) {
+            }
 
             @Override
             public void handleEvent(T value) {
                 handler.accept(value);
             }
-
         });
     }
 
@@ -83,7 +83,6 @@ public class EventManager {
             public void handleEvent(T value) {
                 handler.accept(value);
             }
-
         });
     }
 
@@ -102,7 +101,6 @@ public class EventManager {
             public void handleEvent(T value) {
                 handler.accept(value);
             }
-
         });
     }
 

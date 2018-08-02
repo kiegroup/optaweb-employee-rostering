@@ -19,7 +19,8 @@ import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @Templated("#row")
-public class TenantTableRow implements TakesValue<Tenant>, IsElement {
+public class TenantTableRow implements TakesValue<Tenant>,
+                                       IsElement {
 
     private Tenant tenant;
 
@@ -52,5 +53,4 @@ public class TenantTableRow implements TakesValue<Tenant>, IsElement {
             eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Tenant.class);
         }));
     }
-
 }

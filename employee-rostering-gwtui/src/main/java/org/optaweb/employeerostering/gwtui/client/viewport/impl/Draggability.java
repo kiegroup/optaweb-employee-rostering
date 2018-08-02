@@ -45,7 +45,6 @@ public class Draggability<T, M> {
 
         makeDraggable(gridObject.getElement(),
                       "x");
-
     }
 
     private void makeDraggable(final HTMLElement blob,
@@ -133,5 +132,4 @@ public class Draggability<T, M> {
 
         void onEvent(Event event, UIEvent uiEvent);
     }
-
 }

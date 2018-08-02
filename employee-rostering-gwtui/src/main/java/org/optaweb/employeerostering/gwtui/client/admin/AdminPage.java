@@ -121,10 +121,10 @@ public class AdminPage implements Page {
     private Promise<Void> refresh() {
         return promiseUtils.promise((res, rej) -> {
             TenantRestServiceBuilder.getTenantList(FailureShownRestCallback
-                                                                           .onSuccess(newTenantList -> {
-                                                                               searchBar.setListToFilter(newTenantList);
-                                                                               res.onInvoke(promiseUtils.resolve());
-                                                                           }));
+                                                           .onSuccess(newTenantList -> {
+                                                               searchBar.setListToFilter(newTenantList);
+                                                               res.onInvoke(promiseUtils.resolve());
+                                                           }));
         });
     }
 

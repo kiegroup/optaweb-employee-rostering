@@ -81,16 +81,16 @@ public class EmployeeSubform extends TableRow<Employee> {
     @PostConstruct
     protected void initWidget() {
         employeeName.getElement().setAttribute("placeholder", translationService.format(
-                                                                                        OptaWebUIConstants.EmployeeListPanel_employeeName));
+                OptaWebUIConstants.EmployeeListPanel_employeeName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         updateSkillMap(skillConvertor.getSkillMap());
         dataBinder.bind(employeeName, "name");
         dataBinder.bind(employeeSkillProficiencySet, "skillProficiencySet", skillConvertor);
 
-        dataBinder.<String> addPropertyChangeHandler("name", (e) -> {
+        dataBinder.<String>addPropertyChangeHandler("name", (e) -> {
             employeeNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
         });
-        dataBinder.<Set<Skill>> addPropertyChangeHandler("skillProficiencySet", (e) -> {
+        dataBinder.<Set<Skill>>addPropertyChangeHandler("skillProficiencySet", (e) -> {
             employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(commonUtils.delimitCollection(e.getNewValue(),
                                                                                                                              (s) -> s.getName(), ", ")).toSafeHtml().asString();
         });

@@ -59,11 +59,11 @@ public class SkillSubform extends TableRow<Skill> implements TakesValue<Skill> {
     @PostConstruct
     protected void initWidget() {
         skillName.getElement().setAttribute("placeholder", translationService.format(
-                                                                                     OptaWebUIConstants.SkillListPanel_skillName));
+                OptaWebUIConstants.SkillListPanel_skillName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         dataBinder.bind(skillName, "name");
 
-        dataBinder.<String> addPropertyChangeHandler("name", (e) -> {
+        dataBinder.<String>addPropertyChangeHandler("name", (e) -> {
             skillNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
         });
     }
