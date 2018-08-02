@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -35,12 +36,14 @@ import org.optaweb.employeerostering.shared.spot.Spot;
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "ShiftTemplate.findAll",
-                           query = "select distinct sa from ShiftTemplate sa" +
-                                   " left join fetch sa.spot s" +
-                                   " left join fetch sa.rotationEmployee re" +
-                                   " where sa.tenantId = :tenantId" +
-                                   " order by sa.startDayOffset, sa.startTime, s.name, re.name"),
+        @NamedQuery(name = "ShiftTemplate.findAll",
+                query = "select distinct sa from ShiftTemplate sa" +
+                        " left join fetch sa.spot s" +
+                        " left join fetch sa.rotationEmployee re" +
+                        " where sa.tenantId = :tenantId" +
+                        " order by sa.startDayOffset, sa.startTime, s.name, re.name"),
+        @NamedQuery(name = "ShiftTemplate.deleteForTenant",
+                query = "delete from ShiftTemplate st where st.tenantId = :tenantId")
 })
 public class ShiftTemplate extends AbstractPersistable {
 
@@ -62,7 +65,8 @@ public class ShiftTemplate extends AbstractPersistable {
     private Employee rotationEmployee;
 
     @SuppressWarnings("unused")
-    public ShiftTemplate() {}
+    public ShiftTemplate() {
+    }
 
     public ShiftTemplate(Integer tenantId, Spot spot, int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime) {
         this(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, null);
@@ -88,18 +92,18 @@ public class ShiftTemplate extends AbstractPersistable {
                 .getDurationBetweenRotationStartAndTemplateStart()
                 .toDays());
         this.startTime = LocalTime.ofSecondOfDay(shiftTemplateView
-                .getDurationBetweenRotationStartAndTemplateStart()
-                .minusDays(startDayOffset)
-                .getSeconds());
+                                                         .getDurationBetweenRotationStartAndTemplateStart()
+                                                         .minusDays(startDayOffset)
+                                                         .getSeconds());
         int endDayAfterStartDay = ((int) (shiftTemplateView
                 .getDurationBetweenRotationStartAndTemplateStart()
                 .plus(shiftTemplateView.getShiftTemplateDuration())
                 .toDays()));
         this.endTime = LocalTime.ofSecondOfDay(shiftTemplateView
-                .getDurationBetweenRotationStartAndTemplateStart()
-                .plus(shiftTemplateView.getDurationOfTimeslot())
-                .minusDays(endDayAfterStartDay)
-                .getSeconds());
+                                                       .getDurationBetweenRotationStartAndTemplateStart()
+                                                       .plus(shiftTemplateView.getDurationOfTimeslot())
+                                                       .minusDays(endDayAfterStartDay)
+                                                       .getSeconds());
         this.endDayOffset = endDayAfterStartDay % rotationLength;
     }
 
@@ -176,5 +180,4 @@ public class ShiftTemplate extends AbstractPersistable {
     public void setRotationEmployee(Employee rotationEmployee) {
         this.rotationEmployee = rotationEmployee;
     }
-
 }

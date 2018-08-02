@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.shared.employee;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
@@ -35,10 +36,12 @@ import org.optaweb.employeerostering.shared.skill.Skill;
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "Employee.findAll",
-                           query = "select e from Employee e" +
-                                   " where e.tenantId = :tenantId" +
-                                   " order by LOWER(e.name)"),
+        @NamedQuery(name = "Employee.findAll",
+                query = "select e from Employee e" +
+                        " where e.tenantId = :tenantId" +
+                        " order by LOWER(e.name)"),
+        @NamedQuery(name = "Employee.deleteForTenant",
+                query = "delete from Employee e where e.tenantId = :tenantId")
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Employee extends AbstractPersistable {
@@ -53,7 +56,8 @@ public class Employee extends AbstractPersistable {
     private Set<Skill> skillProficiencySet;
 
     @SuppressWarnings("unused")
-    public Employee() {}
+    public Employee() {
+    }
 
     public Employee(Integer tenantId, String name) {
         super(tenantId);
@@ -108,5 +112,4 @@ public class Employee extends AbstractPersistable {
     public int hashCode() {
         return (31 * name.hashCode()) ^ skillProficiencySet.hashCode();
     }
-
 }

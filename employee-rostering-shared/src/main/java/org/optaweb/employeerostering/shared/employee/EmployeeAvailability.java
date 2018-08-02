@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.shared.employee;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -35,26 +36,28 @@ import org.optaweb.employeerostering.shared.employee.view.EmployeeAvailabilityVi
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "EmployeeAvailability.findAll",
-                           query = "select distinct ea from EmployeeAvailability ea" +
-                                   " left join fetch ea.employee e" +
-                                   " where ea.tenantId = :tenantId" +
-                                   " order by e.name, ea.startDateTime"),
-               @NamedQuery(name = "EmployeeAvailability.filter",
-                           query = "select distinct ea from EmployeeAvailability ea" +
-                                   " left join fetch ea.employee e" +
-                                   " where ea.tenantId = :tenantId" +
-                                   " and ea.endDateTime >= :startDateTime" +
-                                   " and ea.startDateTime < :endDateTime" +
-                                   " order by e.name, ea.startDateTime"),
-               @NamedQuery(name = "EmployeeAvailability.filterWithEmployee",
-                           query = "select distinct ea from EmployeeAvailability ea" +
-                                   " left join fetch ea.employee e" +
-                                   " where ea.tenantId = :tenantId" +
-                                   " and ea.employee IN :employeeSet" +
-                                   " and ea.endDateTime >= :startDateTime" +
-                                   " and ea.startDateTime < :endDateTime" +
-                                   " order by e.name, ea.startDateTime")
+        @NamedQuery(name = "EmployeeAvailability.findAll",
+                query = "select distinct ea from EmployeeAvailability ea" +
+                        " left join fetch ea.employee e" +
+                        " where ea.tenantId = :tenantId" +
+                        " order by e.name, ea.startDateTime"),
+        @NamedQuery(name = "EmployeeAvailability.deleteForTenant",
+                query = "delete from EmployeeAvailability ea where ea.tenantId = :tenantId"),
+        @NamedQuery(name = "EmployeeAvailability.filter",
+                query = "select distinct ea from EmployeeAvailability ea" +
+                        " left join fetch ea.employee e" +
+                        " where ea.tenantId = :tenantId" +
+                        " and ea.endDateTime >= :startDateTime" +
+                        " and ea.startDateTime < :endDateTime" +
+                        " order by e.name, ea.startDateTime"),
+        @NamedQuery(name = "EmployeeAvailability.filterWithEmployee",
+                query = "select distinct ea from EmployeeAvailability ea" +
+                        " left join fetch ea.employee e" +
+                        " where ea.tenantId = :tenantId" +
+                        " and ea.employee IN :employeeSet" +
+                        " and ea.endDateTime >= :startDateTime" +
+                        " and ea.startDateTime < :endDateTime" +
+                        " order by e.name, ea.startDateTime")
 })
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "employee_id", "startDateTime", "endDateTime"}))
 public class EmployeeAvailability extends AbstractPersistable {
@@ -72,7 +75,8 @@ public class EmployeeAvailability extends AbstractPersistable {
     private EmployeeAvailabilityState state;
 
     @SuppressWarnings("unused")
-    public EmployeeAvailability() {}
+    public EmployeeAvailability() {
+    }
 
     public EmployeeAvailability(Integer tenantId, Employee employee, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         super(tenantId);
@@ -141,5 +145,4 @@ public class EmployeeAvailability extends AbstractPersistable {
     public void setState(EmployeeAvailabilityState state) {
         this.state = state;
     }
-
 }

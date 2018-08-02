@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.shared.shift;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -34,42 +35,44 @@ import org.optaweb.employeerostering.shared.spot.Spot;
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "Shift.findAll",
-                           query = "select distinct sa from Shift sa" +
-                                   " left join fetch sa.spot s" +
-                                   " left join fetch sa.rotationEmployee re" +
-                                   " left join fetch sa.employee e" +
-                                   " where sa.tenantId = :tenantId" +
-                                   " order by sa.startDateTime, s.name, e.name"),
-               @NamedQuery(name = "Shift.filter",
-                           query = "select distinct sa from Shift sa" +
-                                   " left join fetch sa.spot s" +
-                                   " left join fetch sa.rotationEmployee re" +
-                                   " left join fetch sa.employee e" +
-                                   " where sa.tenantId = :tenantId" +
-                                   " and sa.endDateTime >= :startDateTime" +
-                                   " and sa.startDateTime < :endDateTime" +
-                                   " order by sa.startDateTime, s.name, e.name"),
-               @NamedQuery(name = "Shift.filterWithEmployees",
-                           query = "select distinct sa from Shift sa" +
-                                   " left join fetch sa.spot s" +
-                                   " left join fetch sa.rotationEmployee re" +
-                                   " left join fetch sa.employee e" +
-                                   " where sa.tenantId = :tenantId" +
-                                   " and sa.employee IN :employeeSet" +
-                                   " and sa.endDateTime >= :startDateTime" +
-                                   " and sa.startDateTime < :endDateTime" +
-                                   " order by sa.startDateTime, s.name, e.name"),
-               @NamedQuery(name = "Shift.filterWithSpots",
-                           query = "select distinct sa from Shift sa" +
-                                   " left join fetch sa.spot s" +
-                                   " left join fetch sa.rotationEmployee re" +
-                                   " left join fetch sa.employee e" +
-                                   " where sa.tenantId = :tenantId" +
-                                   " and sa.spot IN :spotSet" +
-                                   " and sa.endDateTime >= :startDateTime" +
-                                   " and sa.startDateTime < :endDateTime" +
-                                   " order by sa.startDateTime, s.name, e.name")
+        @NamedQuery(name = "Shift.findAll",
+                query = "select distinct sa from Shift sa" +
+                        " left join fetch sa.spot s" +
+                        " left join fetch sa.rotationEmployee re" +
+                        " left join fetch sa.employee e" +
+                        " where sa.tenantId = :tenantId" +
+                        " order by sa.startDateTime, s.name, e.name"),
+        @NamedQuery(name = "Shift.deleteForTenant",
+                query = "delete from Shift s where s.tenantId = :tenantId"),
+        @NamedQuery(name = "Shift.filter",
+                query = "select distinct sa from Shift sa" +
+                        " left join fetch sa.spot s" +
+                        " left join fetch sa.rotationEmployee re" +
+                        " left join fetch sa.employee e" +
+                        " where sa.tenantId = :tenantId" +
+                        " and sa.endDateTime >= :startDateTime" +
+                        " and sa.startDateTime < :endDateTime" +
+                        " order by sa.startDateTime, s.name, e.name"),
+        @NamedQuery(name = "Shift.filterWithEmployees",
+                query = "select distinct sa from Shift sa" +
+                        " left join fetch sa.spot s" +
+                        " left join fetch sa.rotationEmployee re" +
+                        " left join fetch sa.employee e" +
+                        " where sa.tenantId = :tenantId" +
+                        " and sa.employee IN :employeeSet" +
+                        " and sa.endDateTime >= :startDateTime" +
+                        " and sa.startDateTime < :endDateTime" +
+                        " order by sa.startDateTime, s.name, e.name"),
+        @NamedQuery(name = "Shift.filterWithSpots",
+                query = "select distinct sa from Shift sa" +
+                        " left join fetch sa.spot s" +
+                        " left join fetch sa.rotationEmployee re" +
+                        " left join fetch sa.employee e" +
+                        " where sa.tenantId = :tenantId" +
+                        " and sa.spot IN :spotSet" +
+                        " and sa.endDateTime >= :startDateTime" +
+                        " and sa.startDateTime < :endDateTime" +
+                        " order by sa.startDateTime, s.name, e.name")
 })
 @PlanningEntity(movableEntitySelectionFilter = MovableShiftFilter.class)
 public class Shift extends AbstractPersistable {
@@ -93,7 +96,8 @@ public class Shift extends AbstractPersistable {
     private Employee employee = null;
 
     @SuppressWarnings("unused")
-    public Shift() {}
+    public Shift() {
+    }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime) {
         this(tenantId, spot, startDateTime, endDateTime, null);
@@ -114,9 +118,9 @@ public class Shift extends AbstractPersistable {
     public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee) {
         super(shiftView);
         this.startDateTime = OffsetDateTime.of(shiftView.getStartDateTime(),
-                zoneId.getRules().getOffset(shiftView.getStartDateTime()));
+                                               zoneId.getRules().getOffset(shiftView.getStartDateTime()));
         this.endDateTime = OffsetDateTime.of(shiftView.getEndDateTime(),
-                zoneId.getRules().getOffset(shiftView.getEndDateTime()));
+                                             zoneId.getRules().getOffset(shiftView.getEndDateTime()));
         this.spot = spot;
         this.pinnedByUser = shiftView.isPinnedByUser();
         this.rotationEmployee = rotationEmployee;
@@ -178,5 +182,4 @@ public class Shift extends AbstractPersistable {
     public void setRotationEmployee(Employee rotationEmployee) {
         this.rotationEmployee = rotationEmployee;
     }
-
 }

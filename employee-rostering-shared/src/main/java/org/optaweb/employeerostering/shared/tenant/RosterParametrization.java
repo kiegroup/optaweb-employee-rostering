@@ -25,9 +25,11 @@ import org.optaweb.employeerostering.shared.common.AbstractPersistable;
 
 @Entity
 @NamedQueries({
-               @NamedQuery(name = "RosterParametrization.find",
-                           query = "select distinct rp from RosterParametrization rp" +
-                                   " where rp.tenantId = :tenantId")
+        @NamedQuery(name = "RosterParametrization.find",
+                query = "select distinct rp from RosterParametrization rp" +
+                        " where rp.tenantId = :tenantId"),
+        @NamedQuery(name = "RosterParametrization.deleteForTenant",
+                query = "delete from RosterParametrization rp where rp.tenantId = :tenantId")
 })
 public class RosterParametrization extends AbstractPersistable {
 
@@ -76,5 +78,4 @@ public class RosterParametrization extends AbstractPersistable {
     public void setRotationEmployeeMatchWeight(Integer rotationEmployeeMatchWeight) {
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
     }
-
 }
