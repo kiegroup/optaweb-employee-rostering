@@ -17,15 +17,20 @@
 package org.optaweb.employeerostering.gwtui.client.viewport.shiftroster;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.util.CommonUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
@@ -33,9 +38,11 @@ import org.optaweb.employeerostering.gwtui.client.viewport.grid.SingleGridObject
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.AbstractHasTimeslotGridObject;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.Draggability;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.Resizability;
+import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaweb.employeerostering.shared.common.HasTimeslot;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.roster.RosterState;
+import org.optaweb.employeerostering.shared.shift.Shift;
 import org.optaweb.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 import org.optaweb.employeerostering.shared.spot.Spot;
@@ -48,7 +55,9 @@ import org.optaweb.employeerostering.shared.violation.UnavailableEmployeeViolati
 import org.optaweb.employeerostering.shared.violation.UndesiredTimeslotForEmployeePenalty;
 
 @Templated
-public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMetadata> implements SingleGridObject<LocalDateTime, ShiftRosterMetadata> {
+public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMetadata>
+        implements
+        SingleGridObject<LocalDateTime, ShiftRosterMetadata> {
 
     @Inject
     @DataField("label")
@@ -99,8 +108,7 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMe
         if (getLane() != null) {
             getLane().positionGridObject(this);
             label.innerHTML = (shiftView.getEmployeeId() == null) ? "Unassigned" : getLane().getMetadata()
-                                                                                            .getEmployeeIdToEmployeeMap().get(shiftView.getEmployeeId()).getName();
-            setClassProperty("pinned", shiftView.isPinnedByUser());
+                    .getEmployeeIdToEmployeeMap().get(shiftView.getEmployeeId()).getName();
             setClassProperty("unassigned", shiftView.getEmployeeId() == null);
             RosterState rosterState = getLane().getMetadata().getRosterState();
             setClassProperty("historic", rosterState.isHistoric(shiftView));
@@ -108,76 +116,133 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMe
             setClassProperty("draft", rosterState.isDraft(shiftView));
 
             indictmentIcons.clear();
+            if (shiftView.isPinnedByUser()) {
+                indictmentIcons.add(IconContainer.Icon.PINNED, "The employee " + getEmployee().getName() + " is pinned to this shift");
+            }
+
+            setClassProperty("score", shiftView.getIndictmentScore() != null);
             if (shiftView.getIndictmentScore() != null) { // can be null iff shift view was added manually
-                getElement().title = "Score is " + shiftView.getIndictmentScore();
+                updateColor(shiftView.getIndictmentScore());
+                getElement().title = "Score is " + shiftView.getIndictmentScore().toShortString();
                 for (RequiredSkillViolation violation : shiftView.getRequiredSkillViolationList()) {
                     // Note: Unassigned shif
                     indictmentIcons.add(IconContainer.Icon.REQUIRED_SKILL_VIOLATION, "Employee " + violation.getShift().getEmployee().getName() +
-                                                                                     " does not have the following skills required for " +
-                                                                                     violation.getShift().getSpot().getName() + ": " +
-                                                                                     commonUtils.delimitCollection(violation.getShift()
-                                                                                                                            .getSpot()
-                                                                                                                            .getRequiredSkillSet()
-                                                                                                                            .stream()
-                                                                                                                            .filter(s -> !violation.getShift()
-                                                                                                                                                   .getEmployee()
-                                                                                                                                                   .getSkillProficiencySet()
-                                                                                                                                                   .contains(s))
-                                                                                                                            .collect(Collectors.toList()),
-                                                                                                                   s -> s.getName(),
-                                                                                                                   ",") + " (Score: " + violation.getScore() + ").");
+                            " does not have the following skills required for " +
+                            violation.getShift().getSpot().getName() + ": " +
+                            commonUtils.delimitCollection(violation.getShift()
+                                                                  .getSpot()
+                                                                  .getRequiredSkillSet()
+                                                                  .stream()
+                                                                  .filter(s -> !violation.getShift()
+                                                                          .getEmployee()
+                                                                          .getSkillProficiencySet()
+                                                                          .contains(s))
+                                                                  .collect(Collectors.toList()),
+                                                          s -> s.getName(),
+                                                          ",") + " (Score: " + violation.getScore().toShortString() + ").");
                 }
 
                 for (UnavailableEmployeeViolation violation : shiftView.getUnavailableEmployeeViolationList()) {
                     indictmentIcons.add(IconContainer.Icon.UNAVAILABLE_EMPLOYEE_VIOLATION, "Employee " + violation.getShift().getEmployee().getName() +
-                                                                                           " is not avaliable from " +
-                                                                                           violation.getEmployeeAvailability().getStartDateTime() + " to " +
-                                                                                           violation.getEmployeeAvailability().getEndDateTime() + " (Score: " + violation.getScore() + ").");
+                            " is not avaliable from " +
+                            getNiceString(violation.getEmployeeAvailability().getStartDateTime()) + " to " +
+                            getNiceString(violation.getEmployeeAvailability().getEndDateTime()) + " (Score: " + violation
+                            .getScore()
+                            .toShortString() +
+                            ").");
                 }
 
                 for (ShiftEmployeeConflict conflict : shiftView.getShiftEmployeeConflictList()) {
                     if (!conflict.getLeftShift().getId().equals(shiftView.getId())) {
                         indictmentIcons.add(IconContainer.Icon.SHIFT_EMPLOYEE_CONFLICT, "Employee " + conflict.getLeftShift().getEmployee().getName() +
-                                                                                        " has a later shift that conflicts with this one: " +
-                                                                                        conflict.getRightShift() + " (Score: " + conflict.getScore() + ").");
+                                " has a later shift that conflicts with this one: " +
+                                getNiceString(conflict.getRightShift()) + " (Score: " + conflict.getScore().toShortString() + ").");
                     } else {
                         indictmentIcons.add(IconContainer.Icon.SHIFT_EMPLOYEE_CONFLICT, "Employee " + conflict.getRightShift().getEmployee().getName() +
-                                                                                        " has a eariler shift that conflicts with this one: " +
-                                                                                        conflict.getLeftShift() + " (Score: " + conflict.getScore() + ").");
+                                " has a eariler shift that conflicts with this one: " +
+                                getNiceString(conflict.getLeftShift()) + " (Score: " + conflict.getScore().toShortString() + ").");
                     }
-
                 }
 
                 for (DesiredTimeslotForEmployeeReward reward : shiftView.getDesiredTimeslotForEmployeeRewardList()) {
                     indictmentIcons.add(IconContainer.Icon.DESIRED_TIMESLOT_FOR_EMPLOYEE_REWARD, "Employee " + reward.getShift().getEmployee().getName() +
-                                                                                                 " want to work from " +
-                                                                                                 reward.getEmployeeAvailability().getStartDateTime() + " to " +
-                                                                                                 reward.getEmployeeAvailability().getEndDateTime() + " (Score: " + reward.getScore() + ").");
+                            " want to work from " +
+                            getNiceString(reward.getEmployeeAvailability().getStartDateTime()) + " to " +
+                            getNiceString(reward.getEmployeeAvailability().getEndDateTime()) + " (Score: " + reward.getScore().toShortString() + ").");
                 }
 
                 for (UndesiredTimeslotForEmployeePenalty penalty : shiftView.getUndesiredTimeslotForEmployeePenaltyList()) {
                     indictmentIcons.add(IconContainer.Icon.UNDESIRED_TIMESLOT_FOR_EMPLOYEE_PENALTY, "Employee " + penalty.getShift().getEmployee().getName() +
-                                                                                                    " does not want to work from " +
-                                                                                                    penalty.getEmployeeAvailability().getStartDateTime() + " to " +
-                                                                                                    penalty.getEmployeeAvailability().getEndDateTime() + " (Score: " + penalty.getScore() + ").");
+                            " does not want to work from " +
+                            getNiceString(penalty.getEmployeeAvailability().getStartDateTime()) + " to " +
+                            getNiceString(penalty.getEmployeeAvailability().getEndDateTime()) + " (Score: " + penalty.getScore().toShortString() +
+                            ").");
                 }
 
                 for (RotationViolationPenalty penalty : shiftView.getRotationViolationPenaltyList()) {
                     if (penalty.getShift().getEmployee() != null) {
                         indictmentIcons.add(IconContainer.Icon.ROTATION_VIOLATION_PENALTY, "Employee " + penalty.getShift().getEmployee().getName() +
-                                                                                           " does not match Rotation Employee (" +
-                                                                                           penalty.getShift().getRotationEmployee().getName() + ") (Score: " + penalty.getScore() + ").");
+                                " does not match Rotation Employee (" +
+                                penalty.getShift().getRotationEmployee().getName() + ") (Score: " + penalty.getScore().toShortString() + ").");
                     } else {
                         indictmentIcons.add(IconContainer.Icon.ROTATION_VIOLATION_PENALTY, "Shift is unassigned although it has a Rotation Employee (" +
-                                                                                           penalty.getShift().getRotationEmployee().getName() + ") (Score: " + penalty.getScore() + ").");
+                                penalty.getShift().getRotationEmployee().getName() + ") (Score: " + penalty.getScore().toShortString() + ").");
                     }
                 }
-                
+
                 for (UnassignedShiftPenalty penalty : shiftView.getUnassignedShiftPenaltyList()) {
-                    indictmentIcons.add(IconContainer.Icon.UNASSIGNED_SHIFT_PENALTY, "Shift is unassigned (Score: " + penalty.getScore() + ").");
+                    indictmentIcons.add(IconContainer.Icon.UNASSIGNED_SHIFT_PENALTY, "Shift is unassigned (Score: " + penalty.getScore().toShortString() + ").");
                 }
             }
         }
+    }
+
+    private String getNiceString(Shift shift) {
+        return shift.getSpot().getName() + ":" + getNiceString(shift.getStartDateTime()) + " to " + getNiceString(shift.getEndDateTime());
+    }
+
+    private String getNiceString(OffsetDateTime dateTime) {
+        DateTimeFormat timeFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_SHORT);
+        return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(GwtJavaTimeWorkaroundUtil.toLocalDateTime(dateTime)));
+    }
+
+    private void updateColor(HardMediumSoftLongScore score) {
+        if (score.getHardScore() < 0) {
+            setAnimationDelay(mapToRange(-score.getHardScore(), 5, 0, 10));
+        } else if (score.getHardScore() > 0) {
+            setAnimationDelay(mapToRange(score.getHardScore(), 85, 100, 10));
+        } else if (score.getMediumScore() < 0) {
+            setAnimationDelay(mapToRange(-score.getMediumScore(), 30, 15, 1));
+        } else if (score.getMediumScore() > 0) {
+            setAnimationDelay(mapToRange(score.getMediumScore(), 70, 85, 10));
+        } else if (score.getSoftScore() < 0) {
+            setAnimationDelay(mapToRange(-score.getSoftScore(), 50, 30, 100));
+        } else if (score.getSoftScore() > 0) {
+            setAnimationDelay(mapToRange(score.getSoftScore(), 50, 70, 30));
+        } else {
+            setAnimationDelay(50);
+        }
+    }
+
+    // NOTE: if amount == 0, then it returns start
+    //       if amount >= maxAmount, then it returns end
+    //       else it returns start + amount * ((end - start)/maxAmount)
+    private double mapToRange(double amount, double start, double end, double maxAmount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("amount (" + amount + ") must be non-negative.");
+        }
+        if (maxAmount <= 0) {
+            throw new IllegalArgumentException("maxAmount (" + maxAmount + ") must be positive.");
+        }
+        return start + (end - start) * Math.min(maxAmount, amount) / maxAmount;
+    }
+
+    private void setAnimationDelay(double animationDelay) {
+        // Due to CSS not allowing you to set animation-frame or something similar, we set
+        // it to an NEGATIVE animation-delay with the animation being paused, so it will
+        // begin that much ahead in the animation (so we are effectively setting the frame).
+        // animation-duration should be 100s
+        getElement().style.set("animation-delay", "-" + animationDelay + "s");
     }
 
     @Override
