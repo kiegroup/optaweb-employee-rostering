@@ -44,7 +44,9 @@ import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaweb.employeerostering.shared.employee.view.EmployeeAvailabilityView;
 
 @Templated
-public class AvailabilityGridObjectPopup implements IsElement {
+public class AvailabilityGridObjectPopup
+        implements
+        IsElement {
 
     @Inject
     @DataField("root")
@@ -112,10 +114,6 @@ public class AvailabilityGridObjectPopup implements IsElement {
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
             employeeSelect.setSelectedIndex(employees.indexOf(availabilityGridObject.getEmployee()) + 1);
         }));
-
-        Arrays.asList(EmployeeAvailabilityState.values()).forEach((e) -> {
-            availabilitySelect.addItem(e.toString());
-        });
 
         availabilitySelect.addItem(translationService.format(OptaWebUIConstants.EmployeeAvailabilityState_DESIRED));
         availabilitySelect.addItem(translationService.format(OptaWebUIConstants.EmployeeAvailabilityState_UNDESIRED));

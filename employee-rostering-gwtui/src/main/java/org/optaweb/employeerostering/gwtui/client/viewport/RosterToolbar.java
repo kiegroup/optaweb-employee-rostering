@@ -26,6 +26,7 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
@@ -34,6 +35,7 @@ import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaweb.employeerostering.gwtui.client.common.LocalWeekDatePicker;
+import org.optaweb.employeerostering.gwtui.client.resources.i18n.OptaWebUIConstants;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.roster.Pagination;
 import org.optaweb.employeerostering.shared.roster.view.AbstractRosterView;
@@ -90,6 +92,9 @@ public abstract class RosterToolbar {
     @Inject
     protected EventManager eventManager;
 
+    @Inject
+    protected TranslationService translationService;
+
     protected Pagination pagenation;
 
     protected int timeRemaining;
@@ -105,19 +110,19 @@ public abstract class RosterToolbar {
     @PostConstruct
     private void init() {
         pagenation = Pagination.of(0, 10);
-        remainingTime.classList.add("hidden");
+        ((HTMLElement) remainingTime.parentNode).classList.add("hidden");
 
         eventManager.subscribeToEventForever(getViewRefreshEvent(), (view) -> {
             onViewRefresh(view);
         });
         eventManager.subscribeToEventForever(SOLVE_TIME_UPDATE, (timeRemaining) -> {
-            remainingTime.innerHTML = timeRemaining + "s";
+            remainingTime.innerHTML = translationService.format(OptaWebUIConstants.Solver_secondsRemaining, timeRemaining);
         });
         eventManager.subscribeToEventForever(SOLVE_START, (v) -> {
-            remainingTime.classList.remove("hidden");
+            ((HTMLElement) remainingTime.parentNode).classList.remove("hidden");
         });
         eventManager.subscribeToEventForever(SOLVE_END, (v) -> {
-            remainingTime.classList.add("hidden");
+            ((HTMLElement) remainingTime.parentNode).classList.add("hidden");
         });
         eventManager.subscribeToEventForever(getPageChangeEvent(), (pagenation) -> {
             this.pagenation = pagenation;
@@ -135,9 +140,9 @@ public abstract class RosterToolbar {
 
         if (score.isPresent()) {
             scores.classList.remove("hidden");
-            hardScore.textContent = score.get().getHardScore() + "";
-            mediumScore.textContent = score.get().getMediumScore() + "";
-            softScore.textContent = score.get().getSoftScore() + "";
+            hardScore.textContent = translationService.format(OptaWebUIConstants.Indictment_hardScore, score.get().getHardScore());
+            mediumScore.textContent = translationService.format(OptaWebUIConstants.Indictment_mediumScore, score.get().getMediumScore());
+            softScore.textContent = translationService.format(OptaWebUIConstants.Indictment_softScore, score.get().getSoftScore());
         } else {
             scores.classList.add("hidden");
         }

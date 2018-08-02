@@ -93,6 +93,15 @@ public interface OptaWebUIConstants {
     @TranslationKey(defaultValue = "Skills")
     final String General_skills = "General.skills";
 
+    @TranslationKey(defaultValue = "Hard Score: {0}")
+    final String Indictment_hardScore = "Indictment.hardScore";
+
+    @TranslationKey(defaultValue = "Medium Score: {0}")
+    final String Indictment_mediumScore = "Indictment.mediumScore";
+
+    @TranslationKey(defaultValue = "Soft Score: {0}")
+    final String Indictment_softScore = "Indictment.softScore";
+
     @TranslationKey(defaultValue = "Availability Roster")
     final String MenuPanel_availabilityRoster = "MenuPanel.availabilityRoster";
 
@@ -123,12 +132,15 @@ public interface OptaWebUIConstants {
     @TranslationKey(defaultValue = "Skill name")
     final String SkillListPanel_skillName = "SkillListPanel.skillName";
 
+    @TranslationKey(defaultValue = "Time remaining: {0} seconds")
+    final String Solver_secondsRemaining = "Solver.secondsRemaining";
+
     @TranslationKey(defaultValue = "Required skill")
     final String SpotListPanel_requiredSkill = "SpotListPanel.requiredSkill";
 
     @TranslationKey(defaultValue = "Spot name")
     final String SpotListPanel_spotName = "SpotListPanel.spotName";
 
-    @TranslationKey(defaultValue = "Day {1}")
+    @TranslationKey(defaultValue = "Day {0}")
     final String Rotation_dateHeader = "Rotation.dateHeader";
 }
