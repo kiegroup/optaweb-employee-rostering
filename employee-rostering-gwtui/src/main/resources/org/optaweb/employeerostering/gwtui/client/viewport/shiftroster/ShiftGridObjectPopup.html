@@ -19,7 +19,7 @@
 <div class="root panel panel-default blob-popover-content">
 
     <div class="panel-heading">
-        Edit shift
+        <span data-i18n-key="ShiftGridObjectPopup.editShift"></span>
         <button data-field="close-button" type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -30,28 +30,28 @@
             <form class="form">
                 <div class="row form-group">
                     <div class="col-md-6">
-                        <label>From</label>
+                        <label data-i18n-key="General.from"></label>
                         <div data-field="from"></div>
                     </div>
                 </div>
 
                 <div class="row form-group">
                     <div class="col-md-6">
-                        <label>To</label>
+                        <label data-i18n-key="General.to"></label>
                         <div data-field="to"></div>
                     </div>
                 </div>
 
                 <div class="row form-group">
                     <div class="col-md-12">
-                        <label>Spot</label>
+                        <label data-i18n-key="General.spot"></label>
                         <select class="form-control" data-field="spot" disabled></select>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-md-12">
-                        <label>Employee</label>
+                        <label data-i18n-key="General.employee"></label>
                         <select class="form-control" data-field="employee"></select>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
                     <div class="col-md-12">
                         <div class="checkbox">
                             <label>
-                                <input data-field="pinned" type="checkbox"> Pinned
+                                <input data-field="pinned" type="checkbox"><span data-i18n-key="Shift.pinned"></span>
                             </label>
                         </div>
                     </div>
@@ -70,11 +70,11 @@
 
                 <div class="form-group row last-form-group-row">
                     <div class="col-md-6 text-left">
-                        <button type="button" class="btn btn-link" data-field="delete-button">Delete shift</button>
+                        <button type="button" class="btn btn-link" data-field="delete-button" data-i18n-key="ShiftGridObjectPopup.deleteShift"></button>
                     </div>
                     <div class="col-md-6 text-right">
-                        <button type="button" class="btn btn-default" data-field="cancel-button">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-field="apply-button">Apply</button>
+                        <button type="button" class="btn btn-default" data-field="cancel-button" data-i18n-key="General.cancel"></button>
+                        <button type="button" class="btn btn-primary" data-field="apply-button" data-i18n-key="General.apply"></button>
                     </div>
                 </div>
             </form>
