@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.HashSet;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.ValidationException;
@@ -33,7 +34,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.TakesValue;
 import elemental2.core.Date;
 import elemental2.dom.Event;
-import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -43,7 +44,10 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 
 @Templated
-public class LocalWeekDatePicker implements TakesValue<LocalDate>, HasValueChangeHandlers<LocalDate> {
+public class LocalWeekDatePicker
+        implements
+        TakesValue<LocalDate>,
+        HasValueChangeHandlers<LocalDate> {
 
     @Inject
     @DataField("date-picker")
@@ -51,11 +55,11 @@ public class LocalWeekDatePicker implements TakesValue<LocalDate>, HasValueChang
 
     @Inject
     @DataField("previous-week-button")
-    private HTMLButtonElement previousWeekButton;
+    private HTMLAnchorElement previousWeekButton;
 
     @Inject
     @DataField("next-week-button")
-    private HTMLButtonElement nextWeekButton;
+    private HTMLAnchorElement nextWeekButton;
 
     private Collection<ValueChangeHandler<LocalDate>> valueChangeHandlers;
 

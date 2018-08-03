@@ -16,11 +16,13 @@
 }
 
 .time-tick {
-     text-indent: -1.25em;
-     font-size: 0.8em;
-     opacity: 0.7;
-     transform-origin: left;
-     height: 40px;
-     transform: translateX(2em) translateY(6px) rotate(-60deg);
-     grid-row: 2;
+    text-indent: -1.25em;
+    font-size: 0.8em;
+    transform-origin: left;
+    opacity: 0.7;
+    padding-top: 100%;
+    overflow: visible;
+    white-space: nowrap;
+    transform: translateX(-10px) rotateZ(-60deg);
+    grid-row: 2;
 }

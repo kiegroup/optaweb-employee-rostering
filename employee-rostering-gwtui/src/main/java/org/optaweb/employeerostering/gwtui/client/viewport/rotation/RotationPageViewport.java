@@ -31,8 +31,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -42,6 +40,7 @@ import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbac
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.OptaWebUIConstants;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.DateTimeViewport;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.HasGridObjects;
@@ -49,7 +48,6 @@ import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane.DummySublane;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.LinearScale;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.DynamicScale;
-import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaweb.employeerostering.shared.common.HasTimeslot;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.rotation.view.RotationView;
@@ -60,7 +58,9 @@ import org.optaweb.employeerostering.shared.spot.Spot;
 import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.ROTATION_SAVE;
 
 @Templated
-public class RotationPageViewport extends DateTimeViewport<RotationView, RotationMetadata> implements IsElement {
+public class RotationPageViewport extends DateTimeViewport<RotationView, RotationMetadata>
+        implements
+        IsElement {
 
     @Inject
     private RotationPageViewportBuilder viewportBuilder;
@@ -74,6 +74,8 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     private PromiseUtils promiseUtils;
     @Inject
     private TranslationService translationService;
+    @Inject
+    private DateTimeUtils dateTimeUtils;
 
     private Map<Long, Spot> spotIdToSpotMap;
     private Map<Long, Employee> employeeIdToEmployeeMap;
@@ -135,12 +137,8 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
 
     @Override
     protected Function<LocalDateTime, String> getTimeHeaderFunction() {
-        DateTimeFormat timeFormat = DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT);
         return (date) -> {
-            if (date.getHour() == 0) {
-                return "";
-            }
-            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
+            return dateTimeUtils.translateLocalTime(date.toLocalTime());
         };
     }
 

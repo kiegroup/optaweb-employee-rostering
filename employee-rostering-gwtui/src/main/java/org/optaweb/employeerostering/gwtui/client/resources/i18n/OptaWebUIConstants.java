@@ -143,4 +143,10 @@ public interface OptaWebUIConstants {
 
     @TranslationKey(defaultValue = "Day {0}")
     final String Rotation_dateHeader = "Rotation.dateHeader";
+
+    @TranslationKey(defaultValue = "EEE, MMM d, yyyy")
+    final String LocalDate_format = "LocalDate.format";
+
+    @TranslationKey(defaultValue = "h:mm a")
+    final String LocalTime_format = "LocalTime.format";
 }

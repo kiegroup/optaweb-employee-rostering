@@ -25,25 +25,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
+import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.DateTimeViewport;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.HasGridObjects;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane.DummySublane;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.LinearScale;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.DynamicScale;
-import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.roster.RosterState;
 import org.optaweb.employeerostering.shared.roster.view.ShiftRosterView;
@@ -51,15 +50,19 @@ import org.optaweb.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 import org.optaweb.employeerostering.shared.spot.Spot;
 
-import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.*;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
 
 @Templated
-public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, ShiftRosterMetadata> implements IsElement {
+public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, ShiftRosterMetadata>
+        implements
+        IsElement {
 
     @Inject
     private ShiftRosterPageViewportBuilder viewportBuilder;
     @Inject
     private ManagedInstance<ShiftGridObject> shiftGridObjectInstances;
+    @Inject
+    private DateTimeUtils dateTimeUtils;
     @Inject
     private EventManager eventManager;
 
@@ -124,18 +127,15 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
 
     @Override
     protected Function<LocalDateTime, String> getDateHeaderFunction() {
-        DateTimeFormat dateFormat = DateTimeFormat.getFormat(PredefinedFormat.DATE_FULL);
-        return (date) -> dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
+        return (date) -> {
+            return dateTimeUtils.translateLocalDate(date.toLocalDate());
+        };
     }
 
     @Override
     protected Function<LocalDateTime, String> getTimeHeaderFunction() {
-        DateTimeFormat timeFormat = DateTimeFormat.getFormat(PredefinedFormat.TIME_SHORT);
         return (date) -> {
-            if (date.getHour() == 0) {
-                return "";
-            }
-            return timeFormat.format(GwtJavaTimeWorkaroundUtil.toDate(date));
+            return dateTimeUtils.translateLocalTime(date.toLocalTime());
         };
     }
 
@@ -163,5 +163,4 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
     protected List<Long> getLaneOrder(ShiftRosterView view) {
         return view.getSpotList().stream().map(s -> s.getId()).collect(Collectors.toList());
     }
-
 }

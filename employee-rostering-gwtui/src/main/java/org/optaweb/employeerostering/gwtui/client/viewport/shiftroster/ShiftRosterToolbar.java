@@ -34,11 +34,21 @@ import org.optaweb.employeerostering.gwtui.client.viewport.RosterToolbar;
 import org.optaweb.employeerostering.shared.roster.Pagination;
 import org.optaweb.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaweb.employeerostering.shared.roster.view.ShiftRosterView;
+import org.optaweb.employeerostering.shared.spot.Spot;
+import org.optaweb.employeerostering.shared.spot.SpotRestServiceBuilder;
 
-import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.*;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_DATE_RANGE;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_PAGINATION;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_UPDATE;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_END;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_START;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SOLVE_TIME_UPDATE;
 
 @Templated
-public class ShiftRosterToolbar extends RosterToolbar implements IsElement {
+public class ShiftRosterToolbar extends RosterToolbar
+        implements
+        IsElement {
 
     @Inject
     @DataField("solve-button")
@@ -52,7 +62,12 @@ public class ShiftRosterToolbar extends RosterToolbar implements IsElement {
     protected Timer terminateSolvingTimer;
 
     @PostConstruct
-    public void initTimers() {
+    public void init() {
+        eventManager.subscribeToEventForever(Event.DATA_INVALIDATION, clazz -> {
+            if (clazz.equals(Spot.class)) {
+                updateRowCount();
+            }
+        });
         updateSolvingTimeTimer = new Timer() {
 
             @Override
@@ -62,7 +77,6 @@ public class ShiftRosterToolbar extends RosterToolbar implements IsElement {
                 }
                 eventManager.fireEvent(SOLVE_TIME_UPDATE, timeRemaining);
             }
-
         };
         terminateSolvingTimer = new Timer() {
 
@@ -72,6 +86,7 @@ public class ShiftRosterToolbar extends RosterToolbar implements IsElement {
             }
         };
         terminateEarlyButton.classList.add("hidden");
+        updateRowCount();
     }
 
     @Override
@@ -94,6 +109,12 @@ public class ShiftRosterToolbar extends RosterToolbar implements IsElement {
         return SHIFT_ROSTER_DATE_RANGE;
     }
 
+    private void updateRowCount() {
+        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spotList -> {
+            setRowCount(spotList.size());
+        }));
+    }
+
     @EventHandler("solve-button")
     public void onSolveButtonClick(@ForEvent("click") MouseEvent e) {
         RosterRestServiceBuilder.solveRoster(tenantStore.getCurrentTenantId(),
@@ -106,7 +127,6 @@ public class ShiftRosterToolbar extends RosterToolbar implements IsElement {
                                                  updateSolvingTimeTimer.scheduleRepeating(1000);
                                                  terminateSolvingTimer.schedule(30000);
                                              }));
-
     }
 
     @EventHandler("publish-button")
@@ -115,7 +135,6 @@ public class ShiftRosterToolbar extends RosterToolbar implements IsElement {
                                                      FailureShownRestCallback.onSuccess(a -> {
                                                          eventManager.fireEvent(getViewInvalidateEvent());
                                                      }));
-
     }
 
     private void terminateSolving() {
@@ -135,7 +154,5 @@ public class ShiftRosterToolbar extends RosterToolbar implements IsElement {
                                                           terminateSolvingTimer.cancel();
                                                           terminateSolving();
                                                       }));
-
     }
-
 }
