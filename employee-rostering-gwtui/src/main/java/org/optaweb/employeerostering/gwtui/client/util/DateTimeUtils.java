@@ -16,24 +16,32 @@
 
 package org.optaweb.employeerostering.gwtui.client.util;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.optaweb.employeerostering.gwtui.client.resources.i18n.OptaWebUIConstants;
+import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
+
+@Singleton
 public class DateTimeUtils {
 
-    public static int SECONDS_PER_MINUTE = 60;
-    public static int MINUTES_PER_HOUR = 60;
-    public static int HOURS_PER_DAY = 24;
+    @Inject
+    private TranslationService translationService;
 
-    // We don't have Temporal, so we kinda need to do every combination...
-    public static int daysBetween(LocalDate a, OffsetDateTime b) {
-        return (int) (Duration.between(OffsetDateTime.of(a.atTime(LocalTime.MIDNIGHT), b.getOffset()), b).getSeconds() / (SECONDS_PER_MINUTE * MINUTES_PER_HOUR * HOURS_PER_DAY));
+    public String translateLocalDate(LocalDate localDate) {
+        String dateFormatString = translationService.getTranslation(OptaWebUIConstants.LocalDate_format);
+        DateTimeFormat dateFormat = DateTimeFormat.getFormat(dateFormatString);
+        return dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(localDate.atTime(0, 0)));
     }
 
-    public static LocalTime getLocalTimeOf(OffsetDateTime dateTime) {
-        return LocalTime.of(dateTime.getHour(), dateTime.getMinute(), dateTime.getSecond(), dateTime.getNano());
+    public String translateLocalTime(LocalTime localTime) {
+        String timeFormatString = translationService.getTranslation(OptaWebUIConstants.LocalTime_format);
+        DateTimeFormat dateFormat = DateTimeFormat.getFormat(timeFormatString);
+        return dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(LocalDate.now().atTime(localTime)));
     }
-
 }

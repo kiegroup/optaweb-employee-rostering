@@ -16,18 +16,38 @@
 
 package org.optaweb.employeerostering.gwtui.client.viewport.availabilityroster;
 
+import javax.annotation.PostConstruct;
+
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaweb.employeerostering.gwtui.client.viewport.RosterToolbar;
+import org.optaweb.employeerostering.shared.employee.Employee;
+import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaweb.employeerostering.shared.roster.Pagination;
 import org.optaweb.employeerostering.shared.roster.view.AvailabilityRosterView;
 
-import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.*;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_DATE_RANGE;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_INVALIDATE;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_PAGINATION;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.AVAILABILITY_ROSTER_UPDATE;
 
 @Templated
-public class AvailabilityRosterToolbar extends RosterToolbar implements IsElement {
+public class AvailabilityRosterToolbar extends RosterToolbar
+        implements
+        IsElement {
+
+    @PostConstruct
+    private void init() {
+        eventManager.subscribeToEventForever(Event.DATA_INVALIDATION, clazz -> {
+            if (clazz.equals(Employee.class)) {
+                updateRowCount();
+            }
+        });
+        updateRowCount();
+    }
 
     @Override
     protected Event<AvailabilityRosterView> getViewRefreshEvent() {
@@ -49,4 +69,9 @@ public class AvailabilityRosterToolbar extends RosterToolbar implements IsElemen
         return AVAILABILITY_ROSTER_DATE_RANGE;
     }
 
+    private void updateRowCount() {
+        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employeeList -> {
+            setRowCount(employeeList.size());
+        }));
+    }
 }

@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -70,12 +71,22 @@ public abstract class RosterToolbar {
     private HTMLElement softScore;
 
     @Inject
+    @Named("span")
+    @DataField("current-range")
+    private HTMLElement currentRange;
+
+    @Inject
+    @Named("span")
+    @DataField("row-count")
+    private HTMLElement rowCountDisplay;
+
+    @Inject
     @DataField("previous-page-button")
-    private HTMLButtonElement prevPage;
+    private HTMLAnchorElement prevPage;
 
     @Inject
     @DataField("next-page-button")
-    private HTMLButtonElement nextPage;
+    private HTMLAnchorElement nextPage;
 
     @Inject
     @Named("span")
@@ -97,6 +108,8 @@ public abstract class RosterToolbar {
 
     protected Pagination pagenation;
 
+    protected Integer rowCount;
+
     protected int timeRemaining;
 
     protected abstract Event<? extends AbstractRosterView> getViewRefreshEvent();
@@ -110,6 +123,8 @@ public abstract class RosterToolbar {
     @PostConstruct
     private void init() {
         pagenation = Pagination.of(0, 10);
+        rowCount = 0;
+        setCurrentRange(pagenation);
         ((HTMLElement) remainingTime.parentNode).classList.add("hidden");
 
         eventManager.subscribeToEventForever(getViewRefreshEvent(), (view) -> {
@@ -126,6 +141,7 @@ public abstract class RosterToolbar {
         });
         eventManager.subscribeToEventForever(getPageChangeEvent(), (pagenation) -> {
             this.pagenation = pagenation;
+            setCurrentRange(pagenation);
         });
         eventManager.subscribeToEventForever(getDateRangeEvent(), (dateRange) -> {
             weekPicker.setValue(dateRange.getStartDate());
@@ -146,6 +162,20 @@ public abstract class RosterToolbar {
         } else {
             scores.classList.add("hidden");
         }
+    }
+
+    protected void setRowCount(Integer rowCount) {
+        rowCountDisplay.innerHTML = rowCount + "";
+        this.rowCount = rowCount;
+        setCurrentRange(pagenation);
+    }
+
+    protected void setCurrentRange(Pagination pagenation) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(pagenation.getFirstResultIndex() + 1);
+        builder.append("-");
+        builder.append(Math.min(pagenation.getFirstResultIndex() + pagenation.getNumberOfItemsPerPage(), rowCount));
+        currentRange.innerHTML = builder.toString();
     }
 
     @EventHandler("refresh-button")
