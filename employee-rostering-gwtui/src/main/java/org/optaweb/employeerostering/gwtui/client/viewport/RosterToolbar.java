@@ -170,12 +170,8 @@ public abstract class RosterToolbar {
         setCurrentRange(pagenation);
     }
 
-    protected void setCurrentRange(Pagination pagenation) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(pagenation.getFirstResultIndex() + 1);
-        builder.append("-");
-        builder.append(Math.min(pagenation.getFirstResultIndex() + pagenation.getNumberOfItemsPerPage(), rowCount));
-        currentRange.innerHTML = builder.toString();
+    protected void setCurrentRange(Pagination pagination) {
+        currentRange.innerHTML = (pagination.getFirstResultIndex() + 1) + "-" + Math.min(pagination.getFirstResultIndex() + pagination.getNumberOfItemsPerPage(), rowCount);
     }
 
     @EventHandler("refresh-button")
