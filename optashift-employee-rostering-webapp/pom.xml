@@ -97,7 +97,7 @@
                 <artifactId>${project.artifactId}</artifactId>
                 <type>war</type>
                 <pingURL>${application.url}</pingURL>
-                <pingTimeout>30000</pingTimeout>
+                <pingTimeout>120000</pingTimeout>
               </deployable>
             </deployables>
             <configuration>
