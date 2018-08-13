@@ -39,7 +39,9 @@ import org.optaweb.employeerostering.gwtui.client.pages.Pages.Id;
 
 @Templated
 @ApplicationScoped
-public class HeaderView implements IsElement {
+public class HeaderView
+        implements
+        IsElement {
 
     @Inject
     @DataField("rest-api")

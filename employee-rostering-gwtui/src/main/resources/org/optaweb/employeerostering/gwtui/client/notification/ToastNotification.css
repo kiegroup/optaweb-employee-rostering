@@ -1,0 +1,20 @@
+.toast-notification {
+}
+
+.fade-and-slide-in {
+	animation: slide-in 2.0s;
+}
+
+.fade-and-slide-out {
+	animation: slide-out 2.0s;
+}
+
+@keyframes slide-in {
+	from { transform: translateY(-100%); opacity: 0;}
+    to { transform: translateY(0%); opacity: 1; }
+}
+
+@keyframes slide-out {
+	from   { transform: translateY(0); opacity: 1;}
+    to { transform: translateY(-100%); opacity: 0;}
+}

@@ -21,7 +21,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -33,7 +35,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.interfaces.Updatable;
 
 @Templated
 public class KieSearchBar<T> {
@@ -51,7 +52,7 @@ public class KieSearchBar<T> {
     private HTMLInputElement searchText;
 
     private List<T> listToFilter;
-    private Set<Updatable<List<T>>> filterListenerSet;
+    private Set<Consumer<List<T>>> filterListenerSet;
     private OneWayMapping<T, String> elementToStringMapping;
 
     @PostConstruct
@@ -74,7 +75,7 @@ public class KieSearchBar<T> {
         return listToFilter.stream().filter((e) -> {
             return elementToStringMapping.map(e).toLowerCase().contains(searchText.value.toLowerCase());
         })
-                           .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @EventHandler("search-button")
@@ -93,16 +94,16 @@ public class KieSearchBar<T> {
         updateListeners();
     }
 
-    public void addFilterListener(Updatable<List<T>> listener) {
+    public void addFilterListener(Consumer<List<T>> listener) {
         filterListenerSet.add(listener);
     }
 
-    public void removeFilterListener(Updatable<List<T>> listener) {
+    public void removeFilterListener(Consumer<List<T>> listener) {
         filterListenerSet.remove(listener);
     }
 
     private void updateListeners() {
         List<T> filteredList = getFilteredList();
-        filterListenerSet.forEach((l) -> l.onUpdate(filteredList));
+        filterListenerSet.forEach((l) -> l.accept(filteredList));
     }
 }

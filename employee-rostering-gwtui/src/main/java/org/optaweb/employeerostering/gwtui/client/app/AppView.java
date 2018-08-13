@@ -26,11 +26,14 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.footer.FooterView;
 import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaweb.employeerostering.gwtui.client.header.HeaderView;
+import org.optaweb.employeerostering.gwtui.client.notification.Notifications;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
 import org.optaweb.employeerostering.gwtui.client.viewport.CSSGlobalStyle;
 
 @Templated
-public class AppView implements IsElement {
+public class AppView
+        implements
+        IsElement {
 
     @Inject
     @DataField("header")
@@ -47,6 +50,10 @@ public class AppView implements IsElement {
     @Inject
     @DataField("loading-spinner")
     private LoadingSpinner loadingSpinner;
+
+    @Inject
+    @DataField("notifications")
+    private Notifications notifications;
 
     @Inject
     private CSSGlobalStyle cssGlobalStyle;

@@ -37,8 +37,9 @@ import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
-import org.optaweb.employeerostering.gwtui.client.common.NotificationSystem;
+import org.optaweb.employeerostering.gwtui.client.notification.Notifications;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
+import org.optaweb.employeerostering.gwtui.client.resources.i18n.OptaWebUIConstants;
 import org.optaweb.employeerostering.gwtui.client.tenant.NewTenantForm;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantTableRow;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
@@ -47,7 +48,9 @@ import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
 @Templated
-public class AdminPage implements Page {
+public class AdminPage
+        implements
+        Page {
 
     @Inject
     @DataField("reset-application-button")
@@ -65,7 +68,7 @@ public class AdminPage implements Page {
     private LoadingSpinner loadingSpinner;
 
     @Inject
-    private NotificationSystem notificationSystem;
+    private Notifications notifications;
 
     @Inject
     private ManagedInstance<NewTenantForm> newTenantForm;
@@ -133,7 +136,7 @@ public class AdminPage implements Page {
         loadingSpinner.showFor("reset-application");
         AdminRestServiceBuilder.resetApplication(null, FailureShownRestCallback.onSuccess((success) -> {
             loadingSpinner.hideFor("reset-application");
-            notificationSystem.notify("Application was reset successfully", "Application was reset successfully, please refresh the page.");
+            notifications.showInfoMessage(OptaWebUIConstants.Notifications_resetApplicationSuccessful);
         }));
     }
 
