@@ -123,6 +123,21 @@ public interface OptaWebUIConstants {
     @TranslationKey(defaultValue = "Toggle navigation")
     final String MenuPanel_toggleNavigation = "MenuPanel.toggleNavigation";
 
+    @TranslationKey(defaultValue = "An exception occurred: {0}")
+    final String Notifications_exception = "Notifications.exception";
+
+    @TranslationKey(defaultValue = "Published shifts beginning after {0} and before {1}.")
+    final String Notifications_publishResult = "Notifications.publishResult";
+
+    @TranslationKey(defaultValue = "Rotation saved.")
+    final String Notifications_rotationSaved = "Notifications.rotationSaved";
+
+    @TranslationKey(defaultValue = "View stack trace")
+    final String Notifications_viewStackTrace = "Notifications.viewStackTrace";
+
+    @TranslationKey(defaultValue = "Application was reset successfully, please refresh the page.")
+    final String Notifications_resetApplicationSuccessful = "Notifications.resetApplicationSuccessful";
+
     @TranslationKey(defaultValue = "Unassigned")
     final String Shift_unassigned = "Shift.unassigned";
 

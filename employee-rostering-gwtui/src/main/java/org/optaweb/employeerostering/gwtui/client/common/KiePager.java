@@ -21,6 +21,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -38,10 +40,12 @@ import org.jboss.errai.databinding.client.components.ListComponent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.interfaces.Updatable;
 
 @Templated
-public class KiePager<T> implements Updatable<List<T>>, HasRows {
+public class KiePager<T>
+        implements
+        Consumer<List<T>>,
+        HasRows {
 
     @Inject
     @DataField
@@ -166,7 +170,7 @@ public class KiePager<T> implements Updatable<List<T>>, HasRows {
 
     @Override
     public HandlerRegistration addRowCountChangeHandler(
-                                                        com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
+            com.google.gwt.view.client.RowCountChangeEvent.Handler handler) {
         rowCountChangeHandlers.add(handler);
         return () -> rowCountChangeHandlers.remove(handler);
     }
@@ -223,7 +227,7 @@ public class KiePager<T> implements Updatable<List<T>>, HasRows {
     }
 
     @Override
-    public void onUpdate(List<T> data) {
+    public void accept(List<T> data) {
         setData(data);
     }
 }

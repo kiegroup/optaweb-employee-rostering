@@ -38,6 +38,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
+import org.optaweb.employeerostering.gwtui.client.notification.Notifications;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.OptaWebUIConstants;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
@@ -76,6 +77,8 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     private TranslationService translationService;
     @Inject
     private DateTimeUtils dateTimeUtils;
+    @Inject
+    private Notifications notifications;
 
     private Map<Long, Spot> spotIdToSpotMap;
     private Map<Long, Employee> employeeIdToEmployeeMap;
@@ -163,6 +166,7 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
             rotationView.setSpotIdToShiftTemplateViewListMap(newSpotIdToShiftTemplateViewListMap);
             ShiftRestServiceBuilder.updateRotation(tenantStore.getCurrentTenantId(), rotationView,
                                                    FailureShownRestCallback.onSuccess(e -> {
+                                                       notifications.showSuccessMessage(OptaWebUIConstants.Notifications_rotationSaved);
                                                        viewportBuilder.buildRotationViewport(this);
                                                    }));
             return promiseUtils.resolve();

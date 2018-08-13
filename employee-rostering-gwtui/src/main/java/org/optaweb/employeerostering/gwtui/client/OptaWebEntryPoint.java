@@ -23,16 +23,14 @@ import javax.inject.Inject;
 
 import com.github.nmorel.gwtjackson.rest.api.RestRequestBuilder;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.UmbrellaException;
-import com.google.gwt.logging.impl.StackTracePrintStream;
 import com.google.gwt.user.client.Window;
 import elemental2.dom.DomGlobal;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.shared.api.annotations.Bundle;
 import org.optaweb.employeerostering.gwtui.client.app.NavigationController;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.notification.Notifications;
 import org.optaweb.employeerostering.gwtui.client.pages.Pages;
-import org.optaweb.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
@@ -54,6 +52,9 @@ public class OptaWebEntryPoint {
     @Inject
     private TenantStore tenantStore;
 
+    @Inject
+    Notifications notifications;
+
     private boolean isPageLoaded;
 
     @PostConstruct
@@ -64,21 +65,7 @@ public class OptaWebEntryPoint {
 
             public void onUncaughtException(Throwable e) {
                 javascriptLoggerExceptionHandler.onUncaughtException(e);
-                Throwable unwrapped = unwrap(e);
-                StringBuilder message = new StringBuilder();
-                StackTracePrintStream stackTracePrintStream = new StackTracePrintStream(message);
-                unwrapped.printStackTrace(stackTracePrintStream);
-                ErrorPopup.show(message.toString());
-            }
-
-            public Throwable unwrap(Throwable e) {
-                if (e instanceof UmbrellaException) {
-                    UmbrellaException ue = (UmbrellaException) e;
-                    if (ue.getCauses().size() == 1) {
-                        return unwrap(ue.getCauses().iterator().next());
-                    }
-                }
-                return e;
+                notifications.showError(e);
             }
         });
         healthCheck();

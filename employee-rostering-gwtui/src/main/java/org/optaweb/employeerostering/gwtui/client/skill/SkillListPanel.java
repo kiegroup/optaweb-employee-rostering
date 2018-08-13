@@ -46,8 +46,10 @@ import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.skill.SkillRestServiceBuilder;
 
 @Templated
-public class SkillListPanel implements IsElement,
-                                       Page {
+public class SkillListPanel
+        implements
+        IsElement,
+        Page {
 
     @Inject
     @DataField("refresh-button")

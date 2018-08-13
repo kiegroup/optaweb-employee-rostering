@@ -1,0 +1,18 @@
+.notification-container {
+    z-index: 3000;
+    position: fixed;
+    width: 100vw;
+    top: 120px;
+    display: grid;
+    grid-template-columns: 1fr auto 20px;
+    pointer-events: none;
+}
+
+.notifications {
+	display: flex;
+    flex-direction: column;
+	pointer-events: auto;
+	grid-column: 2;
+	max-height: 20vh;
+	overflow: auto;
+}

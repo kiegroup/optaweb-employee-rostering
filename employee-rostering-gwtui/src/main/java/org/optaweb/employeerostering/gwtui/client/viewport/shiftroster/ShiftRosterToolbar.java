@@ -30,8 +30,12 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateRange;
+import org.optaweb.employeerostering.gwtui.client.notification.Notifications;
+import org.optaweb.employeerostering.gwtui.client.resources.i18n.OptaWebUIConstants;
+import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.RosterToolbar;
 import org.optaweb.employeerostering.shared.roster.Pagination;
+import org.optaweb.employeerostering.shared.roster.PublishResult;
 import org.optaweb.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaweb.employeerostering.shared.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.shared.spot.Spot;
@@ -57,6 +61,12 @@ public class ShiftRosterToolbar extends RosterToolbar
     @Inject
     @DataField("terminate-early-button")
     private HTMLButtonElement terminateEarlyButton;
+
+    @Inject
+    private Notifications notifications;
+
+    @Inject
+    private DateTimeUtils dateTimeUtils;
 
     protected Timer updateSolvingTimeTimer;
     protected Timer terminateSolvingTimer;
@@ -132,7 +142,9 @@ public class ShiftRosterToolbar extends RosterToolbar
     @EventHandler("publish-button")
     public void onPublishButtonClick(@ForEvent("click") MouseEvent e) {
         RosterRestServiceBuilder.publishAndProvision(tenantStore.getCurrentTenantId(),
-                                                     FailureShownRestCallback.onSuccess(a -> {
+                                                     FailureShownRestCallback.onSuccess((PublishResult pr) -> {
+                                                         notifications.showSuccessMessage(OptaWebUIConstants.Notifications_publishResult, dateTimeUtils.translateLocalDate(pr.getPublishedFromDate()), dateTimeUtils
+                                                                 .translateLocalDate(pr.getPublishedToDate()));
                                                          eventManager.fireEvent(getViewInvalidateEvent());
                                                      }));
     }
