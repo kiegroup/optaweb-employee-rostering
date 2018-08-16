@@ -18,15 +18,21 @@ package org.optaweb.employeerostering.webapp;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
+import org.junit.After;
 import org.junit.Before;
 import org.optaweb.employeerostering.restclient.ServiceClientFactory;
 import org.optaweb.employeerostering.server.common.jaxrs.OptaWebObjectMapperResolver;
+import org.optaweb.employeerostering.shared.roster.RosterState;
+import org.optaweb.employeerostering.shared.tenant.Tenant;
+import org.optaweb.employeerostering.shared.tenant.TenantRestService;
 import org.optaweb.employeerostering.webapp.tools.ClientResponseContextAssert;
 import org.optaweb.employeerostering.webapp.tools.RecordingClientResponseFilter;
 import org.optaweb.employeerostering.webapp.tools.TestConfig;
@@ -40,6 +46,8 @@ public class AbstractRestServiceIT {
 
     protected final ServiceClientFactory serviceClientFactory;
     protected final RecordingClientResponseFilter recordingClientResponseFilter;
+    protected TenantRestService tenantRestService;
+    protected Integer TENANT_ID;
 
     protected AbstractRestServiceIT() {
         URL baseTestUrl;
@@ -53,6 +61,7 @@ public class AbstractRestServiceIT {
         ResteasyClient resteasyClient = new ResteasyClientBuilder().register(recordingClientResponseFilter).build();
         resteasyClient.register(OptaWebObjectMapperResolver.class);
         serviceClientFactory = new ServiceClientFactory(baseTestUrl, resteasyClient);
+        tenantRestService = serviceClientFactory.createTenantRestServiceClient();
     }
 
     protected void assertClientResponseOk() {
@@ -72,5 +81,19 @@ public class AbstractRestServiceIT {
     @Before
     public void clearClientResponseFilter() {
         recordingClientResponseFilter.clear();
+    }
+
+    @Before
+    public void createTestTenant() {
+        RosterState rosterState = new RosterState(null, 7, LocalDate.of(2000, 1, 1), 7, 24, 0, 7, LocalDate.of(1999, 12, 24),
+                                                  ZoneOffset.UTC);
+        rosterState.setTenant(new Tenant("TestTenant"));
+        Tenant tenant = tenantRestService.addTenant(rosterState);
+        TENANT_ID = tenant.getId();
+    }
+
+    @After
+    public void deleteTestTenant() {
+        tenantRestService.removeTenant(TENANT_ID);
     }
 }

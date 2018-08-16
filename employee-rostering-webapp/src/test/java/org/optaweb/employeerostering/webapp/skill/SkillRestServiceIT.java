@@ -20,7 +20,6 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.skill.SkillRestService;
@@ -31,18 +30,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class SkillRestServiceIT extends AbstractRestServiceIT {
 
-    private static final int TENANT_ID = 1000;
-
     private SkillRestService skillRestService;
 
     public SkillRestServiceIT() {
         skillRestService = serviceClientFactory.createSkillRestServiceClient();
-    }
-
-    @Before
-    public void setup() {
-        skillRestService.getSkillList(TENANT_ID)
-                .forEach(skill -> skillRestService.removeSkill(TENANT_ID, skill.getId()));
     }
 
     @Test

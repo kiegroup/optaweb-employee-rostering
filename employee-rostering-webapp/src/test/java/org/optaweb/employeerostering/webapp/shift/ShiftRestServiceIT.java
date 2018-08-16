@@ -16,26 +16,19 @@
 
 package org.optaweb.employeerostering.webapp.shift;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
-import org.optaweb.employeerostering.shared.roster.RosterState;
 import org.optaweb.employeerostering.shared.shift.ShiftRestService;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.spot.SpotRestService;
-import org.optaweb.employeerostering.shared.tenant.Tenant;
-import org.optaweb.employeerostering.shared.tenant.TenantRestService;
 import org.optaweb.employeerostering.webapp.AbstractRestServiceIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,8 +36,6 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class ShiftRestServiceIT extends AbstractRestServiceIT {
 
-    private int TENANT_ID;
-    private TenantRestService tenantRestService;
     private ShiftRestService shiftRestService;
     private SpotRestService spotRestService;
     private EmployeeRestService employeeRestService;
@@ -52,27 +43,9 @@ public class ShiftRestServiceIT extends AbstractRestServiceIT {
     private final String[] shiftViewNonIndictmentFields = {"employeeId", "spotId", "rotationEmployeeId", "startDateTime", "endDateTime", "tenantId"};
 
     public ShiftRestServiceIT() {
-        tenantRestService = serviceClientFactory.createTenantRestServiceClient();
         shiftRestService = serviceClientFactory.createShiftRestServiceClient();
         spotRestService = serviceClientFactory.createSpotRestServiceClient();
         employeeRestService = serviceClientFactory.createEmployeeRestServiceClient();
-    }
-
-    @Before
-    public void setup() {
-        RosterState rosterState = new RosterState(null, 7, LocalDate.of(2000, 1, 1), 7, 24, 0, 7, LocalDate.of(1999, 12, 24),
-                                                  ZoneOffset.UTC);
-        rosterState.setTenant(new Tenant("TestTenant"));
-        Tenant tenant = tenantRestService.addTenant(rosterState);
-        TENANT_ID = tenant.getId();
-    }
-
-    @After
-    public void cleanup() {
-        shiftRestService.getShifts(TENANT_ID).forEach(sv -> shiftRestService.removeShift(TENANT_ID, sv.getId()));
-        spotRestService.getSpotList(TENANT_ID).forEach(spot -> spotRestService.removeSpot(TENANT_ID, spot.getId()));
-        employeeRestService.getEmployeeList(TENANT_ID).forEach(employee -> employeeRestService.removeEmployee(TENANT_ID, employee.getId()));
-        tenantRestService.removeTenant(TENANT_ID);
     }
 
     private Employee createEmployee(String name) {
