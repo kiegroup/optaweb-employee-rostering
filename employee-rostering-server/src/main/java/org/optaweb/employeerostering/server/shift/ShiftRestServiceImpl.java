@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
@@ -61,6 +62,9 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @Transactional
     public ShiftView getShift(Integer tenantId, Long id) {
         Shift shift = entityManager.find(Shift.class, id);
+        if (shift == null) {
+            throw new EntityNotFoundException("No Shift entity found with ID (" + id + ").");
+        }
         validateTenantIdParameter(tenantId, shift);
         Indictment indictment = indictmentUtils.getIndictmentMapForRoster(rosterRestService.buildRoster(tenantId)).get(shift);
         return indictmentUtils.getShiftViewWithIndictment(rosterRestService.getRosterState(tenantId).getTimeZone(),

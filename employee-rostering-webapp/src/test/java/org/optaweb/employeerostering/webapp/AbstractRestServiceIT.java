@@ -26,9 +26,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.junit.Before;
 import org.optaweb.employeerostering.restclient.ServiceClientFactory;
-import org.optaweb.employeerostering.webapp.tools.ClientResponseContextAssert;
-import org.optaweb.employeerostering.webapp.tools.RecordingClientResponseFilter;
-import org.optaweb.employeerostering.webapp.tools.TestConfig;
+import org.optaweb.employeerostering.server.common.jaxrs.OptaWebObjectMapperResolver;
 import org.optaweb.employeerostering.webapp.tools.ClientResponseContextAssert;
 import org.optaweb.employeerostering.webapp.tools.RecordingClientResponseFilter;
 import org.optaweb.employeerostering.webapp.tools.TestConfig;
@@ -53,6 +51,7 @@ public class AbstractRestServiceIT {
 
         recordingClientResponseFilter = new RecordingClientResponseFilter();
         ResteasyClient resteasyClient = new ResteasyClientBuilder().register(recordingClientResponseFilter).build();
+        resteasyClient.register(OptaWebObjectMapperResolver.class);
         serviceClientFactory = new ServiceClientFactory(baseTestUrl, resteasyClient);
     }
 
