@@ -76,6 +76,7 @@ public class SpotRestServiceIT extends AbstractEntityRequireTenantRestServiceIT 
         Spot updatedSpot = spotRestService.updateSpot(TENANT_ID, nonExistingSpot);
 
         assertThat(updatedSpot.getName()).isEqualTo(nonExistingSpot.getName());
+        assertThat(updatedSpot.getRequiredSkillSet()).isEqualTo(nonExistingSpot.getRequiredSkillSet());
         assertThat(updatedSpot.getId()).isNotNull().isNotEqualTo(nonExistingSpot.getId());
     }
 

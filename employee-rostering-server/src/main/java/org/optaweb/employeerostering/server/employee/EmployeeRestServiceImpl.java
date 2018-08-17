@@ -18,8 +18,10 @@ package org.optaweb.employeerostering.server.employee;
 
 import java.util.List;
 import java.util.Objects;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
@@ -31,7 +33,9 @@ import org.optaweb.employeerostering.shared.employee.view.EmployeeAvailabilityVi
 import org.optaweb.employeerostering.shared.roster.RosterRestService;
 import org.optaweb.employeerostering.shared.skill.Skill;
 
-public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements EmployeeRestService {
+public class EmployeeRestServiceImpl extends AbstractRestServiceImpl
+        implements
+        EmployeeRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -42,14 +46,17 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
     @Transactional
     public List<Employee> getEmployeeList(Integer tenantId) {
         return entityManager.createNamedQuery("Employee.findAll", Employee.class)
-                            .setParameter("tenantId", tenantId)
-                            .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
     }
 
     @Override
     @Transactional
     public Employee getEmployee(Integer tenantId, Long id) {
         Employee employee = entityManager.find(Employee.class, id);
+        if (employee == null) {
+            throw new EntityNotFoundException("No Employee entity found with ID (" + id + ").");
+        }
         validateTenantIdParameter(tenantId, employee);
         return employee;
     }
@@ -131,5 +138,4 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl implements 
         entityManager.remove(employeeAvailability);
         return true;
     }
-
 }
