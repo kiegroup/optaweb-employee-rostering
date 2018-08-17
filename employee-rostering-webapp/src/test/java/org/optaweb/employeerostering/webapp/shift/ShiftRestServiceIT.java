@@ -16,12 +16,15 @@
 
 package org.optaweb.employeerostering.webapp.shift;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.After;
 import org.junit.Test;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
@@ -29,12 +32,13 @@ import org.optaweb.employeerostering.shared.shift.ShiftRestService;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.spot.SpotRestService;
-import org.optaweb.employeerostering.webapp.AbstractRestServiceIT;
+import org.optaweb.employeerostering.shared.violation.ShiftEmployeeConflict;
+import org.optaweb.employeerostering.webapp.AbstractEntityRequireTenantRestServiceIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class ShiftRestServiceIT extends AbstractRestServiceIT {
+public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT {
 
     private ShiftRestService shiftRestService;
     private SpotRestService spotRestService;
@@ -58,8 +62,14 @@ public class ShiftRestServiceIT extends AbstractRestServiceIT {
         return spotRestService.addSpot(TENANT_ID, spot);
     }
 
+    @After
+    public void cleanup() {
+        deleteTestTenant();
+    }
+
     @Test
     public void testDeleteNonExistingShift() {
+        createTestTenant();
         final long nonExistingShiftId = 123456L;
         boolean result = shiftRestService.removeShift(TENANT_ID, nonExistingShiftId);
         assertThat(result).isFalse();
@@ -68,6 +78,7 @@ public class ShiftRestServiceIT extends AbstractRestServiceIT {
 
     @Test
     public void testUpdateNonExistingShift() {
+        createTestTenant();
         final long nonExistingShiftId = 123456L;
         Spot spot = createSpot("spot");
         Employee employee = createEmployee("employee");
@@ -91,6 +102,7 @@ public class ShiftRestServiceIT extends AbstractRestServiceIT {
 
     @Test
     public void testGetOfNonExistingShift() {
+        createTestTenant();
         final long nonExistingShiftId = 123456L;
         assertThatExceptionOfType(javax.ws.rs.NotFoundException.class)
                 .isThrownBy(() -> shiftRestService.getShift(TENANT_ID, nonExistingShiftId));
@@ -99,6 +111,7 @@ public class ShiftRestServiceIT extends AbstractRestServiceIT {
 
     @Test
     public void testCrudShift() {
+        createTestTenant();
         Spot spot = createSpot("spot");
         Employee employee = createEmployee("employee");
         Employee rotationEmployee = createEmployee("rotationEmployee");
@@ -132,5 +145,40 @@ public class ShiftRestServiceIT extends AbstractRestServiceIT {
 
         shifts = shiftRestService.getShifts(TENANT_ID);
         assertThat(shifts).isEmpty();
+    }
+
+    @Test
+    public void testShiftWithDaylightSavingTime() {
+        createTestTenant(ZoneId.of("America/New_York"));
+        Spot spot = createSpot("spot");
+        Employee employee = createEmployee("employee");
+        LocalDateTime startDateTime = LocalDateTime.of(2018, 3, 10, 23, 0, 0, 0);
+        LocalDateTime endDateTime = startDateTime.plusHours(8);
+
+        ShiftView testAddShift = new ShiftView(TENANT_ID, spot, startDateTime, endDateTime);
+        testAddShift.setEmployeeId(employee.getId());
+
+        ShiftView addedShift = shiftRestService.addShift(TENANT_ID, testAddShift);
+        ShiftView retrievedShift = shiftRestService.getShift(TENANT_ID, addedShift.getId());
+        assertClientResponseOk();
+        assertThat(retrievedShift).isNotNull().isEqualToComparingOnlyGivenFields(testAddShift, shiftViewNonIndictmentFields);
+
+        // Trigger an indictment so we can read zone offset
+        LocalDateTime conflictingStartDateTime = endDateTime.plusHours(9);
+        LocalDateTime conflictingEndDateTime = conflictingStartDateTime.plusHours(8);
+
+        ShiftView testConflictingShift = new ShiftView(TENANT_ID, spot, conflictingStartDateTime, conflictingEndDateTime);
+        testConflictingShift.setEmployeeId(employee.getId());
+        addedShift = shiftRestService.addShift(TENANT_ID, testConflictingShift);
+        ShiftView retrievedConflictingShift = shiftRestService.getShift(TENANT_ID, addedShift.getId());
+
+        assertThat(retrievedShift.getEndDateTime().plusHours(9)).isEqualTo(retrievedConflictingShift.getStartDateTime());
+        assertThat(retrievedConflictingShift.getShiftEmployeeConflictList()).hasSize(1);
+        ShiftEmployeeConflict shiftEmployeeConflict = retrievedConflictingShift.getShiftEmployeeConflictList().get(0);
+        assertThat(shiftEmployeeConflict.getRightShift().getStartDateTime().getOffset()).isNotEqualTo(shiftEmployeeConflict.getRightShift().getEndDateTime().getOffset());
+        assertThat(Duration.between(shiftEmployeeConflict.getRightShift().getStartDateTime(), shiftEmployeeConflict.getRightShift().getEndDateTime()).toHours()).isEqualTo(7);
+
+        assertThat(shiftEmployeeConflict.getLeftShift().getStartDateTime().getOffset()).isEqualTo(shiftEmployeeConflict.getLeftShift().getEndDateTime().getOffset());
+        assertThat(Duration.between(shiftEmployeeConflict.getLeftShift().getStartDateTime(), shiftEmployeeConflict.getLeftShift().getEndDateTime()).toHours()).isEqualTo(8);
     }
 }

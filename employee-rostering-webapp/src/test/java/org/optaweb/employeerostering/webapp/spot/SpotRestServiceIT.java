@@ -23,17 +23,19 @@ import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.skill.SkillRestService;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.spot.SpotRestService;
-import org.optaweb.employeerostering.webapp.AbstractRestServiceIT;
+import org.optaweb.employeerostering.webapp.AbstractEntityRequireTenantRestServiceIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class SpotRestServiceIT extends AbstractRestServiceIT {
+public class SpotRestServiceIT extends AbstractEntityRequireTenantRestServiceIT {
 
     private SpotRestService spotRestService;
     private SkillRestService skillRestService;
@@ -41,6 +43,16 @@ public class SpotRestServiceIT extends AbstractRestServiceIT {
     public SpotRestServiceIT() {
         spotRestService = serviceClientFactory.createSpotRestServiceClient();
         skillRestService = serviceClientFactory.createSkillRestServiceClient();
+    }
+
+    @Before
+    public void setup() {
+        createTestTenant();
+    }
+
+    @After
+    public void cleanup() {
+        deleteTestTenant();
     }
 
     private Skill createSkill(String name) {
@@ -71,7 +83,7 @@ public class SpotRestServiceIT extends AbstractRestServiceIT {
     public void testGetOfNonExistingSpot() {
         final long nonExistingSpotId = 123456L;
         assertThatExceptionOfType(javax.ws.rs.NotFoundException.class)
-                                                                      .isThrownBy(() -> spotRestService.getSpot(TENANT_ID, nonExistingSpotId));
+                .isThrownBy(() -> spotRestService.getSpot(TENANT_ID, nonExistingSpotId));
         assertClientResponseError(Response.Status.NOT_FOUND);
     }
 

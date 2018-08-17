@@ -20,20 +20,32 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.skill.SkillRestService;
-import org.optaweb.employeerostering.webapp.AbstractRestServiceIT;
+import org.optaweb.employeerostering.webapp.AbstractEntityRequireTenantRestServiceIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class SkillRestServiceIT extends AbstractRestServiceIT {
+public class SkillRestServiceIT extends AbstractEntityRequireTenantRestServiceIT {
 
     private SkillRestService skillRestService;
 
     public SkillRestServiceIT() {
         skillRestService = serviceClientFactory.createSkillRestServiceClient();
+    }
+
+    @Before
+    public void setup() {
+        createTestTenant();
+    }
+
+    @After
+    public void cleanup() {
+        deleteTestTenant();
     }
 
     @Test
