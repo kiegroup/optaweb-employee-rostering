@@ -32,9 +32,9 @@ import javax.transaction.Transactional;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaweb.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaweb.employeerostering.server.common.IndictmentUtils;
+import org.optaweb.employeerostering.server.roster.RosterRestServiceImpl;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
-import org.optaweb.employeerostering.shared.roster.RosterRestService;
 import org.optaweb.employeerostering.shared.roster.RosterState;
 import org.optaweb.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaweb.employeerostering.shared.rotation.view.RotationView;
@@ -50,7 +50,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @PersistenceContext
     private EntityManager entityManager;
     @Inject
-    private RosterRestService rosterRestService;
+    private RosterRestServiceImpl rosterRestService;
     @Inject
     private SpotRestService spotRestService;
     @Inject

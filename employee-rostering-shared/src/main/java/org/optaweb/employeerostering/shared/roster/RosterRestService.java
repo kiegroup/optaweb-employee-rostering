@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.shared.roster;
 
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -123,15 +124,13 @@ public interface RosterRestService {
     @Path("/terminate")
     void terminateRosterEarly(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
 
+    // ************************************************************************
+    // Publishing/Provisioning methods
+    // ************************************************************************
+
     @ApiOperation("Publishes the next set of draft shifts and creates new draft shift from the rotation template.")
     @POST
     @Path("/publishAndProvision")
     PublishResult publishAndProvision(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
-
-    // Not a REST method
-    Roster buildRoster(Integer tenantId);
-
-    // Not a REST method
-    void updateShiftsOfRoster(Roster newRoster);
 
 }

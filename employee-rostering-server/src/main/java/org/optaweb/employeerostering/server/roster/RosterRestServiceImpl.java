@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -53,9 +54,11 @@ import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.tenant.TenantRestService;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
 
-public class RosterRestServiceImpl extends AbstractRestServiceImpl implements RosterRestService {
+public class RosterRestServiceImpl extends AbstractRestServiceImpl
+        implements
+        RosterRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -102,17 +105,6 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                                               .setParameter("tenantId", tenantId)
                                               .setMaxResults(pagination.getNumberOfItemsPerPage())
                                               .setFirstResult(pagination.getFirstResultIndex())
-                                              .getResultList();
-
-        return getShiftRosterView(tenantId, startDate, endDate, spots);
-    }
-
-    private ShiftRosterView getShiftRosterView(final Integer tenantId,
-                                               final LocalDate startDate,
-                                               final LocalDate endDate) {
-
-        final List<Spot> spots = entityManager.createNamedQuery("Spot.findAll", Spot.class)
-                                              .setParameter("tenantId", tenantId)
                                               .getResultList();
 
         return getShiftRosterView(tenantId, startDate, endDate, spots);
@@ -306,7 +298,6 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         solverManager.terminate(tenantId);
     }
 
-    @Override
     @Transactional
     public Roster buildRoster(Integer tenantId) {
         List<Skill> skillList = entityManager.createNamedQuery("Skill.findAll", Skill.class)
@@ -332,7 +323,6 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                           tenantRestService.getRosterParametrization(tenantId), getRosterState(tenantId), shiftList);
     }
 
-    @Override
     @Transactional
     public void updateShiftsOfRoster(Roster newRoster) {
         Integer tenantId = newRoster.getTenantId();

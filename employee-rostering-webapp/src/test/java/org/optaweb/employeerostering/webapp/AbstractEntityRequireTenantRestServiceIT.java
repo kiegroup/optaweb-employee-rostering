@@ -36,30 +36,32 @@ public class AbstractEntityRequireTenantRestServiceIT extends AbstractRestServic
     /**
      * Create a tenant with timezone UTC
      */
-    protected void createTestTenant() {
-        createTestTenant(ZoneOffset.UTC);
+    protected Tenant createTestTenant() {
+        return createTestTenant(ZoneOffset.UTC);
     }
 
     /**
      * Create a tenant with timezone zoneId
      * @param zoneId the timezone for the tenant to be in, not null
      */
-    protected void createTestTenant(ZoneId zoneId) {
-        createTestTenant(new RosterState(null, 7, LocalDate.of(2000, 1, 1), 7, 24, 0, 7, LocalDate.of(1999, 12, 24),
-                                         zoneId));
+    protected Tenant createTestTenant(ZoneId zoneId) {
+        return createTestTenant(new RosterState(null, 7, LocalDate.of(2000, 1, 1), 7, 24, 0, 7, LocalDate.of(1999, 12, 24),
+                                                zoneId));
     }
 
     /**
      * Create a tenant with the specified roster state
      * @param rosterState the initial roster state for the tenant, not null
      */
-    protected void createTestTenant(RosterState rosterState) {
+    protected Tenant createTestTenant(RosterState rosterState) {
         rosterState.setTenant(new Tenant("TestTenant"));
         Tenant tenant = tenantRestService.addTenant(rosterState);
         TENANT_ID = tenant.getId();
+        return tenant;
     }
 
     protected void deleteTestTenant() {
         tenantRestService.removeTenant(TENANT_ID);
+        TENANT_ID = null;
     }
 }
