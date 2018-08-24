@@ -20,6 +20,8 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -51,6 +53,10 @@ public class Spot extends AbstractPersistable {
     private String name;
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "SpotRequiredSkillSet",
+            joinColumns = @JoinColumn(name = "spotId", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id")
+    )
     private Set<Skill> requiredSkillSet;
 
     @SuppressWarnings("unused")
