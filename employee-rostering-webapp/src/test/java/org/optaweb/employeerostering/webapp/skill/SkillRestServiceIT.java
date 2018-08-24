@@ -63,6 +63,7 @@ public class SkillRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
         nonExistingSkill.setId(nonExistingSkillId);
         Skill updatedSkill = skillRestService.updateSkill(TENANT_ID, nonExistingSkill);
 
+        assertClientResponseOk();
         assertThat(updatedSkill.getName()).isEqualTo(nonExistingSkill.getName());
         assertThat(updatedSkill.getId()).isNotNull().isNotEqualTo(nonExistingSkillId);
     }

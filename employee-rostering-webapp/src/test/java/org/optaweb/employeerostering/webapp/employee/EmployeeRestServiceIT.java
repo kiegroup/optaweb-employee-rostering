@@ -57,7 +57,9 @@ public class EmployeeRestServiceIT extends AbstractEntityRequireTenantRestServic
 
     private Skill createSkill(String name) {
         Skill skill = new Skill(TENANT_ID, name);
-        return skillRestService.addSkill(TENANT_ID, skill);
+        Skill out = skillRestService.addSkill(TENANT_ID, skill);
+        assertClientResponseOk();
+        return out;
     }
 
     @Test
@@ -76,6 +78,7 @@ public class EmployeeRestServiceIT extends AbstractEntityRequireTenantRestServic
         nonExistingEmployee.setId(nonExistingEmployeeId);
         Employee updatedEmployee = employeeRestService.updateEmployee(TENANT_ID, nonExistingEmployee);
 
+        assertClientResponseOk();
         assertThat(updatedEmployee.getName()).isEqualTo(nonExistingEmployee.getName());
         assertThat(updatedEmployee.getSkillProficiencySet()).isEqualTo(nonExistingEmployee.getSkillProficiencySet());
         assertThat(updatedEmployee.getId()).isNotNull().isNotEqualTo(nonExistingEmployee.getId());

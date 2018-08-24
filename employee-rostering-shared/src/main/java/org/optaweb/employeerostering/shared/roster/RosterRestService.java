@@ -104,7 +104,7 @@ public interface RosterRestService {
     @ApiOperation("Get an availability roster view between 2 dates for a subset of the employees")
     @POST
     @Path("/availabilityRosterView/for")
-    // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
+        // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
     AvailabilityRosterView getAvailabilityRosterViewFor(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId,
                                                         @ApiParam(value = "inclusive", required = true) @QueryParam("startDate") String startDateString,
                                                         @ApiParam(value = "exclusive", required = true) @QueryParam("endDate") String endDateString,
@@ -132,5 +132,4 @@ public interface RosterRestService {
     @POST
     @Path("/publishAndProvision")
     PublishResult publishAndProvision(@ApiParam(required = true) @PathParam("tenantId") Integer tenantId);
-
 }

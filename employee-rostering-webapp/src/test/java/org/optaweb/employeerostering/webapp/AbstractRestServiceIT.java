@@ -63,6 +63,11 @@ public class AbstractRestServiceIT {
         assertClientResponse(Status.OK, MediaType.APPLICATION_JSON);
     }
 
+    protected void assertClientResponseEmpty() {
+        ClientResponseContextAssert.assertThat(recordingClientResponseFilter.next())
+                .hasStatus(Status.NO_CONTENT);
+    }
+
     protected void assertClientResponseError(final Status expectedStatus) {
         assertClientResponse(expectedStatus, MediaType.TEXT_PLAIN);
     }

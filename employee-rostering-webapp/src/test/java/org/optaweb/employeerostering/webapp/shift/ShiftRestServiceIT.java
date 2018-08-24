@@ -54,12 +54,16 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
 
     private Employee createEmployee(String name) {
         Employee employee = new Employee(TENANT_ID, name);
-        return employeeRestService.addEmployee(TENANT_ID, employee);
+        Employee out = employeeRestService.addEmployee(TENANT_ID, employee);
+        assertClientResponseOk();
+        return out;
     }
 
     private Spot createSpot(String name) {
         Spot spot = new Spot(TENANT_ID, name, Collections.emptySet());
-        return spotRestService.addSpot(TENANT_ID, spot);
+        Spot out = spotRestService.addSpot(TENANT_ID, spot);
+        assertClientResponseOk();
+        return out;
     }
 
     @After
@@ -91,6 +95,7 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
         nonExistingShift.setRotationEmployeeId(rotationEmployee.getId());
         nonExistingShift.setId(nonExistingShiftId);
         ShiftView updatedShift = shiftRestService.updateShift(TENANT_ID, nonExistingShift);
+        assertClientResponseOk();
 
         assertThat(updatedShift.getSpotId()).isEqualTo(updatedShift.getSpotId());
         assertThat(updatedShift.getEmployeeId()).isEqualTo(updatedShift.getEmployeeId());

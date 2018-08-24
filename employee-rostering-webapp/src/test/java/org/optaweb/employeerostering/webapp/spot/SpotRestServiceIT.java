@@ -57,7 +57,9 @@ public class SpotRestServiceIT extends AbstractEntityRequireTenantRestServiceIT 
 
     private Skill createSkill(String name) {
         Skill skill = new Skill(TENANT_ID, name);
-        return skillRestService.addSkill(TENANT_ID, skill);
+        Skill out = skillRestService.addSkill(TENANT_ID, skill);
+        assertClientResponseOk();
+        return out;
     }
 
     @Test
@@ -75,6 +77,7 @@ public class SpotRestServiceIT extends AbstractEntityRequireTenantRestServiceIT 
         nonExistingSpot.setId(nonExistingSpotId);
         Spot updatedSpot = spotRestService.updateSpot(TENANT_ID, nonExistingSpot);
 
+        assertClientResponseOk();
         assertThat(updatedSpot.getName()).isEqualTo(nonExistingSpot.getName());
         assertThat(updatedSpot.getRequiredSkillSet()).isEqualTo(nonExistingSpot.getRequiredSkillSet());
         assertThat(updatedSpot.getId()).isNotNull().isNotEqualTo(nonExistingSpot.getId());
