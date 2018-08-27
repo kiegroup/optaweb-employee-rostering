@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -53,7 +54,7 @@ public class KieSearchBar<T> {
 
     private List<T> listToFilter;
     private Set<Consumer<List<T>>> filterListenerSet;
-    private OneWayMapping<T, String> elementToStringMapping;
+    private Function<T, String> elementToStringMapping;
 
     @PostConstruct
     public void initWidget() {
@@ -67,13 +68,13 @@ public class KieSearchBar<T> {
         updateListeners();
     }
 
-    public void setElementToStringMapping(OneWayMapping<T, String> elementToStringMapping) {
+    public void setElementToStringMapping(Function<T, String> elementToStringMapping) {
         this.elementToStringMapping = elementToStringMapping;
     }
 
     public List<T> getFilteredList() {
         return listToFilter.stream().filter((e) -> {
-            return elementToStringMapping.map(e).toLowerCase().contains(searchText.value.toLowerCase());
+            return elementToStringMapping.apply(e).toLowerCase().contains(searchText.value.toLowerCase());
         })
                 .collect(Collectors.toCollection(ArrayList::new));
     }
