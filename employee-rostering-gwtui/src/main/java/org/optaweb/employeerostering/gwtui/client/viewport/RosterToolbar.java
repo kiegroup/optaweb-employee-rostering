@@ -36,7 +36,7 @@ import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaweb.employeerostering.gwtui.client.common.LocalWeekDatePicker;
-import org.optaweb.employeerostering.gwtui.client.resources.i18n.OptaWebUIConstants;
+import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.roster.Pagination;
 import org.optaweb.employeerostering.shared.roster.view.AbstractRosterView;
@@ -131,7 +131,7 @@ public abstract class RosterToolbar {
             onViewRefresh(view);
         });
         eventManager.subscribeToEventForever(SOLVE_TIME_UPDATE, (timeRemaining) -> {
-            remainingTime.innerHTML = translationService.format(OptaWebUIConstants.Solver_secondsRemaining, timeRemaining);
+            remainingTime.innerHTML = translationService.format(I18nKeys.Solver_secondsRemaining, timeRemaining);
         });
         eventManager.subscribeToEventForever(SOLVE_START, (v) -> {
             ((HTMLElement) remainingTime.parentNode).classList.remove("hidden");
@@ -156,9 +156,9 @@ public abstract class RosterToolbar {
 
         if (score.isPresent()) {
             scores.classList.remove("hidden");
-            hardScore.textContent = translationService.format(OptaWebUIConstants.Indictment_hardScore, score.get().getHardScore());
-            mediumScore.textContent = translationService.format(OptaWebUIConstants.Indictment_mediumScore, score.get().getMediumScore());
-            softScore.textContent = translationService.format(OptaWebUIConstants.Indictment_softScore, score.get().getSoftScore());
+            hardScore.textContent = translationService.format(I18nKeys.Indictment_hardScore, score.get().getHardScore());
+            mediumScore.textContent = translationService.format(I18nKeys.Indictment_mediumScore, score.get().getMediumScore());
+            softScore.textContent = translationService.format(I18nKeys.Indictment_softScore, score.get().getSoftScore());
         } else {
             scores.classList.add("hidden");
         }

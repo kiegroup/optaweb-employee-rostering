@@ -26,7 +26,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.footer.FooterView;
 import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaweb.employeerostering.gwtui.client.header.HeaderView;
-import org.optaweb.employeerostering.gwtui.client.notification.Notifications;
+import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
 import org.optaweb.employeerostering.gwtui.client.viewport.CSSGlobalStyle;
 
@@ -53,7 +53,7 @@ public class AppView
 
     @Inject
     @DataField("notifications")
-    private Notifications notifications;
+    private NotificationFactory notificationFactory;
 
     @Inject
     private CSSGlobalStyle cssGlobalStyle;

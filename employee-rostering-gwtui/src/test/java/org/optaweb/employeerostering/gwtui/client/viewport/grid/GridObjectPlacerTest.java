@@ -22,7 +22,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.optaweb.employeerostering.gwtui.client.viewport.AbstractViewportTest;
+import org.optaweb.employeerostering.gwtui.client.pages.AbstractViewportTest;
+import org.optaweb.employeerostering.gwtui.client.viewport.grid.GridObjectPlacer;
+import org.optaweb.employeerostering.gwtui.client.viewport.grid.LinearScale;
+import org.optaweb.employeerostering.gwtui.client.viewport.grid.SingleGridObject;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class GridObjectPlacerTest extends AbstractViewportTest {
@@ -77,5 +80,4 @@ public class GridObjectPlacerTest extends AbstractViewportTest {
     }
 
     // TODO: More tests
-
 }
