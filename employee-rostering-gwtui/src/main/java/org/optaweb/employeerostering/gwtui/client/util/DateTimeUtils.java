@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.optaweb.employeerostering.gwtui.client.resources.i18n.OptaWebUIConstants;
+import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 
 @Singleton
@@ -34,13 +34,13 @@ public class DateTimeUtils {
     private TranslationService translationService;
 
     public String translateLocalDate(LocalDate localDate) {
-        String dateFormatString = translationService.getTranslation(OptaWebUIConstants.LocalDate_format);
+        String dateFormatString = translationService.getTranslation(I18nKeys.LocalDate_format);
         DateTimeFormat dateFormat = DateTimeFormat.getFormat(dateFormatString);
         return dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(localDate.atTime(0, 0)));
     }
 
     public String translateLocalTime(LocalTime localTime) {
-        String timeFormatString = translationService.getTranslation(OptaWebUIConstants.LocalTime_format);
+        String timeFormatString = translationService.getTranslation(I18nKeys.LocalTime_format);
         DateTimeFormat dateFormat = DateTimeFormat.getFormat(timeFormatString);
         return dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(LocalDate.now().atTime(localTime)));
     }

@@ -19,18 +19,19 @@ package org.optaweb.employeerostering.gwtui.client.pages;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.optaweb.employeerostering.gwtui.client.admin.AdminPage;
-import org.optaweb.employeerostering.gwtui.client.employee.EmployeeListPanel;
-import org.optaweb.employeerostering.gwtui.client.skill.SkillListPanel;
-import org.optaweb.employeerostering.gwtui.client.spot.SpotListPanel;
-import org.optaweb.employeerostering.gwtui.client.viewport.availabilityroster.AvailabilityRosterPage;
-import org.optaweb.employeerostering.gwtui.client.viewport.rotation.RotationPage;
-import org.optaweb.employeerostering.gwtui.client.viewport.shiftroster.ShiftRosterPage;
+import org.optaweb.employeerostering.gwtui.client.pages.admin.AdminPage;
+import org.optaweb.employeerostering.gwtui.client.pages.availabilityroster.AvailabilityRosterPage;
+import org.optaweb.employeerostering.gwtui.client.pages.employee.EmployeeListPanel;
+import org.optaweb.employeerostering.gwtui.client.pages.rotation.RotationPage;
+import org.optaweb.employeerostering.gwtui.client.pages.shiftroster.ShiftRosterPage;
+import org.optaweb.employeerostering.gwtui.client.pages.skill.SkillListPanel;
+import org.optaweb.employeerostering.gwtui.client.pages.spot.SpotListPanel;
 
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.*;
 
