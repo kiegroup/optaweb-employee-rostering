@@ -39,6 +39,9 @@ public interface I18nKeys {
     @TranslationKey(defaultValue = "AbstractRosterViewPanel.terminateEarly")
     final String AbstractRosterViewPanel_terminateEarly = "Terminate";
 
+    @TranslationKey(defaultValue = "Create Availability")
+    final String AvailabilityRosterToolbar_createAvailability = "AvailabilityRosterToolbar.createAvailability";
+
     @TranslationKey(defaultValue = "Week {0}")
     final String DateDisplay_WEEKS_FROM_EPOCH = "DateDisplay.WEEKS_FROM_EPOCH";
 
@@ -93,6 +96,9 @@ public interface I18nKeys {
     @TranslationKey(defaultValue = "Skills")
     final String General_skills = "General.skills";
 
+    @TranslationKey(defaultValue = "Today")
+    final String General_today = "General.today";
+
     @TranslationKey(defaultValue = "Hard Score: {0}")
     final String Indictment_hardScore = "Indictment.hardScore";
 
@@ -146,6 +152,9 @@ public interface I18nKeys {
 
     @TranslationKey(defaultValue = "Spot")
     final String ShiftRosterView_spot = "ShiftRosterView.spot";
+
+    @TranslationKey(defaultValue = "Create Shift")
+    final String ShiftRosterToolbar_createShift = "ShiftRosterToolbar.createShift";
 
     @TranslationKey(defaultValue = "Skill name")
     final String SkillListPanel_skillName = "SkillListPanel.skillName";

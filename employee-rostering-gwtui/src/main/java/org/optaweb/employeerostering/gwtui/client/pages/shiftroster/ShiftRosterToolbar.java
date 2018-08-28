@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.Timer;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.MouseEvent;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -67,6 +68,9 @@ public class ShiftRosterToolbar extends RosterToolbar
 
     @Inject
     private DateTimeUtils dateTimeUtils;
+
+    @Inject
+    private ManagedInstance<ShiftGridObjectPopup> shiftGridObjectPopupInstance;
 
     protected Timer updateSolvingTimeTimer;
     protected Timer terminateSolvingTimer;
@@ -147,6 +151,11 @@ public class ShiftRosterToolbar extends RosterToolbar
                                                                  .translateLocalDate(pr.getPublishedToDate()));
                                                          eventManager.fireEvent(getViewInvalidateEvent());
                                                      }));
+    }
+
+    @EventHandler("add-shift-button")
+    public void onCreateShiftClick(@ForEvent("click") MouseEvent e) {
+        shiftGridObjectPopupInstance.get().createNewShift();
     }
 
     private void terminateSolving() {

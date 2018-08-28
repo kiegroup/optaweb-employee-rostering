@@ -17,8 +17,15 @@
 package org.optaweb.employeerostering.gwtui.client.pages.availabilityroster;
 
 import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
+import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.MouseEvent;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
@@ -38,6 +45,13 @@ import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Eve
 public class AvailabilityRosterToolbar extends RosterToolbar
         implements
         IsElement {
+
+    @Inject
+    @DataField("add-employee-availability-button")
+    private HTMLButtonElement addEmployeeAvailabilityButton;
+
+    @Inject
+    private ManagedInstance<AvailabilityGridObjectPopup> popoverInstances;
 
     @PostConstruct
     private void init() {
@@ -67,6 +81,11 @@ public class AvailabilityRosterToolbar extends RosterToolbar
     @Override
     protected Event<LocalDateRange> getDateRangeEvent() {
         return AVAILABILITY_ROSTER_DATE_RANGE;
+    }
+
+    @EventHandler("add-employee-availability-button")
+    public void addEmployeeAvailability(@ForEvent("click") MouseEvent e) {
+        popoverInstances.get().createNewAvailability();
     }
 
     private void updateRowCount() {
