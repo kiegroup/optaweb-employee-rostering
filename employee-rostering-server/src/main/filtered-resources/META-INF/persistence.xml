@@ -4,6 +4,7 @@
   <persistence-unit name="optaweb-employee-rostering-persistence-unit" transaction-type="JTA">
     <description>OptaWeb Employee Rostering Persistence Unit</description>
     <jta-data-source>${org.optaweb.employeerostering.persistence.datasource}</jta-data-source>
+    <mapping-file>META-INF/orm.xml</mapping-file>
     <class>org.optaweb.employeerostering.shared.skill.Skill</class>
     <class>org.optaweb.employeerostering.shared.spot.Spot</class>
     <class>org.optaweb.employeerostering.shared.employee.Employee</class>

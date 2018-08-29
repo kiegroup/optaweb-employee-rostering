@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<entity-mappings
+    xmlns="http://xmlns.jcp.org/xml/ns/persistence/orm"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence/orm orm_2_1.xsd"
+    version="2.1"
+        >
+    <entity class="org.optaweb.employeerostering.shared.tenant.Tenant">
+        <attributes>
+            <id name="id">
+                <generated-value strategy="${org.optaweb.employeerostering.persistence.id.generator}"/>
+            </id>
+        </attributes>
+    </entity>
+    <mapped-superclass class="org.optaweb.employeerostering.shared.common.AbstractPersistable">
+        <attributes>
+            <id name="id">
+                <generated-value strategy="${org.optaweb.employeerostering.persistence.id.generator}"/>
+            </id>
+        </attributes>
+    </mapped-superclass>
+</entity-mappings>
