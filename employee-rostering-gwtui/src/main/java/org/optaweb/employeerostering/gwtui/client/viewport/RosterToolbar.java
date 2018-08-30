@@ -172,6 +172,17 @@ public abstract class RosterToolbar {
 
     protected void setCurrentRange(Pagination pagination) {
         currentRange.innerHTML = (pagination.getFirstResultIndex() + 1) + "-" + Math.min(pagination.getFirstResultIndex() + pagination.getNumberOfItemsPerPage(), rowCount);
+        if (pagenation.getNumberOfItemsPerPage() + pagenation.getFirstResultIndex() >= rowCount) {
+            nextPage.classList.add("btn", "disabled");
+        } else {
+            nextPage.classList.remove("btn", "disabled");
+        }
+
+        if (pagenation.isOnFirstPage()) {
+            prevPage.classList.add("btn", "disabled");
+        } else {
+            prevPage.classList.remove("btn", "disabled");
+        }
     }
 
     @EventHandler("refresh-button")
@@ -181,13 +192,17 @@ public abstract class RosterToolbar {
 
     @EventHandler("previous-page-button")
     public void onPreviousPageButtonClick(@ForEvent("click") MouseEvent e) {
-        pagenation = pagenation.previousPage();
-        eventManager.fireEvent(getPageChangeEvent(), pagenation);
+        if (!pagenation.isOnFirstPage()) {
+            pagenation = pagenation.previousPage();
+            eventManager.fireEvent(getPageChangeEvent(), pagenation);
+        }
     }
 
     @EventHandler("next-page-button")
     public void onNextPageButtonClick(@ForEvent("click") MouseEvent e) {
-        pagenation = pagenation.nextPage();
-        eventManager.fireEvent(getPageChangeEvent(), pagenation);
+        if (pagenation.getNumberOfItemsPerPage() + pagenation.getFirstResultIndex() < rowCount) {
+            pagenation = pagenation.nextPage();
+            eventManager.fireEvent(getPageChangeEvent(), pagenation);
+        }
     }
 }
