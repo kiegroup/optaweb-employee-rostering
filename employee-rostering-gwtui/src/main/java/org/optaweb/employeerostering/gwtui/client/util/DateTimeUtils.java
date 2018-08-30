@@ -24,6 +24,7 @@ import javax.inject.Singleton;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.optaweb.employeerostering.gwtui.client.common.MomentJs;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 
@@ -43,5 +44,13 @@ public class DateTimeUtils {
         String timeFormatString = translationService.getTranslation(I18nKeys.LocalTime_format);
         DateTimeFormat dateFormat = DateTimeFormat.getFormat(timeFormatString);
         return dateFormat.format(GwtJavaTimeWorkaroundUtil.toDate(LocalDate.now().atTime(localTime)));
+    }
+
+    public LocalDate getFirstDateOfWeek(LocalDate dayInWeek) {
+        return LocalDate.parse(MomentJs.moment(dayInWeek.toString()).day(0).format("YYYY-MM-DD"));
+    }
+
+    public LocalDate getLastDateOfWeek(LocalDate dayInWeek) {
+        return LocalDate.parse(MomentJs.moment(dayInWeek.toString()).day(6).format("YYYY-MM-DD"));
     }
 }

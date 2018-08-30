@@ -16,55 +16,110 @@
 
 package org.optaweb.employeerostering.gwtui.client.common;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import javax.inject.Inject;
-import javax.validation.ValidationException;
+import java.util.Collection;
+import java.util.HashSet;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.TakesValue;
-import elemental2.core.Date;
+import elemental2.dom.Event;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
 
 @Templated
-public class LocalDateTimePicker implements TakesValue<LocalDateTime> {
+public class LocalDateTimePicker implements TakesValue<LocalDateTime>,
+                                            HasValueChangeHandlers<LocalDateTime> {
 
     @Inject
-    @DataField("date-picker")
-    private HTMLInputElement datePicker;
+    @DataField("date-time-picker-text-field")
+    private HTMLInputElement datePickerTextField;
 
     @Inject
-    @DataField("time-picker")
-    private HTMLInputElement timePicker;
+    @DataField("date-time-picker")
+    private HTMLDivElement datePickerElement;
+
+    private Collection<ValueChangeHandler<LocalDateTime>> valueChangeHandlers;
+
+    private BootstrapDateTimePicker datePicker;
+
+    private LocalDateTime currentValue;
+
+    private static final String DATE_FORMAT_STRING = "LLLL";
+
+    @PostConstruct
+    public void init() {
+        valueChangeHandlers = new HashSet<>();
+        datePicker = BootstrapDateTimePicker.get(datePickerElement);
+        BootstrapDateTimePicker.BootstrapDateTimePickerOptions options = new BootstrapDateTimePicker.BootstrapDateTimePickerOptions();
+        options.format = DATE_FORMAT_STRING;
+        options.showTodayButton = true;
+        options.allowInputToggle = true;
+        options.toolbarPlacement = "bottom";
+        options.sideBySide = true;
+        BootstrapDateTimePicker.BootstrapDateTimePickerIcons icons = new BootstrapDateTimePicker.BootstrapDateTimePickerIcons();
+        icons.today = "today-button-pf";
+        options.icons = icons;
+        datePicker.datetimepicker(options);
+        datePicker.on("dp.show", () -> {
+            JQuery.get(datePickerElement).children(".bootstrap-datetimepicker-widget").css("height", "min-content").css("margin-bottom", "-100%");
+        });
+        datePicker.on("dp.change", () -> {
+            String value = datePickerTextField.value;
+            if (value != null && !LocalDateTime.parse(MomentJs.moment(value).format("YYYY-MM-DDTHH:mm")).equals(currentValue)) {
+                setValue(LocalDateTime.parse(MomentJs.moment(value).format("YYYY-MM-DDTHH:mm")));
+                ValueChangeEvent.fire(this, getValue());
+            }
+        });
+    }
+
+    public boolean reportValidity() {
+        return datePickerTextField.reportValidity();
+    }
 
     @Override
     public void setValue(LocalDateTime value) {
-        datePicker.valueAsDate = new Date(Date.parse(value.toLocalDate().toString()));
-        timePicker.value = value.toLocalTime().toString();
+        if (currentValue == null || !currentValue.equals(value)) {
+            currentValue = value;
+            if (value != null) {
+                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) datePicker.data("DateTimePicker")).date(MomentJs.moment(value.toString(), "YYYY-MM-DDTHH:mm").toDate());
+            } else {
+                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) datePicker.data("DateTimePicker")).date((String) null);
+            }
+        }
     }
 
     @Override
     public LocalDateTime getValue() {
-        Date date;
-        datePicker.checkValidity();
-        timePicker.checkValidity();
-        if (datePicker.validity.valid && timePicker.validity.valid) {
-            date = datePicker.valueAsDate;
-            LocalTime localTime = LocalTime.parse(timePicker.value);
-            LocalDate localDate = GwtJavaTimeWorkaroundUtil.toLocalDate(OffsetDateTime.parse(date.toISOString()));
-            return localDate.atTime(localTime);
-        } else {
-            datePicker.reportValidity();
-            timePicker.reportValidity();
-            if (!datePicker.validity.valid) {
-                throw new ValidationException(datePicker.validationMessage);
-            } else {
-                throw new ValidationException(timePicker.validationMessage);
-            }
+        return currentValue;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        if (event.getAssociatedType().equals(ValueChangeEvent.getType())) {
+            valueChangeHandlers.forEach(h -> h.onValueChange((ValueChangeEvent<LocalDateTime>) event));
         }
+    }
+
+    @Override
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<LocalDateTime> handler) {
+        valueChangeHandlers.add(handler);
+        return () -> valueChangeHandlers.remove(handler);
+    }
+
+    @EventHandler("date-time-picker")
+    public void onDateChange(@ForEvent("change") Event e) {
+        ValueChangeEvent.fire(this, getValue());
     }
 }

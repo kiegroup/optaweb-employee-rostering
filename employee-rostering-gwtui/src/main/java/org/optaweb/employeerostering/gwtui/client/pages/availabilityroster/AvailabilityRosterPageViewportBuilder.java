@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.gwtui.client.pages.availabilityroster;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,6 +40,7 @@ import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbac
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.shared.employee.Employee;
@@ -78,6 +80,9 @@ public class AvailabilityRosterPageViewportBuilder {
     @Inject
     private LoadingSpinner loadingSpinner;
 
+    @Inject
+    private DateTimeUtils dateTimeUtils;
+
     private AvailabilityRosterPageViewport viewport;
 
     private boolean isUpdatingRoster;
@@ -112,7 +117,9 @@ public class AvailabilityRosterPageViewportBuilder {
         });
         RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(),
                                                 FailureShownRestCallback.onSuccess((rs) -> {
-                                                    eventManager.fireEvent(AVAILABILITY_ROSTER_DATE_RANGE, new LocalDateRange(rs.getFirstDraftDate(), rs.getFirstDraftDate().plusDays(7)));
+                                                    LocalDate startDate = dateTimeUtils.getFirstDateOfWeek(rs.getFirstDraftDate());
+                                                    LocalDate endDate = dateTimeUtils.getLastDateOfWeek(rs.getFirstDraftDate());
+                                                    eventManager.fireEvent(AVAILABILITY_ROSTER_DATE_RANGE, new LocalDateRange(startDate, endDate));
                                                 }));
     }
 

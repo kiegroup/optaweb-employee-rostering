@@ -1,0 +1,11 @@
+.weekly-date-picker > .bootstrap-datetimepicker-widget tr:hover {
+    background-color: #808080;
+}
+
+.bootstrap-datetimepicker-widget .today-button-pf:before {
+    content: "Today";
+}
+
+.bootstrap-timepicker-widget.dropdown-menu {
+    z-index: 100000000000!important;
+}

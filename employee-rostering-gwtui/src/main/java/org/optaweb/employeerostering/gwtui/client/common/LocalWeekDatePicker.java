@@ -18,13 +18,11 @@ package org.optaweb.employeerostering.gwtui.client.common;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.validation.ValidationException;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -32,17 +30,16 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.TakesValue;
-import elemental2.core.Date;
-import elemental2.dom.Event;
 import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
+import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
 
 @Templated
 public class LocalWeekDatePicker
@@ -51,12 +48,12 @@ public class LocalWeekDatePicker
         HasValueChangeHandlers<LocalDate> {
 
     @Inject
-    @DataField("date-picker")
-    private HTMLInputElement datePicker;
+    @DataField("weekly-date-picker")
+    private HTMLDivElement weeklyDatePickerElement;
 
     @Inject
-    @DataField("today-button")
-    private HTMLButtonElement todayButton;
+    @DataField("weekly-date-picker-text-field")
+    private HTMLInputElement weeklyDatePickerTextField;
 
     @Inject
     @DataField("previous-week-button")
@@ -66,56 +63,80 @@ public class LocalWeekDatePicker
     @DataField("next-week-button")
     private HTMLAnchorElement nextWeekButton;
 
+    @Inject
+    private TranslationService translationService;
+
+    @Inject
+    private DateTimeUtils dateTimeUtils;
+
+    private BootstrapDateTimePicker weeklyDatePicker;
+    private LocalDate firstDayOfWeek;
+
     private Collection<ValueChangeHandler<LocalDate>> valueChangeHandlers;
 
     // TODO: Load this from server
     private static final DayOfWeek START_OF_WEEK = DayOfWeek.SUNDAY;
+    private static final String DATE_FORMAT_STRING = "L";
 
     @PostConstruct
     public void init() {
         valueChangeHandlers = new HashSet<>();
+        weeklyDatePicker = BootstrapDateTimePicker.get(weeklyDatePickerElement);
+        BootstrapDateTimePicker.BootstrapDateTimePickerOptions options = new BootstrapDateTimePicker.BootstrapDateTimePickerOptions();
+        options.format = DATE_FORMAT_STRING;
+        options.showTodayButton = true;
+        options.allowInputToggle = true;
+        BootstrapDateTimePicker.BootstrapDateTimePickerIcons icons = new BootstrapDateTimePicker.BootstrapDateTimePickerIcons();
+        icons.today = "today-button-pf";
+        options.icons = icons;
+        weeklyDatePicker.datetimepicker(options);
+        weeklyDatePicker.on("dp.show", () -> {
+            JQuery.get(weeklyDatePickerElement).children(".bootstrap-datetimepicker-widget").css("height", "min-content").css("margin-bottom", "-100%");
+            JQuery.select("tr:has(td.active)").children("td").addClass("active");
+            String firstDate = MomentJs.moment(weeklyDatePickerTextField.value).day(0).format(DATE_FORMAT_STRING);
+            String lastDate = MomentJs.moment(weeklyDatePickerTextField.value).day(6).format(DATE_FORMAT_STRING);
+            weeklyDatePickerTextField.value = firstDate + " - " + lastDate;
+        });
+        weeklyDatePicker.on("dp.change", () -> {
+            String value = weeklyDatePickerTextField.value;
+            if (value != null && !LocalDate.parse(MomentJs.moment(value).day(0).format("YYYY-MM-DD")).equals(firstDayOfWeek)) {
+                String firstDate = MomentJs.moment(value).day(0).format(DATE_FORMAT_STRING);
+                String lastDate = MomentJs.moment(value).day(6).format(DATE_FORMAT_STRING);
+                setValue(LocalDate.parse(MomentJs.moment(value).day(0).format("YYYY-MM-DD")));
+                weeklyDatePickerTextField.value = firstDate + " - " + lastDate;
+                ValueChangeEvent.fire(this, firstDayOfWeek);
+            }
+        });
     }
 
     @Override
     public void setValue(LocalDate value) {
-        datePicker.valueAsDate = new Date(Date.parse(getFirstDayOfWeek(value).toString()));
+        if (firstDayOfWeek == null || !firstDayOfWeek.equals(value)) {
+            if (value != null) {
+                firstDayOfWeek = dateTimeUtils.getFirstDateOfWeek(value);
+                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) weeklyDatePicker.data("DateTimePicker")).date(firstDayOfWeek.toString());
+                String firstDate = MomentJs.moment(value.toString()).day(0).format(DATE_FORMAT_STRING);
+                String lastDate = MomentJs.moment(value.toString()).day(6).format(DATE_FORMAT_STRING);
+                weeklyDatePickerTextField.value = firstDate + " - " + lastDate;
+                JQuery.select("tr:has(td.active)").children("td").addClass("active");
+            } else {
+                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) weeklyDatePicker.data("DateTimePicker")).date((String) null);
+                weeklyDatePickerTextField.value = "";
+            }
+        }
     }
 
     @Override
     public LocalDate getValue() {
-        Date date;
-        datePicker.checkValidity();
-        if (datePicker.validity.valid) {
-            try {
-                date = datePicker.valueAsDate;
-            } catch (Exception e) {
-                // Browser does not support input type date/time; need to convert String to Date
-                date = new Date(Date.parse(datePicker.value));
-            }
-            return getFirstDayOfWeek(GwtJavaTimeWorkaroundUtil.toLocalDate(OffsetDateTime.parse(date.toISOString())));
-        } else {
-            datePicker.reportValidity();
-            throw new ValidationException(datePicker.validationMessage);
-        }
+        return firstDayOfWeek;
     }
 
-    private LocalDate getFirstDayOfWeek(LocalDate dayInWeek) {
-        while (dayInWeek.getDayOfWeek() != START_OF_WEEK) {
-            dayInWeek = dayInWeek.minusDays(1);
-        }
-        return dayInWeek;
+    public LocalDate getFirstDateOfWeek() {
+        return firstDayOfWeek;
     }
 
-    @EventHandler("date-picker")
-    public void onDateChange(@ForEvent("change") Event e) {
-        datePicker.valueAsDate = new Date(Date.parse(getFirstDayOfWeek(getValue()).toString()));
-        ValueChangeEvent.fire(this, getValue());
-    }
-
-    @EventHandler("today-button")
-    public void onTodayButtonClick(@ForEvent("click") MouseEvent e) {
-        setValue(LocalDate.now());
-        ValueChangeEvent.fire(this, getValue());
+    public LocalDate getLastDateOfWeek() {
+        return firstDayOfWeek.plusDays(6);
     }
 
     @EventHandler("previous-week-button")
