@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -150,20 +151,20 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @Override
     public RotationView getRotation(Integer tenantId) {
         List<ShiftTemplate> shiftTemplateList = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class)
-                                                             .setParameter("tenantId", tenantId)
-                                                             .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         RotationView rotationView = new RotationView();
         rotationView.setTenantId(tenantId);
         rotationView.setSpotList(spotRestService.getSpotList(tenantId));
         rotationView.setEmployeeList(employeeRestService.getEmployeeList(tenantId));
         rotationView.setRotationLength(entityManager.createNamedQuery("RosterState.find", RosterState.class)
-                                                    .setParameter("tenantId", tenantId)
-                                                    .getSingleResult().getRotationLength());
+                                               .setParameter("tenantId", tenantId)
+                                               .getSingleResult().getRotationLength());
         Map<Long, List<ShiftTemplateView>> spotIdToShiftTemplateViewListMap = new HashMap<>();
         shiftTemplateList.forEach((shiftTemplate) -> {
             spotIdToShiftTemplateViewListMap.computeIfAbsent(shiftTemplate.getSpot().getId(),
                                                              (k) -> new ArrayList<>())
-                                            .add(new ShiftTemplateView(rotationView.getRotationLength(), shiftTemplate));
+                    .add(new ShiftTemplateView(rotationView.getRotationLength(), shiftTemplate));
         });
         rotationView.setSpotIdToShiftTemplateViewListMap(spotIdToShiftTemplateViewListMap);
         return rotationView;
@@ -174,34 +175,32 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     public void updateRotation(Integer tenantId, RotationView rotationView) {
         if (!tenantId.equals(rotationView.getTenantId())) {
             throw new IllegalArgumentException("rotationView (" + rotationView + ") tenantId" +
-                                               " does not match tenantId (" + tenantId + ")");
+                                                       " does not match tenantId (" + tenantId + ")");
         }
         List<ShiftTemplate> oldShiftTemplateList = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class)
-                                                                .setParameter("tenantId", tenantId)
-                                                                .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         oldShiftTemplateList.forEach((s) -> entityManager.remove(s));
         // TODO: Update rotation length and unplanneOffset
         Integer rotationLength = entityManager.createNamedQuery("RosterState.find", RosterState.class)
-                                              .setParameter("tenantId", tenantId)
-                                              .getSingleResult().getRotationLength();
+                .setParameter("tenantId", tenantId)
+                .getSingleResult().getRotationLength();
         Map<Long, Spot> spotIdToSpotMap = spotRestService
-                                                         .getSpotList(tenantId).stream().collect(Collectors
-                                                                                                           .toMap(spot -> spot.getId(), spot -> spot));
+                .getSpotList(tenantId).stream().collect(Collectors
+                                                                .toMap(spot -> spot.getId(), spot -> spot));
         Map<Long, Employee> employeeIdToEmployeeMap = employeeRestService
-                                                                         .getEmployeeList(tenantId).stream().collect(Collectors
-                                                                                                                               .toMap(employee -> employee.getId(), employee -> employee));
+                .getEmployeeList(tenantId).stream().collect(Collectors
+                                                                    .toMap(employee -> employee.getId(), employee -> employee));
         rotationView.getSpotIdToShiftTemplateViewListMap()
-                    .forEach((spotId, shiftTemplateViewList) -> {
-                        Spot spot = spotIdToSpotMap.get(spotId);
-                        if (shiftTemplateViewList != null) {
-                            shiftTemplateViewList.forEach(shiftTemplateView -> {
-                                entityManager.merge(new ShiftTemplate(rotationLength,
-                                                                      shiftTemplateView, spot,
-                                                                      employeeIdToEmployeeMap.get(shiftTemplateView.getId())));
-                            });
-                        }
-                    });
-
+                .forEach((spotId, shiftTemplateViewList) -> {
+                    Spot spot = spotIdToSpotMap.get(spotId);
+                    if (shiftTemplateViewList != null) {
+                        shiftTemplateViewList.forEach(shiftTemplateView -> {
+                            entityManager.merge(new ShiftTemplate(rotationLength,
+                                                                  shiftTemplateView, spot,
+                                                                  employeeIdToEmployeeMap.get(shiftTemplateView.getRotationEmployeeId())));
+                        });
+                    }
+                });
     }
-
 }
