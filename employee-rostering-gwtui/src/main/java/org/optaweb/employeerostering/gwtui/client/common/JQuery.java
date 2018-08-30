@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.gwtui.client.common;
 
 import elemental2.dom.HTMLElement;
+import jsinterop.annotations.JsFunction;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
@@ -27,9 +28,14 @@ public class JQuery {
     @JsMethod(name = "$", namespace = JsPackage.GLOBAL)
     public static native JQuery get(HTMLElement element);
 
+    @JsMethod(name = "$", namespace = JsPackage.GLOBAL)
+    public static native JQuery select(String selector);
+
     public native JQuery children(String selector);
 
     public native JQuery css(String propertyName, String propertyValue);
+
+    public native JQuery addClass(String className);
 
     public native Object data(String owner);
 
@@ -39,10 +45,18 @@ public class JQuery {
 
     public native Offset offset();
 
+    public native void on(String event, EventHandler handler);
+
     @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
     public static class Offset {
 
         public double top;
         public double left;
+    }
+
+    @JsFunction
+    public interface EventHandler {
+
+        public void handleEvent();
     }
 }

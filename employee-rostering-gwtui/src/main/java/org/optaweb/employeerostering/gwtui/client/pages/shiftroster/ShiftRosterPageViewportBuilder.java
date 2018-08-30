@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.gwtui.client.pages.shiftroster;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,6 +39,7 @@ import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbac
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.shared.roster.Pagination;
@@ -72,6 +74,9 @@ public class ShiftRosterPageViewportBuilder {
 
     @Inject
     private LoadingSpinner loadingSpinner;
+
+    @Inject
+    private DateTimeUtils dateTimeUtils;
 
     private ShiftRosterPageViewport viewport;
 
@@ -111,7 +116,9 @@ public class ShiftRosterPageViewportBuilder {
 
         RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(),
                                                 FailureShownRestCallback.onSuccess((rs) -> {
-                                                    eventManager.fireEvent(SHIFT_ROSTER_DATE_RANGE, new LocalDateRange(rs.getFirstDraftDate(), rs.getFirstDraftDate().plusDays(7)));
+                                                    LocalDate startDate = dateTimeUtils.getFirstDateOfWeek(rs.getFirstDraftDate());
+                                                    LocalDate endDate = dateTimeUtils.getLastDateOfWeek(rs.getFirstDraftDate());
+                                                    eventManager.fireEvent(SHIFT_ROSTER_DATE_RANGE, new LocalDateRange(startDate, endDate));
                                                 }));
     }
 

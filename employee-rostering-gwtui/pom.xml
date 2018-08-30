@@ -106,7 +106,7 @@
       <artifactId>errai-cdi-jboss</artifactId>
       <scope>runtime</scope>
     </dependency>
-     <dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
     </dependency>
@@ -118,14 +118,14 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
       <classifier>sources</classifier>
-     </dependency>
-     
-     <!-- TESTS -->
-     <dependency>
+    </dependency>
+
+    <!-- TESTS -->
+    <dependency>
       <groupId>com.google.gwt.gwtmockito</groupId>
       <artifactId>gwtmockito</artifactId>
       <scope>test</scope>
-     </dependency>
+    </dependency>
   </dependencies>
 
   <build>
@@ -170,6 +170,22 @@
                   <overWrite>true</overWrite>
                   <outputDirectory>${project.build.directory}/patternfly</outputDirectory>
                 </artifactItem>
+                <artifactItem>
+                  <groupId>org.webjars</groupId>
+                  <artifactId>momentjs</artifactId>
+                  <version>${version.org.webjars.momentjs}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/momentjs</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.webjars</groupId>
+                  <artifactId>Eonasdan-bootstrap-datetimepicker</artifactId>
+                  <version>${version.org.webjars.Eonasdan-bootstrap-datetimepicker}</version>
+                  <type>jar</type>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/bootstrap-datetimepicker</outputDirectory>
+                </artifactItem>
               </artifactItems>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>true</overWriteSnapshots>
@@ -182,7 +198,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-patternfly-resources</id>
+            <id>copy-webjars-resources</id>
             <phase>process-resources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -200,6 +216,51 @@
                   <excludes>
                     <exclude>tests/**</exclude>
                   </excludes>
+                </resource>
+                <resource>
+                  <directory>
+                    ${project.build.directory}/momentjs/META-INF/resources/webjars/momentjs/${version.org.webjars.momentjs}/min
+                  </directory>
+                  <includes>
+                    <include>moment.min.js</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>
+                    ${project.build.directory}/bootstrap-datetimepicker/META-INF/resources/webjars/Eonasdan-bootstrap-datetimepicker/${version.org.webjars.Eonasdan-bootstrap-datetimepicker}
+                  </directory>
+                  <includes>
+                    <include>js/bootstrap-datetimepicker.js</include>
+                    <include>css/bootstrap-datetimepicker.css</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-javascript-to-gwt</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/org/optaplanner/openshift/employeerostering/gwtui/client/resources/js</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>
+                    ${project.build.directory}/momentjs/META-INF/resources/webjars/momentjs/${version.org.webjars.momentjs}/min
+                  </directory>
+                  <includes>
+                    <include>moment.min.js</include>
+                  </includes>
+                </resource>
+                <resource>
+                  <directory>
+                    ${project.build.directory}/bootstrap-daterangepicker/META-INF/resources/webjars/Eonasdan-bootstrap-datetimepicker/${version.org.webjars.Eonasdan-bootstrap-datetimepicker}/js
+                  </directory>
+                  <includes>
+                    <include>bootstrap-datetimepicker.js</include>
+                  </includes>
                 </resource>
               </resources>
             </configuration>

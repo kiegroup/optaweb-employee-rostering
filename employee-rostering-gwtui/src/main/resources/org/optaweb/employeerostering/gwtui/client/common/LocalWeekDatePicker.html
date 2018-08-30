@@ -2,20 +2,15 @@
     <li>
         <a data-field="previous-week-button" href="#" title="Previous Page" class="pagination-pf-back"><span class="i fa fa-angle-left"></span></a>
     </li>
-    <li style="display: inline-flex;">
-        <label for="date-picker" data-i18n-key="LocalWeekDatePicker.weekOf" style="overflow: hidden;
-                                        white-space: nowrap;
-                                        min-width: -moz-min-content;
-                                        min-width: min-content;
-                                        padding-left: 5px;
-                                        padding-right: 5px;
-                                        padding-top: 3px;">
-        </label>
-        <input class="form-control" id="date-picker" type="date"
-               pattern="(0[1-9]|1[0-9]|2[0-9]|3[01])/(0[1-9]|1[012])/[0-9]{4}" required/>
-        <button data-field="today-button" data-i18n-key="General.today"></button>
+    <li>
+        <div class="weekly-date-picker input-group date-time-picker-pf" data-field="weekly-date-picker">
+            <input type="text" data-field="weekly-date-picker-text-field" class="form-control" style="min-width: 250px;">
+            <span class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+            </span>
+        </div>
     </li>
     <li>
-        <a href="#" style="margin-left: 5px;" data-field="next-week-button" title="Next Page" class="pagination-pf-forward"><span class="i fa fa-angle-right"></span></a>
+        <a href="#" data-field="next-week-button" title="Next Page" class="pagination-pf-forward"><span class="i fa fa-angle-right"></span></a>
     </li>
 </ul>
