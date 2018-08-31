@@ -300,6 +300,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl
 
     @Transactional
     public Roster buildRoster(Integer tenantId) {
+        ZoneId zoneId = getRosterState(tenantId).getTimeZone();
         List<Skill> skillList = entityManager.createNamedQuery("Skill.findAll", Skill.class)
                 .setParameter("tenantId", tenantId)
                 .getResultList();
@@ -312,10 +313,16 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl
         List<EmployeeAvailability> employeeAvailabilityList = entityManager.createNamedQuery(
                 "EmployeeAvailability.findAll", EmployeeAvailability.class)
                 .setParameter("tenantId", tenantId)
-                .getResultList();
+                .getResultList()
+                .stream()
+                .map(ea -> ea.inTimeZone(zoneId))
+                .collect(Collectors.toList());
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
                 .setParameter("tenantId", tenantId)
-                .getResultList();
+                .getResultList()
+                .stream()
+                .map(s -> s.inTimeZone(zoneId))
+                .collect(Collectors.toList());
 
         // TODO fill in the score too - do we inject a ScoreDirectorFactory?
         return new Roster((long) tenantId, tenantId,

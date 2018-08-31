@@ -145,4 +145,8 @@ public class EmployeeAvailability extends AbstractPersistable {
     public void setState(EmployeeAvailabilityState state) {
         this.state = state;
     }
+
+    public EmployeeAvailability inTimeZone(ZoneId zoneId) {
+        return new EmployeeAvailability(zoneId, new EmployeeAvailabilityView(zoneId, this), getEmployee());
+    }
 }
