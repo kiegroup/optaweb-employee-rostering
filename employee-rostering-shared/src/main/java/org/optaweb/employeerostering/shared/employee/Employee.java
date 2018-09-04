@@ -22,6 +22,8 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -53,6 +55,10 @@ public class Employee extends AbstractPersistable {
     //@JsonManagedReference
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER) // TODO Eager fetching bloats the EmployeeAvailability.findAll query
+    @JoinTable(name = "EmployeeSkillProficiencySet",
+            joinColumns = @JoinColumn(name = "employeeId", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id")
+    )
     private Set<Skill> skillProficiencySet;
 
     @SuppressWarnings("unused")
