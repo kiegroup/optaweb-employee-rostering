@@ -37,11 +37,12 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
-import org.optaweb.employeerostering.gwtui.client.popups.ErrorPopup;
-import org.optaweb.employeerostering.gwtui.client.util.CommonUtils;
+import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 
-public abstract class TableRow<T> implements TakesValue<T>,
-                                             IsElement {
+public abstract class TableRow<T>
+        implements
+        TakesValue<T>,
+        IsElement {
 
     @Inject
     private Validator validator;
@@ -71,7 +72,7 @@ public abstract class TableRow<T> implements TakesValue<T>,
     private HTMLTableRowElement presenter;
 
     @Inject
-    private CommonUtils commonUtils;
+    private NotificationFactory notificationFactory;
 
     // Not Null if and only if this row is a row for creating an instance
     private KiePager<T> pager;
@@ -113,8 +114,7 @@ public abstract class TableRow<T> implements TakesValue<T>,
             commitChanges();
             setEditing(false);
         } catch (ConstraintViolationException validationException) {
-            Set<ConstraintViolation<?>> validationErrorSet = validationException.getConstraintViolations();
-            ErrorPopup.show(commonUtils.delimitCollection(validationErrorSet, (violation) -> violation.getMessage(), "\n"));
+            notificationFactory.showError(validationException);
         }
     }
 

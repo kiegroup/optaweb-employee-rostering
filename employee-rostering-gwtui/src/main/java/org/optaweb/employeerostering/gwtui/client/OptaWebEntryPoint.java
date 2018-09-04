@@ -29,8 +29,9 @@ import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.shared.api.annotations.Bundle;
 import org.optaweb.employeerostering.gwtui.client.app.NavigationController;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
-import org.optaweb.employeerostering.gwtui.client.notification.Notifications;
+import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.pages.Pages;
+import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
@@ -53,7 +54,7 @@ public class OptaWebEntryPoint {
     private TenantStore tenantStore;
 
     @Inject
-    Notifications notifications;
+    private NotificationFactory notificationFactory;
 
     private boolean isPageLoaded;
 
@@ -65,7 +66,7 @@ public class OptaWebEntryPoint {
 
             public void onUncaughtException(Throwable e) {
                 javascriptLoggerExceptionHandler.onUncaughtException(e);
-                notifications.showError(e);
+                notificationFactory.showError(e);
             }
         });
         healthCheck();
@@ -95,9 +96,10 @@ public class OptaWebEntryPoint {
     private void healthCheck() {
         TenantRestServiceBuilder.getTenantList(FailureShownRestCallback.onSuccess(tenantList -> {
             if (null == tenantList) {
-                throw new IllegalStateException("The server cannot be contacted on url (" + Window.Location.getHref() + ").");
+                notificationFactory.showErrorMessage(I18nKeys.OptaWebEntryPoint_cannotContactServer, Window.Location.getHref());
+            } else {
+                tenantStore.init(); //FIXME: Shouldn't this call be made by the Container once it's annotated with @PostConstruct?
             }
-            tenantStore.init(); //FIXME: Shouldn't this call be made by the Container once it's annotated with @PostConstruct?
         }));
     }
 }
