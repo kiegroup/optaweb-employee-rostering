@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -130,10 +131,11 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
         List<ShiftView> shifts = shiftRestService.getShifts(TENANT_ID);
         assertClientResponseOk();
         assertThat(shifts)
-                .usingComparatorForElementFieldsWithType((a, b) -> a.compareTo(b), Integer.class)
-                .usingComparatorForElementFieldsWithType((a, b) -> a.compareTo(b), Long.class)
-                .usingComparatorForElementFieldsWithType((a, b) -> a.compareTo(b), LocalDateTime.class)
-                .usingElementComparatorOnFields(shiftViewNonIndictmentFields);
+                .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), Integer.class)
+                .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), Long.class)
+                .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), LocalDateTime.class)
+                .usingElementComparatorOnFields(shiftViewNonIndictmentFields)
+                .containsExactly(testAddShift);
 
         ShiftView testUpdateShift = shifts.get(0);
         testUpdateShift.setEmployeeId(employee.getId());
