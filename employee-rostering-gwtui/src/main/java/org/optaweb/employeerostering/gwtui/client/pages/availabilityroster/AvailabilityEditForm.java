@@ -16,15 +16,19 @@
 
 package org.optaweb.employeerostering.gwtui.client.pages.availabilityroster;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.ValidationException;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
@@ -33,12 +37,15 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateTimePicker;
 import org.optaweb.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaweb.employeerostering.shared.employee.view.EmployeeAvailabilityView;
@@ -51,6 +58,11 @@ public class AvailabilityEditForm
     @Inject
     @DataField("root")
     private HTMLDivElement root;
+
+    @Inject
+    @DataField("popup-title")
+    @Named("span")
+    private HTMLElement popupTitle;
 
     @Inject
     @DataField("close-button")
@@ -93,9 +105,14 @@ public class AvailabilityEditForm
     @Inject
     private TranslationService translationService;
 
+    @Inject
+    private EventManager eventManager;
+
     private FormPopup formPopup;
 
     private AvailabilityGridObject availabilityGridObject;
+
+    private List<Employee> employeeList;
 
     private static final List<EmployeeAvailabilityState> EMPLOYEE_AVAILABILITY_STATE_LIST = Arrays.asList(EmployeeAvailabilityState.DESIRED,
                                                                                                           EmployeeAvailabilityState.UNDESIRED,
@@ -107,12 +124,43 @@ public class AvailabilityEditForm
         availabilityGridObject.getElement().classList.add("selected");
         final EmployeeAvailabilityView availabilityView = availabilityGridObject.getEmployeeAvailabilityView();
 
+        setup(availabilityView);
+
+        popupFactory.getFormPopup(this).ifPresent((fp) -> {
+            formPopup = fp;
+            formPopup.showFor(availabilityGridObject);
+        });
+    }
+
+    public void createNewAvailability() {
+        setup(new EmployeeAvailabilityView(tenantStore.getCurrentTenantId(),
+                                           new Employee(),
+                                           LocalDate.now().atTime(0, 0),
+                                           LocalDate.now().plusDays(1).atTime(0, 0),
+                                           EmployeeAvailabilityState.UNAVAILABLE));
+        employeeSelect.setEnabled(true);
+        deleteButton.remove();
+        popupTitle.innerHTML = translationService.format(I18nKeys.AvailabilityRosterToolbar_createAvailability);
+
+        popupFactory.getFormPopup(this).ifPresent((fp) -> {
+            formPopup = fp;
+            formPopup.center();
+        });
+    }
+
+    private void setup(EmployeeAvailabilityView availabilityView) {
         employeeSelect.clear();
         availabilitySelect.clear();
 
         EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
+            employeeList = employees;
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
-            employeeSelect.setSelectedIndex(employees.indexOf(availabilityGridObject.getEmployee()) + 1);
+            if (availabilityView.getEmployeeId() != null) {
+                employeeSelect.setSelectedIndex(employeeList.stream().map(e -> e.getId()).collect(Collectors.toList())
+                                                        .indexOf(availabilityView.getEmployeeId()));
+            } else {
+                employeeSelect.setSelectedIndex(0);
+            }
         }));
 
         availabilitySelect.addItem(translationService.format(I18nKeys.EmployeeAvailabilityState_DESIRED));
@@ -125,11 +173,6 @@ public class AvailabilityEditForm
 
         from.setValue(availabilityView.getStartDateTime());
         to.setValue(availabilityView.getEndDateTime());
-
-        popupFactory.getFormPopup(this).ifPresent((fp) -> {
-            formPopup = fp;
-            formPopup.showFor(availabilityGridObject);
-        });
     }
 
     @EventHandler("root")
@@ -140,49 +183,65 @@ public class AvailabilityEditForm
     @EventHandler("cancel-button")
     public void onCancelButtonClick(@ForEvent("click") final MouseEvent e) {
         formPopup.hide();
-        availabilityGridObject.getElement().classList.remove("selected");
+        if (availabilityGridObject != null) {
+            availabilityGridObject.getElement().classList.remove("selected");
+        }
         e.stopPropagation();
     }
 
     @EventHandler("close-button")
     public void onCloseButtonClick(@ForEvent("click") final MouseEvent e) {
         formPopup.hide();
-        availabilityGridObject.getElement().classList.remove("selected");
+        if (availabilityGridObject != null) {
+            availabilityGridObject.getElement().classList.remove("selected");
+        }
         e.stopPropagation();
     }
 
     @EventHandler("apply-button")
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
-        final EmployeeAvailabilityView availabilityView = availabilityGridObject.getEmployeeAvailabilityView();
+        if (availabilityGridObject != null) {
+            final EmployeeAvailabilityView availabilityView = availabilityGridObject.getEmployeeAvailabilityView();
 
-        final EmployeeAvailabilityState oldState = availabilityView.getState();
-        final LocalDateTime oldStartDateTime = availabilityView.getStartDateTime();
-        final LocalDateTime oldEndDateTime = availabilityView.getEndDateTime();
+            final EmployeeAvailabilityState oldState = availabilityView.getState();
+            final Long oldEmployeeId = availabilityView.getEmployeeId();
+            final LocalDateTime oldStartDateTime = availabilityView.getStartDateTime();
+            final LocalDateTime oldEndDateTime = availabilityView.getEndDateTime();
 
-        try {
-            availabilityView.setState(EMPLOYEE_AVAILABILITY_STATE_LIST.get(availabilitySelect.getSelectedIndex()));
-            availabilityView.setStartDateTime(from.getValue());
-            availabilityView.setEndDateTime(to.getValue());
-        } catch (ValidationException invalidField) {
-            availabilityView.setState(oldState);
-            availabilityView.setStartDateTime(oldStartDateTime);
-            availabilityView.setEndDateTime(oldEndDateTime);
-            return;
+            try {
+                availabilityView.setState(EMPLOYEE_AVAILABILITY_STATE_LIST.get(availabilitySelect.getSelectedIndex()));
+                availabilityView.setEmployeeId(employeeList.get(employeeSelect.getSelectedIndex()).getId());
+                availabilityView.setStartDateTime(from.getValue());
+                availabilityView.setEndDateTime(to.getValue());
+            } catch (ValidationException invalidField) {
+                availabilityView.setState(oldState);
+                availabilityView.setEmployeeId(oldEmployeeId);
+                availabilityView.setStartDateTime(oldStartDateTime);
+                availabilityView.setEndDateTime(oldEndDateTime);
+                return;
+            }
+
+            EmployeeRestServiceBuilder.updateEmployeeAvailability(availabilityView.getTenantId(), availabilityView, FailureShownRestCallback.onSuccess((EmployeeAvailabilityView updatedView) -> {
+                availabilityGridObject.withEmployeeAvailabilityView(updatedView);
+                availabilityGridObject.getElement().classList.remove("selected");
+                formPopup.hide();
+            }).onFailure(i -> {
+                availabilityView.setState(oldState);
+                availabilityView.setStartDateTime(oldStartDateTime);
+                availabilityView.setEndDateTime(oldEndDateTime);
+            }).onError(i -> {
+                availabilityView.setState(oldState);
+                availabilityView.setStartDateTime(oldStartDateTime);
+                availabilityView.setEndDateTime(oldEndDateTime);
+            }));
+        } else {
+            final EmployeeAvailabilityView availabilityView = new EmployeeAvailabilityView(tenantStore.getCurrentTenantId(), employeeList.get(employeeSelect.getSelectedIndex()), from.getValue(), to.getValue(),
+                                                                                           EMPLOYEE_AVAILABILITY_STATE_LIST.get(availabilitySelect.getSelectedIndex()));
+            EmployeeRestServiceBuilder.addEmployeeAvailability(tenantStore.getCurrentTenantId(), availabilityView, FailureShownRestCallback.onSuccess(v -> {
+                formPopup.hide();
+                eventManager.fireEvent(Event.AVAILABILITY_ROSTER_INVALIDATE);
+            }));
         }
-
-        EmployeeRestServiceBuilder.updateEmployeeAvailability(availabilityView.getTenantId(), availabilityView, FailureShownRestCallback.onSuccess((EmployeeAvailabilityView updatedView) -> {
-            availabilityGridObject.withEmployeeAvailabilityView(updatedView);
-            availabilityGridObject.getElement().classList.remove("selected");
-            formPopup.hide();
-        }).onFailure(i -> {
-            availabilityView.setState(oldState);
-            availabilityView.setStartDateTime(oldStartDateTime);
-            availabilityView.setEndDateTime(oldEndDateTime);
-        }).onError(i -> {
-            availabilityView.setState(oldState);
-            availabilityView.setStartDateTime(oldStartDateTime);
-            availabilityView.setEndDateTime(oldEndDateTime);
-        }));
 
         e.stopPropagation();
     }

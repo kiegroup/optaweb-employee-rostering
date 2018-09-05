@@ -19,10 +19,12 @@ package org.optaweb.employeerostering.gwtui.client.pages.shiftroster;
 import java.time.LocalDateTime;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.validation.ValidationException;
 
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.ListBox;
@@ -42,6 +44,7 @@ import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaweb.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
+import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
@@ -52,6 +55,11 @@ public class ShiftEditForm implements IsElement {
     @Inject
     @DataField("root")
     private HTMLDivElement root;
+
+    @Inject
+    @DataField("popup-title")
+    @Named("span")
+    private HTMLElement popupTitle;
 
     @Inject
     @DataField("close-button")
@@ -111,27 +119,52 @@ public class ShiftEditForm implements IsElement {
         shiftGridObject.getElement().classList.add("selected");
         final ShiftView shift = shiftGridObject.getShiftView();
 
-        employeeSelect.clear();
-        employeeSelect.addItem(translationService.format(I18nKeys.Shift_unassigned), "-1");
-
-        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spots -> {
-            spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
-            spotSelect.setSelectedIndex(spots.indexOf(shiftGridObject.getSpot()));
-        }));
-
-        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
-            employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
-            employeeSelect.setSelectedIndex((shiftGridObject.getEmployee() == null) ? 0 : employees.indexOf(shiftGridObject.getEmployee()) + 1);
-        }));
-
-        from.setValue(shift.getStartDateTime());
-        to.setValue(shift.getEndDateTime());
-        pinned.checked = shift.isPinnedByUser();
+        setup(shift);
 
         popupFactory.getFormPopup(this).ifPresent((fp) -> {
             formPopup = fp;
             formPopup.showFor(shiftGridObject);
         });
+    }
+
+    public void createNewShift() {
+        setup(new ShiftView(tenantStore.getCurrentTenantId(), new Spot(), LocalDateTime.now(), LocalDateTime.now().plusHours(9)));
+
+        spotSelect.setEnabled(true);
+        deleteButton.remove();
+        popupTitle.innerHTML = translationService.format(I18nKeys.ShiftRosterToolbar_createShift);
+
+        popupFactory.getFormPopup(this).ifPresent((fp) -> {
+            formPopup = fp;
+            formPopup.center();
+        });
+    }
+
+    private void setup(ShiftView shiftView) {
+        employeeSelect.clear();
+        employeeSelect.addItem(translationService.format(I18nKeys.Shift_unassigned), "-1");
+
+        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spots -> {
+            spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
+            if (shiftView.getSpotId() != null) {
+                spotSelect.setSelectedIndex(spots.indexOf(shiftGridObject.getSpot()));
+            } else {
+                spotSelect.setSelectedIndex(0);
+            }
+        }));
+
+        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
+            employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
+            if (shiftView.getEmployeeId() != null) {
+                employeeSelect.setSelectedIndex((shiftGridObject.getEmployee() == null) ? 0 : employees.indexOf(shiftGridObject.getEmployee()) + 1);
+            } else {
+                employeeSelect.setSelectedIndex(0);
+            }
+        }));
+
+        from.setValue(shiftView.getStartDateTime());
+        to.setValue(shiftView.getEndDateTime());
+        pinned.checked = shiftView.isPinnedByUser();
     }
 
     @EventHandler("root")
@@ -142,56 +175,76 @@ public class ShiftEditForm implements IsElement {
     @EventHandler("cancel-button")
     public void onCancelButtonClick(@ForEvent("click") final MouseEvent e) {
         formPopup.hide();
-        shiftGridObject.getElement().classList.remove("selected");
+        if (shiftGridObject != null) {
+            shiftGridObject.getElement().classList.remove("selected");
+        }
         e.stopPropagation();
     }
 
     @EventHandler("close-button")
     public void onCloseButtonClick(@ForEvent("click") final MouseEvent e) {
         formPopup.hide();
-        shiftGridObject.getElement().classList.remove("selected");
+        if (shiftGridObject != null) {
+            shiftGridObject.getElement().classList.remove("selected");
+        }
         e.stopPropagation();
     }
 
     @EventHandler("apply-button")
     public void onApplyButtonClick(@ForEvent("click") final MouseEvent e) {
+        if (shiftGridObject != null) {
 
-        final ShiftView shiftView = shiftGridObject.getShiftView();
+            final ShiftView shiftView = shiftGridObject.getShiftView();
 
-        final boolean oldLockedByUser = shiftView.isPinnedByUser();
-        final Long oldEmployee = shiftView.getEmployeeId();
-        final LocalDateTime oldStartDateTime = shiftView.getStartDateTime();
-        final LocalDateTime oldEndDateTime = shiftView.getEndDateTime();
+            final boolean oldLockedByUser = shiftView.isPinnedByUser();
+            final Long oldEmployee = shiftView.getEmployeeId();
+            final LocalDateTime oldStartDateTime = shiftView.getStartDateTime();
+            final LocalDateTime oldEndDateTime = shiftView.getEndDateTime();
 
-        try {
+            try {
+                shiftView.setPinnedByUser(pinned.checked);
+                shiftView.setEmployeeId(parseId(employeeSelect.getSelectedValue()));
+                shiftView.setStartDateTime(from.getValue());
+                shiftView.setEndDateTime(to.getValue());
+            } catch (ValidationException invalidField) {
+                shiftView.setPinnedByUser(oldLockedByUser);
+                shiftView.setEmployeeId(oldEmployee);
+                shiftView.setStartDateTime(oldStartDateTime);
+                shiftView.setEndDateTime(oldEndDateTime);
+                return;
+            }
+
+            ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, FailureShownRestCallback.onSuccess((final ShiftView updatedShift) -> {
+                shiftGridObject.withShiftView(updatedShift);
+                shiftGridObject.getElement().classList.remove("selected");
+                eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
+                formPopup.hide();
+            }).onFailure(i -> {
+                shiftView.setPinnedByUser(oldLockedByUser);
+                shiftView.setEmployeeId(oldEmployee);
+                shiftView.setStartDateTime(oldStartDateTime);
+                shiftView.setEndDateTime(oldEndDateTime);
+            }).onError(i -> {
+                shiftView.setPinnedByUser(oldLockedByUser);
+                shiftView.setEmployeeId(oldEmployee);
+                shiftView.setStartDateTime(oldStartDateTime);
+                shiftView.setEndDateTime(oldEndDateTime);
+            }));
+        } else {
+            final ShiftView shiftView = new ShiftView();
+
             shiftView.setPinnedByUser(pinned.checked);
+            shiftView.setSpotId(parseId(spotSelect.getSelectedValue()));
             shiftView.setEmployeeId(parseId(employeeSelect.getSelectedValue()));
             shiftView.setStartDateTime(from.getValue());
             shiftView.setEndDateTime(to.getValue());
-        } catch (ValidationException invalidField) {
-            shiftView.setPinnedByUser(oldLockedByUser);
-            shiftView.setEmployeeId(oldEmployee);
-            shiftView.setStartDateTime(oldStartDateTime);
-            shiftView.setEndDateTime(oldEndDateTime);
-            return;
-        }
+            shiftView.setTenantId(tenantStore.getCurrentTenantId());
 
-        ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, FailureShownRestCallback.onSuccess((final ShiftView updatedShift) -> {
-            shiftGridObject.withShiftView(updatedShift);
-            shiftGridObject.getElement().classList.remove("selected");
-            eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
-            formPopup.hide();
-        }).onFailure(i -> {
-            shiftView.setPinnedByUser(oldLockedByUser);
-            shiftView.setEmployeeId(oldEmployee);
-            shiftView.setStartDateTime(oldStartDateTime);
-            shiftView.setEndDateTime(oldEndDateTime);
-        }).onError(i -> {
-            shiftView.setPinnedByUser(oldLockedByUser);
-            shiftView.setEmployeeId(oldEmployee);
-            shiftView.setStartDateTime(oldStartDateTime);
-            shiftView.setEndDateTime(oldEndDateTime);
-        }));
+            ShiftRestServiceBuilder.addShift(tenantStore.getCurrentTenantId(), shiftView, FailureShownRestCallback.onSuccess(v -> {
+                formPopup.hide();
+                eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
+            }));
+        }
 
         e.stopPropagation();
     }

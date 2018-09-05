@@ -35,6 +35,7 @@ import com.google.gwt.user.client.TakesValue;
 import elemental2.core.Date;
 import elemental2.dom.Event;
 import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -52,6 +53,10 @@ public class LocalWeekDatePicker
     @Inject
     @DataField("date-picker")
     private HTMLInputElement datePicker;
+
+    @Inject
+    @DataField("today-button")
+    private HTMLButtonElement todayButton;
 
     @Inject
     @DataField("previous-week-button")
@@ -104,6 +109,12 @@ public class LocalWeekDatePicker
     @EventHandler("date-picker")
     public void onDateChange(@ForEvent("change") Event e) {
         datePicker.valueAsDate = new Date(Date.parse(getFirstDayOfWeek(getValue()).toString()));
+        ValueChangeEvent.fire(this, getValue());
+    }
+
+    @EventHandler("today-button")
+    public void onTodayButtonClick(@ForEvent("click") MouseEvent e) {
+        setValue(LocalDate.now());
         ValueChangeEvent.fire(this, getValue());
     }
 
