@@ -132,7 +132,7 @@ public class ShiftEditForm implements IsElement {
 
         spotSelect.setEnabled(true);
         deleteButton.remove();
-        popupTitle.innerHTML = translationService.format(OptaWebUIConstants.ShiftRosterToolbar_createShift);
+        popupTitle.innerHTML = translationService.format(I18nKeys.ShiftRosterToolbar_createShift);
 
         popupFactory.getFormPopup(this).ifPresent((fp) -> {
             formPopup = fp;
@@ -146,19 +146,19 @@ public class ShiftEditForm implements IsElement {
 
         SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spots -> {
             spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
-            if (null == shiftView.getSpotId()) {
-                spotSelect.setSelectedIndex(0);
-            } else {
+            if (shiftView.getSpotId() != null) {
                 spotSelect.setSelectedIndex(spots.indexOf(shiftGridObject.getSpot()));
+            } else {
+                spotSelect.setSelectedIndex(0);
             }
         }));
 
         EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
-            if (null == shiftView.getEmployeeId()) {
-                employeeSelect.setSelectedIndex(0);
-            } else {
+            if (shiftView.getEmployeeId() != null) {
                 employeeSelect.setSelectedIndex((shiftGridObject.getEmployee() == null) ? 0 : employees.indexOf(shiftGridObject.getEmployee()) + 1);
+            } else {
+                employeeSelect.setSelectedIndex(0);
             }
         }));
 

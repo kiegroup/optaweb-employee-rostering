@@ -70,7 +70,7 @@ public class ShiftRosterToolbar extends RosterToolbar
     private DateTimeUtils dateTimeUtils;
 
     @Inject
-    private ManagedInstance<ShiftGridObjectPopup> shiftGridObjectPopupInstance;
+    private ManagedInstance<ShiftEditForm> shiftEditFormInstance;
 
     protected Timer updateSolvingTimeTimer;
     protected Timer terminateSolvingTimer;
@@ -155,7 +155,7 @@ public class ShiftRosterToolbar extends RosterToolbar
 
     @EventHandler("add-shift-button")
     public void onCreateShiftClick(@ForEvent("click") MouseEvent e) {
-        shiftGridObjectPopupInstance.get().createNewShift();
+        shiftEditFormInstance.get().createNewShift();
     }
 
     private void terminateSolving() {

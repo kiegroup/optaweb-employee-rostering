@@ -51,7 +51,7 @@ public class AvailabilityRosterToolbar extends RosterToolbar
     private HTMLButtonElement addEmployeeAvailabilityButton;
 
     @Inject
-    private ManagedInstance<AvailabilityGridObjectPopup> popoverInstances;
+    private ManagedInstance<AvailabilityEditForm> availabilityEditForm;
 
     @PostConstruct
     private void init() {
@@ -85,7 +85,7 @@ public class AvailabilityRosterToolbar extends RosterToolbar
 
     @EventHandler("add-employee-availability-button")
     public void addEmployeeAvailability(@ForEvent("click") MouseEvent e) {
-        popoverInstances.get().createNewAvailability();
+        availabilityEditForm.get().createNewAvailability();
     }
 
     private void updateRowCount() {

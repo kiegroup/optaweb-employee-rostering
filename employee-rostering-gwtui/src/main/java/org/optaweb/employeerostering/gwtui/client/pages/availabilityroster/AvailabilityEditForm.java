@@ -133,10 +133,14 @@ public class AvailabilityEditForm
     }
 
     public void createNewAvailability() {
-        setup(new EmployeeAvailabilityView(tenantStore.getCurrentTenantId(), new Employee(), LocalDate.now().atTime(0, 0), LocalDate.now().plusDays(1).atTime(0, 0), EmployeeAvailabilityState.UNAVAILABLE));
+        setup(new EmployeeAvailabilityView(tenantStore.getCurrentTenantId(),
+                                           new Employee(),
+                                           LocalDate.now().atTime(0, 0),
+                                           LocalDate.now().plusDays(1).atTime(0, 0),
+                                           EmployeeAvailabilityState.UNAVAILABLE));
         employeeSelect.setEnabled(true);
         deleteButton.remove();
-        popupTitle.innerHTML = translationService.format(OptaWebUIConstants.AvailabilityRosterToolbar_createAvailability);
+        popupTitle.innerHTML = translationService.format(I18nKeys.AvailabilityRosterToolbar_createAvailability);
 
         popupFactory.getFormPopup(this).ifPresent((fp) -> {
             formPopup = fp;
@@ -151,10 +155,11 @@ public class AvailabilityEditForm
         EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
             employeeList = employees;
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
-            if (null == availabilityView.getEmployeeId()) {
-                employeeSelect.setSelectedIndex(0);
+            if (availabilityView.getEmployeeId() != null) {
+                employeeSelect.setSelectedIndex(employeeList.stream().map(e -> e.getId()).collect(Collectors.toList())
+                                                        .indexOf(availabilityView.getEmployeeId()));
             } else {
-                employeeSelect.setSelectedIndex(employeeList.stream().map(e -> e.getId()).collect(Collectors.toList()).indexOf(availabilityView.getEmployeeId()));
+                employeeSelect.setSelectedIndex(0);
             }
         }));
 
