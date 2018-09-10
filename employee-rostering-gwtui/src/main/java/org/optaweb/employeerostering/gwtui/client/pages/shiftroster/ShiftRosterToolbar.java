@@ -134,7 +134,7 @@ public class ShiftRosterToolbar extends RosterToolbar
         RosterRestServiceBuilder.solveRoster(tenantStore.getCurrentTenantId(),
                                              FailureShownRestCallback.onSuccess(a -> {
                                                  timeRemaining = 30;
-                                                 scores.classList.remove("hidden");
+                                                 scoresDisplay.classList.remove("hidden");
                                                  terminateEarlyButton.classList.remove("hidden");
                                                  solveButton.classList.add("hidden");
                                                  eventManager.fireEvent(SOLVE_START);
@@ -159,10 +159,10 @@ public class ShiftRosterToolbar extends RosterToolbar
     }
 
     private void terminateSolving() {
-        remainingTime.innerHTML = "";
+        remainingTimeDisplay.innerHTML = "";
         updateSolvingTimeTimer.cancel();
 
-        scores.classList.add("hidden");
+        scoresDisplay.classList.add("hidden");
         terminateEarlyButton.classList.add("hidden");
         solveButton.classList.remove("hidden");
         eventManager.fireEvent(SOLVE_END);

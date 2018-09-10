@@ -53,27 +53,27 @@ public abstract class RosterToolbar {
 
     @Inject
     @DataField("scores")
-    protected HTMLDivElement scores;
+    protected HTMLDivElement scoresDisplay;
 
     @Inject
     @Named("span")
     @DataField("hard-score")
-    private HTMLElement hardScore;
+    private HTMLElement hardScoreDisplay;
 
     @Inject
     @Named("span")
     @DataField("medium-score")
-    private HTMLElement mediumScore;
+    private HTMLElement mediumScoreDisplay;
 
     @Inject
     @Named("span")
     @DataField("soft-score")
-    private HTMLElement softScore;
+    private HTMLElement softScoreDisplay;
 
     @Inject
     @Named("span")
     @DataField("current-range")
-    private HTMLElement currentRange;
+    private HTMLElement currentRangeDisplay;
 
     @Inject
     @Named("span")
@@ -82,16 +82,16 @@ public abstract class RosterToolbar {
 
     @Inject
     @DataField("previous-page-button")
-    private HTMLAnchorElement prevPage;
+    private HTMLAnchorElement prevPageButton;
 
     @Inject
     @DataField("next-page-button")
-    private HTMLAnchorElement nextPage;
+    private HTMLAnchorElement nextPageButton;
 
     @Inject
     @Named("span")
     @DataField("remaining-time")
-    protected HTMLElement remainingTime;
+    protected HTMLElement remainingTimeDisplay;
 
     @Inject
     @DataField("week-picker")
@@ -106,7 +106,7 @@ public abstract class RosterToolbar {
     @Inject
     protected TranslationService translationService;
 
-    protected Pagination pagenation;
+    protected Pagination currentRange;
 
     protected Integer rowCount;
 
@@ -122,26 +122,26 @@ public abstract class RosterToolbar {
 
     @PostConstruct
     private void init() {
-        pagenation = Pagination.of(0, 10);
+        currentRange = Pagination.of(0, 10);
         rowCount = 0;
-        setCurrentRange(pagenation);
-        ((HTMLElement) remainingTime.parentNode).classList.add("hidden");
+        setCurrentRange(currentRange);
+        ((HTMLElement) remainingTimeDisplay.parentNode).classList.add("hidden");
 
         eventManager.subscribeToEventForever(getViewRefreshEvent(), (view) -> {
             onViewRefresh(view);
         });
         eventManager.subscribeToEventForever(SOLVE_TIME_UPDATE, (timeRemaining) -> {
-            remainingTime.innerHTML = translationService.format(I18nKeys.Solver_secondsRemaining, timeRemaining);
+            remainingTimeDisplay.innerHTML = translationService.format(I18nKeys.Solver_secondsRemaining, timeRemaining);
         });
         eventManager.subscribeToEventForever(SOLVE_START, (v) -> {
-            ((HTMLElement) remainingTime.parentNode).classList.remove("hidden");
+            ((HTMLElement) remainingTimeDisplay.parentNode).classList.remove("hidden");
         });
         eventManager.subscribeToEventForever(SOLVE_END, (v) -> {
-            ((HTMLElement) remainingTime.parentNode).classList.add("hidden");
+            ((HTMLElement) remainingTimeDisplay.parentNode).classList.add("hidden");
         });
-        eventManager.subscribeToEventForever(getPageChangeEvent(), (pagenation) -> {
-            this.pagenation = pagenation;
-            setCurrentRange(pagenation);
+        eventManager.subscribeToEventForever(getPageChangeEvent(), (newRange) -> {
+            this.currentRange = newRange;
+            setCurrentRange(newRange);
         });
         eventManager.subscribeToEventForever(getDateRangeEvent(), (dateRange) -> {
             weekPicker.setValue(dateRange.getStartDate());
@@ -155,23 +155,34 @@ public abstract class RosterToolbar {
         final Optional<HardMediumSoftLongScore> score = Optional.ofNullable(view.getScore());
 
         if (score.isPresent()) {
-            scores.classList.remove("hidden");
-            hardScore.textContent = translationService.format(I18nKeys.Indictment_hardScore, score.get().getHardScore());
-            mediumScore.textContent = translationService.format(I18nKeys.Indictment_mediumScore, score.get().getMediumScore());
-            softScore.textContent = translationService.format(I18nKeys.Indictment_softScore, score.get().getSoftScore());
+            scoresDisplay.classList.remove("hidden");
+            hardScoreDisplay.textContent = translationService.format(I18nKeys.Indictment_hardScore, score.get().getHardScore());
+            mediumScoreDisplay.textContent = translationService.format(I18nKeys.Indictment_mediumScore, score.get().getMediumScore());
+            softScoreDisplay.textContent = translationService.format(I18nKeys.Indictment_softScore, score.get().getSoftScore());
         } else {
-            scores.classList.add("hidden");
+            scoresDisplay.classList.add("hidden");
         }
     }
 
     protected void setRowCount(Integer rowCount) {
         rowCountDisplay.innerHTML = rowCount + "";
         this.rowCount = rowCount;
-        setCurrentRange(pagenation);
+        setCurrentRange(currentRange);
     }
 
-    protected void setCurrentRange(Pagination pagination) {
-        currentRange.innerHTML = (pagination.getFirstResultIndex() + 1) + "-" + Math.min(pagination.getFirstResultIndex() + pagination.getNumberOfItemsPerPage(), rowCount);
+    protected void setCurrentRange(Pagination newRange) {
+        currentRangeDisplay.innerHTML = (newRange.getFirstResultIndex() + 1) + "-" + Math.min(newRange.getFirstResultIndex() + newRange.getNumberOfItemsPerPage(), rowCount);
+        if (currentRange.getNumberOfItemsPerPage() + currentRange.getFirstResultIndex() >= rowCount) {
+            nextPageButton.classList.add("btn", "disabled");
+        } else {
+            nextPageButton.classList.remove("btn", "disabled");
+        }
+
+        if (currentRange.isOnFirstPage()) {
+            prevPageButton.classList.add("btn", "disabled");
+        } else {
+            prevPageButton.classList.remove("btn", "disabled");
+        }
     }
 
     @EventHandler("refresh-button")
@@ -181,13 +192,17 @@ public abstract class RosterToolbar {
 
     @EventHandler("previous-page-button")
     public void onPreviousPageButtonClick(@ForEvent("click") MouseEvent e) {
-        pagenation = pagenation.previousPage();
-        eventManager.fireEvent(getPageChangeEvent(), pagenation);
+        if (!currentRange.isOnFirstPage()) {
+            currentRange = currentRange.previousPage();
+            eventManager.fireEvent(getPageChangeEvent(), currentRange);
+        }
     }
 
     @EventHandler("next-page-button")
     public void onNextPageButtonClick(@ForEvent("click") MouseEvent e) {
-        pagenation = pagenation.nextPage();
-        eventManager.fireEvent(getPageChangeEvent(), pagenation);
+        if (currentRange.getNumberOfItemsPerPage() + currentRange.getFirstResultIndex() < rowCount) {
+            currentRange = currentRange.nextPage();
+            eventManager.fireEvent(getPageChangeEvent(), currentRange);
+        }
     }
 }
