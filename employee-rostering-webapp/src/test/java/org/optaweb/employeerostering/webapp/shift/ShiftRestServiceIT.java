@@ -45,7 +45,7 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
     private SpotRestService spotRestService;
     private EmployeeRestService employeeRestService;
 
-    private final String[] shiftViewNonIndictmentFields = {"employeeId", "spotId", "rotationEmployeeId", "startDateTime", "endDateTime", "tenantId"};
+    private static final String[] SHIFT_VIEW_NON_INDICTMENT_FIELDS = {"employeeId", "spotId", "rotationEmployeeId", "startDateTime", "endDateTime", "tenantId"};
 
     public ShiftRestServiceIT() {
         shiftRestService = serviceClientFactory.createShiftRestServiceClient();
@@ -98,12 +98,12 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
         ShiftView updatedShift = shiftRestService.updateShift(TENANT_ID, nonExistingShift);
         assertClientResponseOk();
 
-        assertThat(updatedShift.getSpotId()).isEqualTo(updatedShift.getSpotId());
-        assertThat(updatedShift.getEmployeeId()).isEqualTo(updatedShift.getEmployeeId());
-        assertThat(updatedShift.getStartDateTime()).isEqualTo(updatedShift.getStartDateTime());
-        assertThat(updatedShift.getEndDateTime()).isEqualTo(updatedShift.getEndDateTime());
-        assertThat(updatedShift.getRotationEmployeeId()).isEqualTo(updatedShift.getRotationEmployeeId());
-        assertThat(updatedShift.getId()).isNotNull().isNotEqualTo("spot");
+        assertThat(updatedShift.getSpotId()).isEqualTo(nonExistingShift.getSpotId());
+        assertThat(updatedShift.getEmployeeId()).isEqualTo(nonExistingShift.getEmployeeId());
+        assertThat(updatedShift.getStartDateTime()).isEqualTo(nonExistingShift.getStartDateTime());
+        assertThat(updatedShift.getEndDateTime()).isEqualTo(nonExistingShift.getEndDateTime());
+        assertThat(updatedShift.getRotationEmployeeId()).isEqualTo(nonExistingShift.getRotationEmployeeId());
+        assertThat(updatedShift.getId()).isNotNull().isNotEqualTo(nonExistingShiftId);
     }
 
     @Test
@@ -134,7 +134,7 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
                 .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), Integer.class)
                 .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), Long.class)
                 .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), LocalDateTime.class)
-                .usingElementComparatorOnFields(shiftViewNonIndictmentFields)
+                .usingElementComparatorOnFields(SHIFT_VIEW_NON_INDICTMENT_FIELDS)
                 .containsExactly(testAddShift);
 
         ShiftView testUpdateShift = shifts.get(0);
@@ -144,7 +144,7 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
 
         ShiftView retrievedShift = shiftRestService.getShift(TENANT_ID, testUpdateShift.getId());
         assertClientResponseOk();
-        assertThat(retrievedShift).isNotNull().isEqualToComparingOnlyGivenFields(testUpdateShift, shiftViewNonIndictmentFields);
+        assertThat(retrievedShift).isNotNull().isEqualToComparingOnlyGivenFields(testUpdateShift, SHIFT_VIEW_NON_INDICTMENT_FIELDS);
 
         boolean result = shiftRestService.removeShift(TENANT_ID, retrievedShift.getId());
         assertThat(result).isTrue();
@@ -168,7 +168,7 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
         ShiftView addedShift = shiftRestService.addShift(TENANT_ID, testAddShift);
         ShiftView retrievedShift = shiftRestService.getShift(TENANT_ID, addedShift.getId());
         assertClientResponseOk();
-        assertThat(retrievedShift).isNotNull().isEqualToComparingOnlyGivenFields(testAddShift, shiftViewNonIndictmentFields);
+        assertThat(retrievedShift).isNotNull().isEqualToComparingOnlyGivenFields(testAddShift, SHIFT_VIEW_NON_INDICTMENT_FIELDS);
 
         // Trigger an indictment so we can read zone offset
         LocalDateTime conflictingStartDateTime = endDateTime.plusHours(9);
