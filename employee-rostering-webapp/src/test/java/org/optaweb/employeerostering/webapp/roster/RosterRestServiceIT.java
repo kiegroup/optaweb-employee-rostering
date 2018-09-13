@@ -130,8 +130,8 @@ public class RosterRestServiceIT extends AbstractEntityRequireTenantRestServiceI
         rosterState.setTenant(tenant);
         rosterState.setTenantId(tenant.getId());
 
-        RosterState recievedRosterState = rosterRestService.getRosterState(TENANT_ID);
-        assertThat(recievedRosterState).isEqualToIgnoringGivenFields(rosterState, IGNORED_FIELDS);
+        RosterState receivedRosterState = rosterRestService.getRosterState(TENANT_ID);
+        assertThat(receivedRosterState).isEqualToIgnoringGivenFields(rosterState, IGNORED_FIELDS);
     }
 
     @Test
@@ -144,7 +144,7 @@ public class RosterRestServiceIT extends AbstractEntityRequireTenantRestServiceI
         assertClientResponseOk();
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
-        assertThat(shiftRosterView.getSpotList()).containsExactly(spotList.get(0));
+        assertThat(shiftRosterView.getSpotList()).containsExactlyElementsOf(spotList.subList(0, 1));
         assertThat(shiftRosterView.getStartDate()).isEqualTo(startDate);
         assertThat(shiftRosterView.getEndDate()).isEqualTo(endDate);
         assertThat(shiftRosterView.getSpotIdToShiftViewListMap()).containsOnly(entry(spotList.get(0).getId(), Arrays.asList(shiftViewList.get(0))));
@@ -154,7 +154,7 @@ public class RosterRestServiceIT extends AbstractEntityRequireTenantRestServiceI
         assertClientResponseOk();
         assertThat(shiftRosterView).isNotNull();
         assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
-        assertThat(shiftRosterView.getSpotList()).containsExactly(spotList.get(1));
+        assertThat(shiftRosterView.getSpotList()).containsExactlyElementsOf(spotList.subList(1, 2));
         assertThat(shiftRosterView.getStartDate()).isEqualTo(startDate);
         assertThat(shiftRosterView.getEndDate()).isEqualTo(endDate);
         assertThat(shiftRosterView.getSpotIdToShiftViewListMap()).containsOnly(entry(spotList.get(1).getId(), Arrays.asList(shiftViewList.get(1))));
@@ -170,7 +170,7 @@ public class RosterRestServiceIT extends AbstractEntityRequireTenantRestServiceI
         AvailabilityRosterView availabilityRosterView = rosterRestService.getAvailabilityRosterView(TENANT_ID, 0, 1, startDate.toString(), endDate.toString());
         assertClientResponseOk();
         assertThat(availabilityRosterView).isNotNull();
-        assertThat(availabilityRosterView.getEmployeeList()).containsExactly(employeeList.get(0));
+        assertThat(availabilityRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList.subList(0, 1));
         assertThat(availabilityRosterView.getSpotList()).containsExactlyElementsOf(spotList);
         assertThat(availabilityRosterView.getStartDate()).isEqualTo(startDate);
         assertThat(availabilityRosterView.getEndDate()).isEqualTo(endDate);
@@ -181,7 +181,7 @@ public class RosterRestServiceIT extends AbstractEntityRequireTenantRestServiceI
         availabilityRosterView = rosterRestService.getAvailabilityRosterView(TENANT_ID, 1, 1, startDate.toString(), endDate.toString());
         assertClientResponseOk();
         assertThat(availabilityRosterView).isNotNull();
-        assertThat(availabilityRosterView.getEmployeeList()).containsExactly(employeeList.get(1));
+        assertThat(availabilityRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList.subList(1, 2));
         assertThat(availabilityRosterView.getSpotList()).containsExactlyElementsOf(spotList);
         assertThat(availabilityRosterView.getStartDate()).isEqualTo(startDate);
         assertThat(availabilityRosterView.getEndDate()).isEqualTo(endDate);
