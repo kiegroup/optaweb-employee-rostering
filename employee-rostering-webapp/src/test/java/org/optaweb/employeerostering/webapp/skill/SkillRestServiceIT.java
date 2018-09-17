@@ -20,18 +20,17 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.skill.SkillRestService;
-import org.optaweb.employeerostering.webapp.AbstractRestServiceIT;
+import org.optaweb.employeerostering.webapp.AbstractEntityRequireTenantRestServiceIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class SkillRestServiceIT extends AbstractRestServiceIT {
-
-    private static final int TENANT_ID = 1000;
+public class SkillRestServiceIT extends AbstractEntityRequireTenantRestServiceIT {
 
     private SkillRestService skillRestService;
 
@@ -41,8 +40,12 @@ public class SkillRestServiceIT extends AbstractRestServiceIT {
 
     @Before
     public void setup() {
-        skillRestService.getSkillList(TENANT_ID)
-                .forEach(skill -> skillRestService.removeSkill(TENANT_ID, skill.getId()));
+        createTestTenant();
+    }
+
+    @After
+    public void cleanup() {
+        deleteTestTenant();
     }
 
     @Test
@@ -60,6 +63,7 @@ public class SkillRestServiceIT extends AbstractRestServiceIT {
         nonExistingSkill.setId(nonExistingSkillId);
         Skill updatedSkill = skillRestService.updateSkill(TENANT_ID, nonExistingSkill);
 
+        assertClientResponseOk();
         assertThat(updatedSkill.getName()).isEqualTo(nonExistingSkill.getName());
         assertThat(updatedSkill.getId()).isNotNull().isNotEqualTo(nonExistingSkillId);
     }

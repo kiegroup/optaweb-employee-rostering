@@ -17,7 +17,9 @@
 package org.optaweb.employeerostering.server.spot;
 
 import java.util.List;
+
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
@@ -25,7 +27,9 @@ import org.optaweb.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.spot.SpotRestService;
 
-public class SpotRestServiceImpl extends AbstractRestServiceImpl implements SpotRestService {
+public class SpotRestServiceImpl extends AbstractRestServiceImpl
+        implements
+        SpotRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -42,6 +46,9 @@ public class SpotRestServiceImpl extends AbstractRestServiceImpl implements Spot
     @Transactional
     public Spot getSpot(Integer tenantId, Long id) {
         Spot spot = entityManager.find(Spot.class, id);
+        if (spot == null) {
+            throw new EntityNotFoundException("No Spot entity found with ID (" + id + ").");
+        }
         validateTenantIdParameter(tenantId, spot);
         return spot;
     }
@@ -73,5 +80,4 @@ public class SpotRestServiceImpl extends AbstractRestServiceImpl implements Spot
         entityManager.remove(spot);
         return true;
     }
-
 }

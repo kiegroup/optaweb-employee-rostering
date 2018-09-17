@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
@@ -31,9 +32,9 @@ import javax.transaction.Transactional;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaweb.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaweb.employeerostering.server.common.IndictmentUtils;
+import org.optaweb.employeerostering.server.roster.RosterRestServiceImpl;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
-import org.optaweb.employeerostering.shared.roster.RosterRestService;
 import org.optaweb.employeerostering.shared.roster.RosterState;
 import org.optaweb.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaweb.employeerostering.shared.rotation.view.RotationView;
@@ -44,12 +45,14 @@ import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.spot.SpotRestService;
 
-public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements ShiftRestService {
+public class ShiftRestServiceImpl extends AbstractRestServiceImpl
+        implements
+        ShiftRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
     @Inject
-    private RosterRestService rosterRestService;
+    private RosterRestServiceImpl rosterRestService;
     @Inject
     private SpotRestService spotRestService;
     @Inject
@@ -61,6 +64,9 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
     @Transactional
     public ShiftView getShift(Integer tenantId, Long id) {
         Shift shift = entityManager.find(Shift.class, id);
+        if (shift == null) {
+            throw new EntityNotFoundException("No Shift entity found with ID (" + id + ").");
+        }
         validateTenantIdParameter(tenantId, shift);
         Indictment indictment = indictmentUtils.getIndictmentMapForRoster(rosterRestService.buildRoster(tenantId)).get(shift);
         return indictmentUtils.getShiftViewWithIndictment(rosterRestService.getRosterState(tenantId).getTimeZone(),
@@ -181,10 +187,15 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
                 .setParameter("tenantId", tenantId)
                 .getResultList();
         oldShiftTemplateList.forEach((s) -> entityManager.remove(s));
-        // TODO: Update rotation length and unplanneOffset
-        Integer rotationLength = entityManager.createNamedQuery("RosterState.find", RosterState.class)
+
+        RosterState rosterState = entityManager.createNamedQuery("RosterState.find", RosterState.class)
                 .setParameter("tenantId", tenantId)
-                .getSingleResult().getRotationLength();
+                .getSingleResult();
+
+        rosterState.setRotationLength(rotationView.getRotationLength());
+        rosterState.setUnplannedRotationOffset(0);
+        entityManager.merge(rosterState);
+
         Map<Long, Spot> spotIdToSpotMap = spotRestService
                 .getSpotList(tenantId).stream().collect(Collectors
                                                                 .toMap(spot -> spot.getId(), spot -> spot));
@@ -196,7 +207,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl implements Shi
                     Spot spot = spotIdToSpotMap.get(spotId);
                     if (shiftTemplateViewList != null) {
                         shiftTemplateViewList.forEach(shiftTemplateView -> {
-                            entityManager.merge(new ShiftTemplate(rotationLength,
+                            entityManager.merge(new ShiftTemplate(rotationView.getRotationLength(),
                                                                   shiftTemplateView, spot,
                                                                   employeeIdToEmployeeMap.get(shiftTemplateView.getRotationEmployeeId())));
                         });

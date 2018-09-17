@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -53,9 +54,11 @@ import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.tenant.TenantRestService;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.groupingBy;
 
-public class RosterRestServiceImpl extends AbstractRestServiceImpl implements RosterRestService {
+public class RosterRestServiceImpl extends AbstractRestServiceImpl
+        implements
+        RosterRestService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -99,21 +102,10 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                                                final Pagination pagination) {
 
         final List<Spot> spots = entityManager.createNamedQuery("Spot.findAll", Spot.class)
-                                              .setParameter("tenantId", tenantId)
-                                              .setMaxResults(pagination.getNumberOfItemsPerPage())
-                                              .setFirstResult(pagination.getFirstResultIndex())
-                                              .getResultList();
-
-        return getShiftRosterView(tenantId, startDate, endDate, spots);
-    }
-
-    private ShiftRosterView getShiftRosterView(final Integer tenantId,
-                                               final LocalDate startDate,
-                                               final LocalDate endDate) {
-
-        final List<Spot> spots = entityManager.createNamedQuery("Spot.findAll", Spot.class)
-                                              .setParameter("tenantId", tenantId)
-                                              .getResultList();
+                .setParameter("tenantId", tenantId)
+                .setMaxResults(pagination.getNumberOfItemsPerPage())
+                .setFirstResult(pagination.getFirstResultIndex())
+                .getResultList();
 
         return getShiftRosterView(tenantId, startDate, endDate, spots);
     }
@@ -135,19 +127,19 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         ShiftRosterView shiftRosterView = new ShiftRosterView(tenantId, startDate, endDate);
         shiftRosterView.setSpotList(spotList);
         List<Employee> employeeList = entityManager.createNamedQuery("Employee.findAll", Employee.class)
-                                                   .setParameter("tenantId", tenantId)
-                                                   .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         shiftRosterView.setEmployeeList(employeeList);
 
         Set<Spot> spotSet = new HashSet<>(spotList);
         ZoneId timeZone = getRosterState(tenantId).getTimeZone();
 
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.filterWithSpots", Shift.class)
-                                             .setParameter("tenantId", tenantId)
-                                             .setParameter("spotSet", spotSet)
-                                             .setParameter("startDateTime", startDate.atStartOfDay(timeZone).toOffsetDateTime())
-                                             .setParameter("endDateTime", endDate.atStartOfDay(timeZone).toOffsetDateTime())
-                                             .getResultList();
+                .setParameter("tenantId", tenantId)
+                .setParameter("spotSet", spotSet)
+                .setParameter("startDateTime", startDate.atStartOfDay(timeZone).toOffsetDateTime())
+                .setParameter("endDateTime", endDate.atStartOfDay(timeZone).toOffsetDateTime())
+                .getResultList();
 
         Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
         // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched,
@@ -161,7 +153,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         for (Shift shift : shiftList) {
             Indictment indictment = indictmentMap.get(shift);
             spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>())
-                                    .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+                    .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
         }
         shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
 
@@ -218,10 +210,10 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                                                              final Pagination pagination) {
 
         final List<Employee> employeeList = entityManager.createNamedQuery("Employee.findAll", Employee.class)
-                                                         .setParameter("tenantId", tenantId)
-                                                         .setMaxResults(pagination.getNumberOfItemsPerPage())
-                                                         .setFirstResult(pagination.getFirstResultIndex())
-                                                         .getResultList();
+                .setParameter("tenantId", tenantId)
+                .setMaxResults(pagination.getNumberOfItemsPerPage())
+                .setFirstResult(pagination.getFirstResultIndex())
+                .getResultList();
 
         return getAvailabilityRosterView(tenantId, startDate, endDate, employeeList);
     }
@@ -233,8 +225,8 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                                                                List<Employee> employeeList) {
         AvailabilityRosterView availabilityRosterView = new AvailabilityRosterView(tenantId, startDate, endDate);
         List<Spot> spotList = entityManager.createNamedQuery("Spot.findAll", Spot.class)
-                                           .setParameter("tenantId", tenantId)
-                                           .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         availabilityRosterView.setSpotList(spotList);
 
         availabilityRosterView.setEmployeeList(employeeList);
@@ -245,11 +237,11 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         ZoneId timeZone = getRosterState(tenantId).getTimeZone();
 
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.filterWithEmployees", Shift.class)
-                                             .setParameter("tenantId", tenantId)
-                                             .setParameter("startDateTime", startDate.atStartOfDay(timeZone).toOffsetDateTime())
-                                             .setParameter("endDateTime", endDate.atStartOfDay(timeZone).toOffsetDateTime())
-                                             .setParameter("employeeSet", employeeSet)
-                                             .getResultList();
+                .setParameter("tenantId", tenantId)
+                .setParameter("startDateTime", startDate.atStartOfDay(timeZone).toOffsetDateTime())
+                .setParameter("endDateTime", endDate.atStartOfDay(timeZone).toOffsetDateTime())
+                .setParameter("employeeSet", employeeSet)
+                .getResultList();
 
         Roster roster = solverManager.getRoster(tenantId);
         if (roster == null) {
@@ -262,7 +254,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
             if (shift.getEmployee() != null) {
                 employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(),
                                                              k -> new ArrayList<>())
-                                            .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+                        .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
             } else {
                 unassignedShiftViewList.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
             }
@@ -270,18 +262,18 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         availabilityRosterView.setEmployeeIdToShiftViewListMap(employeeIdToShiftViewListMap);
         availabilityRosterView.setUnassignedShiftViewList(unassignedShiftViewList);
         Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap = new LinkedHashMap<>(
-                                                                                                            employeeList.size());
+                employeeList.size());
         List<EmployeeAvailability> employeeAvailabilityList = entityManager.createNamedQuery(
-                                                                                             "EmployeeAvailability.filterWithEmployee", EmployeeAvailability.class)
-                                                                           .setParameter("tenantId", tenantId)
-                                                                           .setParameter("startDateTime", startDate.atStartOfDay(timeZone).toOffsetDateTime())
-                                                                           .setParameter("endDateTime", endDate.atStartOfDay(timeZone).toOffsetDateTime())
-                                                                           .setParameter("employeeSet", employeeSet)
-                                                                           .getResultList();
+                "EmployeeAvailability.filterWithEmployee", EmployeeAvailability.class)
+                .setParameter("tenantId", tenantId)
+                .setParameter("startDateTime", startDate.atStartOfDay(timeZone).toOffsetDateTime())
+                .setParameter("endDateTime", endDate.atStartOfDay(timeZone).toOffsetDateTime())
+                .setParameter("employeeSet", employeeSet)
+                .getResultList();
         for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
             employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),
                                                                 k -> new ArrayList<>())
-                                               .add(new EmployeeAvailabilityView(timeZone, employeeAvailability));
+                    .add(new EmployeeAvailabilityView(timeZone, employeeAvailability));
         }
         availabilityRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
 
@@ -306,25 +298,31 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         solverManager.terminate(tenantId);
     }
 
-    @Override
     @Transactional
     public Roster buildRoster(Integer tenantId) {
+        ZoneId zoneId = getRosterState(tenantId).getTimeZone();
         List<Skill> skillList = entityManager.createNamedQuery("Skill.findAll", Skill.class)
-                                             .setParameter("tenantId", tenantId)
-                                             .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         List<Spot> spotList = entityManager.createNamedQuery("Spot.findAll", Spot.class)
-                                           .setParameter("tenantId", tenantId)
-                                           .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         List<Employee> employeeList = entityManager.createNamedQuery("Employee.findAll", Employee.class)
-                                                   .setParameter("tenantId", tenantId)
-                                                   .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         List<EmployeeAvailability> employeeAvailabilityList = entityManager.createNamedQuery(
-                                                                                             "EmployeeAvailability.findAll", EmployeeAvailability.class)
-                                                                           .setParameter("tenantId", tenantId)
-                                                                           .getResultList();
+                "EmployeeAvailability.findAll", EmployeeAvailability.class)
+                .setParameter("tenantId", tenantId)
+                .getResultList()
+                .stream()
+                .map(ea -> ea.inTimeZone(zoneId))
+                .collect(Collectors.toList());
         List<Shift> shiftList = entityManager.createNamedQuery("Shift.findAll", Shift.class)
-                                             .setParameter("tenantId", tenantId)
-                                             .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList()
+                .stream()
+                .map(s -> s.inTimeZone(zoneId))
+                .collect(Collectors.toList());
 
         // TODO fill in the score too - do we inject a ScoreDirectorFactory?
         return new Roster((long) tenantId, tenantId,
@@ -332,17 +330,16 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                           tenantRestService.getRosterParametrization(tenantId), getRosterState(tenantId), shiftList);
     }
 
-    @Override
     @Transactional
     public void updateShiftsOfRoster(Roster newRoster) {
         Integer tenantId = newRoster.getTenantId();
         // TODO HACK avoids optimistic locking exception while solve(), but it circumvents optimistic locking completely
         Map<Long, Employee> employeeIdMap = entityManager.createNamedQuery("Employee.findAll", Employee.class)
-                                                         .setParameter("tenantId", tenantId)
-                                                         .getResultList().stream().collect(Collectors.toMap(Employee::getId, Function.identity()));
+                .setParameter("tenantId", tenantId)
+                .getResultList().stream().collect(Collectors.toMap(Employee::getId, Function.identity()));
         Map<Long, Shift> shiftIdMap = entityManager.createNamedQuery("Shift.findAll", Shift.class)
-                                                   .setParameter("tenantId", tenantId)
-                                                   .getResultList().stream().collect(Collectors.toMap(Shift::getId, Function.identity()));
+                .setParameter("tenantId", tenantId)
+                .getResultList().stream().collect(Collectors.toMap(Shift::getId, Function.identity()));
 
         for (Shift shift : newRoster.getShiftList()) {
             Shift attachedShift = shiftIdMap.get(shift.getId());
@@ -350,7 +347,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
                 continue;
             }
             attachedShift.setEmployee((shift.getEmployee() == null)
-                    ? null : employeeIdMap.get(shift.getEmployee().getId()));
+                                              ? null : employeeIdMap.get(shift.getEmployee().getId()));
         }
     }
 
@@ -365,10 +362,10 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
         rosterState.setFirstDraftDate(publishTo);
         // Provision
         List<ShiftTemplate> shiftTemplateList = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class)
-                                                             .setParameter("tenantId", tenantId)
-                                                             .getResultList();
+                .setParameter("tenantId", tenantId)
+                .getResultList();
         Map<Integer, List<ShiftTemplate>> dayOffsetToShiftTemplateListMap = shiftTemplateList.stream()
-                                                                                             .collect(groupingBy(ShiftTemplate::getStartDayOffset));
+                .collect(groupingBy(ShiftTemplate::getStartDayOffset));
         int dayOffset = rosterState.getUnplannedRotationOffset();
         LocalDate shiftDate = firstUnplannedDate;
         for (int i = 0; i < rosterState.getPublishLength(); i++) {
@@ -387,8 +384,7 @@ public class RosterRestServiceImpl extends AbstractRestServiceImpl implements Ro
     @Override
     public RosterState getRosterState(Integer tenantId) {
         return entityManager.createNamedQuery("RosterState.find", RosterState.class)
-                            .setParameter("tenantId", tenantId)
-                            .getSingleResult();
+                .setParameter("tenantId", tenantId)
+                .getSingleResult();
     }
-
 }

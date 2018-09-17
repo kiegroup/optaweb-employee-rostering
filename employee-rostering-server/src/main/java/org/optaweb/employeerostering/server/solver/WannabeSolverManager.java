@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.server.solver;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.enterprise.concurrent.ManagedExecutorService;
@@ -28,8 +29,8 @@ import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaplanner.core.impl.score.director.ScoreDirectorFactory;
+import org.optaweb.employeerostering.server.roster.RosterRestServiceImpl;
 import org.optaweb.employeerostering.shared.roster.Roster;
-import org.optaweb.employeerostering.shared.roster.RosterRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public class WannabeSolverManager {
     private ManagedExecutorService executorService;
 
     @Inject
-    private RosterRestService rosterRestService;
+    private RosterRestServiceImpl rosterRestService;
 
     private ConcurrentMap<Integer, SolverStatus> tenantIdToSolverStateMap = new ConcurrentHashMap<>();
     private ConcurrentMap<Integer, Solver<Roster>> tenantIdToSolverMap = new ConcurrentHashMap<>();

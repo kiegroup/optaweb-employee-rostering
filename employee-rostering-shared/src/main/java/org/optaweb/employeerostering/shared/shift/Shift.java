@@ -182,4 +182,10 @@ public class Shift extends AbstractPersistable {
     public void setRotationEmployee(Employee rotationEmployee) {
         this.rotationEmployee = rotationEmployee;
     }
+
+    public Shift inTimeZone(ZoneId zoneId) {
+        Shift out = new Shift(zoneId, new ShiftView(zoneId, this), getSpot(), getRotationEmployee());
+        out.setEmployee(getEmployee());
+        return out;
+    }
 }
