@@ -16,6 +16,9 @@
 
 package org.optaweb.employeerostering.server.common.jaxrs;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -28,14 +31,12 @@ public class OptaWebExceptionMapper implements ExceptionMapper<Exception> {
 
     @Override
     public Response toResponse(Exception exception) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(exception.getMessage());
-        for (StackTraceElement trace : exception.getStackTrace()) {
-            builder.append(trace.toString()).append('\n');
-        }
+        StringWriter exceptionStackTrace = new StringWriter();
+        PrintWriter exceptionStackTraceWriter = new PrintWriter(exceptionStackTrace);
+        exception.printStackTrace(exceptionStackTraceWriter);
         return Response.status(resolveStatus(exception))
                 .type(MediaType.TEXT_PLAIN)
-                .entity(builder.toString())
+                .entity(exceptionStackTrace.getBuffer().toString())
                 .build();
     }
 
@@ -46,5 +47,4 @@ public class OptaWebExceptionMapper implements ExceptionMapper<Exception> {
             return Status.INTERNAL_SERVER_ERROR;
         }
     }
-
 }
