@@ -6,8 +6,13 @@ These system properties can overwrite default properties of the application,
 for example as `-Doptaweb.generator.zoneId="America/New_York"` to WildFly.
 These system properties might also be exposed as OpenShift template parameters.
 
-
 * *optaweb.generator.timeZoneId*:
 The time zone ID for the automatically generated tenants.
 For example `America/New_York`.
 This defaults to the system default Zone ID.
+
+The OpenShift docker image also supports these parameters:
+
+* *org.optaweb.employeerostering.persistence.datasource*
+* *org.optaweb.employeerostering.persistence.dialect*
+* *org.optaweb.employeerostering.persistence.hbm2ddl.auto*

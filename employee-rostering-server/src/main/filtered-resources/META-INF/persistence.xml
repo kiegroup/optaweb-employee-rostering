@@ -15,7 +15,7 @@
     <class>org.optaweb.employeerostering.shared.tenant.RosterParametrization</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
-      <property name="hibernate.hbm2ddl.auto" value="create"/>
+      <property name="hibernate.hbm2ddl.auto" value="${org.optaweb.employeerostering.persistence.hbm2ddl.auto}"/>
       <!-- <property name="hibernate.show_sql" value="true"/> -->
       <!-- <property name="hibernate.format_sql" value="true"/> -->
       <property name="hibernate.transaction.flush_before_completion" value="true"/>
