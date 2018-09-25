@@ -16,3 +16,4 @@ The OpenShift docker image also supports these parameters:
 * *org.optaweb.employeerostering.persistence.datasource*
 * *org.optaweb.employeerostering.persistence.dialect*
 * *org.optaweb.employeerostering.persistence.hbm2ddl.auto*
+* *org.optaweb.employeerostering.persistence.id.generator*
