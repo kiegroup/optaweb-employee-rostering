@@ -92,6 +92,7 @@ public class EmployeeAvailability extends AbstractPersistable {
                                                zoneId.getRules().getOffset(employeeAvailabilityView.getStartDateTime()));
         this.endDateTime = OffsetDateTime.of(employeeAvailabilityView.getEndDateTime(),
                                              zoneId.getRules().getOffset(employeeAvailabilityView.getEndDateTime()));
+        this.state = employeeAvailabilityView.getState();
     }
 
     @AssertTrue
