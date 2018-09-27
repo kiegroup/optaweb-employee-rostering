@@ -37,7 +37,7 @@ public class GwtJavaTimeWorkaroundUtil {
     public static LocalDateTime toLocalDateTime(OffsetDateTime time) {
         return LocalDateTime.of(toLocalDate(time), toLocalTime(time));
     }
-    
+
     public static LocalDateTime toLocalDateTimeInZone(OffsetDateTime dateTime, ZoneId zoneId) {
         return LocalDateTime.ofEpochSecond(dateTime.toEpochSecond(), dateTime.getNano(),
                                            zoneId.getRules().getOffset(dateTime.toInstant()));
@@ -60,7 +60,7 @@ public class GwtJavaTimeWorkaroundUtil {
     }
 
     public static boolean doTimeslotsIntersect(OffsetDateTime start1, OffsetDateTime end1, OffsetDateTime start2, OffsetDateTime end2) {
-        return start1.isBefore(end2) && end1.isAfter(start2);
+        return !start1.isAfter(end2) && !end1.isBefore(start2);
     }
 
     public static boolean doTimeslotsIntersect(LocalDate date, OffsetTime start1, OffsetTime end1, OffsetDateTime start2, OffsetDateTime end2) {
@@ -92,5 +92,4 @@ public class GwtJavaTimeWorkaroundUtil {
     public static int getOffsetInMinutes(LocalDate date, ZoneOffset offset) {
         return (offset.getTotalSeconds() / 60) - JsDate.create(date.getYear(), date.getMonthValue(), date.getDayOfMonth()).getTimezoneOffset();
     }
-
 }
