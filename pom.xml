@@ -64,7 +64,7 @@
       https://github.com/jboss-integration/jboss-integration-platform-bom/blob/master/pom.xml
     -->
     <version.ch.qos.logback>1.2.3</version.ch.qos.logback>
-    <version.com.fasterxml.jackson>2.8.10</version.com.fasterxml.jackson>
+    <version.com.fasterxml.jackson>2.9.5</version.com.fasterxml.jackson>
     <version.com.github.nmorel.gwtjackson.restprocessor>0.4.1</version.com.github.nmorel.gwtjackson.restprocessor>
     <version.com.github.nmorel.gwtjackson>0.14.2</version.com.github.nmorel.gwtjackson>
     <version.com.google.gwt>2.8.2</version.com.google.gwt>
