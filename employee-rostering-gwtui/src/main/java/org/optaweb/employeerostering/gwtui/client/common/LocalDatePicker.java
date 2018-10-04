@@ -74,10 +74,13 @@ public class LocalDatePicker implements TakesValue<LocalDate>,
         });
         datePicker.on("dp.change", () -> {
             String value = datePickerTextField.value;
-            if (value != null && !LocalDate.parse(MomentJs.moment(value).format("YYYY-MM-DD")).equals(currentValue)) {
-                setValue(LocalDate.parse(MomentJs.moment(value).format("YYYY-MM-DD")));
-                ValueChangeEvent.fire(this, getValue());
+            LocalDate oldValue = getValue();
+            if (value != null) {
+                setValue(LocalDate.parse(MomentJs.moment(value, DATE_FORMAT_STRING).format("YYYY-MM-DD")));
+            } else {
+                setValue(null);
             }
+            ValueChangeEvent.fireIfNotEqual(this, oldValue, getValue());
         });
     }
 

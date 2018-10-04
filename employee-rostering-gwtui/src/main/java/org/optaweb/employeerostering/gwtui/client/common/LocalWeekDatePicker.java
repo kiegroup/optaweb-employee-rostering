@@ -93,19 +93,20 @@ public class LocalWeekDatePicker
         weeklyDatePicker.on("dp.show", () -> {
             JQuery.get(weeklyDatePickerElement).children(".bootstrap-datetimepicker-widget").css("height", "min-content").css("margin-bottom", "-100%");
             JQuery.select("tr:has(td.active)").children("td").addClass("active");
-            String firstDate = MomentJs.moment(weeklyDatePickerTextField.value).day(0).format(DATE_FORMAT_STRING);
-            String lastDate = MomentJs.moment(weeklyDatePickerTextField.value).day(6).format(DATE_FORMAT_STRING);
+            String firstDate = MomentJs.moment(weeklyDatePickerTextField.value, DATE_FORMAT_STRING).day(0).format(DATE_FORMAT_STRING);
+            String lastDate = MomentJs.moment(weeklyDatePickerTextField.value, DATE_FORMAT_STRING).day(6).format(DATE_FORMAT_STRING);
             weeklyDatePickerTextField.value = firstDate + " - " + lastDate;
         });
         weeklyDatePicker.on("dp.change", () -> {
             String value = weeklyDatePickerTextField.value;
-            if (value != null && !LocalDate.parse(MomentJs.moment(value).day(0).format("YYYY-MM-DD")).equals(firstDayOfWeek)) {
-                String firstDate = MomentJs.moment(value).day(0).format(DATE_FORMAT_STRING);
-                String lastDate = MomentJs.moment(value).day(6).format(DATE_FORMAT_STRING);
+            LocalDate oldValue = getValue();
+            if (value != null) {
+                String firstDate = MomentJs.moment(value, DATE_FORMAT_STRING).day(0).format(DATE_FORMAT_STRING);
+                String lastDate = MomentJs.moment(value, DATE_FORMAT_STRING).day(6).format(DATE_FORMAT_STRING);
                 setValue(LocalDate.parse(MomentJs.moment(value).day(0).format("YYYY-MM-DD")));
                 weeklyDatePickerTextField.value = firstDate + " - " + lastDate;
-                ValueChangeEvent.fire(this, firstDayOfWeek);
             }
+            ValueChangeEvent.fireIfNotEqual(this, oldValue, firstDayOfWeek);
         });
     }
 
