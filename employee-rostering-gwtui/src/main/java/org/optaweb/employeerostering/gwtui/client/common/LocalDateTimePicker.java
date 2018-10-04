@@ -76,10 +76,13 @@ public class LocalDateTimePicker implements TakesValue<LocalDateTime>,
         });
         datePicker.on("dp.change", () -> {
             String value = datePickerTextField.value;
-            if (value != null && !LocalDateTime.parse(MomentJs.moment(value).format("YYYY-MM-DDTHH:mm")).equals(currentValue)) {
-                setValue(LocalDateTime.parse(MomentJs.moment(value).format("YYYY-MM-DDTHH:mm")));
-                ValueChangeEvent.fire(this, getValue());
+            LocalDateTime oldValue = getValue();
+            if (value != null) {
+                setValue(LocalDateTime.parse(MomentJs.moment(value, DATE_FORMAT_STRING).format("YYYY-MM-DDTHH:mm")));
+            } else {
+                setValue(null);
             }
+            ValueChangeEvent.fireIfNotEqual(this, oldValue, getValue());
         });
     }
 
@@ -92,9 +95,12 @@ public class LocalDateTimePicker implements TakesValue<LocalDateTime>,
         if (currentValue == null || !currentValue.equals(value)) {
             currentValue = value;
             if (value != null) {
-                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) datePicker.data("DateTimePicker")).date(MomentJs.moment(value.toString(), "YYYY-MM-DDTHH:mm").toDate());
+                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) datePicker.data("DateTimePicker"))
+                        .date(MomentJs.moment(value.toString(), "YYYY-MM-DDTHH:mm")
+                                      .toDate());
             } else {
-                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) datePicker.data("DateTimePicker")).date((String) null);
+                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) datePicker.data("DateTimePicker"))
+                        .date((String) null);
             }
         }
     }

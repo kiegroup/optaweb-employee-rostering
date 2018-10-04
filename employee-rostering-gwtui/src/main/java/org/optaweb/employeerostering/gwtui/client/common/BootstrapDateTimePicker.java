@@ -5,6 +5,7 @@ import elemental2.dom.HTMLElement;
 import jsinterop.annotations.JsMethod;
 import jsinterop.annotations.JsPackage;
 import jsinterop.annotations.JsType;
+import org.optaweb.employeerostering.gwtui.client.common.MomentJs.Moment;
 
 class BootstrapDateTimePicker extends JQuery {
 
@@ -36,6 +37,9 @@ class BootstrapDateTimePicker extends JQuery {
 
         @JsMethod
         public native void date(Date date);
+
+        @JsMethod
+        public native void date(Moment moment);
     }
 
     @JsType(isNative = true, name = "Object", namespace = JsPackage.GLOBAL)
