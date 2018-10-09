@@ -72,7 +72,8 @@ public class LocalDateTimePicker implements TakesValue<LocalDateTime>,
         options.icons = icons;
         datePicker.datetimepicker(options);
         datePicker.on("dp.show", () -> {
-            JQuery.get(datePickerElement).children(".bootstrap-datetimepicker-widget").css("height", "min-content").css("margin-bottom", "-100%");
+            JQuery.get(datePickerElement).children(".bootstrap-datetimepicker-widget").css("height", "min-content").css("margin-bottom", "-100%")
+                    .css("bottom", "unset");
         });
         datePicker.on("dp.change", () -> {
             String value = datePickerTextField.value;

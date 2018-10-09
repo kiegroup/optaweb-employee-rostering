@@ -91,7 +91,8 @@ public class LocalWeekDatePicker
         options.icons = icons;
         weeklyDatePicker.datetimepicker(options);
         weeklyDatePicker.on("dp.show", () -> {
-            JQuery.get(weeklyDatePickerElement).children(".bootstrap-datetimepicker-widget").css("height", "min-content").css("margin-bottom", "-100%");
+            JQuery.get(weeklyDatePickerElement).children(".bootstrap-datetimepicker-widget").css("height", "min-content").css("margin-bottom", "-100%")
+                    .css("bottom", "unset");
             JQuery.select("tr:has(td.active)").children("td").addClass("active");
             String firstDate = MomentJs.moment(weeklyDatePickerTextField.value, DATE_FORMAT_STRING).day(0).format(DATE_FORMAT_STRING);
             String lastDate = MomentJs.moment(weeklyDatePickerTextField.value, DATE_FORMAT_STRING).day(6).format(DATE_FORMAT_STRING);
