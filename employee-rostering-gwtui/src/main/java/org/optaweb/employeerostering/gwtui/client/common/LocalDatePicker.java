@@ -93,7 +93,7 @@ public class LocalDatePicker implements TakesValue<LocalDate>,
         if (currentValue == null || !currentValue.equals(value)) {
             currentValue = value;
             if (value != null) {
-                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) datePicker.data("DateTimePicker")).date(value.toString());
+                ((BootstrapDateTimePicker.BootstrapDateTimePickerData) datePicker.data("DateTimePicker")).date(MomentJs.moment(value.toString()).format(DATE_FORMAT_STRING));
             } else {
                 ((BootstrapDateTimePicker.BootstrapDateTimePickerData) datePicker.data("DateTimePicker")).date((String) null);
             }

@@ -187,6 +187,6 @@ public class NewTenantForm implements IsElement {
     }
 
     private static native String getSystemTimezone() /*-{
-                                                     return Intl.DateTimeFormat().resolvedOptions().timeZone;
-                                                     }-*/;
+        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }-*/;
 }
