@@ -17,6 +17,8 @@
 package org.optaweb.employeerostering.gwtui.client.pages.rotation;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -38,9 +40,12 @@ import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
+import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
+import org.optaweb.employeerostering.shared.roster.RosterRestServiceBuilder;
+import org.optaweb.employeerostering.shared.rotation.RotationRestServiceBuilder;
 import org.optaweb.employeerostering.shared.rotation.view.RotationView;
 import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
-import org.optaweb.employeerostering.shared.shift.ShiftRestServiceBuilder;
+import org.optaweb.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.ROTATION_INVALIDATE;
 
@@ -136,11 +141,31 @@ public class RotationPageViewportBuilder {
     }
 
     public Promise<RotationView> getRotationView() {
+
         return promiseUtils.promise((res, rej) -> {
-            ShiftRestServiceBuilder.getRotation(tenantStore.getCurrentTenantId(),
-                                                FailureShownRestCallback.onSuccess((rv) -> {
-                                                    res.onInvoke(rv);
-                                                }));
+            RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess((rosterState) -> {
+                SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess((spotList) -> {
+                    EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess((employeeList) -> {
+                        RotationRestServiceBuilder.getShiftTemplateList(tenantStore.getCurrentTenantId(),
+                                                                        FailureShownRestCallback.onSuccess((shiftTemplateViewList) -> {
+                                                                            RotationView rotationView = new RotationView();
+                                                                            rotationView.setTenantId(tenantStore.getCurrentTenantId());
+                                                                            rotationView.setRotationLength(rosterState.getRotationLength());
+                                                                            rotationView.setSpotList(spotList);
+                                                                            rotationView.setEmployeeList(employeeList);
+                                                                            Map<Long, List<ShiftTemplateView>> spotIdToShiftTemplateViewListMap =
+                                                                                    new HashMap<>();
+                                                                            spotList.forEach(spot -> {
+                                                                                spotIdToShiftTemplateViewListMap.put(spot.getId(), new ArrayList<>());
+                                                                            });
+
+                                                                            shiftTemplateViewList.forEach(stv -> spotIdToShiftTemplateViewListMap.get(stv.getSpotId()).add(stv));
+                                                                            rotationView.setSpotIdToShiftTemplateViewListMap(spotIdToShiftTemplateViewListMap);
+                                                                            res.onInvoke(rotationView);
+                                                                        }));
+                    }));
+                }));
+            }));
         });
     }
 }

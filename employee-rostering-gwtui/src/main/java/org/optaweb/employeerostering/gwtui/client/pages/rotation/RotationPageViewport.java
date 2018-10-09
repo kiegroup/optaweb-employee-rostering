@@ -18,10 +18,7 @@ package org.optaweb.employeerostering.gwtui.client.pages.rotation;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -51,12 +48,10 @@ import org.optaweb.employeerostering.gwtui.client.viewport.grid.LinearScale;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.DynamicScale;
 import org.optaweb.employeerostering.shared.common.HasTimeslot;
 import org.optaweb.employeerostering.shared.employee.Employee;
+import org.optaweb.employeerostering.shared.rotation.RotationRestServiceBuilder;
 import org.optaweb.employeerostering.shared.rotation.view.RotationView;
 import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
-import org.optaweb.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaweb.employeerostering.shared.spot.Spot;
-
-import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.ROTATION_SAVE;
 
 @Templated
 public class RotationPageViewport extends DateTimeViewport<RotationView, RotationMetadata>
@@ -88,7 +83,6 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     @PostConstruct
     private void init() {
         viewportBuilder.withViewport(this);
-        eventManager.subscribeToEventForever(ROTATION_SAVE, (v) -> saveRotation());
     }
 
     @Override
@@ -124,7 +118,13 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
             newInstance.setDurationBetweenRotationStartAndTemplateStart(
                     Duration.between(BASE_DATE, t));
             newInstance.setShiftTemplateDuration(Duration.ofHours(8));
-            return shiftTemplateModelInstances.get().withShiftTemplateView(newInstance);
+            ShiftTemplateModel out = shiftTemplateModelInstances.get().withShiftTemplateView(newInstance);
+
+            RotationRestServiceBuilder.addShiftTemplate(tenantStore.getCurrentTenantId(), newInstance,
+                                                        FailureShownRestCallback.onSuccess((stv) -> {
+                                                            out.withShiftTemplateView(stv);
+                                                        }));
+            return out;
         };
     }
 
@@ -148,29 +148,6 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     @Override
     protected Function<LocalDateTime, List<String>> getDateHeaderIconClassesFunction() {
         return (date) -> Collections.emptyList();
-    }
-
-    private void saveRotation() {
-        getLockableLaneMap().acquire().then(laneMap -> {
-            Map<Long, List<ShiftTemplateView>> newSpotIdToShiftTemplateViewListMap = new HashMap<>();
-
-            for (Long spotId : laneMap.keySet()) {
-                Lane<LocalDateTime, RotationMetadata> lane = laneMap.get(spotId);
-                Collection<ShiftTemplateModel> shiftTemplateMap = lane.getGridObjects(ShiftTemplateModel.class);
-                List<ShiftTemplateView> shiftTemplateList = new ArrayList<>();
-                shiftTemplateMap.forEach((template) -> shiftTemplateList.add(template.getShiftTemplateView()));
-                newSpotIdToShiftTemplateViewListMap.put(spotId, shiftTemplateList);
-            }
-            RotationView rotationView = new RotationView();
-            rotationView.setTenantId(tenantStore.getCurrentTenantId());
-            rotationView.setSpotIdToShiftTemplateViewListMap(newSpotIdToShiftTemplateViewListMap);
-            ShiftRestServiceBuilder.updateRotation(tenantStore.getCurrentTenantId(), rotationView,
-                                                   FailureShownRestCallback.onSuccess(e -> {
-                                                       notificationFactory.showSuccessMessage(I18nKeys.Notifications_rotationSaved);
-                                                       viewportBuilder.buildRotationViewport(this);
-                                                   }));
-            return promiseUtils.resolve();
-        });
     }
 
     @Override

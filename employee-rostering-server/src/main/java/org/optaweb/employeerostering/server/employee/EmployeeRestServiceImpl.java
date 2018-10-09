@@ -111,7 +111,6 @@ public class EmployeeRestServiceImpl extends AbstractRestServiceImpl
     public EmployeeAvailabilityView updateEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability employeeAvailability = convertFromView(tenantId, employeeAvailabilityView);
         employeeAvailability = entityManager.merge(employeeAvailability);
-
         // Flush to increase version number before we duplicate it to EmployeeAvailableView
         entityManager.flush();
         return new EmployeeAvailabilityView(rosterRestService.getRosterState(tenantId).getTimeZone(), employeeAvailability);

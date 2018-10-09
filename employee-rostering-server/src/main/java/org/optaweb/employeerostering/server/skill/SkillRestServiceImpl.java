@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.server.skill;
 
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
@@ -77,5 +78,4 @@ public class SkillRestServiceImpl extends AbstractRestServiceImpl implements Ski
         entityManager.remove(skill);
         return true;
     }
-
 }

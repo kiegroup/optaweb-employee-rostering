@@ -16,8 +16,6 @@
 
 package org.optaweb.employeerostering.server.shift;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,16 +32,10 @@ import org.optaweb.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaweb.employeerostering.server.common.IndictmentUtils;
 import org.optaweb.employeerostering.server.roster.RosterRestServiceImpl;
 import org.optaweb.employeerostering.shared.employee.Employee;
-import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
-import org.optaweb.employeerostering.shared.roster.RosterState;
-import org.optaweb.employeerostering.shared.rotation.ShiftTemplate;
-import org.optaweb.employeerostering.shared.rotation.view.RotationView;
-import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.shared.shift.Shift;
 import org.optaweb.employeerostering.shared.shift.ShiftRestService;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 import org.optaweb.employeerostering.shared.spot.Spot;
-import org.optaweb.employeerostering.shared.spot.SpotRestService;
 
 public class ShiftRestServiceImpl extends AbstractRestServiceImpl
         implements
@@ -53,10 +45,6 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl
     private EntityManager entityManager;
     @Inject
     private RosterRestServiceImpl rosterRestService;
-    @Inject
-    private SpotRestService spotRestService;
-    @Inject
-    private EmployeeRestService employeeRestService;
     @Inject
     private IndictmentUtils indictmentUtils;
 
@@ -140,7 +128,7 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl
     }
 
     @Override
-    public List<ShiftView> getShifts(Integer tenantId) {
+    public List<ShiftView> getShiftList(Integer tenantId) {
         Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(rosterRestService.buildRoster(tenantId));
         return getAllShifts(tenantId).stream()
                 .map(s -> indictmentUtils.getShiftViewWithIndictment(rosterRestService.getRosterState(tenantId).getTimeZone(),
@@ -152,66 +140,5 @@ public class ShiftRestServiceImpl extends AbstractRestServiceImpl
         TypedQuery<Shift> q = entityManager.createNamedQuery("Shift.findAll", Shift.class);
         q.setParameter("tenantId", tenantId);
         return q.getResultList();
-    }
-
-    @Override
-    public RotationView getRotation(Integer tenantId) {
-        List<ShiftTemplate> shiftTemplateList = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList();
-        RotationView rotationView = new RotationView();
-        rotationView.setTenantId(tenantId);
-        rotationView.setSpotList(spotRestService.getSpotList(tenantId));
-        rotationView.setEmployeeList(employeeRestService.getEmployeeList(tenantId));
-        rotationView.setRotationLength(entityManager.createNamedQuery("RosterState.find", RosterState.class)
-                                               .setParameter("tenantId", tenantId)
-                                               .getSingleResult().getRotationLength());
-        Map<Long, List<ShiftTemplateView>> spotIdToShiftTemplateViewListMap = new HashMap<>();
-        shiftTemplateList.forEach((shiftTemplate) -> {
-            spotIdToShiftTemplateViewListMap.computeIfAbsent(shiftTemplate.getSpot().getId(),
-                                                             (k) -> new ArrayList<>())
-                    .add(new ShiftTemplateView(rotationView.getRotationLength(), shiftTemplate));
-        });
-        rotationView.setSpotIdToShiftTemplateViewListMap(spotIdToShiftTemplateViewListMap);
-        return rotationView;
-    }
-
-    @Override
-    @Transactional
-    public void updateRotation(Integer tenantId, RotationView rotationView) {
-        if (!tenantId.equals(rotationView.getTenantId())) {
-            throw new IllegalArgumentException("rotationView (" + rotationView + ") tenantId" +
-                                                       " does not match tenantId (" + tenantId + ")");
-        }
-        List<ShiftTemplate> oldShiftTemplateList = entityManager.createNamedQuery("ShiftTemplate.findAll", ShiftTemplate.class)
-                .setParameter("tenantId", tenantId)
-                .getResultList();
-        oldShiftTemplateList.forEach((s) -> entityManager.remove(s));
-
-        RosterState rosterState = entityManager.createNamedQuery("RosterState.find", RosterState.class)
-                .setParameter("tenantId", tenantId)
-                .getSingleResult();
-
-        rosterState.setRotationLength(rotationView.getRotationLength());
-        rosterState.setUnplannedRotationOffset(0);
-        entityManager.merge(rosterState);
-
-        Map<Long, Spot> spotIdToSpotMap = spotRestService
-                .getSpotList(tenantId).stream().collect(Collectors
-                                                                .toMap(spot -> spot.getId(), spot -> spot));
-        Map<Long, Employee> employeeIdToEmployeeMap = employeeRestService
-                .getEmployeeList(tenantId).stream().collect(Collectors
-                                                                    .toMap(employee -> employee.getId(), employee -> employee));
-        rotationView.getSpotIdToShiftTemplateViewListMap()
-                .forEach((spotId, shiftTemplateViewList) -> {
-                    Spot spot = spotIdToSpotMap.get(spotId);
-                    if (shiftTemplateViewList != null) {
-                        shiftTemplateViewList.forEach(shiftTemplateView -> {
-                            entityManager.merge(new ShiftTemplate(rotationView.getRotationLength(),
-                                                                  shiftTemplateView, spot,
-                                                                  employeeIdToEmployeeMap.get(shiftTemplateView.getRotationEmployeeId())));
-                        });
-                    }
-                });
     }
 }

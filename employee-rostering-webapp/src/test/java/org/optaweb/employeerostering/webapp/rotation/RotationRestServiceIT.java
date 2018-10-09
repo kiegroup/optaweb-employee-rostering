@@ -163,7 +163,7 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
         assertClientResponseOk();
         RosterState newRosterState = rosterRestService.getRosterState(TENANT_ID);
         assertClientResponseOk();
-        List<ShiftView> shiftList = shiftRestService.getShifts(TENANT_ID);
+        List<ShiftView> shiftList = shiftRestService.getShiftList(TENANT_ID);
 
         assertThat(publishResult.getPublishedFromDate()).isEqualTo(oldRosterState.getFirstDraftDate());
         assertThat(publishResult.getPublishedToDate()).isEqualTo(oldRosterState.getFirstDraftDate().plusDays(oldRosterState.getPublishLength()));
