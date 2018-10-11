@@ -1,0 +1,22 @@
+language: java
+sudo: false
+install: true
+
+addons:
+  sonarcloud:
+    organization: "kiegroup"
+    token:
+      secure: "89a1d7699b3d752aa91e5c58a6e4338be811fcdb"
+
+jdk:
+- oraclejdk8
+
+script:
+# JaCoCo is used to have code coverage, the agent has to be activated
+- mvn clean install -Prun-code-coverage
+- mvn jacoco:merge sonar:sonar -Preport-code-coverage
+
+cache:
+  directories:
+  - '$HOME/.m2/repository'
+  - '$HOME/.sonar/cache'
