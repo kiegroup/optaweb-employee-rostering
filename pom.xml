@@ -81,7 +81,7 @@
     <version.org.webjars.momentjs>2.22.2</version.org.webjars.momentjs>
     <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
     <version.org.wildfly.wildfly-dist>11.0.0.Final</version.org.wildfly.wildfly-dist>
-    <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.5</version.org.codehaus.cargo.cargo-maven2-plugin>
+    <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.11</version.org.codehaus.cargo.cargo-maven2-plugin>
     <version.wildfly>11.0.0.Final</version.wildfly>
   </properties>
 
