@@ -17,11 +17,11 @@
 package org.optaweb.employeerostering.webapp.rotation;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
+
+import javax.ws.rs.core.Response;
 
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +31,7 @@ import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
 import org.optaweb.employeerostering.shared.roster.PublishResult;
 import org.optaweb.employeerostering.shared.roster.RosterRestService;
 import org.optaweb.employeerostering.shared.roster.RosterState;
-import org.optaweb.employeerostering.shared.rotation.view.RotationView;
+import org.optaweb.employeerostering.shared.rotation.RotationRestService;
 import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.shared.shift.ShiftRestService;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
@@ -40,12 +40,14 @@ import org.optaweb.employeerostering.shared.spot.SpotRestService;
 import org.optaweb.employeerostering.webapp.AbstractEntityRequireTenantRestServiceIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServiceIT {
 
     private ShiftRestService shiftRestService;
     private SpotRestService spotRestService;
     private EmployeeRestService employeeRestService;
+    private RotationRestService rotationRestService;
     private RosterRestService rosterRestService;
 
     public RotationRestServiceIT() {
@@ -53,6 +55,7 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
         spotRestService = serviceClientFactory.createSpotRestServiceClient();
         employeeRestService = serviceClientFactory.createEmployeeRestServiceClient();
         rosterRestService = serviceClientFactory.createRosterRestServiceClient();
+        rotationRestService = serviceClientFactory.createRotationRestServiceClient();
     }
 
     private Employee createEmployee(String name) {
@@ -83,52 +86,76 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
         deleteTestTenant();
     }
 
-    // TODO: Discuss about removing the updateRotation/getRotation and replacing with
-    // getShiftTemplate, getShiftTemplateList, updateShiftTemplate, removeShiftTemplate
     @Test
-    public void testCrudRotation() {
-        Spot spotA = createSpot("Spot A");
-        Spot spotB = createSpot("Spot B");
-
-        Employee employeeA = createEmployee("Employee A");
-        Employee employeeB = createEmployee("Employee B");
-
-        ShiftTemplateView shiftTemplateA = createShiftTemplate(spotA, employeeA, Duration.ZERO, Duration.ofHours(9));
-        ShiftTemplateView shiftTemplateB = createShiftTemplate(spotB, employeeB, Duration.ZERO, Duration.ofHours(9));
-        ShiftTemplateView shiftTemplateC = createShiftTemplate(spotA, null, Duration.ofDays(1), Duration.ofHours(9));
-        ShiftTemplateView shiftTemplateD = createShiftTemplate(spotB, employeeA, Duration.ofDays(1), Duration.ofHours(9));
-
-        Map<Long, List<ShiftTemplateView>> spotIdToShiftTemplateViewListMap = new HashMap<>();
-        spotIdToShiftTemplateViewListMap.put(spotA.getId(), Arrays.asList(shiftTemplateA, shiftTemplateC));
-        spotIdToShiftTemplateViewListMap.put(spotB.getId(), Arrays.asList(shiftTemplateB, shiftTemplateD));
-
-        RotationView rotationView = new RotationView();
-        rotationView.setTenantId(TENANT_ID);
-        rotationView.setSpotList(Arrays.asList(spotA, spotB));
-        rotationView.setEmployeeList(Arrays.asList(employeeA, employeeB));
-        rotationView.setSpotIdToShiftTemplateViewListMap(spotIdToShiftTemplateViewListMap);
-        rotationView.setRotationLength(7);
-        shiftRestService.updateRotation(TENANT_ID, rotationView);
-        assertClientResponseEmpty();
-
-        RotationView retrivedRotationView = shiftRestService.getRotation(TENANT_ID);
+    public void testDeleteNonExistingShiftTemplate() {
+        final long nonExistingShiftTemplateId = 123456L;
+        boolean result = rotationRestService.removeShiftTemplate(TENANT_ID, nonExistingShiftTemplateId);
+        assertThat(result).isFalse();
         assertClientResponseOk();
-        assertThat(retrivedRotationView).isEqualToIgnoringGivenFields(rotationView, "spotIdToShiftTemplateViewListMap");
-        RosterState rosterState = rosterRestService.getRosterState(TENANT_ID);
-        assertClientResponseOk();
-        assertThat(rosterState.getRotationLength()).isEqualTo(7);
+    }
 
-        rotationView.setRotationLength(14);
-        shiftRestService.updateRotation(TENANT_ID, rotationView);
-        assertClientResponseEmpty();
+    @Test
+    public void testUpdateNonExistingShiftTemplate() {
+        final long nonExistingShiftTemplateId = 123456L;
+        Spot spot = createSpot("spot");
+        Employee rotationEmployee = createEmployee("rotationEmployee");
+        Duration startOffset = Duration.ofDays(1);
+        Duration shiftDuration = Duration.ofHours(8);
 
-        retrivedRotationView = shiftRestService.getRotation(TENANT_ID);
+        ShiftTemplateView nonExistingShiftTemplate = createShiftTemplate(spot, rotationEmployee, startOffset, shiftDuration);
+        nonExistingShiftTemplate.setId(nonExistingShiftTemplateId);
+        ShiftTemplateView updatedShiftTemplate = rotationRestService.updateShiftTemplate(TENANT_ID, nonExistingShiftTemplate);
         assertClientResponseOk();
-        assertThat(retrivedRotationView).isEqualToIgnoringGivenFields(rotationView, "spotIdToShiftTemplateViewListMap");
 
-        rosterState = rosterRestService.getRosterState(TENANT_ID);
+        assertThat(updatedShiftTemplate.getSpotId()).isEqualTo(nonExistingShiftTemplate.getSpotId());
+        assertThat(updatedShiftTemplate.getRotationEmployeeId()).isEqualTo(nonExistingShiftTemplate.getRotationEmployeeId());
+        assertThat(updatedShiftTemplate.getDurationBetweenRotationStartAndTemplateStart()).isEqualTo(nonExistingShiftTemplate.getDurationBetweenRotationStartAndTemplateStart());
+        assertThat(updatedShiftTemplate.getShiftTemplateDuration()).isEqualTo(nonExistingShiftTemplate.getShiftTemplateDuration());
+        assertThat(updatedShiftTemplate.getId()).isNotNull().isNotEqualTo(nonExistingShiftTemplateId);
+    }
+
+    @Test
+    public void testGetOfNonExistingShiftTemplate() {
+        final long nonExistingShiftTemplateId = 123456L;
+        assertThatExceptionOfType(javax.ws.rs.NotFoundException.class)
+                .isThrownBy(() -> rotationRestService.getShiftTemplate(TENANT_ID, nonExistingShiftTemplateId));
+        assertClientResponseError(Response.Status.NOT_FOUND);
+    }
+
+    @Test
+    public void testCrudShiftTemplate() {
+        Spot spot = createSpot("spot");
+        Employee rotationEmployee = createEmployee("rotationEmployee");
+        Duration startOffset = Duration.ofDays(1);
+        Duration shiftDuration = Duration.ofHours(8);
+
+        ShiftTemplateView testAddShiftTemplate = createShiftTemplate(spot, null, startOffset, shiftDuration);
+        rotationRestService.addShiftTemplate(TENANT_ID, testAddShiftTemplate);
         assertClientResponseOk();
-        assertThat(rosterState.getRotationLength()).isEqualTo(14);
+
+        List<ShiftTemplateView> shiftTemplates = rotationRestService.getShiftTemplateList(TENANT_ID);
+        assertClientResponseOk();
+        assertThat(shiftTemplates)
+                .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), Integer.class)
+                .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), Long.class)
+                .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), Duration.class)
+                .usingElementComparatorIgnoringFields(IGNORED_FIELDS)
+                .containsExactly(testAddShiftTemplate);
+
+        ShiftTemplateView testUpdateShiftTemplate = shiftTemplates.get(0);
+        testUpdateShiftTemplate.setRotationEmployeeId(rotationEmployee.getId());
+        rotationRestService.updateShiftTemplate(TENANT_ID, testUpdateShiftTemplate);
+
+        ShiftTemplateView retrievedShiftTemplate = rotationRestService.getShiftTemplate(TENANT_ID, testUpdateShiftTemplate.getId());
+        assertClientResponseOk();
+        assertThat(retrievedShiftTemplate).isNotNull().isEqualToIgnoringGivenFields(testUpdateShiftTemplate, IGNORED_FIELDS);
+
+        boolean result = rotationRestService.removeShiftTemplate(TENANT_ID, retrievedShiftTemplate.getId());
+        assertThat(result).isTrue();
+        assertClientResponseOk();
+
+        shiftTemplates = rotationRestService.getShiftTemplateList(TENANT_ID);
+        assertThat(shiftTemplates).isEmpty();
     }
 
     @Test
@@ -144,18 +171,12 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
         ShiftTemplateView shiftTemplateC = createShiftTemplate(spotA, null, Duration.ofDays(1), Duration.ofHours(9));
         ShiftTemplateView shiftTemplateD = createShiftTemplate(spotB, employeeA, Duration.ofDays(1), Duration.ofHours(9));
 
-        Map<Long, List<ShiftTemplateView>> spotIdToShiftTemplateViewListMap = new HashMap<>();
-        spotIdToShiftTemplateViewListMap.put(spotA.getId(), Arrays.asList(shiftTemplateA, shiftTemplateC));
-        spotIdToShiftTemplateViewListMap.put(spotB.getId(), Arrays.asList(shiftTemplateB, shiftTemplateD));
+        rotationRestService.addShiftTemplate(TENANT_ID, shiftTemplateA);
+        rotationRestService.addShiftTemplate(TENANT_ID, shiftTemplateB);
+        rotationRestService.addShiftTemplate(TENANT_ID, shiftTemplateC);
+        rotationRestService.addShiftTemplate(TENANT_ID, shiftTemplateD);
 
-        RotationView rotationView = new RotationView();
-        rotationView.setTenantId(TENANT_ID);
-        rotationView.setSpotList(Arrays.asList(spotA, spotB));
-        rotationView.setEmployeeList(Arrays.asList(employeeA, employeeB));
-        rotationView.setSpotIdToShiftTemplateViewListMap(spotIdToShiftTemplateViewListMap);
-        rotationView.setRotationLength(2);
-        shiftRestService.updateRotation(TENANT_ID, rotationView);
-        assertClientResponseEmpty();
+        assertClientResponseOk();
 
         RosterState oldRosterState = rosterRestService.getRosterState(TENANT_ID);
         assertClientResponseOk();
@@ -170,8 +191,8 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
 
         assertThat(newRosterState.getFirstDraftDate()).isEqualTo(oldRosterState.getFirstDraftDate().plusDays(oldRosterState.getPublishLength()));
         assertThat(newRosterState.getDraftLength()).isEqualTo(oldRosterState.getDraftLength());
-        assertThat(newRosterState.getUnplannedRotationOffset()).isEqualTo(oldRosterState.getPublishLength() % 2);
+        assertThat(newRosterState.getUnplannedRotationOffset()).isEqualTo(oldRosterState.getPublishLength() % oldRosterState.getRotationLength());
         assertThat(newRosterState.getPublishDeadline()).isEqualTo(oldRosterState.getPublishDeadline().plusDays(oldRosterState.getPublishLength()));
-        assertThat(shiftList).size().isEqualTo(oldRosterState.getPublishLength() * 2);
+        assertThat(shiftList).size().usingComparator(Comparator.naturalOrder()).isEqualTo(4);
     }
 }

@@ -23,6 +23,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
 import org.optaweb.employeerostering.shared.roster.RosterRestService;
+import org.optaweb.employeerostering.shared.rotation.RotationRestService;
 import org.optaweb.employeerostering.shared.shift.ShiftRestService;
 import org.optaweb.employeerostering.shared.skill.SkillRestService;
 import org.optaweb.employeerostering.shared.spot.SpotRestService;
@@ -76,8 +77,11 @@ public final class ServiceClientFactory {
         return target.proxy(SpotRestService.class);
     }
 
+    public RotationRestService createRotationRestServiceClient() {
+        return target.proxy(RotationRestService.class);
+    }
+
     public TenantRestService createTenantRestServiceClient() {
         return target.proxy(TenantRestService.class);
     }
-
 }
