@@ -46,8 +46,8 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <wildfly.parent>${project.basedir}/local/appserver</wildfly.parent>
-    <wildfly.home>${wildfly.parent}/wildfly-${version.org.wildfly.wildfly-dist}</wildfly.home>
-    <wildfly.launchdir>${project.basedir}/local/appserver/wildfly-${version.org.wildfly.wildfly-dist}</wildfly.launchdir>
+    <wildfly.home>${wildfly.parent}/wildfly-${version.org.wildfly}</wildfly.home>
+    <wildfly.launchdir>${project.basedir}/local/appserver/wildfly-${version.org.wildfly}</wildfly.launchdir>
     <wildfly.install.skip>false</wildfly.install.skip>
     <deployment.parent>${project.basedir}/employee-rostering-webapp/target</deployment.parent>
     <deployment.name>optaweb-${project.artifactId}-${project.version}</deployment.name>
@@ -69,20 +69,17 @@
     <version.com.github.nmorel.gwtjackson>0.14.2</version.com.github.nmorel.gwtjackson>
     <version.com.google.gwt>2.8.2</version.com.google.gwt>
     <version.io.swagger>1.5.15</version.io.swagger>
-    <version.javax.javaee-api>7.0</version.javax.javaee-api>
     <version.net.ltgt.gwt.maven.gwt-maven-plugin>1.0-rc-9</version.net.ltgt.gwt.maven.gwt-maven-plugin>
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
-    <version.org.jboss.errai>4.1.2.Final</version.org.jboss.errai>
-    <version.org.jboss.resteasy>3.1.4.Final</version.org.jboss.resteasy>
+    <version.org.jboss.errai>4.3.3.Final</version.org.jboss.errai>
     <version.org.optaplanner>${project.version}</version.org.optaplanner>
     <version.org.slf4j>1.7.25</version.org.slf4j>
     <version.org.webjars.bower.org.patternfly>3.18.1</version.org.webjars.bower.org.patternfly>
     <version.org.webjars.Eonasdan-bootstrap-datetimepicker>4.17.47</version.org.webjars.Eonasdan-bootstrap-datetimepicker>
     <version.org.webjars.momentjs>2.22.2</version.org.webjars.momentjs>
     <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
-    <version.org.wildfly.wildfly-dist>11.0.0.Final</version.org.wildfly.wildfly-dist>
+    <version.org.wildfly>14.0.1.Final</version.org.wildfly>
     <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.11</version.org.codehaus.cargo.cargo-maven2-plugin>
-    <version.wildfly>11.0.0.Final</version.wildfly>
   </properties>
 
   <modules>
@@ -160,9 +157,11 @@
 
       <!-- JEE -->
       <dependency>
-        <groupId>javax</groupId>
-        <artifactId>javaee-api</artifactId>
-        <version>${version.javax.javaee-api}</version>
+        <groupId>org.wildfly.bom</groupId>
+        <artifactId>wildfly-javaee8</artifactId>
+        <type>pom</type>
+        <version>${version.org.wildfly}</version>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
@@ -218,21 +217,6 @@
         <version>${version.org.jboss.errai}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-client</artifactId>
-        <version>${version.org.jboss.resteasy}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-jaxrs</artifactId>
-        <version>${version.org.jboss.resteasy}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-jackson-provider</artifactId>
-        <version>${version.org.jboss.resteasy}</version>
       </dependency>
 
       <dependency>
@@ -294,7 +278,7 @@
                 <artifactItem>
                   <groupId>org.wildfly</groupId>
                   <artifactId>wildfly-dist</artifactId>
-                  <version>${version.org.wildfly.wildfly-dist}</version>
+                  <version>${version.org.wildfly}</version>
                   <type>zip</type>
                   <overWrite>false</overWrite>
                   <outputDirectory>${wildfly.parent}</outputDirectory>

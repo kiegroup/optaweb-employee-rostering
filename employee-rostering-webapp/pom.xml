@@ -194,14 +194,14 @@
     </profile>
     
     <profile>
-      <id>cargoWildfly11</id>
+      <id>cargoWildfly14</id>
       <activation>
         <property>
           <name>!cargo.maven.skip</name>
         </property>
       </activation>
       <properties>
-        <cargo.container.id>wildfly11x</cargo.container.id>
+        <cargo.container.id>wildfly14x</cargo.container.id>
         <cargo.container.port>8080</cargo.container.port>
       </properties>
       <build>
@@ -216,7 +216,7 @@
                   <artifactInstaller>
                     <groupId>org.wildfly</groupId>
                     <artifactId>wildfly-dist</artifactId>
-                    <version>${version.wildfly}</version>
+                    <version>${version.org.wildfly}</version>
                   </artifactInstaller>
                 </container>
                 <configuration>
