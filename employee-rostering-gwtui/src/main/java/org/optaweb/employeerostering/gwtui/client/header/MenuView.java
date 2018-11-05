@@ -38,6 +38,7 @@ import org.optaweb.employeerostering.gwtui.client.popups.ErrorPopup;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.AVAILABILITY_ROSTER;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.CONTRACTS;
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.ROTATION;
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.SHIFT_ROSTER;
@@ -60,6 +61,10 @@ public class MenuView implements IsElement {
     private HTMLAnchorElement employees;
 
     @Inject
+    @DataField("contracts")
+    private HTMLAnchorElement contracts;
+
+    @Inject
     @DataField("availability-roster")
     private HTMLAnchorElement availabilityRoster;
 
@@ -77,7 +82,7 @@ public class MenuView implements IsElement {
     @PostConstruct
     private void initMenu() {
         pageChangeEvent.fire(new PageChange(Pages.Id.SHIFT_ROSTER));
-        setInactive(skills, spots, employees, rotation, shiftRoster, availabilityRoster, shiftRoster);
+        setInactive(skills, spots, employees, contracts, rotation, shiftRoster, availabilityRoster, shiftRoster);
     }
 
     @EventHandler("skills")
@@ -93,6 +98,11 @@ public class MenuView implements IsElement {
     @EventHandler("employees")
     public void employees(final @ForEvent("click") MouseEvent e) {
         goTo(EMPLOYEES, e);
+    }
+
+    @EventHandler("contracts")
+    public void contracts(final @ForEvent("click") MouseEvent e) {
+        goTo(CONTRACTS, e);
     }
 
     @EventHandler("availability-roster")
@@ -121,20 +131,20 @@ public class MenuView implements IsElement {
     }
 
     public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
-        setEnabled(skills, spots, employees, rotation, shiftRoster, availabilityRoster);
+        setEnabled(skills, spots, employees, contracts, rotation, shiftRoster, availabilityRoster);
     }
 
     public void onNoTenants(final @Observes TenantStore.NoTenants noTenants) {
-        setDisabled(skills, spots, employees, rotation, shiftRoster, availabilityRoster);
+        setDisabled(skills, spots, employees, contracts, rotation, shiftRoster, availabilityRoster);
     }
 
     public void handleActiveLink(final HTMLElement target) {
-        setInactive(skills, spots, employees, availabilityRoster, rotation, shiftRoster);
+        setInactive(skills, spots, employees, contracts, availabilityRoster, rotation, shiftRoster);
         setActive(target);
     }
 
     public void onPageChangeEvent(@Observes final PageChange pageChangeEvent) {
-        setInactive(skills, spots, employees, availabilityRoster, rotation, shiftRoster);
+        setInactive(skills, spots, employees, contracts, availabilityRoster, rotation, shiftRoster);
         switch (pageChangeEvent.getPageId()) {
             case AVAILABILITY_ROSTER:
                 setActive(availabilityRoster);

@@ -26,6 +26,8 @@ import javax.ws.rs.core.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.optaweb.employeerostering.shared.contract.Contract;
+import org.optaweb.employeerostering.shared.contract.ContractRestService;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
 import org.optaweb.employeerostering.shared.roster.PublishResult;
@@ -49,6 +51,7 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
     private EmployeeRestService employeeRestService;
     private RotationRestService rotationRestService;
     private RosterRestService rosterRestService;
+    private ContractRestService contractRestService;
 
     public RotationRestServiceIT() {
         shiftRestService = serviceClientFactory.createShiftRestServiceClient();
@@ -56,10 +59,18 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
         employeeRestService = serviceClientFactory.createEmployeeRestServiceClient();
         rosterRestService = serviceClientFactory.createRosterRestServiceClient();
         rotationRestService = serviceClientFactory.createRotationRestServiceClient();
+        contractRestService = serviceClientFactory.createContractRestServiceClient();
     }
 
-    private Employee createEmployee(String name) {
-        Employee employee = new Employee(TENANT_ID, name);
+    private Contract createContract(String name) {
+        Contract contract = new Contract(TENANT_ID, name);
+        Contract out = contractRestService.addContract(TENANT_ID, contract);
+        assertClientResponseOk();
+        return out;
+    }
+
+    private Employee createEmployee(String name, Contract contract) {
+        Employee employee = new Employee(TENANT_ID, name, contract, Collections.emptySet());
         Employee out = employeeRestService.addEmployee(TENANT_ID, employee);
         assertClientResponseOk();
         return out;
@@ -98,7 +109,8 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
     public void testUpdateNonExistingShiftTemplate() {
         final long nonExistingShiftTemplateId = 123456L;
         Spot spot = createSpot("spot");
-        Employee rotationEmployee = createEmployee("rotationEmployee");
+        Contract contract = createContract("contract");
+        Employee rotationEmployee = createEmployee("rotationEmployee", contract);
         Duration startOffset = Duration.ofDays(1);
         Duration shiftDuration = Duration.ofHours(8);
 
@@ -125,7 +137,8 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
     @Test
     public void testCrudShiftTemplate() {
         Spot spot = createSpot("spot");
-        Employee rotationEmployee = createEmployee("rotationEmployee");
+        Contract contract = createContract("contract");
+        Employee rotationEmployee = createEmployee("rotationEmployee", contract);
         Duration startOffset = Duration.ofDays(1);
         Duration shiftDuration = Duration.ofHours(8);
 
@@ -163,8 +176,9 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
         Spot spotA = createSpot("Spot A");
         Spot spotB = createSpot("Spot B");
 
-        Employee employeeA = createEmployee("Employee A");
-        Employee employeeB = createEmployee("Employee B");
+        Contract contract = createContract("contract");
+        Employee employeeA = createEmployee("Employee A", contract);
+        Employee employeeB = createEmployee("Employee B", contract);
 
         ShiftTemplateView shiftTemplateA = createShiftTemplate(spotA, employeeA, Duration.ZERO, Duration.ofHours(9));
         ShiftTemplateView shiftTemplateB = createShiftTemplate(spotB, employeeB, Duration.ZERO, Duration.ofHours(9));

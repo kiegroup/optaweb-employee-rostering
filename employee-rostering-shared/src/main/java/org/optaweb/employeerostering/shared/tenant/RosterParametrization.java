@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.shared.tenant;
 
+import java.time.DayOfWeek;
+
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -40,6 +42,8 @@ public class RosterParametrization extends AbstractPersistable {
     private Integer desiredTimeSlotWeight = 10;
     @NotNull
     private Integer rotationEmployeeMatchWeight = 500;
+    @NotNull
+    private DayOfWeek weekStartDay = DayOfWeek.MONDAY;
 
     @SuppressWarnings("unused")
     public RosterParametrization() {
@@ -48,11 +52,12 @@ public class RosterParametrization extends AbstractPersistable {
 
     public RosterParametrization(Integer tenantId,
                                  Integer undesiredTimeSlotWeight, Integer desiredTimeSlotWeight,
-                                 Integer rotationEmployeeMatchWeight) {
+                                 Integer rotationEmployeeMatchWeight, DayOfWeek weekStartDay) {
         super(tenantId);
         this.undesiredTimeSlotWeight = undesiredTimeSlotWeight;
         this.desiredTimeSlotWeight = desiredTimeSlotWeight;
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
+        this.weekStartDay = weekStartDay;
     }
 
     public Integer getUndesiredTimeSlotWeight() {
@@ -77,5 +82,13 @@ public class RosterParametrization extends AbstractPersistable {
 
     public void setRotationEmployeeMatchWeight(Integer rotationEmployeeMatchWeight) {
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
+    }
+
+    public DayOfWeek getWeekStartDay() {
+        return weekStartDay;
+    }
+
+    public void setWeekStartDay(DayOfWeek weekStartDay) {
+        this.weekStartDay = weekStartDay;
     }
 }

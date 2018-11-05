@@ -118,31 +118,33 @@ public class EventManager {
     public static final class Event<T> {
 
         // Solving events
-        public static Event<Integer> SOLVE_TIME_UPDATE = new Event<>("SolveTimeUpdate", Integer.class);
-        public static Event<Void> SOLVE_START = new Event<>("SolveStart", Void.class);
-        public static Event<Void> SOLVE_END = new Event<>("SolveEnd", Void.class);
+        public static final Event<Integer> SOLVE_TIME_UPDATE = new Event<>("SolveTimeUpdate", Integer.class);
+        public static final Event<Void> SOLVE_START = new Event<>("SolveStart", Void.class);
+        public static final Event<Void> SOLVE_END = new Event<>("SolveEnd", Void.class);
 
         // Spot Roster Events
-        public static Event<ShiftRosterView> SHIFT_ROSTER_UPDATE = new Event<>("ShiftRosterUpdate", ShiftRosterView.class);
-        public static Event<Void> SHIFT_ROSTER_INVALIDATE = new Event<>("ShiftRosterInvalidate", Void.class);
-        public static Event<Pagination> SHIFT_ROSTER_PAGINATION = new Event<>("ShiftRosterPagination", Pagination.class);
-        public static Event<LocalDateRange> SHIFT_ROSTER_DATE_RANGE = new Event<>("ShiftRosterDateRange", LocalDateRange.class);
+        public static final Event<ShiftRosterView> SHIFT_ROSTER_UPDATE = new Event<>("ShiftRosterUpdate", ShiftRosterView.class);
+        public static final Event<Void> SHIFT_ROSTER_INVALIDATE = new Event<>("ShiftRosterInvalidate", Void.class);
+        public static final Event<Pagination> SHIFT_ROSTER_PAGINATION = new Event<>("ShiftRosterPagination", Pagination.class);
+        public static final Event<LocalDateRange> SHIFT_ROSTER_DATE_RANGE = new Event<>("ShiftRosterDateRange", LocalDateRange.class);
 
         // Employee Roster Events
-        public static Event<AvailabilityRosterView> AVAILABILITY_ROSTER_UPDATE = new Event<>("AvailabilityRosterUpdate", AvailabilityRosterView.class);
-        public static Event<Void> AVAILABILITY_ROSTER_INVALIDATE = new Event<>("AvailabilityRosterInvalidate", Void.class);
-        public static Event<Pagination> AVAILABILITY_ROSTER_PAGINATION = new Event<>("AvailabilityRosterPagination", Pagination.class);
-        public static Event<LocalDateRange> AVAILABILITY_ROSTER_DATE_RANGE = new Event<>("AvailabilityRosterDateRange", LocalDateRange.class);
+        public static final Event<AvailabilityRosterView> AVAILABILITY_ROSTER_UPDATE = new Event<>("AvailabilityRosterUpdate", AvailabilityRosterView.class);
+        public static final Event<Void> AVAILABILITY_ROSTER_INVALIDATE = new Event<>("AvailabilityRosterInvalidate", Void.class);
+        public static final Event<Pagination> AVAILABILITY_ROSTER_PAGINATION = new Event<>("AvailabilityRosterPagination", Pagination.class);
+        public static final Event<LocalDateRange> AVAILABILITY_ROSTER_DATE_RANGE = new Event<>("AvailabilityRosterDateRange", LocalDateRange.class);
 
         // Rotation Events
-        public static Event<Void> ROTATION_SAVE = new Event<>("RotationSave", Void.class);
-        public static Event<Void> ROTATION_INVALIDATE = new Event<>("RotationInvalidate", Void.class);
+        public static final Event<Void> ROTATION_SAVE = new Event<>("RotationSave", Void.class);
+        public static final Event<Void> ROTATION_INVALIDATE = new Event<>("RotationInvalidate", Void.class);
 
         // Invalidation Events
         @SuppressWarnings("rawtypes")
-        public static Event<Class> DATA_INVALIDATION = new Event<>("DataInvalidation", Class.class);
+        public static final Event<Class> DATA_INVALIDATION = new Event<>("DataInvalidation", Class.class);
         @SuppressWarnings("rawtypes")
-        public static Event<Map> SKILL_MAP_INVALIDATION = new Event<>("SkillMapInvalidation", Map.class);
+        public static final Event<Map> SKILL_MAP_INVALIDATION = new Event<>("SkillMapInvalidation", Map.class);
+        @SuppressWarnings("rawtypes")
+        public static final Event<Map> CONTRACT_MAP_INVALIDATION = new Event<>("ContractMapInvalidation", Map.class);
 
         private final String eventName;
         private final Class<? extends T> eventClass;

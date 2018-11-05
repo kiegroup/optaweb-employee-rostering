@@ -14,79 +14,79 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.gwtui.client.pages.skill;
+package org.optaweb.employeerostering.gwtui.client.pages.contract;
 
 import java.util.Collections;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLTableCellElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
 import org.jboss.errai.databinding.client.components.ListComponent;
 import org.jboss.errai.databinding.client.components.ListContainer;
-import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
+import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
-import org.optaweb.employeerostering.shared.skill.Skill;
-import org.optaweb.employeerostering.shared.skill.SkillRestServiceBuilder;
+import org.optaweb.employeerostering.shared.contract.Contract;
+import org.optaweb.employeerostering.shared.contract.ContractRestServiceBuilder;
 
 @Templated
-public class SkillListPanel
+public class ContractsPage
         implements
-        IsElement,
         Page {
+
+    @Inject
+    @DataField("add-contract-button")
+    private HTMLButtonElement addContractButton;
 
     @Inject
     @DataField("refresh-button")
     private HTMLButtonElement refreshButton;
+
     @Inject
-    @DataField("add-button")
-    private HTMLButtonElement addButton;
+    private LoadingSpinner loadingSpinner;
+
+    @Inject
+    private NotificationFactory notificationFactory;
+
+    @Inject
+    private ManagedInstance<ContractForm> contractFormFactory;
 
     @Inject
     @DataField("pager")
-    private KiePager<Skill> pager;
+    private KiePager<Contract> pager;
 
     @Inject
     @DataField("search-bar")
-    private KieSearchBar<Skill> searchBar;
+    private KieSearchBar<Contract> searchBar;
+
+    @Inject
+    @DataField("table")
+    @ListContainer("table")
+    private ListComponent<Contract, ContractTableRow> table;
+
+    @Inject
+    private EventManager eventManager;
 
     @Inject
     private TenantStore tenantStore;
 
     @Inject
-    @DataField("table")
-    @ListContainer("table")
-    private ListComponent<Skill, SkillTableRow> table;
-
-    @Inject
-    @DataField("name-header")
-    @Named("th")
-    private HTMLTableCellElement skillNameHeader;
-
-    @Inject
     private PromiseUtils promiseUtils;
-
-    @Inject
-    private EventManager eventManager;
-
-    public SkillListPanel() {
-    }
 
     @PostConstruct
     protected void initWidget() {
@@ -99,12 +99,8 @@ public class SkillListPanel
         return refresh();
     }
 
-    public void onAnyTenantEvent(@Observes TenantStore.TenantChange tenant) {
-        refresh();
-    }
-
     public void onAnyInvalidationEvent(Class<?> dataInvalidated) {
-        if (dataInvalidated.equals(Skill.class)) {
+        if (dataInvalidated.equals(Contract.class)) {
             refresh();
         }
     }
@@ -114,33 +110,25 @@ public class SkillListPanel
         refresh();
     }
 
-    public Promise<Void> refresh() {
-        if (tenantStore.getCurrentTenantId() == null) {
-            return promiseUtils.resolve();
-        }
+    private void initTable() {
+        searchBar.setListToFilter(Collections.emptyList());
+        pager.setPresenter(table);
+        searchBar.setElementToStringMapping((tenant) -> tenant.getName());
+        searchBar.addFilterListener(pager);
+    }
+
+    private Promise<Void> refresh() {
         return promiseUtils.promise((res, rej) -> {
-            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
-                    .onSuccess(newSkillList -> {
-                        searchBar.setListToFilter(newSkillList);
+            ContractRestServiceBuilder.getContractList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
+                    .onSuccess(newContractList -> {
+                        searchBar.setListToFilter(newContractList);
                         res.onInvoke(promiseUtils.resolve());
                     }));
         });
     }
 
-    private void initTable() {
-        searchBar.setListToFilter(Collections.emptyList());
-        pager.setPresenter(table);
-        searchBar.setElementToStringMapping((skill) -> skill.getName());
-        searchBar.addFilterListener(pager);
-    }
-
-    @EventHandler("add-button")
-    public void add(final @ForEvent("click") MouseEvent e) {
-        SkillTableRow.createNewRow(new Skill(tenantStore.getCurrentTenantId(), ""), table, pager);
-    }
-
-    @EventHandler("name-header")
-    public void spotNameHeaderClick(final @ForEvent("click") MouseEvent e) {
-        pager.sortBy((a, b) -> a.getName().toLowerCase().compareTo(b.getName().toLowerCase()));
+    @EventHandler("add-contract-button")
+    private void addContract(@ForEvent("click") MouseEvent e) {
+        contractFormFactory.get().createNewContract();
     }
 }

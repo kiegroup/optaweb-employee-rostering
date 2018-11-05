@@ -28,6 +28,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLTableCellElement;
 import org.gwtbootstrap3.extras.select.client.ui.MultipleSelect;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
+import org.gwtbootstrap3.extras.select.client.ui.Select;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -35,9 +36,11 @@ import org.optaweb.employeerostering.gwtui.client.common.AutoTrimWhitespaceTextB
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
+import org.optaweb.employeerostering.gwtui.client.common.StringToContractConverter;
 import org.optaweb.employeerostering.gwtui.client.common.TableRow;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
+import org.optaweb.employeerostering.shared.contract.Contract;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaweb.employeerostering.shared.skill.Skill;
@@ -52,12 +55,19 @@ public class EmployeeTableRow extends TableRow<Employee> {
     private StringListToSkillSetConverter skillConvertor;
 
     @Inject
+    private StringToContractConverter contractConvertor;
+
+    @Inject
     @DataField("employee-name-text-box")
     private AutoTrimWhitespaceTextBox employeeName;
 
     @Inject
     @DataField("employee-skill-proficiency-set-select")
     private MultipleSelect employeeSkillProficiencySet;
+
+    @Inject
+    @DataField("employee-contract-select")
+    private Select employeeContract;
 
     @Inject
     @DataField("employee-name-display")
@@ -68,6 +78,11 @@ public class EmployeeTableRow extends TableRow<Employee> {
     @DataField("employee-skill-proficiency-set-display")
     @Named("td")
     private HTMLTableCellElement employeeSkillProficiencySetDisplay;
+
+    @Inject
+    @DataField("employee-contract-display")
+    @Named("td")
+    private HTMLTableCellElement employeeContractDisplay;
 
     @Inject
     private TranslationService translationService;
@@ -81,17 +96,23 @@ public class EmployeeTableRow extends TableRow<Employee> {
                 I18nKeys.EmployeeListPanel_employeeName));
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         updateSkillMap(skillConvertor.getSkillMap());
+        updateContractMap(contractConvertor.getContractMap());
         dataBinder.bind(employeeName, "name");
+        dataBinder.bind(employeeContract, "contract", contractConvertor);
         dataBinder.bind(employeeSkillProficiencySet, "skillProficiencySet", skillConvertor);
 
         dataBinder.<String>addPropertyChangeHandler("name", (e) -> {
             employeeNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
+        });
+        dataBinder.<Contract>addPropertyChangeHandler("contract", (e) -> {
+            employeeContractDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped((e.getNewValue() != null) ? e.getNewValue().getName() : "").toSafeHtml().asString();
         });
         dataBinder.<Set<Skill>>addPropertyChangeHandler("skillProficiencySet", (e) -> {
             employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue().stream().map(Skill::getName).collect(Collectors.joining(", ")))
                     .toSafeHtml().asString();
         });
         eventManager.subscribeToEventForElement(EventManager.Event.SKILL_MAP_INVALIDATION, this, this::updateSkillMap);
+        eventManager.subscribeToEventForElement(EventManager.Event.CONTRACT_MAP_INVALIDATION, this, this::updateContractMap);
     }
 
     public void reset() {
@@ -108,6 +129,18 @@ public class EmployeeTableRow extends TableRow<Employee> {
             employeeSkillProficiencySet.add(option);
         });
         employeeSkillProficiencySet.refresh();
+    }
+
+    private void updateContractMap(Map<String, Contract> contractMap) {
+        employeeContract.clear();
+        contractMap.forEach((name, contract) -> {
+            Option option = new Option();
+            option.setName(name);
+            option.setValue(name);
+            option.setText(name);
+            employeeContract.add(option);
+        });
+        employeeContract.refresh();
     }
 
     @Override

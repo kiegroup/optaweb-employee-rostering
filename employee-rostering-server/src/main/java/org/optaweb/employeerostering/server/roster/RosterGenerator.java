@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
@@ -43,6 +44,7 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.optaweb.employeerostering.server.admin.SystemPropertiesRetriever;
 import org.optaweb.employeerostering.server.common.generator.StringDataGenerator;
+import org.optaweb.employeerostering.shared.contract.Contract;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.shared.employee.EmployeeAvailabilityState;
@@ -386,7 +388,8 @@ public class RosterGenerator {
 
         List<Skill> skillList = createSkillList(generatorType, tenantId, skillListSize);
         List<Spot> spotList = createSpotList(generatorType, tenantId, spotListSize, skillList);
-        List<Employee> employeeList = createEmployeeList(generatorType, tenantId, employeeListSize, skillList);
+        List<Contract> contractList = createContractList(tenantId);
+        List<Employee> employeeList = createEmployeeList(generatorType, tenantId, employeeListSize, contractList, skillList);
         List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId, rosterState, spotList, employeeList);
         List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterParametrization, rosterState, spotList, shiftTemplateList);
         List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
@@ -457,14 +460,30 @@ public class RosterGenerator {
         return spotList;
     }
 
-    private List<Employee> createEmployeeList(GeneratorType generatorType, Integer tenantId, int size, List<Skill> generalSkillList) {
+    private List<Contract> createContractList(Integer tenantId) {
+        List<Contract> contractList = new ArrayList<>(3);
+        Contract contract = new Contract(tenantId, "Part Time Contract");
+        entityManager.persist(contract);
+        contractList.add(contract);
+
+        contract = new Contract(tenantId, "Max 16 Hours Per Week Contract", null, 16 * 60, null, null);
+        entityManager.persist(contract);
+        contractList.add(contract);
+
+        contract = new Contract(tenantId, "Max 16 Hours Per Week, 32 Hours Per Month Contract", null, 16 * 60, 32 * 60, null);
+        entityManager.persist(contract);
+        contractList.add(contract);
+
+        return contractList;
+    }
+
+    private List<Employee> createEmployeeList(GeneratorType generatorType, Integer tenantId, int size, List<Contract> contractList, List<Skill> generalSkillList) {
         List<Employee> employeeList = new ArrayList<>(size);
         employeeNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = employeeNameGenerator.generateNextValue();
             HashSet<Skill> skillProficiencySet = new HashSet<>(extractRandomSubList(generalSkillList, 0.1, 0.3, 0.5, 0.7, 0.9, 1.0));
-            Employee employee = new Employee(tenantId, name);
-            employee.setSkillProficiencySet(skillProficiencySet);
+            Employee employee = new Employee(tenantId, name, contractList.get(generateRandomIntFromThresholds(0.7, 0.5)), skillProficiencySet);
             entityManager.persist(employee);
             employeeList.add(employee);
         }
@@ -478,7 +497,9 @@ public class RosterGenerator {
                                                         List<Employee> employeeList) {
         int rotationLength = rosterState.getRotationLength();
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength * generatorType.timeslotRangeList.size());
-        List<Employee> remainingEmployeeList = new ArrayList<>(employeeList);
+        List<Employee> remainingEmployeeList = employeeList.stream()
+                .filter((e) -> e.getContract().getMaximumMinutesPerWeek() == null)
+                .collect(Collectors.toCollection(ArrayList::new));
         for (Spot spot : spotList) {
             List<Employee> rotationEmployeeList = remainingEmployeeList.stream()
                     .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()))

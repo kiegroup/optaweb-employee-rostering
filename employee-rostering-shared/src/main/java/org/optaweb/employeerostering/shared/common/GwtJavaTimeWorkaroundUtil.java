@@ -59,14 +59,6 @@ public class GwtJavaTimeWorkaroundUtil {
         return OffsetDateTime.of(date.atTime(toLocalTime(offsetTime)), offsetTime.getOffset());
     }
 
-    public static boolean doTimeslotsIntersect(OffsetDateTime start1, OffsetDateTime end1, OffsetDateTime start2, OffsetDateTime end2) {
-        return !start1.isAfter(end2) && !end1.isBefore(start2);
-    }
-
-    public static boolean doTimeslotsIntersect(LocalDate date, OffsetTime start1, OffsetTime end1, OffsetDateTime start2, OffsetDateTime end2) {
-        return doTimeslotsIntersect(start1.atDate(date), end1.atDate(date), start2, end2);
-    }
-
     public static Date toDate(OffsetDateTime offsetDateTime) {
         DateTimeFormat offsetDateTimeConvertor = DateTimeFormat.getFormat(PredefinedFormat.ISO_8601);
         return offsetDateTimeConvertor.parse(offsetDateTimeToISO(offsetDateTime));

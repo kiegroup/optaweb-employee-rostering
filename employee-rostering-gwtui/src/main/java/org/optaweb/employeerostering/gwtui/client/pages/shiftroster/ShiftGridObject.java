@@ -47,6 +47,7 @@ import org.optaweb.employeerostering.shared.shift.ShiftRestServiceBuilder;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.spot.Spot;
+import org.optaweb.employeerostering.shared.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.shared.violation.DesiredTimeslotForEmployeeReward;
 import org.optaweb.employeerostering.shared.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.shared.violation.RotationViolationPenalty;
@@ -197,6 +198,14 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMe
 
             for (UnassignedShiftPenalty penalty : shiftView.getUnassignedShiftPenaltyList()) {
                 indictmentIcons.add(IconContainer.Icon.UNASSIGNED_SHIFT_PENALTY, "Shift is unassigned (Score: " + penalty.getScore().toShortString() + ").");
+            }
+
+            for (ContractMinutesViolation penalty : shiftView.getContractMinutesViolationPenaltyList()) {
+                indictmentIcons.add(IconContainer.Icon.CONTRACT_MINUTES_VIOLATION, "Employee have worked more than their " + penalty.getType().toString() +
+                        " minutes; the maximum they can work per " + penalty.getType().name().toLowerCase() + " is " +
+                        penalty.getMaximumMinutesWorked() + ", but they worked " + penalty.getMinutesWorked() + " this " + penalty.getType().name()
+                        .toLowerCase() +
+                        " (Score: " + penalty.getScore().toShortString() + ").");
             }
         }
     }

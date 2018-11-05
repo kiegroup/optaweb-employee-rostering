@@ -47,7 +47,7 @@ import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 @Templated
-public class SpotListPanel implements IsElement,
+public class SpotsPage implements IsElement,
                                       Page {
 
     @Inject
@@ -89,9 +89,6 @@ public class SpotListPanel implements IsElement,
 
     @Inject
     private EventManager eventManager;
-
-    public SpotListPanel() {
-    }
 
     @PostConstruct
     protected void initWidget() {

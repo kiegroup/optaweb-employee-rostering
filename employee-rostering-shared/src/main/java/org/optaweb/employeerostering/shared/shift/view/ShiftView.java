@@ -31,6 +31,7 @@ import org.optaweb.employeerostering.shared.common.HasTimeslot;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.shift.Shift;
 import org.optaweb.employeerostering.shared.spot.Spot;
+import org.optaweb.employeerostering.shared.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.shared.violation.DesiredTimeslotForEmployeeReward;
 import org.optaweb.employeerostering.shared.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.shared.violation.RotationViolationPenalty;
@@ -56,6 +57,7 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
     private List<UndesiredTimeslotForEmployeePenalty> undesiredTimeslotForEmployeePenaltyList;
     private List<RotationViolationPenalty> rotationViolationPenaltyList;
     private List<UnassignedShiftPenalty> unassignedShiftPenaltyList;
+    private List<ContractMinutesViolation> contractMinutesViolationPenaltyList;
     private HardMediumSoftLongScore indictmentScore;
 
     private boolean pinnedByUser = false;
@@ -63,7 +65,8 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
     private Long employeeId = null;
 
     @SuppressWarnings("unused")
-    public ShiftView() {}
+    public ShiftView() {
+    }
 
     public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         this(tenantId, spot, startDateTime, endDateTime, null);
@@ -82,11 +85,12 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
         this.desiredTimeslotForEmployeeRewardList = null;
         this.undesiredTimeslotForEmployeePenaltyList = null;
         this.rotationViolationPenaltyList = null;
+        this.contractMinutesViolationPenaltyList = null;
         this.indictmentScore = null;
     }
 
     public ShiftView(ZoneId zoneId, Shift shift) {
-        this(zoneId, shift, null, null, null, null, null, null, null, null);
+        this(zoneId, shift, null, null, null, null, null, null, null, null, null);
     }
 
     public ShiftView(ZoneId zoneId, Shift shift, List<RequiredSkillViolation> requiredSkillViolationList,
@@ -95,6 +99,7 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
                      List<UndesiredTimeslotForEmployeePenalty> undesiredTimeslotForEmployeePenaltyList,
                      List<RotationViolationPenalty> rotationViolationPenaltyList,
                      List<UnassignedShiftPenalty> unassignedShiftPenaltyList,
+                     List<ContractMinutesViolation> contractMinutesViolationPenaltyList,
                      HardMediumSoftLongScore indictmentScore) {
         super(shift);
         this.spotId = shift.getSpot().getId();
@@ -111,6 +116,7 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
         this.undesiredTimeslotForEmployeePenaltyList = undesiredTimeslotForEmployeePenaltyList;
         this.rotationViolationPenaltyList = rotationViolationPenaltyList;
         this.unassignedShiftPenaltyList = unassignedShiftPenaltyList;
+        this.contractMinutesViolationPenaltyList = contractMinutesViolationPenaltyList;
         this.indictmentScore = indictmentScore;
     }
 
@@ -238,7 +244,7 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
     public void setRotationViolationPenaltyList(List<RotationViolationPenalty> rotationViolationPenaltyList) {
         this.rotationViolationPenaltyList = rotationViolationPenaltyList;
     }
-    
+
     public List<UnassignedShiftPenalty> getUnassignedShiftPenaltyList() {
         return unassignedShiftPenaltyList;
     }
@@ -247,4 +253,11 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
         this.unassignedShiftPenaltyList = unassignedShiftPenaltyList;
     }
 
+    public List<ContractMinutesViolation> getContractMinutesViolationPenaltyList() {
+        return contractMinutesViolationPenaltyList;
+    }
+
+    public void setContractMinutesViolationPenaltyList(List<ContractMinutesViolation> contractMinutesViolationPenaltyList) {
+        this.contractMinutesViolationPenaltyList = contractMinutesViolationPenaltyList;
+    }
 }

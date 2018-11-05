@@ -1,0 +1,59 @@
+<!--
+  ~ Copyright 2018 Red Hat, Inc. and/or its affiliates.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~       http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- FIXME: i18n -->
+
+<div style="width: 600px" class="root panel panel-default blob-popover-content">
+
+    <div class="panel-heading">
+        <span data-field="popup-title"></span>
+        <button data-field="close-button" type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="panel-body" data-field="form">
+        <div>
+            <form class="form">
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <label data-i18n-key="General.name"></label>
+                        <div>
+                            <input type="text" data-field="contract-name-text-box" required></input>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <label data-i18n-key="ContractForm.maximumMinutes"></label>
+                        <div data-field="maximum-minutes-per-day"></div>
+                        <div data-field="maximum-minutes-per-week"></div>
+                        <div data-field="maximum-minutes-per-month"></div>
+                        <div data-field="maximum-minutes-per-year"></div>
+                    </div>
+                </div>
+
+                <div class="form-group row last-form-group-row">
+                    <div class="col-md-6 text-right">
+                        <button type="button" class="btn btn-default" data-field="cancel-button" data-i18n-key="General.cancel"></button>
+                        <button type="button" class="btn btn-primary" data-field="save-button" data-i18n-key="General.save" disabled></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

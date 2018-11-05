@@ -21,6 +21,7 @@ import java.util.Collections;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.optaweb.employeerostering.shared.contract.Contract;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.shared.spot.Spot;
@@ -33,16 +34,17 @@ public class ShiftTemplateTest {
 
     @Test
     public void testConversionFromToView() {
+        Contract contract = new Contract(1, "Contract");
         Spot testSpot = new Spot(1, "Test", Collections.emptySet());
-        Employee testEmployee = new Employee(1, "Employee");
+        Employee testEmployee = new Employee(1, "Employee", contract, Collections.emptySet());
         testConversion(new ShiftTemplate(1, testSpot, 0, LocalTime.of(9, 0),
-                2, LocalTime.of(17, 0)), ROTATION_LENGTH);
+                                         2, LocalTime.of(17, 0)), ROTATION_LENGTH);
         testConversion(new ShiftTemplate(1, testSpot, 0, LocalTime.of(9, 0),
-                2, LocalTime.of(17, 0), testEmployee), ROTATION_LENGTH);
+                                         2, LocalTime.of(17, 0), testEmployee), ROTATION_LENGTH);
         testConversion(new ShiftTemplate(1, testSpot, 2, LocalTime.of(11, 0),
-                4, LocalTime.of(14, 0)), ROTATION_LENGTH);
+                                         4, LocalTime.of(14, 0)), ROTATION_LENGTH);
         testConversion(new ShiftTemplate(1, testSpot, 6, LocalTime.of(19, 0),
-                0, LocalTime.of(6, 0)), ROTATION_LENGTH);
+                                         0, LocalTime.of(6, 0)), ROTATION_LENGTH);
     }
 
     public void testConversion(final ShiftTemplate template, int rotationLength) {
@@ -57,5 +59,4 @@ public class ShiftTemplateTest {
         assertEquals(template.getTenantId(), templateFromView.getTenantId());
         assertEquals(template.getId(), templateFromView.getId());
     }
-
 }

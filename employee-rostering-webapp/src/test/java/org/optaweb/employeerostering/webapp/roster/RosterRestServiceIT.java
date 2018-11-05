@@ -26,6 +26,8 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Test;
+import org.optaweb.employeerostering.shared.contract.Contract;
+import org.optaweb.employeerostering.shared.contract.ContractRestService;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
@@ -50,6 +52,7 @@ public class RosterRestServiceIT extends AbstractEntityRequireTenantRestServiceI
     private SpotRestService spotRestService;
     private EmployeeRestService employeeRestService;
     private RosterRestService rosterRestService;
+    private ContractRestService contractRestService;
 
     private List<Spot> spotList;
     private List<Employee> employeeList;
@@ -61,10 +64,18 @@ public class RosterRestServiceIT extends AbstractEntityRequireTenantRestServiceI
         spotRestService = serviceClientFactory.createSpotRestServiceClient();
         employeeRestService = serviceClientFactory.createEmployeeRestServiceClient();
         rosterRestService = serviceClientFactory.createRosterRestServiceClient();
+        contractRestService = serviceClientFactory.createContractRestServiceClient();
     }
 
-    private Employee createEmployee(String name) {
-        Employee employee = new Employee(TENANT_ID, name);
+    private Contract createContract(String name) {
+        Contract contract = new Contract(TENANT_ID, name);
+        Contract out = contractRestService.addContract(TENANT_ID, contract);
+        assertClientResponseOk();
+        return out;
+    }
+
+    private Employee createEmployee(String name, Contract contract) {
+        Employee employee = new Employee(TENANT_ID, name, contract, Collections.emptySet());
         Employee out = employeeRestService.addEmployee(TENANT_ID, employee);
         assertClientResponseOk();
         return out;
@@ -97,8 +108,9 @@ public class RosterRestServiceIT extends AbstractEntityRequireTenantRestServiceI
     private void createTestRoster() {
         createTestTenant();
 
-        Employee employeeA = createEmployee("Employee A");
-        Employee employeeB = createEmployee("Employee B");
+        Contract contract = createContract("contract");
+        Employee employeeA = createEmployee("Employee A", contract);
+        Employee employeeB = createEmployee("Employee B", contract);
 
         Spot spotA = createSpot("Spot A");
         Spot spotB = createSpot("Spot B");

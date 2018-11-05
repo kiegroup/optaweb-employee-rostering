@@ -40,6 +40,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.optaweb.employeerostering.gwtui.client.common.CallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
@@ -47,6 +48,7 @@ import org.optaweb.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
+import org.optaweb.employeerostering.shared.contract.Contract;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.shared.spot.Spot;
@@ -202,8 +204,9 @@ public class ShiftTemplateEditFormTest {
 
     private List<Employee> getEmployeeList() {
         List<Employee> out = new ArrayList<>(NUM_OF_EMPLOYEES);
+        Contract mockContract = Mockito.mock(Contract.class);
         for (long i = 0; i < NUM_OF_EMPLOYEES; i++) {
-            Employee employee = new Employee(NUM_OF_SPOTS, "Employee" + i);
+            Employee employee = new Employee(NUM_OF_SPOTS, "Employee" + i, mockContract, Collections.emptySet());
             employee.setId(i);
             out.add(employee);
         }

@@ -42,6 +42,24 @@ public interface I18nKeys {
     @TranslationKey(defaultValue = "Create Availability")
     final String AvailabilityRosterToolbar_createAvailability = "AvailabilityRosterToolbar.createAvailability";
 
+    @TranslationKey(defaultValue = "Create Contract")
+    final String ContractForm_createContract = "ContractForm.createContract";
+
+    @TranslationKey(defaultValue = "Edit Contract")
+    final String ContractForm_editContract = "ContractForm.editContract";
+
+    @TranslationKey(defaultValue = "Per Day")
+    final String ContractForm_perDay = "ContractForm.perDay";
+
+    @TranslationKey(defaultValue = "Per Week")
+    final String ContractForm_perWeek = "ContractForm.perWeek";
+
+    @TranslationKey(defaultValue = "Per Month")
+    final String ContractForm_perMonth = "ContractForm.perMonth";
+
+    @TranslationKey(defaultValue = "Per Year")
+    final String ContractForm_perYear = "ContractForm.perYear";
+
     @TranslationKey(defaultValue = "Week {0}")
     final String DateDisplay_WEEKS_FROM_EPOCH = "DateDisplay.WEEKS_FROM_EPOCH";
 
