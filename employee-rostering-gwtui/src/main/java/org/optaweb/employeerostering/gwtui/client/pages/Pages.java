@@ -27,14 +27,16 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaweb.employeerostering.gwtui.client.pages.admin.AdminPage;
 import org.optaweb.employeerostering.gwtui.client.pages.availabilityroster.AvailabilityRosterPage;
-import org.optaweb.employeerostering.gwtui.client.pages.employee.EmployeeListPanel;
+import org.optaweb.employeerostering.gwtui.client.pages.contract.ContractsPage;
+import org.optaweb.employeerostering.gwtui.client.pages.employee.EmployeesPage;
 import org.optaweb.employeerostering.gwtui.client.pages.rotation.RotationPage;
 import org.optaweb.employeerostering.gwtui.client.pages.shiftroster.ShiftRosterPage;
-import org.optaweb.employeerostering.gwtui.client.pages.skill.SkillListPanel;
-import org.optaweb.employeerostering.gwtui.client.pages.spot.SpotListPanel;
+import org.optaweb.employeerostering.gwtui.client.pages.skill.SkillsPage;
+import org.optaweb.employeerostering.gwtui.client.pages.spot.SpotsPage;
 
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.ADMIN;
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.AVAILABILITY_ROSTER;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.CONTRACTS;
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.ROTATION;
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.SHIFT_ROSTER;
@@ -51,6 +53,7 @@ public class Pages {
         SKILLS,
         SPOTS,
         EMPLOYEES,
+        CONTRACTS,
         ADMIN;
     }
 
@@ -61,13 +64,16 @@ public class Pages {
     private ManagedInstance<RotationPage> rotationPage;
 
     @Inject
-    private ManagedInstance<SkillListPanel> skillsPage;
+    private ManagedInstance<SkillsPage> skillsPage;
 
     @Inject
-    private ManagedInstance<SpotListPanel> spotsPage;
+    private ManagedInstance<SpotsPage> spotsPage;
 
     @Inject
-    private ManagedInstance<EmployeeListPanel> employeesPage;
+    private ManagedInstance<EmployeesPage> employeesPage;
+
+    @Inject
+    private ManagedInstance<ContractsPage> contractsPage;
 
     @Inject
     private ManagedInstance<AvailabilityRosterPage> availabilityRosterPage;
@@ -82,6 +88,7 @@ public class Pages {
         mapping.put(SKILLS, lazyInit(skillsPage));
         mapping.put(SPOTS, lazyInit(spotsPage));
         mapping.put(EMPLOYEES, lazyInit(employeesPage));
+        mapping.put(CONTRACTS, lazyInit(contractsPage));
         mapping.put(SHIFT_ROSTER, lazyInit(shiftRosterPage));
         mapping.put(AVAILABILITY_ROSTER, lazyInit(availabilityRosterPage));
         mapping.put(ROTATION, lazyInit(rotationPage));

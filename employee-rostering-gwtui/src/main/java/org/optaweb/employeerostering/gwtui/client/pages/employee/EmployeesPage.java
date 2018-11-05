@@ -45,8 +45,8 @@ import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 
 @Templated
-public class EmployeeListPanel implements IsElement,
-                                          Page {
+public class EmployeesPage implements IsElement,
+                                      Page {
 
     @Inject
     @DataField("refresh-button")
@@ -87,9 +87,6 @@ public class EmployeeListPanel implements IsElement,
 
     @Inject
     private EventManager eventManager;
-
-    public EmployeeListPanel() {
-    }
 
     @PostConstruct
     protected void initWidget() {
@@ -139,7 +136,7 @@ public class EmployeeListPanel implements IsElement,
 
     @EventHandler("add-button")
     public void add(final @ForEvent("click") MouseEvent e) {
-        EmployeeTableRow.createNewRow(new Employee(tenantStore.getCurrentTenantId(), ""), table, pager);
+        EmployeeTableRow.createNewRow(new Employee(tenantStore.getCurrentTenantId(), "", null, Collections.emptySet()), table, pager);
     }
 
     @EventHandler("name-header")
@@ -150,5 +147,10 @@ public class EmployeeListPanel implements IsElement,
     @EventHandler("skill-set-header")
     public void skillSetHeaderClick(final @ForEvent("click") MouseEvent e) {
         pager.sortBy((a, b) -> b.getSkillProficiencySet().size() - a.getSkillProficiencySet().size());
+    }
+
+    @EventHandler("contract-header")
+    public void contractHeaderClick(final @ForEvent("click") MouseEvent e) {
+        pager.sortBy((a, b) -> a.getContract().getName().compareTo(b.getContract().getName()));
     }
 }

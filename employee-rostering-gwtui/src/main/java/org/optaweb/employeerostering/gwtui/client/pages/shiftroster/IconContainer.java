@@ -112,6 +112,7 @@ public class IconContainer
         ROTATION_VIOLATION_PENALTY(ConstraintMatchCategory.SOFT_CONSTRAINT_PENALTY),
         UNASSIGNED_SHIFT_PENALTY(ConstraintMatchCategory.MEDIUM_CONSTRAINT_BROKEN),
         REQUIRED_SKILL_VIOLATION(ConstraintMatchCategory.HARD_CONSTRAINT_BROKEN),
+        CONTRACT_MINUTES_VIOLATION(ConstraintMatchCategory.HARD_CONSTRAINT_BROKEN),
         PINNED(ConstraintMatchCategory.NONE);
 
         private ConstraintMatchCategory constraintMatchCategory;

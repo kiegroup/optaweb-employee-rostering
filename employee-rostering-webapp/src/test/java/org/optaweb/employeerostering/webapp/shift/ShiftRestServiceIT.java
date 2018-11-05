@@ -27,6 +27,8 @@ import javax.ws.rs.core.Response;
 
 import org.junit.After;
 import org.junit.Test;
+import org.optaweb.employeerostering.shared.contract.Contract;
+import org.optaweb.employeerostering.shared.contract.ContractRestService;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
 import org.optaweb.employeerostering.shared.shift.ShiftRestService;
@@ -44,6 +46,7 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
     private ShiftRestService shiftRestService;
     private SpotRestService spotRestService;
     private EmployeeRestService employeeRestService;
+    private ContractRestService contractRestService;
 
     private static final String[] SHIFT_VIEW_NON_INDICTMENT_FIELDS = {"employeeId", "spotId", "rotationEmployeeId", "startDateTime", "endDateTime", "tenantId"};
 
@@ -51,10 +54,18 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
         shiftRestService = serviceClientFactory.createShiftRestServiceClient();
         spotRestService = serviceClientFactory.createSpotRestServiceClient();
         employeeRestService = serviceClientFactory.createEmployeeRestServiceClient();
+        contractRestService = serviceClientFactory.createContractRestServiceClient();
     }
 
-    private Employee createEmployee(String name) {
-        Employee employee = new Employee(TENANT_ID, name);
+    private Contract createContract(String name) {
+        Contract contract = new Contract(TENANT_ID, name);
+        Contract out = contractRestService.addContract(TENANT_ID, contract);
+        assertClientResponseOk();
+        return out;
+    }
+
+    private Employee createEmployee(String name, Contract contract) {
+        Employee employee = new Employee(TENANT_ID, name, contract, Collections.emptySet());
         Employee out = employeeRestService.addEmployee(TENANT_ID, employee);
         assertClientResponseOk();
         return out;
@@ -86,8 +97,9 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
         createTestTenant();
         final long nonExistingShiftId = 123456L;
         Spot spot = createSpot("spot");
-        Employee employee = createEmployee("employee");
-        Employee rotationEmployee = createEmployee("rotationEmployee");
+        Contract contract = createContract("contract");
+        Employee employee = createEmployee("employee", contract);
+        Employee rotationEmployee = createEmployee("rotationEmployee", contract);
         LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
         LocalDateTime endDateTime = startDateTime.plusHours(8);
 
@@ -119,8 +131,9 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
     public void testCrudShift() {
         createTestTenant();
         Spot spot = createSpot("spot");
-        Employee employee = createEmployee("employee");
-        Employee rotationEmployee = createEmployee("rotationEmployee");
+        Contract contract = createContract("contract");
+        Employee employee = createEmployee("employee", contract);
+        Employee rotationEmployee = createEmployee("rotationEmployee", contract);
         LocalDateTime startDateTime = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
         LocalDateTime endDateTime = startDateTime.plusHours(8);
 
@@ -158,7 +171,8 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
     public void testShiftWithDaylightSavingTime() {
         createTestTenant(ZoneId.of("America/New_York"));
         Spot spot = createSpot("spot");
-        Employee employee = createEmployee("employee");
+        Contract contract = createContract("contract");
+        Employee employee = createEmployee("employee", contract);
         LocalDateTime startDateTime = LocalDateTime.of(2018, 3, 10, 23, 0, 0, 0);
         LocalDateTime endDateTime = startDateTime.plusHours(8);
 

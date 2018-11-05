@@ -17,7 +17,6 @@
 package org.optaweb.employeerostering.shared.employee;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -25,6 +24,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
@@ -34,6 +34,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.optaweb.employeerostering.shared.common.AbstractPersistable;
+import org.optaweb.employeerostering.shared.contract.Contract;
 import org.optaweb.employeerostering.shared.skill.Skill;
 
 @Entity
@@ -52,6 +53,11 @@ public class Employee extends AbstractPersistable {
     @Size(min = 1, max = 120)
     @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
+
+    @NotNull
+    @ManyToOne
+    private Contract contract;
+
     //@JsonManagedReference
     @NotNull
     @ManyToMany(fetch = FetchType.EAGER) // TODO Eager fetching bloats the EmployeeAvailability.findAll query
@@ -65,10 +71,11 @@ public class Employee extends AbstractPersistable {
     public Employee() {
     }
 
-    public Employee(Integer tenantId, String name) {
+    public Employee(Integer tenantId, String name, Contract contract, Set<Skill> skillProficiencySet) {
         super(tenantId);
         this.name = name;
-        skillProficiencySet = new HashSet<>(2);
+        this.contract = contract;
+        this.skillProficiencySet = skillProficiencySet;
     }
 
     public boolean hasSkill(Skill skill) {
@@ -104,11 +111,21 @@ public class Employee extends AbstractPersistable {
         this.skillProficiencySet = skillProficiencySet;
     }
 
+    public Contract getContract() {
+        return contract;
+    }
+
+    public void setContract(Contract contract) {
+        this.contract = contract;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof Employee) {
             Employee other = (Employee) o;
-            return this.name.equals(other.getName()) && this.skillProficiencySet.equals(other.getSkillProficiencySet());
+            return this.name.equals(other.getName()) &&
+                    this.contract.equals(other.getContract()) &&
+                    this.skillProficiencySet.equals(other.getSkillProficiencySet());
         } else {
             return false;
         }
@@ -116,6 +133,6 @@ public class Employee extends AbstractPersistable {
 
     @Override
     public int hashCode() {
-        return (31 * name.hashCode()) ^ skillProficiencySet.hashCode();
+        return 31 * ((31 * name.hashCode()) ^ contract.hashCode()) ^ skillProficiencySet.hashCode();
     }
 }

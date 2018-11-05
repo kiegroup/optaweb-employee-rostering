@@ -26,6 +26,8 @@ import javax.ws.rs.core.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.optaweb.employeerostering.shared.contract.Contract;
+import org.optaweb.employeerostering.shared.contract.ContractRestService;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestService;
 import org.optaweb.employeerostering.shared.skill.Skill;
@@ -39,10 +41,12 @@ public class EmployeeRestServiceIT extends AbstractEntityRequireTenantRestServic
 
     private EmployeeRestService employeeRestService;
     private SkillRestService skillRestService;
+    private ContractRestService contractRestService;
 
     public EmployeeRestServiceIT() {
         employeeRestService = serviceClientFactory.createEmployeeRestServiceClient();
         skillRestService = serviceClientFactory.createSkillRestServiceClient();
+        contractRestService = serviceClientFactory.createContractRestServiceClient();
     }
 
     @Before
@@ -62,6 +66,13 @@ public class EmployeeRestServiceIT extends AbstractEntityRequireTenantRestServic
         return out;
     }
 
+    private Contract createContract(String name) {
+        Contract contract = new Contract(TENANT_ID, name);
+        Contract out = contractRestService.addContract(TENANT_ID, contract);
+        assertClientResponseOk();
+        return out;
+    }
+
     @Test
     public void testDeleteNonExistingEmployee() {
         final long nonExistingEmployeeId = 123456L;
@@ -73,7 +84,8 @@ public class EmployeeRestServiceIT extends AbstractEntityRequireTenantRestServic
     @Test
     public void testUpdateNonExistingEmployee() {
         final long nonExistingEmployeeId = 123456L;
-        Employee nonExistingEmployee = new Employee(TENANT_ID, "Non-existing employee");
+        Contract contract = createContract("Contract");
+        Employee nonExistingEmployee = new Employee(TENANT_ID, "Non-existing employee", contract, Collections.emptySet());
         nonExistingEmployee.setSkillProficiencySet(Collections.emptySet());
         nonExistingEmployee.setId(nonExistingEmployeeId);
         Employee updatedEmployee = employeeRestService.updateEmployee(TENANT_ID, nonExistingEmployee);
@@ -100,8 +112,8 @@ public class EmployeeRestServiceIT extends AbstractEntityRequireTenantRestServic
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Employee testAddEmployee = new Employee(TENANT_ID, "Test Employee");
-        testAddEmployee.setSkillProficiencySet(testSkillSet);
+        Contract contract = createContract("Contract");
+        Employee testAddEmployee = new Employee(TENANT_ID, "Test Employee", contract, testSkillSet);
         employeeRestService.addEmployee(TENANT_ID, testAddEmployee);
         assertClientResponseOk();
 

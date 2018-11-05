@@ -18,6 +18,8 @@ package org.optaweb.employeerostering.server.solver;
     dialect "java"
 
 import java.time.temporal.ChronoUnit;
+import java.time.DayOfWeek;
+import java.time.Duration;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreHolder;
 import org.optaweb.employeerostering.shared.employee.Employee;
@@ -28,7 +30,7 @@ import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.roster.Roster;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.tenant.RosterParametrization;
-import org.optaweb.employeerostering.shared.common.GwtJavaTimeWorkaroundUtil;
+import org.optaweb.employeerostering.shared.common.DateTimeUtils;
 
 global HardMediumSoftLongScoreHolder scoreHolder;
 
@@ -54,7 +56,7 @@ rule "Unavailable time slot for an employee"
                 $endDateTime : endDateTime)
         Shift(
                 employee == $e,
-                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
+                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -50);
@@ -89,6 +91,64 @@ rule "No 2 shifts within 10 hours from each other"
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
+rule "Daily minutes must not exceed contract maximum"
+    when
+        $employee : Employee($contract : contract, $contract.getMaximumMinutesPerDay() != null)
+        $s : Shift(employee == $employee, $startDateTime : startDateTime)
+        Number( intValue > $contract.getMaximumMinutesPerDay() ) from accumulate(
+            Shift(employee == $employee, $shiftStart : startDateTime,
+            $shiftEnd : endDateTime,
+            DateTimeUtils.dayOf($shiftStart) == DateTimeUtils.dayOf($startDateTime)),
+            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "Weekly minutes must not exceed contract maximum"
+    when
+        $rosterParametrization : RosterParametrization()
+        $employee : Employee($contract : contract, $contract.getMaximumMinutesPerWeek() != null)
+        $s : Shift(employee == $employee, $startDateTime : startDateTime)
+        Number( intValue > $contract.getMaximumMinutesPerWeek() ) from accumulate(
+            Shift(employee == $employee, $shiftStart : startDateTime,
+            $shiftEnd : endDateTime,
+            DateTimeUtils.weekOf($rosterParametrization.getWeekStartDay(), $shiftStart) == DateTimeUtils.weekOf($rosterParametrization.getWeekStartDay(), $startDateTime)),
+            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "Monthly minutes must not exceed contract maximum"
+    when
+        $employee : Employee($contract : contract, $contract.getMaximumMinutesPerMonth() != null)
+        $s : Shift(employee == $employee, $startDateTime : startDateTime)
+        Number( intValue > $contract.getMaximumMinutesPerMonth() ) from accumulate(
+            Shift(employee == $employee, $shiftStart : startDateTime,
+            $shiftEnd : endDateTime,
+            DateTimeUtils.monthOf($shiftStart) == DateTimeUtils.monthOf($startDateTime)),
+            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "Yearly minutes must not exceed contract maximum"
+    when
+        $employee : Employee($contract : contract, $contract.getMaximumMinutesPerYear() != null)
+        $s : Shift(employee == $employee, $startDateTime : startDateTime)
+        Number( intValue > $contract.getMaximumMinutesPerYear() ) from accumulate(
+            Shift(employee == $employee, $shiftStart : startDateTime,
+            $shiftEnd : endDateTime,
+            DateTimeUtils.yearOf($shiftStart) == DateTimeUtils.yearOf($startDateTime)),
+            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+
 // ############################################################################
 // Medium constraints
 // ############################################################################
@@ -115,7 +175,7 @@ rule "Undesired time slot for an employee"
                 $endDateTime : endDateTime)
         Shift(
                 employee == $e,
-                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
+                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getUndesiredTimeSlotWeight());
@@ -131,7 +191,7 @@ rule "Desired time slot for an employee"
                 $endDateTime : endDateTime)
         Shift(
                 employee == $e,
-                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
+                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, +$rosterParametrization.getDesiredTimeSlotWeight());

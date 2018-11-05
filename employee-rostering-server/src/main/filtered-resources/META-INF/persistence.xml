@@ -6,6 +6,7 @@
     <jta-data-source>${org.optaweb.employeerostering.persistence.datasource}</jta-data-source>
     <class>org.optaweb.employeerostering.shared.skill.Skill</class>
     <class>org.optaweb.employeerostering.shared.spot.Spot</class>
+    <class>org.optaweb.employeerostering.shared.contract.Contract</class>
     <class>org.optaweb.employeerostering.shared.employee.Employee</class>
     <class>org.optaweb.employeerostering.shared.employee.EmployeeAvailability</class>
     <class>org.optaweb.employeerostering.shared.shift.Shift</class>
