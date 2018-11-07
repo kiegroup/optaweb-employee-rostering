@@ -14,7 +14,7 @@
   <groupId>org.optaweb.employeerostering</groupId>
   <artifactId>employee-rostering</artifactId>
   <packaging>pom</packaging>
-  <version>7.14.0-SNAPSHOT</version>
+  <version>7.15.0-SNAPSHOT</version>
 
   <name>Employee Rostering as a Service Parent</name>
   <description>
