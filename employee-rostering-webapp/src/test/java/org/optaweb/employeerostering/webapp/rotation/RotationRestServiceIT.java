@@ -193,6 +193,6 @@ public class RotationRestServiceIT extends AbstractEntityRequireTenantRestServic
         assertThat(newRosterState.getDraftLength()).isEqualTo(oldRosterState.getDraftLength());
         assertThat(newRosterState.getUnplannedRotationOffset()).isEqualTo(oldRosterState.getPublishLength() % oldRosterState.getRotationLength());
         assertThat(newRosterState.getPublishDeadline()).isEqualTo(oldRosterState.getPublishDeadline().plusDays(oldRosterState.getPublishLength()));
-        assertThat(shiftList).size().usingComparator(Comparator.naturalOrder()).isEqualTo(4);
+        assertThat(shiftList).hasSize(4);
     }
 }
