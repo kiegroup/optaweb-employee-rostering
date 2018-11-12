@@ -79,6 +79,7 @@
     <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
     <version.org.wildfly>14.0.1.Final</version.org.wildfly>
     <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.11</version.org.codehaus.cargo.cargo-maven2-plugin>
+    <version.org.mockito>2.12.0</version.org.mockito>
   </properties>
 
   <modules>
@@ -217,13 +218,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
-      <dependency>
-        <!-- TODO remove me, workaround for https://github.com/errai/errai/issues/256 -->
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>2.11.0</version>
-      </dependency>
       <dependency>
         <groupId>com.github.nmorel.gwtjackson</groupId>
         <artifactId>gwt-jackson</artifactId>
@@ -254,6 +248,12 @@
         <groupId>io.swagger</groupId>
         <artifactId>swagger-annotations</artifactId>
         <version>${version.io.swagger}</version>
+      </dependency>
+      <dependency>
+      	<groupId>net.bytebuddy</groupId>
+      	<artifactId>byte-buddy</artifactId>
+      	<version>1.7.9</version>
+      	<scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -321,7 +321,6 @@
       <plugin>
         <groupId>org.wildfly.plugins</groupId>
         <artifactId>wildfly-maven-plugin</artifactId>
-        <version>${version.org.wildfly-plugins.wildfly-maven-plugin}</version>
         <inherited>false</inherited>
         <executions>
           <execution>
