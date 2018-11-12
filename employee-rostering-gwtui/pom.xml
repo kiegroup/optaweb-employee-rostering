@@ -18,7 +18,7 @@
     <version.com.google.elemental2>1.0.0-beta-1</version.com.google.elemental2>
     <version.com.google.jsinterop.base>1.0.0-beta-1</version.com.google.jsinterop.base>
   </properties>
-  
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -33,7 +33,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
     <!-- gwt-dev must be first so the correct JDT ECJ version is on GWT's compiler's classpath -->
     <dependency>
@@ -48,8 +48,8 @@
       </exclusions>
     </dependency>
     <dependency>
-        <groupId>org.optaplanner</groupId>
-        <artifactId>optaplanner-core</artifactId>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-core</artifactId>
     </dependency>
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
@@ -60,10 +60,6 @@
       <artifactId>kie-soup-project-datamodel-api</artifactId>
       <classifier>sources</classifier>
     </dependency>
-<!--     <dependency> -->
-<!--       <groupId>org.kie.soup</groupId> -->
-<!--       <artifactId>kie-soup-commons</artifactId> -->
-<!--     </dependency> -->
     <dependency>
       <groupId>org.kie.soup</groupId>
       <artifactId>kie-soup-commons</artifactId>
@@ -102,10 +98,10 @@
       <groupId>com.github.nmorel.gwtjackson</groupId>
       <artifactId>gwt-jackson-rest-processor</artifactId>
     </dependency>
-	<dependency>
-	  <groupId>com.github.nmorel.gwtjackson</groupId>
-	  <artifactId>gwt-jackson-rest-api</artifactId>
-	</dependency>    
+    <dependency>
+      <groupId>com.github.nmorel.gwtjackson</groupId>
+      <artifactId>gwt-jackson-rest-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.gwtbootstrap3</groupId>
       <artifactId>gwtbootstrap3</artifactId>
@@ -125,8 +121,8 @@
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-common</artifactId>
-    </dependency>    
-    <!-- kie-parent excludes this from errai-ioc, but it is required for GWT compile  -->
+    </dependency>
+    <!-- kie-parent excludes this from errai-ioc, but it is required for GWT compile -->
     <!-- otherwise it fails with CNFE for com.google.inject.Inject -->
     <dependency>
       <groupId>com.google.inject</groupId>
@@ -142,7 +138,7 @@
     </dependency>
     <dependency>
       <groupId>com.google.elemental2</groupId>
-	  <artifactId>elemental2-promise</artifactId>
+      <artifactId>elemental2-promise</artifactId>
     </dependency>
     <dependency>
       <groupId>com.google.jsinterop</groupId>
