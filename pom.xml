@@ -72,6 +72,7 @@
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
     <version.org.jboss.errai>4.3.3.Final</version.org.jboss.errai>
     <version.org.optaplanner>${project.version}</version.org.optaplanner>
+    <version.org.kie.soup>${project.version}</version.org.kie.soup>
     <version.org.slf4j>1.7.25</version.org.slf4j>
     <version.org.webjars.bower.org.patternfly>3.18.1</version.org.webjars.bower.org.patternfly>
     <version.org.webjars.Eonasdan-bootstrap-datetimepicker>4.17.47</version.org.webjars.Eonasdan-bootstrap-datetimepicker>
@@ -186,6 +187,14 @@
         <version>${version.org.optaplanner}</version>
         <scope>import</scope>
       </dependency>
+      <!-- kie-soup-bom -->
+      <dependency>
+        <groupId>org.kie.soup</groupId>
+        <artifactId>kie-soup-bom</artifactId>
+        <type>pom</type>
+        <scope>import</scope>
+        <version>${version.org.kie.soup}</version>
+      </dependency>
       <!-- Logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -226,6 +235,11 @@
       <dependency>
         <groupId>com.github.nmorel.gwtjackson</groupId>
         <artifactId>gwt-jackson-rest-processor</artifactId>
+        <version>${version.com.github.nmorel.gwtjackson.restprocessor}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.nmorel.gwtjackson</groupId>
+        <artifactId>gwt-jackson-rest-api</artifactId>
         <version>${version.com.github.nmorel.gwtjackson.restprocessor}</version>
       </dependency>
       <dependency>

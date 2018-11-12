@@ -41,6 +41,26 @@
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-core</artifactId>
     </dependency>
+	<dependency>
+	  <groupId>com.fasterxml.jackson.core</groupId>
+	  <artifactId>jackson-databind</artifactId>
+	</dependency>
+	<dependency>
+	  <groupId>com.fasterxml.jackson.datatype</groupId>
+	  <artifactId>jackson-datatype-jsr310</artifactId>
+	</dependency>
+	<dependency>
+	  <groupId>org.apache.commons</groupId>
+	  <artifactId>commons-lang3</artifactId>
+	</dependency>
+	<dependency>
+	  <groupId>org.optaplanner</groupId>
+	  <artifactId>optaplanner-persistence-common</artifactId>
+	</dependency>
+	<dependency>
+	  <groupId>org.optaplanner</groupId>
+	  <artifactId>optaplanner-persistence-jackson</artifactId>
+	</dependency>
 
     <!-- Logging -->
     <dependency>
@@ -54,4 +74,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
 </project>

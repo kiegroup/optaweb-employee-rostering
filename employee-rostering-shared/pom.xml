@@ -26,6 +26,21 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+   	  <groupId>com.github.nmorel.gwtjackson</groupId>
+  	  <artifactId>gwt-jackson-rest-api</artifactId>
+  	  <scope>provided</scope> 
+    </dependency>
+    <dependency>
+	  <groupId>com.google.gwt</groupId>
+	  <artifactId>gwt-user</artifactId>
+	  <scope>provided</scope>
+	  </dependency>
+	<dependency>
+	  <groupId>com.github.nmorel.gwtjackson</groupId>
+	  <artifactId>gwt-jackson</artifactId>
+	  <scope>provided</scope>
+	</dependency>
+    <dependency>
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-core</artifactId>
     </dependency>
@@ -46,5 +61,4 @@
       <artifactId>swagger-annotations</artifactId>
     </dependency>
   </dependencies>
-
 </project>
