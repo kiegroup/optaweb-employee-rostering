@@ -72,6 +72,12 @@
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-ioc</artifactId>
     </dependency>
+    <!-- kie-parent excludes guice from errai-ioc so adding it manually here
+         otherwise GWT compile fails with ClassNotFound exception for com.google.inject.Inject -->
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-cdi-client</artifactId>
