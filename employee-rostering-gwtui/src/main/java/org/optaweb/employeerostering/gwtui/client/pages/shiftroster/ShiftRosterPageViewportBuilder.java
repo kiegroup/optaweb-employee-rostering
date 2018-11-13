@@ -175,6 +175,7 @@ public class ShiftRosterPageViewportBuilder {
                         laneMap.forEach((l, lane) -> lane.endModifying());
                         loadingSpinner.hideFor(viewport.getLoadingTaskId());
                         setUpdatingRoster(false);
+                        viewport.unlock();
                     }
                 });
                 return shiftViewsToAdd.hasNext();

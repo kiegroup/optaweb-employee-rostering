@@ -19,10 +19,8 @@ package org.optaweb.employeerostering.gwtui.client.viewport;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -72,6 +70,8 @@ public abstract class DateTimeViewport<T, M> {
     @Inject
     private Lockable<Map<Long, Lane<LocalDateTime, M>>> lockableLaneMap;
 
+    private Map<Long, Lane<LocalDateTime, M>> laneMap;
+
     @Inject
     private LoadingSpinner loadingSpinner;
 
@@ -80,6 +80,8 @@ public abstract class DateTimeViewport<T, M> {
 
     private GridObjectPlacer gridObjectPlacer;
     private LinearScale<LocalDateTime> scale;
+
+    private T view;
 
     protected abstract void withView(T view);
 
@@ -111,7 +113,8 @@ public abstract class DateTimeViewport<T, M> {
     private void init() {
         viewportOverlay.hidden = true;
         gridObjectPlacer = GridObjectPlacer.HORIZONTAL;
-        lockableLaneMap.setInstance(new HashMap<>());
+        laneMap = new HashMap<>();
+        lockableLaneMap.setInstance(laneMap);
     }
 
     public void refresh(T view) {
@@ -119,12 +122,12 @@ public abstract class DateTimeViewport<T, M> {
             loadingSpinner.showFor(getLoadingTaskId());
         }
         promiseUtils.manage(lockableLaneMap.acquire().then(laneMap -> {
+            this.view = view;
             withView(view);
             // Need to defer it so we have height information
             Scheduler.get().scheduleDeferred(() -> {
                 dateTimeHeader.getElement().style.top = JQuery.get(headerView.getElement()).height() + "px";
             });
-            Set<Long> lanesToRemove = new HashSet<>(laneMap.keySet());
             scale = getScaleFor(view);
 
             dateTimeHeader.generateTicks(gridObjectPlacer, scale, 0L,
@@ -133,26 +136,15 @@ public abstract class DateTimeViewport<T, M> {
                                          getDateHeaderIconClassesFunction());
 
             Map<Long, String> viewLanes = getLaneTitlesFor(view);
-            domUtils.removeAllElementChildren(laneContainer);
             for (Long laneId : viewLanes.keySet()) {
-                if (!laneMap.containsKey(laneId)) {
-                    Lane<LocalDateTime, M> lane = laneInstance.get().withDummySublane(getDummySublane()).withGridObjectPlacer(gridObjectPlacer)
-                                                              .withScale(scale).withTitle(viewLanes.get(laneId))
-                                                              .withGridObjectCreator(getInstanceCreator(view, laneId));
-                    laneMap.put(laneId, lane);
-                } else {
-                    laneMap.get(laneId).withScale(scale);
-                    lanesToRemove.remove(laneId);
-                }
+                Lane<LocalDateTime, M> lane = laneInstance.get().withDummySublane(getDummySublane()).withGridObjectPlacer(gridObjectPlacer)
+                        .withScale(scale).withTitle(viewLanes.get(laneId))
+                        .withGridObjectCreator(getInstanceCreator(view, laneId));
+                laneMap.put(laneId, lane);
             }
-            lanesToRemove.forEach((id) -> {
-                Lane<LocalDateTime, M> toRemove = laneMap.remove(id);
-                laneInstance.destroy(toRemove);
-            });
-
-            getLaneOrder(view).forEach(laneId -> laneContainer.appendChild(laneMap.get(laneId).getElement()));
 
             final M metadata = getMetadata();
+            lock();
             laneMap.forEach((l, lane) -> {
                 lane.setMetadata(metadata);
                 lane.startModifying();
@@ -160,7 +152,6 @@ public abstract class DateTimeViewport<T, M> {
             Scheduler.get().scheduleIncremental(getViewportBuilderCommand(view, lockableLaneMap));
             return promiseUtils.resolve();
         }));
-
     }
 
     public void lock() {
@@ -169,6 +160,8 @@ public abstract class DateTimeViewport<T, M> {
 
     public void unlock() {
         viewportOverlay.hidden = true;
+        domUtils.removeAllElementChildren(laneContainer);
+        getLaneOrder(view).forEach(laneId -> laneContainer.appendChild(laneMap.get(laneId).getElement()));
     }
 
     public <X> Map<Long, X> getIdMapFor(Collection<X> collection, Function<X, Long> idMapper) {

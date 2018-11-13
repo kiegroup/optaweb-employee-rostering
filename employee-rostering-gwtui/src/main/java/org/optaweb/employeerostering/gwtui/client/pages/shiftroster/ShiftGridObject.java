@@ -31,6 +31,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.SingleGridObject;
@@ -54,6 +55,8 @@ import org.optaweb.employeerostering.shared.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.shared.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.shared.violation.UndesiredTimeslotForEmployeePenalty;
 
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
+
 @Templated
 public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMetadata>
         implements
@@ -74,6 +77,8 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMe
     private ResizabilityDecorator<LocalDateTime, ShiftRosterMetadata> resizability;
     @Inject
     private ManagedInstance<ShiftEditForm> shiftEditFormFactory;
+    @Inject
+    private EventManager eventManager;
 
     private ShiftView shiftView;
 
@@ -278,6 +283,7 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMe
         ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView,
                                             FailureShownRestCallback.onSuccess(sv -> {
                                                 withShiftView(sv);
+                                                eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
                                             }));
     }
 }

@@ -122,6 +122,7 @@ public class RotationPageViewportBuilder {
                     if (!shiftTemplateViewsToAdd.hasNext()) {
                         laneMap.forEach((l, lane) -> lane.endModifying());
                         loadingSpinner.hideFor(viewport.getLoadingTaskId());
+                        viewport.unlock();
                     }
                 });
                 return shiftTemplateViewsToAdd.hasNext();
