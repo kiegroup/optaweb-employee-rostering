@@ -30,18 +30,42 @@
     <dependency>
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-benchmark</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.spec.javax.xml.bind</groupId>
+          <artifactId>jboss-jaxb-api_2.2_spec</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>com.sun.mail</groupId>
+          <artifactId>javax.mail</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate.javax.persistence</groupId>
+          <artifactId>hibernate-jpa-2.1-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate.javax.persistence</groupId>
+          <artifactId>hibernate-jpa-2.1-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hsqldb</groupId>

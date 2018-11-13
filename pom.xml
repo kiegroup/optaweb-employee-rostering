@@ -80,7 +80,8 @@
     <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
     <version.org.wildfly>14.0.1.Final</version.org.wildfly>
     <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.11</version.org.codehaus.cargo.cargo-maven2-plugin>
-    <!-- gwtmockito compatible version of mockito, otherwise kie-parent manages version 1.x -->
+    <!-- gwtmockito uses a different version of mockito than kie-parent, so we need to override the mockito version,
+         kie-parent manages version 1.x -->
     <version.org.mockito>2.12.0</version.org.mockito>
     <version.net.bytebuddy>1.7.9</version.net.bytebuddy>
   </properties>
@@ -265,6 +266,7 @@
         <artifactId>swagger-annotations</artifactId>
         <version>${version.io.swagger}</version>
       </dependency>
+      <!-- byte-buddy is managed in kie-parent and we need to keep the same version mockito-core defines -->
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
