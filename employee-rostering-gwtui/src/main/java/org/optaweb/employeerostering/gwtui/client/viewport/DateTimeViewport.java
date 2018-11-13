@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -117,7 +118,7 @@ public abstract class DateTimeViewport<T, M> {
         if (showLoadingSpinner()) {
             loadingSpinner.showFor(getLoadingTaskId());
         }
-        lockableLaneMap.acquire().then(laneMap -> {
+        promiseUtils.manage(lockableLaneMap.acquire().then(laneMap -> {
             withView(view);
             // Need to defer it so we have height information
             Scheduler.get().scheduleDeferred(() -> {
@@ -158,7 +159,7 @@ public abstract class DateTimeViewport<T, M> {
             });
             Scheduler.get().scheduleIncremental(getViewportBuilderCommand(view, lockableLaneMap));
             return promiseUtils.resolve();
-        });
+        }));
 
     }
 
