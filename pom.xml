@@ -82,6 +82,7 @@
     <!-- gwtmockito uses a different version of mockito than kie-parent, so we need to override the mockito version,
          kie-parent manages version 1.x -->
     <version.org.mockito>2.12.0</version.org.mockito>
+    <!-- this version ensures this is correctly taken version bytebuddy which works with mockito-core 2.x  -->
     <version.net.bytebuddy>1.7.9</version.net.bytebuddy>
   </properties>
 
