@@ -23,6 +23,8 @@
   <inherits name="org.jboss.errai.databinding.DataBinding" />
   <inherits name="org.jboss.errai.validation.Validation" />
   <inherits name="org.hibernate.validator.HibernateValidator" />
+  <inherits name="org.kie.soup.project.datamodel.ProjectDataModelAPI" />
+  <inherits name="org.kie.soup.commons.KIESoupCommons" />
 
   <extend-property name="locale" values="en"/>
 

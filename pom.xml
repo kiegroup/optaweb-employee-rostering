@@ -5,16 +5,15 @@
   <modelVersion>4.0.0</modelVersion>
   <!-- Use JBoss parent so all maven-plugins have a decent base version. -->
   <parent>
-    <groupId>org.jboss</groupId>
-    <artifactId>jboss-parent</artifactId>
-    <version>25</version>
+    <groupId>org.kie</groupId>
+    <artifactId>kie-parent</artifactId>
+    <version>7.15.0-SNAPSHOT</version>
     <relativePath/>
   </parent>
 
   <groupId>org.optaweb.employeerostering</groupId>
   <artifactId>employee-rostering</artifactId>
   <packaging>pom</packaging>
-  <version>7.15.0-SNAPSHOT</version>
 
   <name>Employee Rostering as a Service Parent</name>
   <description>
@@ -73,13 +72,18 @@
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
     <version.org.jboss.errai>4.3.3.Final</version.org.jboss.errai>
     <version.org.optaplanner>${project.version}</version.org.optaplanner>
+    <version.org.kie.soup>${project.version}</version.org.kie.soup>
     <version.org.slf4j>1.7.25</version.org.slf4j>
     <version.org.webjars.bower.org.patternfly>3.18.1</version.org.webjars.bower.org.patternfly>
     <version.org.webjars.Eonasdan-bootstrap-datetimepicker>4.17.47</version.org.webjars.Eonasdan-bootstrap-datetimepicker>
     <version.org.webjars.momentjs>2.22.2</version.org.webjars.momentjs>
-    <version.org.wildfly-plugins.wildfly-maven-plugin>1.2.0.Final</version.org.wildfly-plugins.wildfly-maven-plugin>
     <version.org.wildfly>14.0.1.Final</version.org.wildfly>
     <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.11</version.org.codehaus.cargo.cargo-maven2-plugin>
+    <!-- gwtmockito uses a different version of mockito than kie-parent, so we need to override the mockito version,
+         kie-parent manages version 1.x -->
+    <version.org.mockito>2.12.0</version.org.mockito>
+    <!-- this version ensures this is correctly taken version bytebuddy which works with mockito-core 2.x  -->
+    <version.net.bytebuddy>1.7.9</version.net.bytebuddy>
   </properties>
 
   <modules>
@@ -186,6 +190,14 @@
         <version>${version.org.optaplanner}</version>
         <scope>import</scope>
       </dependency>
+      <!-- kie-soup-bom -->
+      <dependency>
+        <groupId>org.kie.soup</groupId>
+        <artifactId>kie-soup-bom</artifactId>
+        <type>pom</type>
+        <scope>import</scope>
+        <version>${version.org.kie.soup}</version>
+      </dependency>
       <!-- Logging -->
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -218,13 +230,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
-      <dependency>
-        <!-- TODO remove me, workaround for https://github.com/errai/errai/issues/256 -->
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>2.11.0</version>
-      </dependency>
       <dependency>
         <groupId>com.github.nmorel.gwtjackson</groupId>
         <artifactId>gwt-jackson</artifactId>
@@ -233,6 +238,11 @@
       <dependency>
         <groupId>com.github.nmorel.gwtjackson</groupId>
         <artifactId>gwt-jackson-rest-processor</artifactId>
+        <version>${version.com.github.nmorel.gwtjackson.restprocessor}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.nmorel.gwtjackson</groupId>
+        <artifactId>gwt-jackson-rest-api</artifactId>
         <version>${version.com.github.nmorel.gwtjackson.restprocessor}</version>
       </dependency>
       <dependency>
@@ -255,6 +265,13 @@
         <groupId>io.swagger</groupId>
         <artifactId>swagger-annotations</artifactId>
         <version>${version.io.swagger}</version>
+      </dependency>
+      <!-- byte-buddy is managed in kie-parent and we need to keep the same version mockito-core defines -->
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>${version.net.bytebuddy}</version>
+        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -322,7 +339,6 @@
       <plugin>
         <groupId>org.wildfly.plugins</groupId>
         <artifactId>wildfly-maven-plugin</artifactId>
-        <version>${version.org.wildfly-plugins.wildfly-maven-plugin}</version>
         <inherited>false</inherited>
         <executions>
           <execution>
