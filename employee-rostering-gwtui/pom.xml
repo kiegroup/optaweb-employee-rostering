@@ -15,7 +15,6 @@
   <name>Employee Rostering as a Service GWT UI</name>
 
   <properties>
-    <version.com.google.elemental2>1.0.0-beta-1</version.com.google.elemental2>
     <version.com.google.jsinterop.base>1.0.0-beta-1</version.com.google.jsinterop.base>
   </properties>
 
@@ -47,6 +46,19 @@
         </exclusion>
       </exclusions>
     </dependency>
+    <!-- Java EE APIs -->
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-core</artifactId>
@@ -54,6 +66,10 @@
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
       <artifactId>employee-rostering-shared</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.soup</groupId>
+      <artifactId>kie-soup-project-datamodel-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.kie.soup</groupId>
@@ -163,12 +179,6 @@
     <dependency><!-- TODO Remove me, we don't use JPA on the client, but removing this gives blank screen at runtime -->
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-jpa-client</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.hibernate.javax.persistence</groupId>
-          <artifactId>hibernate-jpa-2.1-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.errai</groupId>
@@ -189,12 +199,6 @@
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-ui</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.elemental2</groupId>
-          <artifactId>elemental2-dom</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <!-- Only used for EmbeddedWildFlyLauncher during GWT Super Dev Mode -->
@@ -225,6 +229,44 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>ban-duplicated-classes</id>
+              <configuration>
+                <rules>
+                  <banDuplicateClasses>
+                    <dependencies combine.children="append">
+                      <!-- errai-jpa-client contains GWT-friendly implementation of JPA2 and has a compile dependency
+                      on org.hibernate.javax.persistence:hibernate-jpa-2.1-api so they have many duplicate classes
+                      (e.g. javax.persistence.Entity). On the other hand, hibernate-jpa-2.1-api contains some extra
+                      classes that errai-jpa-client doesn't have. If we exclude hibernate-jpa-2.1-api
+                      from errai-jpa-client, we get:
+                      [main] ERROR org.jboss.errai.config.rebind.AsyncGenerators - Generator failed to launch
+                      java.lang.NoClassDefFoundError: javax/persistence/spi/PersistenceUnitInfo
+                      The best approach seems to be to keep hibernate-jpa-2.1-api and disable Enforcer.
+                      -->
+                      <dependency>
+                        <groupId>org.jboss.errai</groupId>
+                        <artifactId>errai-jpa-client</artifactId>
+                        <type>jar</type>
+                        <ignoreClasses>
+                          <ignoreClass>javax.persistence.*</ignoreClass>
+                        </ignoreClasses>
+                      </dependency>
+                    </dependencies>
+                  </banDuplicateClasses>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
