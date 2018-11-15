@@ -144,7 +144,6 @@ public abstract class DateTimeViewport<T, M> {
             }
 
             final M metadata = getMetadata();
-            lock();
             laneMap.forEach((l, lane) -> {
                 lane.setMetadata(metadata);
                 lane.startModifying();
@@ -154,14 +153,17 @@ public abstract class DateTimeViewport<T, M> {
         }));
     }
 
+    public void updateElements() {
+        domUtils.removeAllElementChildren(laneContainer);
+        getLaneOrder(view).forEach(laneId -> laneContainer.appendChild(laneMap.get(laneId).getElement()));
+    }
+
     public void lock() {
         viewportOverlay.hidden = false;
     }
 
     public void unlock() {
         viewportOverlay.hidden = true;
-        domUtils.removeAllElementChildren(laneContainer);
-        getLaneOrder(view).forEach(laneId -> laneContainer.appendChild(laneMap.get(laneId).getElement()));
     }
 
     public <X> Map<Long, X> getIdMapFor(Collection<X> collection, Function<X, Long> idMapper) {
