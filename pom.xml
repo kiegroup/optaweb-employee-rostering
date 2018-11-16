@@ -21,7 +21,7 @@
   <inceptionYear>2017</inceptionYear>
 
   <repositories>
-    <!-- TODO remove this repository when we no longer use SNAPSHOT dependencies -->
+    <!-- Bootstrap repository to locate the parent pom when the parent pom has not been build locally. -->
     <repository>
       <id>jboss-public-repository-group</id>
       <name>JBoss Public Repository Group</name>
@@ -39,9 +39,6 @@
   </repositories>
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
     <wildfly.parent>${project.basedir}/local/appserver</wildfly.parent>
     <wildfly.home>${wildfly.parent}/wildfly-${version.org.wildfly}</wildfly.home>
     <wildfly.launchdir>${project.basedir}/local/appserver/wildfly-${version.org.wildfly}</wildfly.launchdir>
@@ -56,28 +53,14 @@
     <org.optaweb.employeerostering.persistence.hbm2ddl.auto>create</org.optaweb.employeerostering.persistence.hbm2ddl.auto>
     <org.optaweb.employeerostering.persistence.id.generator>AUTO</org.optaweb.employeerostering.persistence.id.generator>
 
-    <!--
-      It's recommended, but not required to align the versions as much as possible with
-      https://github.com/jboss-integration/jboss-integration-platform-bom/blob/master/pom.xml
-    -->
-    <version.ch.qos.logback>1.2.3</version.ch.qos.logback>
-    <version.com.fasterxml.jackson>2.9.5</version.com.fasterxml.jackson>
     <version.com.github.nmorel.gwtjackson.restprocessor>0.4.1</version.com.github.nmorel.gwtjackson.restprocessor>
     <version.com.github.nmorel.gwtjackson>0.14.2</version.com.github.nmorel.gwtjackson>
-    <version.com.google.gwt>2.8.2</version.com.google.gwt>
-    <version.io.swagger>1.5.15</version.io.swagger>
-    <version.net.ltgt.gwt.maven.gwt-maven-plugin>1.0-rc-9</version.net.ltgt.gwt.maven.gwt-maven-plugin>
+    <!-- TODO update gwt-maven-plugin version in kie-parent and then remove this override -->
+    <version.net.ltgt.gwt.maven>1.0-rc-9</version.net.ltgt.gwt.maven>
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
-    <version.org.jboss.errai>4.3.3.Final</version.org.jboss.errai>
-    <version.org.optaplanner>${project.version}</version.org.optaplanner>
-    <version.org.kie.soup>${project.version}</version.org.kie.soup>
-    <version.org.slf4j>1.7.25</version.org.slf4j>
     <version.org.webjars.bower.org.patternfly>3.18.1</version.org.webjars.bower.org.patternfly>
     <version.org.webjars.Eonasdan-bootstrap-datetimepicker>4.17.47</version.org.webjars.Eonasdan-bootstrap-datetimepicker>
     <version.org.webjars.momentjs>2.22.2</version.org.webjars.momentjs>
-    <version.org.wildfly>14.0.1.Final</version.org.wildfly>
-    <version.org.codehaus.cargo.cargo-maven2-plugin>1.7.1</version.org.codehaus.cargo.cargo-maven2-plugin>
-
     <!-- gwtmockito uses a different version of mockito than kie-parent, so we need to override the mockito version,
          kie-parent manages version 1.x -->
     <version.org.mockito>2.12.0</version.org.mockito>
@@ -146,7 +129,7 @@
         <version>${project.version}</version>
       </dependency>
 
-      <!-- JEE -->
+      <!-- BOMs -->
       <dependency>
         <groupId>org.wildfly.bom</groupId>
         <artifactId>wildfly-javaee8</artifactId>
@@ -155,13 +138,30 @@
         <scope>import</scope>
       </dependency>
       <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>${version.com.fasterxml.jackson}</version>
+        <groupId>org.jboss.errai.bom</groupId>
+        <artifactId>errai-internal-bom</artifactId>
+        <version>${version.org.jboss.errai}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
+        <groupId>org.kie.soup</groupId>
+        <artifactId>kie-soup-bom</artifactId>
+        <type>pom</type>
+        <scope>import</scope>
+        <version>${version.org.kie}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.optaplanner</groupId>
+        <artifactId>optaplanner-bom</artifactId>
+        <type>pom</type>
+        <version>${version.org.kie}</version>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
+        <artifactId>jackson-annotations</artifactId>
         <version>${version.com.fasterxml.jackson}</version>
       </dependency>
       <dependency>
@@ -169,54 +169,8 @@
         <artifactId>jackson-datatype-jsr310</artifactId>
         <version>${version.com.fasterxml.jackson}</version>
       </dependency>
-      <!-- KIE -->
-      <dependency>
-        <groupId>org.optaplanner</groupId>
-        <artifactId>optaplanner-bom</artifactId>
-        <type>pom</type>
-        <version>${version.org.optaplanner}</version>
-        <scope>import</scope>
-      </dependency>
-      <!-- kie-soup-bom -->
-      <dependency>
-        <groupId>org.kie.soup</groupId>
-        <artifactId>kie-soup-bom</artifactId>
-        <type>pom</type>
-        <scope>import</scope>
-        <version>${version.org.kie.soup}</version>
-      </dependency>
-      <!-- Logging -->
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>${version.org.slf4j}</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>${version.ch.qos.logback}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl-over-slf4j</artifactId>
-        <version>${version.org.slf4j}</version>
-      </dependency>
 
       <!-- GWT -->
-      <dependency>
-        <groupId>com.google.gwt</groupId>
-        <artifactId>gwt</artifactId>
-        <version>${version.com.google.gwt}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.errai.bom</groupId>
-        <artifactId>errai-bom</artifactId>
-        <version>${version.org.jboss.errai}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       <dependency>
         <groupId>com.github.nmorel.gwtjackson</groupId>
         <artifactId>gwt-jackson</artifactId>
@@ -231,27 +185,6 @@
         <groupId>com.github.nmorel.gwtjackson</groupId>
         <artifactId>gwt-jackson-rest-api</artifactId>
         <version>${version.com.github.nmorel.gwtjackson.restprocessor}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.gwtbootstrap3</groupId>
-        <artifactId>gwtbootstrap3</artifactId>
-        <version>${version.org.gwtbootstrap3}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.gwtbootstrap3</groupId>
-        <artifactId>gwtbootstrap3-extras</artifactId>
-        <version>${version.org.gwtbootstrap3}</version>
-      </dependency>
-      <!-- Swagger -->
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-jaxrs</artifactId>
-        <version>${version.io.swagger}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.swagger</groupId>
-        <artifactId>swagger-annotations</artifactId>
-        <version>${version.io.swagger}</version>
       </dependency>
       <!-- byte-buddy is managed in kie-parent and we need to keep the same version mockito-core defines -->
       <dependency>
@@ -352,7 +285,7 @@
         <plugin>
           <groupId>net.ltgt.gwt.maven</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
-          <version>${version.net.ltgt.gwt.maven.gwt-maven-plugin}</version>
+          <version>${version.net.ltgt.gwt.maven}</version>
           <extensions>true</extensions>
           <configuration>
             <style>PRETTY</style>
@@ -379,26 +312,6 @@
               <errai.dev.context>optaweb-employee-rostering</errai.dev.context>
             </systemProperties>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-war-plugin</artifactId>
-        </plugin>
-
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-antrun-plugin</artifactId>
-        </plugin>
-
-        <plugin>
-          <groupId>org.codehaus.cargo</groupId>
-          <artifactId>cargo-maven2-plugin</artifactId>
-          <version>${version.org.codehaus.cargo.cargo-maven2-plugin}</version>
         </plugin>
       </plugins>
     </pluginManagement>
