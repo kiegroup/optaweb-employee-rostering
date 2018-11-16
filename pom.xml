@@ -55,6 +55,7 @@
 
     <version.com.github.nmorel.gwtjackson.restprocessor>0.4.1</version.com.github.nmorel.gwtjackson.restprocessor>
     <version.com.github.nmorel.gwtjackson>0.14.2</version.com.github.nmorel.gwtjackson>
+    <version.com.google.jsinterop.base>1.0.0-beta-1</version.com.google.jsinterop.base>
     <!-- TODO update gwt-maven-plugin version in kie-parent and then remove this override -->
     <version.net.ltgt.gwt.maven>1.0-rc-9</version.net.ltgt.gwt.maven>
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
@@ -185,6 +186,16 @@
         <groupId>com.github.nmorel.gwtjackson</groupId>
         <artifactId>gwt-jackson-rest-api</artifactId>
         <version>${version.com.github.nmorel.gwtjackson.restprocessor}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.jsinterop</groupId>
+        <artifactId>base</artifactId>
+        <version>${version.com.google.jsinterop.base}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.elemental2</groupId>
+        <artifactId>elemental2-core</artifactId>
+        <version>${version.com.google.elemental2}</version>
       </dependency>
       <!-- byte-buddy is managed in kie-parent and we need to keep the same version mockito-core defines -->
       <dependency>
