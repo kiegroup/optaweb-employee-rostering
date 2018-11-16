@@ -14,25 +14,6 @@
 
   <name>Employee Rostering as a Service GWT UI</name>
 
-  <properties>
-    <version.com.google.jsinterop.base>1.0.0-beta-1</version.com.google.jsinterop.base>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>com.google.jsinterop</groupId>
-        <artifactId>base</artifactId>
-        <version>${version.com.google.jsinterop.base}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.elemental2</groupId>
-        <artifactId>elemental2-core</artifactId>
-        <version>${version.com.google.elemental2}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <dependencies>
     <!-- gwt-dev must be first so the correct JDT ECJ version is on GWT's compiler's classpath -->
     <dependency>
