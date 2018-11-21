@@ -280,6 +280,11 @@
         <version>${version.net.bytebuddy}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>org.jacoco</groupId>
+        <artifactId>org.jacoco.agent</artifactId>
+        <version>${version.jacoco.plugin}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -519,7 +524,6 @@
         <dependency>
           <groupId>org.jacoco</groupId>
           <artifactId>org.jacoco.agent</artifactId>
-          <version>${version.jacoco.plugin}</version>
         </dependency>
       </dependencies>
       <build>
