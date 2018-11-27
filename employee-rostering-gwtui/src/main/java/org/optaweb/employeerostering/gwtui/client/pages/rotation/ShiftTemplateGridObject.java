@@ -29,12 +29,14 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.GridObject;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.AbstractHasTimeslotGridObject;
 import org.optaweb.employeerostering.gwtui.client.viewport.powers.DraggabilityDecorator;
 import org.optaweb.employeerostering.gwtui.client.viewport.powers.ResizabilityDecorator;
 import org.optaweb.employeerostering.shared.common.HasTimeslot;
+import org.optaweb.employeerostering.shared.rotation.RotationRestServiceBuilder;
 import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
 
 @Templated
@@ -57,6 +59,7 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
         this.model = model;
         ShiftTemplateView newShift = new ShiftTemplateView();
         newShift.setId(model.getShiftTemplateView().getId());
+        newShift.setVersion(model.getShiftTemplateView().getVersion());
         newShift.setRotationEmployeeId(model.getShiftTemplateView().getRotationEmployeeId());
         this.shiftTemplateView = newShift;
 
@@ -146,6 +149,9 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
 
     @Override
     public void save() {
-        // Nothing to save; save is done in batch for Rotation
+        RotationRestServiceBuilder.updateShiftTemplate(model.getShiftTemplateView().getTenantId(), model.getShiftTemplateView(),
+                                                       FailureShownRestCallback.onSuccess(stv -> {
+                                                           model.withShiftTemplateView(stv);
+                                                       }));
     }
 }

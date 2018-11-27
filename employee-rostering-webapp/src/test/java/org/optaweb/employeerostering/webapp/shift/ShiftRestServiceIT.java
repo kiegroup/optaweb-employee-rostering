@@ -128,7 +128,7 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
         shiftRestService.addShift(TENANT_ID, testAddShift);
         assertClientResponseOk();
 
-        List<ShiftView> shifts = shiftRestService.getShifts(TENANT_ID);
+        List<ShiftView> shifts = shiftRestService.getShiftList(TENANT_ID);
         assertClientResponseOk();
         assertThat(shifts)
                 .usingComparatorForElementFieldsWithType(Comparator.naturalOrder(), Integer.class)
@@ -150,7 +150,7 @@ public class ShiftRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
         assertThat(result).isTrue();
         assertClientResponseOk();
 
-        shifts = shiftRestService.getShifts(TENANT_ID);
+        shifts = shiftRestService.getShiftList(TENANT_ID);
         assertThat(shifts).isEmpty();
     }
 

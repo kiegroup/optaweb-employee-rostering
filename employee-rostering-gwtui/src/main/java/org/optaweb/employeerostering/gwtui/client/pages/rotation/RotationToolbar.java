@@ -27,7 +27,7 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 
-import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.*;
+import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.ROTATION_INVALIDATE;
 
 @Templated
 public class RotationToolbar implements IsElement {
@@ -37,19 +37,10 @@ public class RotationToolbar implements IsElement {
     private HTMLButtonElement refreshButton;
 
     @Inject
-    @DataField("save-button")
-    private HTMLButtonElement saveButton;
-
-    @Inject
     private EventManager eventManager;
 
     @EventHandler("refresh-button")
     public void onRefreshButtonClick(@ForEvent("click") MouseEvent e) {
         eventManager.fireEvent(ROTATION_INVALIDATE);
-    }
-
-    @EventHandler("save-button")
-    public void onSaveButtonClick(@ForEvent("click") MouseEvent e) {
-        eventManager.fireEvent(ROTATION_SAVE);
     }
 }

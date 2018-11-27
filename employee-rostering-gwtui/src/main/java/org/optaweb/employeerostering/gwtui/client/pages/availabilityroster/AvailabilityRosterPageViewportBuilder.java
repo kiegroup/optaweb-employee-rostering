@@ -206,6 +206,7 @@ public class AvailabilityRosterPageViewportBuilder {
                         laneMap.forEach((l, lane) -> lane.endModifying());
                         loadingSpinner.hideFor(viewport.getLoadingTaskId());
                         setUpdatingRoster(false);
+                        viewport.updateElements();
                     }
                 });
                 return shiftViewsToAdd.hasNext() || employeeAvaliabilitiesViewsToAdd.hasNext();

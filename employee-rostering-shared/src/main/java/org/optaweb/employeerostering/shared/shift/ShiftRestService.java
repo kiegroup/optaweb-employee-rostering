@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.shared.shift;
 
 import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -29,7 +30,6 @@ import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.processor.GenRestBuilder;
 import io.swagger.annotations.Api;
-import org.optaweb.employeerostering.shared.rotation.view.RotationView;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 
 @Api(tags = {"Shift"})
@@ -38,20 +38,17 @@ import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 @Consumes(MediaType.APPLICATION_JSON)
 @GenRestBuilder
 public interface ShiftRestService {
-
-    // TODO clean up the order, method names and annotations in this file to be consistent with SpotRestService and EmployeeRestService
-
-    /**
-     * @param id never null
-     * @return never null, the id
-     */
-    @GET
-    @Path("/{id}")
-    ShiftView getShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
+    // ************************************************************************
+    // Shift
+    // ************************************************************************
 
     @GET
     @Path("/")
-    List<ShiftView> getShifts(@PathParam("tenantId") Integer tenantId);
+    List<ShiftView> getShiftList(@PathParam("tenantId") Integer tenantId);
+
+    @GET
+    @Path("/{id}")
+    ShiftView getShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
 
     /**
      * @param shift never null
@@ -75,14 +72,4 @@ public interface ShiftRestService {
     @DELETE
     @Path("/{id}")
     Boolean removeShift(@PathParam("tenantId") Integer tenantId, @PathParam("id") Long id);
-
-    // TODO /update should update a single item. Use /bulkUpdate for list
-    @PUT
-    @Path("/template/update")
-    void updateRotation(@PathParam("tenantId") Integer tenantId, RotationView rotationView);
-
-    @GET
-    @Path("/template")
-    RotationView getRotation(@PathParam("tenantId") Integer tenantId);
-
 }
