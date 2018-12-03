@@ -68,7 +68,6 @@
     <version.com.github.nmorel.gwtjackson>0.14.2</version.com.github.nmorel.gwtjackson>
     <version.com.google.gwt>2.8.2</version.com.google.gwt>
     <version.io.swagger>1.5.15</version.io.swagger>
-    <version.jacoco.plugin>0.8.2</version.jacoco.plugin>
     <version.net.ltgt.gwt.maven.gwt-maven-plugin>1.0-rc-9</version.net.ltgt.gwt.maven.gwt-maven-plugin>
     <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
     <version.org.jboss.errai>4.3.3.Final</version.org.jboss.errai>
@@ -560,8 +559,7 @@
 
     <profile>
       <!--
-        For automated run, see travis.yml.
-        To report coverage data manually, run "mvn jacoco:merge sonar:sonar" -Preport-code-coverage
+        For running the report manually, please refer to travis.yml.
       -->
       <id>report-code-coverage</id>
       <properties>
