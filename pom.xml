@@ -589,6 +589,35 @@
         </pluginManagement>
       </build>
     </profile>
+
+    <profile>
+      <!-- environment-specific profile that should be activated only when running in travis-ci. -->
+      <id>travis-ci</id>
+      <activation>
+        <property>
+          <name>env.TRAVIS</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.cargo</groupId>
+              <artifactId>cargo-maven2-plugin</artifactId>
+              <configuration>
+                <container>
+                  <systemProperties>
+                    <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+                    <java.net.preferIPv4Addresses>true</java.net.preferIPv4Addresses>
+                  </systemProperties>
+                </container>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
   </profiles>
 
 </project>

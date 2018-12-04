@@ -108,10 +108,6 @@
               <containerId>${cargo.container.id}</containerId>
               <timeout>600000</timeout>
               <output>${cargo.container.log.file}</output>
-              <systemProperties>
-                <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
-                <java.net.preferIPv4Addresses>true</java.net.preferIPv4Addresses>
-              </systemProperties>
             </container>
             <deployables>
               <deployable>
@@ -265,6 +261,5 @@
         <cargo.goal>run</cargo.goal>
       </properties>
     </profile>
-
   </profiles>
 </project>
