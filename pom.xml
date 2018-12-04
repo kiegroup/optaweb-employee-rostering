@@ -80,11 +80,6 @@
     <version.org.wildfly>14.0.1.Final</version.org.wildfly>
     <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.11</version.org.codehaus.cargo.cargo-maven2-plugin>
 
-    <jacoco.agent.line/>
-    <surefire.argLine>
-      -Dfile.encoding=${project.build.sourceEncoding}
-      ${jacoco.agent.line}
-    </surefire.argLine>
     <!-- gwtmockito uses a different version of mockito than kie-parent, so we need to override the mockito version,
          kie-parent manages version 1.x -->
     <version.org.mockito>2.12.0</version.org.mockito>
@@ -278,11 +273,6 @@
         <artifactId>byte-buddy</artifactId>
         <version>${version.net.bytebuddy}</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jacoco</groupId>
-        <artifactId>org.jacoco.agent</artifactId>
-        <version>${version.jacoco.plugin}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -518,13 +508,11 @@
       <properties>
         <jacoco.exec.file>${project.build.directory}/jacoco.exec</jacoco.exec.file>
         <jacoco.agent.line>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${version.jacoco.plugin}/org.jacoco.agent-${version.jacoco.plugin}-runtime.jar=destfile=${jacoco.exec.file},append=true,excludes=*Lexer</jacoco.agent.line>
+        <surefire.argLine>
+          -Dfile.encoding=${project.build.sourceEncoding}
+          ${jacoco.agent.line}
+        </surefire.argLine>
       </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jacoco</groupId>
-          <artifactId>org.jacoco.agent</artifactId>
-        </dependency>
-      </dependencies>
       <build>
         <pluginManagement>
           <plugins>
@@ -538,6 +526,13 @@
                   </properties>
                 </configuration>
               </configuration>
+              <dependencies>
+                <dependency>
+                  <groupId>org.jacoco</groupId>
+                  <artifactId>org.jacoco.agent</artifactId>
+                  <version>${version.jacoco.plugin}</version>
+                </dependency>
+              </dependencies>
             </plugin>
             <plugin>
               <groupId>net.ltgt.gwt.maven</groupId>
@@ -551,6 +546,13 @@
               <configuration>
                 <argLine>${surefire.argLine}</argLine>
               </configuration>
+              <dependencies>
+                <dependency>
+                  <groupId>org.jacoco</groupId>
+                  <artifactId>org.jacoco.agent</artifactId>
+                  <version>${version.jacoco.plugin}</version>
+                </dependency>
+              </dependencies>
             </plugin>
           </plugins>
         </pluginManagement>
