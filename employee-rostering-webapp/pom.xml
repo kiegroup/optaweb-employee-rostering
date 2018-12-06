@@ -261,6 +261,5 @@
         <cargo.goal>run</cargo.goal>
       </properties>
     </profile>
-
   </profiles>
 </project>

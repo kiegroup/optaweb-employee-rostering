@@ -2,7 +2,7 @@
 /local
 
 # Eclipse, Netbeans and IntelliJ files
-/.*
+/.idea
 !.gitignore
 !.gitattributes
 /nbproject

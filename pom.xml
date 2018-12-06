@@ -79,6 +79,7 @@
     <version.org.webjars.momentjs>2.22.2</version.org.webjars.momentjs>
     <version.org.wildfly>14.0.1.Final</version.org.wildfly>
     <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.11</version.org.codehaus.cargo.cargo-maven2-plugin>
+
     <!-- gwtmockito uses a different version of mockito than kie-parent, so we need to override the mockito version,
          kie-parent manages version 1.x -->
     <version.org.mockito>2.12.0</version.org.mockito>
@@ -500,6 +501,124 @@
       <properties>
         <antrun.skip>true</antrun.skip>
       </properties>
+    </profile>
+
+    <profile>
+      <id>run-code-coverage</id>
+      <properties>
+        <jacoco.exec.file>${project.build.directory}/jacoco.exec</jacoco.exec.file>
+        <jacoco.agent.line>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${version.jacoco.plugin}/org.jacoco.agent-${version.jacoco.plugin}-runtime.jar=destfile=${jacoco.exec.file},append=true,excludes=*Lexer</jacoco.agent.line>
+        <surefire.argLine>
+          -Dfile.encoding=${project.build.sourceEncoding}
+          ${jacoco.agent.line}
+        </surefire.argLine>
+      </properties>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.cargo</groupId>
+              <artifactId>cargo-maven2-plugin</artifactId>
+              <configuration>
+                <configuration>
+                  <properties>
+                    <cargo.start.jvmargs>${jacoco.agent.line}</cargo.start.jvmargs>
+                  </properties>
+                </configuration>
+              </configuration>
+              <dependencies>
+                <dependency>
+                  <groupId>org.jacoco</groupId>
+                  <artifactId>org.jacoco.agent</artifactId>
+                  <version>${version.jacoco.plugin}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+            <plugin>
+              <groupId>net.ltgt.gwt.maven</groupId>
+              <artifactId>gwt-maven-plugin</artifactId>
+              <configuration>
+                <skipCompilation>true</skipCompilation>
+              </configuration>
+            </plugin>
+            <plugin>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <argLine>${surefire.argLine}</argLine>
+              </configuration>
+              <dependencies>
+                <dependency>
+                  <groupId>org.jacoco</groupId>
+                  <artifactId>org.jacoco.agent</artifactId>
+                  <version>${version.jacoco.plugin}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+
+    <profile>
+      <!--
+        For running the report manually, please refer to travis.yml.
+      -->
+      <id>report-code-coverage</id>
+      <properties>
+        <jacoco.master.exec.file>${maven.multiModuleProjectDirectory}/target/jacoco.exec</jacoco.master.exec.file>
+        <sonar.jacoco.reportPaths>${jacoco.master.exec.file}</sonar.jacoco.reportPaths>
+      </properties>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>${version.jacoco.plugin}</version>
+              <configuration>
+                <fileSets>
+                  <fileSet>
+                    <directory>${project.build.directory}</directory>
+                    <includes>
+                      <include>*.exec</include>
+                    </includes>
+                  </fileSet>
+                </fileSets>
+                <destFile>${jacoco.master.exec.file}</destFile>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+
+    <profile>
+      <!-- environment-specific profile that should be activated only when running in travis-ci. -->
+      <id>travis-ci</id>
+      <activation>
+        <property>
+          <name>env.TRAVIS</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.cargo</groupId>
+              <artifactId>cargo-maven2-plugin</artifactId>
+              <configuration>
+                <container>
+                  <systemProperties>
+                    <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+                    <java.net.preferIPv4Addresses>true</java.net.preferIPv4Addresses>
+                  </systemProperties>
+                </container>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
     </profile>
   </profiles>
 
