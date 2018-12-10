@@ -78,7 +78,7 @@
     <version.org.webjars.Eonasdan-bootstrap-datetimepicker>4.17.47</version.org.webjars.Eonasdan-bootstrap-datetimepicker>
     <version.org.webjars.momentjs>2.22.2</version.org.webjars.momentjs>
     <version.org.wildfly>14.0.1.Final</version.org.wildfly>
-    <version.org.codehaus.cargo.cargo-maven2-plugin>1.6.11</version.org.codehaus.cargo.cargo-maven2-plugin>
+    <version.org.codehaus.cargo.cargo-maven2-plugin>1.7.1</version.org.codehaus.cargo.cargo-maven2-plugin>
 
     <!-- gwtmockito uses a different version of mockito than kie-parent, so we need to override the mockito version,
          kie-parent manages version 1.x -->
