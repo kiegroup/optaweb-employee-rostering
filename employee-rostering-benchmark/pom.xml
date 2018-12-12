@@ -32,9 +32,13 @@
       <artifactId>optaplanner-benchmark</artifactId>
       <exclusions>
         <exclusion>
+          <groupId>org.jboss.spec.javax.xml.bind</groupId>
+          <artifactId>jboss-jaxb-api_2.3_spec</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>javax.activation</groupId>
-	  <artifactId>activation</artifactId>
-	</exclusion>
+          <artifactId>activation</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <!-- Persistence -->
