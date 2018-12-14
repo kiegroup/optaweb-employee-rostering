@@ -506,16 +506,56 @@
     <profile>
       <id>run-code-coverage</id>
       <properties>
+        <jacoco.excludes>*Lexer</jacoco.excludes>
         <jacoco.exec.file>${project.build.directory}/jacoco.exec</jacoco.exec.file>
-        <jacoco.agent.line>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${version.jacoco.plugin}/org.jacoco.agent-${version.jacoco.plugin}-runtime.jar=destfile=${jacoco.exec.file},append=true,excludes=*Lexer</jacoco.agent.line>
-        <surefire.argLine>
-          -Dfile.encoding=${project.build.sourceEncoding}
-          ${jacoco.agent.line}
-        </surefire.argLine>
+        <jacoco.agent.line>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${version.jacoco.plugin}/org.jacoco.agent-${version.jacoco.plugin}-runtime.jar=destfile=${jacoco.exec.file},append=true,excludes=${jacoco.excludes}</jacoco.agent.line>
       </properties>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.jacoco</groupId>
+            <artifactId>org.jacoco.agent</artifactId>
+            <version>${version.jacoco.plugin}</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+      <dependencies>
+        <dependency>
+          <groupId>org.jacoco</groupId>
+          <artifactId>org.jacoco.agent</artifactId>
+          <classifier>runtime</classifier>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
       <build>
         <pluginManagement>
           <plugins>
+            <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>${version.jacoco.plugin}</version>
+              <configuration>
+                <append>true</append>
+                <destFile>${jacoco.exec.file}</destFile>
+                <excludes>
+                  <exclude>${jacoco.excludes}</exclude>
+                </excludes>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>default-instrument</id>
+                  <goals>
+                    <goal>instrument</goal>
+                  </goals>
+                </execution>
+                <execution>
+                  <id>default-restore-instrumented-classes</id>
+                  <goals>
+                    <goal>restore-instrumented-classes</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
             <plugin>
               <groupId>org.codehaus.cargo</groupId>
               <artifactId>cargo-maven2-plugin</artifactId>
@@ -544,18 +584,19 @@
             <plugin>
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>
-                <argLine>${surefire.argLine}</argLine>
+                <systemPropertyVariables>
+                  <jacoco-agent.destfile>${jacoco.exec.file}</jacoco-agent.destfile>
+                </systemPropertyVariables>
               </configuration>
-              <dependencies>
-                <dependency>
-                  <groupId>org.jacoco</groupId>
-                  <artifactId>org.jacoco.agent</artifactId>
-                  <version>${version.jacoco.plugin}</version>
-                </dependency>
-              </dependencies>
             </plugin>
           </plugins>
         </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
       </build>
     </profile>
 
