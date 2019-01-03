@@ -1,4 +1,6 @@
 language: java
+git: # required for auto-assignment of issues in SonarCloud
+  depth: false
 sudo: false
 install: true
 
@@ -6,7 +8,7 @@ jdk:
 - oraclejdk8
 script:
 - mvn --quiet clean install -Prun-code-coverage
-- mvn --quiet jacoco:report jacoco:merge sonar:sonar -Preport-code-coverage -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=kiegroup -Dsonar.login=$SONARCLOUD_TOKEN -Dsonar.projectKey=optaweb-employee-rostering
+- ./travis-sonarcloud.sh
 cache:
   directories:
   - "$HOME/.m2/repository"
