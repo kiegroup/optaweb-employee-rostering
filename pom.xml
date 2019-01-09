@@ -39,6 +39,7 @@
   </repositories>
 
   <properties>
+    <needs-errai-1101-workaround>true</needs-errai-1101-workaround>
     <wildfly.parent>${project.basedir}/local/appserver</wildfly.parent>
     <wildfly.home>${wildfly.parent}/wildfly-${version.org.wildfly}</wildfly.home>
     <wildfly.launchdir>${project.basedir}/local/appserver/wildfly-${version.org.wildfly}</wildfly.launchdir>
