@@ -30,11 +30,17 @@
     <dependency>
       <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-benchmark</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.activation</groupId>
+	  <artifactId>activation</artifactId>
+	</exclusion>
+      </exclusions>
     </dependency>
     <!-- Persistence -->
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.1-api</artifactId>
+      <groupId>javax.persistence</groupId>
+      <artifactId>javax.persistence-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.transaction</groupId>
@@ -45,6 +51,12 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-entitymanager</artifactId>
       <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate.javax.persistence</groupId>
+          <artifactId>hibernate-jpa-2.1-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hsqldb</groupId>
