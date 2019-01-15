@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -47,23 +48,21 @@ public class KiePager<T>
         Consumer<List<T>>,
         HasRows {
 
-    @Inject
+    public static final int DEFAULT_PAGER_LENGTH = 10;
+
     @DataField
     private Span currentRange;
 
-    @Inject
     @DataField
     private Span rowCount;
 
-    @Inject
     @DataField
     private Anchor previousPageButton;
 
-    @Inject
     @DataField
     private Anchor nextPageButton;
 
-    private SimplePager pager = new SimplePager();
+    private SimplePager pager;
 
     private int startIndex;
     private int endIndex;
@@ -76,7 +75,19 @@ public class KiePager<T>
     private Set<Handler> rangeChangeHandlers;
     private Set<com.google.gwt.view.client.RowCountChangeEvent.Handler> rowCountChangeHandlers;
 
-    public KiePager() {
+    @Inject
+    public KiePager(final Span currentRange,
+                    final Span rowCount,
+                    final Anchor previousPageButton,
+                    final Anchor nextPageButton) {
+        this.currentRange = currentRange;
+        this.rowCount = rowCount;
+        this.previousPageButton = previousPageButton;
+        this.nextPageButton = nextPageButton;
+    }
+
+    @PostConstruct
+    public void initKiePager() {
         sorter = (a, b) -> 0;
         pager = new SimplePager() {
 
@@ -99,7 +110,7 @@ public class KiePager<T>
                 }
             }
         };
-        this.pageSize = 10;
+        this.pageSize = DEFAULT_PAGER_LENGTH;
         pager.setPageSize(pageSize);
         rangeChangeHandlers = new HashSet<>();
         rowCountChangeHandlers = new HashSet<>();
@@ -109,15 +120,6 @@ public class KiePager<T>
 
     public SimplePager getPager() {
         return pager;
-    }
-
-    public void setData(List<T> listData) {
-        this.listData = listData;
-        Collections.sort(listData, sorter);
-        pager.firstPage();
-        enableDisablePagerButtons();
-        RowCountChangeEvent.fire(this, listData.size(), true);
-        refresh();
     }
 
     public void setPresenter(ListComponent<T, ?> listPresenter) {
@@ -205,7 +207,7 @@ public class KiePager<T>
         startIndex = start;
         endIndex = Math.min(start + length, listData.size());
         currentRange.setText((startIndex + 1) + "-" + endIndex);
-        if (listPresenter != null) {
+        if (listPresenter != null && startIndex <= endIndex) {
             listPresenter.setValue(listData.subList(startIndex, endIndex));
         }
     }
@@ -228,6 +230,11 @@ public class KiePager<T>
 
     @Override
     public void accept(List<T> data) {
-        setData(data);
+        this.listData = data;
+        Collections.sort(listData, sorter);
+        pager.firstPage();
+        enableDisablePagerButtons();
+        RowCountChangeEvent.fire(this, listData.size(), true);
+        refresh();
     }
 }
