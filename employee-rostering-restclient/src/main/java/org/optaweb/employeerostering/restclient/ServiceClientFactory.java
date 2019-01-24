@@ -54,7 +54,9 @@ public final class ServiceClientFactory {
     public ServiceClientFactory(URL baseUrl, ResteasyClient resteasyClient) {
         this.baseUrl = baseUrl;
         this.resteasyClient = resteasyClient;
-        this.target = resteasyClient.target(baseUrl.toExternalForm() + REST_API_CONTEXT);
+        String baseUrlString = baseUrl.toExternalForm();
+        String contextSuffix = baseUrlString.endsWith("/") ? REST_API_CONTEXT : "/" + REST_API_CONTEXT;
+        this.target = resteasyClient.target(baseUrlString + contextSuffix);
     }
 
     public SkillRestService createSkillRestServiceClient() {
