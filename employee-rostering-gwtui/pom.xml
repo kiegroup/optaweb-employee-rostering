@@ -160,6 +160,12 @@
     <dependency><!-- TODO Remove me, we don't use JPA on the client, but removing this gives blank screen at runtime -->
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-jpa-client</artifactId>
+      <exclusions>
+        <exclusion>
+	      <groupId>org.hibernate.javax.persistence</groupId>
+	      <artifactId>hibernate-jpa-2.1-api</artifactId>
+        </exclusion>
+      </exclusions> 	
     </dependency>
     <dependency>
       <groupId>org.jboss.errai</groupId>
@@ -231,15 +237,15 @@
                       java.lang.NoClassDefFoundError: javax/persistence/spi/PersistenceUnitInfo
                       The best approach seems to be to keep hibernate-jpa-2.1-api and disable Enforcer.
                       -->
-                      <dependency>
+		      <dependency>
                         <groupId>org.jboss.errai</groupId>
                         <artifactId>errai-jpa-client</artifactId>
-                        <type>jar</type>
-                        <ignoreClasses>
+			<type>jar</type> 
+			<ignoreClasses>
                           <ignoreClass>javax.persistence.*</ignoreClass>
-                        </ignoreClasses>
-                      </dependency>
-                    </dependencies>
+		        </ignoreClasses>
+	              </dependency>
+	            </dependencies> 
                   </banDuplicateClasses>
                 </rules>
               </configuration>
