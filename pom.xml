@@ -345,11 +345,6 @@
     <profile>
       <!-- Magic profileId that is activated automatically in OpenShift S2I builds -->
       <id>openshift</id>
-      <activation>
-        <property>
-          <name>productizedOpenshift</name>
-        </property>
-      </activation>
       <properties>
         <wildfly.install.skip>true</wildfly.install.skip>
         <antrun.skip>true</antrun.skip>
@@ -387,17 +382,17 @@
       </build>
     </profile>
     <profile>
-      <!-- To activate use -DproductizedOpenshift (not -P) -->
-      <id>productizedOpenshift</id>
+      <!-- To activate use -Dproductized (not -P) -->
+      <id>productized</id>
       <activation>
         <property>
-          <name>productizedOpenshift</name>
+          <name>productized</name>
         </property>
       </activation>
       <properties>
         <!-- Maven resource filtering -->
         <dollarSign>$</dollarSign><!-- HACK to escape maven property interpolation -->
-        <!-- The productized docker image have EAP <spec-descriptor-property-replacement> set to true -->
+        <!-- The productized docker image has EAP <spec-descriptor-property-replacement> set to true -->
         <!-- to dynamically configure the database type (mysql, postgresql, ...). -->
         <org.optaweb.employeerostering.persistence.datasource>${dollarSign}{org.optaweb.employeerostering.persistence.datasource:java:jboss/datasources/ExampleDS}</org.optaweb.employeerostering.persistence.datasource>
         <org.optaweb.employeerostering.persistence.dialect>${dollarSign}{org.optaweb.employeerostering.persistence.dialect:org.hibernate.dialect.H2Dialect}</org.optaweb.employeerostering.persistence.dialect>
