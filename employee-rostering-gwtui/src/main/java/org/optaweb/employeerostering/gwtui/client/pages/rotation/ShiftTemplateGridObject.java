@@ -25,6 +25,7 @@ import javax.inject.Named;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
@@ -54,6 +55,8 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     private DraggabilityDecorator<LocalDateTime, RotationMetadata> draggability;
     @Inject
     private ResizabilityDecorator<LocalDateTime, RotationMetadata> resizability;
+    @Inject
+    private ManagedInstance<ShiftTemplateEditForm> shiftTemplateEditFormFactory;
 
     public void withShiftTemplateModel(ShiftTemplateModel model) {
         this.model = model;
@@ -139,12 +142,18 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     private void onClick(@ForEvent("click") MouseEvent e) {
         if (e.shiftKey) {
             getLane().removeGridObject(model);
+        } else {
+            shiftTemplateEditFormFactory.get().init(this);
         }
     }
 
     @Override
     protected HasTimeslot getTimeslot() {
         return shiftTemplateView;
+    }
+
+    public ShiftTemplateModel getShiftTemplateModel() {
+        return model;
     }
 
     @Override

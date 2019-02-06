@@ -28,16 +28,15 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
 import org.gwtbootstrap3.client.ui.ListBox;
-import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.optaweb.employeerostering.gwtui.client.common.AbstractFormPopup;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateTimePicker;
-import org.optaweb.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
@@ -50,94 +49,72 @@ import org.optaweb.employeerostering.shared.spot.SpotRestServiceBuilder;
 import static org.optaweb.employeerostering.gwtui.client.common.EventManager.Event.SHIFT_ROSTER_INVALIDATE;
 
 @Templated
-public class ShiftEditForm implements IsElement {
+public class ShiftEditForm extends AbstractFormPopup {
 
-    @Inject
-    @DataField("root")
-    private HTMLDivElement root;
-
-    @Inject
-    @DataField("popup-title")
-    @Named("span")
-    private HTMLElement popupTitle;
-
-    @Inject
-    @DataField("close-button")
-    private HTMLButtonElement closeButton;
-
-    @Inject
     @DataField("from")
     private LocalDateTimePicker from;
 
-    @Inject
     @DataField("to")
     private LocalDateTimePicker to;
 
-    @Inject
     @DataField("spot")
     private ListBox spotSelect; //FIXME: Don't use GWT widget
 
-    @Inject
     @DataField("employee")
     private ListBox employeeSelect; //FIXME: Don't use GWT widget
 
-    @Inject
     @DataField("pinned")
     private HTMLInputElement pinned;
 
-    @Inject
     @DataField("delete-button")
     private HTMLButtonElement deleteButton;
 
-    @Inject
-    @DataField("cancel-button")
-    private HTMLButtonElement cancelButton;
-
-    @Inject
     @DataField("apply-button")
     private HTMLButtonElement applyButton;
 
-    @Inject
     private TenantStore tenantStore;
 
-    @Inject
-    private PopupFactory popupFactory;
-
-    @Inject
     private EventManager eventManager;
 
-    @Inject
     private TranslationService translationService;
 
-    private FormPopup formPopup;
-
     private ShiftGridObject shiftGridObject;
+
+    @Inject
+    public ShiftEditForm(PopupFactory popupFactory, HTMLDivElement root, @Named("span") HTMLElement popupTitle, HTMLButtonElement closeButton,
+                         HTMLButtonElement cancelButton, LocalDateTimePicker from, LocalDateTimePicker to,
+                         ListBox spotSelect, ListBox employeeSelect, HTMLInputElement pinned,
+                         HTMLButtonElement deleteButton, HTMLButtonElement applyButton,
+                         TenantStore tenantStore, EventManager eventManager,
+                         TranslationService translationService) {
+        super(popupFactory, root, popupTitle, closeButton, cancelButton);
+        this.from = from;
+        this.to = to;
+        this.spotSelect = spotSelect;
+        this.employeeSelect = employeeSelect;
+        this.pinned = pinned;
+        this.deleteButton = deleteButton;
+        this.applyButton = applyButton;
+        this.tenantStore = tenantStore;
+        this.eventManager = eventManager;
+        this.translationService = translationService;
+    }
 
     public void init(final ShiftGridObject shiftGridObject) {
 
         this.shiftGridObject = (ShiftGridObject) shiftGridObject;
         shiftGridObject.getElement().classList.add("selected");
         final ShiftView shift = shiftGridObject.getShiftView();
-
         setup(shift);
-
-        popupFactory.getFormPopup(this).ifPresent((fp) -> {
-            formPopup = fp;
-            formPopup.showFor(shiftGridObject);
-        });
+        showFor(shiftGridObject);
     }
 
     public void createNewShift() {
         setup(new ShiftView(tenantStore.getCurrentTenantId(), new Spot(), LocalDateTime.now(), LocalDateTime.now().plusHours(9)));
-
         spotSelect.setEnabled(true);
         deleteButton.remove();
-        popupTitle.innerHTML = translationService.format(I18nKeys.ShiftRosterToolbar_createShift);
-
-        popupFactory.getFormPopup(this).ifPresent((fp) -> {
-            formPopup = fp;
-            formPopup.center();
-        });
+        setTitle(translationService.format(I18nKeys.ShiftRosterToolbar_createShift));
+        show();
     }
 
     private void setup(ShiftView shiftView) {
@@ -167,27 +144,11 @@ public class ShiftEditForm implements IsElement {
         pinned.checked = shiftView.isPinnedByUser();
     }
 
-    @EventHandler("root")
-    public void onClick(@ForEvent("click") final MouseEvent e) {
-        e.stopPropagation();
-    }
-
-    @EventHandler("cancel-button")
-    public void onCancelButtonClick(@ForEvent("click") final MouseEvent e) {
-        formPopup.hide();
+    @Override
+    protected void onClose() {
         if (shiftGridObject != null) {
             shiftGridObject.getElement().classList.remove("selected");
         }
-        e.stopPropagation();
-    }
-
-    @EventHandler("close-button")
-    public void onCloseButtonClick(@ForEvent("click") final MouseEvent e) {
-        formPopup.hide();
-        if (shiftGridObject != null) {
-            shiftGridObject.getElement().classList.remove("selected");
-        }
-        e.stopPropagation();
     }
 
     @EventHandler("apply-button")
@@ -218,7 +179,7 @@ public class ShiftEditForm implements IsElement {
                 shiftGridObject.withShiftView(updatedShift);
                 shiftGridObject.getElement().classList.remove("selected");
                 eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
-                formPopup.hide();
+                hide();
             }).onFailure(i -> {
                 shiftView.setPinnedByUser(oldLockedByUser);
                 shiftView.setEmployeeId(oldEmployee);
@@ -241,7 +202,7 @@ public class ShiftEditForm implements IsElement {
             shiftView.setTenantId(tenantStore.getCurrentTenantId());
 
             ShiftRestServiceBuilder.addShift(tenantStore.getCurrentTenantId(), shiftView, FailureShownRestCallback.onSuccess(v -> {
-                formPopup.hide();
+                hide();
                 eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
             }));
         }
@@ -255,7 +216,7 @@ public class ShiftEditForm implements IsElement {
 
         ShiftRestServiceBuilder.removeShift(shiftView.getTenantId(), shiftView.getId(), FailureShownRestCallback.onSuccess(v -> {
             shiftGridObject.getLane().removeGridObject(shiftGridObject);
-            formPopup.hide();
+            hide();
         }));
         e.stopPropagation();
     }
