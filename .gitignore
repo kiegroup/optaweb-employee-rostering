@@ -3,6 +3,7 @@
 
 # Eclipse, Netbeans and IntelliJ files
 /.idea
+/.project
 !.gitignore
 !.gitattributes
 /nbproject
