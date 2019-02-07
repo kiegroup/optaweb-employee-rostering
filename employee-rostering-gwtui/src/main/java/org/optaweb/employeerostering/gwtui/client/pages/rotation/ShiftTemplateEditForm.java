@@ -79,6 +79,8 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
 
     private ShiftTemplateGridObject shiftTemplateGridObject;
 
+    private static final String SELECTED_CLASS = "selected";
+
     @Inject
     public ShiftTemplateEditForm(PopupFactory popupFactory, HTMLDivElement root, @Named("span") HTMLElement popupTitle, HTMLButtonElement closeButton,
                                  HTMLButtonElement cancelButton, RotationTimeSelector from, RotationTimeSelector to,
@@ -99,9 +101,8 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
     }
 
     public void init(final ShiftTemplateGridObject shiftTemplateGridObject) {
-
         this.shiftTemplateGridObject = (ShiftTemplateGridObject) shiftTemplateGridObject;
-        shiftTemplateGridObject.getElement().classList.add("selected");
+        shiftTemplateGridObject.getElement().classList.add(SELECTED_CLASS);
         final ShiftTemplateView template = shiftTemplateGridObject.getShiftTemplateModel().getShiftTemplateView();
         setup(template);
         showFor(shiftTemplateGridObject);
@@ -150,7 +151,7 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
     @Override
     protected void onClose() {
         if (shiftTemplateGridObject != null) {
-            shiftTemplateGridObject.getElement().classList.remove("selected");
+            shiftTemplateGridObject.getElement().classList.remove(SELECTED_CLASS);
         }
     }
 
@@ -184,7 +185,7 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
 
             RotationRestServiceBuilder.updateShiftTemplate(template.getTenantId(), template, FailureShownRestCallback.onSuccess((final ShiftTemplateView updatedShiftTemplate) -> {
                 shiftTemplateGridObject.getShiftTemplateModel().withShiftTemplateView(updatedShiftTemplate);
-                shiftTemplateGridObject.getElement().classList.remove("selected");
+                shiftTemplateGridObject.getElement().classList.remove(SELECTED_CLASS);
                 eventManager.fireEvent(ROTATION_INVALIDATE);
                 hide();
             }).onFailure(i -> {
