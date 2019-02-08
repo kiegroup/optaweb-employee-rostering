@@ -58,10 +58,10 @@ public class ShiftEditForm extends AbstractFormPopup {
     private LocalDateTimePicker to;
 
     @DataField("spot")
-    private ListBox spotSelect; //FIXME: Don't use GWT widget
+    private ListBox spotSelect; //TODO: Replace with widget that has search capabilities
 
     @DataField("employee")
-    private ListBox employeeSelect; //FIXME: Don't use GWT widget
+    private ListBox employeeSelect; //TODO: Replace with widget that has search capabilities
 
     @DataField("pinned")
     private HTMLInputElement pinned;
@@ -81,11 +81,20 @@ public class ShiftEditForm extends AbstractFormPopup {
     private ShiftGridObject shiftGridObject;
 
     @Inject
-    public ShiftEditForm(PopupFactory popupFactory, HTMLDivElement root, @Named("span") HTMLElement popupTitle, HTMLButtonElement closeButton,
-                         HTMLButtonElement cancelButton, LocalDateTimePicker from, LocalDateTimePicker to,
-                         ListBox spotSelect, ListBox employeeSelect, HTMLInputElement pinned,
-                         HTMLButtonElement deleteButton, HTMLButtonElement applyButton,
-                         TenantStore tenantStore, EventManager eventManager,
+    public ShiftEditForm(PopupFactory popupFactory,
+                         HTMLDivElement root,
+                         @Named("span") HTMLElement popupTitle,
+                         HTMLButtonElement closeButton,
+                         HTMLButtonElement cancelButton,
+                         LocalDateTimePicker from,
+                         LocalDateTimePicker to,
+                         ListBox spotSelect,
+                         ListBox employeeSelect,
+                         HTMLInputElement pinned,
+                         HTMLButtonElement deleteButton,
+                         HTMLButtonElement applyButton,
+                         TenantStore tenantStore,
+                         EventManager eventManager,
                          TranslationService translationService) {
         super(popupFactory, root, popupTitle, closeButton, cancelButton);
         this.from = from;
@@ -103,7 +112,7 @@ public class ShiftEditForm extends AbstractFormPopup {
     public void init(final ShiftGridObject shiftGridObject) {
 
         this.shiftGridObject = (ShiftGridObject) shiftGridObject;
-        shiftGridObject.getElement().classList.add("selected");
+        shiftGridObject.setSelected(true);
         final ShiftView shift = shiftGridObject.getShiftView();
         setup(shift);
         showFor(shiftGridObject);
@@ -147,7 +156,7 @@ public class ShiftEditForm extends AbstractFormPopup {
     @Override
     protected void onClose() {
         if (shiftGridObject != null) {
-            shiftGridObject.getElement().classList.remove("selected");
+            shiftGridObject.setSelected(false);
         }
     }
 
@@ -162,49 +171,35 @@ public class ShiftEditForm extends AbstractFormPopup {
             final LocalDateTime oldStartDateTime = shiftView.getStartDateTime();
             final LocalDateTime oldEndDateTime = shiftView.getEndDateTime();
 
-            try {
-                shiftView.setPinnedByUser(pinned.checked);
-                shiftView.setEmployeeId(parseId(employeeSelect.getSelectedValue()));
-                shiftView.setStartDateTime(from.getValue());
-                shiftView.setEndDateTime(to.getValue());
-            } catch (ValidationException invalidField) {
-                shiftView.setPinnedByUser(oldLockedByUser);
-                shiftView.setEmployeeId(oldEmployee);
-                shiftView.setStartDateTime(oldStartDateTime);
-                shiftView.setEndDateTime(oldEndDateTime);
-                return;
-            }
+            if (updateShiftFromWidgetsIfValid(shiftView)) {
 
-            ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, FailureShownRestCallback.onSuccess((final ShiftView updatedShift) -> {
-                shiftGridObject.withShiftView(updatedShift);
-                shiftGridObject.getElement().classList.remove("selected");
-                eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
-                hide();
-            }).onFailure(i -> {
-                shiftView.setPinnedByUser(oldLockedByUser);
-                shiftView.setEmployeeId(oldEmployee);
-                shiftView.setStartDateTime(oldStartDateTime);
-                shiftView.setEndDateTime(oldEndDateTime);
-            }).onError(i -> {
-                shiftView.setPinnedByUser(oldLockedByUser);
-                shiftView.setEmployeeId(oldEmployee);
-                shiftView.setStartDateTime(oldStartDateTime);
-                shiftView.setEndDateTime(oldEndDateTime);
-            }));
+                ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, FailureShownRestCallback.onSuccess((final ShiftView updatedShift) -> {
+                    shiftGridObject.withShiftView(updatedShift);
+                    shiftGridObject.setSelected(false);
+                    eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
+                    hide();
+                }).onFailure(i -> {
+                    shiftView.setPinnedByUser(oldLockedByUser);
+                    shiftView.setEmployeeId(oldEmployee);
+                    shiftView.setStartDateTime(oldStartDateTime);
+                    shiftView.setEndDateTime(oldEndDateTime);
+                }).onError(i -> {
+                    shiftView.setPinnedByUser(oldLockedByUser);
+                    shiftView.setEmployeeId(oldEmployee);
+                    shiftView.setStartDateTime(oldStartDateTime);
+                    shiftView.setEndDateTime(oldEndDateTime);
+                }));
+            }
         } else {
             final ShiftView shiftView = new ShiftView();
-
-            shiftView.setPinnedByUser(pinned.checked);
-            shiftView.setSpotId(parseId(spotSelect.getSelectedValue()));
-            shiftView.setEmployeeId(parseId(employeeSelect.getSelectedValue()));
-            shiftView.setStartDateTime(from.getValue());
-            shiftView.setEndDateTime(to.getValue());
             shiftView.setTenantId(tenantStore.getCurrentTenantId());
 
-            ShiftRestServiceBuilder.addShift(tenantStore.getCurrentTenantId(), shiftView, FailureShownRestCallback.onSuccess(v -> {
-                hide();
-                eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
-            }));
+            if (updateShiftFromWidgetsIfValid(shiftView)) {
+                ShiftRestServiceBuilder.addShift(tenantStore.getCurrentTenantId(), shiftView, FailureShownRestCallback.onSuccess(v -> {
+                    hide();
+                    eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
+                }));
+            }
         }
 
         e.stopPropagation();
@@ -219,6 +214,30 @@ public class ShiftEditForm extends AbstractFormPopup {
             hide();
         }));
         e.stopPropagation();
+    }
+
+    public boolean updateShiftFromWidgetsIfValid(ShiftView shiftView) {
+        final boolean oldLockedByUser = shiftView.isPinnedByUser();
+        final Long oldEmployee = shiftView.getEmployeeId();
+        final Long oldSpot = shiftView.getSpotId();
+        final LocalDateTime oldStartDateTime = shiftView.getStartDateTime();
+        final LocalDateTime oldEndDateTime = shiftView.getEndDateTime();
+
+        try {
+            shiftView.setPinnedByUser(pinned.checked);
+            shiftView.setSpotId(parseId(spotSelect.getSelectedValue()));
+            shiftView.setEmployeeId(parseId(employeeSelect.getSelectedValue()));
+            shiftView.setStartDateTime(from.getValue());
+            shiftView.setEndDateTime(to.getValue());
+            return true;
+        } catch (ValidationException invalidField) {
+            shiftView.setPinnedByUser(oldLockedByUser);
+            shiftView.setSpotId(oldSpot);
+            shiftView.setEmployeeId(oldEmployee);
+            shiftView.setStartDateTime(oldStartDateTime);
+            shiftView.setEndDateTime(oldEndDateTime);
+            return false;
+        }
     }
 
     private Long parseId(String text) {

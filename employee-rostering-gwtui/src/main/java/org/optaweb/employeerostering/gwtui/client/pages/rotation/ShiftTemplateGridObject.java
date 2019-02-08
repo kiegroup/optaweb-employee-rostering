@@ -156,6 +156,14 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
         return model;
     }
 
+    public void setSelected(boolean isSelected) {
+        if (isSelected) {
+            getElement().classList.add("selected");
+        } else {
+            getElement().classList.remove("selected");
+        }
+    }
+
     @Override
     public void save() {
         RotationRestServiceBuilder.updateShiftTemplate(model.getShiftTemplateView().getTenantId(), model.getShiftTemplateView(),
