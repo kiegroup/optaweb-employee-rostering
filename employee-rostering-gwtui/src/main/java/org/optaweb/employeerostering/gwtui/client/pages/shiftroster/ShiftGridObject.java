@@ -278,6 +278,14 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMe
         return getLane().getMetadata().getEmployeeIdToEmployeeMap().get(shiftView.getEmployeeId());
     }
 
+    public void setSelected(boolean isSelected) {
+        if (isSelected) {
+            getElement().classList.add("selected");
+        } else {
+            getElement().classList.remove("selected");
+        }
+    }
+
     @Override
     public void save() {
         ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView,
