@@ -13,6 +13,7 @@ import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbac
 import org.optaweb.employeerostering.gwtui.client.common.LocalTimePicker;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.roster.RosterRestServiceBuilder;
+import org.optaweb.employeerostering.shared.roster.RosterState;
 
 @Templated
 public class RotationTimeSelector {
@@ -29,14 +30,17 @@ public class RotationTimeSelector {
 
     @Inject
     public RotationTimeSelector(IntegerBox dayOffsetPicker, LocalTimePicker timePicker, TenantStore tenantStore) {
+        offset = 0;
         this.dayOffsetPicker = dayOffsetPicker;
         this.timePicker = timePicker;
-        RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(rs -> {
-            rotationLength = rs.getRotationLength();
-            dayOffsetPicker.addValidator(new DecimalMinValidator<Integer>(1));
-            dayOffsetPicker.addValidator(new DecimalMaxValidator<Integer>(rotationLength));
-            setDayOffset(offset);
-        }));
+        RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(this::setRotationLength));
+    }
+
+    protected void setRotationLength(RosterState rs) {
+        rotationLength = rs.getRotationLength();
+        dayOffsetPicker.addValidator(new DecimalMinValidator<Integer>(1));
+        dayOffsetPicker.addValidator(new DecimalMaxValidator<Integer>(rotationLength));
+        setDayOffset(offset);
     }
 
     public void setDayOffset(int dayOffset) {

@@ -68,10 +68,10 @@ public class KiePagerTest {
         doReturn(nextPageButtonElement).when(nextPageButton).getElement();
         doReturn(nextPageButtonParentElement).when(nextPageButtonElement).getParentElement();
 
-        testedKiePager = spy(new KiePager(currentRange,
-                                          rowCount,
-                                          previousPageButton,
-                                          nextPageButton));
+        testedKiePager = spy(new KiePager<>(currentRange,
+                                            rowCount,
+                                            previousPageButton,
+                                            nextPageButton));
 
         testedKiePager.initKiePager();
         testedKiePager.setPresenter(listPresenter);
