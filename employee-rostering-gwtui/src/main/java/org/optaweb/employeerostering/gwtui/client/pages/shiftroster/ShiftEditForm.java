@@ -34,8 +34,8 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AbstractFormPopup;
+import org.optaweb.employeerostering.gwtui.client.common.CallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateTimePicker;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
@@ -77,11 +77,14 @@ public class ShiftEditForm extends AbstractFormPopup {
     private EventManager eventManager;
 
     private TranslationService translationService;
-
+    
+    private CallbackFactory callbackFactory;
+    
     private ShiftGridObject shiftGridObject;
 
     @Inject
     public ShiftEditForm(PopupFactory popupFactory,
+                         CallbackFactory callbackFactory,
                          HTMLDivElement root,
                          @Named("span") HTMLElement popupTitle,
                          HTMLButtonElement closeButton,
@@ -107,6 +110,7 @@ public class ShiftEditForm extends AbstractFormPopup {
         this.tenantStore = tenantStore;
         this.eventManager = eventManager;
         this.translationService = translationService;
+        this.callbackFactory = callbackFactory;
     }
 
     public void init(final ShiftGridObject shiftGridObject) {
@@ -126,11 +130,11 @@ public class ShiftEditForm extends AbstractFormPopup {
         show();
     }
 
-    private void setup(ShiftView shiftView) {
+    protected void setup(ShiftView shiftView) {
         employeeSelect.clear();
         employeeSelect.addItem(translationService.format(I18nKeys.Shift_unassigned), "-1");
 
-        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spots -> {
+        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), callbackFactory.onSuccess(spots -> {
             spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
             if (shiftView.getSpotId() != null) {
                 spotSelect.setSelectedIndex(spots.indexOf(shiftGridObject.getSpot()));
@@ -139,7 +143,7 @@ public class ShiftEditForm extends AbstractFormPopup {
             }
         }));
 
-        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
+        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), callbackFactory.onSuccess(employees -> {
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
             if (shiftView.getEmployeeId() != null) {
                 employeeSelect.setSelectedIndex((shiftGridObject.getEmployee() == null) ? 0 : employees.indexOf(shiftGridObject.getEmployee()) + 1);
@@ -173,7 +177,7 @@ public class ShiftEditForm extends AbstractFormPopup {
 
             if (updateShiftFromWidgetsIfValid(shiftView)) {
 
-                ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, FailureShownRestCallback.onSuccess((final ShiftView updatedShift) -> {
+                ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView, callbackFactory.onSuccess((final ShiftView updatedShift) -> {
                     shiftGridObject.withShiftView(updatedShift);
                     shiftGridObject.setSelected(false);
                     eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
@@ -195,7 +199,7 @@ public class ShiftEditForm extends AbstractFormPopup {
             shiftView.setTenantId(tenantStore.getCurrentTenantId());
 
             if (updateShiftFromWidgetsIfValid(shiftView)) {
-                ShiftRestServiceBuilder.addShift(tenantStore.getCurrentTenantId(), shiftView, FailureShownRestCallback.onSuccess(v -> {
+                ShiftRestServiceBuilder.addShift(tenantStore.getCurrentTenantId(), shiftView, callbackFactory.onSuccess(v -> {
                     hide();
                     eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
                 }));
@@ -209,7 +213,7 @@ public class ShiftEditForm extends AbstractFormPopup {
     public void onDeleteButtonClick(@ForEvent("click") final MouseEvent e) {
         final ShiftView shiftView = shiftGridObject.getShiftView();
 
-        ShiftRestServiceBuilder.removeShift(shiftView.getTenantId(), shiftView.getId(), FailureShownRestCallback.onSuccess(v -> {
+        ShiftRestServiceBuilder.removeShift(shiftView.getTenantId(), shiftView.getId(), callbackFactory.onSuccess(v -> {
             shiftGridObject.getLane().removeGridObject(shiftGridObject);
             hide();
         }));
