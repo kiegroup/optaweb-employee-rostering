@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.gwtui.client.common;
 import java.util.function.Consumer;
 
 public class CallbackFactory {
+
     public <T> FailureShownRestCallback<T> onSuccess(final Consumer<T> onSuccess) {
         return new FailureShownRestCallback<T>() {
 
