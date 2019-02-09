@@ -77,9 +77,9 @@ public class ShiftEditForm extends AbstractFormPopup {
     private EventManager eventManager;
 
     private TranslationService translationService;
-    
+
     private CallbackFactory callbackFactory;
-    
+
     private ShiftGridObject shiftGridObject;
 
     @Inject
@@ -130,7 +130,7 @@ public class ShiftEditForm extends AbstractFormPopup {
         show();
     }
 
-    protected void setup(ShiftView shiftView) {
+    private void setup(ShiftView shiftView) {
         employeeSelect.clear();
         employeeSelect.addItem(translationService.format(I18nKeys.Shift_unassigned), "-1");
 
@@ -182,16 +182,6 @@ public class ShiftEditForm extends AbstractFormPopup {
                     shiftGridObject.setSelected(false);
                     eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
                     hide();
-                }).onFailure(i -> {
-                    shiftView.setPinnedByUser(oldLockedByUser);
-                    shiftView.setEmployeeId(oldEmployee);
-                    shiftView.setStartDateTime(oldStartDateTime);
-                    shiftView.setEndDateTime(oldEndDateTime);
-                }).onError(i -> {
-                    shiftView.setPinnedByUser(oldLockedByUser);
-                    shiftView.setEmployeeId(oldEmployee);
-                    shiftView.setStartDateTime(oldStartDateTime);
-                    shiftView.setEndDateTime(oldEndDateTime);
                 }));
             }
         } else {
@@ -233,6 +223,9 @@ public class ShiftEditForm extends AbstractFormPopup {
             shiftView.setEmployeeId(parseId(employeeSelect.getSelectedValue()));
             shiftView.setStartDateTime(from.getValue());
             shiftView.setEndDateTime(to.getValue());
+            if (!shiftView.getStartDateTime().isBefore(shiftView.getEndDateTime())) {
+                throw new ValidationException("Shift's end time need to be after shift's start time.");
+            }
             return true;
         } catch (ValidationException invalidField) {
             shiftView.setPinnedByUser(oldLockedByUser);
