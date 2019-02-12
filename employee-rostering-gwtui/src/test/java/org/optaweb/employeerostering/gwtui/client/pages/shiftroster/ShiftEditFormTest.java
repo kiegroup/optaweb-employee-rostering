@@ -422,7 +422,7 @@ public class ShiftEditFormTest {
 
     @Test
     public void testInvalidUpdateShiftFromForm() {
-        ShiftView shiftView = new ShiftView(0, spotList.get(2),
+        ShiftView shiftView = new ShiftView(TENANT_ID, spotList.get(SELECTED_SPOT),
                                             EARILER_LOCAL_DATE_TIME,
                                             LATER_LOCAL_DATE_TIME);
         when(mockShiftGridObject.getShiftView()).thenReturn(shiftView);
@@ -454,7 +454,7 @@ public class ShiftEditFormTest {
     public void testSuccessfulDelete() {
         when(mockShiftGridObject.getLane()).thenReturn(mockLane);
 
-        ShiftView shiftView = new ShiftView(0, spotList.get(2),
+        ShiftView shiftView = new ShiftView(TENANT_ID, spotList.get(SELECTED_SPOT),
                                             EARILER_LOCAL_DATE_TIME,
                                             LATER_LOCAL_DATE_TIME);
         when(mockShiftGridObject.getShiftView()).thenReturn(shiftView);
@@ -476,7 +476,7 @@ public class ShiftEditFormTest {
     public void testUnsuccessfulDelete() {
         when(mockShiftGridObject.getLane()).thenReturn(mockLane);
 
-        ShiftView shiftView = new ShiftView(0, spotList.get(2),
+        ShiftView shiftView = new ShiftView(TENANT_ID, spotList.get(SELECTED_SPOT),
                                             EARILER_LOCAL_DATE_TIME,
                                             LATER_LOCAL_DATE_TIME);
         when(mockShiftGridObject.getShiftView()).thenReturn(shiftView);
