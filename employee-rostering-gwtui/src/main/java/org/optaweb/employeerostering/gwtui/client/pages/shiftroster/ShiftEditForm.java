@@ -37,6 +37,7 @@ import org.optaweb.employeerostering.gwtui.client.common.AbstractFormPopup;
 import org.optaweb.employeerostering.gwtui.client.common.CallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateTimePicker;
+import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
@@ -80,11 +81,14 @@ public class ShiftEditForm extends AbstractFormPopup {
 
     private CallbackFactory callbackFactory;
 
+    private NotificationFactory notificationFactory;
+
     private ShiftGridObject shiftGridObject;
 
     @Inject
     public ShiftEditForm(PopupFactory popupFactory,
                          CallbackFactory callbackFactory,
+                         NotificationFactory notificationFactory,
                          HTMLDivElement root,
                          @Named("span") HTMLElement popupTitle,
                          HTMLButtonElement closeButton,
@@ -111,6 +115,7 @@ public class ShiftEditForm extends AbstractFormPopup {
         this.eventManager = eventManager;
         this.translationService = translationService;
         this.callbackFactory = callbackFactory;
+        this.notificationFactory = notificationFactory;
     }
 
     public void init(final ShiftGridObject shiftGridObject) {
@@ -146,7 +151,8 @@ public class ShiftEditForm extends AbstractFormPopup {
         EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), callbackFactory.onSuccess(employees -> {
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
             if (shiftView.getEmployeeId() != null) {
-                employeeSelect.setSelectedIndex((shiftGridObject.getEmployee() == null) ? 0 : employees.indexOf(shiftGridObject.getEmployee()) + 1);
+                employeeSelect.setSelectedIndex((shiftGridObject.getEmployee() == null) ?
+                                                        0 : employees.indexOf(shiftGridObject.getEmployee()) + 1);
             } else {
                 employeeSelect.setSelectedIndex(0);
             }
@@ -169,11 +175,6 @@ public class ShiftEditForm extends AbstractFormPopup {
         if (shiftGridObject != null) {
 
             final ShiftView shiftView = shiftGridObject.getShiftView();
-
-            final boolean oldLockedByUser = shiftView.isPinnedByUser();
-            final Long oldEmployee = shiftView.getEmployeeId();
-            final LocalDateTime oldStartDateTime = shiftView.getStartDateTime();
-            final LocalDateTime oldEndDateTime = shiftView.getEndDateTime();
 
             if (updateShiftFromWidgetsIfValid(shiftView)) {
 
@@ -203,9 +204,11 @@ public class ShiftEditForm extends AbstractFormPopup {
     public void onDeleteButtonClick(@ForEvent("click") final MouseEvent e) {
         final ShiftView shiftView = shiftGridObject.getShiftView();
 
-        ShiftRestServiceBuilder.removeShift(shiftView.getTenantId(), shiftView.getId(), callbackFactory.onSuccess(v -> {
-            shiftGridObject.getLane().removeGridObject(shiftGridObject);
-            hide();
+        ShiftRestServiceBuilder.removeShift(shiftView.getTenantId(), shiftView.getId(), callbackFactory.onSuccess(success -> {
+            if (success) {
+                shiftGridObject.getLane().removeGridObject(shiftGridObject);
+                hide();
+            }
         }));
         e.stopPropagation();
     }
@@ -218,11 +221,19 @@ public class ShiftEditForm extends AbstractFormPopup {
         final LocalDateTime oldEndDateTime = shiftView.getEndDateTime();
 
         try {
+            if (!from.reportValidity()) {
+                throw new ValidationException("Shift's start time need to be set.");
+            }
+            if (!to.reportValidity()) {
+                throw new ValidationException("Shift's end time need to be set.");
+            }
+
             shiftView.setPinnedByUser(pinned.checked);
             shiftView.setSpotId(parseId(spotSelect.getSelectedValue()));
             shiftView.setEmployeeId(parseId(employeeSelect.getSelectedValue()));
             shiftView.setStartDateTime(from.getValue());
             shiftView.setEndDateTime(to.getValue());
+
             if (!shiftView.getStartDateTime().isBefore(shiftView.getEndDateTime())) {
                 throw new ValidationException("Shift's end time need to be after shift's start time.");
             }
@@ -233,6 +244,7 @@ public class ShiftEditForm extends AbstractFormPopup {
             shiftView.setEmployeeId(oldEmployee);
             shiftView.setStartDateTime(oldStartDateTime);
             shiftView.setEndDateTime(oldEndDateTime);
+            notificationFactory.showError(invalidField);
             return false;
         }
     }

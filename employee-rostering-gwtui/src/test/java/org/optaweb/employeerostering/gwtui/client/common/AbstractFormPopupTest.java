@@ -16,10 +16,10 @@ import org.optaweb.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class AbstractFormPopupTest {
@@ -53,7 +53,7 @@ public class AbstractFormPopupTest {
             public void onClose() {
             }
         });
-        doReturn(Optional.of(formPopup)).when(popupFactory).getFormPopup(testedAbstractFormPopup);
+        when(popupFactory.getFormPopup(testedAbstractFormPopup)).thenReturn(Optional.of(formPopup));
     }
 
     @Test

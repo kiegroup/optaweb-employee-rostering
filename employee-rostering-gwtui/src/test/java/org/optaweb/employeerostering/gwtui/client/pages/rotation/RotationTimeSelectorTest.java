@@ -22,6 +22,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class RotationTimeSelectorTest {
@@ -50,18 +51,18 @@ public class RotationTimeSelectorTest {
             return null;
         }).when(dayOffsetPicker).setValue(any());
 
-        doAnswer(v -> {
+        when(dayOffsetPicker.getValue()).thenAnswer(v -> {
             return dayOffset;
-        }).when(dayOffsetPicker).getValue();
+        });
 
         doAnswer(v -> {
             localTime = v.getArgument(0);
             return null;
         }).when(timePicker).setValue(any());
 
-        doAnswer(v -> {
+        when(timePicker.getValue()).thenAnswer(v -> {
             return localTime;
-        }).when(timePicker).getValue();
+        });
 
         testedRotationTimeSelector = spy(new RotationTimeSelector(dayOffsetPicker, timePicker, tenantStore));
         RosterState rs = new RosterState();

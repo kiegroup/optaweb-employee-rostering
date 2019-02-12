@@ -76,7 +76,7 @@ public class LocalDatePicker implements TakesValue<LocalDate>,
         datePicker.on("dp.change", () -> {
             String value = datePickerTextField.value;
             LocalDate oldValue = getValue();
-            if (value != null) {
+            if (value != null && !value.isEmpty()) {
                 setValue(LocalDate.parse(MomentJs.moment(value, DATE_FORMAT_STRING).format("YYYY-MM-DD")));
             } else {
                 setValue(null);

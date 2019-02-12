@@ -35,8 +35,8 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AbstractFormPopup;
+import org.optaweb.employeerostering.gwtui.client.common.CallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
@@ -77,10 +77,13 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
 
     private TranslationService translationService;
 
+    private CallbackFactory callbackFactory;
+
     private ShiftTemplateGridObject shiftTemplateGridObject;
 
     @Inject
     public ShiftTemplateEditForm(PopupFactory popupFactory,
+                                 CallbackFactory callbackFactory,
                                  HTMLDivElement root,
                                  @Named("span") HTMLElement popupTitle,
                                  HTMLButtonElement closeButton,
@@ -95,6 +98,7 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
                                  EventManager eventManager,
                                  TranslationService translationService) {
         super(popupFactory, root, popupTitle, closeButton, cancelButton);
+        this.callbackFactory = callbackFactory;
         this.from = from;
         this.to = to;
         this.spotSelect = spotSelect;
@@ -115,7 +119,9 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
     }
 
     public void createNewShiftTemplate() {
-        setup(new ShiftTemplateView(tenantStore.getCurrentTenantId(), new ShiftTemplate(tenantStore.getCurrentTenantId(), new Spot(), 0, LocalTime.MIDNIGHT, 1, LocalTime.MIDNIGHT)));
+        setup(new ShiftTemplateView(tenantStore.getCurrentTenantId(),
+                                    new ShiftTemplate(tenantStore.getCurrentTenantId(),
+                                                      new Spot(), 0, LocalTime.MIDNIGHT, 1, LocalTime.MIDNIGHT)));
         spotSelect.setEnabled(true);
         deleteButton.remove();
         setTitle(translationService.format(I18nKeys.ShiftRosterToolbar_createShift));
@@ -126,7 +132,7 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
         employeeSelect.clear();
         employeeSelect.addItem(translationService.format(I18nKeys.Shift_unassigned), "-1");
 
-        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spots -> {
+        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), callbackFactory.onSuccess(spots -> {
             spots.forEach(s -> this.spotSelect.addItem(s.getName(), s.getId().toString()));
             Optional<Spot> mySpot = spots.stream().filter(s -> s.getId().equals(shiftTemplateView.getSpotId())).findAny();
             if (mySpot.isPresent()) {
@@ -136,9 +142,11 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
             }
         }));
 
-        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
+        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), callbackFactory.onSuccess(employees -> {
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
-            Optional<Employee> myEmployee = employees.stream().filter(s -> s.getId().equals(shiftTemplateView.getRotationEmployeeId())).findAny();
+            Optional<Employee> myEmployee = employees.stream().filter(s -> s.getId()
+                    .equals(shiftTemplateView
+                                    .getRotationEmployeeId())).findAny();
             if (myEmployee.isPresent()) {
                 employeeSelect.setSelectedIndex(employees.indexOf(myEmployee.get()) + 1);
             } else {
@@ -148,10 +156,14 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
 
         long startDayOffset = shiftTemplateView.getDurationBetweenReferenceAndStart().toDays();
         from.setDayOffset((int) startDayOffset);
-        from.setTime(LocalTime.MIDNIGHT.plusSeconds(shiftTemplateView.getDurationBetweenReferenceAndStart().minusDays(startDayOffset).getSeconds()));
-        long endDayOffset = shiftTemplateView.getDurationBetweenReferenceAndStart().plus(shiftTemplateView.getShiftTemplateDuration()).toDays();
+        from.setTime(LocalTime.MIDNIGHT.plusSeconds(shiftTemplateView.getDurationBetweenReferenceAndStart()
+                                                            .minusDays(startDayOffset).getSeconds()));
+        long endDayOffset = shiftTemplateView.getDurationBetweenReferenceAndStart()
+                .plus(shiftTemplateView.getShiftTemplateDuration()).toDays();
         to.setDayOffset((int) endDayOffset);
-        to.setTime(LocalTime.MIDNIGHT.plusSeconds(shiftTemplateView.getDurationBetweenReferenceAndStart().plus(shiftTemplateView.getShiftTemplateDuration()).minusDays(endDayOffset).getSeconds()));
+        to.setTime(LocalTime.MIDNIGHT.plusSeconds(shiftTemplateView.getDurationBetweenReferenceAndStart().
+                plus(shiftTemplateView.getShiftTemplateDuration())
+                                                          .minusDays(endDayOffset).getSeconds()));
     }
 
     @Override
@@ -171,7 +183,7 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
             final Duration oldDurationOfTemplate = template.getShiftTemplateDuration();
 
             if (updateShiftTemplateFromWidgetsIfValid(template)) {
-                RotationRestServiceBuilder.updateShiftTemplate(template.getTenantId(), template, FailureShownRestCallback.onSuccess((final ShiftTemplateView updatedShiftTemplate) -> {
+                RotationRestServiceBuilder.updateShiftTemplate(template.getTenantId(), template, callbackFactory.onSuccess((final ShiftTemplateView updatedShiftTemplate) -> {
                     shiftTemplateGridObject.getShiftTemplateModel().withShiftTemplateView(updatedShiftTemplate);
                     shiftTemplateGridObject.setSelected(false);
                     eventManager.fireEvent(ROTATION_INVALIDATE);
@@ -191,19 +203,7 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
             template.setTenantId(tenantStore.getCurrentTenantId());
 
             if (updateShiftTemplateFromWidgetsIfValid(template)) {
-                template.setRotationEmployeeId(parseId(employeeSelect.getSelectedValue()));
-                Duration newDurationFromReference = Duration.ofDays(from.getDayOffset()).plusSeconds(from.getTime().toSecondOfDay());
-                Duration newDurationOfTemplate;
-                if (to.getDayOffset() >= from.getDayOffset()) {
-                    newDurationOfTemplate = Duration.ofDays(to.getDayOffset()).plusSeconds(to.getTime().toSecondOfDay()).minus(newDurationFromReference);
-                } else {
-                    newDurationOfTemplate = Duration.ofDays(to.getRotationLength()).minus(newDurationFromReference).plusDays(to.getDayOffset()).plusSeconds(to.getTime().toSecondOfDay());
-                }
-                template.setDurationBetweenRotationStartAndTemplateStart(newDurationFromReference);
-                template.setShiftTemplateDuration(newDurationOfTemplate);
-                template.setTenantId(tenantStore.getCurrentTenantId());
-
-                RotationRestServiceBuilder.addShiftTemplate(tenantStore.getCurrentTenantId(), template, FailureShownRestCallback.onSuccess(v -> {
+                RotationRestServiceBuilder.addShiftTemplate(tenantStore.getCurrentTenantId(), template, callbackFactory.onSuccess(v -> {
                     hide();
                     eventManager.fireEvent(ROTATION_INVALIDATE);
                 }));
@@ -217,7 +217,7 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
     public void onDeleteButtonClick(@ForEvent("click") final MouseEvent e) {
         final ShiftTemplateView shiftTemplateView = shiftTemplateGridObject.getShiftTemplateModel().getShiftTemplateView();
 
-        RotationRestServiceBuilder.removeShiftTemplate(shiftTemplateView.getTenantId(), shiftTemplateView.getId(), FailureShownRestCallback.onSuccess(v -> {
+        RotationRestServiceBuilder.removeShiftTemplate(shiftTemplateView.getTenantId(), shiftTemplateView.getId(), callbackFactory.onSuccess(v -> {
             shiftTemplateGridObject.getLane().removeGridObject(shiftTemplateGridObject.getShiftTemplateModel());
             hide();
         }));
@@ -236,9 +236,11 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
             Duration newDurationFromReference = Duration.ofDays(from.getDayOffset()).plusSeconds(from.getTime().toSecondOfDay());
             Duration newDurationOfTemplate;
             if (to.getDayOffset() >= from.getDayOffset()) {
-                newDurationOfTemplate = Duration.ofDays(to.getDayOffset()).plusSeconds(to.getTime().toSecondOfDay()).minus(newDurationFromReference);
+                newDurationOfTemplate = Duration.ofDays(to.getDayOffset()).plusSeconds(to.getTime().toSecondOfDay())
+                        .minus(newDurationFromReference);
             } else {
-                newDurationOfTemplate = Duration.ofDays(to.getRotationLength()).minus(newDurationFromReference).plusDays(to.getDayOffset()).plusSeconds(to.getTime().toSecondOfDay());
+                newDurationOfTemplate = Duration.ofDays(to.getRotationLength()).minus(newDurationFromReference)
+                        .plusDays(to.getDayOffset()).plusSeconds(to.getTime().toSecondOfDay());
             }
             template.setDurationBetweenRotationStartAndTemplateStart(newDurationFromReference);
             template.setShiftTemplateDuration(newDurationOfTemplate);
