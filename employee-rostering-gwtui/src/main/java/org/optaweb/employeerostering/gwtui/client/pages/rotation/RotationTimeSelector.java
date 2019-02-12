@@ -21,6 +21,7 @@ import java.time.LocalTime;
 import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.IntegerBox;
+import org.gwtbootstrap3.client.ui.form.validator.BlankValidator;
 import org.gwtbootstrap3.client.ui.form.validator.DecimalMaxValidator;
 import org.gwtbootstrap3.client.ui.form.validator.DecimalMinValidator;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -54,9 +55,14 @@ public class RotationTimeSelector {
 
     protected void setRotationLength(RosterState rs) {
         rotationLength = rs.getRotationLength();
+        dayOffsetPicker.addValidator(new BlankValidator<Integer>());
         dayOffsetPicker.addValidator(new DecimalMinValidator<Integer>(1));
         dayOffsetPicker.addValidator(new DecimalMaxValidator<Integer>(rotationLength));
         setDayOffset(offset);
+    }
+
+    public boolean reportValidity() {
+        return dayOffsetPicker.validate(true) && timePicker.reportValidity();
     }
 
     public void setDayOffset(int dayOffset) {

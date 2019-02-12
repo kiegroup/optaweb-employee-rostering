@@ -110,4 +110,38 @@ public class RotationTimeSelectorTest {
         assertThat(testedRotationTimeSelector.getTime()).isEqualTo(LocalTime.NOON);
         callOrder.verify(timePicker).getValue();
     }
+
+    @Test
+    public void testValidReportValidity() {
+        when(timePicker.reportValidity()).thenReturn(true);
+        when(dayOffsetPicker.validate(true)).thenReturn(true);
+
+        boolean isValid = testedRotationTimeSelector.reportValidity();
+
+        assertThat(isValid).isTrue();
+        verify(timePicker).reportValidity();
+        verify(dayOffsetPicker).validate(true);
+    }
+
+    @Test
+    public void testInvalidTimeReportValidity() {
+        when(timePicker.reportValidity()).thenReturn(false);
+        when(dayOffsetPicker.validate(true)).thenReturn(true);
+
+        boolean isValid = testedRotationTimeSelector.reportValidity();
+
+        assertThat(isValid).isFalse();
+        verify(timePicker).reportValidity();
+    }
+
+    @Test
+    public void testInvalidOffsetReportValidity() {
+        when(timePicker.reportValidity()).thenReturn(true);
+        when(dayOffsetPicker.validate(true)).thenReturn(false);
+
+        boolean isValid = testedRotationTimeSelector.reportValidity();
+
+        assertThat(isValid).isFalse();
+        verify(dayOffsetPicker).validate(true);
+    }
 }
