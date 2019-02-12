@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 
 import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import elemental2.promise.Promise;
 import elemental2.promise.Promise.PromiseExecutorCallbackFn;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
@@ -36,18 +35,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.pages.AbstractViewportTest;
-import org.optaweb.employeerostering.gwtui.client.pages.shiftroster.ShiftGridObject;
-import org.optaweb.employeerostering.gwtui.client.pages.shiftroster.ShiftRosterMetadata;
-import org.optaweb.employeerostering.gwtui.client.pages.shiftroster.ShiftRosterPageViewport;
-import org.optaweb.employeerostering.gwtui.client.pages.shiftroster.ShiftRosterPageViewportBuilder;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
@@ -55,6 +46,15 @@ import org.optaweb.employeerostering.shared.roster.RosterState;
 import org.optaweb.employeerostering.shared.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.shared.shift.view.ShiftView;
 import org.optaweb.employeerostering.shared.spot.Spot;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class ShiftRosterBuilderTest extends AbstractViewportTest {
@@ -89,47 +89,34 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
-        Mockito.when(lockableLaneMap.acquireIfPossible(Mockito.any())).thenAnswer(new Answer<Boolean>() {
-
-            @Override
-            public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                Consumer arg = invocation.getArgument(0);
-                arg.accept(laneMap);
-                return true;
-            }
+        //MockitoAnnotations.initMocks(this);
+        when(lockableLaneMap.acquireIfPossible(any())).thenAnswer(invocation -> {
+            Consumer arg = invocation.getArgument(0);
+            arg.accept(laneMap);
+            return true;
         });
-        Mockito.when(tenantStore.getCurrentTenantId()).thenReturn(0);
-        Mockito.when(promiseUtils.promise(Mockito.any())).thenAnswer(new Answer<Promise>() {
-
-            @Override
-            public Promise answer(InvocationOnMock invocation) throws Throwable {
-                PromiseExecutorCallbackFn arg = invocation.getArgument(0);
-                return promise(arg);
-            }
+        when(tenantStore.getCurrentTenantId()).thenReturn(0);
+        when(promiseUtils.promise(any())).thenAnswer(invocation -> {
+            PromiseExecutorCallbackFn arg = invocation.getArgument(0);
+            return promise(arg);
         });
-        Mockito.doAnswer(new Answer<Void>() {
-
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                ShiftRosterView spv = invocation.getArgument(0);
-                RepeatingCommand rc = builder.getWorkerCommand(spv, lockableLaneMap, 0);
-                while (rc.execute()) {
-                    // Wait for worker to finish
-                }
-                return null;
+        doAnswer(invocation -> {
+            ShiftRosterView spv = invocation.getArgument(0);
+            RepeatingCommand rc = builder.getWorkerCommand(spv, lockableLaneMap, 0);
+            while (rc.execute()) {
+                // Wait for worker to finish
             }
-        }).when(viewport).refresh(Mockito.any());
+            return null;
+        }).when(viewport).refresh(any());
 
-        builder = Mockito.spy(builder);
-        Mockito.doAnswer(new Answer() {
+        builder = spy(builder);
 
-            @SuppressWarnings("unchecked")
-            public Promise<ShiftRosterView> answer(InvocationOnMock invocation) {
-                return promise((res, rej) -> {
-                    res.onInvoke(resolveValue(shiftRosterView));
-                });
-            }
+        // Mockito disallows when(spy.method()).thenAnswer(answer)
+        // But allows doAnswer(answer).when(spy).method()
+        doAnswer(invocation -> {
+            return promise((res, rej) -> {
+                res.onInvoke(resolveValue(shiftRosterView));
+            });
         }).when(builder).getShiftRosterView();
     }
 
@@ -168,15 +155,15 @@ public class ShiftRosterBuilderTest extends AbstractViewportTest {
         shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewMap);
 
         laneMap = new HashMap<>();
-        Lane<LocalDateTime, ShiftRosterMetadata> laneAMock = Mockito.mock(Lane.class);
-        Lane<LocalDateTime, ShiftRosterMetadata> laneBMock = Mockito.mock(Lane.class);
+        Lane<LocalDateTime, ShiftRosterMetadata> laneAMock = mock(Lane.class);
+        Lane<LocalDateTime, ShiftRosterMetadata> laneBMock = mock(Lane.class);
 
         laneMap.put(spotA.getId(), laneAMock);
         laneMap.put(spotB.getId(), laneBMock);
 
         builder.buildShiftRosterViewport(viewport).then((v) -> {
-            Mockito.verify(laneAMock).addOrUpdateGridObject(Mockito.eq(ShiftGridObject.class), Mockito.isNull(), Mockito.any(), Mockito.any());
-            Mockito.verify(laneBMock).addOrUpdateGridObject(Mockito.eq(ShiftGridObject.class), Mockito.isNull(), Mockito.any(), Mockito.any());
+            verify(laneAMock).addOrUpdateGridObject(eq(ShiftGridObject.class), isNull(), any(), any());
+            verify(laneBMock).addOrUpdateGridObject(eq(ShiftGridObject.class), isNull(), any(), any());
             // TODO: Add more verification tests
             return null;
         });

@@ -25,14 +25,13 @@ import elemental2.promise.Promise;
 import elemental2.promise.Promise.PromiseExecutorCallbackFn;
 import elemental2.promise.Promise.PromiseExecutorCallbackFn.ResolveCallbackFn.ResolveUnionType;
 import jsinterop.annotations.JsOverlay;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.LinearScale;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.SingleGridObject;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public abstract class AbstractViewportTest {
 
@@ -48,24 +47,20 @@ public abstract class AbstractViewportTest {
 
     @SuppressWarnings("unchecked")
     public <T> Promise<T> promise(PromiseExecutorCallbackFn callback) {
-        Promise<T> promise = Mockito.mock(Promise.class);
+        Promise<T> promise = mock(Promise.class);
         if (rootPromise == null) {
             rootPromise = callback;
         }
-        Mockito.doAnswer(new Answer() {
-
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                ThenOnFulfilledCallbackFn onFulfilled = invocation.getArgument(0);
-                Object[] out = new Object[1];
-                rootPromise.onInvoke((res) -> {
-                    out[0] = onFulfilled.onInvoke(res.asT());
-                }, (rej) -> {
-                });
-                rootPromise = getCallbackFn(out[0]);
-                return promise(rootPromise);
-            }
-        }).when(promise).then(Mockito.any());
+        when(promise.then(any())).thenAnswer(invocation -> {
+            ThenOnFulfilledCallbackFn onFulfilled = invocation.getArgument(0);
+            Object[] out = new Object[1];
+            rootPromise.onInvoke((res) -> {
+                out[0] = onFulfilled.onInvoke(res.asT());
+            }, (rej) -> {
+            });
+            rootPromise = getCallbackFn(out[0]);
+            return promise(rootPromise);
+        });
         return promise;
     }
 

@@ -101,7 +101,7 @@ public class LocalWeekDatePicker
         weeklyDatePicker.on("dp.change", () -> {
             String value = weeklyDatePickerTextField.value;
             LocalDate oldValue = getValue();
-            if (value != null) {
+            if (value != null && !value.isEmpty()) {
                 String firstDate = MomentJs.moment(value, DATE_FORMAT_STRING).day(0).format(DATE_FORMAT_STRING);
                 String lastDate = MomentJs.moment(value, DATE_FORMAT_STRING).day(6).format(DATE_FORMAT_STRING);
                 setValue(LocalDate.parse(MomentJs.moment(value).day(0).format("YYYY-MM-DD")));

@@ -20,12 +20,12 @@ import org.mockito.Mock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class KiePagerTest {
@@ -62,11 +62,11 @@ public class KiePagerTest {
     @Before
     public void setUp() throws Exception {
 
-        doReturn(previousPageButtonElement).when(previousPageButton).getElement();
-        doReturn(previousPageButtonParentElement).when(previousPageButtonElement).getParentElement();
+        when(previousPageButton.getElement()).thenReturn(previousPageButtonElement);
+        when(previousPageButtonElement.getParentElement()).thenReturn(previousPageButtonParentElement);
 
-        doReturn(nextPageButtonElement).when(nextPageButton).getElement();
-        doReturn(nextPageButtonParentElement).when(nextPageButtonElement).getParentElement();
+        when(nextPageButton.getElement()).thenReturn(nextPageButtonElement);
+        when(nextPageButtonElement.getParentElement()).thenReturn(nextPageButtonParentElement);
 
         testedKiePager = spy(new KiePager<>(currentRange,
                                             rowCount,
@@ -177,7 +177,7 @@ public class KiePagerTest {
     public void testRowCountChange() {
         final RowCountChangeEvent.Handler handler = mock(RowCountChangeEvent.Handler.class);
         final RowCountChangeEvent event = mock(RowCountChangeEvent.class);
-        doReturn(RowCountChangeEvent.getType()).when(event).getAssociatedType();
+        when(event.getAssociatedType()).thenReturn(RowCountChangeEvent.getType());
 
         testedKiePager.addRowCountChangeHandler(handler);
         testedKiePager.fireEvent(event);
