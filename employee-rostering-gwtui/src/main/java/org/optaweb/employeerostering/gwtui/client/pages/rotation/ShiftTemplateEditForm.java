@@ -37,13 +37,13 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AbstractFormPopup;
 import org.optaweb.employeerostering.gwtui.client.common.CallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
+import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeRestServiceBuilder;
 import org.optaweb.employeerostering.shared.rotation.RotationRestServiceBuilder;
-import org.optaweb.employeerostering.shared.rotation.ShiftTemplate;
 import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.spot.SpotRestServiceBuilder;
@@ -79,11 +79,14 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
 
     private CallbackFactory callbackFactory;
 
+    private NotificationFactory notificationFactory;
+
     private ShiftTemplateGridObject shiftTemplateGridObject;
 
     @Inject
     public ShiftTemplateEditForm(PopupFactory popupFactory,
                                  CallbackFactory callbackFactory,
+                                 NotificationFactory notificationFactory,
                                  HTMLDivElement root,
                                  @Named("span") HTMLElement popupTitle,
                                  HTMLButtonElement closeButton,
@@ -99,6 +102,7 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
                                  TranslationService translationService) {
         super(popupFactory, root, popupTitle, closeButton, cancelButton);
         this.callbackFactory = callbackFactory;
+        this.notificationFactory = notificationFactory;
         this.from = from;
         this.to = to;
         this.spotSelect = spotSelect;
@@ -116,16 +120,6 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
         final ShiftTemplateView template = shiftTemplateGridObject.getShiftTemplateModel().getShiftTemplateView();
         setup(template);
         showFor(shiftTemplateGridObject);
-    }
-
-    public void createNewShiftTemplate() {
-        setup(new ShiftTemplateView(tenantStore.getCurrentTenantId(),
-                                    new ShiftTemplate(tenantStore.getCurrentTenantId(),
-                                                      new Spot(), 0, LocalTime.MIDNIGHT, 1, LocalTime.MIDNIGHT)));
-        spotSelect.setEnabled(true);
-        deleteButton.remove();
-        setTitle(translationService.format(I18nKeys.ShiftRosterToolbar_createShift));
-        show();
     }
 
     private void setup(ShiftTemplateView shiftTemplateView) {
@@ -178,9 +172,6 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
         if (shiftTemplateGridObject != null) {
 
             final ShiftTemplateView template = shiftTemplateGridObject.getShiftTemplateModel().getShiftTemplateView();
-            final Long oldEmployee = template.getRotationEmployeeId();
-            final Duration oldDurationFromReference = template.getDurationBetweenRotationStartAndTemplateStart();
-            final Duration oldDurationOfTemplate = template.getShiftTemplateDuration();
 
             if (updateShiftTemplateFromWidgetsIfValid(template)) {
                 RotationRestServiceBuilder.updateShiftTemplate(template.getTenantId(), template, callbackFactory.onSuccess((final ShiftTemplateView updatedShiftTemplate) -> {
@@ -188,26 +179,10 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
                     shiftTemplateGridObject.setSelected(false);
                     eventManager.fireEvent(ROTATION_INVALIDATE);
                     hide();
-                }).onFailure(i -> {
-                    template.setRotationEmployeeId(oldEmployee);
-                    template.setDurationBetweenRotationStartAndTemplateStart(oldDurationFromReference);
-                    template.setShiftTemplateDuration(oldDurationOfTemplate);
-                }).onError(i -> {
-                    template.setRotationEmployeeId(oldEmployee);
-                    template.setDurationBetweenRotationStartAndTemplateStart(oldDurationFromReference);
-                    template.setShiftTemplateDuration(oldDurationOfTemplate);
                 }));
             }
         } else {
-            final ShiftTemplateView template = new ShiftTemplateView();
-            template.setTenantId(tenantStore.getCurrentTenantId());
-
-            if (updateShiftTemplateFromWidgetsIfValid(template)) {
-                RotationRestServiceBuilder.addShiftTemplate(tenantStore.getCurrentTenantId(), template, callbackFactory.onSuccess(v -> {
-                    hide();
-                    eventManager.fireEvent(ROTATION_INVALIDATE);
-                }));
-            }
+            throw new IllegalStateException("shiftTemplateGridObject is null.");
         }
 
         e.stopPropagation();
@@ -217,9 +192,11 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
     public void onDeleteButtonClick(@ForEvent("click") final MouseEvent e) {
         final ShiftTemplateView shiftTemplateView = shiftTemplateGridObject.getShiftTemplateModel().getShiftTemplateView();
 
-        RotationRestServiceBuilder.removeShiftTemplate(shiftTemplateView.getTenantId(), shiftTemplateView.getId(), callbackFactory.onSuccess(v -> {
-            shiftTemplateGridObject.getLane().removeGridObject(shiftTemplateGridObject.getShiftTemplateModel());
-            hide();
+        RotationRestServiceBuilder.removeShiftTemplate(shiftTemplateView.getTenantId(), shiftTemplateView.getId(), callbackFactory.onSuccess(success -> {
+            if (success) {
+                shiftTemplateGridObject.getLane().removeGridObject(shiftTemplateGridObject.getShiftTemplateModel());
+                hide();
+            }
         }));
         e.stopPropagation();
     }
@@ -231,6 +208,12 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
         final Duration oldDurationOfTemplate = template.getShiftTemplateDuration();
 
         try {
+            if (!from.reportValidity()) {
+                throw new ValidationException("Rotation shift's start day offset/time is invalid.");
+            }
+            if (!to.reportValidity()) {
+                throw new ValidationException("Rotation shift's end day offset/time is invalid.");
+            }
             template.setSpotId(parseId(spotSelect.getSelectedValue()));
             template.setRotationEmployeeId(parseId(employeeSelect.getSelectedValue()));
             Duration newDurationFromReference = Duration.ofDays(from.getDayOffset()).plusSeconds(from.getTime().toSecondOfDay());
@@ -250,6 +233,7 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
             template.setRotationEmployeeId(oldEmployee);
             template.setDurationBetweenRotationStartAndTemplateStart(oldDurationFromReference);
             template.setShiftTemplateDuration(oldDurationOfTemplate);
+            notificationFactory.showError(invalidField);
             return false;
         }
     }
