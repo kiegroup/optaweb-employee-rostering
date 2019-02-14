@@ -27,13 +27,12 @@ import elemental2.dom.HTMLElement;
 import elemental2.dom.MouseEvent;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
-import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.GridObject;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.AbstractHasTimeslotGridObject;
+import org.optaweb.employeerostering.gwtui.client.viewport.powers.ClickableDecorator;
 import org.optaweb.employeerostering.gwtui.client.viewport.powers.DraggabilityDecorator;
 import org.optaweb.employeerostering.gwtui.client.viewport.powers.ResizabilityDecorator;
 import org.optaweb.employeerostering.shared.common.HasTimeslot;
@@ -55,6 +54,8 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     private DraggabilityDecorator<LocalDateTime, RotationMetadata> draggability;
     @Inject
     private ResizabilityDecorator<LocalDateTime, RotationMetadata> resizability;
+    @Inject
+    private ClickableDecorator<LocalDateTime, RotationMetadata> clickable;
     @Inject
     private ManagedInstance<ShiftTemplateEditForm> shiftTemplateEditFormFactory;
 
@@ -102,6 +103,7 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
         }
         draggability.applyFor(this, lane.getScale());
         resizability.applyFor(this, lane.getScale());
+        clickable.applyFor(this).onClick(this::onClick);
     }
 
     private void updatePositionInLane() {
@@ -138,8 +140,8 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
         }
     }
 
-    @EventHandler("root")
-    private void onClick(@ForEvent("click") MouseEvent e) {
+    //@EventHandler("root")
+    private void onClick(/* @ForEvent("click") */ MouseEvent e) {
         if (e.shiftKey) {
             getLane().removeGridObject(model);
         } else {

@@ -258,7 +258,7 @@ public class ShiftTemplateEditFormTest {
     }
 
     @Test
-    public void testValidUpdateShiftFromWidgetsIfValid() {
+    public void testValidUpdateShiftTemplateFromWidgetsIfValid() {
         final int NEW_SELECTED_SPOT = 3;
         final int NEW_SELECTED_EMPLOYEE = 1;
 
@@ -270,6 +270,8 @@ public class ShiftTemplateEditFormTest {
         when(to.getTime()).thenReturn(LATER_LOCAL_TIME);
         when(from.reportValidity()).thenReturn(true);
         when(to.reportValidity()).thenReturn(true);
+        when(from.getRotationLength()).thenReturn(7);
+        when(to.getRotationLength()).thenReturn(7);
 
         boolean out = testedShiftTemplateEditForm.updateShiftTemplateFromWidgetsIfValid(shiftTemplateView);
 
@@ -282,6 +284,10 @@ public class ShiftTemplateEditFormTest {
         verify(from, atLeastOnce()).getTime();
         verify(to, atLeastOnce()).getDayOffset();
         verify(to, atLeastOnce()).getTime();
+        verify(testedShiftTemplateEditForm, atLeastOnce()).fromDayOffsetAndTimeToDuration(from.getDayOffset(), from.getTime());
+        verify(testedShiftTemplateEditForm, atLeastOnce()).getDurationOfShiftTemplate(from.getDayOffset(), from.getTime(),
+                                                                                      to.getDayOffset(), to.getTime(),
+                                                                                      to.getRotationLength());
 
         assertThat(shiftTemplateView.getSpotId()).isEqualTo(spotList.get(NEW_SELECTED_SPOT).getId());
         assertThat(shiftTemplateView.getRotationEmployeeId()).isEqualTo(employeeList.get(NEW_SELECTED_EMPLOYEE).getId());
@@ -290,9 +296,27 @@ public class ShiftTemplateEditFormTest {
         assertThat(shiftTemplateView.getShiftTemplateDuration()).isEqualTo(DURATION_OF_SHIFT);
         assertThat(out).isTrue();
     }
+    
+    @Test
+    public void testFromDayOffsetAndTimeToDuration() {
+        assertThat(testedShiftTemplateEditForm.fromDayOffsetAndTimeToDuration(3, LocalTime.NOON))
+            .isEqualTo(Duration.ofDays(3).plusSeconds(LocalTime.NOON.toSecondOfDay()));
+    }
+    
+    @Test
+    public void testGetDurationOfShiftTemplate() {
+        assertThat(testedShiftTemplateEditForm.getDurationOfShiftTemplate(3, LocalTime.NOON, 5, LocalTime.NOON, 7))
+            .isEqualTo(Duration.ofDays(2));
+        assertThat(testedShiftTemplateEditForm.getDurationOfShiftTemplate(3, LocalTime.MIN, 5, LocalTime.NOON, 7))
+            .isEqualTo(Duration.ofDays(2).plusSeconds(LocalTime.NOON.toSecondOfDay()));
+        assertThat(testedShiftTemplateEditForm.getDurationOfShiftTemplate(3, LocalTime.NOON, 5, LocalTime.NOON, 7))
+            .isEqualTo(Duration.ofDays(2));
+        assertThat(testedShiftTemplateEditForm.getDurationOfShiftTemplate(6, LocalTime.NOON, 0, LocalTime.of(3, 0), 7))
+            .isEqualTo(Duration.ofHours(15));
+    }
 
     @Test
-    public void testUpdateShiftFromForm() {
+    public void testUpdateShiftTemplateFromForm() {
         restCallbackAnswers.add(spotList);
         restCallbackAnswers.add(employeeList);
         testedShiftTemplateEditForm.init(mockShiftTemplateGridObject);
@@ -329,7 +353,7 @@ public class ShiftTemplateEditFormTest {
     }
 
     @Test
-    public void testInvalidUpdateShiftFromForm() {
+    public void testInvalidUpdateShiftTemplateFromForm() {
         restCallbackAnswers.add(spotList);
         restCallbackAnswers.add(employeeList);
         testedShiftTemplateEditForm.init(mockShiftTemplateGridObject);
