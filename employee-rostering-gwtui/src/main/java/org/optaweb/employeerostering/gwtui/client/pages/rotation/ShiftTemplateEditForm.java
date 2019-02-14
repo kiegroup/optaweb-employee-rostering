@@ -216,15 +216,10 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
             }
             template.setSpotId(parseId(spotSelect.getSelectedValue()));
             template.setRotationEmployeeId(parseId(employeeSelect.getSelectedValue()));
-            Duration newDurationFromReference = Duration.ofDays(from.getDayOffset()).plusSeconds(from.getTime().toSecondOfDay());
-            Duration newDurationOfTemplate;
-            if (to.getDayOffset() >= from.getDayOffset()) {
-                newDurationOfTemplate = Duration.ofDays(to.getDayOffset()).plusSeconds(to.getTime().toSecondOfDay())
-                        .minus(newDurationFromReference);
-            } else {
-                newDurationOfTemplate = Duration.ofDays(to.getRotationLength()).minus(newDurationFromReference)
-                        .plusDays(to.getDayOffset()).plusSeconds(to.getTime().toSecondOfDay());
-            }
+            Duration newDurationFromReference = fromDayOffsetAndTimeToDuration(from.getDayOffset(), from.getTime());
+            Duration newDurationOfTemplate = getDurationOfShiftTemplate(from.getDayOffset(), from.getTime(),
+                                                                        to.getDayOffset(), to.getTime(),
+                                                                        to.getRotationLength());
             template.setDurationBetweenRotationStartAndTemplateStart(newDurationFromReference);
             template.setShiftTemplateDuration(newDurationOfTemplate);
             return true;
@@ -236,6 +231,24 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
             notificationFactory.showError(invalidField);
             return false;
         }
+    }
+    
+    public Duration fromDayOffsetAndTimeToDuration(int dayOffset, LocalTime time){
+        return Duration.ofDays(dayOffset).plusSeconds(time.toSecondOfDay());
+    }
+    
+    public Duration getDurationOfShiftTemplate(int startDayOffset, LocalTime startTime,
+                                               int endDayOffset, LocalTime endTime,
+                                               int rotationLength) {
+        Duration durationFromStart = fromDayOffsetAndTimeToDuration(startDayOffset, startTime);
+        if (endDayOffset >= startDayOffset) {
+            return Duration.ofDays(endDayOffset).plusSeconds(endTime.toSecondOfDay())
+                    .minus(durationFromStart);
+        } else {
+            return Duration.ofDays(rotationLength).minus(durationFromStart)
+                    .plusDays(endDayOffset).plusSeconds(endTime.toSecondOfDay());
+        }
+        
     }
 
     private Long parseId(String text) {
