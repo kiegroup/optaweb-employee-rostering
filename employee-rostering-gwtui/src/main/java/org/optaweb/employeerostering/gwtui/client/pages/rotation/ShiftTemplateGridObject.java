@@ -140,8 +140,7 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
         }
     }
 
-    //@EventHandler("root")
-    private void onClick(/* @ForEvent("click") */ MouseEvent e) {
+    private void onClick(MouseEvent e) {
         if (e.shiftKey) {
             getLane().removeGridObject(model);
         } else {

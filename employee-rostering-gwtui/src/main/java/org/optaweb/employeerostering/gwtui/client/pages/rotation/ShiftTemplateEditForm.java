@@ -232,11 +232,11 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
             return false;
         }
     }
-    
-    public Duration fromDayOffsetAndTimeToDuration(int dayOffset, LocalTime time){
+
+    public Duration fromDayOffsetAndTimeToDuration(int dayOffset, LocalTime time) {
         return Duration.ofDays(dayOffset).plusSeconds(time.toSecondOfDay());
     }
-    
+
     public Duration getDurationOfShiftTemplate(int startDayOffset, LocalTime startTime,
                                                int endDayOffset, LocalTime endTime,
                                                int rotationLength) {
@@ -248,7 +248,6 @@ public class ShiftTemplateEditForm extends AbstractFormPopup {
             return Duration.ofDays(rotationLength).minus(durationFromStart)
                     .plusDays(endDayOffset).plusSeconds(endTime.toSecondOfDay());
         }
-        
     }
 
     private Long parseId(String text) {

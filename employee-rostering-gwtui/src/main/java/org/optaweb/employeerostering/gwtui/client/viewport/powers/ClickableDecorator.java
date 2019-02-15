@@ -7,27 +7,28 @@ import elemental2.dom.MouseEvent;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.GridObject;
 
 public class ClickableDecorator<T, M> {
+
     private Consumer<MouseEvent> onClick;
-    
+
     private double startX;
     private double startY;
     private double dx;
     private double dy;
-    
+
     private final double MOVE_TOLERANCE = 20;
-    
-    public ClickableDecorator<T,M> applyFor(GridObject<T, M> gridObject) {
+
+    public ClickableDecorator<T, M> applyFor(GridObject<T, M> gridObject) {
         gridObject.getElement().addEventListener("mousedown", this::gridObjectMouseDownListener);
         gridObject.getElement().addEventListener("mousemove", this::gridObjectMouseMoveListener);
-        gridObject.getElement().addEventListener("mouseclick", this::gridObjectMouseClickListener);
+        gridObject.getElement().addEventListener("click", this::gridObjectMouseClickListener);
         return this;
     }
-    
-    public ClickableDecorator<T,M> onClick(Consumer<MouseEvent> onClick) {
+
+    public ClickableDecorator<T, M> onClick(Consumer<MouseEvent> onClick) {
         this.onClick = onClick;
         return this;
     }
-    
+
     public void gridObjectMouseDownListener(Event event) {
         MouseEvent mouseEvent = (MouseEvent) event;
         startX = mouseEvent.screenX;
@@ -35,7 +36,7 @@ public class ClickableDecorator<T, M> {
         dx = 0;
         dy = 0;
     }
-    
+
     public void gridObjectMouseMoveListener(Event event) {
         MouseEvent mouseEvent = (MouseEvent) event;
         dx += Math.abs(startX - mouseEvent.screenX);
@@ -43,7 +44,7 @@ public class ClickableDecorator<T, M> {
         startX = mouseEvent.screenX;
         startY = mouseEvent.screenY;
     }
-    
+
     public void gridObjectMouseClickListener(Event event) {
         MouseEvent mouseEvent = (MouseEvent) event;
         if (dx + dy <= MOVE_TOLERANCE) {
