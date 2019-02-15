@@ -296,23 +296,23 @@ public class ShiftTemplateEditFormTest {
         assertThat(shiftTemplateView.getShiftTemplateDuration()).isEqualTo(DURATION_OF_SHIFT);
         assertThat(out).isTrue();
     }
-    
+
     @Test
     public void testFromDayOffsetAndTimeToDuration() {
         assertThat(testedShiftTemplateEditForm.fromDayOffsetAndTimeToDuration(3, LocalTime.NOON))
-            .isEqualTo(Duration.ofDays(3).plusSeconds(LocalTime.NOON.toSecondOfDay()));
+                .isEqualTo(Duration.ofDays(3).plusSeconds(LocalTime.NOON.toSecondOfDay()));
     }
-    
+
     @Test
     public void testGetDurationOfShiftTemplate() {
         assertThat(testedShiftTemplateEditForm.getDurationOfShiftTemplate(3, LocalTime.NOON, 5, LocalTime.NOON, 7))
-            .isEqualTo(Duration.ofDays(2));
+                .isEqualTo(Duration.ofDays(2));
         assertThat(testedShiftTemplateEditForm.getDurationOfShiftTemplate(3, LocalTime.MIN, 5, LocalTime.NOON, 7))
-            .isEqualTo(Duration.ofDays(2).plusSeconds(LocalTime.NOON.toSecondOfDay()));
+                .isEqualTo(Duration.ofDays(2).plusSeconds(LocalTime.NOON.toSecondOfDay()));
         assertThat(testedShiftTemplateEditForm.getDurationOfShiftTemplate(3, LocalTime.NOON, 5, LocalTime.NOON, 7))
-            .isEqualTo(Duration.ofDays(2));
+                .isEqualTo(Duration.ofDays(2));
         assertThat(testedShiftTemplateEditForm.getDurationOfShiftTemplate(6, LocalTime.NOON, 0, LocalTime.of(3, 0), 7))
-            .isEqualTo(Duration.ofHours(15));
+                .isEqualTo(Duration.ofHours(15));
     }
 
     @Test
