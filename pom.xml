@@ -39,6 +39,7 @@
   </repositories>
 
   <properties>
+    <checkstyle.logViolationsToConsole>true</checkstyle.logViolationsToConsole>
     <needs-errai-1101-workaround>true</needs-errai-1101-workaround>
     <wildfly.parent>${project.basedir}/local/appserver</wildfly.parent>
     <wildfly.home>${wildfly.parent}/wildfly-${version.org.wildfly}</wildfly.home>
@@ -210,6 +211,14 @@
 
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <failOnViolation>true</failOnViolation>
+        </configuration>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
