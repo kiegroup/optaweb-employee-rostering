@@ -31,9 +31,6 @@
  */
 package java.time;
 
-import static java.time.calendrical.ChronoField.INSTANT_SECONDS;
-import static java.time.calendrical.ChronoField.NANO_OF_SECOND;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -50,6 +47,9 @@ import java.time.jdk8.DefaultInterfaceChronoZonedDateTime;
 import java.time.jdk8.Jdk7Methods;
 import java.time.zone.ZoneRules;
 import java.util.List;
+
+import static java.time.calendrical.ChronoField.INSTANT_SECONDS;
+import static java.time.calendrical.ChronoField.NANO_OF_SECOND;
 
 /**
  * A date-time with a time-zone in the ISO-8601 calendar system, such as

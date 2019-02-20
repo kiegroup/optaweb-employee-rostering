@@ -31,13 +31,6 @@
  */
 package java.time.jdk8;
 
-import static java.time.calendrical.ChronoField.DAY_OF_MONTH;
-import static java.time.calendrical.ChronoField.EPOCH_DAY;
-import static java.time.calendrical.ChronoField.ERA;
-import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
-import static java.time.calendrical.ChronoField.YEAR;
-import static java.time.calendrical.ChronoField.YEAR_OF_ERA;
-
 import java.time.LocalTime;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.DateTime;
@@ -47,6 +40,13 @@ import java.time.chrono.Chrono;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoLocalDateTime;
 import java.time.chrono.Era;
+
+import static java.time.calendrical.ChronoField.DAY_OF_MONTH;
+import static java.time.calendrical.ChronoField.EPOCH_DAY;
+import static java.time.calendrical.ChronoField.ERA;
+import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
+import static java.time.calendrical.ChronoField.YEAR;
+import static java.time.calendrical.ChronoField.YEAR_OF_ERA;
 
 /**
  * A temporary class providing implementations that will become default interface methods once integrated into

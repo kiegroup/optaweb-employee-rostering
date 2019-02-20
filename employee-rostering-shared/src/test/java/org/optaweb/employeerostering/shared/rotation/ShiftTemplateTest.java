@@ -25,7 +25,7 @@ import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.shared.spot.Spot;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ShiftTemplateTest {
 

@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.gwtui.client.viewport;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+
 import javax.enterprise.context.ApplicationScoped;
 
 import elemental2.dom.HTMLElement;

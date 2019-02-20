@@ -31,15 +31,6 @@
  */
 package java.time;
 
-import static java.time.calendrical.ChronoField.HOUR_OF_DAY;
-import static java.time.calendrical.ChronoField.MICRO_OF_DAY;
-import static java.time.calendrical.ChronoField.MINUTE_OF_HOUR;
-import static java.time.calendrical.ChronoField.NANO_OF_DAY;
-import static java.time.calendrical.ChronoField.NANO_OF_SECOND;
-import static java.time.calendrical.ChronoField.SECOND_OF_DAY;
-import static java.time.calendrical.ChronoField.SECOND_OF_MINUTE;
-import static java.time.calendrical.ChronoUnit.NANOS;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -55,6 +46,15 @@ import java.time.chrono.ChronoZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.jdk8.DefaultInterfaceDateTimeAccessor;
 import java.time.jdk8.Jdk7Methods;
+
+import static java.time.calendrical.ChronoField.HOUR_OF_DAY;
+import static java.time.calendrical.ChronoField.MICRO_OF_DAY;
+import static java.time.calendrical.ChronoField.MINUTE_OF_HOUR;
+import static java.time.calendrical.ChronoField.NANO_OF_DAY;
+import static java.time.calendrical.ChronoField.NANO_OF_SECOND;
+import static java.time.calendrical.ChronoField.SECOND_OF_DAY;
+import static java.time.calendrical.ChronoField.SECOND_OF_MINUTE;
+import static java.time.calendrical.ChronoUnit.NANOS;
 
 /**
  * A time without time-zone in the ISO-8601 calendar system, such as {@code 10:15:30}.

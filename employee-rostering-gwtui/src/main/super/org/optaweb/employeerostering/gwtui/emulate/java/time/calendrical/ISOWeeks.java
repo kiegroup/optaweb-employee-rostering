@@ -31,6 +31,11 @@
  */
 package java.time.calendrical;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.calendrical.PeriodUnit.PeriodBetween;
+import java.time.jdk8.Jdk8Methods;
+
 import static java.time.DayOfWeek.THURSDAY;
 import static java.time.DayOfWeek.WEDNESDAY;
 import static java.time.calendrical.ChronoField.DAY_OF_WEEK;
@@ -39,11 +44,6 @@ import static java.time.calendrical.ChronoField.YEAR;
 import static java.time.calendrical.ChronoUnit.FOREVER;
 import static java.time.calendrical.ChronoUnit.WEEKS;
 import static java.time.calendrical.ChronoUnit.YEARS;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.calendrical.PeriodUnit.PeriodBetween;
-import java.time.jdk8.Jdk8Methods;
 
 /**
  * Fields and units supporting the week-based-year defined by ISO-8601.

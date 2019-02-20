@@ -31,6 +31,12 @@
  */
 package java.time.calendrical;
 
+import java.time.DayOfWeek;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.chrono.ChronoLocalDate;
+
 import static java.time.calendrical.ChronoUnit.DAYS;
 import static java.time.calendrical.ChronoUnit.ERAS;
 import static java.time.calendrical.ChronoUnit.FOREVER;
@@ -44,12 +50,6 @@ import static java.time.calendrical.ChronoUnit.NANOS;
 import static java.time.calendrical.ChronoUnit.SECONDS;
 import static java.time.calendrical.ChronoUnit.WEEKS;
 import static java.time.calendrical.ChronoUnit.YEARS;
-
-import java.time.DayOfWeek;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.chrono.ChronoLocalDate;
 
 /**
  * A standard set of fields.

@@ -31,11 +31,6 @@
  */
 package java.time;
 
-import static java.time.LocalTime.SECONDS_PER_DAY;
-import static java.time.calendrical.ChronoField.INSTANT_SECONDS;
-import static java.time.calendrical.ChronoField.NANO_OF_SECOND;
-import static java.time.calendrical.ChronoUnit.DAYS;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -50,6 +45,11 @@ import java.time.calendrical.PeriodUnit;
 import java.time.format.DateTimeParseException;
 import java.time.jdk8.Jdk7Methods;
 import java.time.jdk8.Jdk8Methods;
+
+import static java.time.LocalTime.SECONDS_PER_DAY;
+import static java.time.calendrical.ChronoField.INSTANT_SECONDS;
+import static java.time.calendrical.ChronoField.NANO_OF_SECOND;
+import static java.time.calendrical.ChronoUnit.DAYS;
 
 /**
  * A duration between two instants on the time-line.

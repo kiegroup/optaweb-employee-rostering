@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.shared.roster.view;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 
 import org.optaweb.employeerostering.shared.employee.view.EmployeeAvailabilityView;

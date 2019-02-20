@@ -31,16 +31,16 @@
  */
 package java.time.calendrical;
 
+import java.time.DayOfWeek;
+import java.time.calendrical.DateTime.WithAdjuster;
+import java.time.jdk8.Jdk7Methods;
+
 import static java.time.calendrical.ChronoField.DAY_OF_MONTH;
 import static java.time.calendrical.ChronoField.DAY_OF_WEEK;
 import static java.time.calendrical.ChronoField.DAY_OF_YEAR;
 import static java.time.calendrical.ChronoUnit.DAYS;
 import static java.time.calendrical.ChronoUnit.MONTHS;
 import static java.time.calendrical.ChronoUnit.YEARS;
-
-import java.time.DayOfWeek;
-import java.time.calendrical.DateTime.WithAdjuster;
-import java.time.jdk8.Jdk7Methods;
 
 /**
  * Common implementations of {@code DateTime.WithAdjuster}.

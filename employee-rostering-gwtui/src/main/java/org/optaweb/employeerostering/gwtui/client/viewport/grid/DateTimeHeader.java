@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.gwtui.client.viewport.grid;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Function;
+
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Named;

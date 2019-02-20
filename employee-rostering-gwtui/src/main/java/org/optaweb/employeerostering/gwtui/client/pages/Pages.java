@@ -33,7 +33,13 @@ import org.optaweb.employeerostering.gwtui.client.pages.shiftroster.ShiftRosterP
 import org.optaweb.employeerostering.gwtui.client.pages.skill.SkillListPanel;
 import org.optaweb.employeerostering.gwtui.client.pages.spot.SpotListPanel;
 
-import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.*;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.ADMIN;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.AVAILABILITY_ROSTER;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.EMPLOYEES;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.ROTATION;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.SHIFT_ROSTER;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.SKILLS;
+import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.SPOTS;
 
 @Dependent
 public class Pages {

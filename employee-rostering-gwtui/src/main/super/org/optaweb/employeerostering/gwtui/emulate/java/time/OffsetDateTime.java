@@ -31,11 +31,6 @@
  */
 package java.time;
 
-import static java.time.calendrical.ChronoField.EPOCH_DAY;
-import static java.time.calendrical.ChronoField.NANO_OF_DAY;
-import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
-import static java.time.calendrical.ChronoUnit.NANOS;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -51,6 +46,11 @@ import java.time.jdk8.DefaultInterfaceDateTime;
 import java.time.jdk8.Jdk7Methods;
 import java.time.zone.ZoneRules;
 import java.util.Comparator;
+
+import static java.time.calendrical.ChronoField.EPOCH_DAY;
+import static java.time.calendrical.ChronoField.NANO_OF_DAY;
+import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
+import static java.time.calendrical.ChronoUnit.NANOS;
 
 /**
  * A date-time with an offset from UTC/Greenwich in the ISO-8601 calendar system, such as

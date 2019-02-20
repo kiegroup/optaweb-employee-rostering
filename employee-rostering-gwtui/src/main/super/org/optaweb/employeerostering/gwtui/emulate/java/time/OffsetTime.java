@@ -31,14 +31,6 @@
  */
 package java.time;
 
-import static java.time.LocalTime.NANOS_PER_HOUR;
-import static java.time.LocalTime.NANOS_PER_MINUTE;
-import static java.time.LocalTime.NANOS_PER_SECOND;
-import static java.time.LocalTime.SECONDS_PER_DAY;
-import static java.time.calendrical.ChronoField.NANO_OF_DAY;
-import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
-import static java.time.calendrical.ChronoUnit.NANOS;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -52,6 +44,14 @@ import java.time.format.DateTimeParseException;
 import java.time.jdk8.DefaultInterfaceDateTimeAccessor;
 import java.time.jdk8.Jdk7Methods;
 import java.time.zone.ZoneRules;
+
+import static java.time.LocalTime.NANOS_PER_HOUR;
+import static java.time.LocalTime.NANOS_PER_MINUTE;
+import static java.time.LocalTime.NANOS_PER_SECOND;
+import static java.time.LocalTime.SECONDS_PER_DAY;
+import static java.time.calendrical.ChronoField.NANO_OF_DAY;
+import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
+import static java.time.calendrical.ChronoUnit.NANOS;
 
 /**
  * A time with an offset from UTC/Greenwich in the ISO-8601 calendar system, such as {@code 10:15:30+01:00}.

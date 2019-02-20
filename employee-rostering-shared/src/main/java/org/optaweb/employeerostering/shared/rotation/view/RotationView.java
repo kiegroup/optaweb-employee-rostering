@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.shared.rotation.view;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 
 import org.optaweb.employeerostering.shared.employee.Employee;

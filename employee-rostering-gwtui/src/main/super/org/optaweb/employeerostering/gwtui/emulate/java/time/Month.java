@@ -31,8 +31,6 @@
  */
 package java.time;
 
-import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
-
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.DateTime;
 import java.time.calendrical.DateTime.WithAdjuster;
@@ -43,6 +41,8 @@ import java.time.chrono.Chrono;
 import java.time.chrono.ISOChrono;
 import java.time.format.TextStyle;
 import java.util.Locale;
+
+import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
 
 /**
  * A month-of-year, such as 'July'.

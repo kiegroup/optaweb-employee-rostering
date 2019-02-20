@@ -31,10 +31,6 @@
  */
 package java.time;
 
-import static java.time.calendrical.ChronoField.ERA;
-import static java.time.calendrical.ChronoField.YEAR;
-import static java.time.calendrical.ChronoField.YEAR_OF_ERA;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -49,6 +45,10 @@ import java.time.chrono.ISOChrono;
 import java.time.format.DateTimeParseException;
 import java.time.jdk8.DefaultInterfaceDateTimeAccessor;
 import java.time.jdk8.Jdk8Methods;
+
+import static java.time.calendrical.ChronoField.ERA;
+import static java.time.calendrical.ChronoField.YEAR;
+import static java.time.calendrical.ChronoField.YEAR_OF_ERA;
 
 /**
  * A year in the ISO-8601 calendar system, such as {@code 2007}.

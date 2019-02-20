@@ -16,7 +16,7 @@
 
 package org.optaweb.employeerostering.shared.roster;
 
-import static java.lang.Math.*;
+import static java.lang.Math.max;
 
 public class Pagination {
 

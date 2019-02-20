@@ -31,12 +31,12 @@
  */
 package java.time.calendrical;
 
-import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
-
 import java.time.DateTimeException;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.chrono.Chrono;
+
+import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
 
 /**
  * General low-level access to a date and/or time object.

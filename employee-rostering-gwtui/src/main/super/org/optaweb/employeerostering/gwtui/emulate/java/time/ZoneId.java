@@ -33,7 +33,6 @@ package java.time;
 
 import java.time.calendrical.DateTimeAccessor;
 import java.time.calendrical.DateTimeAccessor.Query;
-import java.time.format.DateTimeParseException;
 import java.time.format.TextStyle;
 import java.time.jdk8.Jdk7Methods;
 import java.time.zone.ZoneRules;

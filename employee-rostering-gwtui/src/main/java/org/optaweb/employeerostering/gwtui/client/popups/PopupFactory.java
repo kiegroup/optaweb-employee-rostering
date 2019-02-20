@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.gwtui.client.popups;
 
 import java.util.Optional;
+
 import javax.enterprise.context.ApplicationScoped;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;

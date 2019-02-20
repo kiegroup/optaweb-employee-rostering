@@ -31,8 +31,6 @@
  */
 package java.time.chrono;
 
-import static java.time.calendrical.ChronoUnit.SECONDS;
-
 import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.Instant;
@@ -48,6 +46,8 @@ import java.time.jdk8.DefaultInterfaceChronoZonedDateTime;
 import java.time.jdk8.Jdk7Methods;
 import java.time.zone.ZoneRules;
 import java.util.List;
+
+import static java.time.calendrical.ChronoUnit.SECONDS;
 
 /**
  * A date-time with a time-zone in the calendar neutral API.
