@@ -298,12 +298,15 @@ public class TimeSlotTable<T> {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj)
+            if (this == obj) {
                 return true;
-            if (obj == null)
+            }
+            if (obj == null) {
                 return false;
-            if (!(obj instanceof TimeSlot))
+            }
+            if (!(obj instanceof TimeSlot)) {
                 return false;
+            }
             TimeSlot other = (TimeSlot) obj;
 
             return this.getUUID().equals(other.getUUID());
