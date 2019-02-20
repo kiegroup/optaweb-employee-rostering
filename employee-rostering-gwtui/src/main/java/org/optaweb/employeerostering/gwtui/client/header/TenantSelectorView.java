@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.gwtui.client.header;
 
 import java.util.List;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 

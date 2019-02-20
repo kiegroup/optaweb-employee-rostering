@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.gwtui.client.app.spinner;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;

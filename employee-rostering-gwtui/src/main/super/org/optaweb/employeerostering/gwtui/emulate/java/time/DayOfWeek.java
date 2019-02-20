@@ -31,8 +31,6 @@
  */
 package java.time;
 
-import static java.time.calendrical.ChronoField.DAY_OF_WEEK;
-
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.DateTime;
 import java.time.calendrical.DateTime.WithAdjuster;
@@ -41,6 +39,8 @@ import java.time.calendrical.DateTimeField;
 import java.time.calendrical.DateTimeValueRange;
 import java.time.format.TextStyle;
 import java.util.Locale;
+
+import static java.time.calendrical.ChronoField.DAY_OF_WEEK;
 
 /**
  * A day-of-week, such as 'Tuesday'.

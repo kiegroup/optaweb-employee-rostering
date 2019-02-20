@@ -31,8 +31,6 @@
  */
 package java.time;
 
-import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.DateTime;
@@ -46,6 +44,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
 
 /**
  * A time-zone offset from Greenwich/UTC, such as {@code +02:00}.

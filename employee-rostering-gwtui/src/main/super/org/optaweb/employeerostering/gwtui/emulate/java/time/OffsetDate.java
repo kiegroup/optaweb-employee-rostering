@@ -31,10 +31,6 @@
  */
 package java.time;
 
-import static java.time.LocalTime.SECONDS_PER_DAY;
-import static java.time.calendrical.ChronoField.EPOCH_DAY;
-import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -51,6 +47,10 @@ import java.time.jdk8.DefaultInterfaceDateTimeAccessor;
 import java.time.jdk8.Jdk7Methods;
 import java.time.jdk8.Jdk8Methods;
 import java.time.zone.ZoneRules;
+
+import static java.time.LocalTime.SECONDS_PER_DAY;
+import static java.time.calendrical.ChronoField.EPOCH_DAY;
+import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
 
 /**
  * A date with an offset from UTC/Greenwich in the ISO-8601 calendar system, such as {@code 2007-12-03+01:00}.

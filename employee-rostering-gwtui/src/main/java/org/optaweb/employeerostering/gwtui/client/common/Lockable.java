@@ -17,6 +17,7 @@
 package org.optaweb.employeerostering.gwtui.client.common;
 
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;

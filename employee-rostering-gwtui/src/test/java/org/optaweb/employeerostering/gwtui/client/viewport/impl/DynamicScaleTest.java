@@ -23,7 +23,6 @@ import java.time.LocalTime;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.optaweb.employeerostering.gwtui.client.viewport.impl.DynamicScale;
 
 public class DynamicScaleTest {
 

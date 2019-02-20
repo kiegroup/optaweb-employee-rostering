@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.shared.roster.view;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;

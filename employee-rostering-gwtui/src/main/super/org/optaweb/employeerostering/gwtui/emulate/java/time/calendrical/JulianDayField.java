@@ -31,14 +31,14 @@
  */
 package java.time.calendrical;
 
-import static java.time.calendrical.ChronoField.EPOCH_DAY;
-import static java.time.calendrical.ChronoUnit.DAYS;
-import static java.time.calendrical.ChronoUnit.FOREVER;
-
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.jdk8.Jdk7Methods;
 import java.time.jdk8.Jdk8Methods;
+
+import static java.time.calendrical.ChronoField.EPOCH_DAY;
+import static java.time.calendrical.ChronoUnit.DAYS;
+import static java.time.calendrical.ChronoUnit.FOREVER;
 
 /**
  * A set of date fields that provide access to Julian Days.

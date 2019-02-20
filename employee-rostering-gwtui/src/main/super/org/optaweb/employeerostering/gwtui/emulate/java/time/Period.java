@@ -31,20 +31,6 @@
  */
 package java.time;
 
-import static java.time.LocalTime.NANOS_PER_DAY;
-import static java.time.LocalTime.NANOS_PER_HOUR;
-import static java.time.LocalTime.NANOS_PER_MINUTE;
-import static java.time.LocalTime.NANOS_PER_SECOND;
-import static java.time.calendrical.ChronoField.DAY_OF_MONTH;
-import static java.time.calendrical.ChronoField.EPOCH_MONTH;
-import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
-import static java.time.calendrical.ChronoField.NANO_OF_DAY;
-import static java.time.calendrical.ChronoField.YEAR;
-import static java.time.calendrical.ChronoUnit.DAYS;
-import static java.time.calendrical.ChronoUnit.MONTHS;
-import static java.time.calendrical.ChronoUnit.NANOS;
-import static java.time.calendrical.ChronoUnit.YEARS;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -58,6 +44,20 @@ import java.time.chrono.Chrono;
 import java.time.format.DateTimeParseException;
 import java.time.jdk8.Jdk7Methods;
 import java.time.jdk8.Jdk8Methods;
+
+import static java.time.LocalTime.NANOS_PER_DAY;
+import static java.time.LocalTime.NANOS_PER_HOUR;
+import static java.time.LocalTime.NANOS_PER_MINUTE;
+import static java.time.LocalTime.NANOS_PER_SECOND;
+import static java.time.calendrical.ChronoField.DAY_OF_MONTH;
+import static java.time.calendrical.ChronoField.EPOCH_MONTH;
+import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
+import static java.time.calendrical.ChronoField.NANO_OF_DAY;
+import static java.time.calendrical.ChronoField.YEAR;
+import static java.time.calendrical.ChronoUnit.DAYS;
+import static java.time.calendrical.ChronoUnit.MONTHS;
+import static java.time.calendrical.ChronoUnit.NANOS;
+import static java.time.calendrical.ChronoUnit.YEARS;
 
 /**
  * An immutable period consisting of the most common units, such as '3 Months, 4 Days and 7 Hours'.

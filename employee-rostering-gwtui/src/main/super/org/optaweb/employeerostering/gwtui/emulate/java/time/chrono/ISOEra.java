@@ -31,8 +31,6 @@
  */
 package java.time.chrono;
 
-import static java.time.calendrical.ChronoField.ERA;
-
 import java.time.DateTimeException;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.DateTime;
@@ -40,6 +38,8 @@ import java.time.calendrical.DateTimeField;
 import java.time.calendrical.DateTimeValueRange;
 import java.time.format.TextStyle;
 import java.util.Locale;
+
+import static java.time.calendrical.ChronoField.ERA;
 
 /**
  * An era in the ISO calendar system.

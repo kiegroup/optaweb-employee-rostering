@@ -31,10 +31,6 @@
  */
 package java.time.jdk8;
 
-import static java.time.calendrical.ChronoField.INSTANT_SECONDS;
-import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
-import static java.time.calendrical.ChronoUnit.NANOS;
-
 import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.LocalTime;
@@ -45,6 +41,10 @@ import java.time.calendrical.PeriodUnit;
 import java.time.chrono.Chrono;
 import java.time.chrono.ChronoLocalDate;
 import java.time.chrono.ChronoZonedDateTime;
+
+import static java.time.calendrical.ChronoField.INSTANT_SECONDS;
+import static java.time.calendrical.ChronoField.OFFSET_SECONDS;
+import static java.time.calendrical.ChronoUnit.NANOS;
 
 /**
  * A temporary class providing implementations that will become default interface methods once integrated into

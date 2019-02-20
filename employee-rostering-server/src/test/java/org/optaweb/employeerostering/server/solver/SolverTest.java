@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.server.solver;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+
 import javax.persistence.EntityManager;
 
 import org.junit.Test;
@@ -29,8 +30,12 @@ import org.optaweb.employeerostering.shared.common.AbstractPersistable;
 import org.optaweb.employeerostering.shared.roster.Roster;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 
 public class SolverTest {
 

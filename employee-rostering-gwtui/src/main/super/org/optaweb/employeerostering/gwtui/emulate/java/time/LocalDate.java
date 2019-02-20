@@ -31,19 +31,6 @@
  */
 package java.time;
 
-import static java.time.LocalTime.SECONDS_PER_DAY;
-import static java.time.calendrical.ChronoField.ALIGNED_DAY_OF_WEEK_IN_MONTH;
-import static java.time.calendrical.ChronoField.ALIGNED_DAY_OF_WEEK_IN_YEAR;
-import static java.time.calendrical.ChronoField.ALIGNED_WEEK_OF_MONTH;
-import static java.time.calendrical.ChronoField.ALIGNED_WEEK_OF_YEAR;
-import static java.time.calendrical.ChronoField.DAY_OF_MONTH;
-import static java.time.calendrical.ChronoField.DAY_OF_YEAR;
-import static java.time.calendrical.ChronoField.EPOCH_DAY;
-import static java.time.calendrical.ChronoField.EPOCH_MONTH;
-import static java.time.calendrical.ChronoField.ERA;
-import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
-import static java.time.calendrical.ChronoField.YEAR;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -62,6 +49,19 @@ import java.time.format.DateTimeParseException;
 import java.time.jdk8.DefaultInterfaceChronoLocalDate;
 import java.time.jdk8.Jdk7Methods;
 import java.time.jdk8.Jdk8Methods;
+
+import static java.time.LocalTime.SECONDS_PER_DAY;
+import static java.time.calendrical.ChronoField.ALIGNED_DAY_OF_WEEK_IN_MONTH;
+import static java.time.calendrical.ChronoField.ALIGNED_DAY_OF_WEEK_IN_YEAR;
+import static java.time.calendrical.ChronoField.ALIGNED_WEEK_OF_MONTH;
+import static java.time.calendrical.ChronoField.ALIGNED_WEEK_OF_YEAR;
+import static java.time.calendrical.ChronoField.DAY_OF_MONTH;
+import static java.time.calendrical.ChronoField.DAY_OF_YEAR;
+import static java.time.calendrical.ChronoField.EPOCH_DAY;
+import static java.time.calendrical.ChronoField.EPOCH_MONTH;
+import static java.time.calendrical.ChronoField.ERA;
+import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
+import static java.time.calendrical.ChronoField.YEAR;
 
 /**
  * A date without a time-zone in the ISO-8601 calendar system, such as {@code 2007-12-03}.

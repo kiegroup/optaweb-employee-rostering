@@ -31,9 +31,6 @@
  */
 package java.time;
 
-import static java.time.calendrical.ChronoField.DAY_OF_MONTH;
-import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.DateTime;
@@ -46,6 +43,9 @@ import java.time.chrono.ISOChrono;
 import java.time.format.DateTimeParseException;
 import java.time.jdk8.DefaultInterfaceDateTimeAccessor;
 import java.time.jdk8.Jdk7Methods;
+
+import static java.time.calendrical.ChronoField.DAY_OF_MONTH;
+import static java.time.calendrical.ChronoField.MONTH_OF_YEAR;
 
 /**
  * A month-day in the ISO-8601 calendar system, such as {@code --12-03}.

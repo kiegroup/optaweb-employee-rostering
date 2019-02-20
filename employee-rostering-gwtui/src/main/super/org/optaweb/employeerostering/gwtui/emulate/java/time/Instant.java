@@ -31,15 +31,6 @@
  */
 package java.time;
 
-import static java.time.LocalTime.SECONDS_PER_DAY;
-import static java.time.LocalTime.SECONDS_PER_HOUR;
-import static java.time.LocalTime.SECONDS_PER_MINUTE;
-import static java.time.calendrical.ChronoField.INSTANT_SECONDS;
-import static java.time.calendrical.ChronoField.MICRO_OF_SECOND;
-import static java.time.calendrical.ChronoField.MILLI_OF_SECOND;
-import static java.time.calendrical.ChronoField.NANO_OF_SECOND;
-import static java.time.calendrical.ChronoUnit.NANOS;
-
 import java.io.Serializable;
 import java.time.calendrical.ChronoField;
 import java.time.calendrical.ChronoUnit;
@@ -52,6 +43,15 @@ import java.time.format.DateTimeParseException;
 import java.time.jdk8.DefaultInterfaceDateTimeAccessor;
 import java.time.jdk8.Jdk7Methods;
 import java.time.jdk8.Jdk8Methods;
+
+import static java.time.LocalTime.SECONDS_PER_DAY;
+import static java.time.LocalTime.SECONDS_PER_HOUR;
+import static java.time.LocalTime.SECONDS_PER_MINUTE;
+import static java.time.calendrical.ChronoField.INSTANT_SECONDS;
+import static java.time.calendrical.ChronoField.MICRO_OF_SECOND;
+import static java.time.calendrical.ChronoField.MILLI_OF_SECOND;
+import static java.time.calendrical.ChronoField.NANO_OF_SECOND;
+import static java.time.calendrical.ChronoUnit.NANOS;
 
 /**
  * An instantaneous point on the time-line.

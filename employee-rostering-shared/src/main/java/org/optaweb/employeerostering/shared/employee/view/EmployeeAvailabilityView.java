@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.shared.employee.view;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

@@ -31,14 +31,14 @@
  */
 package java.time;
 
-import static java.time.LocalTime.NANOS_PER_MINUTE;
-import static java.time.LocalTime.NANOS_PER_SECOND;
-
 import java.io.Serializable;
 import java.time.jdk8.Jdk7Methods;
 import java.time.jdk8.Jdk8Methods;
 import java.util.Date;
 import java.util.TimeZone;
+
+import static java.time.LocalTime.NANOS_PER_MINUTE;
+import static java.time.LocalTime.NANOS_PER_SECOND;
 
 /**
  * A clock providing access to the current instant, date and time using a time-zone.
