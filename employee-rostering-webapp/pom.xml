@@ -177,6 +177,19 @@
 
   <profiles>
     <profile>
+      <id>productized</id>
+      <activation>
+        <property>
+            <name>productized</name>
+        </property>
+      </activation>
+      <properties>
+        <cargo.maven.skip>true</cargo.maven.skip>
+        <skipITs>true</skipITs>
+      </properties>
+    </profile>
+
+    <profile>
       <id>withGwt</id>
       <activation>
         <property>
