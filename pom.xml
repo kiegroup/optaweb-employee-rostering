@@ -52,7 +52,6 @@
     <org.optaweb.employeerostering.persistence.datasource>java:jboss/datasources/ExampleDS</org.optaweb.employeerostering.persistence.datasource>
     <org.optaweb.employeerostering.persistence.dialect>org.hibernate.dialect.H2Dialect</org.optaweb.employeerostering.persistence.dialect>
     <org.optaweb.employeerostering.persistence.hbm2ddl.auto>create</org.optaweb.employeerostering.persistence.hbm2ddl.auto>
-    <org.optaweb.employeerostering.persistence.id.generator>AUTO</org.optaweb.employeerostering.persistence.id.generator>
 
     <version.com.github.nmorel.gwtjackson.restprocessor>0.4.1</version.com.github.nmorel.gwtjackson.restprocessor>
     <version.com.github.nmorel.gwtjackson>0.14.2</version.com.github.nmorel.gwtjackson>
@@ -398,7 +397,6 @@
         <org.optaweb.employeerostering.persistence.datasource>${dollarSign}{org.optaweb.employeerostering.persistence.datasource:java:jboss/datasources/ExampleDS}</org.optaweb.employeerostering.persistence.datasource>
         <org.optaweb.employeerostering.persistence.dialect>${dollarSign}{org.optaweb.employeerostering.persistence.dialect:org.hibernate.dialect.H2Dialect}</org.optaweb.employeerostering.persistence.dialect>
         <org.optaweb.employeerostering.persistence.hbm2ddl.auto>${dollarSign}{org.optaweb.employeerostering.persistence.hbm2ddl.auto:update}</org.optaweb.employeerostering.persistence.hbm2ddl.auto>
-        <org.optaweb.employeerostering.persistence.id.generator>${dollarSign}{org.optaweb.employeerostering.persistence.id.generator:AUTO}</org.optaweb.employeerostering.persistence.id.generator>
       </properties>
       <build>
         <pluginManagement>
