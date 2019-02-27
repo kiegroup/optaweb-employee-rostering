@@ -1,0 +1,1 @@
+/subsystem=ee:write-attribute(name="spec-descriptor-property-replacement",value=true)

@@ -400,6 +400,23 @@
         <org.optaweb.employeerostering.persistence.hbm2ddl.auto>${dollarSign}{org.optaweb.employeerostering.persistence.hbm2ddl.auto:update}</org.optaweb.employeerostering.persistence.hbm2ddl.auto>
         <org.optaweb.employeerostering.persistence.id.generator>${dollarSign}{org.optaweb.employeerostering.persistence.id.generator:AUTO}</org.optaweb.employeerostering.persistence.id.generator>
       </properties>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.codehaus.cargo</groupId>
+              <artifactId>cargo-maven2-plugin</artifactId>
+              <configuration>
+                <configuration>
+                  <properties>
+                    <cargo.wildfly.script.cli.embedded.descriptor-replacement>${project.build.testOutputDirectory}/descriptor-replacement.cli</cargo.wildfly.script.cli.embedded.descriptor-replacement>
+                  </properties>
+                </configuration>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
     </profile>
 
     <profile>
