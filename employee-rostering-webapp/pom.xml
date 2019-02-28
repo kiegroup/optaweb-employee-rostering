@@ -97,6 +97,12 @@
         <directory>src/test/resources/filtered</directory>
         <filtering>true</filtering>
       </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <includes>
+          <include>*.cli</include>
+        </includes>
+      </testResource>
     </testResources>
     <pluginManagement>
       <plugins>
