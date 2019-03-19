@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Window;
 import elemental2.promise.Promise;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -56,7 +57,7 @@ public class AvailabilityRosterPage implements IsElement,
 
     @PostConstruct
     public void init() {
-        cssGlobalStyle.setGridVariable(GridVariables.GRID_UNIT_SIZE, 10);
+        cssGlobalStyle.setGridVariable(GridVariables.GRID_UNIT_SIZE, Window.getClientWidth() / (8 * 24));
         cssGlobalStyle.setGridVariable(GridVariables.GRID_ROW_SIZE, 50);
         cssGlobalStyle.setGridVariable(GridVariables.GRID_SOFT_LINE_INTERVAL, 4);
         cssGlobalStyle.setGridVariable(GridVariables.GRID_HARD_LINE_INTERVAL, 24);

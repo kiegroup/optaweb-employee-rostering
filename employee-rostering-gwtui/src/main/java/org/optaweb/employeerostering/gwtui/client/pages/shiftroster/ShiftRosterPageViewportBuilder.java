@@ -117,7 +117,7 @@ public class ShiftRosterPageViewportBuilder {
         RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(),
                                                 FailureShownRestCallback.onSuccess((rs) -> {
                                                     LocalDate startDate = dateTimeUtils.getFirstDateOfWeek(rs.getFirstDraftDate());
-                                                    LocalDate endDate = dateTimeUtils.getLastDateOfWeek(rs.getFirstDraftDate());
+                                                    LocalDate endDate = dateTimeUtils.getLastDateOfWeek(rs.getFirstDraftDate()).plusDays(1);
                                                     eventManager.fireEvent(SHIFT_ROSTER_DATE_RANGE, new LocalDateRange(startDate, endDate));
                                                 }));
     }
