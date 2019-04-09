@@ -17,6 +17,8 @@
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.hbm2ddl.auto" value="${org.optaweb.employeerostering.persistence.hbm2ddl.auto}"/>
+      <!-- Uncomment the property below if you are using MySQL -->
+      <!--<property name="hibernate.id.new_generator_mappings" value="false"/>-->
       <!--<property name="hibernate.show_sql" value="true"/>-->
       <!--<property name="hibernate.format_sql" value="true"/>-->
       <property name="hibernate.dialect" value="${org.optaweb.employeerostering.persistence.dialect}"/>
