@@ -16,8 +16,6 @@
 
 package org.optaweb.employeerostering.shared.admin;
 
-import java.time.ZoneId;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -39,6 +37,10 @@ public interface AdminRestService {
     @ApiOperation("Resets the application")
     @POST
     @Path("/reset")
-    void resetApplication(@ApiParam ZoneId zoneId);
+    void resetApplication();
 
+    @ApiOperation("Setup the application")
+    @POST
+    @Path("/setup")
+    void setupApplication(@ApiParam DatabaseType databaseType);
 }

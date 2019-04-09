@@ -18,10 +18,14 @@ package org.optaweb.employeerostering.server.admin;
 
 import java.time.DateTimeException;
 import java.time.ZoneId;
+import java.util.Optional;
+
+import org.optaweb.employeerostering.shared.admin.DatabaseType;
 
 public class SystemPropertiesRetriever {
 
     public static final String ZONE_ID_SYSTEM_PROPERTY = "optaweb.generator.timeZoneId";
+    public static final String DATABASE_STARTUP_DATA_SYSTEM_PROPERTY = "optaweb.generator.databaseStartupData";
 
     public static ZoneId determineZoneId() {
         String zoneIdProperty = System.getProperty(ZONE_ID_SYSTEM_PROPERTY);
@@ -30,13 +34,26 @@ public class SystemPropertiesRetriever {
                 return ZoneId.of(zoneIdProperty);
             } catch (DateTimeException e) {
                 throw new IllegalStateException("The system property (" + ZONE_ID_SYSTEM_PROPERTY
-                        + ") has an invalid value (" + zoneIdProperty + ").", e);
+                                                        + ") has an invalid value (" + zoneIdProperty + ").", e);
             }
         }
         return ZoneId.systemDefault();
     }
 
-    private SystemPropertiesRetriever() {
+    public static Optional<DatabaseType> determineDatabaseStartupData() {
+        String databaseStartupDataProperty = System.getProperty(DATABASE_STARTUP_DATA_SYSTEM_PROPERTY);
+        if (databaseStartupDataProperty != null) {
+            try {
+                return Optional.of(DatabaseType.valueOf(databaseStartupDataProperty));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalStateException("The system property (" + DATABASE_STARTUP_DATA_SYSTEM_PROPERTY
+                                                        + ") has an invalid value (" + databaseStartupDataProperty + ").", e);
+            }
+        } else {
+            return Optional.empty();
+        }
     }
 
+    private SystemPropertiesRetriever() {
+    }
 }

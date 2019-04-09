@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -43,6 +44,7 @@ import javax.transaction.Transactional;
 import org.apache.commons.lang3.tuple.Pair;
 import org.optaweb.employeerostering.server.admin.SystemPropertiesRetriever;
 import org.optaweb.employeerostering.server.common.generator.StringDataGenerator;
+import org.optaweb.employeerostering.shared.admin.DatabaseType;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.shared.employee.EmployeeAvailabilityState;
@@ -344,24 +346,46 @@ public class RosterGenerator {
     @PostConstruct
     public void setUpGeneratedData() {
         ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
-        setUpGeneratedData(zoneId);
+        Optional<DatabaseType> databaseType = SystemPropertiesRetriever.determineDatabaseStartupData();
+        if (databaseType.isPresent()) {
+            setUpGeneratedData(zoneId, databaseType.get());
+        }
     }
 
-    public void setUpGeneratedData(ZoneId zoneId) {
-        random = new Random(37);
-        tenantNameGenerator.predictMaximumSizeAndReset(12);
-        generateRoster(10, 7, hospitalGeneratorType, zoneId);
-        generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
-        generateRoster(10, 7, guardSecurityGeneratorType, zoneId);
-        generateRoster(10, 7, callCenterGeneratorType, zoneId);
-        generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-        generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-        generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
-        generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-        generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-        generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-        generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
-        generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+    public void setUpGeneratedData(ZoneId zoneId, DatabaseType databaseType) {
+        switch (databaseType) {
+            case EMPTY:
+                break;
+
+            case SMALL:
+                random = new Random(37);
+                tenantNameGenerator.predictMaximumSizeAndReset(12);
+                generateRoster(10, 7, hospitalGeneratorType, zoneId);
+                generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(10, 7, guardSecurityGeneratorType, zoneId);
+                generateRoster(10, 7, callCenterGeneratorType, zoneId);
+                break;
+
+            case LARGE:
+                random = new Random(37);
+                tenantNameGenerator.predictMaximumSizeAndReset(12);
+                generateRoster(10, 7, hospitalGeneratorType, zoneId);
+                generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(10, 7, guardSecurityGeneratorType, zoneId);
+                generateRoster(10, 7, callCenterGeneratorType, zoneId);
+                generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                break;
+
+            default:
+                throw new IllegalStateException("Missing case for DatabaseType (" + databaseType.name() + ").");
+        }
     }
 
     public Roster generateRoster(int spotListSize, int lengthInDays) {

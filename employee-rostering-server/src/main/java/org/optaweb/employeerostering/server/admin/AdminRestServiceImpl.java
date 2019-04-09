@@ -28,6 +28,7 @@ import javax.transaction.Transactional;
 import org.optaweb.employeerostering.server.common.AbstractRestServiceImpl;
 import org.optaweb.employeerostering.server.roster.RosterGenerator;
 import org.optaweb.employeerostering.shared.admin.AdminRestService;
+import org.optaweb.employeerostering.shared.admin.DatabaseType;
 import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.shared.roster.RosterState;
@@ -37,6 +38,7 @@ import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.tenant.RosterParametrization;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
+import org.optaweb.employeerostering.shared.tenant.TenantRestService;
 
 public class AdminRestServiceImpl extends AbstractRestServiceImpl implements AdminRestService {
 
@@ -46,18 +48,28 @@ public class AdminRestServiceImpl extends AbstractRestServiceImpl implements Adm
     @Inject
     private RosterGenerator rosterGenerator;
 
+    @Inject
+    private TenantRestService tenantRestService;
+
+    @Override
+    public void setupApplication(DatabaseType databaseType) {
+        if (tenantRestService.getTenantList().isEmpty()) {
+            ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
+            rosterGenerator.setUpGeneratedData(zoneId, databaseType);
+        } else {
+            throw new IllegalStateException("Application already started.");
+        }
+    }
+
     @Override
     @Transactional
-    public void resetApplication(ZoneId zoneId) {
-        if (zoneId == null){
-            zoneId = SystemPropertiesRetriever.determineZoneId();
-        }
+    public void resetApplication() {
         // IMPORTANT: Delete entries that has Many-to-One relations first,
         // otherwise we break referential integrity
         deleteAllEntities(Shift.class, EmployeeAvailability.class, ShiftTemplate.class,
-                Employee.class, Spot.class, Skill.class,
-                RosterParametrization.class, RosterState.class, Tenant.class);
-        rosterGenerator.setUpGeneratedData(zoneId);
+                          Employee.class, Spot.class, Skill.class,
+                          RosterParametrization.class, RosterState.class, Tenant.class);
+        rosterGenerator.setUpGeneratedData();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -69,5 +81,4 @@ public class AdminRestServiceImpl extends AbstractRestServiceImpl implements Adm
             entityManager.createQuery(query).executeUpdate();
         }
     }
-
 }

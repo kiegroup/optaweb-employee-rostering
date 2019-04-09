@@ -19,9 +19,11 @@ package org.optaweb.employeerostering.gwtui.client.pages.admin;
 import java.util.Collections;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.MouseEvent;
 import elemental2.promise.Promise;
 import org.jboss.errai.databinding.client.components.ListComponent;
@@ -41,9 +43,11 @@ import org.optaweb.employeerostering.gwtui.client.notification.NotificationFacto
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.NewTenantForm;
+import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantTableRow;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.shared.admin.AdminRestServiceBuilder;
+import org.optaweb.employeerostering.shared.admin.DatabaseType;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
@@ -51,6 +55,14 @@ import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 public class AdminPage
         implements
         Page {
+
+    @Inject
+    @DataField("tenant-list-container")
+    private HTMLDivElement tenantListContainer;
+
+    @Inject
+    @DataField("application-startup-page")
+    private HTMLDivElement applicationStartupPage;
 
     @Inject
     @DataField("reset-application-button")
@@ -134,7 +146,7 @@ public class AdminPage
     @EventHandler("reset-application-button")
     private void resetApplication(@ForEvent("click") MouseEvent e) {
         loadingSpinner.showFor("reset-application");
-        AdminRestServiceBuilder.resetApplication(null, FailureShownRestCallback.onSuccess((success) -> {
+        AdminRestServiceBuilder.resetApplication(FailureShownRestCallback.onSuccess((success) -> {
             loadingSpinner.hideFor("reset-application");
             notificationFactory.showInfoMessage(I18nKeys.Notifications_resetApplicationSuccessful);
         }));
@@ -143,5 +155,38 @@ public class AdminPage
     @EventHandler("add-tenant-button")
     private void addTenant(@ForEvent("click") MouseEvent e) {
         newTenantFormFactory.get();
+    }
+
+    @EventHandler("empty-database-link")
+    private void onEmptyDatabaseClick(@ForEvent("click") MouseEvent e) {
+        addTenant(e);
+    }
+
+    @EventHandler("small-database-link")
+    private void onSmallDatabaseClick(@ForEvent("click") MouseEvent e) {
+        loadingSpinner.showFor("setup-application");
+        AdminRestServiceBuilder.setupApplication(DatabaseType.SMALL, FailureShownRestCallback.onSuccess((success) -> {
+            loadingSpinner.hideFor("setup-application");
+            notificationFactory.showInfoMessage(I18nKeys.Notifications_resetApplicationSuccessful);
+        }));
+    }
+
+    @EventHandler("large-database-link")
+    private void onLargeDatabaseClick(@ForEvent("click") MouseEvent e) {
+        loadingSpinner.showFor("setup-application");
+        AdminRestServiceBuilder.setupApplication(DatabaseType.LARGE, FailureShownRestCallback.onSuccess((success) -> {
+            loadingSpinner.hideFor("setup-application");
+            notificationFactory.showInfoMessage(I18nKeys.Notifications_resetApplicationSuccessful);
+        }));
+    }
+
+    public void onTenantsReady(final @Observes TenantStore.TenantsReady tenantsReady) {
+        tenantListContainer.hidden = false;
+        applicationStartupPage.hidden = true;
+    }
+
+    public void onNoTenants(final @Observes TenantStore.NoTenants noTenants) {
+        tenantListContainer.hidden = true;
+        applicationStartupPage.hidden = false;
     }
 }
