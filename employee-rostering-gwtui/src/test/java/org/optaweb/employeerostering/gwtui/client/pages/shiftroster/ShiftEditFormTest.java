@@ -192,7 +192,7 @@ public class ShiftEditFormTest {
     private List<Employee> getEmployeeList() {
         List<Employee> out = new ArrayList<>(NUM_OF_EMPLOYEES);
         for (long i = 0; i < NUM_OF_EMPLOYEES; i++) {
-            Employee employee = new Employee(NUM_OF_SPOTS, "Employee" + i);
+            Employee employee = new Employee(TENANT_ID, "Employee" + i);
             employee.setId(i);
             out.add(employee);
         }
@@ -330,13 +330,8 @@ public class ShiftEditFormTest {
 
         boolean out = testedShiftEditForm.updateShiftFromWidgetsIfValid(shiftView);
 
-        verify(spotSelect).getSelectedValue();
-        verify(employeeSelect).getSelectedValue();
-
         verify(from).reportValidity();
         verify(to).reportValidity();
-        verify(from).getValue();
-        verify(to).getValue();
 
         assertThat(shiftView.isPinnedByUser()).isTrue();
         assertThat(shiftView.getSpotId()).isEqualTo(spotList.get(NEW_SELECTED_SPOT).getId());
