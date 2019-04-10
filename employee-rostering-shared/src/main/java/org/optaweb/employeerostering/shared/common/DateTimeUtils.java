@@ -17,11 +17,10 @@
 package org.optaweb.employeerostering.shared.common;
 
 import java.time.DayOfWeek;
-import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.temporal.IsoFields;
 
 public class DateTimeUtils {
 
@@ -36,22 +35,13 @@ public class DateTimeUtils {
         return doTimeslotsIntersect(start1.atDate(date), end1.atDate(date), start2, end2);
     }
 
-    public static long dayOf(OffsetDateTime dateTime) {
-        OffsetDateTime epochDate = OffsetDateTime.ofInstant(Instant.ofEpochMilli(0), dateTime.getOffset());
-        return Duration.between(epochDate, dateTime).toDays();
-    }
-
-    public static long weekOf(DayOfWeek weekStarting, OffsetDateTime dateTime) {
-        OffsetDateTime epochDate = OffsetDateTime.ofInstant(Instant.ofEpochMilli(0), dateTime.getOffset());
-        OffsetDateTime firstDate = epochDate.plusDays((long) weekStarting.getValue() - epochDate.getDayOfWeek().getValue()).minusDays(1);
-        return Duration.between(firstDate, dateTime).toDays() / 7;
-    }
-
-    public static long monthOf(OffsetDateTime dateTime) {
-        return dateTime.getYear() * 12L + dateTime.getMonthValue();
-    }
-
-    public static long yearOf(OffsetDateTime dateTime) {
-        return dateTime.getYear();
+    public static boolean sameWeek(DayOfWeek weekStarting, OffsetDateTime dateTime1, OffsetDateTime dateTime2) {
+        // ISO-8601 weeks begin on Monday, so we shift dates that begin on weekStarting to Monday
+        // To get a week numbering system that use weekStarting instead of Monday
+        int dayDifference = weekStarting.getValue() - 1;
+        OffsetDateTime first = dateTime1.minusDays(dayDifference);
+        OffsetDateTime second = dateTime2.minusDays(dayDifference);
+        return first.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR) == second.get(IsoFields.WEEK_OF_WEEK_BASED_YEAR)
+                && first.get(IsoFields.WEEK_BASED_YEAR) == second.get(IsoFields.WEEK_BASED_YEAR);
     }
 }

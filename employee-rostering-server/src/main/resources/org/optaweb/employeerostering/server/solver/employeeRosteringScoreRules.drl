@@ -20,6 +20,7 @@ package org.optaweb.employeerostering.server.solver;
 import java.time.temporal.ChronoUnit;
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.temporal.IsoFields;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreHolder;
 import org.optaweb.employeerostering.shared.employee.Employee;
@@ -98,7 +99,7 @@ rule "Daily minutes must not exceed contract maximum"
         Number( intValue > $contract.getMaximumMinutesPerDay() ) from accumulate(
             Shift(employee == $employee, $shiftStart : startDateTime,
             $shiftEnd : endDateTime,
-            DateTimeUtils.dayOf($shiftStart) == DateTimeUtils.dayOf($startDateTime)),
+            $shiftStart.toLocalDate().equals($startDateTime.toLocalDate())),
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
@@ -113,7 +114,7 @@ rule "Weekly minutes must not exceed contract maximum"
         Number( intValue > $contract.getMaximumMinutesPerWeek() ) from accumulate(
             Shift(employee == $employee, $shiftStart : startDateTime,
             $shiftEnd : endDateTime,
-            DateTimeUtils.weekOf($rosterParametrization.getWeekStartDay(), $shiftStart) == DateTimeUtils.weekOf($rosterParametrization.getWeekStartDay(), $startDateTime)),
+            DateTimeUtils.sameWeek($rosterParametrization.getWeekStartDay(), $shiftStart, $startDateTime)),
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
@@ -127,7 +128,8 @@ rule "Monthly minutes must not exceed contract maximum"
         Number( intValue > $contract.getMaximumMinutesPerMonth() ) from accumulate(
             Shift(employee == $employee, $shiftStart : startDateTime,
             $shiftEnd : endDateTime,
-            DateTimeUtils.monthOf($shiftStart) == DateTimeUtils.monthOf($startDateTime)),
+            $shiftStart.getMonth() == $startDateTime.getMonth(),
+            $shiftStart.getYear() == $startDateTime.getYear()),
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
@@ -141,7 +143,7 @@ rule "Yearly minutes must not exceed contract maximum"
         Number( intValue > $contract.getMaximumMinutesPerYear() ) from accumulate(
             Shift(employee == $employee, $shiftStart : startDateTime,
             $shiftEnd : endDateTime,
-            DateTimeUtils.yearOf($shiftStart) == DateTimeUtils.yearOf($startDateTime)),
+            $shiftStart.getYear() == $startDateTime.getYear()),
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
