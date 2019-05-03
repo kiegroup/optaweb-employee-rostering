@@ -34,7 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
 import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
@@ -72,6 +72,9 @@ public class AdminPage
 
     @Inject
     private ManagedInstance<NewTenantForm> newTenantFormFactory;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     @Inject
     @DataField("pager")
@@ -123,7 +126,7 @@ public class AdminPage
 
     private Promise<Void> refresh() {
         return promiseUtils.promise((res, rej) -> {
-            TenantRestServiceBuilder.getTenantList(FailureShownRestCallback
+            TenantRestServiceBuilder.getTenantList(restCallbackFactory
                                                            .onSuccess(newTenantList -> {
                                                                searchBar.setListToFilter(newTenantList);
                                                                res.onInvoke(promiseUtils.resolve());
@@ -134,7 +137,7 @@ public class AdminPage
     @EventHandler("reset-application-button")
     private void resetApplication(@ForEvent("click") MouseEvent e) {
         loadingSpinner.showFor("reset-application");
-        AdminRestServiceBuilder.resetApplication(null, FailureShownRestCallback.onSuccess((success) -> {
+        AdminRestServiceBuilder.resetApplication(null, restCallbackFactory.onSuccess((success) -> {
             loadingSpinner.hideFor("reset-application");
             notificationFactory.showInfoMessage(I18nKeys.Notifications_resetApplicationSuccessful);
         }));

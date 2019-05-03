@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.LocalTimePicker;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.roster.RosterState;
@@ -51,6 +52,9 @@ public class RotationTimeSelectorTest {
 
     @Mock
     private TenantStore tenantStore;
+
+    @Mock
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private RotationTimeSelector testedRotationTimeSelector;
 
@@ -80,7 +84,7 @@ public class RotationTimeSelectorTest {
             return localTime;
         });
 
-        testedRotationTimeSelector = spy(new RotationTimeSelector(dayOffsetPicker, timePicker, tenantStore));
+        testedRotationTimeSelector = spy(new RotationTimeSelector(dayOffsetPicker, timePicker, tenantStore, restCallbackFactory));
         RosterState rs = new RosterState();
         rs.setRotationLength(ROTATION_LENGTH);
         testedRotationTimeSelector.setRotationLength(rs);

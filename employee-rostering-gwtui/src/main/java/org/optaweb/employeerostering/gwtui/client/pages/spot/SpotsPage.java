@@ -37,7 +37,7 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
@@ -48,7 +48,7 @@ import org.optaweb.employeerostering.shared.spot.SpotRestServiceBuilder;
 
 @Templated
 public class SpotsPage implements IsElement,
-                                      Page {
+                                  Page {
 
     @Inject
     @DataField("refresh-button")
@@ -90,6 +90,9 @@ public class SpotsPage implements IsElement,
     @Inject
     private EventManager eventManager;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     @PostConstruct
     protected void initWidget() {
         initTable();
@@ -121,7 +124,7 @@ public class SpotsPage implements IsElement,
             return promiseUtils.resolve();
         }
         return promiseUtils.promise((res, rej) -> {
-            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
+            SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), restCallbackFactory
                     .onSuccess(newSpotList -> {
                         searchBar.setListToFilter(newSpotList);
                         res.onInvoke(promiseUtils.resolve());

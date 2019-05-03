@@ -39,7 +39,7 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateTimePicker;
 import org.optaweb.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
@@ -108,6 +108,9 @@ public class AvailabilityEditForm
     @Inject
     private EventManager eventManager;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     private FormPopup formPopup;
 
     private AvailabilityGridObject availabilityGridObject;
@@ -152,7 +155,7 @@ public class AvailabilityEditForm
         employeeSelect.clear();
         availabilitySelect.clear();
 
-        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employees -> {
+        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess(employees -> {
             employeeList = employees;
             employees.forEach(e -> employeeSelect.addItem(e.getName(), e.getId().toString()));
             if (availabilityView.getEmployeeId() != null) {
@@ -221,7 +224,7 @@ public class AvailabilityEditForm
                 return;
             }
 
-            EmployeeRestServiceBuilder.updateEmployeeAvailability(availabilityView.getTenantId(), availabilityView, FailureShownRestCallback.onSuccess((EmployeeAvailabilityView updatedView) -> {
+            EmployeeRestServiceBuilder.updateEmployeeAvailability(availabilityView.getTenantId(), availabilityView, restCallbackFactory.onSuccess((EmployeeAvailabilityView updatedView) -> {
                 availabilityGridObject.withEmployeeAvailabilityView(updatedView);
                 availabilityGridObject.getElement().classList.remove("selected");
                 formPopup.hide();
@@ -237,7 +240,7 @@ public class AvailabilityEditForm
         } else {
             final EmployeeAvailabilityView availabilityView = new EmployeeAvailabilityView(tenantStore.getCurrentTenantId(), employeeList.get(employeeSelect.getSelectedIndex()), from.getValue(), to.getValue(),
                                                                                            EMPLOYEE_AVAILABILITY_STATE_LIST.get(availabilitySelect.getSelectedIndex()));
-            EmployeeRestServiceBuilder.addEmployeeAvailability(tenantStore.getCurrentTenantId(), availabilityView, FailureShownRestCallback.onSuccess(v -> {
+            EmployeeRestServiceBuilder.addEmployeeAvailability(tenantStore.getCurrentTenantId(), availabilityView, restCallbackFactory.onSuccess(v -> {
                 formPopup.hide();
                 eventManager.fireEvent(Event.AVAILABILITY_ROSTER_INVALIDATE);
             }));
@@ -251,7 +254,7 @@ public class AvailabilityEditForm
 
         final EmployeeAvailabilityView availabilityView = availabilityGridObject.getEmployeeAvailabilityView();
 
-        EmployeeRestServiceBuilder.removeEmployeeAvailability(availabilityView.getTenantId(), availabilityView.getId(), FailureShownRestCallback.onSuccess((Boolean v) -> {
+        EmployeeRestServiceBuilder.removeEmployeeAvailability(availabilityView.getTenantId(), availabilityView.getId(), restCallbackFactory.onSuccess((Boolean v) -> {
             availabilityGridObject.getLane().removeGridObject(availabilityGridObject);
             formPopup.hide();
         }));

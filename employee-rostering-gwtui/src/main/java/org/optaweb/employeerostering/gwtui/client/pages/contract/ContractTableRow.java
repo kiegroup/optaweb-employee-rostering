@@ -31,7 +31,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.contract.Contract;
 import org.optaweb.employeerostering.shared.contract.ContractRestServiceBuilder;
@@ -63,6 +63,9 @@ public class ContractTableRow implements TakesValue<Contract>,
     @Inject
     private TenantStore tenantStore;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     @Override
     public void setValue(Contract contract) {
         this.contract = contract;
@@ -81,7 +84,7 @@ public class ContractTableRow implements TakesValue<Contract>,
 
     @EventHandler("delete")
     public void onDeleteContractButtonClick(@ForEvent("click") MouseEvent e) {
-        ContractRestServiceBuilder.removeContract(tenantStore.getCurrentTenantId(), contract.getId(), FailureShownRestCallback.onSuccess(v -> {
+        ContractRestServiceBuilder.removeContract(tenantStore.getCurrentTenantId(), contract.getId(), restCallbackFactory.onSuccess(v -> {
             eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Contract.class);
         }));
     }

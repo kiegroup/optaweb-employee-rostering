@@ -29,7 +29,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
@@ -71,6 +71,9 @@ public class ShiftRosterToolbar extends RosterToolbar
 
     @Inject
     private ManagedInstance<ShiftEditForm> shiftEditFormInstance;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     protected Timer updateSolvingTimeTimer;
     protected Timer terminateSolvingTimer;
@@ -124,7 +127,7 @@ public class ShiftRosterToolbar extends RosterToolbar
     }
 
     private void updateRowCount() {
-        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(spotList -> {
+        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess(spotList -> {
             setRowCount(spotList.size());
         }));
     }
@@ -132,7 +135,7 @@ public class ShiftRosterToolbar extends RosterToolbar
     @EventHandler("solve-button")
     public void onSolveButtonClick(@ForEvent("click") MouseEvent e) {
         RosterRestServiceBuilder.solveRoster(tenantStore.getCurrentTenantId(),
-                                             FailureShownRestCallback.onSuccess(a -> {
+                                             restCallbackFactory.onSuccess(a -> {
                                                  timeRemaining = 30;
                                                  scoresDisplay.classList.remove("hidden");
                                                  terminateEarlyButton.classList.remove("hidden");
@@ -146,7 +149,7 @@ public class ShiftRosterToolbar extends RosterToolbar
     @EventHandler("publish-button")
     public void onPublishButtonClick(@ForEvent("click") MouseEvent e) {
         RosterRestServiceBuilder.publishAndProvision(tenantStore.getCurrentTenantId(),
-                                                     FailureShownRestCallback.onSuccess((PublishResult pr) -> {
+                                                     restCallbackFactory.onSuccess((PublishResult pr) -> {
                                                          notificationFactory.showSuccessMessage(I18nKeys.Notifications_publishResult, dateTimeUtils.translateLocalDate(pr.getPublishedFromDate()), dateTimeUtils
                                                                  .translateLocalDate(pr.getPublishedToDate()));
                                                          eventManager.fireEvent(getViewInvalidateEvent());
@@ -171,7 +174,7 @@ public class ShiftRosterToolbar extends RosterToolbar
     @EventHandler("terminate-early-button")
     public void onTerminateEarlyButtonClick(@ForEvent("click") MouseEvent e) {
         RosterRestServiceBuilder.terminateRosterEarly(tenantStore.getCurrentTenantId(),
-                                                      FailureShownRestCallback.onSuccess(a -> {
+                                                      restCallbackFactory.onSuccess(a -> {
                                                           terminateSolvingTimer.cancel();
                                                           terminateSolving();
                                                       }));

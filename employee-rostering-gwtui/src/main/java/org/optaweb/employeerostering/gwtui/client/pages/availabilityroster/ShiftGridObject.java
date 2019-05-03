@@ -25,7 +25,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.SingleGridObject;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.AbstractHasTimeslotGridObject;
@@ -41,6 +41,9 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<AvailabilityR
     @DataField("label")
     @Named("span")
     private HTMLElement label;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private ShiftView shiftView;
 
@@ -96,7 +99,7 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<AvailabilityR
     @Override
     public void save() {
         ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView,
-                                            FailureShownRestCallback.onSuccess(sv -> {
+                                            restCallbackFactory.onSuccess(sv -> {
                                                 withShiftView(sv);
                                             }));
     }

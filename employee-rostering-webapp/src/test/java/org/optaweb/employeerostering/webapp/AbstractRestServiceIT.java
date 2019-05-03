@@ -69,7 +69,7 @@ public class AbstractRestServiceIT {
     }
 
     protected void assertClientResponseError(final Status expectedStatus) {
-        assertClientResponse(expectedStatus, MediaType.TEXT_PLAIN);
+        assertClientResponse(expectedStatus, MediaType.APPLICATION_JSON);
     }
 
     protected void assertClientResponse(final Status expectedStatus, final String expectedMediaType) {

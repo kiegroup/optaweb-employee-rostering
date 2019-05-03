@@ -47,6 +47,9 @@ public class StringToContractConverter implements Converter<Contract, String> {
     @Inject
     private EventManager eventManager;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     private Map<String, Contract> contractMap;
 
     @PostConstruct
@@ -106,7 +109,7 @@ public class StringToContractConverter implements Converter<Contract, String> {
     }
 
     private Promise<List<Contract>> getContractList() {
-        return new Promise<>((resolve, reject) -> ContractRestServiceBuilder.getContractList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
+        return new Promise<>((resolve, reject) -> ContractRestServiceBuilder.getContractList(tenantStore.getCurrentTenantId(), restCallbackFactory
                 .onSuccess(resolve::onInvoke)));
     }
 

@@ -35,7 +35,7 @@ import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
@@ -66,6 +66,9 @@ public class RotationPageViewportBuilder {
 
     @Inject
     private LoadingSpinner loadingSpinner;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private RotationPageViewport viewport;
 
@@ -144,11 +147,11 @@ public class RotationPageViewportBuilder {
     public Promise<RotationView> getRotationView() {
 
         return promiseUtils.promise((res, rej) -> {
-            RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess((rosterState) -> {
-                SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess((spotList) -> {
-                    EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess((employeeList) -> {
+            RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess((rosterState) -> {
+                SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess((spotList) -> {
+                    EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess((employeeList) -> {
                         RotationRestServiceBuilder.getShiftTemplateList(tenantStore.getCurrentTenantId(),
-                                                                        FailureShownRestCallback.onSuccess((shiftTemplateViewList) -> {
+                                                                        restCallbackFactory.onSuccess((shiftTemplateViewList) -> {
                                                                             RotationView rotationView = new RotationView();
                                                                             rotationView.setTenantId(tenantStore.getCurrentTenantId());
                                                                             rotationView.setRotationLength(rosterState.getRotationLength());

@@ -18,15 +18,14 @@ package org.optaweb.employeerostering.gwtui.client.common;
 
 import java.util.function.Consumer;
 
+import javax.inject.Inject;
+
 public class CallbackFactory {
 
-    public <T> FailureShownRestCallback<T> onSuccess(final Consumer<T> onSuccess) {
-        return new FailureShownRestCallback<T>() {
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
-            @Override
-            public void onSuccess(final T ret) {
-                onSuccess.accept(ret);
-            }
-        };
+    public <T> FailureShownRestCallbackFactory.FailureShownRestCallback<T> onSuccess(final Consumer<T> onSuccess) {
+        return restCallbackFactory.onSuccess(onSuccess);
     }
 }

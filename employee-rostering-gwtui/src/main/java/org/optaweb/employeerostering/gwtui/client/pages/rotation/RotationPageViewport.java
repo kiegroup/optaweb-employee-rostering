@@ -33,7 +33,7 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
@@ -74,6 +74,8 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     private DateTimeUtils dateTimeUtils;
     @Inject
     private NotificationFactory notificationFactory;
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private Map<Long, Spot> spotIdToSpotMap;
     private Map<Long, Employee> employeeIdToEmployeeMap;
@@ -121,7 +123,7 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
             ShiftTemplateModel out = shiftTemplateModelInstances.get().withShiftTemplateView(newInstance);
 
             RotationRestServiceBuilder.addShiftTemplate(tenantStore.getCurrentTenantId(), newInstance,
-                                                        FailureShownRestCallback.onSuccess((stv) -> {
+                                                        restCallbackFactory.onSuccess((stv) -> {
                                                             out.withShiftTemplateView(stv);
                                                         }));
             return out;
