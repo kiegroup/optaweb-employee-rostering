@@ -23,7 +23,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
@@ -45,6 +45,9 @@ public class TenantStore {
 
     @Inject
     private EventManager eventManager;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     // @PostConstruct
     public void init() {
@@ -92,7 +95,7 @@ public class TenantStore {
     }
 
     private void refresh() {
-        TenantRestServiceBuilder.getTenantList(FailureShownRestCallback.onSuccess(tenantList -> {
+        TenantRestServiceBuilder.getTenantList(restCallbackFactory.onSuccess(tenantList -> {
             this.tenantList = tenantList;
             if (tenantList.isEmpty()) {
                 current = null;

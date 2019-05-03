@@ -30,7 +30,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.SingleGridObject;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.AbstractHasTimeslotGridObject;
@@ -63,6 +63,9 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
 
     @Inject
     private ManagedInstance<AvailabilityEditForm> availabilityEditFormFactory;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private EmployeeAvailabilityView employeeAvailabilityView;
 
@@ -110,7 +113,7 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
     private void onDeleteClick(@ForEvent("click") MouseEvent e) {
         e.stopPropagation();
         EmployeeRestServiceBuilder.removeEmployeeAvailability(employeeAvailabilityView.getTenantId(), employeeAvailabilityView.getId(),
-                                                              FailureShownRestCallback.onSuccess(success -> {
+                                                              restCallbackFactory.onSuccess(success -> {
                                                                   getLane().removeGridObject(this);
                                                               }));
     }
@@ -136,7 +139,7 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
     private void setEmployeeAvailabilityState(EmployeeAvailabilityState state) {
         employeeAvailabilityView.setState(state);
         EmployeeRestServiceBuilder.updateEmployeeAvailability(employeeAvailabilityView.getTenantId(), employeeAvailabilityView,
-                                                              FailureShownRestCallback.onSuccess(eav -> {
+                                                              restCallbackFactory.onSuccess(eav -> {
                                                                   withEmployeeAvailabilityView(eav);
                                                               }));
     }
@@ -197,7 +200,7 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
     @Override
     public void save() {
         EmployeeRestServiceBuilder.updateEmployeeAvailability(employeeAvailabilityView.getTenantId(), employeeAvailabilityView,
-                                                              FailureShownRestCallback.onSuccess(eav -> {
+                                                              restCallbackFactory.onSuccess(eav -> {
                                                                   withEmployeeAvailabilityView(eav);
                                                               }));
     }

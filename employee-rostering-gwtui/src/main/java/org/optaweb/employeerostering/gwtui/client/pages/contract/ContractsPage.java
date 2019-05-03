@@ -34,7 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
 import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
@@ -88,6 +88,9 @@ public class ContractsPage
     @Inject
     private PromiseUtils promiseUtils;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     @PostConstruct
     protected void initWidget() {
         initTable();
@@ -119,7 +122,7 @@ public class ContractsPage
 
     private Promise<Void> refresh() {
         return promiseUtils.promise((res, rej) -> {
-            ContractRestServiceBuilder.getContractList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
+            ContractRestServiceBuilder.getContractList(tenantStore.getCurrentTenantId(), restCallbackFactory
                     .onSuccess(newContractList -> {
                         searchBar.setListToFilter(newContractList);
                         res.onInvoke(promiseUtils.resolve());

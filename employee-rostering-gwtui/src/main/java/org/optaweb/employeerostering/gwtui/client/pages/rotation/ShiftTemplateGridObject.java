@@ -28,7 +28,7 @@ import elemental2.dom.MouseEvent;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.GridObject;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.AbstractHasTimeslotGridObject;
@@ -58,6 +58,9 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     private ClickableDecorator<LocalDateTime, RotationMetadata> clickable;
     @Inject
     private ManagedInstance<ShiftTemplateEditForm> shiftTemplateEditFormFactory;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     public void withShiftTemplateModel(ShiftTemplateModel model) {
         this.model = model;
@@ -168,7 +171,7 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     @Override
     public void save() {
         RotationRestServiceBuilder.updateShiftTemplate(model.getShiftTemplateView().getTenantId(), model.getShiftTemplateView(),
-                                                       FailureShownRestCallback.onSuccess(stv -> {
+                                                       restCallbackFactory.onSuccess(stv -> {
                                                            model.withShiftTemplateView(stv);
                                                        }));
     }

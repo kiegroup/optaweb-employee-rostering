@@ -32,7 +32,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.SingleGridObject;
 import org.optaweb.employeerostering.gwtui.client.viewport.impl.AbstractHasTimeslotGridObject;
@@ -80,6 +80,9 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMe
     private ManagedInstance<ShiftEditForm> shiftEditFormFactory;
     @Inject
     private EventManager eventManager;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private ShiftView shiftView;
 
@@ -298,7 +301,7 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<ShiftRosterMe
     @Override
     public void save() {
         ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView,
-                                            FailureShownRestCallback.onSuccess(sv -> {
+                                            restCallbackFactory.onSuccess(sv -> {
                                                 withShiftView(sv);
                                                 eventManager.fireEvent(SHIFT_ROSTER_INVALIDATE);
                                             }));

@@ -34,7 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AutoTrimWhitespaceTextBox;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
 import org.optaweb.employeerostering.gwtui.client.common.StringToContractConverter;
 import org.optaweb.employeerostering.gwtui.client.common.TableRow;
@@ -89,6 +89,9 @@ public class EmployeeTableRow extends TableRow<Employee> {
 
     @Inject
     private EventManager eventManager;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     @PostConstruct
     protected void initWidget() {
@@ -146,7 +149,7 @@ public class EmployeeTableRow extends TableRow<Employee> {
     @Override
     protected void deleteRow(Employee employee) {
         EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), employee.getId(),
-                                                  FailureShownRestCallback.onSuccess(success -> {
+                                                  restCallbackFactory.onSuccess(success -> {
                                                       eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
                                                   }));
     }
@@ -155,7 +158,7 @@ public class EmployeeTableRow extends TableRow<Employee> {
     protected void updateRow(Employee oldValue, Employee newValue) {
 
         EmployeeRestServiceBuilder.updateEmployee(tenantStore.getCurrentTenantId(), newValue,
-                                                  FailureShownRestCallback.onSuccess(v -> {
+                                                  restCallbackFactory.onSuccess(v -> {
                                                       eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
                                                   }));
     }
@@ -163,7 +166,7 @@ public class EmployeeTableRow extends TableRow<Employee> {
     @Override
     protected void createRow(Employee employee) {
         EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee,
-                                               FailureShownRestCallback.onSuccess(v -> {
+                                               restCallbackFactory.onSuccess(v -> {
                                                    eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
                                                }));
     }

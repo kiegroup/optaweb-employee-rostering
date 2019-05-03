@@ -28,7 +28,7 @@ import elemental2.dom.DomGlobal;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.shared.api.annotations.Bundle;
 import org.optaweb.employeerostering.gwtui.client.app.NavigationController;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.pages.Pages;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
@@ -55,6 +55,9 @@ public class OptaWebEntryPoint {
 
     @Inject
     private NotificationFactory notificationFactory;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private boolean isPageLoaded;
 
@@ -94,7 +97,7 @@ public class OptaWebEntryPoint {
     }
 
     private void healthCheck() {
-        TenantRestServiceBuilder.getTenantList(FailureShownRestCallback.onSuccess(tenantList -> {
+        TenantRestServiceBuilder.getTenantList(restCallbackFactory.onSuccess(tenantList -> {
             if (null == tenantList) {
                 notificationFactory.showErrorMessage(I18nKeys.OptaWebEntryPoint_cannotContactServer, Window.Location.getHref());
             } else {

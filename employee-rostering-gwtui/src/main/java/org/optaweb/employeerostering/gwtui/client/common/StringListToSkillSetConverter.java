@@ -50,6 +50,9 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
     @Inject
     private EventManager eventManager;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     private Map<String, Skill> skillMap;
 
     @PostConstruct
@@ -112,7 +115,7 @@ public class StringListToSkillSetConverter implements Converter<Set<Skill>, List
     }
 
     private Promise<List<Skill>> getSkillList() {
-        return new Promise<>((resolve, reject) -> SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
+        return new Promise<>((resolve, reject) -> SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), restCallbackFactory
                 .onSuccess(newSkillList -> {
                     resolve.onInvoke(newSkillList);
                 })));

@@ -34,7 +34,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AutoTrimWhitespaceTextBox;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.StringListToSkillSetConverter;
 import org.optaweb.employeerostering.gwtui.client.common.TableRow;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
@@ -78,6 +78,9 @@ public class SpotTableRow extends TableRow<Spot>
     @Inject
     private TranslationService translationService;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     @PostConstruct
     protected void initWidget() {
         spotName.getElement().setAttribute("placeholder", translationService.format(
@@ -115,7 +118,7 @@ public class SpotTableRow extends TableRow<Spot>
     @Override
     protected void deleteRow(Spot spot) {
         SpotRestServiceBuilder.removeSpot(tenantStore.getCurrentTenantId(), spot.getId(),
-                                          FailureShownRestCallback.onSuccess(success -> {
+                                          restCallbackFactory.onSuccess(success -> {
                                               eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class);
                                           }));
     }
@@ -123,7 +126,7 @@ public class SpotTableRow extends TableRow<Spot>
     @Override
     protected void updateRow(Spot oldValue, Spot newValue) {
         SpotRestServiceBuilder.updateSpot(tenantStore.getCurrentTenantId(), newValue,
-                                          FailureShownRestCallback.onSuccess(v -> {
+                                          restCallbackFactory.onSuccess(v -> {
                                               eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class);
                                           }));
     }
@@ -131,7 +134,7 @@ public class SpotTableRow extends TableRow<Spot>
     @Override
     protected void createRow(Spot spot) {
         SpotRestServiceBuilder.addSpot(tenantStore.getCurrentTenantId(), spot,
-                                       FailureShownRestCallback.onSuccess(v -> {
+                                       restCallbackFactory.onSuccess(v -> {
                                            eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class);
                                        }));
     }

@@ -35,7 +35,7 @@ import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.optaweb.employeerostering.gwtui.client.app.spinner.LoadingSpinner;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
@@ -78,6 +78,9 @@ public class ShiftRosterPageViewportBuilder {
     @Inject
     private DateTimeUtils dateTimeUtils;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     private ShiftRosterPageViewport viewport;
 
     private boolean isUpdatingRoster;
@@ -115,7 +118,7 @@ public class ShiftRosterPageViewportBuilder {
         });
 
         RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(),
-                                                FailureShownRestCallback.onSuccess((rs) -> {
+                                                restCallbackFactory.onSuccess((rs) -> {
                                                     LocalDate startDate = dateTimeUtils.getFirstDateOfWeek(rs.getFirstDraftDate());
                                                     LocalDate endDate = dateTimeUtils.getLastDateOfWeek(rs.getFirstDraftDate()).plusDays(1);
                                                     eventManager.fireEvent(SHIFT_ROSTER_DATE_RANGE, new LocalDateRange(startDate, endDate));
@@ -234,7 +237,7 @@ public class ShiftRosterPageViewportBuilder {
                                                                 .getStartDate()
                                                                 .toString(),
                                                         localDateRange.getEndDate().toString(),
-                                                        FailureShownRestCallback.onSuccess((s) -> {
+                                                        restCallbackFactory.onSuccess((s) -> {
                                                             res.onInvoke(s);
                                                         }));
                         });

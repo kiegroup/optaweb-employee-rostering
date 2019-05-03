@@ -36,7 +36,7 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.KiePager;
 import org.optaweb.employeerostering.gwtui.client.common.KieSearchBar;
 import org.optaweb.employeerostering.gwtui.client.pages.Page;
@@ -85,6 +85,9 @@ public class SkillsPage
     @Inject
     private EventManager eventManager;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     @PostConstruct
     protected void initWidget() {
         initTable();
@@ -116,7 +119,7 @@ public class SkillsPage
             return promiseUtils.resolve();
         }
         return promiseUtils.promise((res, rej) -> {
-            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), FailureShownRestCallback
+            SkillRestServiceBuilder.getSkillList(tenantStore.getCurrentTenantId(), restCallbackFactory
                     .onSuccess(newSkillList -> {
                         searchBar.setListToFilter(newSkillList);
                         res.onInvoke(promiseUtils.resolve());

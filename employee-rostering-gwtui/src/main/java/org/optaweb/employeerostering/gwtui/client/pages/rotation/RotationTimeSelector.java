@@ -26,7 +26,7 @@ import org.gwtbootstrap3.client.ui.form.validator.DecimalMaxValidator;
 import org.gwtbootstrap3.client.ui.form.validator.DecimalMinValidator;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.LocalTimePicker;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.shared.roster.RosterRestServiceBuilder;
@@ -46,11 +46,11 @@ public class RotationTimeSelector {
     private int offset;
 
     @Inject
-    public RotationTimeSelector(IntegerBox dayOffsetPicker, LocalTimePicker timePicker, TenantStore tenantStore) {
+    public RotationTimeSelector(IntegerBox dayOffsetPicker, LocalTimePicker timePicker, TenantStore tenantStore, FailureShownRestCallbackFactory restCallbackFactory) {
         offset = 0;
         this.dayOffsetPicker = dayOffsetPicker;
         this.timePicker = timePicker;
-        RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(this::setRotationLength));
+        RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess(this::setRotationLength));
     }
 
     protected void setRotationLength(RosterState rs) {

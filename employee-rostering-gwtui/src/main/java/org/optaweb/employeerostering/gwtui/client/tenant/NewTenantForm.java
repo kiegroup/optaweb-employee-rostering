@@ -35,7 +35,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDatePicker;
 import org.optaweb.employeerostering.gwtui.client.popups.FormPopup;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
@@ -96,6 +96,9 @@ public class NewTenantForm implements IsElement {
     @Inject
     private EventManager eventManager;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     private FormPopup formPopup;
 
     @PostConstruct
@@ -106,7 +109,7 @@ public class NewTenantForm implements IsElement {
         rotationLength.valueAsNumber = 28;
         draftLength.valueAsNumber = 21;
 
-        TenantRestServiceBuilder.getSupportedTimezones(FailureShownRestCallback.onSuccess(timezoneList -> {
+        TenantRestServiceBuilder.getSupportedTimezones(restCallbackFactory.onSuccess(timezoneList -> {
             String systemTimezone = getSystemTimezone();
             for (ZoneId timezone : timezoneList) {
                 Option option = new Option();
@@ -169,7 +172,7 @@ public class NewTenantForm implements IsElement {
             rosterState.setTimeZone(ZoneId.of(timezoneSelect.getSelectedItem().getValue()));
             rosterState.setTenant(newTenant);
 
-            TenantRestServiceBuilder.addTenant(rosterState, FailureShownRestCallback.onSuccess(tenant -> {
+            TenantRestServiceBuilder.addTenant(rosterState, restCallbackFactory.onSuccess(tenant -> {
                 eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Tenant.class);
                 formPopup.hide();
             }));

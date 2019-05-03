@@ -33,7 +33,7 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.DateTimeViewport;
@@ -61,6 +61,8 @@ public class AvailabilityRosterPageViewport extends DateTimeViewport<Availabilit
     private ManagedInstance<AvailabilityGridObject> employeeAvailabilityGridObjectInstances;
     @Inject
     private DateTimeUtils dateTimeUtils;
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private RosterState rosterState;
     private Map<Long, Spot> spotIdToSpotMap;
@@ -107,7 +109,7 @@ public class AvailabilityRosterPageViewport extends DateTimeViewport<Availabilit
             EmployeeAvailabilityView availability = new EmployeeAvailabilityView(tenantId, employee, startDateTime, endDateTime,
                                                                                  EmployeeAvailabilityState.UNAVAILABLE);
             AvailabilityGridObject out = employeeAvailabilityGridObjectInstances.get().withEmployeeAvailabilityView(availability);
-            EmployeeRestServiceBuilder.addEmployeeAvailability(tenantId, availability, FailureShownRestCallback.onSuccess(av -> {
+            EmployeeRestServiceBuilder.addEmployeeAvailability(tenantId, availability, restCallbackFactory.onSuccess(av -> {
                 out.withEmployeeAvailabilityView(av);
                 getLockableLaneMap().acquire().then(laneMap -> {
                     laneMap.get(laneId).moveAddedGridObjectToIdMap(out);

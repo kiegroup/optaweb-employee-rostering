@@ -34,7 +34,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
 import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.DateTimeViewport;
@@ -65,6 +65,9 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
     private DateTimeUtils dateTimeUtils;
     @Inject
     private EventManager eventManager;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private RosterState rosterState;
     private Map<Long, Spot> spotIdToSpotMap;
@@ -108,7 +111,7 @@ public class ShiftRosterPageViewport extends DateTimeViewport<ShiftRosterView, S
         return (t) -> {
             ShiftView shift = new ShiftView(tenantId, spot, t, t.plusHours(8));
             ShiftGridObject out = shiftGridObjectInstances.get().withShiftView(shift);
-            ShiftRestServiceBuilder.addShift(tenantId, shift, FailureShownRestCallback.onSuccess(sv -> {
+            ShiftRestServiceBuilder.addShift(tenantId, shift, restCallbackFactory.onSuccess(sv -> {
                 out.withShiftView(sv);
                 getLockableLaneMap().acquire().then(laneMap -> {
                     laneMap.get(laneId).moveAddedGridObjectToIdMap(out);

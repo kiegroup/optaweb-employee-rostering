@@ -30,7 +30,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
 import org.optaweb.employeerostering.shared.tenant.TenantRestServiceBuilder;
 
@@ -52,6 +52,9 @@ public class TenantTableRow implements TakesValue<Tenant>,
     @Inject
     private EventManager eventManager;
 
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
+
     @Override
     public void setValue(Tenant tenant) {
         this.tenant = tenant;
@@ -65,7 +68,7 @@ public class TenantTableRow implements TakesValue<Tenant>,
 
     @EventHandler("delete-tenant-button")
     public void onDeleteTenantButtonClick(@ForEvent("click") MouseEvent e) {
-        TenantRestServiceBuilder.removeTenant(tenant.getId(), FailureShownRestCallback.onSuccess(v -> {
+        TenantRestServiceBuilder.removeTenant(tenant.getId(), restCallbackFactory.onSuccess(v -> {
             eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Tenant.class);
         }));
     }

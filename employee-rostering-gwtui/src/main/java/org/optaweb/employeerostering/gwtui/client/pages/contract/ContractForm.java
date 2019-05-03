@@ -33,7 +33,7 @@ import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.AbstractFormPopup;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.NullableIntegerElement;
 import org.optaweb.employeerostering.gwtui.client.popups.PopupFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
@@ -61,6 +61,9 @@ public class ContractForm extends AbstractFormPopup {
 
     @DataField("maximum-minutes-per-year")
     private NullableIntegerElement maximumMinutesPerYear;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     private TranslationService translationService;
 
@@ -148,7 +151,7 @@ public class ContractForm extends AbstractFormPopup {
                 contract.setMaximumMinutesPerWeek(maximumMinutesPerWeek.getValue().orElse(null));
                 contract.setMaximumMinutesPerMonth(maximumMinutesPerMonth.getValue().orElse(null));
                 contract.setMaximumMinutesPerYear(maximumMinutesPerYear.getValue().orElse(null));
-                ContractRestServiceBuilder.updateContract(tenantStore.getCurrentTenantId(), contract, FailureShownRestCallback.onSuccess(c -> {
+                ContractRestServiceBuilder.updateContract(tenantStore.getCurrentTenantId(), contract, restCallbackFactory.onSuccess(c -> {
                     hide();
                     eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Contract.class);
                 }));
@@ -158,7 +161,7 @@ public class ContractForm extends AbstractFormPopup {
                                         maximumMinutesPerWeek.getValue().orElse(null),
                                         maximumMinutesPerMonth.getValue().orElse(null),
                                         maximumMinutesPerYear.getValue().orElse(null));
-                ContractRestServiceBuilder.addContract(tenantStore.getCurrentTenantId(), contract, FailureShownRestCallback.onSuccess(c -> {
+                ContractRestServiceBuilder.addContract(tenantStore.getCurrentTenantId(), contract, restCallbackFactory.onSuccess(c -> {
                     hide();
                     eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Contract.class);
                 }));

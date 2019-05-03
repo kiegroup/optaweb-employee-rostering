@@ -28,7 +28,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.common.EventManager.Event;
-import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallback;
+import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.LocalDateRange;
 import org.optaweb.employeerostering.gwtui.client.viewport.RosterToolbar;
 import org.optaweb.employeerostering.shared.employee.Employee;
@@ -52,6 +52,9 @@ public class AvailabilityRosterToolbar extends RosterToolbar
 
     @Inject
     private ManagedInstance<AvailabilityEditForm> availabilityEditForm;
+
+    @Inject
+    private FailureShownRestCallbackFactory restCallbackFactory;
 
     @PostConstruct
     private void init() {
@@ -89,7 +92,7 @@ public class AvailabilityRosterToolbar extends RosterToolbar
     }
 
     private void updateRowCount() {
-        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), FailureShownRestCallback.onSuccess(employeeList -> {
+        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess(employeeList -> {
             setRowCount(employeeList.size());
         }));
     }
