@@ -95,8 +95,8 @@ public class TenantStore {
     }
 
     private void refresh() {
-        TenantRestServiceBuilder.getTenantList(restCallbackFactory.onSuccess(tenantList -> {
-            this.tenantList = tenantList;
+        TenantRestServiceBuilder.getTenantList(restCallbackFactory.onSuccess(newTenantList -> {
+            this.tenantList = newTenantList;
             if (tenantList.isEmpty()) {
                 current = null;
                 noTenantsEvent.fire(new NoTenants());

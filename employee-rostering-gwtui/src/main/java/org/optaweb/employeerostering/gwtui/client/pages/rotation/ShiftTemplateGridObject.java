@@ -171,8 +171,8 @@ public class ShiftTemplateGridObject extends AbstractHasTimeslotGridObject<Rotat
     @Override
     public void save() {
         RotationRestServiceBuilder.updateShiftTemplate(model.getShiftTemplateView().getTenantId(), model.getShiftTemplateView(),
-                                                       restCallbackFactory.onSuccess(stv -> {
-                                                           model.withShiftTemplateView(stv);
-                                                       }));
+                                                       restCallbackFactory.onSuccess(stv ->
+                                                                                             model.withShiftTemplateView(stv)
+                                                       ));
     }
 }

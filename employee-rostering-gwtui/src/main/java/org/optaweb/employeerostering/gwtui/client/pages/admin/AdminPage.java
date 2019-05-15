@@ -120,7 +120,7 @@ public class AdminPage
     private void initTable() {
         searchBar.setListToFilter(Collections.emptyList());
         pager.setPresenter(table);
-        searchBar.setElementToStringMapping((tenant) -> tenant.getName());
+        searchBar.setElementToStringMapping(Tenant::getName);
         searchBar.addFilterListener(pager);
     }
 
@@ -137,7 +137,7 @@ public class AdminPage
     @EventHandler("reset-application-button")
     private void resetApplication(@ForEvent("click") MouseEvent e) {
         loadingSpinner.showFor("reset-application");
-        AdminRestServiceBuilder.resetApplication(null, restCallbackFactory.onSuccess((success) -> {
+        AdminRestServiceBuilder.resetApplication(null, restCallbackFactory.onSuccess(success -> {
             loadingSpinner.hideFor("reset-application");
             notificationFactory.showInfoMessage(I18nKeys.Notifications_resetApplicationSuccessful);
         }));

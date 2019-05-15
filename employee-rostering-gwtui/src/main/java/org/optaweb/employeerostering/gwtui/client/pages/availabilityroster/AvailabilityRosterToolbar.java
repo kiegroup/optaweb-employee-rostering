@@ -92,8 +92,8 @@ public class AvailabilityRosterToolbar extends RosterToolbar
     }
 
     private void updateRowCount() {
-        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess(employeeList -> {
-            setRowCount(employeeList.size());
-        }));
+        EmployeeRestServiceBuilder.getEmployeeList(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess(employeeList ->
+                                                                                                                           setRowCount(employeeList.size())
+        ));
     }
 }

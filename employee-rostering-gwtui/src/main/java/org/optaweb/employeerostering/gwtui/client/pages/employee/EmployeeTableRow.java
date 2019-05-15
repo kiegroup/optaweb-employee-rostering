@@ -104,16 +104,16 @@ public class EmployeeTableRow extends TableRow<Employee> {
         dataBinder.bind(employeeContract, "contract", contractConvertor);
         dataBinder.bind(employeeSkillProficiencySet, "skillProficiencySet", skillConvertor);
 
-        dataBinder.<String>addPropertyChangeHandler("name", (e) -> {
-            employeeNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
-        });
-        dataBinder.<Contract>addPropertyChangeHandler("contract", (e) -> {
-            employeeContractDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped((e.getNewValue() != null) ? e.getNewValue().getName() : "").toSafeHtml().asString();
-        });
-        dataBinder.<Set<Skill>>addPropertyChangeHandler("skillProficiencySet", (e) -> {
-            employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue().stream().map(Skill::getName).collect(Collectors.joining(", ")))
-                    .toSafeHtml().asString();
-        });
+        dataBinder.<String>addPropertyChangeHandler("name", e ->
+                employeeNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString()
+        );
+        dataBinder.<Contract>addPropertyChangeHandler("contract", e ->
+                employeeContractDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped((e.getNewValue() != null) ? e.getNewValue().getName() : "").toSafeHtml().asString()
+        );
+        dataBinder.<Set<Skill>>addPropertyChangeHandler("skillProficiencySet", e ->
+                employeeSkillProficiencySetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue().stream().map(Skill::getName).collect(Collectors.joining(", ")))
+                        .toSafeHtml().asString()
+        );
         eventManager.subscribeToEventForElement(EventManager.Event.SKILL_MAP_INVALIDATION, this, this::updateSkillMap);
         eventManager.subscribeToEventForElement(EventManager.Event.CONTRACT_MAP_INVALIDATION, this, this::updateContractMap);
     }
@@ -149,26 +149,26 @@ public class EmployeeTableRow extends TableRow<Employee> {
     @Override
     protected void deleteRow(Employee employee) {
         EmployeeRestServiceBuilder.removeEmployee(tenantStore.getCurrentTenantId(), employee.getId(),
-                                                  restCallbackFactory.onSuccess(success -> {
-                                                      eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
-                                                  }));
+                                                  restCallbackFactory.onSuccess(success ->
+                                                                                        eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class)
+                                                  ));
     }
 
     @Override
     protected void updateRow(Employee oldValue, Employee newValue) {
 
         EmployeeRestServiceBuilder.updateEmployee(tenantStore.getCurrentTenantId(), newValue,
-                                                  restCallbackFactory.onSuccess(v -> {
-                                                      eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
-                                                  }));
+                                                  restCallbackFactory.onSuccess(v ->
+                                                                                        eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class)
+                                                  ));
     }
 
     @Override
     protected void createRow(Employee employee) {
         EmployeeRestServiceBuilder.addEmployee(tenantStore.getCurrentTenantId(), employee,
-                                               restCallbackFactory.onSuccess(v -> {
-                                                   eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class);
-                                               }));
+                                               restCallbackFactory.onSuccess(v ->
+                                                                                     eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Employee.class)
+                                               ));
     }
 
     @Override

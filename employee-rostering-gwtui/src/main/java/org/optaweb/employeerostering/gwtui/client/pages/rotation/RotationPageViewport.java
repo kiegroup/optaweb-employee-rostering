@@ -32,14 +32,11 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.common.EventManager;
 import org.optaweb.employeerostering.gwtui.client.common.FailureShownRestCallbackFactory;
 import org.optaweb.employeerostering.gwtui.client.common.Lockable;
-import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
-import org.optaweb.employeerostering.gwtui.client.util.PromiseUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.DateTimeViewport;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.HasGridObjects;
 import org.optaweb.employeerostering.gwtui.client.viewport.grid.Lane;
@@ -65,15 +62,9 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     @Inject
     private TenantStore tenantStore;
     @Inject
-    private EventManager eventManager;
-    @Inject
-    private PromiseUtils promiseUtils;
-    @Inject
     private TranslationService translationService;
     @Inject
     private DateTimeUtils dateTimeUtils;
-    @Inject
-    private NotificationFactory notificationFactory;
     @Inject
     private FailureShownRestCallbackFactory restCallbackFactory;
 
@@ -89,8 +80,8 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
 
     @Override
     protected void withView(RotationView view) {
-        spotIdToSpotMap = super.getIdMapFor(view.getSpotList(), (s) -> s.getId());
-        employeeIdToEmployeeMap = super.getIdMapFor(view.getEmployeeList(), (s) -> s.getId());
+        spotIdToSpotMap = super.getIdMapFor(view.getSpotList(), Spot::getId);
+        employeeIdToEmployeeMap = super.getIdMapFor(view.getEmployeeList(), Employee::getId);
     }
 
     @Override
@@ -102,7 +93,7 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
 
     @Override
     protected Map<Long, String> getLaneTitlesFor(RotationView view) {
-        return view.getSpotList().stream().collect(Collectors.toMap((s) -> s.getId(), (s) -> s.getName()));
+        return view.getSpotList().stream().collect(Collectors.toMap(Spot::getId, Spot::getName));
     }
 
     @Override
@@ -113,7 +104,7 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
     @Override
     protected Function<LocalDateTime, HasGridObjects<LocalDateTime, RotationMetadata>> getInstanceCreator(RotationView view, Long laneId) {
         final Spot spot = spotIdToSpotMap.get(laneId);
-        return (t) -> {
+        return t -> {
             ShiftTemplateView newInstance = new ShiftTemplateView();
             newInstance.setSpotId(spot.getId());
             newInstance.setTenantId(tenantStore.getCurrentTenantId());
@@ -123,9 +114,7 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
             ShiftTemplateModel out = shiftTemplateModelInstances.get().withShiftTemplateView(newInstance);
 
             RotationRestServiceBuilder.addShiftTemplate(tenantStore.getCurrentTenantId(), newInstance,
-                                                        restCallbackFactory.onSuccess((stv) -> {
-                                                            out.withShiftTemplateView(stv);
-                                                        }));
+                                                        restCallbackFactory.onSuccess(out::withShiftTemplateView));
             return out;
         };
     }
@@ -137,19 +126,17 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
 
     @Override
     protected Function<LocalDateTime, String> getDateHeaderFunction() {
-        return (date) -> translationService.format(I18nKeys.Rotation_dateHeader, Duration.between(BASE_DATE, date).toDays() + 1);
+        return date -> translationService.format(I18nKeys.Rotation_dateHeader, Duration.between(BASE_DATE, date).toDays() + 1);
     }
 
     @Override
     protected Function<LocalDateTime, String> getTimeHeaderFunction() {
-        return (date) -> {
-            return dateTimeUtils.translateLocalTime(date.toLocalTime());
-        };
+        return date -> dateTimeUtils.translateLocalTime(date.toLocalTime());
     }
 
     @Override
     protected Function<LocalDateTime, List<String>> getDateHeaderIconClassesFunction() {
-        return (date) -> Collections.emptyList();
+        return date -> Collections.emptyList();
     }
 
     @Override
@@ -169,6 +156,6 @@ public class RotationPageViewport extends DateTimeViewport<RotationView, Rotatio
 
     @Override
     protected List<Long> getLaneOrder(RotationView view) {
-        return view.getSpotList().stream().map(s -> s.getId()).collect(Collectors.toList());
+        return view.getSpotList().stream().map(Spot::getId).collect(Collectors.toList());
     }
 }

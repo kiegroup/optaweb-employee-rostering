@@ -28,14 +28,15 @@ import com.github.nmorel.gwtjackson.client.stream.JsonReader;
 import com.github.nmorel.gwtjackson.client.stream.JsonToken;
 import com.github.nmorel.gwtjackson.client.stream.impl.DefaultJsonReader;
 import com.github.nmorel.gwtjackson.client.stream.impl.StringReader;
-import org.optaweb.employeerostering.shared.exception.ServerSideException;
+import org.optaweb.employeerostering.shared.exception.ServerSideExceptionInfo;
+import org.optaweb.employeerostering.shared.exception.ServerSideExceptionInfo.ServerSideExceptionInfoFields;
 
 @Singleton
 public class ServerSideExceptionDeserializer {
 
     // Work around for https://github.com/nmorel/gwt-jackson/issues/79
     // (Cannot use the gwt-jackson ObjectMapper due to a compilation error)
-    public ServerSideException deserializeFromJsonString(String json) {
+    public ServerSideExceptionInfo deserializeFromJsonString(String json) {
         JsonReader reader = new DefaultJsonReader(new StringReader(json));
         try {
             return deserialize(reader, json);
@@ -44,32 +45,30 @@ public class ServerSideExceptionDeserializer {
         }
     }
 
-    public ServerSideException deserialize(JsonReader reader, String json) {
-        Set<String> fields = new HashSet<>(Arrays.asList("i18nKey", "messageParameters", "exceptionClass", "stackTrace", "exceptionMessage", "exceptionCause"));
+    public ServerSideExceptionInfo deserialize(JsonReader reader, String json) {
+        Set<ServerSideExceptionInfoFields> fields = new HashSet<>(Arrays.asList(ServerSideExceptionInfoFields.values()));
 
         String i18nKey = null;
         String exceptionMessage = null;
         List<String> messageParameters = null;
         String exceptionClass = null;
         List<String> stackTrace = null;
-        ServerSideException exceptionCause = null;
+        ServerSideExceptionInfo exceptionCause = null;
 
         reader.beginObject();
         while (reader.hasNext()) {
             String fieldName = reader.nextName();
-            if (!fields.contains(fieldName)) {
-                throw new IllegalArgumentException("Invalid Json: (" + json + ").");
-            }
-            fields.remove(fieldName);
+            ServerSideExceptionInfoFields field = ServerSideExceptionInfoFields.getFieldForName(fieldName);
+            fields.remove(field);
 
-            switch (fieldName) {
-                case "i18nKey":
+            switch (field) {
+                case I18N_KEY:
                     i18nKey = reader.nextString();
                     break;
-                case "exceptionMessage":
+                case EXCEPTION_MESSAGE:
                     exceptionMessage = reader.nextString();
                     break;
-                case "messageParameters":
+                case MESSAGE_PARAMETERS:
                     reader.beginArray();
                     messageParameters = new ArrayList<>();
                     while (reader.hasNext()) {
@@ -77,10 +76,10 @@ public class ServerSideExceptionDeserializer {
                     }
                     reader.endArray();
                     break;
-                case "exceptionClass":
+                case EXCEPTION_CLASS:
                     exceptionClass = reader.nextString();
                     break;
-                case "stackTrace":
+                case STACK_TRACE:
                     reader.beginArray();
                     stackTrace = new ArrayList<>();
                     while (reader.hasNext()) {
@@ -89,7 +88,7 @@ public class ServerSideExceptionDeserializer {
                     reader.endArray();
                     break;
 
-                case "exceptionCause":
+                case EXCEPTION_CAUSE:
                     if (reader.peek() != JsonToken.NULL) {
                         exceptionCause = deserialize(reader, json);
                     } else {
@@ -98,13 +97,17 @@ public class ServerSideExceptionDeserializer {
                     }
                     break;
                 default:
-                    throw new IllegalArgumentException("Invalid Json: (" + json + ").");
+                    raiseError(json);
             }
         }
         reader.endObject();
         if (!fields.isEmpty()) {
-            throw new IllegalArgumentException("Invalid Json: (" + json + ").");
+            raiseError(json);
         }
-        return new ServerSideException(i18nKey, exceptionMessage, messageParameters, exceptionClass, stackTrace, exceptionCause);
+        return new ServerSideExceptionInfo(i18nKey, exceptionMessage, messageParameters, exceptionClass, stackTrace, exceptionCause);
+    }
+
+    private static void raiseError(String json) {
+        throw new IllegalArgumentException("Invalid Json: (" + json + ").");
     }
 }

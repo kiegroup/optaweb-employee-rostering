@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.core.MediaType;
 
 import com.github.nmorel.gwtjackson.rest.api.RestCallback;
 import com.google.gwt.core.client.GWT;
@@ -27,7 +28,8 @@ import com.google.gwt.http.client.Response;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.optaweb.employeerostering.gwtui.client.exception.RESTException;
 import org.optaweb.employeerostering.gwtui.client.gwtjackson.ServerSideExceptionDeserializer;
-import org.optaweb.employeerostering.shared.exception.ServerSideException;
+import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
+import org.optaweb.employeerostering.shared.exception.ServerSideExceptionInfo;
 
 @Singleton
 public class FailureShownRestCallbackFactory {
@@ -36,18 +38,24 @@ public class FailureShownRestCallbackFactory {
     private TranslationService translationService;
 
     @Inject
+    private NotificationFactory notificationFactory;
+
+    @Inject
     private ServerSideExceptionDeserializer serverSideExceptionDeserializer;
 
     public abstract class FailureShownRestCallback<T> extends RestCallback<T> {
 
         private Consumer<Response> onError = response -> {
-            ServerSideException exception = serverSideExceptionDeserializer.deserializeFromJsonString(response.getText());
-            GWT.getUncaughtExceptionHandler().onUncaughtException(new RESTException(exception, translationService));
+            if (response.getHeader("Content-Type").equals(MediaType.APPLICATION_JSON)) {
+                ServerSideExceptionInfo exception = serverSideExceptionDeserializer.deserializeFromJsonString(response.getText());
+                GWT.getUncaughtExceptionHandler().onUncaughtException(new RESTException(exception, translationService));
+            } else {
+                notificationFactory.showErrorMessage(response.getText());
+            }
         };
 
-        private Consumer<Throwable> onFailure = throwable -> {
-            GWT.getUncaughtExceptionHandler().onUncaughtException(throwable);
-        };
+        private Consumer<Throwable> onFailure = throwable ->
+                GWT.getUncaughtExceptionHandler().onUncaughtException(throwable);
 
         @Override
         public void onError(final Response response) {

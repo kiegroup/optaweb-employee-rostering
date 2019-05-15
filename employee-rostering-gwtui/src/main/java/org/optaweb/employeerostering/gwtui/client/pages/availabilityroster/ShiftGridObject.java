@@ -99,8 +99,6 @@ public class ShiftGridObject extends AbstractHasTimeslotGridObject<AvailabilityR
     @Override
     public void save() {
         ShiftRestServiceBuilder.updateShift(shiftView.getTenantId(), shiftView,
-                                            restCallbackFactory.onSuccess(sv -> {
-                                                withShiftView(sv);
-                                            }));
+                                            restCallbackFactory.onSuccess(this::withShiftView));
     }
 }

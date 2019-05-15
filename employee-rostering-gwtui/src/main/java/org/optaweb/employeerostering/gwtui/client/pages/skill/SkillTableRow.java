@@ -66,9 +66,9 @@ public class SkillTableRow extends TableRow<Skill> implements TakesValue<Skill> 
         dataBinder.getModel().setTenantId(tenantStore.getCurrentTenantId());
         dataBinder.bind(skillName, "name");
 
-        dataBinder.<String>addPropertyChangeHandler("name", (e) -> {
-            skillNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
-        });
+        dataBinder.<String>addPropertyChangeHandler("name", e ->
+                skillNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString()
+        );
     }
 
     public void reset() {
@@ -78,25 +78,25 @@ public class SkillTableRow extends TableRow<Skill> implements TakesValue<Skill> 
     @Override
     protected void deleteRow(Skill skill) {
         SkillRestServiceBuilder.removeSkill(tenantStore.getCurrentTenantId(), skill.getId(),
-                                            restCallbackFactory.onSuccess(success -> {
-                                                eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Skill.class);
-                                            }));
+                                            restCallbackFactory.onSuccess(success ->
+                                                                                  eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Skill.class)
+                                            ));
     }
 
     @Override
     protected void updateRow(Skill oldValue, Skill newValue) {
         SkillRestServiceBuilder.updateSkill(tenantStore.getCurrentTenantId(), newValue,
-                                            restCallbackFactory.onSuccess(v -> {
-                                                eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Skill.class);
-                                            }));
+                                            restCallbackFactory.onSuccess(v ->
+                                                                                  eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Skill.class)
+                                            ));
     }
 
     @Override
     protected void createRow(Skill skill) {
         SkillRestServiceBuilder.addSkill(tenantStore.getCurrentTenantId(), skill,
-                                         restCallbackFactory.onSuccess(v -> {
-                                             eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Skill.class);
-                                         }));
+                                         restCallbackFactory.onSuccess(v ->
+                                                                               eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Skill.class)
+                                         ));
     }
 
     @Override

@@ -100,16 +100,16 @@ public class AvailabilityRosterPageViewportBuilder {
     @PostConstruct
     private void init() {
         pagination = Pagination.of(0, 10);
-        eventManager.subscribeToEventForever(SOLVE_START, (m) -> this.onSolveStart());
-        eventManager.subscribeToEventForever(SOLVE_END, (m) -> this.onSolveEnd());
-        eventManager.subscribeToEventForever(AVAILABILITY_ROSTER_PAGINATION, (pagination) -> {
+        eventManager.subscribeToEventForever(SOLVE_START, m -> this.onSolveStart());
+        eventManager.subscribeToEventForever(SOLVE_END, m -> this.onSolveEnd());
+        eventManager.subscribeToEventForever(AVAILABILITY_ROSTER_PAGINATION, pagination -> {
             this.pagination = pagination;
             buildAvailabilityRosterViewport(viewport);
         });
-        eventManager.subscribeToEventForever(AVAILABILITY_ROSTER_INVALIDATE, (nil) -> {
+        eventManager.subscribeToEventForever(AVAILABILITY_ROSTER_INVALIDATE, nil -> {
             buildAvailabilityRosterViewport(viewport);
         });
-        eventManager.subscribeToEventForever(DATA_INVALIDATION, (dataInvalidated) -> {
+        eventManager.subscribeToEventForever(DATA_INVALIDATION, dataInvalidated -> {
             if (dataInvalidated.equals(Employee.class) || dataInvalidated.equals(EmployeeAvailability.class)) {
                 buildAvailabilityRosterViewport(viewport);
             }
@@ -119,7 +119,7 @@ public class AvailabilityRosterPageViewportBuilder {
             buildAvailabilityRosterViewport(viewport);
         });
         RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(),
-                                                restCallbackFactory.onSuccess((rs) -> {
+                                                restCallbackFactory.onSuccess(rs -> {
                                                     LocalDate startDate = dateTimeUtils.getFirstDateOfWeek(rs.getFirstDraftDate());
                                                     LocalDate endDate = dateTimeUtils.getLastDateOfWeek(rs.getFirstDraftDate()).plusDays(1);
                                                     eventManager.fireEvent(AVAILABILITY_ROSTER_DATE_RANGE, new LocalDateRange(startDate, endDate));
@@ -264,8 +264,6 @@ public class AvailabilityRosterPageViewportBuilder {
                                                                                                  .getStartDate()
                                                                                                  .toString(),
                                                                                          localDateRange.getEndDate().toString(),
-                                                                                         restCallbackFactory.onSuccess((s) -> {
-                                                                                             res.onInvoke(s);
-                                                                                         })));
+                                                                                         restCallbackFactory.onSuccess(res::onInvoke)));
     }
 }
