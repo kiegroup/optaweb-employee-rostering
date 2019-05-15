@@ -17,7 +17,6 @@
 package org.optaweb.employeerostering.server.common.jaxrs;
 
 import javax.inject.Inject;
-import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -26,7 +25,8 @@ import javax.ws.rs.ext.Provider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.optaweb.employeerostering.server.exception.ExceptionMapping;
+import org.optaweb.employeerostering.server.exception.ExceptionDataMapper;
+import org.optaweb.employeerostering.server.exception.ExceptionDataMapper.ExceptionData;
 import org.optaweb.employeerostering.shared.exception.ServerSideExceptionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,16 +36,21 @@ public class OptaWebExceptionMapper implements ExceptionMapper<Exception> {
 
     @Inject
     private OptaWebObjectMapperResolver objectMapperProvider;
-    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Inject
+    private ExceptionDataMapper exceptionDataMapper;
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public Response toResponse(Exception exception) {
         try {
-            return Response.status(resolveStatus(exception))
+            ExceptionData exceptionData = exceptionDataMapper.getExceptionDataForExceptionClass(exception.getClass());
+            return Response.status(exceptionData.getStatusCode())
                     .type(MediaType.APPLICATION_JSON)
-                    .entity(getEntity(exception))
+                    .entity(getEntity(exceptionData, exception))
                     .build();
-        } catch (JsonProcessingException e) {
+        } catch (Throwable e) {
             logger.error(e.getMessage(), e);
             return Response.status(Status.INTERNAL_SERVER_ERROR)
                     .type(MediaType.TEXT_PLAIN)
@@ -55,17 +60,9 @@ public class OptaWebExceptionMapper implements ExceptionMapper<Exception> {
         }
     }
 
-    private String getEntity(final Exception exception) throws JsonProcessingException {
+    private String getEntity(final ExceptionData exceptionData, final Throwable exception) throws JsonProcessingException {
         ObjectMapper objectMapper = objectMapperProvider.getContext(ServerSideExceptionInfo.class);
-        ServerSideExceptionInfo serverSideException = ExceptionMapping.getServerSideExceptionFromException(exception);
+        ServerSideExceptionInfo serverSideException = exceptionData.getServerSideExceptionInfoFromException(exception);
         return objectMapper.writeValueAsString(serverSideException);
-    }
-
-    private Status resolveStatus(final Exception exception) {
-        if (exception instanceof EntityNotFoundException) {
-            return Status.NOT_FOUND;
-        } else {
-            return Status.INTERNAL_SERVER_ERROR;
-        }
     }
 }
