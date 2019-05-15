@@ -84,8 +84,8 @@ public class ContractTableRow implements TakesValue<Contract>,
 
     @EventHandler("delete")
     public void onDeleteContractButtonClick(@ForEvent("click") MouseEvent e) {
-        ContractRestServiceBuilder.removeContract(tenantStore.getCurrentTenantId(), contract.getId(), restCallbackFactory.onSuccess(v -> {
-            eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Contract.class);
-        }));
+        ContractRestServiceBuilder.removeContract(tenantStore.getCurrentTenantId(), contract.getId(), restCallbackFactory.onSuccess(v ->
+                                                                                                                                            eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Contract.class)
+        ));
     }
 }

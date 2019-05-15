@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,31 @@
 package org.optaweb.employeerostering.gwtui.client.exception;
 
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.optaweb.employeerostering.shared.exception.ServerSideException;
+import org.optaweb.employeerostering.shared.exception.ServerSideExceptionInfo;
 
 public class RESTException extends Exception {
 
-    private ServerSideException serverSideException;
-    private TranslationService translationService;
+    private final transient ServerSideExceptionInfo serverSideException;
+    private final transient TranslationService translationService;
 
-    public RESTException(ServerSideException serverSideException, TranslationService translationService) {
+    public RESTException(ServerSideExceptionInfo serverSideException, TranslationService translationService) {
         super(getExceptionFrom(serverSideException));
         this.serverSideException = serverSideException;
         this.translationService = translationService;
     }
 
-    private static Exception getExceptionFrom(ServerSideException serverSideException) {
+    private static Exception getExceptionFrom(ServerSideExceptionInfo serverSideException) {
         Exception out;
         if (serverSideException.getExceptionCause() != null) {
             out = new ServerException(getExceptionFrom(serverSideException.getExceptionCause()), serverSideException.getExceptionClass() + ": " + serverSideException.getExceptionMessage());
         } else {
             out = new ServerException(serverSideException.getExceptionClass() + ": " + serverSideException.getExceptionMessage());
         }
+        out.setStackTrace(extractStackTrace(serverSideException));
+        return out;
+    }
 
+    private static StackTraceElement[] extractStackTrace(ServerSideExceptionInfo serverSideException) {
         StackTraceElement[] stackTrace = new StackTraceElement[serverSideException.getStackTrace().size()];
         for (int i = 0; i < stackTrace.length; i++) {
             String stackTraceLine = serverSideException.getStackTrace().get(i);
@@ -55,8 +59,7 @@ public class RESTException extends Exception {
                 stackTrace[i] = new StackTraceElement(className, methodName, "Unknown Source", 0);
             }
         }
-        out.setStackTrace(stackTrace);
-        return out;
+        return stackTrace;
     }
 
     @Override
@@ -67,7 +70,7 @@ public class RESTException extends Exception {
 
     private static class ServerException extends Exception {
 
-        private String message;
+        private final String message;
 
         public ServerException(Throwable cause, String message) {
             super(cause);

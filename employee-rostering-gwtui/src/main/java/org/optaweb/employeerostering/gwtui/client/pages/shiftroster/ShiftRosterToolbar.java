@@ -36,7 +36,6 @@ import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.util.DateTimeUtils;
 import org.optaweb.employeerostering.gwtui.client.viewport.RosterToolbar;
 import org.optaweb.employeerostering.shared.roster.Pagination;
-import org.optaweb.employeerostering.shared.roster.PublishResult;
 import org.optaweb.employeerostering.shared.roster.RosterRestServiceBuilder;
 import org.optaweb.employeerostering.shared.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.shared.spot.Spot;
@@ -127,9 +126,9 @@ public class ShiftRosterToolbar extends RosterToolbar
     }
 
     private void updateRowCount() {
-        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess(spotList -> {
-            setRowCount(spotList.size());
-        }));
+        SpotRestServiceBuilder.getSpotList(tenantStore.getCurrentTenantId(), restCallbackFactory.onSuccess(spotList ->
+                                                                                                                   setRowCount(spotList.size())
+        ));
     }
 
     @EventHandler("solve-button")
@@ -149,7 +148,7 @@ public class ShiftRosterToolbar extends RosterToolbar
     @EventHandler("publish-button")
     public void onPublishButtonClick(@ForEvent("click") MouseEvent e) {
         RosterRestServiceBuilder.publishAndProvision(tenantStore.getCurrentTenantId(),
-                                                     restCallbackFactory.onSuccess((PublishResult pr) -> {
+                                                     restCallbackFactory.onSuccess(pr -> {
                                                          notificationFactory.showSuccessMessage(I18nKeys.Notifications_publishResult, dateTimeUtils.translateLocalDate(pr.getPublishedFromDate()), dateTimeUtils
                                                                  .translateLocalDate(pr.getPublishedToDate()));
                                                          eventManager.fireEvent(getViewInvalidateEvent());

@@ -95,20 +95,20 @@ public class ShiftRosterPageViewportBuilder {
     @PostConstruct
     public void init() {
         pagination = Pagination.of(0, 10);
-        eventManager.subscribeToEventForever(SOLVE_START, (m) -> this.onSolveStart());
-        eventManager.subscribeToEventForever(SOLVE_END, (m) -> this.onSolveEnd());
-        eventManager.subscribeToEventForever(SHIFT_ROSTER_PAGINATION, (pagination) -> {
+        eventManager.subscribeToEventForever(SOLVE_START, m -> this.onSolveStart());
+        eventManager.subscribeToEventForever(SOLVE_END, m -> this.onSolveEnd());
+        eventManager.subscribeToEventForever(SHIFT_ROSTER_PAGINATION, pagination -> {
             this.pagination = pagination;
             buildShiftRosterViewport(viewport);
         });
 
-        eventManager.subscribeToEventForever(DATA_INVALIDATION, (dataInvalidated) -> {
+        eventManager.subscribeToEventForever(DATA_INVALIDATION, dataInvalidated -> {
             if (dataInvalidated.equals(Spot.class) || dataInvalidated.equals(Shift.class)) {
                 buildShiftRosterViewport(viewport);
             }
         });
 
-        eventManager.subscribeToEventForever(SHIFT_ROSTER_INVALIDATE, (nil) -> {
+        eventManager.subscribeToEventForever(SHIFT_ROSTER_INVALIDATE, nil -> {
             buildShiftRosterViewport(viewport);
         });
 
@@ -118,7 +118,7 @@ public class ShiftRosterPageViewportBuilder {
         });
 
         RosterRestServiceBuilder.getRosterState(tenantStore.getCurrentTenantId(),
-                                                restCallbackFactory.onSuccess((rs) -> {
+                                                restCallbackFactory.onSuccess(rs -> {
                                                     LocalDate startDate = dateTimeUtils.getFirstDateOfWeek(rs.getFirstDraftDate());
                                                     LocalDate endDate = dateTimeUtils.getLastDateOfWeek(rs.getFirstDraftDate()).plusDays(1);
                                                     eventManager.fireEvent(SHIFT_ROSTER_DATE_RANGE, new LocalDateRange(startDate, endDate));
@@ -159,7 +159,7 @@ public class ShiftRosterPageViewportBuilder {
                         if (!laneIdFilteredSet.contains(toAdd.getSpotId())) {
                             Set<Long> shiftViewsId = view.getSpotIdToShiftViewListMap().get(toAdd.getSpotId()).stream().map(sv -> sv.getId()).collect(Collectors.toSet());
                             laneMap.get(toAdd.getSpotId()).filterGridObjects(ShiftGridObject.class,
-                                                                             (sv) -> shiftViewsId.contains(sv.getId()));
+                                                                             sv -> shiftViewsId.contains(sv.getId()));
                             laneIdFilteredSet.add(toAdd.getSpotId());
                         }
                         laneMap.get(toAdd.getSpotId()).addOrUpdateGridObject(
@@ -167,7 +167,7 @@ public class ShiftRosterPageViewportBuilder {
                                     ShiftGridObject out = shiftGridObjectInstances.get();
                                     out.withShiftView(toAdd);
                                     return out;
-                                }, (s) -> {
+                                }, s -> {
                                     s.withShiftView(toAdd);
                                     return null;
                                 });
@@ -220,7 +220,7 @@ public class ShiftRosterPageViewportBuilder {
     }
 
     public Promise<Void> buildShiftRosterViewport(final ShiftRosterPageViewport toBuild) {
-        return getShiftRosterView().then((srv) -> {
+        return getShiftRosterView().then(srv -> {
             toBuild.refresh(srv);
             return promiseUtils.resolve();
         });
@@ -237,9 +237,8 @@ public class ShiftRosterPageViewportBuilder {
                                                                 .getStartDate()
                                                                 .toString(),
                                                         localDateRange.getEndDate().toString(),
-                                                        restCallbackFactory.onSuccess((s) -> {
-                                                            res.onInvoke(s);
-                                                        }));
+                                                        restCallbackFactory.onSuccess(res::onInvoke)
+                                    );
                         });
     }
 }

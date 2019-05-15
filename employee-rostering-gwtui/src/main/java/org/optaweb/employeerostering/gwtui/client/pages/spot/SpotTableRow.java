@@ -90,12 +90,12 @@ public class SpotTableRow extends TableRow<Spot>
         dataBinder.bind(spotName, "name");
         dataBinder.bind(spotRequiredSkillSet, "requiredSkillSet", skillConvertor);
 
-        dataBinder.<String>addPropertyChangeHandler("name", (e) -> {
-            spotNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString();
-        });
-        dataBinder.<Set<Skill>>addPropertyChangeHandler("requiredSkillSet", (e) -> {
-            spotRequiredSkillSetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue().stream().map(Skill::getName).collect(Collectors.joining(", "))).toSafeHtml().asString();
-        });
+        dataBinder.<String>addPropertyChangeHandler("name", e ->
+                spotNameDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue()).toSafeHtml().asString()
+        );
+        dataBinder.<Set<Skill>>addPropertyChangeHandler("requiredSkillSet", e ->
+                spotRequiredSkillSetDisplay.innerHTML = new SafeHtmlBuilder().appendEscaped(e.getNewValue().stream().map(Skill::getName).collect(Collectors.joining(", "))).toSafeHtml().asString()
+        );
         eventManager.subscribeToEventForElement(EventManager.Event.SKILL_MAP_INVALIDATION, this, this::updateSkillMap);
     }
 
@@ -118,25 +118,25 @@ public class SpotTableRow extends TableRow<Spot>
     @Override
     protected void deleteRow(Spot spot) {
         SpotRestServiceBuilder.removeSpot(tenantStore.getCurrentTenantId(), spot.getId(),
-                                          restCallbackFactory.onSuccess(success -> {
-                                              eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class);
-                                          }));
+                                          restCallbackFactory.onSuccess(success ->
+                                                                                eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class)
+                                          ));
     }
 
     @Override
     protected void updateRow(Spot oldValue, Spot newValue) {
         SpotRestServiceBuilder.updateSpot(tenantStore.getCurrentTenantId(), newValue,
-                                          restCallbackFactory.onSuccess(v -> {
-                                              eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class);
-                                          }));
+                                          restCallbackFactory.onSuccess(v ->
+                                                                                eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class)
+                                          ));
     }
 
     @Override
     protected void createRow(Spot spot) {
         SpotRestServiceBuilder.addSpot(tenantStore.getCurrentTenantId(), spot,
-                                       restCallbackFactory.onSuccess(v -> {
-                                           eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class);
-                                       }));
+                                       restCallbackFactory.onSuccess(v ->
+                                                                             eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Spot.class)
+                                       ));
     }
 
     @Override

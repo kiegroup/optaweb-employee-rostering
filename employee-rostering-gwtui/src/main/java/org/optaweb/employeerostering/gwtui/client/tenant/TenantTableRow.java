@@ -68,8 +68,8 @@ public class TenantTableRow implements TakesValue<Tenant>,
 
     @EventHandler("delete-tenant-button")
     public void onDeleteTenantButtonClick(@ForEvent("click") MouseEvent e) {
-        TenantRestServiceBuilder.removeTenant(tenant.getId(), restCallbackFactory.onSuccess(v -> {
-            eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Tenant.class);
-        }));
+        TenantRestServiceBuilder.removeTenant(tenant.getId(), restCallbackFactory.onSuccess(v ->
+                                                                                                    eventManager.fireEvent(EventManager.Event.DATA_INVALIDATION, Tenant.class)
+        ));
     }
 }

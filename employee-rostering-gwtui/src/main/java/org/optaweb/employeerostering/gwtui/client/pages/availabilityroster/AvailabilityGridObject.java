@@ -113,9 +113,9 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
     private void onDeleteClick(@ForEvent("click") MouseEvent e) {
         e.stopPropagation();
         EmployeeRestServiceBuilder.removeEmployeeAvailability(employeeAvailabilityView.getTenantId(), employeeAvailabilityView.getId(),
-                                                              restCallbackFactory.onSuccess(success -> {
-                                                                  getLane().removeGridObject(this);
-                                                              }));
+                                                              restCallbackFactory.onSuccess(success ->
+                                                                                                    getLane().removeGridObject(this)
+                                                              ));
     }
 
     @EventHandler("timeslot-unavailable")
@@ -139,9 +139,8 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
     private void setEmployeeAvailabilityState(EmployeeAvailabilityState state) {
         employeeAvailabilityView.setState(state);
         EmployeeRestServiceBuilder.updateEmployeeAvailability(employeeAvailabilityView.getTenantId(), employeeAvailabilityView,
-                                                              restCallbackFactory.onSuccess(eav -> {
-                                                                  withEmployeeAvailabilityView(eav);
-                                                              }));
+                                                              restCallbackFactory.onSuccess(
+                                                                      this::withEmployeeAvailabilityView));
     }
 
     @Override
@@ -200,8 +199,6 @@ public class AvailabilityGridObject extends AbstractHasTimeslotGridObject<Availa
     @Override
     public void save() {
         EmployeeRestServiceBuilder.updateEmployeeAvailability(employeeAvailabilityView.getTenantId(), employeeAvailabilityView,
-                                                              restCallbackFactory.onSuccess(eav -> {
-                                                                  withEmployeeAvailabilityView(eav);
-                                                              }));
+                                                              restCallbackFactory.onSuccess(this::withEmployeeAvailabilityView));
     }
 }
