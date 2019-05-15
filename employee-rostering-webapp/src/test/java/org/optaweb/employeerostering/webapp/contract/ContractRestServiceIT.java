@@ -79,11 +79,11 @@ public class ContractRestServiceIT extends AbstractEntityRequireTenantRestServic
     @Test
     public void testInvalidAdd() {
         Contract invalidContract = new Contract(TENANT_ID, "invalid contract", -1, null, null, null);
-        assertThatExceptionOfType(javax.ws.rs.InternalServerErrorException.class)
+        assertThatExceptionOfType(javax.ws.rs.ClientErrorException.class)
                 .isThrownBy(() -> {
                     contractRestService.updateContract(TENANT_ID, invalidContract);
                 });
-        assertClientResponseError(Response.Status.INTERNAL_SERVER_ERROR);
+        assertClientResponseError(Response.Status.CONFLICT);
     }
 
     @Test

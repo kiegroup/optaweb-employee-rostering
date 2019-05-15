@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.webapp.skill;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -25,6 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.skill.SkillRestService;
+import org.optaweb.employeerostering.shared.spot.Spot;
+import org.optaweb.employeerostering.shared.spot.SpotRestService;
 import org.optaweb.employeerostering.webapp.AbstractEntityRequireTenantRestServiceIT;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,9 +36,11 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public class SkillRestServiceIT extends AbstractEntityRequireTenantRestServiceIT {
 
     private SkillRestService skillRestService;
+    private SpotRestService spotRestService;
 
     public SkillRestServiceIT() {
         skillRestService = serviceClientFactory.createSkillRestServiceClient();
+        spotRestService = serviceClientFactory.createSpotRestServiceClient();
     }
 
     @Before
@@ -100,5 +105,22 @@ public class SkillRestServiceIT extends AbstractEntityRequireTenantRestServiceIT
 
         skills = skillRestService.getSkillList(TENANT_ID);
         assertThat(skills).isEmpty();
+    }
+
+    @Test
+    public void testDeleteReferencedField() {
+        Skill newSkill = new Skill(TENANT_ID, "Skill");
+        Skill testSkill = skillRestService.addSkill(TENANT_ID, newSkill);
+        assertClientResponseOk();
+
+        Spot testSpot = new Spot(TENANT_ID, "Spot", Collections.singleton(testSkill));
+        testSpot = spotRestService.addSpot(TENANT_ID, testSpot);
+        assertClientResponseOk();
+
+        assertThatExceptionOfType(javax.ws.rs.ClientErrorException.class)
+                .isThrownBy(() -> {
+                    skillRestService.removeSkill(TENANT_ID, testSkill.getId());
+                });
+        assertClientResponseError(Response.Status.CONFLICT);
     }
 }
