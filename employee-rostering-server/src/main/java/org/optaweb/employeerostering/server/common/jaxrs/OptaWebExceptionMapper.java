@@ -50,7 +50,7 @@ public class OptaWebExceptionMapper implements ExceptionMapper<Exception> {
                     .type(MediaType.APPLICATION_JSON)
                     .entity(getEntity(exceptionData, exception))
                     .build();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return Response.status(Status.INTERNAL_SERVER_ERROR)
                     .type(MediaType.TEXT_PLAIN)

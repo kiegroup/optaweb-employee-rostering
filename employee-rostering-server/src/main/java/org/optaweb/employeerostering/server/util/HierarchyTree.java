@@ -17,6 +17,7 @@ package org.optaweb.employeerostering.server.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -73,7 +74,7 @@ public class HierarchyTree<K, V> {
      * @return The value of the most specific hierarchy class of key.
      */
     public Optional<V> getHierarchyClassValue(K key) {
-        Collection<HierarchyNode> superclassesOfItem = hierarchyDisjointClasses.stream()
+        List<HierarchyNode> superclassesOfItem = hierarchyDisjointClasses.stream()
                 .filter(c -> {
                     HierarchyRelationship relationship = hierarchyRelation.getHierarchyRelationshipBetween(key, c.classKey);
                     return relationship == HierarchyRelationship.IS_BELOW || relationship == HierarchyRelationship.IS_THE_SAME_AS;
@@ -83,13 +84,12 @@ public class HierarchyTree<K, V> {
         if (superclassesOfItem.isEmpty()) {
             return Optional.empty();
         } else {
-            HierarchyNode mostSpecificInstance = null;
-            for (HierarchyNode superclassOfItem : superclassesOfItem) {
+            HierarchyNode mostSpecificInstance = superclassesOfItem.get(0).findHierarchyClassOf(key);
+            for (HierarchyNode superclassOfItem : superclassesOfItem.subList(1, superclassesOfItem.size())) {
                 HierarchyNode mostSpecificInstanceInSuperclass = superclassOfItem.findHierarchyClassOf(key);
-                if (mostSpecificInstance == null ||
-                        hierarchyRelation.getHierarchyRelationshipBetween(mostSpecificInstanceInSuperclass.classKey,
-                                                                          mostSpecificInstance.classKey)
-                                == HierarchyRelationship.IS_BELOW) {
+                if (hierarchyRelation.getHierarchyRelationshipBetween(mostSpecificInstanceInSuperclass.classKey,
+                                                                      mostSpecificInstance.classKey)
+                        == HierarchyRelationship.IS_BELOW) {
                     mostSpecificInstance = mostSpecificInstanceInSuperclass;
                 }
             }
@@ -137,7 +137,7 @@ public class HierarchyTree<K, V> {
             if (!(classRelationship == HierarchyRelationship.IS_BELOW || classRelationship == HierarchyRelationship.IS_THE_SAME_AS)) {
                 throw new IllegalArgumentException("The item (" + key + ") is not a desendant of root (" + classKey + ").");
             }
-            Collection<HierarchyNode> superclassesOfItem = hierarchySubclasses.stream()
+            List<HierarchyNode> superclassesOfItem = hierarchySubclasses.stream()
                     .filter(c -> {
                         HierarchyRelationship relationship = hierarchyRelation.getHierarchyRelationshipBetween(key, c.classKey);
                         return relationship == HierarchyRelationship.IS_BELOW || relationship == HierarchyRelationship.IS_THE_SAME_AS;
@@ -147,13 +147,12 @@ public class HierarchyTree<K, V> {
             if (superclassesOfItem.isEmpty()) {
                 return this;
             } else {
-                HierarchyNode mostSpecificInstance = null;
-                for (HierarchyNode superclassOfItem : superclassesOfItem) {
+                HierarchyNode mostSpecificInstance = superclassesOfItem.get(0).findHierarchyClassOf(key);
+                for (HierarchyNode superclassOfItem : superclassesOfItem.subList(1, superclassesOfItem.size())) {
                     HierarchyNode mostSpecificInstanceInSuperclass = superclassOfItem.findHierarchyClassOf(key);
-                    if (mostSpecificInstance == null ||
-                            hierarchyRelation.getHierarchyRelationshipBetween(mostSpecificInstanceInSuperclass.classKey,
-                                                                              mostSpecificInstance.classKey)
-                                    == HierarchyRelationship.IS_BELOW) {
+                    if (hierarchyRelation.getHierarchyRelationshipBetween(mostSpecificInstanceInSuperclass.classKey,
+                                                                          mostSpecificInstance.classKey)
+                            == HierarchyRelationship.IS_BELOW) {
                         mostSpecificInstance = mostSpecificInstanceInSuperclass;
                     }
                 }
