@@ -102,13 +102,13 @@ public class AvailabilityRosterPageViewportBuilder {
         pagination = Pagination.of(0, 10);
         eventManager.subscribeToEventForever(SOLVE_START, m -> this.onSolveStart());
         eventManager.subscribeToEventForever(SOLVE_END, m -> this.onSolveEnd());
-        eventManager.subscribeToEventForever(AVAILABILITY_ROSTER_PAGINATION, pagination -> {
-            this.pagination = pagination;
+        eventManager.subscribeToEventForever(AVAILABILITY_ROSTER_PAGINATION, newPagination -> {
+            this.pagination = newPagination;
             buildAvailabilityRosterViewport(viewport);
         });
-        eventManager.subscribeToEventForever(AVAILABILITY_ROSTER_INVALIDATE, nil -> {
-            buildAvailabilityRosterViewport(viewport);
-        });
+        eventManager.subscribeToEventForever(AVAILABILITY_ROSTER_INVALIDATE, nil ->
+                buildAvailabilityRosterViewport(viewport)
+        );
         eventManager.subscribeToEventForever(DATA_INVALIDATION, dataInvalidated -> {
             if (dataInvalidated.equals(Employee.class) || dataInvalidated.equals(EmployeeAvailability.class)) {
                 buildAvailabilityRosterViewport(viewport);

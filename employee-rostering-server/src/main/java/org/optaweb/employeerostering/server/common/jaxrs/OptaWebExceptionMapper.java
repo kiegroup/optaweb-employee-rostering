@@ -28,12 +28,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.optaweb.employeerostering.server.exception.ExceptionMapping;
 import org.optaweb.employeerostering.shared.exception.ServerSideExceptionInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Provider
 public class OptaWebExceptionMapper implements ExceptionMapper<Exception> {
 
     @Inject
     private OptaWebObjectMapperResolver objectMapperProvider;
+    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public Response toResponse(Exception exception) {
@@ -43,7 +46,7 @@ public class OptaWebExceptionMapper implements ExceptionMapper<Exception> {
                     .entity(getEntity(exception))
                     .build();
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return Response.status(Status.INTERNAL_SERVER_ERROR)
                     .type(MediaType.TEXT_PLAIN)
                     .entity("There was an issue with retrieving the root cause: " + e.getMessage() +

@@ -31,7 +31,7 @@ public class ServerSideExceptionInfo {
 
     // Workaround for GWT client not being able to use a
     // generated JSON Deserializer
-    public static enum ServerSideExceptionInfoFields {
+    public enum ServerSideExceptionInfoFields {
         I18N_KEY("i18nKey"),
         EXCEPTION_MESSAGE("exceptionMessage"),
         MESSAGE_PARAMETERS("messageParameters"),
@@ -47,7 +47,7 @@ public class ServerSideExceptionInfo {
 
         public static ServerSideExceptionInfoFields getFieldForName(String fieldName) {
             for (ServerSideExceptionInfoFields field : ServerSideExceptionInfoFields.values()) {
-                if (field.fieldName == fieldName) {
+                if (field.fieldName.equals(fieldName)) {
                     return field;
                 }
             }

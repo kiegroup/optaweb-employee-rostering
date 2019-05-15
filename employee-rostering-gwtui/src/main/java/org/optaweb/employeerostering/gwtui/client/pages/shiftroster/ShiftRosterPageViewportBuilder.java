@@ -97,8 +97,8 @@ public class ShiftRosterPageViewportBuilder {
         pagination = Pagination.of(0, 10);
         eventManager.subscribeToEventForever(SOLVE_START, m -> this.onSolveStart());
         eventManager.subscribeToEventForever(SOLVE_END, m -> this.onSolveEnd());
-        eventManager.subscribeToEventForever(SHIFT_ROSTER_PAGINATION, pagination -> {
-            this.pagination = pagination;
+        eventManager.subscribeToEventForever(SHIFT_ROSTER_PAGINATION, newPagination -> {
+            this.pagination = newPagination;
             buildShiftRosterViewport(viewport);
         });
 
@@ -108,9 +108,9 @@ public class ShiftRosterPageViewportBuilder {
             }
         });
 
-        eventManager.subscribeToEventForever(SHIFT_ROSTER_INVALIDATE, nil -> {
-            buildShiftRosterViewport(viewport);
-        });
+        eventManager.subscribeToEventForever(SHIFT_ROSTER_INVALIDATE, nil ->
+                buildShiftRosterViewport(viewport)
+        );
 
         eventManager.subscribeToEventForever(SHIFT_ROSTER_DATE_RANGE, dr -> {
             localDateRange = dr;
