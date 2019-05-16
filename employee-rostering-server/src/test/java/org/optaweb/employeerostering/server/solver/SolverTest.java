@@ -25,7 +25,9 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -44,6 +46,7 @@ import org.optaweb.employeerostering.shared.employee.Employee;
 import org.optaweb.employeerostering.shared.roster.Roster;
 import org.optaweb.employeerostering.shared.roster.RosterState;
 import org.optaweb.employeerostering.shared.shift.Shift;
+import org.optaweb.employeerostering.shared.skill.Skill;
 import org.optaweb.employeerostering.shared.spot.Spot;
 import org.optaweb.employeerostering.shared.tenant.RosterParametrization;
 import org.optaweb.employeerostering.shared.tenant.Tenant;
@@ -56,6 +59,8 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
 public class SolverTest {
+    
+    private final int TENANT_ID = 0;
 
     private SolverFactory<Roster> getSolverFactory() {
         SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(WannabeSolverManager.SOLVER_CONFIG);
@@ -133,7 +138,7 @@ public class SolverTest {
     }
     
     private RosterState getRosterState(AtomicLong idGenerator) {
-        RosterState rosterState = new RosterState(0, 7, getStartDate().minusWeeks(1), 7, 14, 0, 7, getStartDate().minusWeeks(2),
+        RosterState rosterState = new RosterState(TENANT_ID, 7, getStartDate().minusWeeks(1), 7, 14, 0, 7, getStartDate().minusWeeks(2),
                                                   ZoneId.systemDefault());
         rosterState.setId(idGenerator.getAndIncrement());
         return rosterState;
@@ -141,6 +146,7 @@ public class SolverTest {
     
     private RosterParametrization getRosterParametrization(AtomicLong idGenerator) {
         RosterParametrization rosterParametrization = new RosterParametrization();
+        rosterParametrization.setTenantId(TENANT_ID);
         rosterParametrization.setId(idGenerator.getAndIncrement());
         rosterParametrization.setWeekStartDay(DayOfWeek.MONDAY);
         return rosterParametrization;
@@ -157,7 +163,7 @@ public class SolverTest {
 
         Roster roster = new Roster();
         Tenant tenant = new Tenant("Test Tenant");
-        tenant.setId(0);
+        tenant.setId(TENANT_ID);
 
         RosterState rosterState = getRosterState(idGenerator);
         RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
@@ -165,25 +171,25 @@ public class SolverTest {
         Contract contract;
         switch (contractField) {
             case DAILY:
-                contract = new Contract(0, "Max 2 Hours Per Day", 2 * 60, null, null, null);
+                contract = new Contract(TENANT_ID, "Max 2 Hours Per Day", 2 * 60, null, null, null);
                 break;
             case WEEKLY:
-                contract = new Contract(0, "Max 2 Hours Per Week", null, 2 * 60, null, null);
+                contract = new Contract(TENANT_ID, "Max 2 Hours Per Week", null, 2 * 60, null, null);
                 break;
             case MONTHLY:
-                contract = new Contract(0, "Max 2 Hours Per Month", null, null, 2 * 60, null);
+                contract = new Contract(TENANT_ID, "Max 2 Hours Per Month", null, null, 2 * 60, null);
                 break;
             case ANNUALLY:
-                contract = new Contract(0, "Max 2 Hours Per Year", null, null, null, 2 * 60);
+                contract = new Contract(TENANT_ID, "Max 2 Hours Per Year", null, null, null, 2 * 60);
                 break;
             default:
                 throw new IllegalArgumentException("No case for (" + contractField + ")");
         }
         
-        Employee employeeA = new Employee(0, "Bill", contract, Collections.emptySet());
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
         
         employeeA.setId(idGenerator.getAndIncrement());
-        Spot spotA = new Spot(0, "Spot", Collections.emptySet());
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
         spotA.setId(idGenerator.getAndIncrement());
 
         LocalDate firstDayOfWeek = getStartDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -225,7 +231,7 @@ public class SolverTest {
                 throw new IllegalArgumentException("No case for (" + contractField + ")");
         }
 
-        roster.setTenantId(0);
+        roster.setTenantId(TENANT_ID);
         roster.setRosterState(rosterState);
         roster.setSpotList(Collections.singletonList(spotA));
         roster.setEmployeeList(Collections.singletonList(employeeA));
@@ -288,6 +294,74 @@ public class SolverTest {
         for (ContractField field : ContractField.values()) {
             testContractConstraint(field);
         }
+    }
+    
+    private Contract getDefaultContract(AtomicLong idGenerator) {
+        Contract out = new Contract(TENANT_ID, "Default", null, null, null, null);
+        out.setId(idGenerator.getAndIncrement());
+        return out;
+    }
+    
+    @Test(timeout = 600000)
+    public void testRequiredSkillForShiftConstraint() {
+        HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
+
+        AtomicLong idGenerator = new AtomicLong(1L);
+
+        Roster roster = new Roster();
+        Tenant tenant = new Tenant("Test Tenant");
+        tenant.setId(TENANT_ID);
+
+        RosterState rosterState = getRosterState(idGenerator);
+        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        
+        Skill skillA = new Skill(TENANT_ID, "Skill A");
+        Skill skillB = new Skill(TENANT_ID, "Skill B");
+        skillA.setId(idGenerator.getAndIncrement());
+        skillB.setId(idGenerator.getAndIncrement());
+        
+        Spot spotA = new Spot(TENANT_ID, "Spot A", new HashSet<>(Arrays.asList(skillA, skillB)));
+        spotA.setId(idGenerator.getAndIncrement());
+        
+        Contract contract = getDefaultContract(idGenerator);
+        Employee employeeA = new Employee(0, "Bill", contract, Collections.emptySet());
+        employeeA.setId(idGenerator.getAndIncrement());
+        
+        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        Shift shift = new Shift(TENANT_ID, spotA, firstDateTime, firstDateTime.plusHours(9));
+        shift.setId(idGenerator.getAndIncrement());
+        shift.setEmployee(employeeA);
+        
+        roster.setTenantId(TENANT_ID);
+        roster.setRosterState(rosterState);
+        roster.setSpotList(Collections.singletonList(spotA));
+        roster.setEmployeeList(Collections.singletonList(employeeA));
+        roster.setSkillList(Arrays.asList(skillA, skillB));
+        roster.setRosterParametrization(rosterParametrization);
+        roster.setEmployeeAvailabilityList(Collections.emptyList());
+        roster.setShiftList(Collections.singletonList(shift));
+        
+        scoreVerifier.assertHardWeight("Required skill for a shift", -100, roster);
+        scoreVerifier.assertMediumWeight("Required skill for a shift", 0, roster);
+        scoreVerifier.assertSoftWeight("Required skill for a shift", 0, roster);
+        
+        employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillA)));
+        
+        scoreVerifier.assertHardWeight("Required skill for a shift", -100, roster);
+        scoreVerifier.assertMediumWeight("Required skill for a shift", 0, roster);
+        scoreVerifier.assertSoftWeight("Required skill for a shift", 0, roster);
+        
+        employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillB)));
+        
+        scoreVerifier.assertHardWeight("Required skill for a shift", -100, roster);
+        scoreVerifier.assertMediumWeight("Required skill for a shift", 0, roster);
+        scoreVerifier.assertSoftWeight("Required skill for a shift", 0, roster);
+        
+        employeeA.setSkillProficiencySet(new HashSet<>(Arrays.asList(skillA, skillB)));
+        
+        scoreVerifier.assertHardWeight("Required skill for a shift", 0, roster);
+        scoreVerifier.assertMediumWeight("Required skill for a shift", 0, roster);
+        scoreVerifier.assertSoftWeight("Required skill for a shift", 0, roster);
     }
 
     protected RosterGenerator buildRosterGenerator() {
