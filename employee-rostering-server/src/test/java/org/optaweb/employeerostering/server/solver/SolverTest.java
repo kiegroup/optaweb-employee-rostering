@@ -43,6 +43,8 @@ import org.optaweb.employeerostering.server.roster.RosterGenerator;
 import org.optaweb.employeerostering.shared.common.AbstractPersistable;
 import org.optaweb.employeerostering.shared.contract.Contract;
 import org.optaweb.employeerostering.shared.employee.Employee;
+import org.optaweb.employeerostering.shared.employee.EmployeeAvailability;
+import org.optaweb.employeerostering.shared.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.shared.roster.Roster;
 import org.optaweb.employeerostering.shared.roster.RosterState;
 import org.optaweb.employeerostering.shared.shift.Shift;
@@ -362,6 +364,103 @@ public class SolverTest {
         scoreVerifier.assertHardWeight("Required skill for a shift", 0, roster);
         scoreVerifier.assertMediumWeight("Required skill for a shift", 0, roster);
         scoreVerifier.assertSoftWeight("Required skill for a shift", 0, roster);
+    }
+    
+    private void testAvailabilityConstraint(EmployeeAvailabilityState availabilityState) {
+        HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
+
+        AtomicLong idGenerator = new AtomicLong(1L);
+
+        Roster roster = new Roster();
+        Tenant tenant = new Tenant("Test Tenant");
+        tenant.setId(TENANT_ID);
+
+        RosterState rosterState = getRosterState(idGenerator);
+        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        
+        Contract contract = getDefaultContract(idGenerator);
+        
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        employeeA.setId(idGenerator.getAndIncrement());
+        
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
+        spotA.setId(idGenerator.getAndIncrement());
+        
+        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        Shift shift = new Shift(TENANT_ID, spotA, firstDateTime, firstDateTime.plusHours(9));
+        shift.setId(idGenerator.getAndIncrement());
+        shift.setEmployee(employeeA);
+        
+        EmployeeAvailability availability = new EmployeeAvailability(TENANT_ID, employeeA, firstDateTime, firstDateTime.plusHours(9));
+        availability.setId(idGenerator.getAndIncrement());
+        availability.setState(availabilityState);
+        
+        roster.setTenantId(TENANT_ID);
+        roster.setRosterState(rosterState);
+        roster.setSpotList(Collections.singletonList(spotA));
+        roster.setEmployeeList(Collections.singletonList(employeeA));
+        roster.setSkillList(Collections.emptyList());
+        roster.setRosterParametrization(rosterParametrization);
+        roster.setEmployeeAvailabilityList(Collections.singletonList(availability));
+        roster.setShiftList(Collections.singletonList(shift));
+        
+        String constraintName;
+        int hardScore, softScore;
+        
+        switch (availabilityState) {
+            case DESIRED:
+                constraintName = "Desired time slot for an employee";
+                hardScore = 0;
+                softScore = rosterParametrization.getDesiredTimeSlotWeight();
+                break;
+                
+            case UNDESIRED:
+                constraintName = "Undesired time slot for an employee";
+                hardScore = 0;
+                softScore = -rosterParametrization.getUndesiredTimeSlotWeight();
+                break;
+                
+            case UNAVAILABLE:
+                constraintName = "Unavailable time slot for an employee";
+                hardScore = -50;
+                softScore = 0;
+                break;
+                
+            default:
+                throw new IllegalArgumentException("No case for (" + availabilityState + ")");
+        }
+        
+        scoreVerifier.assertHardWeight(constraintName, hardScore, roster);
+        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
+        scoreVerifier.assertSoftWeight(constraintName, softScore, roster);
+        
+        shift.setStartDateTime(firstDateTime.minusHours(3));
+        shift.setEndDateTime(firstDateTime.plusHours(6));
+        
+        scoreVerifier.assertHardWeight(constraintName, hardScore, roster);
+        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
+        scoreVerifier.assertSoftWeight(constraintName, softScore, roster);
+        
+        shift.setStartDateTime(firstDateTime.plusHours(3));
+        shift.setEndDateTime(firstDateTime.plusHours(12));
+        
+        scoreVerifier.assertHardWeight(constraintName, hardScore, roster);
+        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
+        scoreVerifier.assertSoftWeight(constraintName, softScore, roster);
+        
+        shift.setStartDateTime(firstDateTime.plusHours(12));
+        shift.setEndDateTime(firstDateTime.plusHours(21));
+        
+        scoreVerifier.assertHardWeight(constraintName, 0, roster);
+        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
+        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
+    }
+    
+    @Test(timeout = 600000)
+    public void testEmployeeAvilabilityConstraints() {
+        for (EmployeeAvailabilityState state : EmployeeAvailabilityState.values()) {
+            testAvailabilityConstraint(state);
+        }
     }
 
     protected RosterGenerator buildRosterGenerator() {
