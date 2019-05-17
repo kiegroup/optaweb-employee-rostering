@@ -605,6 +605,69 @@ public class SolverTest {
         scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
         scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);       
     }
+    
+    @Test(timeout = 600000)
+    public void testAssignEveryShift() {
+        HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
+
+        AtomicLong idGenerator = new AtomicLong(1L);
+
+        Roster roster = new Roster();
+        Tenant tenant = new Tenant("Test Tenant");
+        tenant.setId(TENANT_ID);
+
+        RosterState rosterState = getRosterState(idGenerator);
+        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        
+        Contract contract = getDefaultContract(idGenerator);
+        
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        employeeA.setId(idGenerator.getAndIncrement());
+        
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
+        spotA.setId(idGenerator.getAndIncrement());
+        
+        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        ShiftBuilder shiftBuilder = new ShiftBuilder(idGenerator)
+                .forSpot(spotA)
+                .startingAtDate(firstDateTime)
+                .withShiftLength(Duration.ofHours(1))
+                .withTimeBetweenShifts(Duration.ofDays(1));
+        
+        List<Shift> shiftList = shiftBuilder.generateShifts(3);
+        
+        roster.setTenantId(TENANT_ID);
+        roster.setRosterState(rosterState);
+        roster.setSpotList(Collections.singletonList(spotA));
+        roster.setEmployeeList(Collections.singletonList(employeeA));
+        roster.setSkillList(Collections.emptyList());
+        roster.setRosterParametrization(rosterParametrization);
+        roster.setEmployeeAvailabilityList(Collections.emptyList());
+        roster.setShiftList(shiftList);
+        
+        final String CONSTRAINT_NAME = "Assign every shift";
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, -3, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        
+        shiftList.get(0).setEmployee(employeeA);
+        
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, -2, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        
+        shiftList.get(1).setEmployee(employeeA);
+        
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, -1, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        
+        shiftList.get(2).setEmployee(employeeA);
+        
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);    
+    }
 
     protected RosterGenerator buildRosterGenerator() {
         EntityManager entityManager = mock(EntityManager.class);
