@@ -343,27 +343,29 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(Collections.singletonList(shift));
         
-        scoreVerifier.assertHardWeight("Required skill for a shift", -100, roster);
-        scoreVerifier.assertMediumWeight("Required skill for a shift", 0, roster);
-        scoreVerifier.assertSoftWeight("Required skill for a shift", 0, roster);
+        
+        final String CONSTRAINT_NAME = "Required skill for a shift";
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -100, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
         
         employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillA)));
         
-        scoreVerifier.assertHardWeight("Required skill for a shift", -100, roster);
-        scoreVerifier.assertMediumWeight("Required skill for a shift", 0, roster);
-        scoreVerifier.assertSoftWeight("Required skill for a shift", 0, roster);
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -100, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
         
         employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillB)));
         
-        scoreVerifier.assertHardWeight("Required skill for a shift", -100, roster);
-        scoreVerifier.assertMediumWeight("Required skill for a shift", 0, roster);
-        scoreVerifier.assertSoftWeight("Required skill for a shift", 0, roster);
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -100, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
         
         employeeA.setSkillProficiencySet(new HashSet<>(Arrays.asList(skillA, skillB)));
         
-        scoreVerifier.assertHardWeight("Required skill for a shift", 0, roster);
-        scoreVerifier.assertMediumWeight("Required skill for a shift", 0, roster);
-        scoreVerifier.assertSoftWeight("Required skill for a shift", 0, roster);
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
     }
     
     private void testAvailabilityConstraint(EmployeeAvailabilityState availabilityState) {
@@ -503,18 +505,19 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
         
-        scoreVerifier.assertHardWeight("At most one shift assignment per day per employee", -20, roster);
-        scoreVerifier.assertMediumWeight("At most one shift assignment per day per employee", 0, roster);
-        scoreVerifier.assertSoftWeight("At most one shift assignment per day per employee", 0, roster);
+        final String CONSTRAINT_NAME = "At most one shift assignment per day per employee";
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -20, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
         
         shiftBuilder.withTimeBetweenShifts(Duration.ofDays(1));
         shiftList = shiftBuilder.generateShifts(2);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
         
-        scoreVerifier.assertHardWeight("At most one shift assignment per day per employee", 0, roster);
-        scoreVerifier.assertMediumWeight("At most one shift assignment per day per employee", 0, roster);
-        scoreVerifier.assertSoftWeight("At most one shift assignment per day per employee", 0, roster);
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
         
         // Start time is midnight, so one hour before is a different day
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-1));
@@ -522,10 +525,85 @@ public class SolverTest {
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
         
-        scoreVerifier.assertHardWeight("At most one shift assignment per day per employee", 0, roster);
-        scoreVerifier.assertMediumWeight("At most one shift assignment per day per employee", 0, roster);
-        scoreVerifier.assertSoftWeight("At most one shift assignment per day per employee", 0, roster);
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);       
+    }
+    
+    @Test(timeout = 600000)
+    public void testNoTwoShiftsWithin10HoursOfEachOther() {
+        HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
+
+        AtomicLong idGenerator = new AtomicLong(1L);
+
+        Roster roster = new Roster();
+        Tenant tenant = new Tenant("Test Tenant");
+        tenant.setId(TENANT_ID);
+
+        RosterState rosterState = getRosterState(idGenerator);
+        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
         
+        Contract contract = getDefaultContract(idGenerator);
+        
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        employeeA.setId(idGenerator.getAndIncrement());
+        
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
+        spotA.setId(idGenerator.getAndIncrement());
+        
+        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        ShiftBuilder shiftBuilder = new ShiftBuilder(idGenerator)
+                .forSpot(spotA)
+                .startingAtDate(firstDateTime)
+                .withShiftLength(Duration.ofHours(1))
+                .withTimeBetweenShifts(Duration.ofHours(1));
+        
+        List<Shift> shiftList = shiftBuilder.generateShifts(2);
+        shiftList.forEach(s -> s.setEmployee(employeeA));
+        
+        roster.setTenantId(TENANT_ID);
+        roster.setRosterState(rosterState);
+        roster.setSpotList(Collections.singletonList(spotA));
+        roster.setEmployeeList(Collections.singletonList(employeeA));
+        roster.setSkillList(Collections.emptyList());
+        roster.setRosterParametrization(rosterParametrization);
+        roster.setEmployeeAvailabilityList(Collections.emptyList());
+        roster.setShiftList(shiftList);
+        
+        final String CONSTRAINT_NAME = "No 2 shifts within 10 hours from each other";
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -1, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        
+        shiftBuilder.withTimeBetweenShifts(Duration.ofHours(10));
+        shiftList = shiftBuilder.generateShifts(2);
+        shiftList.forEach(s -> s.setEmployee(employeeA));
+        roster.setShiftList(shiftList);
+        
+        // Although start times are 10 hours apart, first end time is 9 hours apart
+        // from next start time
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -1, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        
+        shiftBuilder.withTimeBetweenShifts(Duration.ofHours(11));
+        shiftList = shiftBuilder.generateShifts(2);
+        shiftList.forEach(s -> s.setEmployee(employeeA));
+        roster.setShiftList(shiftList);
+        
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        
+        // Start time is midnight, so one hour before is a different day
+        shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-1));
+        shiftList = shiftBuilder.generateShifts(2);
+        shiftList.forEach(s -> s.setEmployee(employeeA));
+        roster.setShiftList(shiftList);
+        
+        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -1, roster);
+        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
+        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);       
     }
 
     protected RosterGenerator buildRosterGenerator() {
