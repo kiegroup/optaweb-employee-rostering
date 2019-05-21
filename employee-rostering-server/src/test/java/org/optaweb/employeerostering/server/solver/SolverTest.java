@@ -62,7 +62,7 @@ import static org.mockito.Mockito.mock;
 
 public class SolverTest {
 
-    private final int TENANT_ID = 0;
+    private static final int TENANT_ID = 0;
 
     private SolverFactory<Roster> getSolverFactory() {
         SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(WannabeSolverManager.SOLVER_CONFIG);
@@ -156,10 +156,45 @@ public class SolverTest {
     }
 
     private enum ContractField {
-        DAILY,
-        WEEKLY,
-        MONTHLY,
-        ANNUALLY;
+        DAILY("Daily minutes must not exceed contract maximum", 2 * 60, null, null, null, Duration.ofHours(6), Duration.ofDays(1)),
+        WEEKLY("Weekly minutes must not exceed contract maximum", null, 2 * 60, null, null, Duration.ofDays(1), Duration.ofDays(7)),
+        MONTHLY("Monthly minutes must not exceed contract maximum", null, null, 2 * 60, null, Duration.ofDays(7), Duration.ofDays(31)),
+        ANNUALLY("Yearly minutes must not exceed contract maximum", null, null, null, 2 * 60, Duration.ofDays(31), Duration.ofDays(366));
+
+        String constraintName;
+        Integer dailyHours, weeklyHours, monthlyHours, yearlyHours;
+        Duration timeBetweenShifts, periodLength;
+
+        private ContractField(String constraintName, Integer dailyHours, Integer weeklyHours, Integer monthlyHours,
+                              Integer yearlyHours, Duration timeBetweenShifts, Duration periodLength) {
+            this.constraintName = constraintName;
+            this.dailyHours = dailyHours;
+            this.weeklyHours = weeklyHours;
+            this.monthlyHours = monthlyHours;
+            this.yearlyHours = yearlyHours;
+            this.timeBetweenShifts = timeBetweenShifts;
+            this.periodLength = periodLength;
+        }
+
+        public String getConstraintName() {
+            return constraintName;
+        }
+
+        public Contract getContract(AtomicLong idGenerator) {
+            Contract out = new Contract(TENANT_ID, constraintName, dailyHours, weeklyHours, monthlyHours,
+                                        yearlyHours);
+            out.setId(idGenerator.getAndIncrement());
+            return out;
+        }
+
+        public List<Shift> generateShifts(ShiftBuilder shiftBuilder) {
+            List<Shift> out = new ArrayList<>();
+            shiftBuilder.withTimeBetweenShifts(timeBetweenShifts);
+            out.addAll(shiftBuilder.generateShifts(3));
+            shiftBuilder.startingAtDate(shiftBuilder.firstShiftStartTime.plus(periodLength));
+            out.addAll(shiftBuilder.generateShifts(3));
+            return out;
+        }
     }
 
     private void testContractConstraint(ContractField contractField) {
@@ -174,24 +209,7 @@ public class SolverTest {
         RosterState rosterState = getRosterState(idGenerator);
         RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
 
-        Contract contract;
-        switch (contractField) {
-            case DAILY:
-                contract = new Contract(TENANT_ID, "Max 2 Hours Per Day", 2 * 60, null, null, null);
-                break;
-            case WEEKLY:
-                contract = new Contract(TENANT_ID, "Max 2 Hours Per Week", null, 2 * 60, null, null);
-                break;
-            case MONTHLY:
-                contract = new Contract(TENANT_ID, "Max 2 Hours Per Month", null, null, 2 * 60, null);
-                break;
-            case ANNUALLY:
-                contract = new Contract(TENANT_ID, "Max 2 Hours Per Year", null, null, null, 2 * 60);
-                break;
-            default:
-                throw new IllegalArgumentException("No case for (" + contractField + ")");
-        }
-
+        Contract contract = contractField.getContract(idGenerator);
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
 
         employeeA.setId(idGenerator.getAndIncrement());
@@ -201,42 +219,12 @@ public class SolverTest {
         LocalDate firstDayOfWeek = getStartDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         OffsetDateTime firstDateTime = OffsetDateTime.of(firstDayOfWeek, LocalTime.MIDNIGHT, ZoneOffset.UTC);
 
-        List<Shift> shiftList = new ArrayList<>();
-
         ShiftBuilder shiftBuilder = new ShiftBuilder(idGenerator)
                 .forSpot(spotA)
                 .startingAtDate(firstDateTime)
                 .withShiftLength(Duration.ofHours(1));
 
-        switch (contractField) {
-            case DAILY:
-                shiftBuilder.withTimeBetweenShifts(Duration.ofHours(6));
-                shiftList.addAll(shiftBuilder.generateShifts(3));
-                shiftBuilder.startingAtDate(firstDateTime.plusDays(1));
-                shiftList.addAll(shiftBuilder.generateShifts(3));
-                break;
-            case WEEKLY:
-                shiftBuilder.withTimeBetweenShifts(Duration.ofDays(1));
-                shiftList.addAll(shiftBuilder.generateShifts(3));
-                shiftBuilder.startingAtDate(firstDateTime.plusWeeks(1));
-                shiftList.addAll(shiftBuilder.generateShifts(3));
-                break;
-            case MONTHLY:
-                shiftBuilder.withTimeBetweenShifts(Duration.ofDays(7));
-                shiftList.addAll(shiftBuilder.generateShifts(3));
-                shiftBuilder.startingAtDate(firstDateTime.plusMonths(1));
-                shiftList.addAll(shiftBuilder.generateShifts(3));
-                break;
-            case ANNUALLY:
-                shiftBuilder.withTimeBetweenShifts(Duration.ofDays(7 * 4));
-                shiftList.addAll(shiftBuilder.generateShifts(3));
-                shiftBuilder.startingAtDate(firstDateTime.plusYears(1));
-                shiftList.addAll(shiftBuilder.generateShifts(3));
-                break;
-            default:
-                throw new IllegalArgumentException("No case for (" + contractField + ")");
-        }
-
+        List<Shift> shiftList = contractField.generateShifts(shiftBuilder);
         roster.setTenantId(TENANT_ID);
         roster.setRosterState(rosterState);
         roster.setSpotList(Collections.singletonList(spotA));
@@ -252,47 +240,30 @@ public class SolverTest {
         shiftList.get(3).setEmployee(employeeA);
         shiftList.get(4).setEmployee(employeeA);
 
-        String contraintName;
+        String constraintName = contractField.getConstraintName();
 
-        switch (contractField) {
-            case DAILY:
-                contraintName = "Daily minutes must not exceed contract maximum";
-                break;
-            case WEEKLY:
-                contraintName = "Weekly minutes must not exceed contract maximum";
-                break;
-            case MONTHLY:
-                contraintName = "Monthly minutes must not exceed contract maximum";
-                break;
-            case ANNUALLY:
-                contraintName = "Yearly minutes must not exceed contract maximum";
-                break;
-            default:
-                throw new IllegalArgumentException("No case for (" + contractField + ")");
-        }
-
-        scoreVerifier.assertHardWeight(contraintName, 0, roster);
-        scoreVerifier.assertMediumWeight(contraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(contraintName, 0, roster);
+        scoreVerifier.assertHardWeight(constraintName, 0, roster);
+        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
+        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
 
         shiftList.get(2).setEmployee(employeeA);
 
         // -1 for each shift in overloaded week
-        scoreVerifier.assertHardWeight(contraintName, -3, roster);
-        scoreVerifier.assertMediumWeight(contraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(contraintName, 0, roster);
+        scoreVerifier.assertHardWeight(constraintName, -3, roster);
+        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
+        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
 
         shiftList.get(5).setEmployee(employeeA);
 
-        scoreVerifier.assertHardWeight(contraintName, -6, roster);
-        scoreVerifier.assertMediumWeight(contraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(contraintName, 0, roster);
+        scoreVerifier.assertHardWeight(constraintName, -6, roster);
+        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
+        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
 
         shiftList.get(1).setEmployee(null);
 
-        scoreVerifier.assertHardWeight(contraintName, -3, roster);
-        scoreVerifier.assertMediumWeight(contraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(contraintName, 0, roster);
+        scoreVerifier.assertHardWeight(constraintName, -3, roster);
+        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
+        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
     }
 
     @Test(timeout = 600000)
