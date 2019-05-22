@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.inject.Singleton;
 
@@ -34,10 +35,20 @@ import org.optaweb.employeerostering.shared.exception.ServerSideExceptionInfo.Se
 @Singleton
 public class ServerSideExceptionDeserializer {
 
+    private Function<String, JsonReader> jsonReaderSupplier;
+
+    public ServerSideExceptionDeserializer() {
+        jsonReaderSupplier = json -> new DefaultJsonReader(new StringReader(json));
+    }
+
+    public ServerSideExceptionDeserializer(Function<String, JsonReader> jsonReaderSupplier) {
+        this.jsonReaderSupplier = jsonReaderSupplier;
+    }
+
     // Work around for https://github.com/nmorel/gwt-jackson/issues/79
     // (Cannot use the gwt-jackson ObjectMapper due to a compilation error)
     public ServerSideExceptionInfo deserializeFromJsonString(String json) {
-        JsonReader reader = new DefaultJsonReader(new StringReader(json));
+        JsonReader reader = jsonReaderSupplier.apply(json);
         try {
             return deserialize(reader, json);
         } finally {
@@ -97,12 +108,14 @@ public class ServerSideExceptionDeserializer {
                     }
                     break;
                 default:
-                    raiseError(json);
+                    raiseError("Unknown Id: " + json);
             }
         }
         reader.endObject();
         if (!fields.isEmpty()) {
-            raiseError(json);
+            List<String> fieldNames = new ArrayList<>();
+            fields.forEach(f -> fieldNames.add(f.name()));
+            raiseError("Missing Fields: " + String.join(",", fieldNames));
         }
         return new ServerSideExceptionInfo(i18nKey, exceptionMessage, messageParameters, exceptionClass, stackTrace, exceptionCause);
     }

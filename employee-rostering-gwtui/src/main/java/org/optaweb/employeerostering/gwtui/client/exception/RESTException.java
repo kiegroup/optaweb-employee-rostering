@@ -30,7 +30,7 @@ public class RESTException extends Exception {
         this.translationService = translationService;
     }
 
-    private static Exception getExceptionFrom(ServerSideExceptionInfo serverSideException) {
+    protected static Exception getExceptionFrom(ServerSideExceptionInfo serverSideException) {
         Exception out;
         if (serverSideException.getExceptionCause() != null) {
             out = new ServerException(getExceptionFrom(serverSideException.getExceptionCause()), serverSideException.getExceptionClass() + ": " + serverSideException.getExceptionMessage());
@@ -41,7 +41,7 @@ public class RESTException extends Exception {
         return out;
     }
 
-    private static StackTraceElement[] extractStackTrace(ServerSideExceptionInfo serverSideException) {
+    protected static StackTraceElement[] extractStackTrace(ServerSideExceptionInfo serverSideException) {
         StackTraceElement[] stackTrace = new StackTraceElement[serverSideException.getStackTrace().size()];
         for (int i = 0; i < stackTrace.length; i++) {
             String stackTraceLine = serverSideException.getStackTrace().get(i);
@@ -56,7 +56,14 @@ public class RESTException extends Exception {
                 int lineNumber = Integer.parseInt(stackTraceLine.substring(lineNumberLocation + 1, stackTraceLine.length() - 1));
                 stackTrace[i] = new StackTraceElement(className, methodName, fileName, lineNumber);
             } else {
-                stackTrace[i] = new StackTraceElement(className, methodName, "Unknown Source", 0);
+                if (stackTraceLine.substring(fileNameLocation).equals("(Native Method)")) {
+                    stackTrace[i] = new StackTraceElement(className, methodName, null, -2);
+                } else if (stackTraceLine.substring(fileNameLocation).equals("(Unknown Source)")) {
+                    stackTrace[i] = new StackTraceElement(className, methodName, null, -1);
+                } else {
+                    String fileName = stackTraceLine.substring(fileNameLocation + 1, stackTraceLine.length() - 1);
+                    stackTrace[i] = new StackTraceElement(className, methodName, fileName, -1);
+                }
             }
         }
         return stackTrace;
