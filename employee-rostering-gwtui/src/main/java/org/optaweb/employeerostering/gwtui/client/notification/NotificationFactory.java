@@ -28,7 +28,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.optaweb.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaweb.employeerostering.gwtui.client.popups.StackTracePopup;
 import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 
 @Templated
@@ -77,9 +77,8 @@ public class NotificationFactory
         throwable.printStackTrace(stackTracePrintStream);
 
         ToastNotification notification = toastNotificationInstance.get();
-        notification.setup(NotificationType.ERROR, I18nKeys.Notifications_exception, new NotificationAction(I18nKeys.Notifications_viewStackTrace, () -> ErrorPopup.show(message
-                                                                                                                                                                                 .toString())),
-                           Collections.emptyList(), throwable.getMessage());
+        notification.setup(NotificationType.ERROR, I18nKeys.Notifications_exception, new NotificationAction(I18nKeys.Notifications_viewStackTrace,
+                                                                                                            () -> StackTracePopup.show(message.toString())), Collections.emptyList(), throwable.getMessage());
         notifications.insertBefore(notification.getElement(), notifications.firstChild);
     }
 
