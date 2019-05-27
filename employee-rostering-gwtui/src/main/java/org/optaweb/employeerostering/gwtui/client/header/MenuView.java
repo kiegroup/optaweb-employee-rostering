@@ -33,8 +33,9 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.optaweb.employeerostering.gwtui.client.app.NavigationController.PageChange;
+import org.optaweb.employeerostering.gwtui.client.notification.NotificationFactory;
 import org.optaweb.employeerostering.gwtui.client.pages.Pages;
-import org.optaweb.employeerostering.gwtui.client.popups.ErrorPopup;
+import org.optaweb.employeerostering.gwtui.client.resources.i18n.I18nKeys;
 import org.optaweb.employeerostering.gwtui.client.tenant.TenantStore;
 
 import static org.optaweb.employeerostering.gwtui.client.pages.Pages.Id.AVAILABILITY_ROSTER;
@@ -78,6 +79,9 @@ public class MenuView implements IsElement {
 
     @Inject
     private Event<PageChange> pageChangeEvent;
+
+    @Inject
+    private NotificationFactory notificationFactory;
 
     @PostConstruct
     private void initMenu() {
@@ -126,7 +130,7 @@ public class MenuView implements IsElement {
             pageChangeEvent.fire(new PageChange(pageId));
             handleActiveLink(Js.cast(event.target));
         } else {
-            ErrorPopup.show("There are no Tenants currently. Add one in the Admin page first.");
+            notificationFactory.showInfoMessage(I18nKeys.MenuView_noTenants);
         }
     }
 

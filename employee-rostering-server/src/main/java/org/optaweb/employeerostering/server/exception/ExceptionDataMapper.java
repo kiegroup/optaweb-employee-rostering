@@ -90,6 +90,10 @@ public class ExceptionDataMapper {
             return statusCode;
         }
 
+        public String getI18nKey() {
+            return i18nKey;
+        }
+
         public ServerSideExceptionInfo getServerSideExceptionInfoFromException(Throwable exception) {
             return new ServerSideExceptionInfo(exception, i18nKey,
                                                parameterMapping.apply(exception).toArray(new String[0]));

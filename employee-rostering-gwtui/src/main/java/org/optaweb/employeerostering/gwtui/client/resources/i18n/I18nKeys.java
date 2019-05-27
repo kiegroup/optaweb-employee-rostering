@@ -126,26 +126,8 @@ public interface I18nKeys {
     @TranslationKey(defaultValue = "Soft Score: {0}")
     final String Indictment_softScore = "Indictment.softScore";
 
-    @TranslationKey(defaultValue = "Availability Roster")
-    final String MenuPanel_availabilityRoster = "MenuPanel.availabilityRoster";
-
-    @TranslationKey(defaultValue = "Employees")
-    final String MenuPanel_employees = "MenuPanel.employees";
-
-    @TranslationKey(defaultValue = "Rest API")
-    final String MenuPanel_restAPI = "MenuPanel.restAPI";
-
-    @TranslationKey(defaultValue = "Shift Roster")
-    final String MenuPanel_shiftRoster = "MenuPanel.shiftRoster";
-
-    @TranslationKey(defaultValue = "Spots")
-    final String MenuPanel_spots = "MenuPanel.spots";
-
-    @TranslationKey(defaultValue = "Tenant")
-    final String MenuPanel_tenant = "MenuPanel.tenant";
-
-    @TranslationKey(defaultValue = "Toggle navigation")
-    final String MenuPanel_toggleNavigation = "MenuPanel.toggleNavigation";
+    @TranslationKey(defaultValue = "There are no Tenants currently. Add one in the Admin page first.")
+    final String MenuView_noTenants = "MenuView.noTenants";
 
     @TranslationKey(defaultValue = "An exception occurred: {0}")
     final String Notifications_exception = "Notifications.exception";

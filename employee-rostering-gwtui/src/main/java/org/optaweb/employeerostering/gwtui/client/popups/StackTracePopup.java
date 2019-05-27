@@ -16,30 +16,21 @@
 
 package org.optaweb.employeerostering.gwtui.client.popups;
 
-import java.util.LinkedList;
-import java.util.Queue;
-
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import org.gwtbootstrap3.client.ui.html.Span;
 import org.optaweb.employeerostering.gwtui.client.resources.css.CssResources;
-import org.optaweb.employeerostering.gwtui.client.resources.images.ImageResources;
 
-public class ErrorPopup extends PopupPanel {
-
-    final static Queue<String> errorQueue = new LinkedList<String>();
-
+public class StackTracePopup extends PopupPanel {
     private HandlerRegistration windowResizeHandler;
 
-    private ErrorPopup(String msg) {
+    private StackTracePopup(String msg) {
         super(false);
 
         CssResources.INSTANCE.errorpopup().ensureInjected();
@@ -49,11 +40,9 @@ public class ErrorPopup extends PopupPanel {
 
         VerticalPanel vertPanel = new VerticalPanel();
         HorizontalPanel horizontalSubpanel = new HorizontalPanel();
-        Image image = new Image(ImageResources.INSTANCE.errorIcon());
-        horizontalSubpanel.add(image);
 
         ScrollPanel scrollPanel = new ScrollPanel();
-        scrollPanel.setHeight(image.getHeight() + "px");
+        scrollPanel.setHeight("50vh");
         Span content = new Span(new SafeHtmlBuilder()
                 .appendEscapedLines(msg)
                 .toSafeHtml().asString());
@@ -71,19 +60,8 @@ public class ErrorPopup extends PopupPanel {
         horizontalSubpanel.add(new Span());
         Button button = new Button("Close");
         button.addClickHandler((e) -> {
-            ErrorPopup.this.hide();
-            ErrorPopup.this.windowResizeHandler.removeHandler();
-            errorQueue.poll();
-            if (!errorQueue.isEmpty()) {
-                Timer timer = new Timer() {
-
-                    @Override
-                    public void run() {
-                        showNextQueueError();
-                    }
-                };
-                timer.schedule(500);
-            }
+            StackTracePopup.this.hide();
+            StackTracePopup.this.windowResizeHandler.removeHandler();
         });
         horizontalSubpanel.add(button);
 
@@ -92,14 +70,7 @@ public class ErrorPopup extends PopupPanel {
     }
 
     public static void show(String msg) {
-        errorQueue.add(msg);
-        if (1 == errorQueue.size()) {
-            showNextQueueError();
-        }
-    }
-
-    private static void showNextQueueError() {
-        final ErrorPopup popup = new ErrorPopup(errorQueue.peek());
+        final StackTracePopup popup = new StackTracePopup(msg);
         popup.center();
     }
 }
