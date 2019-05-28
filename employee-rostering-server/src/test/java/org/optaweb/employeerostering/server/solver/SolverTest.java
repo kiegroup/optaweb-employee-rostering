@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import javax.persistence.EntityManager;
 
 import org.junit.Test;
+import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.config.solver.termination.TerminationConfig;
@@ -63,6 +64,8 @@ import static org.mockito.Mockito.mock;
 public class SolverTest {
 
     private static final int TENANT_ID = 0;
+    private static final LocalDate START_DATE = LocalDate.of(2019, 5, 13);
+    private static final RosterParametrization ROSTER_PARAMETRIZATION = new RosterParametrization();
 
     private SolverFactory<Roster> getSolverFactory() {
         SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(WannabeSolverManager.SOLVER_CONFIG);
@@ -91,112 +94,6 @@ public class SolverTest {
         assertTrue(roster.getShiftList().stream().anyMatch(s -> s.getEmployee() != null));
     }
 
-    private static class ShiftBuilder {
-
-        OffsetDateTime firstShiftStartTime;
-        Duration lengthOfShift = Duration.ofHours(9);
-        Duration durationBetweenShifts = Duration.ofDays(1);
-        Spot shiftSpot;
-        AtomicLong idGenerator;
-
-        public ShiftBuilder(AtomicLong idGenerator) {
-            this.idGenerator = idGenerator;
-        }
-
-        public ShiftBuilder startingAtDate(OffsetDateTime startDate) {
-            this.firstShiftStartTime = startDate;
-            return this;
-        }
-
-        public ShiftBuilder withShiftLength(Duration duration) {
-            this.lengthOfShift = duration;
-            return this;
-        }
-
-        public ShiftBuilder withTimeBetweenShifts(Duration duration) {
-            this.durationBetweenShifts = duration;
-            return this;
-        }
-
-        public ShiftBuilder forSpot(Spot spot) {
-            this.shiftSpot = spot;
-            return this;
-        }
-
-        public List<Shift> generateShifts(int numberOfShifts) {
-            List<Shift> out = new ArrayList<>();
-            OffsetDateTime shiftStart = firstShiftStartTime;
-
-            for (int i = 0; i < numberOfShifts; i++, shiftStart = shiftStart.plus(durationBetweenShifts)) {
-                out.add(new Shift(0, shiftSpot, shiftStart, shiftStart.plus(lengthOfShift)));
-            }
-            out.forEach(s -> s.setId(idGenerator.getAndIncrement()));
-
-            return out;
-        }
-    }
-
-    private LocalDate getStartDate() {
-        return LocalDate.of(2019, 5, 13);
-    }
-
-    private RosterState getRosterState(AtomicLong idGenerator) {
-        RosterState rosterState = new RosterState(TENANT_ID, 7, getStartDate().minusWeeks(1), 7, 14, 0, 7, getStartDate().minusWeeks(2),
-                                                  ZoneId.systemDefault());
-        rosterState.setId(idGenerator.getAndIncrement());
-        return rosterState;
-    }
-
-    private RosterParametrization getRosterParametrization(AtomicLong idGenerator) {
-        RosterParametrization rosterParametrization = new RosterParametrization();
-        rosterParametrization.setTenantId(TENANT_ID);
-        rosterParametrization.setId(idGenerator.getAndIncrement());
-        rosterParametrization.setWeekStartDay(DayOfWeek.MONDAY);
-        return rosterParametrization;
-    }
-
-    private enum ContractField {
-        DAILY("Daily minutes must not exceed contract maximum", 2 * 60, null, null, null, Duration.ofHours(6), Duration.ofDays(1)),
-        WEEKLY("Weekly minutes must not exceed contract maximum", null, 2 * 60, null, null, Duration.ofDays(1), Duration.ofDays(7)),
-        MONTHLY("Monthly minutes must not exceed contract maximum", null, null, 2 * 60, null, Duration.ofDays(7), Duration.ofDays(31)),
-        ANNUALLY("Yearly minutes must not exceed contract maximum", null, null, null, 2 * 60, Duration.ofDays(31), Duration.ofDays(366));
-
-        String constraintName;
-        Integer dailyHours, weeklyHours, monthlyHours, yearlyHours;
-        Duration timeBetweenShifts, periodLength;
-
-        private ContractField(String constraintName, Integer dailyHours, Integer weeklyHours, Integer monthlyHours,
-                              Integer yearlyHours, Duration timeBetweenShifts, Duration periodLength) {
-            this.constraintName = constraintName;
-            this.dailyHours = dailyHours;
-            this.weeklyHours = weeklyHours;
-            this.monthlyHours = monthlyHours;
-            this.yearlyHours = yearlyHours;
-            this.timeBetweenShifts = timeBetweenShifts;
-            this.periodLength = periodLength;
-        }
-
-        public String getConstraintName() {
-            return constraintName;
-        }
-
-        public Contract getContract(AtomicLong idGenerator) {
-            Contract out = new Contract(TENANT_ID, constraintName, dailyHours, weeklyHours, monthlyHours,
-                                        yearlyHours);
-            out.setId(idGenerator.getAndIncrement());
-            return out;
-        }
-
-        public List<Shift> generateShifts(ShiftBuilder shiftBuilder) {
-            List<Shift> out = new ArrayList<>();
-            shiftBuilder.withTimeBetweenShifts(timeBetweenShifts);
-            out.addAll(shiftBuilder.generateShifts(3));
-            shiftBuilder.startingAtDate(shiftBuilder.firstShiftStartTime.plus(periodLength));
-            out.addAll(shiftBuilder.generateShifts(3));
-            return out;
-        }
-    }
-
     private void testContractConstraint(ContractField contractField) {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
@@ -216,7 +113,7 @@ public class SolverTest {
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
         spotA.setId(idGenerator.getAndIncrement());
 
-        LocalDate firstDayOfWeek = getStartDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate firstDayOfWeek = START_DATE.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         OffsetDateTime firstDateTime = OffsetDateTime.of(firstDayOfWeek, LocalTime.MIDNIGHT, ZoneOffset.UTC);
 
         ShiftBuilder shiftBuilder = new ShiftBuilder(idGenerator)
@@ -240,30 +137,22 @@ public class SolverTest {
         shiftList.get(3).setEmployee(employeeA);
         shiftList.get(4).setEmployee(employeeA);
 
-        String constraintName = contractField.getConstraintName();
+        Constraints contraint = contractField.getConstraint();
 
-        scoreVerifier.assertHardWeight(constraintName, 0, roster);
-        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
+        contraint.verifyNumOfInstances(scoreVerifier, roster, 0);
 
         shiftList.get(2).setEmployee(employeeA);
 
         // -1 for each shift in overloaded week
-        scoreVerifier.assertHardWeight(constraintName, -3, roster);
-        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
+        contraint.verifyNumOfInstances(scoreVerifier, roster, 3);
 
         shiftList.get(5).setEmployee(employeeA);
 
-        scoreVerifier.assertHardWeight(constraintName, -6, roster);
-        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
+        contraint.verifyNumOfInstances(scoreVerifier, roster, 6);
 
         shiftList.get(1).setEmployee(null);
 
-        scoreVerifier.assertHardWeight(constraintName, -3, roster);
-        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
+        contraint.verifyNumOfInstances(scoreVerifier, roster, 3);
     }
 
     @Test(timeout = 600000)
@@ -271,12 +160,6 @@ public class SolverTest {
         for (ContractField field : ContractField.values()) {
             testContractConstraint(field);
         }
-    }
-
-    private Contract getDefaultContract(AtomicLong idGenerator) {
-        Contract out = new Contract(TENANT_ID, "Default", null, null, null, null);
-        out.setId(idGenerator.getAndIncrement());
-        return out;
     }
 
     @Test(timeout = 600000)
@@ -304,7 +187,7 @@ public class SolverTest {
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
         employeeA.setId(idGenerator.getAndIncrement());
 
-        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
         Shift shift = new Shift(TENANT_ID, spotA, firstDateTime, firstDateTime.plusHours(9));
         shift.setId(idGenerator.getAndIncrement());
         shift.setEmployee(employeeA);
@@ -318,28 +201,20 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(Collections.singletonList(shift));
 
-        final String CONSTRAINT_NAME = "Required skill for a shift";
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -100, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        final Constraints constraint = Constraints.REQUIRED_SKILL_FOR_A_SHIFT;
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillA)));
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -100, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillB)));
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -100, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         employeeA.setSkillProficiencySet(new HashSet<>(Arrays.asList(skillA, skillB)));
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
     private void testAvailabilityConstraint(EmployeeAvailabilityState availabilityState) {
@@ -362,7 +237,7 @@ public class SolverTest {
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
         spotA.setId(idGenerator.getAndIncrement());
 
-        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
         Shift shift = new Shift(TENANT_ID, spotA, firstDateTime, firstDateTime.plusHours(9));
         shift.setId(idGenerator.getAndIncrement());
         shift.setEmployee(employeeA);
@@ -380,56 +255,41 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.singletonList(availability));
         roster.setShiftList(Collections.singletonList(shift));
 
-        String constraintName;
-        int hardScore, softScore;
+        Constraints constraint;
 
         switch (availabilityState) {
             case DESIRED:
-                constraintName = "Desired time slot for an employee";
-                hardScore = 0;
-                softScore = rosterParametrization.getDesiredTimeSlotWeight();
+                constraint = Constraints.DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
                 break;
 
             case UNDESIRED:
-                constraintName = "Undesired time slot for an employee";
-                hardScore = 0;
-                softScore = -rosterParametrization.getUndesiredTimeSlotWeight();
+                constraint = Constraints.UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
                 break;
 
             case UNAVAILABLE:
-                constraintName = "Unavailable time slot for an employee";
-                hardScore = -50;
-                softScore = 0;
+                constraint = Constraints.UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE;
                 break;
 
             default:
                 throw new IllegalArgumentException("No case for (" + availabilityState + ")");
         }
 
-        scoreVerifier.assertHardWeight(constraintName, hardScore, roster);
-        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(constraintName, softScore, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         shift.setStartDateTime(firstDateTime.minusHours(3));
         shift.setEndDateTime(firstDateTime.plusHours(6));
 
-        scoreVerifier.assertHardWeight(constraintName, hardScore, roster);
-        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(constraintName, softScore, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         shift.setStartDateTime(firstDateTime.plusHours(3));
         shift.setEndDateTime(firstDateTime.plusHours(12));
 
-        scoreVerifier.assertHardWeight(constraintName, hardScore, roster);
-        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(constraintName, softScore, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         shift.setStartDateTime(firstDateTime.plusHours(12));
         shift.setEndDateTime(firstDateTime.plusHours(21));
 
-        scoreVerifier.assertHardWeight(constraintName, 0, roster);
-        scoreVerifier.assertMediumWeight(constraintName, 0, roster);
-        scoreVerifier.assertSoftWeight(constraintName, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
     @Test(timeout = 600000)
@@ -460,7 +320,7 @@ public class SolverTest {
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
         spotA.setId(idGenerator.getAndIncrement());
 
-        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
         ShiftBuilder shiftBuilder = new ShiftBuilder(idGenerator)
                 .forSpot(spotA)
                 .startingAtDate(firstDateTime)
@@ -479,19 +339,15 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
-        final String CONSTRAINT_NAME = "At most one shift assignment per day per employee";
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -20, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        final Constraints constraint = Constraints.AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE;
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 2);
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofDays(1));
         shiftList = shiftBuilder.generateShifts(2);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
 
         // Start time is midnight, so one hour before is a different day
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-1));
@@ -499,9 +355,7 @@ public class SolverTest {
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
     @Test(timeout = 600000)
@@ -525,7 +379,7 @@ public class SolverTest {
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
         spotA.setId(idGenerator.getAndIncrement());
 
-        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
         ShiftBuilder shiftBuilder = new ShiftBuilder(idGenerator)
                 .forSpot(spotA)
                 .startingAtDate(firstDateTime)
@@ -544,10 +398,8 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
-        final String CONSTRAINT_NAME = "No 2 shifts within 10 hours from each other";
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -1, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        final Constraints constraint = Constraints.NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER;
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(10));
         shiftList = shiftBuilder.generateShifts(2);
@@ -556,18 +408,14 @@ public class SolverTest {
 
         // Although start times are 10 hours apart, first end time is 9 hours apart
         // from next start time
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -1, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(11));
         shiftList = shiftBuilder.generateShifts(2);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
 
         // Start time is midnight, so one hour before is a different day
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-1));
@@ -575,9 +423,7 @@ public class SolverTest {
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, -1, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
     }
 
     @Test(timeout = 600000)
@@ -601,7 +447,7 @@ public class SolverTest {
         Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
         spotA.setId(idGenerator.getAndIncrement());
 
-        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
         ShiftBuilder shiftBuilder = new ShiftBuilder(idGenerator)
                 .forSpot(spotA)
                 .startingAtDate(firstDateTime)
@@ -619,28 +465,20 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
-        final String CONSTRAINT_NAME = "Assign every shift";
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, -3, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        final Constraints constraint = Constraints.ASSIGN_EVERY_SHIFT;
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 3);
 
         shiftList.get(0).setEmployee(employeeA);
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, -2, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 2);
 
         shiftList.get(1).setEmployee(employeeA);
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, -1, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         shiftList.get(2).setEmployee(employeeA);
 
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
     @Test(timeout = 600000)
@@ -665,7 +503,7 @@ public class SolverTest {
         Employee rotationEmployee = new Employee(TENANT_ID, "Anna", contract, Collections.emptySet());
         rotationEmployee.setId(idGenerator.getAndIncrement());
 
-        OffsetDateTime firstDateTime = OffsetDateTime.of(getStartDate(), LocalTime.MIDNIGHT, ZoneOffset.UTC);
+        OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
         Shift shift = new Shift(TENANT_ID, spotA, firstDateTime, firstDateTime.plusHours(9));
         shift.setId(idGenerator.getAndIncrement());
         shift.setEmployee(employeeA);
@@ -680,15 +518,11 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(Collections.singletonList(shift));
 
-        final String CONSTRAINT_NAME = "Employee is not rotation employee";
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, -rosterParametrization.getRotationEmployeeMatchWeight(), roster);
+        final Constraints constraint = Constraints.EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         shift.setEmployee(rotationEmployee);
-        scoreVerifier.assertHardWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertMediumWeight(CONSTRAINT_NAME, 0, roster);
-        scoreVerifier.assertSoftWeight(CONSTRAINT_NAME, 0, roster);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
     protected RosterGenerator buildRosterGenerator() {
@@ -709,5 +543,154 @@ public class SolverTest {
         RosterGenerator rosterGenerator = new RosterGenerator(entityManager);
         rosterGenerator.setUpGeneratedData();
         return rosterGenerator;
+    }
+
+    private RosterState getRosterState(AtomicLong idGenerator) {
+        final int PUBLISH_NOTICE = 7;
+        final int PUBLISH_LENGTH = 7;
+        final int DRAFT_LENGTH = 14;
+        final int ROTATION_OFFSET = 0;
+        final int ROTATION_LENGTH = 7;
+
+        RosterState rosterState = new RosterState(TENANT_ID, PUBLISH_NOTICE, START_DATE.minusDays(PUBLISH_NOTICE), PUBLISH_LENGTH,
+                                                  DRAFT_LENGTH, ROTATION_OFFSET, ROTATION_LENGTH, START_DATE.minusDays(2 * PUBLISH_NOTICE),
+                                                  ZoneId.systemDefault());
+        rosterState.setId(idGenerator.getAndIncrement());
+        return rosterState;
+    }
+
+    private Contract getDefaultContract(AtomicLong idGenerator) {
+        Contract out = new Contract(TENANT_ID, "Default Contract", null, null, null, null);
+        out.setId(idGenerator.getAndIncrement());
+        return out;
+    }
+
+    private RosterParametrization getRosterParametrization(AtomicLong idGenerator) {
+        ROSTER_PARAMETRIZATION.setTenantId(TENANT_ID);
+        ROSTER_PARAMETRIZATION.setId(idGenerator.getAndIncrement());
+        ROSTER_PARAMETRIZATION.setWeekStartDay(DayOfWeek.MONDAY);
+        return ROSTER_PARAMETRIZATION;
+    }
+
+    private enum Constraints {
+        REQUIRED_SKILL_FOR_A_SHIFT("Required skill for a shift", HardMediumSoftScore.of(-100, 0, 0)),
+        UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE("Unavailable time slot for an employee", HardMediumSoftScore.of(-50, 0, 0)),
+        AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE("At most one shift assignment per day per employee", HardMediumSoftScore.of(-10, 0, 0)),
+        NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER("No 2 shifts within 10 hours from each other", HardMediumSoftScore.of(-1, 0, 0)),
+        DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Daily minutes must not exceed contract maximum", HardMediumSoftScore.of(-1, 0, 0)),
+        WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Weekly minutes must not exceed contract maximum", HardMediumSoftScore.of(-1, 0, 0)),
+        MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Monthly minutes must not exceed contract maximum", HardMediumSoftScore.of(-1, 0, 0)),
+        YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Yearly minutes must not exceed contract maximum", HardMediumSoftScore.of(-1, 0, 0)),
+        ASSIGN_EVERY_SHIFT("Assign every shift", HardMediumSoftScore.of(0, -1, 0)),
+        UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Undesired time slot for an employee",
+                                            HardMediumSoftScore.of(0, 0, -ROSTER_PARAMETRIZATION.getUndesiredTimeSlotWeight())),
+        DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Desired time slot for an employee",
+                                          HardMediumSoftScore.of(0, 0, ROSTER_PARAMETRIZATION.getDesiredTimeSlotWeight())),
+        EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE("Employee is not rotation employee",
+                                          HardMediumSoftScore.of(0, 0, -ROSTER_PARAMETRIZATION.getRotationEmployeeMatchWeight()));
+
+        String constraintName;
+        HardMediumSoftScore constraintWeight;
+
+        private Constraints(String constraintName, HardMediumSoftScore constraintWeight) {
+            this.constraintName = constraintName;
+            this.constraintWeight = constraintWeight;
+        }
+
+        public void verifyNumOfInstances(HardMediumSoftLongScoreVerifier<Roster> scoreVerifier, Roster roster, int numOfInstances) {
+            scoreVerifier.assertHardWeight(constraintName, constraintWeight.getHardScore() * numOfInstances, roster);
+            scoreVerifier.assertMediumWeight(constraintName, constraintWeight.getMediumScore() * numOfInstances, roster);
+            scoreVerifier.assertSoftWeight(constraintName, constraintWeight.getSoftScore() * numOfInstances, roster);
+        }
+    }
+
+    private enum ContractField {
+        DAILY(Constraints.DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, 2 * 60, null, null, null, Duration.ofHours(6), Duration.ofDays(1)),
+        WEEKLY(Constraints.WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, null, 2 * 60, null, null, Duration.ofDays(1), Duration.ofDays(7)),
+        MONTHLY(Constraints.MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, null, null, 2 * 60, null, Duration.ofDays(7), Duration.ofDays(31)),
+        ANNUALLY(Constraints.YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM, null, null, null, 2 * 60, Duration.ofDays(31), Duration.ofDays(366));
+
+        Constraints constraint;
+        Integer dailyHours, weeklyHours, monthlyHours, yearlyHours;
+        Duration timeBetweenShifts, periodLength;
+
+        private ContractField(Constraints constraint, Integer dailyHours, Integer weeklyHours, Integer monthlyHours,
+                              Integer yearlyHours, Duration timeBetweenShifts, Duration periodLength) {
+            this.constraint = constraint;
+            this.dailyHours = dailyHours;
+            this.weeklyHours = weeklyHours;
+            this.monthlyHours = monthlyHours;
+            this.yearlyHours = yearlyHours;
+            this.timeBetweenShifts = timeBetweenShifts;
+            this.periodLength = periodLength;
+        }
+
+        public Constraints getConstraint() {
+            return constraint;
+        }
+
+        public Contract getContract(AtomicLong idGenerator) {
+            Contract out = new Contract(TENANT_ID, "Contract", dailyHours, weeklyHours, monthlyHours,
+                                        yearlyHours);
+            out.setId(idGenerator.getAndIncrement());
+            return out;
+        }
+
+        public List<Shift> generateShifts(ShiftBuilder shiftBuilder) {
+            List<Shift> out = new ArrayList<>();
+            shiftBuilder.withTimeBetweenShifts(timeBetweenShifts);
+            out.addAll(shiftBuilder.generateShifts(3));
+            shiftBuilder.startingAtDate(shiftBuilder.firstShiftStartTime.plus(periodLength));
+            out.addAll(shiftBuilder.generateShifts(3));
+            return out;
+        }
+    }
+
+    private static class ShiftBuilder {
+
+        OffsetDateTime firstShiftStartTime;
+        Duration lengthOfShift;
+        Duration durationBetweenShifts;
+        Spot shiftSpot;
+        AtomicLong idGenerator;
+
+        public ShiftBuilder(AtomicLong idGenerator) {
+            this.idGenerator = idGenerator;
+        }
+
+        public ShiftBuilder startingAtDate(OffsetDateTime startDate) {
+            this.firstShiftStartTime = startDate;
+            return this;
+        }
+
+        public ShiftBuilder withShiftLength(Duration duration) {
+            this.lengthOfShift = duration;
+            return this;
+        }
+
+        public ShiftBuilder withTimeBetweenShifts(Duration duration) {
+            this.durationBetweenShifts = duration;
+            return this;
+        }
+
+        public ShiftBuilder forSpot(Spot spot) {
+            this.shiftSpot = spot;
+            return this;
+        }
+
+        public List<Shift> generateShifts(int numberOfShifts) {
+            if (firstShiftStartTime == null || lengthOfShift == null || durationBetweenShifts == null || shiftSpot == null) {
+                throw new IllegalStateException("ShiftBuilder not initialized");
+            }
+            List<Shift> out = new ArrayList<>();
+            OffsetDateTime shiftStart = firstShiftStartTime;
+
+            for (int i = 0; i < numberOfShifts; i++, shiftStart = shiftStart.plus(durationBetweenShifts)) {
+                out.add(new Shift(TENANT_ID, shiftSpot, shiftStart, shiftStart.plus(lengthOfShift)));
+            }
+            out.forEach(s -> s.setId(idGenerator.getAndIncrement()));
+
+            return out;
+        }
     }
 }
