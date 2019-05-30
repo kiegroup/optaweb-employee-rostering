@@ -137,22 +137,22 @@ public class SolverTest {
         shiftList.get(3).setEmployee(employeeA);
         shiftList.get(4).setEmployee(employeeA);
 
-        Constraints contraint = contractField.getConstraint();
+        Constraints constraint = contractField.getConstraint();
 
-        contraint.verifyNumOfInstances(scoreVerifier, roster, 0);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
 
         shiftList.get(2).setEmployee(employeeA);
 
         // -1 for each shift in overloaded week
-        contraint.verifyNumOfInstances(scoreVerifier, roster, 3);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 3);
 
         shiftList.get(5).setEmployee(employeeA);
 
-        contraint.verifyNumOfInstances(scoreVerifier, roster, 6);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 6);
 
         shiftList.get(1).setEmployee(null);
 
-        contraint.verifyNumOfInstances(scoreVerifier, roster, 3);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 3);
     }
 
     @Test(timeout = 600000)
@@ -687,8 +687,8 @@ public class SolverTest {
 
             for (int i = 0; i < numberOfShifts; i++, shiftStart = shiftStart.plus(durationBetweenShifts)) {
                 out.add(new Shift(TENANT_ID, shiftSpot, shiftStart, shiftStart.plus(lengthOfShift)));
+                out.get(i).setId(idGenerator.getAndIncrement());
             }
-            out.forEach(s -> s.setId(idGenerator.getAndIncrement()));
 
             return out;
         }
