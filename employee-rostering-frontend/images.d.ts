@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,10 @@
  * limitations under the License.
  */
 
-import * as React from 'react';
-import DataTable from '../components/DataTable'
-
-function getSkills() : string[][] {
-    return [['A'], ['B'], ['C']];
-}
-
-const SkillsPage = () => {
-  return <DataTable columnTitles={['Skills']} dataSupplier={getSkills}></DataTable>;
-};
-
-export default SkillsPage;
+declare module '*.svg';
+declare module '*.png';
+declare module '*.jpg';
+declare module '*.jpeg';
+declare module '*.gif';
+declare module '*.bmp';
+declare module '*.tiff';
