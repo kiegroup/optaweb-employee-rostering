@@ -28,8 +28,8 @@ const bgImages = {
   [BackgroundImageSrc.sm]: pfbg_768,
   [BackgroundImageSrc.sm2x]: pfbg_768_2x,
   [BackgroundImageSrc.xs]: pfbg_576,
-  [BackgroundImageSrc.xs2x]: pfbg_576_2x
- // [BackgroundImageSrc.filter]: `${filter}#image_overlay`,
+  [BackgroundImageSrc.xs2x]: pfbg_576_2x,
+  [BackgroundImageSrc.filter]: `${filter}#image_overlay`,
 };
 
 const Background: React.FC = () => (
