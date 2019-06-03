@@ -394,6 +394,9 @@
           <name>legacy</name>
         </property>
       </activation>
+      <properties>
+        <withoutGwt>true</withoutGwt>
+      </properties>	
       <modules>
         <module>employee-rostering-gwtui</module>
         <module>employee-rostering-server</module>
