@@ -24,23 +24,32 @@ import {
   headerCol,
   TableVariant,
   expandable,
-  cellWidth
+  cellWidth,
+  ICell
 } from '@patternfly/react-table';
 
 interface DataTableProps {
+  title: string;
   columnTitles: string[];
-  dataSupplier: () => string[][];
+  dataSupplier: (_: ((_: string[][]) => void)) => void;
 }
 
-class DataTable extends React.Component<DataTableProps> {
-  state : {'columns' : string[], 'rows' : string[][], 'actions' : {'title' : string, 'onClick' : any}[]};
+interface DataTableState {
+  columns : ICell[];
+  data : string[][];
+  actions : {'title' : string, 'onClick' : (event: any, rowId: number, rowData: string[], extra: any) => void}[];
+  currentFilter : (_: string[]) => boolean;
+}
+
+class DataTable extends React.Component<DataTableProps, DataTableState> {
+  state : DataTableState;
 
   constructor(props : DataTableProps) {
     super(props);
-
+    let columns : ICell[] = props.columnTitles.map(t => {return {title: t, cellTransforms: [headerCol] , props: {}};});
     this.state = {
-      columns: props.columnTitles,
-      rows: props.dataSupplier(),
+      columns: columns,
+      data: [],
       actions: [
         {
           title: 'Edit',
@@ -50,14 +59,28 @@ class DataTable extends React.Component<DataTableProps> {
           title: 'Delete',
           onClick: (event : any, rowId : number, rowData : string[], extra : any) => console.log('clicked on Another action, on row: ', rowId)
         }
-      ]
+      ],
+      currentFilter: (row) => true
     };
+
+    this.refresh();
+  }
+
+  refresh() {
+      this.props.dataSupplier(rows => {
+        console.log(rows);
+        this.setState({columns: this.state.columns,
+                       data: rows,
+                       actions: this.state.actions,
+                       currentFilter: this.state.currentFilter
+                      })});
   }
 
   render() {
-    const { columns, rows, actions } = this.state;
+    const { columns, actions } = this.state;
+    const rows = this.state.data.filter(this.state.currentFilter);
     return (
-      <Table caption="Actions Table" actions={actions} cells={columns} rows={rows}>
+      <Table caption={this.props.title} actions={actions} cells={columns} rows={rows}>
         <TableHeader />
         <TableBody />
       </Table>
