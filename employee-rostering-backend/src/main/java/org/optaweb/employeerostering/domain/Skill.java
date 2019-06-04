@@ -58,6 +58,7 @@ public class Skill {
     public String toString() {
         return "Skill{" +
                 "tenantId=" + tenantId +
+                "name=" + name +
                 '}';
     }
 }
