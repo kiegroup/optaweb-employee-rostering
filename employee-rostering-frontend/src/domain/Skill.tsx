@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-import * as React from 'react';
-import DataTable from '../components/DataTable';
-import SkillRestServiceClient from '../../services/SkillRestServiceClient';
+import DomainObject from './DomainObject';
 
-const skillRestService = new SkillRestServiceClient();
-
-function getSkills(callback : (_ : string[][]) => void) : void {
-    skillRestService.getSkillList(1).then((res) => {
-        callback(res.map(skill => [skill.name]));
-    });
-}
-
-const SkillsPage = () => {
-  return <DataTable title={'Skills'} columnTitles={['Name']} dataSupplier={getSkills}></DataTable>;
+interface Skill extends DomainObject {
+    name : string;
 };
 
-export default SkillsPage;
+export default Skill;
