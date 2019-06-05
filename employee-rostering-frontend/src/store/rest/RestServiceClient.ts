@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-import axios from 'axios';
+import axios, { AxiosInstance } from 'axios';
 
 export default class RestServiceClient {
-  restClient = axios.create({
-    baseURL: "/rest"
-  });
+
+  restClient: AxiosInstance;
+
+  constructor(baseURL: string) {
+    this.restClient = axios.create({
+      baseURL: baseURL
+    });
+  }
 
   get<T>(url: string): Promise<T> {
     return this.restClient.get<T>(url).then(res => res.data);

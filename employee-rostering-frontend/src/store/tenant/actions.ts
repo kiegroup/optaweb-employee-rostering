@@ -14,26 +14,17 @@
  * limitations under the License.
  */
 
-import axios from 'axios';
+import Tenant from 'domain/Tenant';
+import { ActionFactory } from '../types';
+import { ActionType, ChangeTenantAction, RefreshTenantListAction } from './types';
 
-export default class RestServiceClient {
-  restClient = axios.create({
-    baseURL: "/rest"
-  });
+export const changeTenant: ActionFactory<number, ChangeTenantAction> = newTenantId => ({
+  type: ActionType.CHANGE_TENANT,
+  tenantId: newTenantId
+});
 
-  get<T>(url: string): Promise<T> {
-    return this.restClient.get<T>(url).then(res => res.data);
-  }
-
-  post<T>(url: string, params: any): Promise<T> {
-    return this.restClient.post<T>(url, params).then(res => res.data);
-  }
-
-  put<T>(url: string, params: any): Promise<T> {
-    return this.restClient.put<T>(url, params).then(res => res.data);
-  }
-
-  delete<T>(url: string): Promise<T> {
-    return this.restClient.delete<T>(url).then(res => res.data);
-  }
-}
+export const refreshTenantList: ActionFactory<{currentTenantId: number; tenantList: Tenant[]}, RefreshTenantListAction> = params => ({
+  type: ActionType.REFRESH_TENANT_LIST,
+  tenantId: params.currentTenantId,
+  tenantList: params.tenantList
+});
