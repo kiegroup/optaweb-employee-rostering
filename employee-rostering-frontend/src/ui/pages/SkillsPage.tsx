@@ -20,10 +20,10 @@ import SkillRestServiceClient from '../../services/SkillRestServiceClient';
 
 const skillRestService = new SkillRestServiceClient();
 
-function getSkills(callback : (_ : string[][]) => void) : void {
-    skillRestService.getSkillList(1).then((res) => {
-        callback(res.map(skill => [skill.name]));
-    });
+function getSkills(callback: (_: string[][]) => void): void {
+  skillRestService.getSkillList(1).then((res) => {
+    callback(res.map(skill => [skill.name]));
+  });
 }
 
 const SkillsPage = () => {
