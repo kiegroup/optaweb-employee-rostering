@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-import axios from 'axios';
+import { ActionType, TenantData, TenantAction } from './types';
 
-export default class RestServiceClient {
-  restClient = axios.create({
-    baseURL: "/rest"
-  });
+const initialState: TenantData = {
+  currentTenantId: 0,
+  tenantList: []
+};
 
-  get<T>(url: string): Promise<T> {
-    return this.restClient.get<T>(url).then(res => res.data);
+const tenantReducer = (state = initialState, action: TenantAction): TenantData => {
+  switch (action.type) {
+    case ActionType.CHANGE_TENANT: {
+      return { ...state, currentTenantId: action.tenantId };
+    }
+    case ActionType.REFRESH_TENANT_LIST: {
+      return { ...state, currentTenantId: action.tenantId, tenantList: action.tenantList};
+    }
+    default:
+      return state;
   }
+};
 
-  post<T>(url: string, params: any): Promise<T> {
-    return this.restClient.post<T>(url, params).then(res => res.data);
-  }
-
-  put<T>(url: string, params: any): Promise<T> {
-    return this.restClient.put<T>(url, params).then(res => res.data);
-  }
-
-  delete<T>(url: string): Promise<T> {
-    return this.restClient.delete<T>(url).then(res => res.data);
-  }
-}
+export default tenantReducer;
