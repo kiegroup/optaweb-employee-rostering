@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-import axios from 'axios';
+import DomainObject from 'domain/DomainObject';
 
-export default class RestServiceClient {
-  restClient = axios.create({
-    baseURL: "/rest"
-  });
+export function withoutElement<T extends DomainObject>(collection: T[], removedElement: T): T[] {
+  return collection.filter(element => element.id !== removedElement.id);
+}
 
-  get<T>(url: string): Promise<T> {
-    return this.restClient.get<T>(url).then(res => res.data);
-  }
+export function withElement<T extends DomainObject>(collection: T[], addedElement: T): T[] {
+  return collection.concat([addedElement]);
+}
 
-  post<T>(url: string, params: any): Promise<T> {
-    return this.restClient.post<T>(url, params).then(res => res.data);
-  }
-
-  put<T>(url: string, params: any): Promise<T> {
-    return this.restClient.put<T>(url, params).then(res => res.data);
-  }
-
-  delete<T>(url: string): Promise<T> {
-    return this.restClient.delete<T>(url).then(res => res.data);
-  }
+export function withUpdatedElement<T extends DomainObject>(collection: T[], updatedElement: T): T[] {
+  return withElement(withoutElement(collection, updatedElement), updatedElement);
 }
