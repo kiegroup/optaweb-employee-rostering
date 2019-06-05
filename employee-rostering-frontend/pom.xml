@@ -21,10 +21,10 @@
 
   <groupId>org.optaweb.employeerostering</groupId>
   <artifactId>optaweb-employee-rostering-frontend</artifactId>
-  <version>7.23.0-SNAPSHOT</version>
+  <version>7.24.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>OptaWeb Employee Rostering Frontend</name>
+  <name>Employee Rostering as a Service React Frontend</name>
 
   <build>
     <plugins>
