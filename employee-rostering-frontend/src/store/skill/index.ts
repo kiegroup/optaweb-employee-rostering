@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-import axios from 'axios';
+import * as tenantOperations from './operations';
+import reducer from './reducers';
 
-export default class RestServiceClient {
-  restClient = axios.create({
-    baseURL: "/rest"
-  });
+export {
+  tenantOperations,
+};
 
-  get<T>(url: string): Promise<T> {
-    return this.restClient.get<T>(url).then(res => res.data);
-  }
-
-  post<T>(url: string, params: any): Promise<T> {
-    return this.restClient.post<T>(url, params).then(res => res.data);
-  }
-
-  put<T>(url: string, params: any): Promise<T> {
-    return this.restClient.put<T>(url, params).then(res => res.data);
-  }
-
-  delete<T>(url: string): Promise<T> {
-    return this.restClient.delete<T>(url).then(res => res.data);
-  }
-}
+export default reducer;
