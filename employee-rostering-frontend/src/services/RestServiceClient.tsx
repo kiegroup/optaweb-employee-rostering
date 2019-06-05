@@ -17,24 +17,24 @@
 import axios from 'axios';
 
 export default class RestServiceClient {
-    restClient = axios.create({
-        baseURL: "/rest",
-        headers: {"Access-Control-Allow-Origin" : "*"}
-    });
+  restClient = axios.create({
+    baseURL: "/rest",
+    headers: { "Access-Control-Allow-Origin": "*" }
+  });
 
-    get<T>(url: string) : Promise<T> {
-        return this.restClient.get<T>(url).then(res => res.data); 
-    }
+  get<T>(url: string): Promise<T> {
+    return this.restClient.get<T>(url).then(res => res.data);
+  }
 
-    post<T>(url: string, params: any) : Promise<T> {
-        return this.restClient.post<T>(url, params).then(res => res.data); 
-    }
+  post<T>(url: string, params: any): Promise<T> {
+    return this.restClient.post<T>(url, params).then(res => res.data);
+  }
 
-    put<T>(url: string, params: any) : Promise<T> {
-        return this.restClient.put<T>(url, params).then(res => res.data);  
-    }
+  put<T>(url: string, params: any): Promise<T> {
+    return this.restClient.put<T>(url, params).then(res => res.data);
+  }
 
-    delete<T>(url: string) : Promise<T> {
-        return this.restClient.delete<T>(url).then(res => res.data); 
-    }
+  delete<T>(url: string): Promise<T> {
+    return this.restClient.delete<T>(url).then(res => res.data);
+  }
 }
