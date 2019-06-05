@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App should render correctly 1`] = `
+<Fragment>
+  <Page
+    breadcrumb={null}
+    className=""
+    header={<Header />}
+    isManagedSidebar={false}
+    onPageResize={null}
+    sidebar={null}
+    skipToContent={null}
+  >
+    <Background />
+    <PageSection
+      className=""
+      noPadding={false}
+      noPaddingMobile={false}
+      style={
+        Object {
+          "display": "flex",
+          "flexDirection": "column",
+          "height": "100%",
+          "overflowY": "auto",
+        }
+      }
+      variant="default"
+    >
+      <Switch>
+        <Route
+          component={[Function]}
+          exact={true}
+          path="/skills"
+        />
+      </Switch>
+    </PageSection>
+  </Page>
+</Fragment>
+`;
