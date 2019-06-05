@@ -15,9 +15,9 @@
  */
 
 interface Tenant {
-    name : string;
-    id? : number;
-    version? : number;
-};
+  name: string;
+  id?: number;
+  version?: number;
+}
 
 export default Tenant;
