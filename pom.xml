@@ -89,14 +89,14 @@
   </properties>
 
   <modules>
-    <!-- The Angular frontend is added by the profile "frontend" (uses old backend)
-         The Spring Boot backend is added by the profile "backend" (uses old frontend)
-         To use both, use the profile "combined"                                  -->
-    <module>employee-rostering-webapp</module>
+    <!-- To build the old backend (for React Frontend development), use the profile "frontend".
+         To build the old frontend (for Spring Boot Backend development), use the profile "backend".
+         To build the legacy application, use the profile "legacy". -->
+    <module>employee-rostering-frontend</module>
+    <module>employee-rostering-backend</module>
     <module>employee-rostering-benchmark</module>
     <module>employee-rostering-docs</module>
     <module>employee-rostering-distribution</module>
-    <module>employee-rostering-restclient</module>
   </modules>
 
   <dependencyManagement>
@@ -370,10 +370,9 @@
         </property>
       </activation>
       <modules>
-        <module>employee-rostering-shared-gwt</module>
         <module>employee-rostering-gwtui</module>
-        <module>employee-rostering-backend</module>
         <module>employee-rostering-shared</module>
+        <module>employee-rostering-shared-gwt</module>
       </modules>
     </profile>
 
@@ -384,23 +383,31 @@
           <name>frontend</name>
         </property>
       </activation>
+      <properties>
+        <withoutGwt>true</withoutGwt>
+      </properties>
       <modules>
-        <module>employee-rostering-frontend</module>
         <module>employee-rostering-server</module>
         <module>employee-rostering-shared</module>
+        <module>employee-rostering-restclient</module>
+        <module>employee-rostering-webapp</module>
       </modules>
     </profile>
 
     <profile>
-      <id>combined</id>
+      <id>legacy</id>
       <activation>
         <property>
-          <name>combined</name>
+          <name>legacy</name>
         </property>
       </activation>
       <modules>
-        <module>employee-rostering-frontend</module>
-        <module>employee-rostering-backend</module>
+        <module>employee-rostering-gwtui</module>
+        <module>employee-rostering-server</module>
+        <module>employee-rostering-shared</module>
+        <module>employee-rostering-shared-gwtui</module>
+        <module>employee-rostering-restclient</module>
+        <module>employee-rostering-webapp</module>
       </modules>
     </profile>
 
