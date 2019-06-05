@@ -17,7 +17,7 @@
 import DomainObject from './DomainObject';
 
 interface Skill extends DomainObject {
-    name : string;
-};
+  name: string;
+}
 
 export default Skill;

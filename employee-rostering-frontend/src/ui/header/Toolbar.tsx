@@ -28,22 +28,22 @@ import { BellIcon, CogIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import Tenant from '../../domain/Tenant';
 import TenantRestServiceClient from '../../services/TenantRestServiceClient';
-import {isUndefined} from "util";
+import { isUndefined } from "util";
 
-interface ToolbarProps {}
+interface ToolbarProps { }
 interface ToolbarState {
-  currentTenant?: Tenant,
-  tenantList : Tenant[],
-  isTenantSelectOpen : boolean;
+  currentTenant?: Tenant;
+  tenantList: Tenant[];
+  isTenantSelectOpen: boolean;
 }
 
 class ToolbarComponent extends React.Component<ToolbarProps, ToolbarState> {
-  tenantRestService : TenantRestServiceClient = new TenantRestServiceClient();
-  toolbarState : ToolbarState;
+  tenantRestService: TenantRestServiceClient = new TenantRestServiceClient();
+  toolbarState: ToolbarState;
 
-  constructor(props : ToolbarProps) {
+  constructor(props: ToolbarProps) {
     super(props);
-    this.toolbarState = {tenantList: [], isTenantSelectOpen : false};;
+    this.toolbarState = { tenantList: [], isTenantSelectOpen: false };
     this.updateTenantList();
   }
 
@@ -54,35 +54,35 @@ class ToolbarComponent extends React.Component<ToolbarProps, ToolbarState> {
           this.toolbarState = {
             currentTenant: tenantList[0],
             tenantList: tenantList,
-            isTenantSelectOpen : this.toolbarState.isTenantSelectOpen
+            isTenantSelectOpen: this.toolbarState.isTenantSelectOpen
           };
         }
         else {
           this.toolbarState = {
             currentTenant: this.toolbarState.currentTenant,
             tenantList: tenantList,
-            isTenantSelectOpen : this.toolbarState.isTenantSelectOpen
+            isTenantSelectOpen: this.toolbarState.isTenantSelectOpen
           };
         }
       }
       else {
-        this.toolbarState = {tenantList: [], isTenantSelectOpen: this.toolbarState.isTenantSelectOpen};
+        this.toolbarState = { tenantList: [], isTenantSelectOpen: this.toolbarState.isTenantSelectOpen };
       }
       this.refresh();
     });
   }
 
-  setCurrentTenant(newTenantId : number) {
+  setCurrentTenant(newTenantId: number) {
     this.toolbarState = {
       currentTenant: this.toolbarState.tenantList[newTenantId],
       tenantList: this.toolbarState.tenantList,
-      isTenantSelectOpen : false
+      isTenantSelectOpen: false
     };
     this.refresh();
   }
 
-  setIsTenantSelectOpen(isOpen : boolean) {
-    this.toolbarState = {currentTenant: this.toolbarState.currentTenant, tenantList: this.toolbarState.tenantList, isTenantSelectOpen: isOpen};
+  setIsTenantSelectOpen(isOpen: boolean) {
+    this.toolbarState = { currentTenant: this.toolbarState.currentTenant, tenantList: this.toolbarState.tenantList, isTenantSelectOpen: isOpen };
     this.refresh();
   }
 
@@ -92,49 +92,7 @@ class ToolbarComponent extends React.Component<ToolbarProps, ToolbarState> {
 
   render() {
     if (isUndefined(this.toolbarState.currentTenant)) {
-      return  <Toolbar><ToolbarGroup/> <ToolbarGroup>
-      <ToolbarItem>
-        <Button
-          id="horizontal-example-uid-01"
-          aria-label="Notifications actions"
-          variant={ButtonVariant.plain}
-        >
-          <BellIcon />
-        </Button>
-      </ToolbarItem>
-      <ToolbarItem>
-        <Button
-          id="horizontal-example-uid-02"
-          aria-label="Settings actions"
-          variant={ButtonVariant.plain}
-        >
-          <CogIcon />
-        </Button>
-      </ToolbarItem>
-    </ToolbarGroup></Toolbar>
-    }
-    else {
-      let {currentTenant, tenantList, isTenantSelectOpen} = this.toolbarState;
-      return <Toolbar>
-      <ToolbarGroup>
-        <ToolbarItem>
-          <Dropdown
-            isPlain={true}
-            position="right"
-            // tslint:disable-next-line:no-console
-            onSelect={event => this.setCurrentTenant(parseInt(event.currentTarget.id))}
-            isOpen={isTenantSelectOpen}
-            toggle={
-              <DropdownToggle onToggle={() => this.setIsTenantSelectOpen(!isTenantSelectOpen)}>
-                {currentTenant.name}
-              </DropdownToggle>}
-            dropdownItems={tenantList.map((tenant, index) => {
-              return <DropdownItem id={index.toString()} key={index}>{tenant.name}</DropdownItem>;
-            })}
-          />
-        </ToolbarItem>
-      </ToolbarGroup>
-      <ToolbarGroup>
+      return <Toolbar><ToolbarGroup /> <ToolbarGroup>
         <ToolbarItem>
           <Button
             id="horizontal-example-uid-01"
@@ -153,8 +111,50 @@ class ToolbarComponent extends React.Component<ToolbarProps, ToolbarState> {
             <CogIcon />
           </Button>
         </ToolbarItem>
-      </ToolbarGroup>
-    </Toolbar>
+      </ToolbarGroup></Toolbar>
+    }
+    else {
+      let { currentTenant, tenantList, isTenantSelectOpen } = this.toolbarState;
+      return <Toolbar>
+        <ToolbarGroup>
+          <ToolbarItem>
+            <Dropdown
+              isPlain={true}
+              position="right"
+              // tslint:disable-next-line:no-console
+              onSelect={event => this.setCurrentTenant(parseInt(event.currentTarget.id))}
+              isOpen={isTenantSelectOpen}
+              toggle={
+                <DropdownToggle onToggle={() => this.setIsTenantSelectOpen(!isTenantSelectOpen)}>
+                  {currentTenant.name}
+                </DropdownToggle>}
+              dropdownItems={tenantList.map((tenant, index) => {
+                return <DropdownItem id={index.toString()} key={index}>{tenant.name}</DropdownItem>;
+              })}
+            />
+          </ToolbarItem>
+        </ToolbarGroup>
+        <ToolbarGroup>
+          <ToolbarItem>
+            <Button
+              id="horizontal-example-uid-01"
+              aria-label="Notifications actions"
+              variant={ButtonVariant.plain}
+            >
+              <BellIcon />
+            </Button>
+          </ToolbarItem>
+          <ToolbarItem>
+            <Button
+              id="horizontal-example-uid-02"
+              aria-label="Settings actions"
+              variant={ButtonVariant.plain}
+            >
+              <CogIcon />
+            </Button>
+          </ToolbarItem>
+        </ToolbarGroup>
+      </Toolbar>
     }
   }
 }
