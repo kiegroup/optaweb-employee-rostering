@@ -18,23 +18,23 @@ import RestServiceClient from './RestServiceClient';
 import Tenant from '../domain/Tenant';
 
 class TenantRestServiceClient {
-    restClient = new RestServiceClient();
+  restClient = new RestServiceClient();
 
-    getTenantList() : Promise<Tenant[]> {
-        return this.restClient.get(`/tenant`);
-    }
+  getTenantList(): Promise<Tenant[]> {
+    return this.restClient.get(`/tenant`);
+  }
 
-    getTenant(tenantId : number) : Promise<Tenant> {
-        return this.restClient.get(`/tenant/${tenantId}`);
-    }
+  getTenant(tenantId: number): Promise<Tenant> {
+    return this.restClient.get(`/tenant/${tenantId}`);
+  }
 
-    addTenant(tenant : Tenant) : Promise<Tenant> {
-        return this.restClient.post(`/tenant/add`, tenant);
-    }
+  addTenant(tenant: Tenant): Promise<Tenant> {
+    return this.restClient.post(`/tenant/add`, tenant);
+  }
 
-    deleteTenant(tenantId : number) : Promise<boolean> {
-        return this.restClient.delete(`/tenant/remove/${tenantId}`);
-    }
+  deleteTenant(tenantId: number): Promise<boolean> {
+    return this.restClient.delete(`/tenant/remove/${tenantId}`);
+  }
 }
 
 export default TenantRestServiceClient;
