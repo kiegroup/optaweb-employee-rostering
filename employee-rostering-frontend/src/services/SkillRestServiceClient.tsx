@@ -19,27 +19,27 @@ import RestServiceClient from './RestServiceClient';
 import Skill from '../domain/Skill';
 
 class SkillRestServiceClient {
-    restClient = new RestServiceClient();
+  restClient = new RestServiceClient();
 
-    getSkillList(tenantId : number) : Promise<Skill[]> {
-        return this.restClient.get(`/tenant/${tenantId}/skill/`);
-    }
+  getSkillList(tenantId: number): Promise<Skill[]> {
+    return this.restClient.get(`/tenant/${tenantId}/skill/`);
+  }
 
-    getSkill(tenantId : number, skillId : number) : Promise<Skill> {
-        return this.restClient.get(`/tenant/${tenantId}/skill/${skillId}`);
-    }
+  getSkill(tenantId: number, skillId: number): Promise<Skill> {
+    return this.restClient.get(`/tenant/${tenantId}/skill/${skillId}`);
+  }
 
-    addSkill(tenantId : number, skill : Skill) : Promise<Skill> {
-        return this.restClient.post(`/tenant/${tenantId}/skill/add`, skill);
-    }
+  addSkill(tenantId: number, skill: Skill): Promise<Skill> {
+    return this.restClient.post(`/tenant/${tenantId}/skill/add`, skill);
+  }
 
-    updateSkill(tenantId : number, skill : Skill) : Promise<Skill> {
-        return this.restClient.post(`/tenant/${tenantId}/skill/update`, skill);
-    }
+  updateSkill(tenantId: number, skill: Skill): Promise<Skill> {
+    return this.restClient.post(`/tenant/${tenantId}/skill/update`, skill);
+  }
 
-    deleteSkill(tenantId : number, skillId : number) : Promise<boolean> {
-        return this.restClient.delete(`/tenant/${tenantId}/skill/${skillId}`);
-    }
+  deleteSkill(tenantId: number, skillId: number): Promise<boolean> {
+    return this.restClient.delete(`/tenant/${tenantId}/skill/${skillId}`);
+  }
 }
 
 export default SkillRestServiceClient;
