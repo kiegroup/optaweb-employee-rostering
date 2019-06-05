@@ -42,12 +42,12 @@ interface DataTableState {
 }
 
 class DataTable extends React.Component<DataTableProps, DataTableState> {
-  state : DataTableState;
+  tableState : DataTableState;
 
   constructor(props : DataTableProps) {
     super(props);
     let columns : ICell[] = props.columnTitles.map(t => {return {title: t, cellTransforms: [headerCol] , props: {}};});
-    this.state = {
+    this.tableState = {
       columns: columns,
       data: [],
       actions: [
@@ -62,23 +62,24 @@ class DataTable extends React.Component<DataTableProps, DataTableState> {
       ],
       currentFilter: (row) => true
     };
-
     this.refresh();
   }
 
   refresh() {
       this.props.dataSupplier(rows => {
-        console.log(rows);
-        this.setState({columns: this.state.columns,
-                       data: rows,
-                       actions: this.state.actions,
-                       currentFilter: this.state.currentFilter
-                      })});
+        this.tableState = {
+          columns: this.tableState.columns,
+          data: rows,
+          actions: this.tableState.actions,
+          currentFilter: this.tableState.currentFilter
+         };
+        this.setState(this.tableState);
+      })
   }
 
   render() {
-    const { columns, actions } = this.state;
-    const rows = this.state.data.filter(this.state.currentFilter);
+    const { columns, actions } = this.tableState;
+    const rows = this.tableState.data.filter(this.tableState.currentFilter);
     return (
       <Table caption={this.props.title} actions={actions} cells={columns} rows={rows}>
         <TableHeader />
