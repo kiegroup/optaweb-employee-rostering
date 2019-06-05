@@ -17,13 +17,21 @@
 import '@patternfly/react-core/dist/styles/base.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { configureStore } from './store';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import App from './ui/App';
 
+const store = configureStore({
+  restBaseURL: '/rest',
+});
+
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
   document.getElementById('root') as HTMLElement,
 );

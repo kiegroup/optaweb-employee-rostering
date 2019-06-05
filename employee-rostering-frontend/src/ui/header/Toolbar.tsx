@@ -26,63 +26,60 @@ import {
 } from '@patternfly/react-core';
 import { BellIcon, CogIcon } from '@patternfly/react-icons';
 import * as React from 'react';
-import Tenant from '../../domain/Tenant';
-import TenantRestServiceClient from '../../services/TenantRestServiceClient';
-import { isUndefined } from "util";
+import { connect } from 'react-redux';
+import { tenantOperations } from 'store/tenant';
+import { AppState } from 'store/types';
+import Tenant from 'domain/Tenant';
+import TenantRestServiceClient from 'services/TenantRestServiceClient';
 
-interface ToolbarProps { }
-interface ToolbarState {
-  currentTenant?: Tenant;
+interface StateProps {
+  currentTenantId: number;
   tenantList: Tenant[];
+}
+
+const mapStateToProps = ({ tenantData }: AppState): StateProps => ({
+  currentTenantId: tenantData.currentTenantId,
+  tenantList: tenantData.tenantList
+});
+
+interface ToolbarState {
   isTenantSelectOpen: boolean;
 }
 
-class ToolbarComponent extends React.Component<ToolbarProps, ToolbarState> {
+export interface DispatchProps {
+  refreshTenantList: typeof tenantOperations.refreshTenantList;
+  changeTenant: typeof tenantOperations.changeTenant;
+}
+
+const mapDispatchToProps: DispatchProps = {
+  refreshTenantList: tenantOperations.refreshTenantList,
+  changeTenant: tenantOperations.changeTenant
+};
+
+export type Props = StateProps & DispatchProps;
+
+class ToolbarComponent extends React.Component<Props, ToolbarState> {
   tenantRestService: TenantRestServiceClient = new TenantRestServiceClient();
   toolbarState: ToolbarState;
 
-  constructor(props: ToolbarProps) {
+  constructor(props: Props) {
     super(props);
-    this.toolbarState = { tenantList: [], isTenantSelectOpen: false };
-    this.updateTenantList();
+    this.toolbarState = { isTenantSelectOpen: false };
   }
 
-  updateTenantList() {
-    this.tenantRestService.getTenantList().then(tenantList => {
-      if (tenantList.length > 0) {
-        if (isUndefined(this.toolbarState.currentTenant) || !tenantList.includes(this.toolbarState.currentTenant)) {
-          this.toolbarState = {
-            currentTenant: tenantList[0],
-            tenantList: tenantList,
-            isTenantSelectOpen: this.toolbarState.isTenantSelectOpen
-          };
-        }
-        else {
-          this.toolbarState = {
-            currentTenant: this.toolbarState.currentTenant,
-            tenantList: tenantList,
-            isTenantSelectOpen: this.toolbarState.isTenantSelectOpen
-          };
-        }
-      }
-      else {
-        this.toolbarState = { tenantList: [], isTenantSelectOpen: this.toolbarState.isTenantSelectOpen };
-      }
-      this.refresh();
-    });
+  componentDidMount() {
+    this.props.refreshTenantList();
   }
 
   setCurrentTenant(newTenantId: number) {
     this.toolbarState = {
-      currentTenant: this.toolbarState.tenantList[newTenantId],
-      tenantList: this.toolbarState.tenantList,
       isTenantSelectOpen: false
     };
-    this.refresh();
+    this.props.changeTenant(newTenantId);
   }
 
   setIsTenantSelectOpen(isOpen: boolean) {
-    this.toolbarState = { currentTenant: this.toolbarState.currentTenant, tenantList: this.toolbarState.tenantList, isTenantSelectOpen: isOpen };
+    this.toolbarState = { isTenantSelectOpen: isOpen };
     this.refresh();
   }
 
@@ -91,7 +88,7 @@ class ToolbarComponent extends React.Component<ToolbarProps, ToolbarState> {
   }
 
   render() {
-    if (isUndefined(this.toolbarState.currentTenant)) {
+    if (this.props.tenantList.length === 0) {
       return <Toolbar><ToolbarGroup /> <ToolbarGroup>
         <ToolbarItem>
           <Button
@@ -114,22 +111,23 @@ class ToolbarComponent extends React.Component<ToolbarProps, ToolbarState> {
       </ToolbarGroup></Toolbar>
     }
     else {
-      let { currentTenant, tenantList, isTenantSelectOpen } = this.toolbarState;
+      let { currentTenantId, tenantList } = this.props;
+      let currentTenant = this.props.tenantList.find(t => t.id === currentTenantId) as Tenant;
+      let isTenantSelectOpen = this.toolbarState.isTenantSelectOpen;
       return <Toolbar>
         <ToolbarGroup>
           <ToolbarItem>
             <Dropdown
               isPlain={true}
               position="right"
-              // tslint:disable-next-line:no-console
-              onSelect={event => this.setCurrentTenant(parseInt(event.currentTarget.id))}
+              onSelect={event => this.setCurrentTenant(parseInt((event.target as HTMLElement).dataset.tenantid as string))}
               isOpen={isTenantSelectOpen}
               toggle={
                 <DropdownToggle onToggle={() => this.setIsTenantSelectOpen(!isTenantSelectOpen)}>
                   {currentTenant.name}
                 </DropdownToggle>}
               dropdownItems={tenantList.map((tenant, index) => {
-                return <DropdownItem id={index.toString()} key={index}>{tenant.name}</DropdownItem>;
+                return <DropdownItem data-tenantid={tenant.id} key={tenant.id}>{tenant.name}</DropdownItem>;
               })}
             />
           </ToolbarItem>
@@ -159,4 +157,4 @@ class ToolbarComponent extends React.Component<ToolbarProps, ToolbarState> {
   }
 }
 
-export default ToolbarComponent;
+export default connect(mapStateToProps, mapDispatchToProps)(ToolbarComponent);
