@@ -16,15 +16,32 @@
 
 package org.optaweb.employeerostering.controller;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class SkillController {
 
     @GetMapping("/skill")
-    public String get() {
-        return "Greetings from Spring Boot! This is a skill";
+    public String getSkill() {
+        return "Get a skill";
     }
 
+    @DeleteMapping("/skill")
+    public String deleteSkill() {
+        return "Delete a skill";
+    }
+
+    @PostMapping("/skill")
+    public String createSkill() {
+        return "Create a skill";
+    }
+
+    @PutMapping("/skill")
+    public String updateSkill() {
+        return "Update a skill";
+    }
 }
