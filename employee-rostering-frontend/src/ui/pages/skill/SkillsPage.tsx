@@ -23,6 +23,7 @@ import {Button, TextInput, ButtonVariant} from '@patternfly/react-core';
 import { IRow } from '@patternfly/react-table';
 import { TrashIcon, EditIcon, SaveIcon, CloseIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
+import { EditableComponent } from 'ui/components/EditableComponent';
 
 interface StateProps {
   skillList: Skill[];
@@ -36,11 +37,13 @@ const mapStateToProps = ({ tenantData, skillList }: AppState): StateProps => ({
 
 export interface DispatchProps {
   addSkill: typeof skillOperations.addSkill;
+  updateSkill: typeof skillOperations.updateSkill;
   removeSkill: typeof skillOperations.removeSkill;
 }
 
 const mapDispatchToProps: DispatchProps = {
   addSkill: skillOperations.addSkill,
+  updateSkill: skillOperations.updateSkill,
   removeSkill: skillOperations.removeSkill
 };
 
@@ -83,20 +86,46 @@ class SkillsPage extends React.Component<Props> {
   }
 
   skillToTableRow(rowData: Skill) : IRow {
+    var name: EditableComponent;
+    var buttons: EditableComponent;
+    var newName = rowData.name;
+
+    const nameElement = <EditableComponent ref={(c) => {name = c as EditableComponent;}}
+        viewer={<span>{rowData.name}</span>}
+        editor={<TextInput aria-label="Name"
+                           onChange={(v) => {newName = v;}} />} />;
+
+    const buttonsElement = <EditableComponent ref={(c) => {buttons = c as EditableComponent;}}
+      viewer={<span>
+        <Button aria-label="Edit"
+                variant={ButtonVariant.link}
+                onClick={() => {name.startEditing(); buttons.startEditing(); }}><EditIcon /></Button>
+        <Button aria-label="Delete"
+                variant={ButtonVariant.link}
+                onClick={() => {this.props.removeSkill(rowData)}}><TrashIcon /></Button>
+      </span>}
+      editor={<span>
+        <Button aria-label="Save"
+                variant={ButtonVariant.link}
+                onClick={() => {this.props.updateSkill({...rowData, name: newName}); name.stopEditing(); buttons.stopEditing();}}>
+          <SaveIcon /></Button>
+        <Button aria-label="Cancel"
+                variant={ButtonVariant.link}
+                onClick={() => {name.stopEditing(); buttons.stopEditing();}}>
+          <CloseIcon />
+        </Button>
+      </span>}/>;
+
     // @ts-ignore
     return { 
       isOpen: true,
       props: {},
       cells: [
-        rowData.name,
         {
-          title: <span>
-                   <Button aria-label="Edit"
-                           variant={ButtonVariant.link}><EditIcon /></Button>
-                   <Button aria-label="Delete"
-                           variant={ButtonVariant.link}
-                           onClick={() => {this.props.removeSkill(rowData)}}><TrashIcon /></Button>
-                 </span>
+          title: nameElement
+        },
+        {
+          title: buttonsElement
         }
       ]
     };
