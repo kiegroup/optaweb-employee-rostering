@@ -31,7 +31,7 @@ export const removeSkill: ThunkCommandFactory<Skill, RemoveSkillAction> = skill 
   (dispatch, state, client) => {
     let tenantId = skill.tenantId;
     let skillId = skill.id;
-    client.delete<boolean>(`/tenant/${tenantId}/skill/remove/${skillId}`).then(isSuccess => {
+    client.delete<boolean>(`/tenant/${tenantId}/skill/${skillId}`).then(isSuccess => {
       if (isSuccess) {
         dispatch(actions.removeSkill(skill));
       }

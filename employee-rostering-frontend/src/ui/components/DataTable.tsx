@@ -20,49 +20,56 @@ import {
   TableHeader,
   TableBody,
   headerCol,
-  ICell,
-  IRow,
-  IAction
+  IRow
 } from '@patternfly/react-table';
+import {Button} from '@patternfly/react-core';
 
 export interface DataTableProps<T> {
   title: string;
+  tenantId: number;
   columnTitles: string[];
   tableData: T[];
+  createRow: (dataTable: DataTable<T>) => IRow;
   rowDataToRow: (rowData : T) => IRow;
 }
 
 interface DataTableState<T> {
-  currentFilter: (_: T) => boolean;
+  newRow: IRow | null;
+  currentFilter: (rowData: T) => boolean;
 }
 
-export abstract class DataTable<T, Props extends DataTableProps<T>> extends React.Component<Props, DataTableState<T>> {
-  columns: ICell[];
-  actions: IAction[];
-
-  constructor(props: Props) {
+export abstract class DataTable<T> extends React.Component<DataTableProps<T>, DataTableState<T>> {
+  constructor(props: DataTableProps<T>) {
     super(props);
-    this.columns = props.columnTitles.map(t => { return { title: t, cellTransforms: [headerCol], props: {} }; });
-    this.actions = [
-      {
-        title: 'Edit',
-        onClick: (event, rowId, rowData, extra) => {}
-      },
-      {
-        title: 'Delete',
-        onClick: (event, rowId, rowData, extra) => {}
-      }
-    ];
-    this.state = {currentFilter: (t) => true};
+    this.createNewRow = this.createNewRow.bind(this);
+    this.state = {newRow: null, currentFilter: (t) => true};
+    this.createNewRow = this.createNewRow.bind(this);
+    this.cancelAddingRow = this.cancelAddingRow.bind(this);
+  }
+
+  createNewRow() {
+    this.setState({...this.state, newRow: this.props.createRow(this)});
+  }
+
+  cancelAddingRow() {
+    this.setState({...this.state, newRow: null});
   }
 
   render() {
-    const rows = this.props.tableData.filter(this.state.currentFilter).map(this.props.rowDataToRow);
+    const additionalRows : IRow[] = (this.state.newRow !== null)? [this.state.newRow] : [];
+    const rows = additionalRows.concat(this.props.tableData
+      .filter(this.state.currentFilter).map(this.props.rowDataToRow));
+    const columns = this.props.columnTitles.map(t => { 
+      return { title: t, cellTransforms: [headerCol], props: {} };
+      }).concat([{title: '', cellTransforms: [headerCol], props: {}}]);
     return (
-      <Table caption={this.props.title} actions={this.actions} cells={this.columns} rows={rows}>
-        <TableHeader />
-        <TableBody />
-      </Table>
+      <div>
+        <Button onClick={this.createNewRow}>Add</Button>
+        <Table caption={this.props.title} cells={columns} rows={rows}>
+          <TableHeader />
+          <TableBody />
+        </Table>
+      </div>
     );
   }
 }
