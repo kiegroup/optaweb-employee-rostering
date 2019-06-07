@@ -28,7 +28,15 @@ exports[`App should render correctly 1`] = `
     >
       <Switch>
         <Route
-          component={[Function]}
+          component={
+            Object {
+              "$$typeof": Symbol(react.memo),
+              "WrappedComponent": [Function],
+              "compare": null,
+              "displayName": "Connect(SkillsPage)",
+              "type": [Function],
+            }
+          }
           exact={true}
           path="/skills"
         />
