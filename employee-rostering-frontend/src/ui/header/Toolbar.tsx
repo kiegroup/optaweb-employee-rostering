@@ -30,7 +30,6 @@ import { connect } from 'react-redux';
 import { tenantOperations } from 'store/tenant';
 import { AppState } from 'store/types';
 import Tenant from 'domain/Tenant';
-import TenantRestServiceClient from 'services/TenantRestServiceClient';
 
 interface StateProps {
   currentTenantId: number;
@@ -58,13 +57,13 @@ const mapDispatchToProps: DispatchProps = {
 
 export type Props = StateProps & DispatchProps;
 
-class ToolbarComponent extends React.Component<Props, ToolbarState> {
-  tenantRestService: TenantRestServiceClient = new TenantRestServiceClient();
-  toolbarState: ToolbarState;
 
+const initalState : ToolbarState = {isTenantSelectOpen : false};
+
+class ToolbarComponent extends React.Component<Props, ToolbarState> {
   constructor(props: Props) {
     super(props);
-    this.toolbarState = { isTenantSelectOpen: false };
+    this.state = initalState;
   }
 
   componentDidMount() {
@@ -72,22 +71,18 @@ class ToolbarComponent extends React.Component<Props, ToolbarState> {
   }
 
   setCurrentTenant(newTenantId: number) {
-    this.toolbarState = {
+    this.setState({
       isTenantSelectOpen: false
-    };
+    });
     this.props.changeTenant(newTenantId);
   }
 
   setIsTenantSelectOpen(isOpen: boolean) {
-    this.toolbarState = { isTenantSelectOpen: isOpen };
-    this.refresh();
-  }
-
-  refresh() {
-    this.setState(this.toolbarState);
+    this.setState({ isTenantSelectOpen: isOpen });
   }
 
   render() {
+    //const state : ToolbarState = this.state || initalState;
     if (this.props.tenantList.length === 0) {
       return <Toolbar><ToolbarGroup /> <ToolbarGroup>
         <ToolbarItem>
@@ -113,7 +108,7 @@ class ToolbarComponent extends React.Component<Props, ToolbarState> {
     else {
       let { currentTenantId, tenantList } = this.props;
       let currentTenant = this.props.tenantList.find(t => t.id === currentTenantId) as Tenant;
-      let isTenantSelectOpen = this.toolbarState.isTenantSelectOpen;
+      let isTenantSelectOpen = this.state.isTenantSelectOpen;
       return <Toolbar>
         <ToolbarGroup>
           <ToolbarItem>

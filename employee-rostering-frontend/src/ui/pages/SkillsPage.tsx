@@ -15,19 +15,44 @@
  */
 
 import * as React from 'react';
-import DataTable from '../components/DataTable';
-import SkillRestServiceClient from '../../services/SkillRestServiceClient';
+import {DataTable, DataTableProps} from 'ui/components/DataTable';
+import {skillOperations} from 'store/skill';
+import Skill from 'domain/Skill';
+import { AppState } from 'store/types';
+import { IRow } from '@patternfly/react-table';
+import { connect } from 'react-redux';
 
-const skillRestService = new SkillRestServiceClient();
+interface StateProps extends DataTableProps<Skill> {
 
-function getSkills(callback: (_: string[][]) => void): void {
-  skillRestService.getSkillList(1).then((res) => {
-    callback(res.map(skill => [skill.name]));
-  });
 }
 
-const SkillsPage = () => {
-  return <DataTable title={'Skills'} columnTitles={['Name']} dataSupplier={getSkills}></DataTable>;
+function skillToTableRow(rowData: Skill) : IRow {
+  // @ts-ignore
+  return {
+    cells: [{title: <div>{rowData.name}</div>}],
+    isOpen: true,
+    props: {}
+  };
+} 
+
+const mapStateToProps = ({ skillList }: AppState): StateProps => ({
+  title: 'Skills',
+  columnTitles: ['Name'],
+  tableData: skillList.skillList,
+  rowDataToRow: skillToTableRow
+});
+
+export interface DispatchProps {
+  refreshSkillList: typeof skillOperations.refreshSkillList;
+}
+
+const mapDispatchToProps: DispatchProps = {
+  refreshSkillList: skillOperations.refreshSkillList
 };
 
-export default SkillsPage;
+export type Props = StateProps & DispatchProps;
+
+class SkillsPage extends DataTable<Skill, Props> {
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SkillsPage);

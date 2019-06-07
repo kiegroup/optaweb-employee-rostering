@@ -18,12 +18,19 @@ import Tenant from 'domain/Tenant';
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import { ChangeTenantAction, RefreshTenantListAction } from './types';
-import {refreshSkillList} from 'store/skill/operations';
+import {skillOperations} from 'store/skill';
+import { ThunkDispatch } from 'redux-thunk';
+import { Action } from 'redux';
+
+function refreshData(dispatch : ThunkDispatch<any,any,Action<any>>) : void {
+  dispatch(skillOperations.refreshSkillList());
+  skillOperations.refreshSkillList();
+}
 
 export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId =>
   (dispatch, state, client) => {
     dispatch(actions.changeTenant(tenantId));
-    refreshSkillList();
+    refreshData(dispatch);
   };
 
 export const refreshTenantList: ThunkCommandFactory<void, RefreshTenantListAction> = () =>
@@ -40,6 +47,7 @@ export const refreshTenantList: ThunkCommandFactory<void, RefreshTenantListActio
       // TODO: this case occurs iff there are no tenants; need a special screen for that
         dispatch(actions.refreshTenantList({tenantList: tenantList, currentTenantId: 0}))
       }
+      refreshData(dispatch);
     });
   };
 
