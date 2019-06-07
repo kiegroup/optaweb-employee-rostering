@@ -16,7 +16,7 @@
 
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import RestServiceClient from '../services/RestServiceClient';
+import RestServiceClient from './rest/RestServiceClient';
 import { TenantData } from 'store/tenant/types';
 import { SkillList } from 'store/skill/types';
 
