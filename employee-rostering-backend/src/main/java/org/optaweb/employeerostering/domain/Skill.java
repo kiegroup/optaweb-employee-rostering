@@ -16,49 +16,56 @@
 
 package org.optaweb.employeerostering.domain;
 
-import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
+@Entity
+@NamedQueries({
+        @NamedQuery(name = "Skill.findAll",
+                query = "select s from Skill s" +
+                        " where s.tenantId = :tenantId" +
+                        " order by LOWER(s.name)"),
+        @NamedQuery(name = "Skill.deleteForTenant",
+                query = "delete from Skill s where s.tenantId = :tenantId")
+})
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Skill extends AbstractPersistable {
 
-    private final Integer tenantId;
-    private final String name;
+    @NotNull
+    @Size(min = 1, max = 120)
+    @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
+    private String name;
+
+    @SuppressWarnings("unused")
+    public Skill() {
+
+    }
 
     public Skill(Integer tenantId, String name) {
-        this.tenantId = Objects.requireNonNull(tenantId);
-        this.name = Objects.requireNonNull(name);
-    }
-
-    public Integer tenantId() {
-        return tenantId;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Skill skill = (Skill) o;
-        return tenantId.compareTo(skill.tenantId) == 0 &&
-                name.compareTo(skill.name) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(tenantId, name);
+        super(tenantId);
+        this.name = name;
     }
 
     @Override
     public String toString() {
-        return "Skill{" +
-                "tenantId=" + tenantId +
-                "name=" + name +
-                '}';
+        return name;
+    }
+
+    // ************************************************************************
+    // Simple getters and setters
+    // ************************************************************************
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
