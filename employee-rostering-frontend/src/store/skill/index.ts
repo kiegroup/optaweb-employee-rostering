@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import * as tenantOperations from './operations';
+import * as skillOperations from './operations';
 import reducer from './reducers';
 
 export {
-  tenantOperations,
+  skillOperations
 };
 
 export default reducer;
