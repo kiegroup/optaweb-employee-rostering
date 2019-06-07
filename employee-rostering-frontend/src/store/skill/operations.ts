@@ -22,7 +22,7 @@ import { AddSkillAction, RemoveSkillAction, UpdateSkillAction, RefreshSkillListA
 export const addSkill: ThunkCommandFactory<Skill, AddSkillAction> = skill =>
   (dispatch, state, client) => {
     let tenantId = skill.tenantId;
-    client.post<Skill>(`/tenant/${{tenantId}}/skill/add`, skill).then(newSkill => {
+    client.post<Skill>(`/tenant/${tenantId}/skill/add`, skill).then(newSkill => {
       dispatch(actions.addSkill(newSkill))
     });
   };
@@ -31,7 +31,7 @@ export const removeSkill: ThunkCommandFactory<Skill, RemoveSkillAction> = skill 
   (dispatch, state, client) => {
     let tenantId = skill.tenantId;
     let skillId = skill.id;
-    client.delete<boolean>(`/tenant/${{tenantId}}/skill/remove/${{skillId}}`).then(isSuccess => {
+    client.delete<boolean>(`/tenant/${tenantId}/skill/remove/${skillId}`).then(isSuccess => {
       if (isSuccess) {
         dispatch(actions.removeSkill(skill));
       }
@@ -41,7 +41,7 @@ export const removeSkill: ThunkCommandFactory<Skill, RemoveSkillAction> = skill 
 export const updateSkill: ThunkCommandFactory<Skill, UpdateSkillAction> = skill =>
   (dispatch, state, client) => {
     let tenantId = skill.tenantId;
-    client.post<Skill>(`/tenant/${{tenantId}}/skill/update`, skill).then(updatedSkill => {
+    client.post<Skill>(`/tenant/${tenantId}/skill/update`, skill).then(updatedSkill => {
       dispatch(actions.updateSkill(updatedSkill));
     });
   };
@@ -49,7 +49,7 @@ export const updateSkill: ThunkCommandFactory<Skill, UpdateSkillAction> = skill 
 export const refreshSkillList: ThunkCommandFactory<void, RefreshSkillListAction> = () =>
   (dispatch, state, client) => {
     let tenantId = state().tenantData.currentTenantId;
-    client.get<Skill[]>(`/tenant/${{tenantId}}/skill/`).then(skillList => {
+    client.get<Skill[]>(`/tenant/${tenantId}/skill/`).then(skillList => {
       dispatch(actions.refreshSkillList(skillList));
     });
   };

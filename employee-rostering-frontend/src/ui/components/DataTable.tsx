@@ -20,63 +20,46 @@ import {
   TableHeader,
   TableBody,
   headerCol,
-  ICell
+  ICell,
+  IRow,
+  IAction
 } from '@patternfly/react-table';
 
-interface DataTableProps {
+export interface DataTableProps<T> {
   title: string;
   columnTitles: string[];
-  dataSupplier: (_: ((_: string[][]) => void)) => void;
+  tableData: T[];
+  rowDataToRow: (rowData : T) => IRow;
 }
 
-interface DataTableState {
+interface DataTableState<T> {
+  currentFilter: (_: T) => boolean;
+}
+
+export abstract class DataTable<T, Props extends DataTableProps<T>> extends React.Component<Props, DataTableState<T>> {
   columns: ICell[];
-  data: string[][];
-  actions: { 'title': string; 'onClick': (event: any, rowId: number, rowData: string[], extra: any) => void }[];
-  currentFilter: (_: string[]) => boolean;
-}
+  actions: IAction[];
 
-class DataTable extends React.Component<DataTableProps, DataTableState> {
-  tableState: DataTableState;
-
-  constructor(props: DataTableProps) {
+  constructor(props: Props) {
     super(props);
-    let columns: ICell[] = props.columnTitles.map(t => { return { title: t, cellTransforms: [headerCol], props: {} }; });
-    this.tableState = {
-      columns: columns,
-      data: [],
-      actions: [
-        {
-          title: 'Edit',
-          onClick: (event: any, rowId: number, rowData: string[], extra: any) => {}
-        },
-        {
-          title: 'Delete',
-          onClick: (event: any, rowId: number, rowData: string[], extra: any) => {}
-        }
-      ],
-      currentFilter: (row) => true
-    };
-    this.refresh();
-  }
-
-  refresh() {
-    this.props.dataSupplier(rows => {
-      this.tableState = {
-        columns: this.tableState.columns,
-        data: rows,
-        actions: this.tableState.actions,
-        currentFilter: this.tableState.currentFilter
-      };
-      this.setState(this.tableState);
-    })
+    this.columns = props.columnTitles.map(t => { return { title: t, cellTransforms: [headerCol], props: {} }; });
+    this.actions = [
+      {
+        title: 'Edit',
+        onClick: (event, rowId, rowData, extra) => {}
+      },
+      {
+        title: 'Delete',
+        onClick: (event, rowId, rowData, extra) => {}
+      }
+    ];
+    this.state = {currentFilter: (t) => true};
   }
 
   render() {
-    const { columns, actions } = this.tableState;
-    const rows = this.tableState.data.filter(this.tableState.currentFilter);
+    const rows = this.props.tableData.filter(this.state.currentFilter).map(this.props.rowDataToRow);
     return (
-      <Table caption={this.props.title} actions={actions} cells={columns} rows={rows}>
+      <Table caption={this.props.title} actions={this.actions} cells={this.columns} rows={rows}>
         <TableHeader />
         <TableBody />
       </Table>
