@@ -57,13 +57,10 @@ const mapDispatchToProps: DispatchProps = {
 
 export type Props = StateProps & DispatchProps;
 
-
-const initalState : ToolbarState = {isTenantSelectOpen : false};
-
 class ToolbarComponent extends React.Component<Props, ToolbarState> {
   constructor(props: Props) {
     super(props);
-    this.state = initalState;
+    this.state = {isTenantSelectOpen : false};
   }
 
   componentDidMount() {
@@ -82,28 +79,28 @@ class ToolbarComponent extends React.Component<Props, ToolbarState> {
   }
 
   render() {
-    //const state : ToolbarState = this.state || initalState;
+    const bellAndCog = (<ToolbarGroup>
+      <ToolbarItem>
+        <Button
+          id="horizontal-example-uid-01"
+          aria-label="Notifications actions"
+          variant={ButtonVariant.plain}
+        >
+          <BellIcon />
+        </Button>
+      </ToolbarItem>
+      <ToolbarItem>
+        <Button
+          id="horizontal-example-uid-02"
+          aria-label="Settings actions"
+          variant={ButtonVariant.plain}
+        >
+          <CogIcon />
+        </Button>
+      </ToolbarItem>
+    </ToolbarGroup>);
     if (this.props.tenantList.length === 0) {
-      return <Toolbar><ToolbarGroup /> <ToolbarGroup>
-        <ToolbarItem>
-          <Button
-            id="horizontal-example-uid-01"
-            aria-label="Notifications actions"
-            variant={ButtonVariant.plain}
-          >
-            <BellIcon />
-          </Button>
-        </ToolbarItem>
-        <ToolbarItem>
-          <Button
-            id="horizontal-example-uid-02"
-            aria-label="Settings actions"
-            variant={ButtonVariant.plain}
-          >
-            <CogIcon />
-          </Button>
-        </ToolbarItem>
-      </ToolbarGroup></Toolbar>
+      return <Toolbar><ToolbarGroup />{bellAndCog}</Toolbar>
     }
     else {
       let { currentTenantId, tenantList } = this.props;
@@ -127,26 +124,7 @@ class ToolbarComponent extends React.Component<Props, ToolbarState> {
             />
           </ToolbarItem>
         </ToolbarGroup>
-        <ToolbarGroup>
-          <ToolbarItem>
-            <Button
-              id="horizontal-example-uid-01"
-              aria-label="Notifications actions"
-              variant={ButtonVariant.plain}
-            >
-              <BellIcon />
-            </Button>
-          </ToolbarItem>
-          <ToolbarItem>
-            <Button
-              id="horizontal-example-uid-02"
-              aria-label="Settings actions"
-              variant={ButtonVariant.plain}
-            >
-              <CogIcon />
-            </Button>
-          </ToolbarItem>
-        </ToolbarGroup>
+        {bellAndCog}
       </Toolbar>
     }
   }

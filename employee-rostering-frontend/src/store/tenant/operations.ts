@@ -24,7 +24,6 @@ import { Action } from 'redux';
 
 function refreshData(dispatch : ThunkDispatch<any,any,Action<any>>) : void {
   dispatch(skillOperations.refreshSkillList());
-  skillOperations.refreshSkillList();
 }
 
 export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId =>
