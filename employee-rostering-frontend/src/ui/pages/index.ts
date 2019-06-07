@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-import SkillsPage from './SkillsPage';
+import SkillsPage from './skill/SkillsPage';
 
 export { SkillsPage };
