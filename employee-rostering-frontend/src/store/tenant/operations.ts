@@ -22,7 +22,7 @@ import {skillOperations} from 'store/skill';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 
-function refreshData(dispatch : ThunkDispatch<any,any,Action<any>>) : void {
+function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>): void {
   dispatch(skillOperations.refreshSkillList());
 }
 
