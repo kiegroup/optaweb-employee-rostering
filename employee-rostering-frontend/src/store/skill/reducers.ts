@@ -17,7 +17,7 @@
 import { ActionType, SkillList, SkillAction } from './types';
 import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
 
-const initialState: SkillList = {
+export const initialState: SkillList = {
   skillList: []
 };
 
