@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Navigation should activate a navigation link matching the current path 1`] = `
+<Nav
+  aria-label="Nav"
+  className=""
+  onSelect={[Function]}
+  onToggle={[Function]}
+>
+  <NavList
+    ariaLeftScroll="Scroll left"
+    ariaRightScroll="Scroll right"
+    className=""
+    variant="horizontal"
+  >
+    <NavItem
+      isActive={true}
+      itemId="skills"
+      key="skills"
+    >
+      <Link
+        to="/skills"
+      >
+        Skills
+      </Link>
+    </NavItem>
+  </NavList>
+</Nav>
+`;
