@@ -16,12 +16,12 @@
 import React from 'react';
 
 
-interface EditableComponentProps {
+export interface EditableComponentProps {
   viewer: JSX.Element;
   editor: JSX.Element;
 }
 
-interface EditableComponentState {
+export interface EditableComponentState {
   isEditing: boolean;
 }
 
