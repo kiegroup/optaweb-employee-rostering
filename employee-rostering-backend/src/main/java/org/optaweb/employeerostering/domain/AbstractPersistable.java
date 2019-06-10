@@ -96,10 +96,6 @@ public abstract class AbstractPersistable implements Serializable {
         return id;
     }
 
-    /**
-     * Should
-     * @param id no
-     */
     public void setId(Long id) {
         this.id = id;
     }
