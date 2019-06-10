@@ -158,7 +158,7 @@ export class SkillsPage extends React.Component<Props> {
   }
 
   render() {
-    return <DataTable title="Skills" tenantId={this.props.tenantId} columnTitles={['Name']} 
+    return <DataTable title="Skills" columnTitles={['Name']} 
       tableData={this.props.skillList} createRow={this.createSkillRow} rowDataToRow={this.skillToTableRow}>
     </DataTable>;
   }
