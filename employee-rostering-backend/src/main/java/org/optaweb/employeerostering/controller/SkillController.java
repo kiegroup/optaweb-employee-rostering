@@ -14,34 +14,41 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.controller;
+package org.optaweb.employeerostering.domain;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class SkillController {
 
-    @GetMapping("/skill")
-    public String getSkill() {
+    @GetMapping("/tenant/{tenantId}/skill")
+    public String getSkillList(@PathVariable Integer tenantId) {
+        return "Get skill list";
+    }
+
+    @GetMapping("/tenant/{tenantId}/skill/{id}")
+    public String getSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
         return "Get a skill";
     }
 
-    @DeleteMapping("/skill")
-    public String deleteSkill() {
+    @DeleteMapping("/tenant/{tenantId}/skill/{id}")
+    public String deleteSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
         return "Delete a skill";
     }
 
-    @PostMapping("/skill")
-    public String createSkill() {
+    @PostMapping("/tenant/{tenantId}/skill/add")
+    public String createSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
         return "Create a skill";
     }
 
-    @PutMapping("/skill")
-    public String updateSkill() {
+    @PutMapping("/tenant/{tenantId}/skill/update")
+    public String updateSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
         return "Update a skill";
     }
 }
