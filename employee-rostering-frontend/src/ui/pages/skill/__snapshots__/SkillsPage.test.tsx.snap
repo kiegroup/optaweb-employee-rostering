@@ -25,7 +25,6 @@ exports[`Skills page should render correctly with a few skills 1`] = `
       },
     ]
   }
-  tenantId={0}
   title="Skills"
 />
 `;
@@ -40,7 +39,6 @@ exports[`Skills page should render correctly with no skills 1`] = `
   createRow={[Function]}
   rowDataToRow={[Function]}
   tableData={Array []}
-  tenantId={0}
   title="Skills"
 />
 `;
