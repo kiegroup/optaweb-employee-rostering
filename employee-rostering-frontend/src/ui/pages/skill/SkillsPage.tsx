@@ -56,62 +56,88 @@ class SkillsPage extends React.Component<Props> {
     this.skillToTableRow = this.skillToTableRow.bind(this);
   }
 
-  createSkillRow(table: DataTable<Skill>) : IRow {
-    var currentName : string = "";
+  createSkillRow(table: DataTable<Skill>): IRow {
+    let currentName = "";
     const name =  <TextInput onChange={(newValue) => currentName = newValue}
-                             aria-label="name">
-                  </TextInput>;
+      aria-label="name">
+    </TextInput>;
     // TODO: Validate before saving
     //@ts-ignore 
     return {
       isOpen: true,
       props: {},
       cells: [
-        {title: name},
+        {
+          title: name
+        },
         {
           title: <span>
-                   <Button aria-label="Save"
-                           variant={ButtonVariant.link}
-                           onClick={() => {this.props.addSkill({
-                             tenantId: this.props.tenantId,
-                             name: currentName
-                           }); table.cancelAddingRow()}}><SaveIcon /></Button>
-                   <Button aria-label="Cancel"
-                           variant={ButtonVariant.link}
-                           onClick={table.cancelAddingRow}><CloseIcon /></Button>
-                 </span>
+            <Button aria-label="Save"
+              variant={ButtonVariant.link}
+              onClick={() => {this.props.addSkill({
+                tenantId: this.props.tenantId,
+                name: currentName
+              }); table.cancelAddingRow()}}>
+              <SaveIcon />
+            </Button>
+            <Button aria-label="Cancel"
+              variant={ButtonVariant.link}
+              onClick={table.cancelAddingRow}>
+              <CloseIcon />
+            </Button>
+          </span>
         }
       ]
     };
   }
 
-  skillToTableRow(rowData: Skill) : IRow {
-    var name: EditableComponent;
-    var buttons: EditableComponent;
-    var newName = rowData.name;
+  skillToTableRow(rowData: Skill): IRow {
+    let name: EditableComponent;
+    let buttons: EditableComponent;
+    let newName = rowData.name;
 
     const nameElement = <EditableComponent ref={(c) => {name = c as EditableComponent;}}
-        viewer={<span>{rowData.name}</span>}
-        editor={<TextInput aria-label="Name"
-                           onChange={(v) => {newName = v;}} />} />;
+      viewer={<span>{rowData.name}</span>}
+      editor={<TextInput aria-label="Name"
+        defaultValue={rowData.name}
+        onChange={(v) => {newName = v;}}
+      />}
+    />;  
 
     const buttonsElement = <EditableComponent ref={(c) => {buttons = c as EditableComponent;}}
       viewer={<span>
         <Button aria-label="Edit"
-                variant={ButtonVariant.link}
-                onClick={() => {name.startEditing(); buttons.startEditing(); }}><EditIcon /></Button>
+          variant={ButtonVariant.link}
+          onClick={() => {
+            name.startEditing();
+            buttons.startEditing();
+          }}>
+          <EditIcon />
+        </Button>
         <Button aria-label="Delete"
-                variant={ButtonVariant.link}
-                onClick={() => {this.props.removeSkill(rowData)}}><TrashIcon /></Button>
+          variant={ButtonVariant.link}
+          onClick={() => {
+            this.props.removeSkill(rowData)
+          }}>
+          <TrashIcon />
+        </Button>
       </span>}
       editor={<span>
         <Button aria-label="Save"
-                variant={ButtonVariant.link}
-                onClick={() => {this.props.updateSkill({...rowData, name: newName}); name.stopEditing(); buttons.stopEditing();}}>
-          <SaveIcon /></Button>
+          variant={ButtonVariant.link}
+          onClick={() => {
+            this.props.updateSkill({...rowData, name: newName});
+            name.stopEditing();
+            buttons.stopEditing();
+          }}>
+          <SaveIcon />
+        </Button>
         <Button aria-label="Cancel"
-                variant={ButtonVariant.link}
-                onClick={() => {name.stopEditing(); buttons.stopEditing();}}>
+          variant={ButtonVariant.link}
+          onClick={() => {
+            name.stopEditing();
+            buttons.stopEditing();
+          }}>
           <CloseIcon />
         </Button>
       </span>}/>;
@@ -134,7 +160,7 @@ class SkillsPage extends React.Component<Props> {
   render() {
     return <DataTable title="Skills" tenantId={this.props.tenantId} columnTitles={['Name']} 
       tableData={this.props.skillList} createRow={this.createSkillRow} rowDataToRow={this.skillToTableRow}>
-      </DataTable>;
+    </DataTable>;
   }
 }
 
