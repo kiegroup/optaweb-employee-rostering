@@ -49,7 +49,7 @@ const mapDispatchToProps: DispatchProps = {
 
 export type Props = StateProps & DispatchProps;
 
-class SkillsPage extends React.Component<Props> {
+export class SkillsPage extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
     this.createSkillRow = this.createSkillRow.bind(this);
