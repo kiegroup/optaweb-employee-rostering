@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header component should render correctly 1`] = `
+<PageHeader
+  aria-label="Global navigation"
+  avatar={null}
+  className=""
+  isNavOpen={true}
+  logo={
+    <Brand
+      alt="OptaPlanner Logo"
+      src="/assets/images/optaPlannerLogo200px.png"
+    />
+  }
+  logoProps={null}
+  onNavToggle={[Function]}
+  showNavToggle={false}
+  toolbar={<Memo(ConnectFunction) />}
+  topNav={<withRouter(Navigation) />}
+/>
+`;
