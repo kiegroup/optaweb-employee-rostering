@@ -22,19 +22,19 @@ import {skillOperations} from 'store/skill';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 
-function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>): void {
-  dispatch(skillOperations.refreshSkillList());
+function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>): Promise<void> {
+  return dispatch(skillOperations.refreshSkillList());
 }
 
 export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId =>
   (dispatch, state, client) => {
     dispatch(actions.changeTenant(tenantId));
-    refreshData(dispatch);
+    return refreshData(dispatch);
   };
 
 export const refreshTenantList: ThunkCommandFactory<void, RefreshTenantListAction> = () =>
   (dispatch, state, client) => {
-    client.get<Tenant[]>(`/tenant/`).then(tenantList => {
+    return client.get<Tenant[]>(`/tenant/`).then(tenantList => {
       let currentTenantId = state().tenantData.currentTenantId;
       if (tenantList.filter(tenant => tenant.id === currentTenantId).length !== 0) {
         dispatch(actions.refreshTenantList({tenantList: tenantList, currentTenantId: currentTenantId}));
