@@ -57,7 +57,7 @@ const mapDispatchToProps: DispatchProps = {
 
 export type Props = StateProps & DispatchProps;
 
-class ToolbarComponent extends React.Component<Props, ToolbarState> {
+export class ToolbarComponent extends React.Component<Props, ToolbarState> {
   constructor(props: Props) {
     super(props);
     this.state = {isTenantSelectOpen : false};
