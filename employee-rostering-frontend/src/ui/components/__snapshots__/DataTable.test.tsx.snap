@@ -1,0 +1,136 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DataTable component should render correctly with a few rows 1`] = `
+<div>
+  <Button
+    onClick={[Function]}
+  >
+    Add
+  </Button>
+  <Table
+    borders={true}
+    caption="Data Table"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Column 1",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Column 2",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onCollapse={null}
+    onExpand={null}
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            "Some Data",
+            1,
+          ],
+          "props": Object {},
+        },
+        Object {
+          "cells": Array [
+            "More Data",
+            2,
+          ],
+          "props": Object {},
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader
+      className=""
+    />
+    <TableBody
+      className=""
+      onRowClick={[Function]}
+      rowKey="id"
+    />
+  </Table>
+</div>
+`;
+
+exports[`DataTable component should render correctly with no rows 1`] = `
+<div>
+  <Button
+    onClick={[Function]}
+  >
+    Add
+  </Button>
+  <Table
+    borders={true}
+    caption="Data Table"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Column 1",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Column 2",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onCollapse={null}
+    onExpand={null}
+    rowLabeledBy="simple-node"
+    rows={Array []}
+    variant={null}
+  >
+    <TableHeader
+      className=""
+    />
+    <TableBody
+      className=""
+      onRowClick={[Function]}
+      rowKey="id"
+    />
+  </Table>
+</div>
+`;
