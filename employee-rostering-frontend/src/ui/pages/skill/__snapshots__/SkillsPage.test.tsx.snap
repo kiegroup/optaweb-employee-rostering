@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Skills page should render correctly with a few skills 1`] = `
+<DataTable
+  columnTitles={
+    Array [
+      "Name",
+    ]
+  }
+  createRow={[Function]}
+  rowDataToRow={[Function]}
+  tableData={
+    Array [
+      Object {
+        "id": 0,
+        "name": "Skill 1",
+        "tenantId": 0,
+        "version": 0,
+      },
+      Object {
+        "id": 1,
+        "name": "Skill 2",
+        "tenantId": 0,
+        "version": 0,
+      },
+    ]
+  }
+  tenantId={0}
+  title="Skills"
+/>
+`;
+
+exports[`Skills page should render correctly with no skills 1`] = `
+<DataTable
+  columnTitles={
+    Array [
+      "Name",
+    ]
+  }
+  createRow={[Function]}
+  rowDataToRow={[Function]}
+  tableData={Array []}
+  tenantId={0}
+  title="Skills"
+/>
+`;
