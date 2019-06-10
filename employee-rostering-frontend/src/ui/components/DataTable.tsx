@@ -30,7 +30,7 @@ export interface DataTableProps<T> {
   columnTitles: string[];
   tableData: T[];
   createRow: (dataTable: DataTable<T>) => IRow;
-  rowDataToRow: (rowData : T) => IRow;
+  rowDataToRow: (rowData: T) => IRow;
 }
 
 interface DataTableState<T> {
@@ -56,12 +56,12 @@ export abstract class DataTable<T> extends React.Component<DataTableProps<T>, Da
   }
 
   render() {
-    const additionalRows : IRow[] = (this.state.newRow !== null)? [this.state.newRow] : [];
+    const additionalRows: IRow[] = (this.state.newRow !== null)? [this.state.newRow] : [];
     const rows = additionalRows.concat(this.props.tableData
       .filter(this.state.currentFilter).map(this.props.rowDataToRow));
     const columns = this.props.columnTitles.map(t => { 
       return { title: t, cellTransforms: [headerCol], props: {} };
-      }).concat([{title: '', cellTransforms: [headerCol], props: {}}]);
+    }).concat([{title: '', cellTransforms: [headerCol], props: {}}]);
     return (
       <div>
         <Button onClick={this.createNewRow}>Add</Button>
