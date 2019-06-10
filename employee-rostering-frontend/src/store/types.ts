@@ -27,7 +27,7 @@ import { SkillList } from 'store/skill/types';
  *
  * @template A Type of action(s) allowed to be dispatched.
  */
-export type ThunkCommand<A extends Action> = ThunkAction<Promise<void>, AppState, RestServiceClient, A>;
+export type ThunkCommand<A extends Action> = ThunkAction<any, AppState, RestServiceClient, A>;
 
 /**
  * Factory method that takes a value and creates an @type {Action}.
