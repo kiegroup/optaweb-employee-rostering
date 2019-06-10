@@ -26,7 +26,6 @@ import {Button} from '@patternfly/react-core';
 
 export interface DataTableProps<T> {
   title: string;
-  tenantId: number;
   columnTitles: string[];
   tableData: T[];
   createRow: (dataTable: DataTable<T>) => IRow;
