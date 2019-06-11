@@ -3,6 +3,7 @@
 exports[`DataTable component should render correctly with a few rows 1`] = `
 <div>
   <Button
+    disabled={false}
     onClick={[Function]}
   >
     Add
@@ -48,17 +49,175 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
       Array [
         Object {
           "cells": Array [
-            "Some Data",
-            1,
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <input
+                    id="editor"
+                  />
+                }
+                viewer={
+                  <span
+                    id="viewer"
+                  >
+                    data[0]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={<input />}
+                viewer={
+                  <span>
+                    data[1]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
           ],
-          "props": Object {},
         },
         Object {
           "cells": Array [
-            "More Data",
-            2,
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <input
+                    id="editor"
+                  />
+                }
+                viewer={
+                  <span
+                    id="viewer"
+                  >
+                    data[0]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={<input />}
+                viewer={
+                  <span>
+                    data[1]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
           ],
-          "props": Object {},
         },
       ]
     }
@@ -79,6 +238,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
 exports[`DataTable component should render correctly with no rows 1`] = `
 <div>
   <Button
+    disabled={false}
     onClick={[Function]}
   >
     Add
@@ -121,6 +281,476 @@ exports[`DataTable component should render correctly with no rows 1`] = `
     onExpand={null}
     rowLabeledBy="simple-node"
     rows={Array []}
+    variant={null}
+  >
+    <TableHeader
+      className=""
+    />
+    <TableBody
+      className=""
+      onRowClick={[Function]}
+      rowKey="id"
+    />
+  </Table>
+</div>
+`;
+
+exports[`DataTable component should render editor for new row 1`] = `
+<div>
+  <Button
+    disabled={false}
+    onClick={[Function]}
+  >
+    Add
+  </Button>
+  <Table
+    borders={true}
+    caption="Data Table"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Column 1",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Column 2",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onCollapse={null}
+    onExpand={null}
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <input
+                    id="editor"
+                  />
+                }
+                viewer={
+                  <span
+                    id="viewer"
+                  >
+                    data[0]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={<input />}
+                viewer={
+                  <span>
+                    data[1]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <input
+                    id="editor"
+                  />
+                }
+                viewer={
+                  <span
+                    id="viewer"
+                  >
+                    data[0]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={<input />}
+                viewer={
+                  <span>
+                    data[1]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader
+      className=""
+    />
+    <TableBody
+      className=""
+      onRowClick={[Function]}
+      rowKey="id"
+    />
+  </Table>
+</div>
+`;
+
+exports[`DataTable component should render viewer initally 1`] = `
+<div>
+  <Button
+    disabled={false}
+    onClick={[Function]}
+  >
+    Add
+  </Button>
+  <Table
+    borders={true}
+    caption="Data Table"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Column 1",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Column 2",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onCollapse={null}
+    onExpand={null}
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <input
+                    id="editor"
+                  />
+                }
+                viewer={
+                  <span
+                    id="viewer"
+                  >
+                    data[0]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={<input />}
+                viewer={
+                  <span>
+                    data[1]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <input
+                    id="editor"
+                  />
+                }
+                viewer={
+                  <span
+                    id="viewer"
+                  >
+                    data[0]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={<input />}
+                viewer={
+                  <span>
+                    data[1]
+                  </span>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+      ]
+    }
     variant={null}
   >
     <TableHeader
