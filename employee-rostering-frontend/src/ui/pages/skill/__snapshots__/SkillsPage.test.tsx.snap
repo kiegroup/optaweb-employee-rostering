@@ -1,44 +1,312 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Skills page should render correctly with a few skills 1`] = `
-<DataTable
-  columnTitles={
-    Array [
-      "Name",
-    ]
-  }
-  createRow={[Function]}
-  rowDataToRow={[Function]}
-  tableData={
-    Array [
-      Object {
-        "id": 0,
-        "name": "Skill 1",
-        "tenantId": 0,
-        "version": 0,
-      },
-      Object {
-        "id": 1,
-        "name": "Skill 2",
-        "tenantId": 0,
-        "version": 0,
-      },
-    ]
-  }
-  title="Skills"
-/>
+<div>
+  <Button
+    disabled={false}
+    onClick={[Function]}
+  >
+    Add
+  </Button>
+  <Table
+    borders={true}
+    caption="Skills"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Name",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onCollapse={null}
+    onExpand={null}
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TextInput
+                    aria-label="Name"
+                    className=""
+                    defaultValue="Skill 1"
+                    isDisabled={false}
+                    isReadOnly={false}
+                    isRequired={false}
+                    isValid={true}
+                    name="name"
+                    onChange={[Function]}
+                    type="text"
+                  />
+                }
+                viewer={
+                  <Text>
+                    Skill 1
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TextInput
+                    aria-label="Name"
+                    className=""
+                    defaultValue="Skill 2"
+                    isDisabled={false}
+                    isReadOnly={false}
+                    isRequired={false}
+                    isValid={true}
+                    name="name"
+                    onChange={[Function]}
+                    type="text"
+                  />
+                }
+                viewer={
+                  <Text>
+                    Skill 2
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader
+      className=""
+    />
+    <TableBody
+      className=""
+      onRowClick={[Function]}
+      rowKey="id"
+    />
+  </Table>
+</div>
 `;
 
 exports[`Skills page should render correctly with no skills 1`] = `
-<DataTable
-  columnTitles={
-    Array [
-      "Name",
-    ]
-  }
-  createRow={[Function]}
-  rowDataToRow={[Function]}
-  tableData={Array []}
-  title="Skills"
-/>
+<div>
+  <Button
+    disabled={false}
+    onClick={[Function]}
+  >
+    Add
+  </Button>
+  <Table
+    borders={true}
+    caption="Skills"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Name",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onCollapse={null}
+    onExpand={null}
+    rowLabeledBy="simple-node"
+    rows={Array []}
+    variant={null}
+  >
+    <TableHeader
+      className=""
+    />
+    <TableBody
+      className=""
+      onRowClick={[Function]}
+      rowKey="id"
+    />
+  </Table>
+</div>
+`;
+
+exports[`Skills page should render the editor correctly 1`] = `
+<tr>
+  <td
+    key="0"
+  >
+    <TextInput
+      aria-label="Name"
+      className=""
+      defaultValue="Skill"
+      isDisabled={false}
+      isReadOnly={false}
+      isRequired={false}
+      isValid={true}
+      key="0"
+      name="name"
+      onChange={[Function]}
+      type="text"
+    />
+  </td>
+</tr>
+`;
+
+exports[`Skills page should render the viewer correctly 1`] = `
+<tr>
+  <td
+    key="0"
+  >
+    <Text
+      key="0"
+    >
+      Skill
+    </Text>
+  </td>
+</tr>
 `;
