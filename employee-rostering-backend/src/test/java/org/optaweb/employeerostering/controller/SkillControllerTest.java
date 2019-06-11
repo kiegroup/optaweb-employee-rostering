@@ -21,7 +21,8 @@ package org.optaweb.employeerostering.controller;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -32,16 +33,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest
+@SpringBootTest
+@AutoConfigureMockMvc
 public class SkillControllerTest {
 
     @Autowired
     private MockMvc mvc;
 
     @Test
+    public void getSkillListTest() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                            .get("tenant/{tenantId}/skill", 0)
+                            .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("Get skill list"));
+    }
+
+    @Test
     public void getSkillTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .get("/skill")
+                            .get("/tenant/{tenantId}/skill/{id}", 0)
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -51,7 +63,7 @@ public class SkillControllerTest {
     @Test
     public void deleteSkillTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .delete("/skill")
+                            .delete("/tenant/{tenantId}/skill/{id}")
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -61,7 +73,7 @@ public class SkillControllerTest {
     @Test
     public void createSkillTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .post("/skill")
+                            .post("/tenant/{tenantId}/skill/add")
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -71,7 +83,7 @@ public class SkillControllerTest {
     @Test
     public void updateSkillTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .put("/skill")
+                            .put("/tenant/{tenantId}/skill/update")
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())

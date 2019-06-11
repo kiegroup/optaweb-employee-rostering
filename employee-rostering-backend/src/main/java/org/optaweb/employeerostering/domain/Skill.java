@@ -16,30 +16,8 @@
 
 package org.optaweb.employeerostering.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-@Entity
-@NamedQueries({
-        @NamedQuery(name = "Skill.findAll",
-                query = "select s from Skill s" +
-                        " where s.tenantId = :tenantId" +
-                        " order by LOWER(s.name)"),
-        @NamedQuery(name = "Skill.deleteForTenant",
-                query = "delete from Skill s where s.tenantId = :tenantId")
-})
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Skill extends AbstractPersistable {
 
-    @NotNull
-    @Size(min = 1, max = 120)
-    @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
 
     @SuppressWarnings("unused")

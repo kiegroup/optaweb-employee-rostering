@@ -19,13 +19,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.optaweb.employeerostering</groupId>
-  <artifactId>optaweb-employee-rostering-backend</artifactId>
-  <version>7.24.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
-
-  <name>Employee Rostering as a Service Spring Boot Backend</name>
-
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -33,48 +26,20 @@
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
 
+  <groupId>org.optaweb.employeerostering</groupId>
+  <artifactId>optaweb-employee-rostering-backend</artifactId>
+  <version>7.24.0-SNAPSHOT</version>
+  <name>optaweb-employee-rostering-backend</name>
+  <description>Employee Rostering as a Service Spring Boot Backend</description>
+
   <properties>
-    <checkstyle.header.template><![CDATA[
-^\/\*$\n^
-\* Copyright \d\d\d\d Red Hat, Inc\. and\/or its affiliates\.$\n^
-\*$\n^
-\* Licensed under the Apache License, Version 2\.0 \(the &quot;License&quot;\);$\n^
-\* you may not use this file except in compliance with the License\.$\n^
-\* You may obtain a copy of the License at$\n^
-\*$\n^
-\*     http:\/\/www\.apache\.org\/licenses\/LICENSE-2\.0$\n^
-\*$\n^
-\* Unless required by applicable law or agreed to in writing, software$\n^
-\* distributed under the License is distributed on an &quot;AS IS&quot; BASIS,$\n^
-\* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied\.$\n^
-\* See the License for the specific language governing permissions and$\n^
-\* limitations under the License\.$\n^
-\*\/$
-]]>
-    </checkstyle.header.template>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
-    <version.org.jacoco>0.8.3</version.org.jacoco>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-rest</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-websocket</artifactId>
+      <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <!-- Testing dependencies -->
     <dependency>
@@ -82,351 +47,15 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- Production dependencies -->
-    <dependency>
-      <groupId>org.optaplanner</groupId>
-      <artifactId>optaplanner-examples</artifactId>
-      <version>7.17.0.Final</version>
-    </dependency>
-    <dependency>
-      <groupId>com.graphhopper</groupId>
-      <artifactId>graphhopper-reader-osm</artifactId>
-      <version>0.11.0</version>
-    </dependency>
-    <dependency>
-      <groupId>com.neovisionaries</groupId>
-      <artifactId>nv-i18n</artifactId>
-      <version>1.24</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.dataformat</groupId>
-      <artifactId>jackson-dataformat-yaml</artifactId>
-      <version>2.9.9</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>2.9.9</version>
-    </dependency>
-    <!-- Enable Spring Boot Automatic Restart, see Development Guide in Readme to learn how to use it. -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-devtools</artifactId>
-      <optional>true</optional>
-    </dependency>
-    <!-- Include annotation processor that generates metadata for @ConfigurationProperties -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <optional>true</optional>
-    </dependency>
   </dependencies>
 
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <compilerArgs>
-              <!-- Visit https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javac.html
-                   to learn more about javac warnings -->
-              <arg>-Xlint:all</arg>
-              <arg>-Xlint:-processing</arg>
-              <arg>-Xlint:-serial</arg>
-            </compilerArgs>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.pitest</groupId>
-          <artifactId>pitest-maven</artifactId>
-          <version>1.4.3</version>
-          <configuration>
-            <reportsDirectory>local/pit-reports</reportsDirectory>
-            <timestampedReports>true</timestampedReports>
-            <!--
-              Experimental. Using more than 2 threads doesn't reduce execution time further
-              and leads to minion timeouts.
-            -->
-            <threads>2</threads>
-            <mutators>
-              <!-- See http://pitest.org/quickstart/mutators/ -->
-              <mutator>DEFAULTS</mutator>
-              <mutator>NON_VOID_METHOD_CALLS</mutator>
-              <mutator>REMOVE_CONDITIONALS</mutator>
-            </mutators>
-            <avoidCallsTo>
-              <!--
-                String concatenation ("a" + "b") is implemented using StringBuilder.append() in bytecode.
-                We're not interested in mutations of these calls - it's mostly toString() and exception messages.
-                Reducing number of mutations also improves execution time.
-              -->
-              <avoidCallsTo>java.lang.StringBuilder</avoidCallsTo>
-              <avoidCallsTo>org.slf4j</avoidCallsTo>
-              <avoidCallsTo>org.springframework.boot.SpringApplication</avoidCallsTo>
-            </avoidCallsTo>
-            <excludedClasses>
-              <excludedClass>*Config</excludedClass>
-              <excludedClass>*Properties</excludedClass>
-            </excludedClasses>
-            <excludedMethods>hashCode</excludedMethods>
-            <excludedTestClasses>
-              <param>*IntegrationTest</param>
-            </excludedTestClasses>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${version.org.jacoco}</version>
-          <executions>
-            <execution>
-              <id>default-instrument</id>
-              <goals>
-                <goal>instrument</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>default-restore-instrumented-classes</id>
-              <goals>
-                <goal>restore-instrumented-classes</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>default-report</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>default-check</id>
-              <goals>
-                <goal>check</goal>
-              </goals>
-              <configuration>
-                <haltOnFailure>true</haltOnFailure>
-                <rules>
-                  <rule>
-                    <element>BUNDLE</element>
-                    <limits>
-                      <limit>
-                        <counter>LINE</counter>
-                        <value>COVEREDRATIO</value>
-                        <minimum>0.5</minimum>
-                      </limit>
-                    </limits>
-                  </rule>
-                </rules>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.sonarsource.scanner.maven</groupId>
-          <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.6.0.1398</version>
-          <executions>
-            <execution>
-              <phase>verify</phase>
-              <goals>
-                <goal>sonar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.0.1</version>
-        <configuration>
-          <show>package</show>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.0.0</version>
-        <executions>
-          <execution>
-            <id>validate</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>check</goal>
-            </goals>
-            <configuration>
-              <checkstyleRules>
-                <module name="Checker">
-                  <!-- Checks for whitespace. -->
-                  <module name="FileTabCharacter">
-                    <property name="severity" value="error"/>
-                    <property name="eachLine" value="true"/>
-                  </module>
-                  <module name="TreeWalker">
-                    <!-- Import settings: getting rid of redundant import, forbid star notation,
-                         defined order of imports. -->
-                    <module name="RedundantImport"/>
-                    <module name="AvoidStarImport">
-                      <property name="allowClassImports" value="false"/>
-                      <property name="allowStaticMemberImports" value="false"/>
-                    </module>
-                    <module name="CustomImportOrder">
-                      <property name="customImportOrderRules"
-                                value="STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STATIC"/>
-                      <property name="specialImportsRegExp" value="^javax\."/>
-                      <property name="standardPackageRegExp" value="^java\."/>
-                      <property name="sortImportsInGroupAlphabetically" value="true"/>
-                      <property name="separateLineBetweenGroups" value="true"/>
-                    </module>
-                    <module name="UnusedImports"/>
-                    <module name="NeedBraces">
-                      <property name="tokens" value="LITERAL_IF, LITERAL_ELSE, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO"/>
-                    </module>
-                    <module name="EqualsHashCode"/>
-                    <module name="LineLength">
-                      <property name="max" value="120"/>
-                    </module>
-                  </module>
-                  <module name="RegexpHeader">
-                    <property name="header" value="${checkstyle.header.template}"/>
-                    <property name="fileExtensions" value="java"/>
-                  </module>
-                </module>
-              </checkstyleRules>
-              <includeTestSourceDirectory>true</includeTestSourceDirectory>
-              <includeResources>true</includeResources>
-              <includeTestResources>true</includeTestResources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <profiles>
-            <profile>local</profile>
-          </profiles>
-        </configuration>
       </plugin>
     </plugins>
   </build>
 
-  <profiles>
-    <profile>
-      <id>mutationCoverage</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.pitest</groupId>
-            <artifactId>pitest-maven</artifactId>
-            <executions>
-              <execution>
-                <id>default-pitest</id>
-                <phase>verify</phase>
-                <goals>
-                  <goal>mutationCoverage</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jacoco</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.jacoco</groupId>
-          <artifactId>org.jacoco.agent</artifactId>
-          <version>${version.org.jacoco}</version>
-          <classifier>runtime</classifier>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <configuration>
-                <systemPropertyVariables>
-                  <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
-                </systemPropertyVariables>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>sonar</id>
-      <properties>
-        <sonar.projectKey>kiegroup_optaweb-vehicle-routing</sonar.projectKey>
-        <sonar.organization>kiegroup</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
-        <!--suppress UnresolvedMavenProperty -->
-        <sonar.login>${env.SONARCLOUD_TOKEN}</sonar.login>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.sonarsource.scanner.maven</groupId>
-            <artifactId>sonar-maven-plugin</artifactId>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <!-- Skip Sonar plugin execution if SONARCLOUD_TOKEN is not set. -->
-      <id>skipSonar</id>
-      <activation>
-        <property>
-          <name>!env.SONARCLOUD_TOKEN</name>
-        </property>
-      </activation>
-      <properties>
-        <sonar.skip>true</sonar.skip>
-      </properties>
-    </profile>
-    <profile>
-      <!-- Don't set sonar.pullrequest properties when the Travis build is not triggered by PR (for example by push
-           to branch or by cron). Sonar plugin would fail because the content of these properties would be invalid. -->
-      <!-- See https://docs.travis-ci.com/user/environment-variables/ for list of Travis environment variables. -->
-      <id>pullRequest</id>
-      <activation>
-        <property>
-          <name>env.TRAVIS_EVENT_TYPE</name>
-          <value>pull_request</value>
-        </property>
-      </activation>
-      <properties>
-        <!--suppress UnresolvedMavenProperty -->
-        <sonar.pullrequest.base>${env.TRAVIS_BRANCH}</sonar.pullrequest.base>
-        <!--suppress UnresolvedMavenProperty -->
-        <sonar.pullrequest.branch>${env.TRAVIS_PULL_REQUEST_BRANCH}</sonar.pullrequest.branch>
-        <!--suppress UnresolvedMavenProperty -->
-        <sonar.pullrequest.key>${env.TRAVIS_PULL_REQUEST}</sonar.pullrequest.key>
-      </properties>
-    </profile>
-  </profiles>
-
-  <repositories>
-    <repository>
-      <id>jboss-public-repository-group</id>
-      <name>JBoss Public Repository Group</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-    </repository>
-  </repositories>
 </project>
