@@ -37,6 +37,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    role="grid"
     rowLabeledBy="simple-node"
     rows={
       Array [
@@ -259,6 +260,7 @@ exports[`Skills page should render correctly with no skills 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    role="grid"
     rowLabeledBy="simple-node"
     rows={Array []}
     variant={null}
