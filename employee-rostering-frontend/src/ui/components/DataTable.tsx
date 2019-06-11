@@ -60,7 +60,6 @@ export abstract class DataTable<T,C, P extends DataTableProps<T,C>> extends Reac
     if (this.state.newRow === null) {
       const dataStore: any = {};
       const newRowComponents: JSX.Element[] = this.createNewDataRow(dataStore);
-      // @ts-ignore
       const newRow: IRow = { cells: newRowComponents.map(c => {return {title: c}}).concat([{
         title: this.getAddButtons(dataStore)}])};
       this.setState({...this.state, newRow: newRow});
@@ -141,7 +140,6 @@ export abstract class DataTable<T,C, P extends DataTableProps<T,C>> extends Reac
         editor={editors[index]}
         ref={(c) => editableComponents[index] = c as EditableComponent}
       />} }).concat([{title: this.getEditButtons(dataStore, data, editableComponents)}]);
-    // @ts-ignore
     return {
       cells: cellContents
     };
