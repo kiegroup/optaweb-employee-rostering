@@ -28,11 +28,80 @@ describe('Skills page', () => {
     const skillsPage = shallow(<SkillsPage {...twoSkills} />);
     expect(toJson(skillsPage)).toMatchSnapshot();
   });
+
+  it('should render the viewer correctly', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
+    const viewer = shallow(skillsPage.renderViewer(skill));
+    expect(toJson(viewer)).toMatchSnapshot();
+  });
+
+  it('should render the editor correctly', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
+    const editor = shallow(skillsPage.renderEditor(skill));
+    expect(toJson(editor)).toMatchSnapshot();
+  });
+
+  it('should call addSkill on addData', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const skill = {name: "Skill", tenantId: 0};
+    skillsPage.addData(skill);
+    expect(twoSkills.addSkill).toBeCalled();
+    expect(twoSkills.addSkill).toBeCalledWith(skill);
+  });
+
+  it('should call updateSkill on updateData', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
+    skillsPage.updateData(skill);
+    expect(twoSkills.updateSkill).toBeCalled();
+    expect(twoSkills.updateSkill).toBeCalledWith(skill);
+  });
+
+  it('should call removeSkill on removeData', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
+    skillsPage.removeData(skill);
+    expect(twoSkills.removeSkill).toBeCalled();
+    expect(twoSkills.removeSkill).toBeCalledWith(skill);
+  });
+
+  it('should extract skill from components on extractDataFromRow with no data', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const components = {name: "Skill"};
+    const result = skillsPage.extractDataFromRow({}, components);
+    expect(result).toEqual({...components, tenantId: 0});
+  });
+
+  it('should extract skill from components on extractDataFromRow with old data', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const skill = {name: "Skill", id: 1, version: 0, tenantId: 0};
+    const components = {name: "New Skill"};
+    const result = skillsPage.extractDataFromRow(skill, components);
+    expect(result).toEqual({...skill, ...components});
+  });
+
+  it('should treat empty name as invalid', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const components = {name: ""};
+    const result = skillsPage.isValid(components);
+    expect(result).toEqual(false);
+  });
+
+  it('should treat non-empty name as valid', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const components = {name: "Skill"};
+    const result = skillsPage.isValid(components);
+    expect(result).toEqual(true);
+  });
 });
 
 const noSkills: Props = {
   tenantId: 0,
-  skillList: [],
+  title: "Skills",
+  columnTitles: ["Name"],
+  tableData: [],
   addSkill: jest.fn(),
   updateSkill: jest.fn(),
   removeSkill: jest.fn()
@@ -40,7 +109,9 @@ const noSkills: Props = {
 
 const twoSkills: Props = {
   tenantId: 0,
-  skillList: [{
+  title: "Skills",
+  columnTitles: ["Name"],
+  tableData: [{
     id: 0,
     version: 0,
     tenantId: 0,

@@ -15,24 +15,26 @@
  */
 
 import * as React from 'react';
-import {DataTable} from 'ui/components/DataTable';
+import {DataTable, DataTableProps} from 'ui/components/DataTable';
 import {skillOperations} from 'store/skill';
 import Skill from 'domain/Skill';
 import { AppState } from 'store/types';
-import {Button, TextInput, ButtonVariant} from '@patternfly/react-core';
-import { IRow } from '@patternfly/react-table';
-import { TrashIcon, EditIcon, SaveIcon, CloseIcon } from '@patternfly/react-icons';
+import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { EditableComponent } from 'ui/components/EditableComponent';
 
-interface StateProps {
-  skillList: Skill[];
+export interface SkillComponents {
+  name: string;
+}
+
+interface StateProps extends DataTableProps<Skill,SkillComponents> {
   tenantId: number;
 }
 
 const mapStateToProps = ({ tenantData, skillList }: AppState): StateProps => ({
-  tenantId: tenantData.currentTenantId,
-  skillList: skillList.skillList
+  title: "Skills",
+  columnTitles: ["Name"],
+  tableData: skillList.skillList,
+  tenantId: tenantData.currentTenantId
 }); 
 
 export interface DispatchProps {
@@ -49,118 +51,52 @@ const mapDispatchToProps: DispatchProps = {
 
 export type Props = StateProps & DispatchProps;
 
-export class SkillsPage extends React.Component<Props> {
+export class SkillsPage extends DataTable<Skill,SkillComponents, Props> {
   constructor(props: Props) {
     super(props);
-    this.createSkillRow = this.createSkillRow.bind(this);
-    this.skillToTableRow = this.skillToTableRow.bind(this);
+    this.extractDataFromRow = this.extractDataFromRow.bind(this);
+    this.addData = this.addData.bind(this);
+    this.updateData = this.updateData.bind(this);
+    this.removeData = this.removeData.bind(this);
   }
 
-  createSkillRow(table: DataTable<Skill>): IRow {
-    let currentName = "";
-    const name =  <TextInput onChange={(newValue) => currentName = newValue}
-      aria-label="name">
-    </TextInput>;
-    // TODO: Validate before saving
-    //@ts-ignore 
-    return {
-      isOpen: true,
-      props: {},
-      cells: [
-        {
-          title: name
-        },
-        {
-          title: <span>
-            <Button aria-label="Save"
-              variant={ButtonVariant.link}
-              onClick={() => {this.props.addSkill({
-                tenantId: this.props.tenantId,
-                name: currentName
-              }); table.cancelAddingRow()}}>
-              <SaveIcon />
-            </Button>
-            <Button aria-label="Cancel"
-              variant={ButtonVariant.link}
-              onClick={table.cancelAddingRow}>
-              <CloseIcon />
-            </Button>
-          </span>
-        }
-      ]
-    };
+  displayDataRow(data: Skill): JSX.Element[] {
+    return [<Text key={0}>{data.name}</Text>];
   }
 
-  skillToTableRow(rowData: Skill): IRow {
-    let name: EditableComponent;
-    let buttons: EditableComponent;
-    let newName = rowData.name;
-
-    const nameElement = <EditableComponent ref={(c) => {name = c as EditableComponent;}}
-      viewer={<span>{rowData.name}</span>}
-      editor={<TextInput aria-label="Name"
-        defaultValue={rowData.name}
-        onChange={(v) => {newName = v;}}
-      />}
-    />;  
-
-    const buttonsElement = <EditableComponent ref={(c) => {buttons = c as EditableComponent;}}
-      viewer={<span>
-        <Button aria-label="Edit"
-          variant={ButtonVariant.link}
-          onClick={() => {
-            name.startEditing();
-            buttons.startEditing();
-          }}>
-          <EditIcon />
-        </Button>
-        <Button aria-label="Delete"
-          variant={ButtonVariant.link}
-          onClick={() => {
-            this.props.removeSkill(rowData)
-          }}>
-          <TrashIcon />
-        </Button>
-      </span>}
-      editor={<span>
-        <Button aria-label="Save"
-          variant={ButtonVariant.link}
-          onClick={() => {
-            this.props.updateSkill({...rowData, name: newName});
-            name.stopEditing();
-            buttons.stopEditing();
-          }}>
-          <SaveIcon />
-        </Button>
-        <Button aria-label="Cancel"
-          variant={ButtonVariant.link}
-          onClick={() => {
-            name.stopEditing();
-            buttons.stopEditing();
-          }}>
-          <CloseIcon />
-        </Button>
-      </span>}/>;
-
-    // @ts-ignore
-    return { 
-      isOpen: true,
-      props: {},
-      cells: [
-        {
-          title: nameElement
-        },
-        {
-          title: buttonsElement
-        }
-      ]
-    };
+  createNewDataRow(dataStore: SkillComponents): JSX.Element[] {
+    dataStore.name = "";
+    return [<TextInput key={0} name="name"
+      aria-label="Name"
+      onChange={(value) => dataStore.name = value}/>];
+  }
+  
+  editDataRow(dataStore: SkillComponents, data: Skill): JSX.Element[] {
+    dataStore.name = data.name;
+    return [<TextInput key={0} name="name"
+      aria-label="Name"
+      defaultValue={data.name}
+      onChange={(value) => dataStore.name = value}/>];
+  }
+  
+  isValid(editedValue: SkillComponents): boolean {
+    return editedValue.name.length > 0;
+  }
+  
+  extractDataFromRow(oldValue: Skill|{}, editedValue: SkillComponents): Skill {
+    return {...oldValue, name: editedValue.name, tenantId: this.props.tenantId};
   }
 
-  render() {
-    return <DataTable title="Skills" columnTitles={['Name']} 
-      tableData={this.props.skillList} createRow={this.createSkillRow} rowDataToRow={this.skillToTableRow}>
-    </DataTable>;
+  updateData(data: Skill): void {
+    this.props.updateSkill(data);
+  }
+  
+  addData(data: Skill): void {
+    this.props.addSkill(data);
+  }
+
+  removeData(data: Skill): void {
+    this.props.removeSkill(data);
   }
 }
 
