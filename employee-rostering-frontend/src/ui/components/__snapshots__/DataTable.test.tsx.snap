@@ -44,6 +44,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    role="grid"
     rowLabeledBy="simple-node"
     rows={
       Array [
@@ -279,6 +280,7 @@ exports[`DataTable component should render correctly with no rows 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    role="grid"
     rowLabeledBy="simple-node"
     rows={Array []}
     variant={null}
@@ -339,6 +341,7 @@ exports[`DataTable component should render editor for new row 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    role="grid"
     rowLabeledBy="simple-node"
     rows={
       Array [
@@ -574,6 +577,7 @@ exports[`DataTable component should render viewer initally 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    role="grid"
     rowLabeledBy="simple-node"
     rows={
       Array [
