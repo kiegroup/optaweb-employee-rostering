@@ -26,7 +26,7 @@ import {Button, ButtonVariant} from '@patternfly/react-core';
 import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { EditableComponent } from './EditableComponent';
 
-export interface DataTableProps<T,C> {
+export interface DataTableProps<T> {
   title: string;
   columnTitles: string[];
   tableData: T[];
@@ -37,7 +37,7 @@ interface DataTableState<T> {
   currentFilter: (rowData: T) => boolean;
 }
 
-export abstract class DataTable<T,C, P extends DataTableProps<T,C>> extends React.Component<P, DataTableState<T>> {
+export abstract class DataTable<T,C, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
   constructor(props: P) {
     super(props);
     this.createNewRow = this.createNewRow.bind(this);
@@ -165,7 +165,7 @@ export abstract class DataTable<T,C, P extends DataTableProps<T,C>> extends Reac
     }).concat([{title: '', cellTransforms: [headerCol], props: {}}]);
     return (
       <div>
-        <Button disabled={this.state.newRow !== null} onClick={this.createNewRow}>Add</Button>
+        <Button isDisabled={this.state.newRow !== null} onClick={this.createNewRow}>Add</Button>
         <Table caption={this.props.title} cells={columns} rows={rows}>
           <TableHeader />
           <TableBody />
