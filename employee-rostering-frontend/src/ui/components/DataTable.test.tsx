@@ -20,9 +20,9 @@ import { DataTable, DataTableProps } from './DataTable';
 import { EditableComponent } from './EditableComponent';
 
 type MockData = [string, number];
-class MockDataTable extends DataTable<MockData, MockData, DataTableProps<MockData,MockData>> {
-  displayDataRow = jest.fn((data) => [<span key={0} id="viewer">data[0]</span>,
-    <span key={1}>data[1]</span>]);
+class MockDataTable extends DataTable<MockData, MockData, DataTableProps<MockData>> {
+  displayDataRow = jest.fn((data) => [<span key={0} id="viewer">{data[0]}</span>,
+    <span key={1}>{data[1]}</span>]);
   createNewDataRow = jest.fn(() =>  [<input key={0} id="editor"/>,
     <input key={1} />]);
   editDataRow = jest.fn((data) => [<input key={0} id="editor"/>,
@@ -56,7 +56,7 @@ describe('DataTable component', () => {
     expect(dataTable.editDataRow).toHaveBeenNthCalledWith(2, {}, twoRows.tableData[1]);
   });
 
-  it('should render viewer initally', () => {
+  it('should render viewer initially', () => {
     const dataTable = new MockDataTable(twoRows);
     const table = shallow(dataTable.render());
     expect(toJson(table)).toMatchSnapshot();
