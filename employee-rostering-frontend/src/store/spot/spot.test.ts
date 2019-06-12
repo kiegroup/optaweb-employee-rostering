@@ -56,6 +56,7 @@ describe('Spot operations', () => {
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/`);
 
     store.clearActions();
+    client.get.mockClear()
 
     const spotToDelete: Spot = mockSpotList[0];
     onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, true);
@@ -65,6 +66,7 @@ describe('Spot operations', () => {
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/${spotToDelete.id}`);
 
     store.clearActions();
+    client.delete.mockClear()
 
     const spotToAdd: Spot = {tenantId: tenantId, name: "New Spot", requiredSkillSet: []};
     const spotWithUpdatedId: Spot = {...spotToAdd, id: 4, version: 0};
@@ -75,6 +77,7 @@ describe('Spot operations', () => {
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/add`, spotToAdd);
 
     store.clearActions();
+    client.post.mockClear()
 
     const spotToUpdate: Spot = {tenantId: tenantId, name: "Updated Spot", id: 4, version: 0, requiredSkillSet: []};
     const spotWithUpdatedVersion: Spot = {...spotToAdd, version: 1};
@@ -93,22 +96,22 @@ describe('Spot reducers', () => {
   it('add spot', () => {
     expect(
       reducer(state.spotList, actions.addSpot(addedSpot))
-    ).toEqual({skillList: withElement(state.skillList.skillList, addedSpot)})
+    ).toEqual({spotList: withElement(state.spotList.spotList, addedSpot)})
   });
   it('remove spot', () => {
     expect(
       reducer(state.spotList, actions.removeSpot(deletedSpot)),
-    ).toEqual({skillList: withoutElement(state.skillList.skillList, deletedSpot)})
+    ).toEqual({spotList: withoutElement(state.spotList.spotList, deletedSpot)})
   });
   it('update spot', () => {
     expect(
       reducer(state.spotList, actions.updateSpot(updatedSpot)),
-    ).toEqual({skillList: withUpdatedElement(state.skillList.skillList, updatedSpot)})
+    ).toEqual({spotList: withUpdatedElement(state.spotList.spotList, updatedSpot)})
   });
   it('refresh spot list', () => {
     expect(
       reducer(state.spotList, actions.refreshSpotList([addedSpot])),
-    ).toEqual({skillList: [addedSpot]});
+    ).toEqual({spotList: [addedSpot]});
   });
 });
 

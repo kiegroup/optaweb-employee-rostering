@@ -20,7 +20,7 @@ import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
 import {spotOperations} from 'store/spot';
 import Spot from 'domain/Spot';
 import { AppState } from 'store/types';
-import { TextInput, Text } from '@patternfly/react-core';
+import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
 
@@ -29,7 +29,7 @@ export interface SpotComponents {
   requiredSkillSet: Skill[];
 }
 
-interface StateProps extends DataTableProps<Spot,SpotComponents> {
+interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
   skillList: Skill[];
 }
@@ -68,9 +68,12 @@ export class SpotsPage extends DataTable<Spot,SpotComponents, Props> {
   displayDataRow(data: Spot): JSX.Element[] {
     return [
       <Text key={0}>{data.name}</Text>,
-      <Text key={1}>{data.requiredSkillSet.reduce((prev, skill) => 
-        (prev.length === 0)? skill.name : prev + "," + skill.name,
-        "")}</Text>
+      <ChipGroup key={1}>{data.requiredSkillSet.map(skill => (
+        <Chip key={skill.name} isReadOnly>
+          {skill.name}
+        </Chip>
+      ))}
+      </ChipGroup>
     ];
   }
 
