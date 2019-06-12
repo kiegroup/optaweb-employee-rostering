@@ -16,9 +16,7 @@
 
 package org.optaweb.employeerostering.domain;
 
-import java.io.Serializable;
-
-public abstract class AbstractPersistable implements Serializable {
+public abstract class AbstractPersistable {
 
     protected Long id;
 
