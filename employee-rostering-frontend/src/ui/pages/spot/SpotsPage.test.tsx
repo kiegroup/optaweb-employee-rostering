@@ -16,114 +16,118 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import { SkillsPage, Props } from './SkillsPage';
+import { SpotsPage, Props } from './SpotsPage';
 
-describe('Skills page', () => {
-  it('should render correctly with no skills', () => {
-    const skillsPage = shallow(<SkillsPage {...noSkills} />);
-    expect(toJson(skillsPage)).toMatchSnapshot();
+describe('Spots page', () => {
+  it('should render correctly with no spots', () => {
+    const spotsPage = shallow(<SpotsPage {...noSpots} />);
+    expect(toJson(spotsPage)).toMatchSnapshot();
   });
 
   it('should render correctly with a few skills', () => {
-    const skillsPage = shallow(<SkillsPage {...twoSkills} />);
-    expect(toJson(skillsPage)).toMatchSnapshot();
+    const spotsPage = shallow(<SpotsPage {...twoSpots} />);
+    expect(toJson(spotsPage)).toMatchSnapshot();
   });
 
   it('should render the viewer correctly', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
-    const viewer = shallow(skillsPage.renderViewer(skill));
+    const spotsPage = new SpotsPage(twoSpots);
+    const spot = twoSpots.tableData[1];
+    const viewer = shallow(spotsPage.renderViewer(spot));
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
   it('should render the editor correctly', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
-    const editor = shallow(skillsPage.renderEditor(skill));
+    const spotsPage = new SpotsPage(twoSpots);
+    const spot = twoSpots.tableData[1];
+    const editor = shallow(spotsPage.renderEditor(spot));
     expect(toJson(editor)).toMatchSnapshot();
   });
 
   it('should call addSkill on addData', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0};
-    skillsPage.addData(skill);
-    expect(twoSkills.addSkill).toBeCalled();
-    expect(twoSkills.addSkill).toBeCalledWith(skill);
+    const spotsPage = new SpotsPage(twoSpots);
+    const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0};
+    spotsPage.addData(spot);
+    expect(twoSpots.addSpot).toBeCalled();
+    expect(twoSpots.addSpot).toBeCalledWith(spot);
   });
 
   it('should call updateSkill on updateData', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
-    skillsPage.updateData(skill);
-    expect(twoSkills.updateSkill).toBeCalled();
-    expect(twoSkills.updateSkill).toBeCalledWith(skill);
+    const spotsPage = new SpotsPage(twoSpots);
+    const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};;
+    spotsPage.updateData(spot);
+    expect(twoSpots.updateSpot).toBeCalled();
+    expect(twoSpots.updateSpot).toBeCalledWith(spot);
   });
 
   it('should call removeSkill on removeData', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
-    skillsPage.removeData(skill);
-    expect(twoSkills.removeSkill).toBeCalled();
-    expect(twoSkills.removeSkill).toBeCalledWith(skill);
+    const spotsPage = new SpotsPage(twoSpots);
+    const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};
+    spotsPage.removeData(spot);
+    expect(twoSpots.removeSpot).toBeCalled();
+    expect(twoSpots.removeSpot).toBeCalledWith(spot);
   });
 
   it('should extract skill from components on extractDataFromRow with no data', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const components = {name: "Skill"};
-    const result = skillsPage.extractDataFromRow({}, components);
+    const spotsPage = new SpotsPage(twoSpots);
+    const components = {name: "Spot", requiredSkillSet: []};
+    const result = spotsPage.extractDataFromRow({}, components);
     expect(result).toEqual({...components, tenantId: 0});
   });
 
   it('should extract skill from components on extractDataFromRow with old data', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", id: 1, version: 0, tenantId: 0};
-    const components = {name: "New Skill"};
-    const result = skillsPage.extractDataFromRow(skill, components);
-    expect(result).toEqual({...skill, ...components});
+    const spotsPage = new SpotsPage(twoSpots);
+    const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};;
+    const components = {name: "New Spot", requiredSkillSet: twoSpots.tableData[1].requiredSkillSet};
+    const result = spotsPage.extractDataFromRow(spot, components);
+    expect(result).toEqual({...spot, ...components});
   });
 
   it('should treat empty name as invalid', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const components = {name: ""};
-    const result = skillsPage.isValid(components);
+    const spotsPage = new SpotsPage(twoSpots);
+    const components = {name: "", requiredSkillSet: []};
+    const result = spotsPage.isValid(components);
     expect(result).toEqual(false);
   });
 
   it('should treat non-empty name as valid', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const components = {name: "Skill"};
-    const result = skillsPage.isValid(components);
+    const spotsPage = new SpotsPage(twoSpots);
+    const components = {name: "Spot", requiredSkillSet: []};
+    const result = spotsPage.isValid(components);
     expect(result).toEqual(true);
   });
 });
 
-const noSkills: Props = {
+const noSpots: Props = {
   tenantId: 0,
-  title: "Skills",
+  title: "Spots",
   columnTitles: ["Name"],
   tableData: [],
-  addSkill: jest.fn(),
-  updateSkill: jest.fn(),
-  removeSkill: jest.fn()
+  skillList: [],
+  addSpot: jest.fn(),
+  updateSpot: jest.fn(),
+  removeSpot: jest.fn()
 };
 
-const twoSkills: Props = {
+const twoSpots: Props = {
   tenantId: 0,
-  title: "Skills",
+  title: "Spots",
   columnTitles: ["Name"],
   tableData: [{
     id: 0,
     version: 0,
     tenantId: 0,
-    name: "Skill 1"
+    name: "Spot 1",
+    requiredSkillSet: []
   },
   {
     id: 1,
     version: 0,
     tenantId: 0,
-    name: "Skill 2"
+    name: "Spot 2",
+    requiredSkillSet: [{tenantId: 0, name: "Skill 1"}, {tenantId: 0, name: "Skill 2"}]
   }],
-  addSkill: jest.fn(),
-  updateSkill: jest.fn(),
-  removeSkill: jest.fn()
+  skillList: [{tenantId: 0, name: "Skill 1"}, {tenantId: 0, name: "Skill 2"}],
+  addSpot: jest.fn(),
+  updateSpot: jest.fn(),
+  removeSpot: jest.fn()
 };
