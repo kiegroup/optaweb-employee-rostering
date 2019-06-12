@@ -56,11 +56,38 @@
     <java.version>1.8</java.version>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.optaplanner</groupId>
+        <artifactId>optaplanner-bom</artifactId>
+        <version>7.22.0.Final</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-core</artifactId>
+    </dependency>
+
     <!-- Testing dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
