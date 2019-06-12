@@ -33,6 +33,26 @@
   <description>Employee Rostering as a Service Spring Boot Backend</description>
 
   <properties>
+    <checkstyle.header.template><![CDATA[
+^\/\*$\n^
+\* Copyright \d\d\d\d Red Hat, Inc\. and\/or its affiliates\.$\n^
+\*$\n^
+\* Licensed under the Apache License, Version 2\.0 \(the &quot;License&quot;\);$\n^
+\* you may not use this file except in compliance with the License\.$\n^
+\* You may obtain a copy of the License at$\n^
+\*$\n^
+\*     http:\/\/www\.apache\.org\/licenses\/LICENSE-2\.0$\n^
+\*$\n^
+\* Unless required by applicable law or agreed to in writing, software$\n^
+\* distributed under the License is distributed on an &quot;AS IS&quot; BASIS,$\n^
+\* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied\.$\n^
+\* See the License for the specific language governing permissions and$\n^
+\* limitations under the License\.$\n^
+\*\/$
+]]>
+    </checkstyle.header.template>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
   </properties>
 
@@ -50,12 +70,152 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <compilerArgs>
+              <!-- Visit https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javac.html
+                   to learn more about javac warnings -->
+              <arg>-Xlint:all</arg>
+              <arg>-Xlint:-processing</arg>
+              <arg>-Xlint:-serial</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>1.4.3</version>
+          <configuration>
+            <reportsDirectory>local/pit-reports</reportsDirectory>
+            <timestampedReports>true</timestampedReports>
+            <!--
+              Experimental. Using more than 2 threads doesn't reduce execution time further
+              and leads to minion timeouts.
+            -->
+            <threads>2</threads>
+            <mutators>
+              <!-- See http://pitest.org/quickstart/mutators/ -->
+              <mutator>DEFAULTS</mutator>
+              <mutator>NON_VOID_METHOD_CALLS</mutator>
+              <mutator>REMOVE_CONDITIONALS</mutator>
+            </mutators>
+            <avoidCallsTo>
+              <!--
+                String concatenation ("a" + "b") is implemented using StringBuilder.append() in bytecode.
+                We're not interested in mutations of these calls - it's mostly toString() and exception messages.
+                Reducing number of mutations also improves execution time.
+              -->
+              <avoidCallsTo>java.lang.StringBuilder</avoidCallsTo>
+              <avoidCallsTo>org.slf4j</avoidCallsTo>
+              <avoidCallsTo>org.springframework.boot.SpringApplication</avoidCallsTo>
+            </avoidCallsTo>
+            <excludedClasses>
+              <excludedClass>*Config</excludedClass>
+              <excludedClass>*Properties</excludedClass>
+            </excludedClasses>
+            <excludedMethods>hashCode</excludedMethods>
+            <excludedTestClasses>
+              <param>*IntegrationTest</param>
+            </excludedTestClasses>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <checkstyleRules>
+                <module name="Checker">
+                  <!-- Checks for whitespace. -->
+                  <module name="FileTabCharacter">
+                    <property name="severity" value="error"/>
+                    <property name="eachLine" value="true"/>
+                  </module>
+                  <module name="TreeWalker">
+                    <!-- Import settings: getting rid of redundant import, forbid star notation,
+                         defined order of imports. -->
+                    <module name="RedundantImport"/>
+                    <module name="AvoidStarImport">
+                      <property name="allowClassImports" value="false"/>
+                      <property name="allowStaticMemberImports" value="false"/>
+                    </module>
+                    <module name="CustomImportOrder">
+                      <property name="customImportOrderRules"
+                                value="STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STATIC"/>
+                      <property name="specialImportsRegExp" value="^javax\."/>
+                      <property name="standardPackageRegExp" value="^java\."/>
+                      <property name="sortImportsInGroupAlphabetically" value="true"/>
+                      <property name="separateLineBetweenGroups" value="true"/>
+                    </module>
+                    <module name="UnusedImports"/>
+                    <module name="NeedBraces">
+                      <property name="tokens" value="LITERAL_IF, LITERAL_ELSE, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO"/>
+                    </module>
+                    <module name="EqualsHashCode"/>
+                    <module name="LineLength">
+                      <property name="max" value="120"/>
+                    </module>
+                  </module>
+                  <module name="RegexpHeader">
+                    <property name="header" value="${checkstyle.header.template}"/>
+                    <property name="fileExtensions" value="java"/>
+                  </module>
+                </module>
+              </checkstyleRules>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
+              <includeResources>true</includeResources>
+              <includeTestResources>true</includeTestResources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <profiles>
+            <profile>local</profile>
+          </profiles>
+        </configuration>
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>mutationCoverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <executions>
+              <execution>
+                <id>default-pitest</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>mutationCoverage</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
