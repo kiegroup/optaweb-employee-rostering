@@ -21,9 +21,14 @@ import { ChangeTenantAction, RefreshTenantListAction } from './types';
 import {skillOperations} from 'store/skill';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
+import { spotOperations } from 'store/spot';
 
-function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>): Promise<void> {
-  return dispatch(skillOperations.refreshSkillList());
+function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>): Promise<any> {
+  return Promise.all([
+      dispatch(skillOperations.refreshSkillList()),
+      dispatch(spotOperations.refreshSpotList())
+    ]
+  );
 }
 
 export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId =>

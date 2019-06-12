@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
+import * as spotOperations from './operations';
+import reducer from './reducers';
 
-export { SkillsPage, SpotsPage };
+export {
+  spotOperations
+};
+
+export default reducer;

@@ -21,6 +21,7 @@ import './App.css';
 import Background from './components/Background';
 import Header from './header/Header';
 import { SkillsPage } from './pages';
+import { SpotsPage } from './pages';
 
 const App: React.FC = () => {
   return (
@@ -40,6 +41,11 @@ const App: React.FC = () => {
               path="/skills"
               exact={true}
               component={SkillsPage}
+            />
+            <Route
+              path="/spots"
+              exact={true}
+              component={SpotsPage}
             />
           </Switch>
         </PageSection>
