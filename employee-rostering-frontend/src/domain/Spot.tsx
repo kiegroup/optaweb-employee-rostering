@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
+import DomainObject from './DomainObject';
+import Skill from './Skill';
 
-export { SkillsPage, SpotsPage };
+export default interface Spot extends DomainObject {
+  name: string;
+  requiredSkillSet: Skill[]; 
+}
