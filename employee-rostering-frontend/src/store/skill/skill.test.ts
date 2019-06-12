@@ -116,6 +116,9 @@ const state: AppState = {
     currentTenantId: 0,
     tenantList: []
   },
+  spotList: {
+    spotList: []
+  },
   skillList: {
     skillList: [
       {
