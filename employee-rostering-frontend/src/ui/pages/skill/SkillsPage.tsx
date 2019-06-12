@@ -26,7 +26,7 @@ export interface SkillComponents {
   name: string;
 }
 
-interface StateProps extends DataTableProps<Skill,SkillComponents> {
+interface StateProps extends DataTableProps<Skill> {
   tenantId: number;
 }
 
