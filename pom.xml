@@ -93,8 +93,7 @@
          To build the old frontend (for Spring Boot Backend development), use the profile "backend".
          To build the legacy application, use the profile "legacy". -->
     <module>employee-rostering-frontend</module>
-    <!-- Uncomment me when employee-rostering-backend builds -->
-    <!-- <module>employee-rostering-backend</module> -->
+    <module>employee-rostering-backend</module>
     <module>employee-rostering-benchmark</module>
     <module>employee-rostering-docs</module>
     <module>employee-rostering-distribution</module>
@@ -397,7 +396,7 @@
       </activation>
       <properties>
         <withoutGwt>true</withoutGwt>
-      </properties>	
+      </properties>
       <modules>
         <module>employee-rostering-gwtui</module>
         <module>employee-rostering-server</module>
