@@ -20,10 +20,11 @@ import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
+import RestServiceClient from './rest';
 import { AppState } from './types';
 import tenantReducer from './tenant';
-import RestServiceClient from './rest';
 import skillReducer from './skill/reducers';
+import spotReducer from './spot/reducers';
 
 export interface StoreConfig {
   readonly restBaseURL: string;
@@ -45,7 +46,8 @@ export function configureStore(
   // map reducers to state slices
   const rootReducer = combineReducers<AppState>({
     tenantData: tenantReducer,
-    skillList: skillReducer
+    skillList: skillReducer,
+    spotList: spotReducer
   });
 
   /* if (process.env.NODE_ENV !== 'production' && module.hot) {
