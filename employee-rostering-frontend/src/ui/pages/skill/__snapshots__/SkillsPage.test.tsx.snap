@@ -3,7 +3,7 @@
 exports[`Skills page should render correctly with a few skills 1`] = `
 <div>
   <Button
-    disabled={false}
+    isDisabled={false}
     onClick={[Function]}
   >
     Add
@@ -226,7 +226,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
 exports[`Skills page should render correctly with no skills 1`] = `
 <div>
   <Button
-    disabled={false}
+    isDisabled={false}
     onClick={[Function]}
   >
     Add

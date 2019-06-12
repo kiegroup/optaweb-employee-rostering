@@ -52,6 +52,7 @@ describe('Skill operations', () => {
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/`);
 
     store.clearActions();
+    client.get.mockClear();
 
     const skillToDelete: Skill = {tenantId: tenantId, id: 3214, name: "test"};
     onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, true);
@@ -61,6 +62,7 @@ describe('Skill operations', () => {
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
 
     store.clearActions();
+    client.delete.mockClear()
 
     const skillToAdd: Skill = {tenantId: tenantId, name: "test"};
     const skillWithUpdatedId: Skill = {...skillToAdd, id: 4, version: 0};
@@ -69,6 +71,17 @@ describe('Skill operations', () => {
     expect(store.getActions()).toEqual([actions.addSkill(skillWithUpdatedId)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/add`, skillToAdd);
+
+    store.clearActions();
+    client.post.mockClear()
+
+    const skillToUpdate: Skill = {tenantId: tenantId, name: "test", id: 4, version: 0};
+    const skillWithUpdatedVersion: Skill = {...skillToUpdate, id: 4, version: 1};
+    onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
+    await store.dispatch(skillOperations.updateSkill(skillToUpdate));
+    expect(store.getActions()).toEqual([actions.updateSkill(skillWithUpdatedVersion)]);
+    expect(client.post).toHaveBeenCalledTimes(1);
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
   });
 });
 
