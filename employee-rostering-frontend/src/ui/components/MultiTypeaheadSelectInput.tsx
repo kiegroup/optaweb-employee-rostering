@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import Skill from 'domain/Skill';
-import { Select, SelectProps, SelectOption, SelectVariant, CheckboxSelectGroup, CheckboxSelectOption } from '@patternfly/react-core';
+import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 
 export interface MultiTypeaheadSelectProps<T> {
     emptyText: string;
