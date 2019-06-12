@@ -24,6 +24,17 @@ exports[`Navigation should activate a navigation link matching the current path 
         Skills
       </Link>
     </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="spots"
+      key="spots"
+    >
+      <Link
+        to="/spots"
+      >
+        Spots
+      </Link>
+    </NavItem>
   </NavList>
 </Nav>
 `;
