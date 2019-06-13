@@ -25,9 +25,9 @@ import { spotOperations } from 'store/spot';
 
 function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>): Promise<any> {
   return Promise.all([
-      dispatch(skillOperations.refreshSkillList()),
-      dispatch(spotOperations.refreshSpotList())
-    ]
+    dispatch(skillOperations.refreshSkillList()),
+    dispatch(spotOperations.refreshSpotList())
+  ]
   );
 }
 
