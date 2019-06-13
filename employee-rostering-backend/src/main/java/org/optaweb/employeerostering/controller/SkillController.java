@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SkillController {
 
     @Autowired
-    SkillService skillService;
+    private SkillService skillService;
 
     @GetMapping("/tenant/{tenantId}/skill")
     public String getSkillList(@PathVariable Integer tenantId) {
