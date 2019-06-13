@@ -19,16 +19,15 @@ import * as React from 'react';
 import { DataTable, DataTableProps } from './DataTable';
 import { EditableComponent } from './EditableComponent';
 
-type MockData = [string, number];
-class MockDataTable extends DataTable<MockData, MockData, DataTableProps<MockData>> {
-  displayDataRow = jest.fn((data) => [<span key={0} id="viewer">{data[0]}</span>,
-    <span key={1}>{data[1]}</span>]);
-  createNewDataRow = jest.fn(() =>  [<input key={0} id="editor"/>,
-    <input key={1} />]);
+interface MockData {name: string; number: number}
+class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
+  createNewDataInstance = jest.fn(() => ({name: '', number: 0}));
+  displayDataRow = jest.fn((data) => [<span key={0} id="viewer">{data.name}</span>,
+    <span key={1}>{data.number}</span>]);
   editDataRow = jest.fn((data) => [<input key={0} id="editor"/>,
     <input key={1} />]);
   isValid = jest.fn();
-  extractDataFromRow = jest.fn((oldValue: MockData|{}, editedValue: MockData) => editedValue);
+
   updateData = jest.fn();
   addData = jest.fn();
   removeData = jest.fn();
@@ -52,8 +51,8 @@ describe('DataTable component', () => {
     expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
     expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
     expect(dataTable.editDataRow).toBeCalledTimes(2);
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(1, {}, twoRows.tableData[0]);
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(2, {}, twoRows.tableData[1]);
+    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
+    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
   });
 
   it('should render viewer initially', () => {
@@ -63,20 +62,22 @@ describe('DataTable component', () => {
   });
 
   it('should render editor for new row', () => {
-    const dataTable = new MockDataTable(twoRows);
-    dataTable.setState = jest.fn();
+    const dataTable = mount(<MockDataTable {...twoRows} />);
+    (dataTable.instance() as MockDataTable).createNewRow();
 
-    const table = shallow(dataTable.render());
-    dataTable.createNewRow();
-    expect(dataTable.setState).toBeCalled();
-    expect(dataTable.createNewDataRow).toBeCalled();
-    expect(dataTable.displayDataRow).toBeCalledTimes(2);
-    expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
-    expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
-    expect(dataTable.editDataRow).toBeCalledTimes(2);
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(1, {}, twoRows.tableData[0]);
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(2, {}, twoRows.tableData[1]);
-    expect(toJson(table)).toMatchSnapshot();
+    expect((dataTable.instance() as MockDataTable).createNewDataInstance).toBeCalled();
+    expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(4);
+    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
+    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
+    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(3, twoRows.tableData[0]);
+    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(4, twoRows.tableData[1]);
+    expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(5);
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(3, {name: '', number: 0});
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(4, twoRows.tableData[0]);
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(5, twoRows.tableData[1]);
+    expect(toJson(shallow(dataTable.instance().render() as JSX.Element))).toMatchSnapshot();
   });
 
   it('clicking edit button should edit row', () => {
@@ -84,8 +85,8 @@ describe('DataTable component', () => {
     const editableComponent1 = new EditableComponent({editor: <input />, viewer: <span>text 1</span>});
     const editableComponent2 = new EditableComponent({editor: <input />, viewer: <span>text 2</span>});
     const editableComponents: any[] = [editableComponent1, editableComponent2, null];
-    const dataStore: any = {};
-    const buttons = mount(dataTable.getEditButtons(dataStore, ["Hello", 1], editableComponents));
+    const data: MockData = {name: "Hello", number: 1};
+    const buttons = mount(dataTable.getEditButtons(data, {...data}, editableComponents));
 
     // Verify the button added itself to the array (note: will not be an EditableComponent despite
     // the fact it is a EditableComponent)
@@ -109,9 +110,8 @@ describe('DataTable component', () => {
   it('clicking delete button should delete row', () => {
     const dataTable = new MockDataTable(twoRows);
     const editableComponents: any[] = [null];
-    const dataStore: any = {};
-    const data = ["Hello", 1];
-    const buttons = mount(dataTable.getEditButtons(dataStore, ["Hello", 1], editableComponents));
+    const data: MockData = {name: "Hello", number: 1};
+    const buttons = mount(dataTable.getEditButtons(data, {...data}, editableComponents));
 
     buttons.find('button[aria-label="Delete"]').simulate('click');
 
@@ -124,8 +124,8 @@ describe('DataTable component', () => {
     const editableComponent1 = new EditableComponent({editor: <input />, viewer: <span>text 1</span>});
     const editableComponent2 = new EditableComponent({editor: <input />, viewer: <span>text 2</span>});
     const editableComponents: any[] = [editableComponent1, editableComponent2, null];
-    const dataStore: any = {};
-    const buttons = mount(dataTable.getEditButtons(dataStore, ["Hello", 1], editableComponents));
+    const data: MockData = {name: "Hello", number: 1};
+    const buttons = mount(dataTable.getEditButtons(data, {...data}, editableComponents));
 
     // Verify the button added itself to the array (note: will not be an EditableComponent despite
     // the fact it is a EditableComponent)
@@ -152,15 +152,15 @@ describe('DataTable component', () => {
     const dataTable = new MockDataTable(twoRows);
     dataTable.isValid.mockReturnValue(false);
     const editableComponents: any[] = [null];
-    const dataStore: any = {};
-    const buttons = mount(dataTable.getEditButtons(dataStore, ["Hello", 1], editableComponents));
+    const data: MockData = {name: "Hello", number: 1};
+    const buttons = mount(dataTable.getEditButtons(data, {...data}, editableComponents));
 
     buttons.find(EditableComponent).instance().setState({isEditing: true});
     buttons.update();
     buttons.find('button[aria-label="Save"]').simulate('click');
 
     expect(dataTable.isValid).toBeCalled();
-    expect(dataTable.isValid).toBeCalledWith(dataStore);
+    expect(dataTable.isValid).toBeCalledWith(data);
     expect(dataTable.updateData).toBeCalledTimes(0);
   });
 
@@ -168,9 +168,9 @@ describe('DataTable component', () => {
     const dataTable = new MockDataTable(twoRows);
     dataTable.isValid.mockReturnValue(true);
     const editableComponents: any[] = [null];
-    const dataStore: any = ["New Data", 10];
-    const oldValue = ["Hello", 1];
-    const buttons = mount(dataTable.getEditButtons(dataStore, ["Hello", 1], editableComponents));
+    const oldValue: MockData = {name: "Hello", number: 1};
+    const newValue: MockData = {name: "New Data", number: 2};
+    const buttons = mount(dataTable.getEditButtons(oldValue, newValue, editableComponents));
 
     buttons.find(EditableComponent).instance().setState({isEditing: true});
     buttons.update();
@@ -183,11 +183,9 @@ describe('DataTable component', () => {
     buttons.find('button[aria-label="Save"]').simulate('click');
 
     expect(dataTable.isValid).toBeCalled();
-    expect(dataTable.isValid).toBeCalledWith(dataStore);
+    expect(dataTable.isValid).toBeCalledWith(newValue);
     expect(dataTable.updateData).toBeCalled();
-    expect(dataTable.updateData).toBeCalledWith(dataStore);
-    expect(dataTable.extractDataFromRow).toBeCalled();
-    expect(dataTable.extractDataFromRow).toBeCalledWith(oldValue, dataStore);
+    expect(dataTable.updateData).toBeCalledWith(newValue);
     expect(editableComponentMock.stopEditing).toBeCalled();
   });
 
@@ -225,20 +223,18 @@ describe('DataTable component', () => {
     expect(dataTable.isValid).toBeCalledWith(dataStore);
     expect(dataTable.addData).toBeCalled();
     expect(dataTable.addData).toBeCalledWith(dataStore);
-    expect(dataTable.extractDataFromRow).toBeCalled();
-    expect(dataTable.extractDataFromRow).toBeCalledWith({}, dataStore);
     expect(dataTable.cancelAddingRow).toBeCalled();
   });
 });
 
-const noRows: DataTableProps<[string, number], [string, number]> = {
+const noRows: DataTableProps<MockData> = {
   title: "Data Table",
   columnTitles: ["Column 1", "Column 2"],
   tableData: [],
 };
 
-const twoRows: DataTableProps<[string, number], [string, number]> = {
+const twoRows: DataTableProps<MockData> = {
   title: "Data Table",
   columnTitles: ["Column 1", "Column 2"],
-  tableData: [["Some Data", 1], ["More Data", 2]],
+  tableData: [{name: "Some Data", number: 1}, {name: "More Data", number: 2}],
 };

@@ -24,7 +24,7 @@ describe('Spots page', () => {
     expect(toJson(spotsPage)).toMatchSnapshot();
   });
 
-  it('should render correctly with a few skills', () => {
+  it('should render correctly with a few spots', () => {
     const spotsPage = shallow(<SpotsPage {...twoSpots} />);
     expect(toJson(spotsPage)).toMatchSnapshot();
   });
@@ -43,7 +43,17 @@ describe('Spots page', () => {
     expect(toJson(editor)).toMatchSnapshot();
   });
 
-  it('should call addSkill on addData', () => {
+  it('should return a spot with the tenantId but no name, requiredSkillSet id or version on createNewDataInstance', () => {
+    const spotsPage = new SpotsPage(twoSpots);
+    const spot = spotsPage.createNewDataInstance();
+    expect(spot.tenantId).toEqual(twoSpots.tenantId);
+    expect(spot.name).toEqual("");
+    expect(spot.requiredSkillSet).toEqual([]);
+    expect(spot.id).toBeUndefined();
+    expect(spot.version).toBeUndefined();
+  })
+
+  it('should call addSpot on addData', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0};
     spotsPage.addData(spot);
@@ -51,7 +61,7 @@ describe('Spots page', () => {
     expect(twoSpots.addSpot).toBeCalledWith(spot);
   });
 
-  it('should call updateSkill on updateData', () => {
+  it('should call updateSpot on updateData', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};
     spotsPage.updateData(spot);
@@ -59,7 +69,7 @@ describe('Spots page', () => {
     expect(twoSpots.updateSpot).toBeCalledWith(spot);
   });
 
-  it('should call removeSkill on removeData', () => {
+  it('should call removeSpot on removeData', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};
     spotsPage.removeData(spot);
@@ -67,31 +77,16 @@ describe('Spots page', () => {
     expect(twoSpots.removeSpot).toBeCalledWith(spot);
   });
 
-  it('should extract skill from components on extractDataFromRow with no data', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const components = {name: "Spot", requiredSkillSet: []};
-    const result = spotsPage.extractDataFromRow({}, components);
-    expect(result).toEqual({...components, tenantId: 0});
-  });
-
-  it('should extract skill from components on extractDataFromRow with old data', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};
-    const components = {name: "New Spot", requiredSkillSet: twoSpots.tableData[1].requiredSkillSet};
-    const result = spotsPage.extractDataFromRow(spot, components);
-    expect(result).toEqual({...spot, ...components});
-  });
-
   it('should treat empty name as invalid', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const components = {name: "", requiredSkillSet: []};
+    const components = {tenantId: 0, name: "", requiredSkillSet: []};
     const result = spotsPage.isValid(components);
     expect(result).toEqual(false);
   });
 
   it('should treat non-empty name as valid', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const components = {name: "Spot", requiredSkillSet: []};
+    const components = {tenantId: 0, name: "Spot", requiredSkillSet: []};
     const result = spotsPage.isValid(components);
     expect(result).toEqual(true);
   });
