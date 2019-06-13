@@ -74,8 +74,7 @@ public class SkillControllerTest {
 
     @Test
     public void createSkillTest() throws Exception {
-        Skill skill = new Skill();
-        String body = (new ObjectMapper()).writeValueAsString(skill);
+        String body = (new ObjectMapper()).writeValueAsString(new Skill(0, "myName"));
         mvc.perform(MockMvcRequestBuilders
                             .post("/tenant/{tenantId}/skill/add", 0)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -88,8 +87,7 @@ public class SkillControllerTest {
 
     @Test
     public void updateSkillTest() throws Exception {
-        Skill skill = new Skill();
-        String body = (new ObjectMapper()).writeValueAsString(skill);
+        String body = (new ObjectMapper()).writeValueAsString(new Skill(0, "myName"));
         mvc.perform(MockMvcRequestBuilders
                             .put("/tenant/{tenantId}/skill/update", 0)
                             .contentType(MediaType.APPLICATION_JSON)
