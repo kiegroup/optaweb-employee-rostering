@@ -53,7 +53,7 @@ describe('Spots page', () => {
 
   it('should call updateSkill on updateData', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};;
+    const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};
     spotsPage.updateData(spot);
     expect(twoSpots.updateSpot).toBeCalled();
     expect(twoSpots.updateSpot).toBeCalledWith(spot);
@@ -76,7 +76,7 @@ describe('Spots page', () => {
 
   it('should extract skill from components on extractDataFromRow with old data', () => {
     const spotsPage = new SpotsPage(twoSpots);
-    const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};;
+    const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0, id: 1, version: 0};
     const components = {name: "New Spot", requiredSkillSet: twoSpots.tableData[1].requiredSkillSet};
     const result = spotsPage.extractDataFromRow(spot, components);
     expect(result).toEqual({...spot, ...components});
