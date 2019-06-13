@@ -17,6 +17,8 @@
 package org.optaweb.employeerostering.controller;
 
 import org.optaweb.employeerostering.domain.Skill;
+import org.optaweb.employeerostering.service.skill.SkillService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,28 +30,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class SkillController {
 
+    @Autowired
+    SkillService skillService;
+
     @GetMapping("/tenant/{tenantId}/skill")
     public String getSkillList(@PathVariable Integer tenantId) {
-        return "Get skill list";
+        return skillService.getSkillList(tenantId);
     }
 
     @GetMapping("/tenant/{tenantId}/skill/{id}")
     public String getSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
-        return "Get a skill";
+        return skillService.getSkill(tenantId, id);
     }
 
     @DeleteMapping("/tenant/{tenantId}/skill/{id}")
     public String deleteSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
+        skillService.deleteSkill(tenantId, id);
         return "Delete a skill";
     }
 
     @PostMapping("/tenant/{tenantId}/skill/add")
     public String createSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
+        skillService.createSkill(tenantId, skill);
         return "Create a skill";
     }
 
     @PutMapping("/tenant/{tenantId}/skill/update")
     public String updateSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
+        skillService.updateSkill(tenantId, skill);
         return "Update a skill";
     }
 }
