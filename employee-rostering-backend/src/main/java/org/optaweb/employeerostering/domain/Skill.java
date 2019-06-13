@@ -16,6 +16,9 @@
 
 package org.optaweb.employeerostering.domain;
 
+import javax.persistence.Entity;
+
+@Entity
 public class Skill extends AbstractPersistable {
 
     private String name;
