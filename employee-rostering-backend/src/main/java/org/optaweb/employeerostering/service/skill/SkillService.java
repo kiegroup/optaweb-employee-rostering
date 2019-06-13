@@ -17,25 +17,12 @@
 package org.optaweb.employeerostering.service.skill;
 
 import org.optaweb.employeerostering.domain.Skill;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 
 public interface SkillService {
 
-    @GetMapping("/tenant/{tenantId}/skill")
     public String getSkillList(Integer tenantId);
-
-    @GetMapping("/tenant/{tenantId}/skill/{id}")
     public String getSkill(Integer tenantId, Long id);
-
-    @DeleteMapping("/tenant/{tenantId}/skill/{id}")
     public void deleteSkill(Integer tenantId, Long id);
-
-    @PostMapping("/tenant/{tenantId}/skill/add")
     public void createSkill(Integer tenantId, Skill skill);
-
-    @PutMapping("/tenant/{tenantId}/skill/update")
     public void updateSkill(Integer tenantId, Skill skill);
 }
