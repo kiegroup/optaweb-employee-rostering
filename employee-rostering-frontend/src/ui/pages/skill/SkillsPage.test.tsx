@@ -17,6 +17,7 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { SkillsPage, Props } from './SkillsPage';
+import Skill from 'domain/Skill';
 
 describe('Skills page', () => {
   it('should render correctly with no skills', () => {
@@ -43,6 +44,15 @@ describe('Skills page', () => {
     expect(toJson(editor)).toMatchSnapshot();
   });
 
+  it('should return a skill with the tenantId but no name, id or version on createNewDataInstance', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const skill = skillsPage.createNewDataInstance();
+    expect(skill.tenantId).toEqual(twoSkills.tenantId);
+    expect(skill.name).toEqual("");
+    expect(skill.id).toBeUndefined();
+    expect(skill.version).toBeUndefined();
+  });
+
   it('should call addSkill on addData', () => {
     const skillsPage = new SkillsPage(twoSkills);
     const skill = {name: "Skill", tenantId: 0};
@@ -67,31 +77,16 @@ describe('Skills page', () => {
     expect(twoSkills.removeSkill).toBeCalledWith(skill);
   });
 
-  it('should extract skill from components on extractDataFromRow with no data', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const components = {name: "Skill"};
-    const result = skillsPage.extractDataFromRow({}, components);
-    expect(result).toEqual({...components, tenantId: 0});
-  });
-
-  it('should extract skill from components on extractDataFromRow with old data', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", id: 1, version: 0, tenantId: 0};
-    const components = {name: "New Skill"};
-    const result = skillsPage.extractDataFromRow(skill, components);
-    expect(result).toEqual({...skill, ...components});
-  });
-
   it('should treat empty name as invalid', () => {
     const skillsPage = new SkillsPage(twoSkills);
-    const components = {name: ""};
+    const components: Skill = {tenantId: 0, name: ""};
     const result = skillsPage.isValid(components);
     expect(result).toEqual(false);
   });
 
   it('should treat non-empty name as valid', () => {
     const skillsPage = new SkillsPage(twoSkills);
-    const components = {name: "Skill"};
+    const components: Skill = {tenantId: 0, name: "Skill"};
     const result = skillsPage.isValid(components);
     expect(result).toEqual(true);
   });
