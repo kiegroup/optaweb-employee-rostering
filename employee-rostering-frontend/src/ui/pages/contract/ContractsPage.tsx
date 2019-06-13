@@ -87,6 +87,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       />,
       <OptionalInput key={1}
         label="Max minutes per day"
+        valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerDay}
         onChange={value => data.maximumMinutesPerDay = value}
         isValid={value => /^\d+$/.test(value)}
@@ -94,6 +95,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       />,
       <OptionalInput key={2}
         label="Max minutes per week"
+        valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerWeek}
         onChange={value => data.maximumMinutesPerWeek = value}
         isValid={value => /^\d+$/.test(value)}
@@ -101,6 +103,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       />,
       <OptionalInput key={3}
         label="Max minutes per month"
+        valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerMonth}
         onChange={value => data.maximumMinutesPerMonth = value}
         isValid={value => /^\d+$/.test(value)}
@@ -108,6 +111,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       />,
       <OptionalInput key={4}
         label="Max minutes per year"
+        valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerYear}
         onChange={value => data.maximumMinutesPerYear = value}
         isValid={value => /^\d+$/.test(value)}
