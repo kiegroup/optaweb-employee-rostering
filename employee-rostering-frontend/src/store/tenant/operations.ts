@@ -22,11 +22,13 @@ import {skillOperations} from 'store/skill';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import { spotOperations } from 'store/spot';
+import { contractOperations } from 'store/contract';
 
 function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>): Promise<any> {
   return Promise.all([
     dispatch(skillOperations.refreshSkillList()),
-    dispatch(spotOperations.refreshSpotList())
+    dispatch(spotOperations.refreshSpotList()),
+    dispatch(contractOperations.refreshContractList())
   ]
   );
 }
