@@ -27,7 +27,7 @@ export const addContract: ThunkCommandFactory<Contract, AddContractAction> = con
     });
   };
 
-export const removeSkill: ThunkCommandFactory<Contract, RemoveContractAction> = contract =>
+export const removeContract: ThunkCommandFactory<Contract, RemoveContractAction> = contract =>
   (dispatch, state, client) => {
     let tenantId = contract.tenantId;
     let contractId = contract.id;
@@ -38,7 +38,7 @@ export const removeSkill: ThunkCommandFactory<Contract, RemoveContractAction> = 
     });
   };
 
-export const updateSkill: ThunkCommandFactory<Contract, UpdateContractAction> = contract =>
+export const updateContract: ThunkCommandFactory<Contract, UpdateContractAction> = contract =>
   (dispatch, state, client) => {
     let tenantId = contract.tenantId;
     return client.post<Contract>(`/tenant/${tenantId}/contract/update`, contract).then(updatedContract => {
@@ -46,7 +46,7 @@ export const updateSkill: ThunkCommandFactory<Contract, UpdateContractAction> = 
     });
   };
 
-export const refreshSkillList: ThunkCommandFactory<void, RefreshContractListAction> = () =>
+export const refreshContractList: ThunkCommandFactory<void, RefreshContractListAction> = () =>
   (dispatch, state, client) => {
     let tenantId = state().tenantData.currentTenantId;
     return client.get<Contract[]>(`/tenant/${tenantId}/contract/`).then(contractList => {
