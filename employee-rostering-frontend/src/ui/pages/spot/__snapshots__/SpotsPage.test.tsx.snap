@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Spots page should render correctly with a few skills 1`] = `
+exports[`Spots page should render correctly with a few spots 1`] = `
 <div>
   <Button
     isDisabled={false}

@@ -24,11 +24,6 @@ import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
 
-export interface SpotComponents {
-  name: string;
-  requiredSkillSet: Skill[];
-}
-
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
   skillList: Skill[];
@@ -56,13 +51,20 @@ const mapDispatchToProps: DispatchProps = {
 
 export type Props = StateProps & DispatchProps;
 
-export class SpotsPage extends DataTable<Spot,SpotComponents, Props> {
+export class SpotsPage extends DataTable<Spot, Props> {
   constructor(props: Props) {
     super(props);
-    this.extractDataFromRow = this.extractDataFromRow.bind(this);
     this.addData = this.addData.bind(this);
     this.updateData = this.updateData.bind(this);
     this.removeData = this.removeData.bind(this);
+  }
+
+  createNewDataInstance(): Spot {
+    return {
+      tenantId: this.props.tenantId,
+      name: "",
+      requiredSkillSet: [] 
+    };
   }
 
   displayDataRow(data: Spot): JSX.Element[] {
@@ -76,57 +78,29 @@ export class SpotsPage extends DataTable<Spot,SpotComponents, Props> {
       </ChipGroup>
     ];
   }
-
-  createNewDataRow(dataStore: SpotComponents): JSX.Element[] {
-    dataStore.name = "";
-    dataStore.requiredSkillSet = []
-    return [
-      <TextInput key={0} name="name"
-        aria-label="Name"
-        onChange={(value) => dataStore.name = value}
-      />,
-      <MultiTypeaheadSelectInput key={1}
-        emptyText={"Select required skills"}
-        options={this.props.skillList}
-        optionToStringMap={skill => skill.name}
-        defaultValue={[]}
-        onChange={selected => dataStore.requiredSkillSet = selected}
-      />
-    ];
-  }
   
-  editDataRow(dataStore: SpotComponents, data: Spot): JSX.Element[] {
-    dataStore.name = data.name;
-    dataStore.requiredSkillSet = data.requiredSkillSet;
+  editDataRow(data: Spot): JSX.Element[] {
     return [
       <TextInput key={0}
         name="name"
         defaultValue={data.name}
         aria-label="Name"
-        onChange={(value) => dataStore.name = value}
+        onChange={(value) => data.name = value}
       />,
       <MultiTypeaheadSelectInput key={1}
         emptyText={"Select required skills"}
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
         defaultValue={data.requiredSkillSet}
-        onChange={selected => dataStore.requiredSkillSet = selected}
+        onChange={selected => data.requiredSkillSet = selected}
       />
     ];
   }
   
-  isValid(editedValue: SpotComponents): boolean {
+  isValid(editedValue: Spot): boolean {
     return editedValue.name.length > 0;
   }
   
-  extractDataFromRow(oldValue: Spot|{}, editedValue: SpotComponents): Spot {
-    return {...oldValue,
-      name: editedValue.name,
-      requiredSkillSet: editedValue.requiredSkillSet,
-      tenantId: this.props.tenantId
-    };
-  }
-
   updateData(data: Spot): void {
     this.props.updateSpot(data);
   }
