@@ -1,0 +1,576 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Contracts page should render correctly with a few contracts 1`] = `
+<div>
+  <Button
+    isDisabled={false}
+    onClick={[Function]}
+  >
+    Add
+  </Button>
+  <Table
+    borders={true}
+    caption="Contracts"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Name",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Max Hours Per Day",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Max Hours Per Week",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Max Hours Per Month",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Max Hours Per Year",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onCollapse={null}
+    onExpand={null}
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TextInput
+                    aria-label="Name"
+                    className=""
+                    defaultValue="Contract 1"
+                    isDisabled={false}
+                    isReadOnly={false}
+                    isRequired={false}
+                    isValid={true}
+                    name="name"
+                    onChange={[Function]}
+                    type="text"
+                  />
+                }
+                viewer={
+                  <Text>
+                    Contract 1
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <OptionalInput
+                    defaultValue={null}
+                    isValid={[Function]}
+                    label="Max minutes per day"
+                    onChange={[Function]}
+                    valueMapper={[Function]}
+                  />
+                }
+                viewer={<Text />}
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <OptionalInput
+                    defaultValue={null}
+                    isValid={[Function]}
+                    label="Max minutes per week"
+                    onChange={[Function]}
+                    valueMapper={[Function]}
+                  />
+                }
+                viewer={<Text />}
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <OptionalInput
+                    defaultValue={null}
+                    isValid={[Function]}
+                    label="Max minutes per month"
+                    onChange={[Function]}
+                    valueMapper={[Function]}
+                  />
+                }
+                viewer={<Text />}
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <OptionalInput
+                    defaultValue={null}
+                    isValid={[Function]}
+                    label="Max minutes per year"
+                    onChange={[Function]}
+                    valueMapper={[Function]}
+                  />
+                }
+                viewer={<Text />}
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TextInput
+                    aria-label="Name"
+                    className=""
+                    defaultValue="Contract 2"
+                    isDisabled={false}
+                    isReadOnly={false}
+                    isRequired={false}
+                    isValid={true}
+                    name="name"
+                    onChange={[Function]}
+                    type="text"
+                  />
+                }
+                viewer={
+                  <Text>
+                    Contract 2
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <OptionalInput
+                    defaultValue={1}
+                    isValid={[Function]}
+                    label="Max minutes per day"
+                    onChange={[Function]}
+                    valueMapper={[Function]}
+                  />
+                }
+                viewer={
+                  <Text>
+                    1
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <OptionalInput
+                    defaultValue={null}
+                    isValid={[Function]}
+                    label="Max minutes per week"
+                    onChange={[Function]}
+                    valueMapper={[Function]}
+                  />
+                }
+                viewer={<Text />}
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <OptionalInput
+                    defaultValue={10}
+                    isValid={[Function]}
+                    label="Max minutes per month"
+                    onChange={[Function]}
+                    valueMapper={[Function]}
+                  />
+                }
+                viewer={
+                  <Text>
+                    10
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <OptionalInput
+                    defaultValue={120}
+                    isValid={[Function]}
+                    label="Max minutes per year"
+                    onChange={[Function]}
+                    valueMapper={[Function]}
+                  />
+                }
+                viewer={
+                  <Text>
+                    120
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span>
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                viewer={
+                  <span>
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader
+      className=""
+    />
+    <TableBody
+      className=""
+      onRowClick={[Function]}
+      rowKey="id"
+    />
+  </Table>
+</div>
+`;
+
+exports[`Contracts page should render correctly with no contracts 1`] = `
+<div>
+  <Button
+    isDisabled={false}
+    onClick={[Function]}
+  >
+    Add
+  </Button>
+  <Table
+    borders={true}
+    caption="Contracts"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Name",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Max Hours Per Day",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Max Hours Per Week",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Max Hours Per Month",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Max Hours Per Year",
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onCollapse={null}
+    onExpand={null}
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={Array []}
+    variant={null}
+  >
+    <TableHeader
+      className=""
+    />
+    <TableBody
+      className=""
+      onRowClick={[Function]}
+      rowKey="id"
+    />
+  </Table>
+</div>
+`;
+
+exports[`Contracts page should render the editor correctly 1`] = `
+<tr>
+  <td
+    key="0"
+  >
+    <TextInput
+      aria-label="Name"
+      className=""
+      defaultValue="Contract 2"
+      isDisabled={false}
+      isReadOnly={false}
+      isRequired={false}
+      isValid={true}
+      key="0"
+      name="name"
+      onChange={[Function]}
+      type="text"
+    />
+  </td>
+  <td
+    key="1"
+  >
+    <OptionalInput
+      defaultValue={1}
+      isValid={[Function]}
+      key="1"
+      label="Max minutes per day"
+      onChange={[Function]}
+      valueMapper={[Function]}
+    />
+  </td>
+  <td
+    key="2"
+  >
+    <OptionalInput
+      defaultValue={null}
+      isValid={[Function]}
+      key="2"
+      label="Max minutes per week"
+      onChange={[Function]}
+      valueMapper={[Function]}
+    />
+  </td>
+  <td
+    key="3"
+  >
+    <OptionalInput
+      defaultValue={10}
+      isValid={[Function]}
+      key="3"
+      label="Max minutes per month"
+      onChange={[Function]}
+      valueMapper={[Function]}
+    />
+  </td>
+  <td
+    key="4"
+  >
+    <OptionalInput
+      defaultValue={120}
+      isValid={[Function]}
+      key="4"
+      label="Max minutes per year"
+      onChange={[Function]}
+      valueMapper={[Function]}
+    />
+  </td>
+</tr>
+`;
+
+exports[`Contracts page should render the viewer correctly 1`] = `
+<tr>
+  <td
+    key="0"
+  >
+    <Text
+      key="0"
+    >
+      Contract 2
+    </Text>
+  </td>
+  <td
+    key="1"
+  >
+    <Text
+      key="1"
+    >
+      1
+    </Text>
+  </td>
+  <td
+    key="2"
+  >
+    <Text
+      key="2"
+    />
+  </td>
+  <td
+    key="3"
+  >
+    <Text
+      key="3"
+    >
+      10
+    </Text>
+  </td>
+  <td
+    key="4"
+  >
+    <Text
+      key="4"
+    >
+      120
+    </Text>
+  </td>
+</tr>
+`;
