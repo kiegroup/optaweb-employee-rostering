@@ -16,5 +16,6 @@
 
 import SkillsPage from './skill/SkillsPage';
 import SpotsPage from './spot/SpotsPage';
+import ContractsPage from './contract/ContractsPage';
 
-export { SkillsPage, SpotsPage };
+export { SkillsPage, SpotsPage, ContractsPage };
