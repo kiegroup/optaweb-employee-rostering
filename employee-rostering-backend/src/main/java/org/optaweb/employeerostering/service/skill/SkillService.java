@@ -17,12 +17,33 @@
 package org.optaweb.employeerostering.service.skill;
 
 import org.optaweb.employeerostering.domain.Skill;
+import org.optaweb.employeerostering.persistence.SkillRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface SkillService {
+@Service
+public class SkillService {
 
-    public String getSkillList(Integer tenantId);
-    public String getSkill(Integer tenantId, Long id);
-    public void deleteSkill(Integer tenantId, Long id);
-    public void createSkill(Integer tenantId, Skill skill);
-    public void updateSkill(Integer tenantId, Skill skill);
+    @Autowired
+    private SkillRepository skillRepository;
+
+    public String getSkillList(Integer tenantId) {
+        return "Get skill list";
+    }
+
+    public String getSkill(Integer tenantId, Long id) {
+        return "Get a skill";
+    }
+
+    public void deleteSkill(Integer tenantId, Long id) {
+        //TODO: delete skill
+    }
+
+    public void createSkill(Integer tenantId, Skill skill) {
+        //TODO: create skill
+    }
+
+    public void updateSkill(Integer tenantId, Skill skill) {
+        //TODO: update skill
+    }
 }
