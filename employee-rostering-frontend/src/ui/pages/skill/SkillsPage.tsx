@@ -22,10 +22,6 @@ import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 
-export interface SkillComponents {
-  name: string;
-}
-
 interface StateProps extends DataTableProps<Skill> {
   tenantId: number;
 }
@@ -51,40 +47,34 @@ const mapDispatchToProps: DispatchProps = {
 
 export type Props = StateProps & DispatchProps;
 
-export class SkillsPage extends DataTable<Skill,SkillComponents, Props> {
+export class SkillsPage extends DataTable<Skill, Props> {
   constructor(props: Props) {
     super(props);
-    this.extractDataFromRow = this.extractDataFromRow.bind(this);
     this.addData = this.addData.bind(this);
     this.updateData = this.updateData.bind(this);
     this.removeData = this.removeData.bind(this);
   }
 
+  createNewDataInstance(): Skill {
+    return {
+      tenantId: this.props.tenantId,
+      name: ""
+    };
+  }
+
   displayDataRow(data: Skill): JSX.Element[] {
     return [<Text key={0}>{data.name}</Text>];
   }
-
-  createNewDataRow(dataStore: SkillComponents): JSX.Element[] {
-    dataStore.name = "";
-    return [<TextInput key={0} name="name"
-      aria-label="Name"
-      onChange={(value) => dataStore.name = value}/>];
-  }
   
-  editDataRow(dataStore: SkillComponents, data: Skill): JSX.Element[] {
-    dataStore.name = data.name;
+  editDataRow(data: Skill): JSX.Element[] {
     return [<TextInput key={0} name="name"
       aria-label="Name"
       defaultValue={data.name}
-      onChange={(value) => dataStore.name = value}/>];
+      onChange={(value) => data.name = value}/>];
   }
   
-  isValid(editedValue: SkillComponents): boolean {
-    return editedValue.name.length > 0;
-  }
-  
-  extractDataFromRow(oldValue: Skill|{}, editedValue: SkillComponents): Skill {
-    return {...oldValue, name: editedValue.name, tenantId: this.props.tenantId};
+  isValid(data: Skill): boolean {
+    return data.name.length > 0;
   }
 
   updateData(data: Skill): void {

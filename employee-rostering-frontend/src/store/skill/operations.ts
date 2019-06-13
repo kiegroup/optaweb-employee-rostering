@@ -16,6 +16,7 @@
 
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
+import { spotOperations } from 'store/spot';
 import Skill from 'domain/Skill';
 import { AddSkillAction, RemoveSkillAction, UpdateSkillAction, RefreshSkillListAction } from './types';
 
@@ -43,6 +44,9 @@ export const updateSkill: ThunkCommandFactory<Skill, UpdateSkillAction> = skill 
     let tenantId = skill.tenantId;
     return client.post<Skill>(`/tenant/${tenantId}/skill/update`, skill).then(updatedSkill => {
       dispatch(actions.updateSkill(updatedSkill));
+      // Need to update spot list, which reference the old skill
+      // (also need to update employee list when it is added)
+      dispatch(spotOperations.refreshSpotList());
     });
   };
 

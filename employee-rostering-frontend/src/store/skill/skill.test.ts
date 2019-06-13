@@ -17,6 +17,7 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
+import * as spotActions from 'store/spot/actions';
 import reducer, { skillOperations } from './index';
 import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
 import {onGet, onPost, onDelete} from 'store/rest/RestServiceClient';
@@ -78,10 +79,13 @@ describe('Skill operations', () => {
     const skillToUpdate: Skill = {tenantId: tenantId, name: "test", id: 4, version: 0};
     const skillWithUpdatedVersion: Skill = {...skillToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
+    onGet(`/tenant/${tenantId}/spot/`, []);
     await store.dispatch(skillOperations.updateSkill(skillToUpdate));
-    expect(store.getActions()).toEqual([actions.updateSkill(skillWithUpdatedVersion)]);
+    expect(store.getActions()).toEqual([actions.updateSkill(skillWithUpdatedVersion), spotActions.refreshSpotList([])]);
     expect(client.post).toHaveBeenCalledTimes(1);
+    expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
+    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/`);
   });
 });
 
