@@ -33,50 +33,45 @@ export interface DataTableProps<T> {
 }
 
 interface DataTableState<T> {
-  newRow: IRow | null;
+  newRowData: T|null;
   currentFilter: (rowData: T) => boolean;
 }
 
-export abstract class DataTable<T,C, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
+export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
   constructor(props: P) {
     super(props);
     this.createNewRow = this.createNewRow.bind(this);
     this.cancelAddingRow = this.cancelAddingRow.bind(this);
     this.convertDataToTableRow = this.convertDataToTableRow.bind(this);
-    this.state = {newRow: null, currentFilter: (t) => true};
+    this.state = {newRowData: null, currentFilter: (t) => true};
   }
 
+  abstract createNewDataInstance(): T;
   abstract displayDataRow(data: T): JSX.Element[];
-  abstract editDataRow(dataStore: C, data: T): JSX.Element[];
-  abstract createNewDataRow(dataStore: C): JSX.Element[];
-  abstract isValid(editedValue: C): boolean;
-  abstract extractDataFromRow(oldValue: T|{}, editedValue: C): T;
+  abstract editDataRow(data: T): JSX.Element[];
+  abstract isValid(editedValue: T): boolean;
 
   abstract updateData(data: T): void;
   abstract addData(data: T): void;
   abstract removeData(data: T): void;
 
   createNewRow() {
-    if (this.state.newRow === null) {
-      const dataStore: any = {};
-      const newRowComponents: JSX.Element[] = this.createNewDataRow(dataStore);
-      const newRow: IRow = { cells: newRowComponents.map(c => {return {title: c}}).concat([{
-        title: this.getAddButtons(dataStore)}])};
-      this.setState({...this.state, newRow: newRow});
+    if (this.state.newRowData === null) {
+      this.setState({...this.state, newRowData: this.createNewDataInstance()});
     }
   }
 
   cancelAddingRow() {
-    this.setState({...this.state, newRow: null});
+    this.setState({...this.state, newRowData: null});
   }
 
-  getAddButtons(dataStore: C): JSX.Element {
+  getAddButtons(newData: T): JSX.Element {
     return <span>
       <Button aria-label="Save"
         variant={ButtonVariant.link}
         onClick={() => {
-          if (this.isValid(dataStore)) {
-            this.addData(this.extractDataFromRow({},dataStore));
+          if (this.isValid(newData)) {
+            this.addData(newData);
             this.cancelAddingRow();
           }
         }}>
@@ -90,7 +85,7 @@ export abstract class DataTable<T,C, P extends DataTableProps<T>> extends React.
     </span>;
   }
 
-  getEditButtons(dataStore: C, data: T, editableComponents: EditableComponent[]): JSX.Element {
+  getEditButtons(originalData: T, editedData: T, editableComponents: EditableComponent[]): JSX.Element {
     return <EditableComponent ref={(c) => {editableComponents[editableComponents.length-1] = c as EditableComponent;}}
       viewer={<span>
         <Button aria-label="Edit"
@@ -103,7 +98,7 @@ export abstract class DataTable<T,C, P extends DataTableProps<T>> extends React.
         <Button aria-label="Delete"
           variant={ButtonVariant.link}
           onClick={() => {
-            this.removeData(data);
+            this.removeData(originalData);
           }}>
           <TrashIcon />
         </Button>
@@ -112,8 +107,8 @@ export abstract class DataTable<T,C, P extends DataTableProps<T>> extends React.
         <Button aria-label="Save"
           variant={ButtonVariant.link}
           onClick={() => {
-            if (this.isValid(dataStore)) {
-              this.updateData(this.extractDataFromRow(data,dataStore));
+            if (this.isValid(editedData)) {
+              this.updateData(editedData);
               editableComponents.forEach(c => c.stopEditing());
             }
           }}>
@@ -130,16 +125,16 @@ export abstract class DataTable<T,C, P extends DataTableProps<T>> extends React.
   }
 
   convertDataToTableRow(data: T): IRow {
-    const dataStore: any = {};
+    const editedData: T = {...data};
     const viewers = this.displayDataRow(data);
-    const editors = this.editDataRow(dataStore, data);
+    const editors = this.editDataRow(editedData);
     const length = viewers.length
     const editableComponents: EditableComponent[] = new Array(length + 1);
     const cellContents = viewers.map((viewer, index) => {return { title:
       <EditableComponent viewer={viewer}
         editor={editors[index]}
         ref={(c) => editableComponents[index] = c as EditableComponent}
-      />} }).concat([{title: this.getEditButtons(dataStore, data, editableComponents)}]);
+      />} }).concat([{title: this.getEditButtons(data, editedData, editableComponents)}]);
     return {
       cells: cellContents
     };
@@ -152,12 +147,18 @@ export abstract class DataTable<T,C, P extends DataTableProps<T>> extends React.
 
   // Use for SNAPSHOT testing
   renderEditor(data: T): JSX.Element {
-    const dataStore: any = {};
-    return <tr>{this.editDataRow(dataStore, data).map((c,index) => <td key={index}>{c}</td>)}</tr>;
+    const editedData: T = {...data};
+    return <tr>{this.editDataRow(editedData).map((c,index) => <td key={index}>{c}</td>)}</tr>;
   }
 
   render() {
-    const additionalRows: IRow[] = (this.state.newRow !== null)? [this.state.newRow] : [];
+    const additionalRows: IRow[] = (this.state.newRowData !== null)?
+      [
+        {
+          cells: this.editDataRow(this.state.newRowData).map(c => {return {title: c}})
+            .concat([{title: this.getAddButtons(this.state.newRowData)}])
+        }
+      ] : [];
     const rows = additionalRows.concat(this.props.tableData
       .filter(this.state.currentFilter).map(this.convertDataToTableRow));
     const columns = this.props.columnTitles.map(t => { 
@@ -165,7 +166,7 @@ export abstract class DataTable<T,C, P extends DataTableProps<T>> extends React.
     }).concat([{title: '', cellTransforms: [headerCol], props: {}}]);
     return (
       <div>
-        <Button isDisabled={this.state.newRow !== null} onClick={this.createNewRow}>Add</Button>
+        <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>Add</Button>
         <Table caption={this.props.title} cells={columns} rows={rows}>
           <TableHeader />
           <TableBody />
