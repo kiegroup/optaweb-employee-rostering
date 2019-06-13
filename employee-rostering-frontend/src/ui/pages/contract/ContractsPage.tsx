@@ -86,24 +86,28 @@ export class ContractsPage extends DataTable<Contract, Props> {
         onChange={(value) => data.name = value}
       />,
       <OptionalInput key={1}
+        label="Max minutes per day"
         defaultValue={data.maximumMinutesPerDay}
         onChange={value => data.maximumMinutesPerDay = value}
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
       <OptionalInput key={2}
+        label="Max minutes per week"
         defaultValue={data.maximumMinutesPerWeek}
         onChange={value => data.maximumMinutesPerWeek = value}
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
       <OptionalInput key={3}
+        label="Max minutes per month"
         defaultValue={data.maximumMinutesPerMonth}
         onChange={value => data.maximumMinutesPerMonth = value}
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
       <OptionalInput key={4}
+        label="Max minutes per year"
         defaultValue={data.maximumMinutesPerYear}
         onChange={value => data.maximumMinutesPerYear = value}
         isValid={value => /^\d+$/.test(value)}
