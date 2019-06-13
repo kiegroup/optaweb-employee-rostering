@@ -5,7 +5,7 @@ exports[`OptionalInput component should render correctly 1`] = `
   <TextInput
     aria-label="data"
     className=""
-    defaultValue="[object Object]"
+    defaultValue="Some name"
     isDisabled={false}
     isReadOnly={false}
     isRequired={false}
