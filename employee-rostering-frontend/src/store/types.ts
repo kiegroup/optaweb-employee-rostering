@@ -20,6 +20,7 @@ import RestServiceClient from './rest/RestServiceClient';
 import { TenantData } from 'store/tenant/types';
 import { SkillList } from 'store/skill/types';
 import { SpotList } from 'store/spot/types';
+import { ContractList } from './contract/types';
 
 /**
  * ThunkCommand is a ThunkAction that has no result (it's typically something like
@@ -55,4 +56,5 @@ export interface AppState {
   readonly tenantData: TenantData;
   readonly skillList: SkillList;
   readonly spotList: SpotList;
+  readonly contractList: ContractList;
 }

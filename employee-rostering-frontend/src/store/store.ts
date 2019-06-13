@@ -25,6 +25,7 @@ import { AppState } from './types';
 import tenantReducer from './tenant';
 import skillReducer from './skill/reducers';
 import spotReducer from './spot/reducers';
+import contractReducer from './contract/reducers';
 
 export interface StoreConfig {
   readonly restBaseURL: string;
@@ -47,7 +48,8 @@ export function configureStore(
   const rootReducer = combineReducers<AppState>({
     tenantData: tenantReducer,
     skillList: skillReducer,
-    spotList: spotReducer
+    spotList: spotReducer,
+    contractList: contractReducer
   });
 
   /* if (process.env.NODE_ENV !== 'production' && module.hot) {
