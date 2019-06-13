@@ -1,12 +1,12 @@
 /*
  * Copyright 2019 Red Hat, Inc. and/or its affiliates.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,20 +17,20 @@ import React from 'react';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 
 export interface MultiTypeaheadSelectProps<T> {
-    emptyText: string;
-    options: T[];
-    defaultValue: T[];
-    optionToStringMap: (option: T) => string;
-    onChange: (selected: T[]) => void;
+  emptyText: string;
+  options: T[];
+  defaultValue: T[];
+  optionToStringMap: (option: T) => string;
+  onChange: (selected: T[]) => void;
 }
 
 export interface MultiTypeaheadSelectState<T> {
-    isExpanded: boolean;
-    selected: T[];
+  isExpanded: boolean;
+  selected: T[];
 }
 
 export default class MultiTypeaheadSelectInput<T> extends React.Component<MultiTypeaheadSelectProps<T>,
-  MultiTypeaheadSelectState<T>>  {
+MultiTypeaheadSelectState<T>>  {
 
   constructor(props: MultiTypeaheadSelectProps<T>) {
     super(props);
@@ -47,7 +47,7 @@ export default class MultiTypeaheadSelectInput<T> extends React.Component<MultiT
 
   onToggle(isExpanded: boolean) {
     this.setState({
-        isExpanded
+      isExpanded
     });
   }
 
@@ -75,9 +75,9 @@ export default class MultiTypeaheadSelectInput<T> extends React.Component<MultiT
 
   clearSelection() {
     this.setState({
-        selected: [],
-        isExpanded: false,
-      });
+      selected: [],
+      isExpanded: false,
+    });
     this.props.onChange([]);
   }
 
