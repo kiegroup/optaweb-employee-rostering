@@ -26,88 +26,121 @@ describe('Contract operations', () => {
   it('should dispatch actions and call client', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const mockSkillList = [{
+    const mockContractList: Contract[] = [{
       tenantId: tenantId,
       id: 0,
       version: 0,
-      name: "Skill 1"
-    },
-    {
-      tenantId: tenantId,
-      id: 1,
-      version: 0,
-      name: "Skill 2"
-    },
-    {
-      tenantId: tenantId,
-      id: 2,
-      version: 0,
-      name: "Skill 3"
+      name: "Contract 1",
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
     }];
 
-    onGet(`/tenant/${tenantId}/skill/`, mockSkillList);
-    await store.dispatch(skillOperations.refreshSkillList());
-    expect(store.getActions()).toEqual([actions.refreshSkillList(mockSkillList)]);
+    onGet(`/tenant/${tenantId}/contract/`, mockContractList);
+    await store.dispatch(contractOperations.refreshContractList());
+    expect(store.getActions()).toEqual([actions.refreshContractList(mockContractList)]);
     expect(client.get).toHaveBeenCalledTimes(1);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/`);
+    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/`);
 
     store.clearActions();
     client.get.mockClear();
 
-    const skillToDelete: Skill = {tenantId: tenantId, id: 3214, name: "test"};
-    onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, true);
-    await store.dispatch(skillOperations.removeSkill(skillToDelete));
-    expect(store.getActions()).toEqual([actions.removeSkill(skillToDelete)]);
+    const contractToDelete = mockContractList[0];
+    onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, true);
+    await store.dispatch(contractOperations.removeContract(contractToDelete));
+    expect(store.getActions()).toEqual([actions.removeContract(contractToDelete)]);
     expect(client.delete).toHaveBeenCalledTimes(1);
-    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
+    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
 
     store.clearActions();
     client.delete.mockClear()
 
-    const skillToAdd: Skill = {tenantId: tenantId, name: "test"};
-    const skillWithUpdatedId: Skill = {...skillToAdd, id: 4, version: 0};
-    onPost(`/tenant/${tenantId}/skill/add`, skillToAdd, skillWithUpdatedId);
-    await store.dispatch(skillOperations.addSkill(skillToAdd));
-    expect(store.getActions()).toEqual([actions.addSkill(skillWithUpdatedId)]);
+    const contractToAdd: Contract = {tenantId: tenantId,
+      name: "Contract 1",
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
+    };
+    const contractWithUpdatedId: Contract = {...contractToAdd, id: 4, version: 0};
+    onPost(`/tenant/${tenantId}/contract/add`, contractToAdd, contractWithUpdatedId);
+    await store.dispatch(contractOperations.addContract(contractToAdd));
+    expect(store.getActions()).toEqual([actions.addContract(contractWithUpdatedId)]);
     expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/add`, skillToAdd);
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/add`, contractToAdd);
 
     store.clearActions();
     client.post.mockClear()
 
-    const skillToUpdate: Skill = {tenantId: tenantId, name: "test", id: 4, version: 0};
-    const skillWithUpdatedVersion: Skill = {...skillToUpdate, id: 4, version: 1};
-    onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
-    await store.dispatch(skillOperations.updateSkill(skillToUpdate));
-    expect(store.getActions()).toEqual([actions.updateSkill(skillWithUpdatedVersion)]);
+    const contractToUpdate: Contract = {tenantId: tenantId,
+      name: "Contract 1",
+      id: 4,
+      version: 0,
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
+    };
+    const contractWithUpdatedVersion: Contract = {...contractToUpdate, id: 4, version: 1};
+    onPost(`/tenant/${tenantId}/contract/update`, contractToUpdate, contractWithUpdatedVersion);
+    await store.dispatch(contractOperations.updateContract(contractToUpdate));
+    expect(store.getActions()).toEqual([actions.updateContract(contractWithUpdatedVersion)]);
     expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/update`, contractToUpdate);
   });
 });
 
 describe('Contract reducers', () => {
-  const addedSkill: Skill = {tenantId: 0, id: 4321, version: 0, name: "Skill 1"};
-  const updatedSkill: Skill = {tenantId: 0, id: 1234, version: 1, name: "Updated Skill 2"};
-  const deletedSkill: Skill = {tenantId: 0, id: 2312, version: 0, name: "Skill 3"};
-  it('add skill', () => {
+  const addedContract: Contract = {
+    tenantId: 0,
+    id: 4,
+    version: 0,
+    name: "Contract 4",
+    maximumMinutesPerDay: null,
+    maximumMinutesPerWeek: 1,
+    maximumMinutesPerMonth: 2,
+    maximumMinutesPerYear: 3
+  };
+  const updatedContract: Contract = {
+    tenantId: 0,
+    id: 1,
+    version: 0,
+    name: "Updated Contract 2",
+    maximumMinutesPerDay: 1,
+    maximumMinutesPerWeek: 2,
+    maximumMinutesPerMonth: 3,
+    maximumMinutesPerYear: 4
+  };
+  const deletedContract: Contract =       {
+    tenantId: 0,
+    id: 2,
+    version: 0,
+    name: "Contract 3",
+    maximumMinutesPerDay: 100,
+    maximumMinutesPerWeek: null,
+    maximumMinutesPerMonth: null,
+    maximumMinutesPerYear: 100
+  };
+  it('add contract', () => {
     expect(
-      reducer(state.skillList, actions.addSkill(addedSkill))
-    ).toEqual({skillList: withElement(state.skillList.skillList, addedSkill)})
+      reducer(state.contractList, actions.addContract(addedContract))
+    ).toEqual({contractList: withElement(state.contractList.contractList, addedContract)})
   });
-  it('remove skill', () => {
+  it('remove contract', () => {
     expect(
-      reducer(state.skillList, actions.removeSkill(deletedSkill)),
-    ).toEqual({skillList: withoutElement(state.skillList.skillList, deletedSkill)})
+      reducer(state.contractList, actions.removeContract(deletedContract)),
+    ).toEqual({contractList: withoutElement(state.contractList.contractList, deletedContract)})
   });
-  it('update skill', () => {
+  it('update contract', () => {
     expect(
-      reducer(state.skillList, actions.updateSkill(updatedSkill)),
-    ).toEqual({skillList: withUpdatedElement(state.skillList.skillList, updatedSkill)})
+      reducer(state.contractList, actions.updateContract(updatedContract)),
+    ).toEqual({contractList: withUpdatedElement(state.contractList.contractList, updatedContract)})
   });
-  it('refresh skill list', () => {
+  it('refresh contract list', () => {
     expect(
-      reducer(state.skillList, actions.refreshSkillList([addedSkill])),
-    ).toEqual({skillList: [addedSkill]});
+      reducer(state.contractList, actions.refreshContractList([addedContract])),
+    ).toEqual({contractList: [addedContract]});
   });
 });
 
@@ -118,6 +151,40 @@ const state: AppState = {
   },
   spotList: {
     spotList: []
+  },
+  contractList: {
+    contractList: [
+      {
+        tenantId: 0,
+        id: 0,
+        version: 0,
+        name: "Contract 1",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null
+      },
+      {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: "Contract 2",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: 100,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null
+      },
+      {
+        tenantId: 0,
+        id: 2,
+        version: 0,
+        name: "Contract 3",
+        maximumMinutesPerDay: 100,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: 100
+      }
+    ]
   },
   skillList: {
     skillList: [
