@@ -16,21 +16,22 @@
 import React from 'react';
 import { Switch, TextInput } from '@patternfly/react-core';
 
-export interface OptionalInputProps<T extends Record<string, any>> {
+export interface OptionalInputProps<T> {
   defaultValue: T|null;
   isValid: (value: string) => boolean;
   valueMapper: (value: string) => T;
+  valueToString: (value: T) => string;
   onChange: (value: T|null) => void;
   label: string;
 }
 
-interface OptionalInputState<T extends Record<string, any>> {
+interface OptionalInputState<T> {
   inputValue: T|null;
   currentValue: T|null;
   isChecked: boolean;
 }
 
-export default class OptionalInput<T  extends Record<string, any>> extends React.Component<OptionalInputProps<T>,OptionalInputState<T>> {
+export default class OptionalInput<T> extends React.Component<OptionalInputProps<T>,OptionalInputState<T>> {
   constructor(props: OptionalInputProps<T>) {
     super(props);
     this.state = {
@@ -57,7 +58,7 @@ export default class OptionalInput<T  extends Record<string, any>> extends React
     return (
       <span>
         <TextInput aria-label={this.props.label} isDisabled={!isChecked}
-          defaultValue={(this.props.defaultValue !== null)? this.props.defaultValue.toString() : ''}
+          defaultValue={(this.props.defaultValue !== null)? this.props.valueToString(this.props.defaultValue) : ''}
           onChange={(value) => {
             if (this.props.isValid(value)) {
               const mappedValue = this.props.valueMapper(value);

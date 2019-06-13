@@ -103,12 +103,15 @@ describe('OptionalInput component', () => {
 
   it('should render correctly', () => {
     const select = shallow(<OptionalInput {...dataProps}/>);
+    expect(dataProps.valueToString).toBeCalled();
+    expect(dataProps.valueToString).toBeCalledWith(dataProps.defaultValue);
     expect(toJson(select)).toMatchSnapshot();
   });
 });
 
 const emptyProps: OptionalInputProps<MockData> = {
   defaultValue: null,
+  valueToString: jest.fn(value => value.name),
   valueMapper: jest.fn(option => ({name: option})),
   onChange: jest.fn(),
   isValid: jest.fn(),
@@ -117,6 +120,7 @@ const emptyProps: OptionalInputProps<MockData> = {
 
 const dataProps: OptionalInputProps<MockData> = {
   defaultValue: {name: "Some name"},
+  valueToString: jest.fn(value => value.name),
   valueMapper: jest.fn(option => ({name: option})),
   onChange: jest.fn(),
   isValid: jest.fn(),
