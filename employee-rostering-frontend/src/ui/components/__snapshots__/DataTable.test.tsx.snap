@@ -300,7 +300,7 @@ exports[`DataTable component should render correctly with no rows 1`] = `
 exports[`DataTable component should render editor for new row 1`] = `
 <div>
   <Button
-    isDisabled={false}
+    isDisabled={true}
     onClick={[Function]}
   >
     Add
@@ -345,6 +345,44 @@ exports[`DataTable component should render editor for new row 1`] = `
     rowLabeledBy="simple-node"
     rows={
       Array [
+        Object {
+          "cells": Array [
+            Object {
+              "title": <input
+                id="editor"
+              />,
+            },
+            Object {
+              "title": <input />,
+            },
+            Object {
+              "title": <span>
+                <Button
+                  aria-label="Save"
+                  onClick={[Function]}
+                  variant="link"
+                >
+                  <SaveIcon
+                    color="currentColor"
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+                <Button
+                  aria-label="Cancel"
+                  onClick={[Function]}
+                  variant="link"
+                >
+                  <CloseIcon
+                    color="currentColor"
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>,
+            },
+          ],
+        },
         Object {
           "cells": Array [
             Object {
