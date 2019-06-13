@@ -20,7 +20,7 @@ import MultiTypeaheadSelectInput, { MultiTypeaheadSelectProps } from './MultiTyp
 
 interface MockData {
   name: string;
-};
+}
 
 type Select = MultiTypeaheadSelectInput<MockData>;
 describe('MultiTypeaheadSelectInput component', () => {
