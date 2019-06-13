@@ -103,6 +103,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     label="Max minutes per day"
                     onChange={[Function]}
                     valueMapper={[Function]}
+                    valueToString={[Function]}
                   />
                 }
                 viewer={<Text />}
@@ -117,6 +118,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     label="Max minutes per week"
                     onChange={[Function]}
                     valueMapper={[Function]}
+                    valueToString={[Function]}
                   />
                 }
                 viewer={<Text />}
@@ -131,6 +133,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     label="Max minutes per month"
                     onChange={[Function]}
                     valueMapper={[Function]}
+                    valueToString={[Function]}
                   />
                 }
                 viewer={<Text />}
@@ -145,6 +148,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     label="Max minutes per year"
                     onChange={[Function]}
                     valueMapper={[Function]}
+                    valueToString={[Function]}
                   />
                 }
                 viewer={<Text />}
@@ -242,6 +246,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     label="Max minutes per day"
                     onChange={[Function]}
                     valueMapper={[Function]}
+                    valueToString={[Function]}
                   />
                 }
                 viewer={
@@ -260,6 +265,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     label="Max minutes per week"
                     onChange={[Function]}
                     valueMapper={[Function]}
+                    valueToString={[Function]}
                   />
                 }
                 viewer={<Text />}
@@ -274,6 +280,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     label="Max minutes per month"
                     onChange={[Function]}
                     valueMapper={[Function]}
+                    valueToString={[Function]}
                   />
                 }
                 viewer={
@@ -292,6 +299,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     label="Max minutes per year"
                     onChange={[Function]}
                     valueMapper={[Function]}
+                    valueToString={[Function]}
                   />
                 }
                 viewer={
@@ -486,6 +494,7 @@ exports[`Contracts page should render the editor correctly 1`] = `
       label="Max minutes per day"
       onChange={[Function]}
       valueMapper={[Function]}
+      valueToString={[Function]}
     />
   </td>
   <td
@@ -498,6 +507,7 @@ exports[`Contracts page should render the editor correctly 1`] = `
       label="Max minutes per week"
       onChange={[Function]}
       valueMapper={[Function]}
+      valueToString={[Function]}
     />
   </td>
   <td
@@ -510,6 +520,7 @@ exports[`Contracts page should render the editor correctly 1`] = `
       label="Max minutes per month"
       onChange={[Function]}
       valueMapper={[Function]}
+      valueToString={[Function]}
     />
   </td>
   <td
@@ -522,6 +533,7 @@ exports[`Contracts page should render the editor correctly 1`] = `
       label="Max minutes per year"
       onChange={[Function]}
       valueMapper={[Function]}
+      valueToString={[Function]}
     />
   </td>
 </tr>
