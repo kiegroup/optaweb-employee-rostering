@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter} from 'ui/components/DataTable';
 import {contractOperations} from 'store/contract';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
@@ -66,7 +66,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
     ];
   }
   
-  editDataRow(data: ReadonlyPartial<Contract>, setProperty: (key: keyof Contract, value: Contract[keyof Contract]|undefined) => void): JSX.Element[] {
+  editDataRow(data: ReadonlyPartial<Contract>, setProperty: PropertySetter<Contract>): JSX.Element[] {
     return [
       <TextInput key={0}
         name="name"
