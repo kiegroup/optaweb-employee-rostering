@@ -18,6 +18,7 @@ import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import Contract from 'domain/Contract';
 import { AddContractAction, RemoveContractAction, UpdateContractAction, RefreshContractListAction } from './types';
+import { employeeOperations } from 'store/employee';
 
 export const addContract: ThunkCommandFactory<Contract, AddContractAction> = contract =>
   (dispatch, state, client) => {
@@ -43,6 +44,7 @@ export const updateContract: ThunkCommandFactory<Contract, UpdateContractAction>
     const tenantId = contract.tenantId;
     return client.post<Contract>(`/tenant/${tenantId}/contract/update`, contract).then(updatedContract => {
       dispatch(actions.updateContract(updatedContract));
+      dispatch(employeeOperations.refreshEmployeeList());
     });
   };
 
