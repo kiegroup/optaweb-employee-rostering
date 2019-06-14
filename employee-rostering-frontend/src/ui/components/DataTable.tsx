@@ -22,7 +22,7 @@ import {
   headerCol,
   IRow
 } from '@patternfly/react-table';
-import {Button, ButtonVariant} from '@patternfly/react-core';
+import {Button, ButtonVariant, Pagination, Card} from '@patternfly/react-core';
 import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { EditableComponent } from './EditableComponent';
 
@@ -34,6 +34,8 @@ export interface DataTableProps<T> {
 
 interface DataTableState<T> {
   newRowData: Partial<T>|null;
+  page: number;
+  perPage: number;
   currentFilter: (rowData: T) => boolean;
 }
 
@@ -46,7 +48,9 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     this.createNewRow = this.createNewRow.bind(this);
     this.cancelAddingRow = this.cancelAddingRow.bind(this);
     this.convertDataToTableRow = this.convertDataToTableRow.bind(this);
-    this.state = {newRowData: null, currentFilter: (t) => true};
+    this.state = {newRowData: null, currentFilter: (t) => true, page: 1, perPage: 10};
+    this.onSetPage = this.onSetPage.bind(this);
+    this.onPerPageSelect = this.onPerPageSelect.bind(this);
   }
 
   abstract displayDataRow(data: T): JSX.Element[];
@@ -56,6 +60,20 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
   abstract updateData(data: T): void;
   abstract addData(data: T): void;
   abstract removeData(data: T): void;
+
+  onSetPage(event: any, pageNumber: number): void {
+    this.setState({
+      page: pageNumber
+    });
+  }
+
+  onPerPageSelect(event: any, perPage: number): void {
+    const newPage = Math.floor(((this.state.page - 1) * this.state.perPage) / perPage) + 1;
+    this.setState({
+      page: newPage,
+      perPage
+    });
+  }
 
   createNewRow() {
     if (this.state.newRowData === null) {
@@ -166,19 +184,33 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
             .concat([{title: this.getAddButtons(this.state.newRowData)}])
         }
       ] : [];
-    const rows = additionalRows.concat(this.props.tableData
-      .filter(this.state.currentFilter).map(this.convertDataToTableRow));
+    const rowsOnPage = this.props.tableData
+      .filter(this.state.currentFilter).map(this.convertDataToTableRow)
+      .filter((row, index) => this.state.perPage * (this.state.page - 1) <= index &&
+          index <= this.state.perPage * this.state.page);
+
+    const rows = additionalRows.concat(rowsOnPage);
     const columns = this.props.columnTitles.map(t => { 
       return { title: t, cellTransforms: [headerCol], props: {} };
     }).concat([{title: '', cellTransforms: [headerCol], props: {}}]);
     return (
-      <div>
-        <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>Add</Button>
+      <Card>
+        <span>
+          <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>Add</Button>
+        </span>
+        <Pagination
+          itemCount={this.props.tableData.length}
+          perPage={this.state.perPage}
+          page={this.state.page}
+          onSetPage={this.onSetPage}
+          widgetId="pagination-options-menu-top"
+          onPerPageSelect={this.onPerPageSelect}
+        />
         <Table caption={this.props.title} cells={columns} rows={rows}>
           <TableHeader />
           <TableBody />
         </Table>
-      </div>
+      </Card>
     );
   }
 }
