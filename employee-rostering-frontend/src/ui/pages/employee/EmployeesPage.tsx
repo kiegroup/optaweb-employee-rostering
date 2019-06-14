@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter} from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
 import {employeeOperations} from 'store/employee';
 import Employee from 'domain/Employee';
@@ -76,7 +76,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
     ];
   }
   
-  editDataRow(data: ReadonlyPartial<Employee>, setProperty: (key: keyof Employee, value: Employee[keyof Employee]|undefined) => void): JSX.Element[] {
+  editDataRow(data: ReadonlyPartial<Employee>, setProperty: PropertySetter<Employee>): JSX.Element[] {
     return [
       <TextInput key={0}
         name="name"
