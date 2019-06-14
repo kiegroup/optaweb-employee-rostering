@@ -26,6 +26,7 @@ import tenantReducer from './tenant';
 import skillReducer from './skill/reducers';
 import spotReducer from './spot/reducers';
 import contractReducer from './contract/reducers';
+import employeeReducer from './employee/reducers';
 
 export interface StoreConfig {
   readonly restBaseURL: string;
@@ -49,7 +50,8 @@ export function configureStore(
     tenantData: tenantReducer,
     skillList: skillReducer,
     spotList: spotReducer,
-    contractList: contractReducer
+    contractList: contractReducer,
+    employeeList: employeeReducer
   });
 
   /* if (process.env.NODE_ENV !== 'production' && module.hot) {

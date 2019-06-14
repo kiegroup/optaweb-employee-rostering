@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial} from 'ui/components/DataTable';
 import {skillOperations} from 'store/skill';
 import Skill from 'domain/Skill';
 import { AppState } from 'store/types';
@@ -31,7 +31,7 @@ const mapStateToProps = ({ tenantData, skillList }: AppState): StateProps => ({
   columnTitles: ["Name"],
   tableData: skillList.skillList,
   tenantId: tenantData.currentTenantId
-});
+}); 
 
 export interface DispatchProps {
   addSkill: typeof skillOperations.addSkill;
@@ -55,35 +55,26 @@ export class SkillsPage extends DataTable<Skill, Props> {
     this.removeData = this.removeData.bind(this);
   }
 
-  createNewDataInstance(): Skill {
-    return {
-      tenantId: this.props.tenantId,
-      name: ""
-    };
-  }
-
   displayDataRow(data: Skill): JSX.Element[] {
     return [<Text key={0}>{data.name}</Text>];
   }
-
-  editDataRow(data: Skill): JSX.Element[] {
-    return [<TextInput
-      key={0}
-      name="name"
+  
+  editDataRow(data: ReadonlyPartial<Skill>, setProperty: (key: keyof Skill, value: Skill[keyof Skill]|undefined) => void): JSX.Element[] {
+    return [<TextInput key={0} name="name"
       aria-label="Name"
       defaultValue={data.name}
-      onChange={(value) => data.name = value}
-    />];
+      onChange={(value) => setProperty("name", value)}/>];
   }
-
-  isValid(data: Skill): boolean {
-    return data.name.length > 0;
+  
+  isValid(data: ReadonlyPartial<Skill>): data is Skill {
+    return data.name !== undefined && 
+      data.name.length > 0;
   }
 
   updateData(data: Skill): void {
     this.props.updateSkill(data);
   }
-
+  
   addData(data: Skill): void {
     this.props.addSkill(data);
   }
