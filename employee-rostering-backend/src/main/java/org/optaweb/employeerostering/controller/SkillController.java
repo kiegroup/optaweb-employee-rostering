@@ -48,20 +48,20 @@ public class SkillController {
     }
 
     @DeleteMapping("/tenant/{tenantId}/skill/{id}")
-    public String deleteSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Void> deleteSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
         skillService.deleteSkill(tenantId, id);
-        return "Delete a skill";
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @PostMapping("/tenant/{tenantId}/skill/add")
-    public String createSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
+    public ResponseEntity<Void> createSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
         skillService.createSkill(tenantId, skill);
-        return "Create a skill";
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @PutMapping("/tenant/{tenantId}/skill/update")
-    public String updateSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
+    public ResponseEntity<Void> updateSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
         skillService.updateSkill(tenantId, skill);
-        return "Update a skill";
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }
