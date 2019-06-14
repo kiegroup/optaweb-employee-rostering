@@ -19,6 +19,7 @@ import * as actions from './actions';
 import { spotOperations } from 'store/spot';
 import Skill from 'domain/Skill';
 import { AddSkillAction, RemoveSkillAction, UpdateSkillAction, RefreshSkillListAction } from './types';
+import { employeeOperations } from 'store/employee';
 
 export const addSkill: ThunkCommandFactory<Skill, AddSkillAction> = skill =>
   (dispatch, state, client) => {
@@ -47,6 +48,7 @@ export const updateSkill: ThunkCommandFactory<Skill, UpdateSkillAction> = skill 
       // Need to update spot list, which reference the old skill
       // (also need to update employee list when it is added)
       dispatch(spotOperations.refreshSpotList());
+      dispatch(employeeOperations.refreshEmployeeList());
     });
   };
 

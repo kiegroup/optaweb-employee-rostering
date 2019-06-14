@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial} from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
 import {spotOperations} from 'store/spot';
 import Spot from 'domain/Spot';
@@ -35,7 +35,7 @@ const mapStateToProps = ({ tenantData, skillList, spotList }: AppState): StatePr
   tableData: spotList.spotList,
   skillList: skillList.skillList,
   tenantId: tenantData.currentTenantId
-});
+}); 
 
 export interface DispatchProps {
   addSpot: typeof spotOperations.addSpot;
@@ -59,55 +59,46 @@ export class SpotsPage extends DataTable<Spot, Props> {
     this.removeData = this.removeData.bind(this);
   }
 
-  createNewDataInstance(): Spot {
-    return {
-      tenantId: this.props.tenantId,
-      name: "",
-      requiredSkillSet: []
-    };
-  }
-
   displayDataRow(data: Spot): JSX.Element[] {
     return [
       <Text key={0}>{data.name}</Text>,
-      <ChipGroup key={1}>
-        {data.requiredSkillSet.map(skill => (
-          <Chip key={skill.name} isReadOnly>
-            {skill.name}
-          </Chip>
-        ))}
+      <ChipGroup key={1}>{data.requiredSkillSet.map(skill => (
+        <Chip key={skill.name} isReadOnly>
+          {skill.name}
+        </Chip>
+      ))}
       </ChipGroup>
     ];
   }
-
-  editDataRow(data: Spot): JSX.Element[] {
+  
+  editDataRow(data: ReadonlyPartial<Spot>, setProperty: (key: keyof Spot, value: Spot[keyof Spot]|undefined) => void): JSX.Element[] {
     return [
-      <TextInput
-        key={0}
+      <TextInput key={0}
         name="name"
         defaultValue={data.name}
         aria-label="Name"
-        onChange={(value) => data.name = value}
+        onChange={(value) => setProperty("name",value)}
       />,
-      <MultiTypeaheadSelectInput
-        key={1}
-        emptyText="Select required skills"
+      <MultiTypeaheadSelectInput key={1}
+        emptyText={"Select required skills"}
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
-        defaultValue={data.requiredSkillSet}
-        onChange={selected => data.requiredSkillSet = selected}
+        defaultValue={data.requiredSkillSet? data.requiredSkillSet : []}
+        onChange={selected => setProperty("requiredSkillSet",selected)}
       />
     ];
   }
-
-  isValid(editedValue: Spot): boolean {
-    return editedValue.name.length > 0;
+  
+  isValid(editedValue: ReadonlyPartial<Spot>): editedValue is Spot {
+    return editedValue.name !== undefined &&
+      editedValue.requiredSkillSet !== undefined &&
+      editedValue.name.length > 0;
   }
-
+  
   updateData(data: Spot): void {
     this.props.updateSpot(data);
   }
-
+  
   addData(data: Spot): void {
     this.props.addSpot(data);
   }
