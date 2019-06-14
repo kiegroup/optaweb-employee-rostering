@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.service.skill;
 
+import java.util.List;
+
 import org.optaweb.employeerostering.domain.Skill;
 import org.optaweb.employeerostering.persistence.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,15 @@ public class SkillService {
     @Autowired
     private SkillRepository skillRepository;
 
-    public String getSkillList(Integer tenantId) {
-        return "Get skill list";
+    public List<Skill> getSkillList(Integer tenantId) {
+        return skillRepository.findAll();
     }
 
-    public String getSkill(Integer tenantId, Long id) {
-        return "Get a skill";
+    public Skill getSkill(Integer tenantId, Long id) {
+        if (skillRepository.findById(id).isPresent())
+            return skillRepository.findById(id).get();
+
+        return new Skill();
     }
 
     public void deleteSkill(Integer tenantId, Long id) {
