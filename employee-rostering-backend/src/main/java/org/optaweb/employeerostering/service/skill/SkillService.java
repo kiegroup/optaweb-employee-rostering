@@ -41,14 +41,22 @@ public class SkillService {
     }
 
     public void deleteSkill(Integer tenantId, Long id) {
-        //TODO: delete skill
+        if (skillRepository.findById(id).isPresent())
+            skillRepository.deleteById(id);
     }
 
     public void createSkill(Integer tenantId, Skill skill) {
-        //TODO: create skill
+        skillRepository.save(skill);
     }
 
     public void updateSkill(Integer tenantId, Skill skill) {
-        //TODO: update skill
+        if (skill.getId() != null) {
+            if (skillRepository.findById(skill.getId()).isPresent()) {
+                Skill skill1 = skillRepository.findById(skill.getId()).get();
+
+                skill1.setTenantId(skill.getTenantId());
+                skill1.setName(skill.getName());
+            }
+        }
     }
 }

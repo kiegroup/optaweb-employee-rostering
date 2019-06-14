@@ -31,7 +31,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -64,10 +63,9 @@ public class SkillControllerTest {
     public void deleteSkillTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
                             .delete("/tenant/{tenantId}/skill/{id}", 0, 0)
-                            .accept(MediaType.TEXT_PLAIN))
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("Delete a skill"));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -77,10 +75,9 @@ public class SkillControllerTest {
                             .post("/tenant/{tenantId}/skill/add", 0)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body)
-                            .accept(MediaType.TEXT_PLAIN))
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("Create a skill"));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -90,9 +87,8 @@ public class SkillControllerTest {
                             .put("/tenant/{tenantId}/skill/update", 0)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body)
-                            .accept(MediaType.TEXT_PLAIN))
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("Update a skill"));
+                .andExpect(status().isOk());
     }
 }
