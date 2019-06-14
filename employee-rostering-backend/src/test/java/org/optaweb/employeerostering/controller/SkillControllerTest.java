@@ -46,20 +46,18 @@ public class SkillControllerTest {
     public void getSkillListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
                             .get("/tenant/{tenantId}/skill", 0)
-                            .accept(MediaType.TEXT_PLAIN))
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("Get skill list"));
+                .andExpect(status().isOk());
     }
 
     @Test
     public void getSkillTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
                             .get("/tenant/{tenantId}/skill/{id}", 0, 0)
-                            .accept(MediaType.TEXT_PLAIN))
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string("Get a skill"));
+                .andExpect(status().isOk());
     }
 
     @Test
