@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter} from 'ui/components/DataTable';
 import {skillOperations} from 'store/skill';
 import Skill from 'domain/Skill';
 import { AppState } from 'store/types';
@@ -59,7 +59,7 @@ export class SkillsPage extends DataTable<Skill, Props> {
     return [<Text key={0}>{data.name}</Text>];
   }
   
-  editDataRow(data: ReadonlyPartial<Skill>, setProperty: (key: keyof Skill, value: Skill[keyof Skill]|undefined) => void): JSX.Element[] {
+  editDataRow(data: ReadonlyPartial<Skill>, setProperty: PropertySetter<Skill>): JSX.Element[] {
     return [<TextInput key={0} name="name"
       aria-label="Name"
       defaultValue={data.name}
