@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial} from 'ui/components/DataTable';
 import {contractOperations} from 'store/contract';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
@@ -32,7 +32,7 @@ const mapStateToProps = ({ tenantData, contractList }: AppState): StateProps => 
   columnTitles: ["Name", "Max Hours Per Day", "Max Hours Per Week", "Max Hours Per Month", "Max Hours Per Year"],
   tableData: contractList.contractList,
   tenantId: tenantData.currentTenantId
-});
+}); 
 
 export interface DispatchProps {
   addContract: typeof contractOperations.addContract;
@@ -56,17 +56,6 @@ export class ContractsPage extends DataTable<Contract, Props> {
     this.removeData = this.removeData.bind(this);
   }
 
-  createNewDataInstance(): Contract {
-    return {
-      tenantId: this.props.tenantId,
-      name: "",
-      maximumMinutesPerDay: null,
-      maximumMinutesPerWeek: null,
-      maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null
-    };
-  }
-
   displayDataRow(data: Contract): JSX.Element[] {
     return [
       <Text key={0}>{data.name}</Text>,
@@ -76,63 +65,63 @@ export class ContractsPage extends DataTable<Contract, Props> {
       <Text key={4}>{data.maximumMinutesPerYear}</Text>
     ];
   }
-
-  editDataRow(data: Contract): JSX.Element[] {
+  
+  editDataRow(data: ReadonlyPartial<Contract>, setProperty: (key: keyof Contract, value: Contract[keyof Contract]|undefined) => void): JSX.Element[] {
     return [
-      <TextInput
-        key={0}
+      <TextInput key={0}
         name="name"
         defaultValue={data.name}
         aria-label="Name"
-        onChange={(value) => data.name = value}
+        onChange={(value) => setProperty("name", value)}
       />,
-      <OptionalInput
-        key={1}
+      <OptionalInput key={1}
         label="Max minutes per day"
         valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerDay}
-        onChange={value => data.maximumMinutesPerDay = value}
+        defaultValue={data.maximumMinutesPerDay? data.maximumMinutesPerDay : null}
+        onChange={value => setProperty("maximumMinutesPerDay", value)}
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
-      <OptionalInput
-        key={2}
+      <OptionalInput key={2}
         label="Max minutes per week"
         valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerWeek}
-        onChange={value => data.maximumMinutesPerWeek = value}
+        defaultValue={data.maximumMinutesPerWeek? data.maximumMinutesPerWeek : null}
+        onChange={value => setProperty("maximumMinutesPerWeek", value)}
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
-      <OptionalInput
-        key={3}
+      <OptionalInput key={3}
         label="Max minutes per month"
         valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerMonth}
-        onChange={value => data.maximumMinutesPerMonth = value}
+        defaultValue={data.maximumMinutesPerMonth? data.maximumMinutesPerMonth : null}
+        onChange={value => setProperty("maximumMinutesPerMonth", value)}
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
-      <OptionalInput
-        key={4}
+      <OptionalInput key={4}
         label="Max minutes per year"
         valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerYear}
-        onChange={value => data.maximumMinutesPerYear = value}
+        defaultValue={data.maximumMinutesPerYear? data.maximumMinutesPerYear : null}
+        onChange={value => setProperty("maximumMinutesPerYear", value)}
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />
     ];
   }
-
-  isValid(editedValue: Contract): boolean {
-    return editedValue.name.length > 0;
+  
+  isValid(editedValue: ReadonlyPartial<Contract>): editedValue is Contract {
+    return editedValue.name !== undefined &&
+      editedValue.maximumMinutesPerDay !== undefined &&
+      editedValue.maximumMinutesPerWeek !== undefined &&
+      editedValue.maximumMinutesPerMonth !== undefined &&
+      editedValue.maximumMinutesPerYear !== undefined &&
+      editedValue.name.length > 0;
   }
-
+  
   updateData(data: Contract): void {
     this.props.updateContract(data);
   }
-
+  
   addData(data: Contract): void {
     this.props.addContract(data);
   }
