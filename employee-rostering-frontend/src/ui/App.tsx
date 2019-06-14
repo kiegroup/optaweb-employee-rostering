@@ -20,7 +20,7 @@ import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import Background from './components/Background';
 import Header from './header/Header';
-import { SkillsPage, SpotsPage, ContractsPage } from './pages';
+import { SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
 
 const App: React.FC = () => {
   return (
@@ -50,6 +50,11 @@ const App: React.FC = () => {
               path="/contracts"
               exact
               component={ContractsPage}
+            />
+            <Route
+              path="/employees"
+              exact={true}
+              component={EmployeesPage}
             />
           </Switch>
         </PageSection>
