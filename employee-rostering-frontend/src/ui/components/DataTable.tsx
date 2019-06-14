@@ -38,6 +38,7 @@ interface DataTableState<T> {
 }
 
 export type ReadonlyPartial<T> = { readonly [P in keyof T]?: T[P] };
+export type PropertySetter<T> = (propertyName: keyof T, value: T[keyof T]|undefined) => void;
 
 export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
   constructor(props: P) {
