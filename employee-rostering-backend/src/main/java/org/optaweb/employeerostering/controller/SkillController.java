@@ -16,9 +16,13 @@
 
 package org.optaweb.employeerostering.controller;
 
+import java.util.List;
+
 import org.optaweb.employeerostering.domain.Skill;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,13 +38,13 @@ public class SkillController {
     private SkillService skillService;
 
     @GetMapping("/tenant/{tenantId}/skill")
-    public String getSkillList(@PathVariable Integer tenantId) {
-        return skillService.getSkillList(tenantId);
+    public ResponseEntity<List> getSkillList(@PathVariable Integer tenantId) {
+        return new ResponseEntity<List>(skillService.getSkillList(tenantId), HttpStatus.OK);
     }
 
     @GetMapping("/tenant/{tenantId}/skill/{id}")
-    public String getSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
-        return skillService.getSkill(tenantId, id);
+    public ResponseEntity<Skill> getSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
+        return new ResponseEntity<Skill>(skillService.getSkill(tenantId, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/tenant/{tenantId}/skill/{id}")
