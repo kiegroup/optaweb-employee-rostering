@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-import { Button, ButtonVariant } from '@patternfly/react-core';
-import { CloseIcon, EditIcon, SaveIcon, TrashIcon } from '@patternfly/react-icons';
-import { headerCol, IRow, Table, TableBody, TableHeader } from '@patternfly/react-table';
 import React from 'react';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  headerCol,
+  IRow
+} from '@patternfly/react-table';
+import {Button, ButtonVariant} from '@patternfly/react-core';
+import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { EditableComponent } from './EditableComponent';
 
 export interface DataTableProps<T> {
@@ -27,9 +33,11 @@ export interface DataTableProps<T> {
 }
 
 interface DataTableState<T> {
-  newRowData: T|null;
+  newRowData: Partial<T>|null;
   currentFilter: (rowData: T) => boolean;
 }
+
+export type ReadonlyPartial<T> = { readonly [P in keyof T]?: T[P] };
 
 export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
   constructor(props: P) {
@@ -40,10 +48,9 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     this.state = {newRowData: null, currentFilter: (t) => true};
   }
 
-  abstract createNewDataInstance(): T;
   abstract displayDataRow(data: T): JSX.Element[];
-  abstract editDataRow(data: T): JSX.Element[];
-  abstract isValid(editedValue: T): boolean;
+  abstract editDataRow(data: ReadonlyPartial<T>, setProperty: (propertyName: keyof T, value: T[keyof T]|undefined) => void): JSX.Element[];
+  abstract isValid(editedValue: ReadonlyPartial<T>): editedValue is T;
 
   abstract updateData(data: T): void;
   abstract addData(data: T): void;
@@ -51,106 +58,86 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
 
   createNewRow() {
     if (this.state.newRowData === null) {
-      this.setState({newRowData: this.createNewDataInstance()});
+      this.setState({...this.state, newRowData: {}});
     }
   }
 
   cancelAddingRow() {
-    this.setState({newRowData: null});
+    this.setState({...this.state, newRowData: null});
   }
 
-  getAddButtons(newData: T): JSX.Element {
-    return (
-      <span>
-        <Button
-          aria-label="Save"
+  getAddButtons(newData: Partial<T>): JSX.Element {
+    return <span>
+      <Button aria-label="Save"
+        variant={ButtonVariant.link}
+        onClick={() => {
+          if (this.isValid(newData)) {
+            this.addData(newData);
+            this.cancelAddingRow();
+          }
+        }}>
+        <SaveIcon />
+      </Button>
+      <Button aria-label="Cancel"
+        variant={ButtonVariant.link}
+        onClick={this.cancelAddingRow}>
+        <CloseIcon />
+      </Button>
+    </span>;
+  }
+
+  getEditButtons(originalData: T, editedData: Partial<T>, editableComponents: EditableComponent[]): JSX.Element {
+    return <EditableComponent ref={(c) => {editableComponents[editableComponents.length-1] = c as EditableComponent;}}
+      viewer={<span>
+        <Button aria-label="Edit"
           variant={ButtonVariant.link}
           onClick={() => {
-            if (this.isValid(newData)) {
-              this.addData(newData);
-              this.cancelAddingRow();
+            editableComponents.forEach(c => c.startEditing());
+          }}>
+          <EditIcon />
+        </Button>
+        <Button aria-label="Delete"
+          variant={ButtonVariant.link}
+          onClick={() => {
+            this.removeData(originalData);
+          }}>
+          <TrashIcon />
+        </Button>
+      </span>}
+      editor={<span>
+        <Button aria-label="Save"
+          variant={ButtonVariant.link}
+          onClick={() => {
+            if (this.isValid(editedData)) {
+              this.updateData(editedData);
+              editableComponents.forEach(c => c.stopEditing());
             }
-          }}
-        >
+          }}>
           <SaveIcon />
         </Button>
-        <Button
-          aria-label="Cancel"
+        <Button aria-label="Cancel"
           variant={ButtonVariant.link}
-          onClick={this.cancelAddingRow}
-        >
+          onClick={() => {
+            editableComponents.forEach(c => c.stopEditing());
+          }}>
           <CloseIcon />
         </Button>
-      </span>
-    );
-  }
-
-  getEditButtons(originalData: T, editedData: T, editableComponents: EditableComponent[]): JSX.Element {
-    return (
-      <EditableComponent
-        ref={(c) => {editableComponents[editableComponents.length-1] = c as EditableComponent;}}
-        viewer={(
-          <span>
-            <Button
-              aria-label="Edit"
-              variant={ButtonVariant.link}
-              onClick={() => {
-                editableComponents.forEach(c => c.startEditing());
-              }}
-            >
-              <EditIcon />
-            </Button>
-            <Button
-              aria-label="Delete"
-              variant={ButtonVariant.link}
-              onClick={() => {
-                this.removeData(originalData);
-              }}
-            >
-              <TrashIcon />
-            </Button>
-          </span>
-        )}
-        editor={(
-          <span>
-            <Button
-              aria-label="Save"
-              variant={ButtonVariant.link}
-              onClick={() => {
-                if (this.isValid(editedData)) {
-                  this.updateData(editedData);
-                  editableComponents.forEach(c => c.stopEditing());
-                }
-              }}
-            >
-              <SaveIcon />
-            </Button>
-            <Button
-              aria-label="Cancel"
-              variant={ButtonVariant.link}
-              onClick={() => {
-                editableComponents.forEach(c => c.stopEditing());
-              }}
-            >
-              <CloseIcon />
-            </Button>
-          </span>
-        )}
-      />
-    );
+      </span>}/>;
   }
 
   convertDataToTableRow(data: T): IRow {
-    const editedData: T = {...data};
+    const editedData: Partial<T> = {...data};
     const viewers = this.displayDataRow(data);
-    const editors = this.editDataRow(editedData);
+
+    const setProperty = (key: keyof T, value: T[keyof T]|undefined) => editedData[key] = value;
+    const editors = this.editDataRow(editedData, setProperty);
     const length = viewers.length
     const editableComponents: EditableComponent[] = new Array(length + 1);
-    const cellContents = viewers.map((viewer, index) => {return { title: <EditableComponent
-      viewer={viewer}
-      editor={editors[index]}
-      ref={(c) => editableComponents[index] = c as EditableComponent}
-    />} }).concat([{title: this.getEditButtons(data, editedData, editableComponents)}]);
+    const cellContents = viewers.map((viewer, index) => {return { title:
+      <EditableComponent viewer={viewer}
+        editor={editors[index]}
+        ref={(c) => editableComponents[index] = c as EditableComponent}
+      />} }).concat([{title: this.getEditButtons(data, editedData, editableComponents)}]);
     return {
       cells: cellContents
     };
@@ -158,28 +145,29 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
 
   // Use for SNAPSHOT testing
   renderViewer(data: T): JSX.Element {
-    // eslint-disable-next-line react/no-array-index-key
     return <tr>{this.displayDataRow(data).map((c,index) => <td key={index}>{c}</td>)}</tr>;
   }
 
   // Use for SNAPSHOT testing
   renderEditor(data: T): JSX.Element {
     const editedData: T = {...data};
-    // eslint-disable-next-line react/no-array-index-key
-    return <tr>{this.editDataRow(editedData).map((c,index) => <td key={index}>{c}</td>)}</tr>;
+    const setProperty = (key: keyof T, value: any) => editedData[key] = value;
+    return <tr>{this.editDataRow(editedData, setProperty).map((c,index) => <td key={index}>{c}</td>)}</tr>;
   }
 
   render() {
+    const setProperty = (key: keyof T,value: T[keyof T]|undefined) => this.setState(prevState => 
+      ({...prevState, newRowData: {...prevState.newRowData, [key]: value}}));
     const additionalRows: IRow[] = (this.state.newRowData !== null)?
       [
         {
-          cells: this.editDataRow(this.state.newRowData).map(c => {return {title: c}})
+          cells: this.editDataRow(this.state.newRowData, setProperty).map(c => {return {title: c}})
             .concat([{title: this.getAddButtons(this.state.newRowData)}])
         }
       ] : [];
     const rows = additionalRows.concat(this.props.tableData
       .filter(this.state.currentFilter).map(this.convertDataToTableRow));
-    const columns = this.props.columnTitles.map(t => {
+    const columns = this.props.columnTitles.map(t => { 
       return { title: t, cellTransforms: [headerCol], props: {} };
     }).concat([{title: '', cellTransforms: [headerCol], props: {}}]);
     return (

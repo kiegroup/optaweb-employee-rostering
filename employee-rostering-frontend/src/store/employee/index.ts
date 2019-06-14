@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
-import ContractsPage from './contract/ContractsPage';
-import EmployeesPage from './employee/EmployeesPage';
+import * as employeeOperations from './operations';
+import reducer from './reducers';
 
-export { SkillsPage, SpotsPage, ContractsPage, EmployeesPage };
+export {
+  employeeOperations
+};
+
+export default reducer;
