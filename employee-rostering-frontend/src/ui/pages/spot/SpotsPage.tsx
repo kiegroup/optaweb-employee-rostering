@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter} from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
 import {spotOperations} from 'store/spot';
 import Spot from 'domain/Spot';
@@ -71,7 +71,7 @@ export class SpotsPage extends DataTable<Spot, Props> {
     ];
   }
   
-  editDataRow(data: ReadonlyPartial<Spot>, setProperty: (key: keyof Spot, value: Spot[keyof Spot]|undefined) => void): JSX.Element[] {
+  editDataRow(data: ReadonlyPartial<Spot>, setProperty: PropertySetter<Spot>): JSX.Element[] {
     return [
       <TextInput key={0}
         name="name"
