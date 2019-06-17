@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter, Sorter} from 'ui/components/DataTable';
 import {skillOperations} from 'store/skill';
 import Skill from 'domain/Skill';
 import { AppState } from 'store/types';
@@ -83,6 +83,10 @@ export class SkillsPage extends DataTable<Skill, Props> {
         />
       }
     ];
+  }
+
+  getSorters(): (Sorter<Skill> | null)[] {
+    return [(a,b) => (a.name < b.name)? -1 : (a.name > b.name)? 1 : 0];
   }
 
   updateData(data: Skill): void {

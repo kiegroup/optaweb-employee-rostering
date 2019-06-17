@@ -20,9 +20,13 @@ import {
   TableHeader,
   TableBody,
   headerCol,
-  IRow
+  IRow,
+  ICell,
+  sortable,
+  SortByDirection,
+  ISortBy
 } from '@patternfly/react-table';
-import {Button, ButtonVariant, Pagination, Card} from '@patternfly/react-core';
+import {Button, ButtonVariant, Pagination, Card } from '@patternfly/react-core';
 import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { EditableComponent } from './EditableComponent';
 import FilterComponent, {Filter} from './FilterComponent';
@@ -38,10 +42,12 @@ interface DataTableState<T> {
   page: number;
   perPage: number;
   currentFilter: (rowData: T) => boolean;
+  sortBy: ISortBy
 }
 
 export type ReadonlyPartial<T> = { readonly [P in keyof T]?: T[P] };
 export type PropertySetter<T> = (propertyName: keyof T, value: T[keyof T]|undefined) => void;
+export type Sorter<T> = (a: T, b: T) => number;
 
 export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
   constructor(props: P) {
@@ -49,16 +55,18 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     this.createNewRow = this.createNewRow.bind(this);
     this.cancelAddingRow = this.cancelAddingRow.bind(this);
     this.convertDataToTableRow = this.convertDataToTableRow.bind(this);
-    this.state = {newRowData: null, currentFilter: (t) => true, page: 1, perPage: 10};
+    this.state = {newRowData: null, currentFilter: (t) => true, page: 1, perPage: 10, sortBy: {}};
     this.onSetPage = this.onSetPage.bind(this);
     this.onPerPageSelect = this.onPerPageSelect.bind(this);
+    this.onSort = this.onSort.bind(this);
   }
 
   abstract displayDataRow(data: T): JSX.Element[];
   abstract editDataRow(data: ReadonlyPartial<T>, setProperty: (propertyName: keyof T, value: T[keyof T]|undefined) => void): JSX.Element[];
   abstract isValid(editedValue: ReadonlyPartial<T>): editedValue is T;
   
-  abstract getFilters(): Filter<T>[]; 
+  abstract getFilters(): Filter<T>[];
+  abstract getSorters(): (Sorter<T>|null)[]
 
   abstract updateData(data: T): void;
   abstract addData(data: T): void;
@@ -177,6 +185,16 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     return <tr>{this.editDataRow(editedData, setProperty).map((c,index) => <td key={index}>{c}</td>)}</tr>;
   }
 
+
+  onSort(event: any, index: number, direction: any) {
+    this.setState({
+      sortBy: {
+        index,
+        direction: direction
+      },
+    });
+  }
+
   render() {
     const setProperty = (key: keyof T,value: T[keyof T]|undefined) => this.setState(prevState => 
       ({...prevState, newRowData: {...prevState.newRowData, [key]: value}}));
@@ -187,15 +205,26 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
             .concat([{title: this.getAddButtons(this.state.newRowData)}])
         }
       ] : [];
-    const filteredRows = this.props.tableData
-      .filter(this.state.currentFilter).map(this.convertDataToTableRow);
+    const sorters = this.getSorters();
+    let sortedRows = [...this.props.tableData];
+    if (this.state.sortBy.index !== undefined) {
+      sortedRows.sort(sorters[this.state.sortBy.index as number] as Sorter<T>);
+      // @ts-ignore
+      if (this.state.sortBy.direction === SortByDirection.desc) {
+        console.log("Okay");
+        sortedRows.reverse();
+      }
+    }
+
+    const filteredRows = sortedRows.filter(this.state.currentFilter).map(this.convertDataToTableRow);
     const rowsOnPage = filteredRows.filter((row, index) => this.state.perPage * (this.state.page - 1) <= index &&
           index <= this.state.perPage * this.state.page);
 
     const rows = additionalRows.concat(rowsOnPage);
-    const columns = this.props.columnTitles.map(t => { 
-      return { title: t, cellTransforms: [headerCol], props: {} };
-    }).concat([{title: '', cellTransforms: [headerCol], props: {}}]);
+
+    const columns: ICell[] = this.props.columnTitles.map((t, index) => { 
+      return { title: t, cellTransforms: [headerCol], props: {}, transforms: (sorters[index] !== null)? [sortable] : undefined };
+    }).concat([{title: '', cellTransforms: [headerCol], props: {}, transforms: undefined}]);
     return (
       <Card>
         <div style={{display: "grid", gridTemplateColumns: "min-content auto min-content max-content"}}>
@@ -213,7 +242,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
             onPerPageSelect={this.onPerPageSelect}
           />
         </div>
-        <Table caption={this.props.title} cells={columns} rows={rows}>
+        <Table caption={this.props.title} sortBy={this.state.sortBy} onSort={this.onSort} cells={columns} rows={rows}>
           <TableHeader />
           <TableBody />
         </Table>
