@@ -25,11 +25,11 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { BellIcon, CogIcon } from '@patternfly/react-icons';
+import Tenant from 'domain/Tenant';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { tenantOperations } from 'store/tenant';
 import { AppState } from 'store/types';
-import Tenant from 'domain/Tenant';
 
 interface StateProps {
   currentTenantId: number;
@@ -79,53 +79,63 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
   }
 
   render() {
-    const bellAndCog = (<ToolbarGroup>
-      <ToolbarItem>
-        <Button
-          id="horizontal-example-uid-01"
-          aria-label="Notifications actions"
-          variant={ButtonVariant.plain}
-        >
-          <BellIcon />
-        </Button>
-      </ToolbarItem>
-      <ToolbarItem>
-        <Button
-          id="horizontal-example-uid-02"
-          aria-label="Settings actions"
-          variant={ButtonVariant.plain}
-        >
-          <CogIcon />
-        </Button>
-      </ToolbarItem>
-    </ToolbarGroup>);
-    if (this.props.tenantList.length === 0) {
-      return <Toolbar><ToolbarGroup />{bellAndCog}</Toolbar>
+    const bellAndCog = (
+      <ToolbarGroup>
+        <ToolbarItem>
+          <Button
+            id="horizontal-example-uid-01"
+            aria-label="Notifications actions"
+            variant={ButtonVariant.plain}
+          >
+            <BellIcon />
+          </Button>
+        </ToolbarItem>
+        <ToolbarItem>
+          <Button
+            id="horizontal-example-uid-02"
+            aria-label="Settings actions"
+            variant={ButtonVariant.plain}
+          >
+            <CogIcon />
+          </Button>
+        </ToolbarItem>
+      </ToolbarGroup>
+    );
+    const { tenantList, currentTenantId } = this.props;
+    const {isTenantSelectOpen} = this.state;
+    if (tenantList.length === 0) {
+      return (
+        <Toolbar>
+          <ToolbarGroup />
+          {bellAndCog}
+        </Toolbar>
+      )
     }
     else {
-      let { currentTenantId, tenantList } = this.props;
-      let currentTenant = this.props.tenantList.find(t => t.id === currentTenantId) as Tenant;
-      let isTenantSelectOpen = this.state.isTenantSelectOpen;
-      return <Toolbar>
-        <ToolbarGroup>
-          <ToolbarItem>
-            <Dropdown
-              isPlain={true}
-              position="right"
-              onSelect={event => this.setCurrentTenant(parseInt((event.target as HTMLElement).dataset.tenantid as string))}
-              isOpen={isTenantSelectOpen}
-              toggle={
-                <DropdownToggle onToggle={() => this.setIsTenantSelectOpen(!isTenantSelectOpen)}>
-                  {currentTenant.name}
-                </DropdownToggle>}
-              dropdownItems={tenantList.map((tenant, index) => {
-                return <DropdownItem data-tenantid={tenant.id} key={tenant.id}>{tenant.name}</DropdownItem>;
-              })}
-            />
-          </ToolbarItem>
-        </ToolbarGroup>
-        {bellAndCog}
-      </Toolbar>
+      let currentTenant = tenantList.find(t => t.id === currentTenantId) as Tenant;
+      return (
+        <Toolbar>
+          <ToolbarGroup>
+            <ToolbarItem>
+              <Dropdown
+                isPlain
+                position="right"
+                onSelect={event => this.setCurrentTenant(parseInt((event.target as HTMLElement).dataset.tenantid as string))}
+                isOpen={isTenantSelectOpen}
+                toggle={(
+                  <DropdownToggle onToggle={() => this.setIsTenantSelectOpen(!isTenantSelectOpen)}>
+                    {currentTenant.name}
+                  </DropdownToggle>
+                )}
+                dropdownItems={tenantList.map((tenant, index) => {
+                  return <DropdownItem data-tenantid={tenant.id} key={tenant.id}>{tenant.name}</DropdownItem>;
+                })}
+              />
+            </ToolbarItem>
+          </ToolbarGroup>
+          {bellAndCog}
+        </Toolbar>
+      )
     }
   }
 }
