@@ -18,6 +18,8 @@ package org.optaweb.employeerostering.service.skill;
 
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.optaweb.employeerostering.domain.Skill;
 import org.optaweb.employeerostering.persistence.SkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +36,17 @@ public class SkillService {
     }
 
     public Skill getSkill(Integer tenantId, Long id) {
-        if (skillRepository.findById(id).isPresent())
+        if (skillRepository.findById(id).isPresent()) {
             return skillRepository.findById(id).get();
+        }
 
-        return new Skill();
+        throw new EntityNotFoundException("No Skill entity found with ID (" + id + ").");
     }
 
     public void deleteSkill(Integer tenantId, Long id) {
-        if (skillRepository.findById(id).isPresent())
+        if (skillRepository.findById(id).isPresent()) {
             skillRepository.deleteById(id);
+        }
     }
 
     public void createSkill(Integer tenantId, Skill skill) {
@@ -50,13 +54,14 @@ public class SkillService {
     }
 
     public void updateSkill(Integer tenantId, Skill skill) {
-        if (skill.getId() != null) {
-            if (skillRepository.findById(skill.getId()).isPresent()) {
-                Skill skill1 = skillRepository.findById(skill.getId()).get();
+        if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
+            Skill skill1 = skillRepository.findById(skill.getId()).get();
 
-                skill1.setTenantId(skill.getTenantId());
-                skill1.setName(skill.getName());
-            }
+            skill1.setTenantId(skill.getTenantId());
+            skill1.setName(skill.getName());
+        }
+        else {
+            throw new EntityNotFoundException("Skill entity not found.");
         }
     }
 }
