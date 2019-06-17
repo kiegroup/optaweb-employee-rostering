@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter, Sorter} from 'ui/components/DataTable';
 import {contractOperations} from 'store/contract';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
@@ -130,6 +130,10 @@ export class ContractsPage extends DataTable<Contract, Props> {
         />
       }
     ];
+  }
+
+  getSorters(): (Sorter<Contract> | null)[] {
+    return [(a,b) => (a.name < b.name)? -1 : (a.name > b.name)? 1 : 0, null, null, null, null];
   }
   
   updateData(data: Contract): void {
