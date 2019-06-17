@@ -32,11 +32,11 @@ export class EditableComponent extends React.Component<EditableComponentProps, E
   }
 
   startEditing() {
-    this.setState({...this.state, isEditing: true});
+    this.setState({isEditing: true});
   }
 
   stopEditing() {
-    this.setState({...this.state, isEditing: false});
+    this.setState({isEditing: false});
   }
 
   render() {
