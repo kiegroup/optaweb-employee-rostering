@@ -25,6 +25,7 @@ import {
 import {Button, ButtonVariant, Pagination, Card} from '@patternfly/react-core';
 import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { EditableComponent } from './EditableComponent';
+import FilterComponent, {Filter} from './FilterComponent';
 
 export interface DataTableProps<T> {
   title: string;
@@ -56,6 +57,8 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
   abstract displayDataRow(data: T): JSX.Element[];
   abstract editDataRow(data: ReadonlyPartial<T>, setProperty: (propertyName: keyof T, value: T[keyof T]|undefined) => void): JSX.Element[];
   abstract isValid(editedValue: ReadonlyPartial<T>): editedValue is T;
+  
+  abstract getFilters(): Filter<T>[]; 
 
   abstract updateData(data: T): void;
   abstract addData(data: T): void;
@@ -77,12 +80,12 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
 
   createNewRow() {
     if (this.state.newRowData === null) {
-      this.setState({...this.state, newRowData: {}});
+      this.setState({newRowData: {}});
     }
   }
 
   cancelAddingRow() {
-    this.setState({...this.state, newRowData: null});
+    this.setState({newRowData: null});
   }
 
   getAddButtons(newData: Partial<T>): JSX.Element {
@@ -184,9 +187,9 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
             .concat([{title: this.getAddButtons(this.state.newRowData)}])
         }
       ] : [];
-    const rowsOnPage = this.props.tableData
-      .filter(this.state.currentFilter).map(this.convertDataToTableRow)
-      .filter((row, index) => this.state.perPage * (this.state.page - 1) <= index &&
+    const filteredRows = this.props.tableData
+      .filter(this.state.currentFilter).map(this.convertDataToTableRow);
+    const rowsOnPage = filteredRows.filter((row, index) => this.state.perPage * (this.state.page - 1) <= index &&
           index <= this.state.perPage * this.state.page);
 
     const rows = additionalRows.concat(rowsOnPage);
@@ -195,17 +198,21 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     }).concat([{title: '', cellTransforms: [headerCol], props: {}}]);
     return (
       <Card>
-        <span>
+        <div style={{display: "grid", gridTemplateColumns: "min-content auto min-content max-content"}}>
+          <FilterComponent filters={this.getFilters()}
+            onChange={(currentFilter) => this.setState({currentFilter})}
+            filterListParentId={"filter-list"}/>
+          <span />
           <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>Add</Button>
-        </span>
-        <Pagination
-          itemCount={this.props.tableData.length}
-          perPage={this.state.perPage}
-          page={this.state.page}
-          onSetPage={this.onSetPage}
-          widgetId="pagination-options-menu-top"
-          onPerPageSelect={this.onPerPageSelect}
-        />
+          <Pagination
+            itemCount={filteredRows.length}
+            perPage={this.state.perPage}
+            page={this.state.page}
+            onSetPage={this.onSetPage}
+            widgetId="pagination-options-menu-top"
+            onPerPageSelect={this.onPerPageSelect}
+          />
+        </div>
         <Table caption={this.props.title} cells={columns} rows={rows}>
           <TableHeader />
           <TableBody />
