@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
 import Contract from 'domain/Contract';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import { Filter } from 'ui/components/FilterComponent';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
@@ -91,7 +92,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         defaultValue={data.contract}
         onChange={contract => setProperty("contract", contract)}/>,
       <MultiTypeaheadSelectInput key={2}
-        emptyText={"Select required skills"}
+        emptyText={"Select skill proficiencies"}
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
         defaultValue={data.skillProficiencySet? data.skillProficiencySet : []}
@@ -106,13 +107,26 @@ export class EmployeesPage extends DataTable<Employee, Props> {
       editedValue.skillProficiencySet !== undefined &&
       editedValue.name.length > 0;
   }
+
+  getFilters(): Filter<Employee>[] {
+    return [
+      {
+        name: "Name",
+        getComponent: (setFilter) =>
+        <TextInput aria-label="Name"
+          placeholder="Filter by name..."
+          onChange={v => setFilter(employee => employee.name.includes(v))}
+        />
+      }
+    ];
+  }
   
   updateData(data: Employee): void {
     this.props.updateEmployee(data);
   }
   
   addData(data: Employee): void {
-    this.props.addEmployee(data);
+    this.props.addEmployee({...data, tenantId: this.props.tenantId});
   }
 
   removeData(data: Employee): void {
