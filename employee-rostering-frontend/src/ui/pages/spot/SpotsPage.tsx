@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter, Sorter} from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
 import {spotOperations} from 'store/spot';
 import Spot from 'domain/Spot';
@@ -107,6 +107,10 @@ export class SpotsPage extends DataTable<Spot, Props> {
         />
       }
     ];
+  }
+
+  getSorters(): (Sorter<Spot> | null)[] {
+    return [(a,b) => (a.name < b.name)? -1 : (a.name > b.name)? 1 : 0, null];
   }
   
   updateData(data: Spot): void {
