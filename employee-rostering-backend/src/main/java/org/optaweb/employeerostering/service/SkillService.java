@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.service.skill;
+package org.optaweb.employeerostering.service;
 
 import java.util.List;
 
