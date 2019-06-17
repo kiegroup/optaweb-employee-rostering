@@ -19,7 +19,7 @@ package org.optaweb.employeerostering.controller;
 import java.util.List;
 
 import org.optaweb.employeerostering.domain.Skill;
-import org.optaweb.employeerostering.service.skill.SkillService;
+import org.optaweb.employeerostering.service.SkillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
