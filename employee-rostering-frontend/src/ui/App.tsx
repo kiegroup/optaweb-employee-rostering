@@ -38,17 +38,17 @@ const App: React.FC = () => {
           <Switch>
             <Route
               path="/skills"
-              exact={true}
+              exact
               component={SkillsPage}
             />
             <Route
               path="/spots"
-              exact={true}
+              exact
               component={SpotsPage}
             />
             <Route
               path="/contracts"
-              exact={true}
+              exact
               component={ContractsPage}
             />
           </Switch>
