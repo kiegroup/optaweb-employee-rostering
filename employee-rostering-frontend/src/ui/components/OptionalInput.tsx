@@ -55,7 +55,9 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
     const { isChecked } = this.state;
     return (
       <span>
-        <TextInput aria-label={this.props.label} isDisabled={!isChecked}
+        <TextInput
+          aria-label={this.props.label}
+          isDisabled={!isChecked}
           defaultValue={(this.props.defaultValue !== null)? this.props.valueToString(this.props.defaultValue) : ''}
           onChange={(value) => {
             if (this.props.isValid(value)) {
@@ -65,7 +67,8 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
                 this.props.onChange(mappedValue);
               }
             }
-          }}/>
+          }}
+        />
         <Switch aria-label="Enabled" isChecked={isChecked} onChange={this.handleToggle} />
       </span>
     );

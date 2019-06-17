@@ -32,7 +32,7 @@ const mapStateToProps = ({ tenantData, contractList }: AppState): StateProps => 
   columnTitles: ["Name", "Max Hours Per Day", "Max Hours Per Week", "Max Hours Per Month", "Max Hours Per Year"],
   tableData: contractList.contractList,
   tenantId: tenantData.currentTenantId
-}); 
+});
 
 export interface DispatchProps {
   addContract: typeof contractOperations.addContract;
@@ -63,7 +63,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       maximumMinutesPerDay: null,
       maximumMinutesPerWeek: null,
       maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null 
+      maximumMinutesPerYear: null
     };
   }
 
@@ -76,16 +76,18 @@ export class ContractsPage extends DataTable<Contract, Props> {
       <Text key={4}>{data.maximumMinutesPerYear}</Text>
     ];
   }
-  
+
   editDataRow(data: Contract): JSX.Element[] {
     return [
-      <TextInput key={0}
+      <TextInput
+        key={0}
         name="name"
         defaultValue={data.name}
         aria-label="Name"
         onChange={(value) => data.name = value}
       />,
-      <OptionalInput key={1}
+      <OptionalInput
+        key={1}
         label="Max minutes per day"
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerDay}
@@ -93,7 +95,8 @@ export class ContractsPage extends DataTable<Contract, Props> {
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
-      <OptionalInput key={2}
+      <OptionalInput
+        key={2}
         label="Max minutes per week"
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerWeek}
@@ -101,7 +104,8 @@ export class ContractsPage extends DataTable<Contract, Props> {
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
-      <OptionalInput key={3}
+      <OptionalInput
+        key={3}
         label="Max minutes per month"
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerMonth}
@@ -109,7 +113,8 @@ export class ContractsPage extends DataTable<Contract, Props> {
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
-      <OptionalInput key={4}
+      <OptionalInput
+        key={4}
         label="Max minutes per year"
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerYear}
@@ -119,15 +124,15 @@ export class ContractsPage extends DataTable<Contract, Props> {
       />
     ];
   }
-  
+
   isValid(editedValue: Contract): boolean {
     return editedValue.name.length > 0;
   }
-  
+
   updateData(data: Contract): void {
     this.props.updateContract(data);
   }
-  
+
   addData(data: Contract): void {
     this.props.addContract(data);
   }
