@@ -158,12 +158,14 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
 
   // Use for SNAPSHOT testing
   renderViewer(data: T): JSX.Element {
+    // eslint-disable-next-line react/no-array-index-key
     return <tr>{this.displayDataRow(data).map((c,index) => <td key={index}>{c}</td>)}</tr>;
   }
 
   // Use for SNAPSHOT testing
   renderEditor(data: T): JSX.Element {
     const editedData: T = {...data};
+    // eslint-disable-next-line react/no-array-index-key
     return <tr>{this.editDataRow(editedData).map((c,index) => <td key={index}>{c}</td>)}</tr>;
   }
 
