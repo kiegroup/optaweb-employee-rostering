@@ -23,6 +23,7 @@ import { AppState } from 'store/types';
 import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
+import { Filter } from 'ui/components/FilterComponent';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
@@ -94,13 +95,26 @@ export class SpotsPage extends DataTable<Spot, Props> {
       editedValue.requiredSkillSet !== undefined &&
       editedValue.name.length > 0;
   }
+
+  getFilters(): Filter<Spot>[] {
+    return [
+      {
+        name: "Name",
+        getComponent: (setFilter) =>
+        <TextInput aria-label="Name"
+          placeholder="Filter by name..."
+          onChange={v => setFilter(spot => spot.name.includes(v))}
+        />
+      }
+    ];
+  }
   
   updateData(data: Spot): void {
     this.props.updateSpot(data);
   }
   
   addData(data: Spot): void {
-    this.props.addSpot(data);
+    this.props.addSpot({...data, tenantId: this.props.tenantId});
   }
 
   removeData(data: Spot): void {

@@ -22,6 +22,7 @@ import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Contract from 'domain/Contract';
 import OptionalInput from 'ui/components/OptionalInput';
+import { Filter } from 'ui/components/FilterComponent';
 
 interface StateProps extends DataTableProps<Contract> {
   tenantId: number;
@@ -117,13 +118,26 @@ export class ContractsPage extends DataTable<Contract, Props> {
       editedValue.maximumMinutesPerYear !== undefined &&
       editedValue.name.length > 0;
   }
+
+  getFilters(): Filter<Contract>[] {
+    return [
+      {
+        name: "Name",
+        getComponent: (setFilter) =>
+        <TextInput aria-label="Name"
+          placeholder="Filter by name..."
+          onChange={v => setFilter(contract => contract.name.includes(v))}
+        />
+      }
+    ];
+  }
   
   updateData(data: Contract): void {
     this.props.updateContract(data);
   }
   
   addData(data: Contract): void {
-    this.props.addContract(data);
+    this.props.addContract({...data, tenantId: this.props.tenantId});
   }
 
   removeData(data: Contract): void {
