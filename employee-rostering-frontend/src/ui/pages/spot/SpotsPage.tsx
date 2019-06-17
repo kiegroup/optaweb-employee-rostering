@@ -35,7 +35,7 @@ const mapStateToProps = ({ tenantData, skillList, spotList }: AppState): StatePr
   tableData: spotList.spotList,
   skillList: skillList.skillList,
   tenantId: tenantData.currentTenantId
-}); 
+});
 
 export interface DispatchProps {
   addSpot: typeof spotOperations.addSpot;
@@ -63,32 +63,35 @@ export class SpotsPage extends DataTable<Spot, Props> {
     return {
       tenantId: this.props.tenantId,
       name: "",
-      requiredSkillSet: [] 
+      requiredSkillSet: []
     };
   }
 
   displayDataRow(data: Spot): JSX.Element[] {
     return [
       <Text key={0}>{data.name}</Text>,
-      <ChipGroup key={1}>{data.requiredSkillSet.map(skill => (
-        <Chip key={skill.name} isReadOnly>
-          {skill.name}
-        </Chip>
-      ))}
+      <ChipGroup key={1}>
+        {data.requiredSkillSet.map(skill => (
+          <Chip key={skill.name} isReadOnly>
+            {skill.name}
+          </Chip>
+        ))}
       </ChipGroup>
     ];
   }
-  
+
   editDataRow(data: Spot): JSX.Element[] {
     return [
-      <TextInput key={0}
+      <TextInput
+        key={0}
         name="name"
         defaultValue={data.name}
         aria-label="Name"
         onChange={(value) => data.name = value}
       />,
-      <MultiTypeaheadSelectInput key={1}
-        emptyText={"Select required skills"}
+      <MultiTypeaheadSelectInput
+        key={1}
+        emptyText="Select required skills"
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
         defaultValue={data.requiredSkillSet}
@@ -96,15 +99,15 @@ export class SpotsPage extends DataTable<Spot, Props> {
       />
     ];
   }
-  
+
   isValid(editedValue: Spot): boolean {
     return editedValue.name.length > 0;
   }
-  
+
   updateData(data: Spot): void {
     this.props.updateSpot(data);
   }
-  
+
   addData(data: Spot): void {
     this.props.addSpot(data);
   }

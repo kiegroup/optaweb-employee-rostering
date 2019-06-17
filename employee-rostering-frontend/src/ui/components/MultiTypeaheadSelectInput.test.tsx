@@ -30,14 +30,14 @@ describe('MultiTypeaheadSelectInput component', () => {
   });
 
   it('should be expanded after a toggle', () => {
-    const select = mount(<MultiTypeaheadSelectInput {...selectProps}/>);
+    const select = mount(<MultiTypeaheadSelectInput {...selectProps} />);
 
     (select.instance() as Select).onToggle(true);
     expect((select.instance() as Select).state.isExpanded).toEqual(true);
   });
 
   it('should be expanded after a false toggle', () => {
-    const select = mount(<MultiTypeaheadSelectInput {...selectProps}/>);
+    const select = mount(<MultiTypeaheadSelectInput {...selectProps} />);
     (select.instance() as Select).onToggle(true);
     (select.instance() as Select).onToggle(false);
     expect((select.instance() as Select).state.isExpanded).toEqual(false);
@@ -52,7 +52,7 @@ describe('MultiTypeaheadSelectInput component', () => {
 
   it('should set selected to an empty list on clearSelection', () => {
     const defaultValue = [{name: "Option 2"}];
-    const select = mount(<MultiTypeaheadSelectInput {...selectProps} defaultValue={defaultValue}/>);
+    const select = mount(<MultiTypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
     const event: any = {};
     (select.instance() as Select).onSelect(event, "Option 2", false);
     expect((select.instance() as Select).state.selected).toEqual([]);
@@ -60,14 +60,14 @@ describe('MultiTypeaheadSelectInput component', () => {
 
   it('should add option to selection when it is selected and not already in the list', () => {
     const defaultValue = [{name: "Option 2"}];
-    const select = mount(<MultiTypeaheadSelectInput {...selectProps} defaultValue={defaultValue}/>);
+    const select = mount(<MultiTypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
     const event: any = {};
     (select.instance() as Select).onSelect(event, "Option 1", false);
     expect((select.instance() as Select).state.selected).toEqual([...defaultValue, {name: "Option 1"}]);
   });
 
   it('should render correctly', () => {
-    const select = shallow(<MultiTypeaheadSelectInput {...selectProps}/>);
+    const select = shallow(<MultiTypeaheadSelectInput {...selectProps} />);
     expect(toJson(select)).toMatchSnapshot();
   });
 });
