@@ -24,7 +24,7 @@ class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
   createNewDataInstance = jest.fn(() => ({name: '', number: 0}));
   displayDataRow = jest.fn((data) => [<span key={0} id="viewer">{data.name}</span>,
     <span key={1}>{data.number}</span>]);
-  editDataRow = jest.fn((data) => [<input key={0} id="editor"/>,
+  editDataRow = jest.fn((data) => [<input key={0} id="editor" />,
     <input key={1} />]);
   isValid = jest.fn();
 
