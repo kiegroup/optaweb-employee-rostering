@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter, Sorter} from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
 import {employeeOperations} from 'store/employee';
 import Employee from 'domain/Employee';
@@ -119,6 +119,10 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         />
       }
     ];
+  }
+
+  getSorters(): (Sorter<Employee> | null)[] {
+    return [(a,b) => (a.name < b.name)? -1 : (a.name > b.name)? 1 : 0, null, null];
   }
   
   updateData(data: Employee): void {
