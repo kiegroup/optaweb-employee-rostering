@@ -21,6 +21,7 @@ import Skill from 'domain/Skill';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
+import { Filter } from 'ui/components/FilterComponent';
 
 interface StateProps extends DataTableProps<Skill> {
   tenantId: number;
@@ -71,12 +72,25 @@ export class SkillsPage extends DataTable<Skill, Props> {
       data.name.length > 0;
   }
 
+  getFilters(): Filter<Skill>[] {
+    return [
+      {
+        name: "Name",
+        getComponent: (setFilter) =>
+        <TextInput aria-label="Name"
+          placeholder="Filter by name..."
+          onChange={v => setFilter(skill => skill.name.includes(v))}
+        />
+      }
+    ];
+  }
+
   updateData(data: Skill): void {
     this.props.updateSkill(data);
   }
   
   addData(data: Skill): void {
-    this.props.addSkill(data);
+    this.props.addSkill({...data, tenantId: this.props.tenantId});
   }
 
   removeData(data: Skill): void {
