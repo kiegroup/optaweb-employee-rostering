@@ -37,7 +37,7 @@ describe('OptionalInput component', () => {
   });
 
   it('should call onChange when input changes if valid', () => {
-    const optionalInput = mount(<OptionalInput {...dataProps}/>);
+    const optionalInput = mount(<OptionalInput {...dataProps} />);
     (dataProps.isValid as jest.Mock).mockReturnValue(true);
 
     (optionalInput.find(TextInput).props().onChange as (value: string) => void)('A');
@@ -50,7 +50,7 @@ describe('OptionalInput component', () => {
   });
 
   it('should not call onChange when input changes if invalid', () => {
-    const optionalInput = mount(<OptionalInput {...dataProps}/>);
+    const optionalInput = mount(<OptionalInput {...dataProps} />);
     (dataProps.isValid as jest.Mock).mockReturnValue(false);
     (dataProps.onChange as jest.Mock).mockClear();
 
@@ -100,7 +100,7 @@ describe('OptionalInput component', () => {
   });
 
   it('should render correctly', () => {
-    const select = shallow(<OptionalInput {...dataProps}/>);
+    const select = shallow(<OptionalInput {...dataProps} />);
     expect(dataProps.valueToString).toBeCalled();
     expect(dataProps.valueToString).toBeCalledWith(dataProps.defaultValue);
     expect(toJson(select)).toMatchSnapshot();
