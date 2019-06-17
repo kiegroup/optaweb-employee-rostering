@@ -103,10 +103,10 @@ MultiTypeaheadSelectState<T>>  {
           ariaLabelledBy={titleId}
           placeholderText={emptyText}
         >
-          {this.props.options.map((option, index) => (
+          {this.props.options.map((option) => (
             <SelectOption
               isDisabled={false}
-              key={index}
+              key={this.props.optionToStringMap(option)}
               value={this.props.optionToStringMap(option)}
             />
           ))}
