@@ -19,7 +19,7 @@ import { AppState } from '../types';
 import * as actions from './actions';
 import reducer, { spotOperations } from './index';
 import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete} from 'store/rest/RestServiceClient';
+import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
 import Spot from 'domain/Spot';
 
 describe('Spot operations', () => {
@@ -56,7 +56,7 @@ describe('Spot operations', () => {
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/`);
 
     store.clearActions();
-    client.get.mockClear()
+    resetRestClientMock(client);
 
     const spotToDelete: Spot = mockSpotList[0];
     onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, true);
@@ -66,7 +66,7 @@ describe('Spot operations', () => {
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/${spotToDelete.id}`);
 
     store.clearActions();
-    client.delete.mockClear()
+    resetRestClientMock(client);
 
     const spotToAdd: Spot = {tenantId: tenantId, name: "New Spot", requiredSkillSet: []};
     const spotWithUpdatedId: Spot = {...spotToAdd, id: 4, version: 0};
@@ -77,7 +77,7 @@ describe('Spot operations', () => {
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/add`, spotToAdd);
 
     store.clearActions();
-    client.post.mockClear()
+    resetRestClientMock(client);
 
     const spotToUpdate: Spot = {tenantId: tenantId, name: "Updated Spot", id: 4, version: 0, requiredSkillSet: []};
     const spotWithUpdatedVersion: Spot = {...spotToAdd, version: 1};
@@ -119,6 +119,9 @@ const state: AppState = {
   tenantData: {
     currentTenantId: 0,
     tenantList: []
+  },
+  contractList: {
+    contractList: []
   },
   spotList: {
     spotList: [
