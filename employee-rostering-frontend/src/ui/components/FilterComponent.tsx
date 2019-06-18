@@ -66,7 +66,7 @@ export default class FilterComponent<T> extends React.Component<FilterProps<T>, 
     }
 
     render() {
-        return (
+        return ((this.props.filters.length !== 0)?
             <span className="form-group toolbar-pf-filter" style={{display: "grid", gridTemplateColumns: "max-content max-content"}}>
               <Select
                 variant={SelectVariant.single}
@@ -95,6 +95,6 @@ export default class FilterComponent<T> extends React.Component<FilterProps<T>, 
                   this.props.onChange(v => true);
                 }
               })}
-            </span>);
+            </span> : <span />);
     }
 }

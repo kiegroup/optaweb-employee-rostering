@@ -21,7 +21,6 @@ import { EditableComponent } from './EditableComponent';
 
 interface MockData {name: string; number: number}
 class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
-  createNewDataInstance = jest.fn(() => ({name: '', number: 0}));
   displayDataRow = jest.fn((data) => [<span key={0} id="viewer">{data.name}</span>,
     <span key={1}>{data.number}</span>]);
   editDataRow = jest.fn((data) => [<input key={0} id="editor" />,
@@ -29,7 +28,7 @@ class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
   // @ts-ignore
   isValid = jest.fn();
   getSorters = jest.fn(() => [null, null]);
-  getFilters = jest.fn();
+  getFilters = jest.fn(() => []);
 
   updateData = jest.fn();
   addData = jest.fn();
@@ -54,8 +53,8 @@ describe('DataTable component', () => {
     expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
     expect(dataTable.displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
     expect(dataTable.editDataRow).toBeCalledTimes(2);
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
-    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
+    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
+    expect(dataTable.editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1], expect.any(Function));
   });
 
   it('should render viewer initially', () => {
@@ -68,54 +67,34 @@ describe('DataTable component', () => {
     const dataTable = mount(<MockDataTable {...twoRows} />);
     (dataTable.instance() as MockDataTable).createNewRow();
 
-    expect((dataTable.instance() as MockDataTable).createNewDataInstance).toBeCalled();
     expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(4);
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(3, twoRows.tableData[0]);
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(4, twoRows.tableData[1]);
     expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(5);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(3, {name: '', number: 0});
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(4, twoRows.tableData[0]);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(5, twoRows.tableData[1]);
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(3, {}, expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(4, twoRows.tableData[0], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(5, twoRows.tableData[1], expect.any(Function));
     expect(toJson(shallow(dataTable.instance().render() as JSX.Element))).toMatchSnapshot();
   });
 
   it('clicking edit button should edit row', () => {
     const dataTable = new MockDataTable(twoRows);
-    const editableComponent1 = new EditableComponent({editor: <input />, viewer: <span>text 1</span>});
-    const editableComponent2 = new EditableComponent({editor: <input />, viewer: <span>text 2</span>});
-    const editableComponents: any[] = [editableComponent1, editableComponent2, null];
     const data: MockData = {name: "Hello", number: 1};
-    const buttons = mount(dataTable.getEditButtons(data, {...data}, editableComponents));
-
-    // Verify the button added itself to the array (note: will not be an EditableComponent despite
-    // the fact it is a EditableComponent)
-    expect(editableComponents[2]).toBeTruthy();
-    // In test, buttons is not an EditableComponent (despite being an EditableComponent),
-    // so override it
-    const editableComponent3 = new EditableComponent({editor: <input />, viewer: <span>text 3</span>});
-    editableComponents[2] = editableComponent3;
-
-    editableComponent1.startEditing = jest.fn();
-    editableComponent2.startEditing = jest.fn();
-    editableComponent3.startEditing = jest.fn();
-
+    const toggleEditing = jest.fn();
+    const buttons = mount(dataTable.getEditButtons(data, {...data}, false, toggleEditing));
     buttons.find('button[aria-label="Edit"]').simulate('click');
-
-    expect(editableComponent1.startEditing).toBeCalled();
-    expect(editableComponent2.startEditing).toBeCalled();
-    expect(editableComponent3.startEditing).toBeCalled();
+    expect(toggleEditing).toBeCalled();
   });
 
   it('clicking delete button should delete row', () => {
     const dataTable = new MockDataTable(twoRows);
-    const editableComponents: any[] = [null];
     const data: MockData = {name: "Hello", number: 1};
-    const buttons = mount(dataTable.getEditButtons(data, {...data}, editableComponents));
-
+    const toggleEditing = jest.fn();
+    const buttons = mount(dataTable.getEditButtons(data, {...data}, false, toggleEditing));
     buttons.find('button[aria-label="Delete"]').simulate('click');
 
     expect(dataTable.removeData).toBeCalled();
@@ -124,72 +103,42 @@ describe('DataTable component', () => {
 
   it('clicking cancel button on edited row should stop editing', () => {
     const dataTable = new MockDataTable(twoRows);
-    const editableComponent1 = new EditableComponent({editor: <input />, viewer: <span>text 1</span>});
-    const editableComponent2 = new EditableComponent({editor: <input />, viewer: <span>text 2</span>});
-    const editableComponents: any[] = [editableComponent1, editableComponent2, null];
     const data: MockData = {name: "Hello", number: 1};
-    const buttons = mount(dataTable.getEditButtons(data, {...data}, editableComponents));
-
-    // Verify the button added itself to the array (note: will not be an EditableComponent despite
-    // the fact it is a EditableComponent)
-    expect(editableComponents[2]).toBeTruthy();
-    buttons.find(EditableComponent).instance().setState({isEditing: true});
-    buttons.update();
-
-    // In test, buttons is not an EditableComponent (despite being an EditableComponent),
-    // so override it
-    const editableComponent3 = new EditableComponent({editor: <input />, viewer: <span>text 3</span>});
-    editableComponents[2] = editableComponent3;
-    editableComponent1.stopEditing = jest.fn();
-    editableComponent2.stopEditing = jest.fn();
-    editableComponent3.stopEditing = jest.fn();
-
+    const toggleEditing = jest.fn();
+    const buttons = mount(dataTable.getEditButtons(data, {...data}, true, toggleEditing));
     buttons.find('button[aria-label="Cancel"]').simulate('click');
 
-    expect(editableComponent1.stopEditing).toBeCalled();
-    expect(editableComponent2.stopEditing).toBeCalled();
-    expect(editableComponent3.stopEditing).toBeCalled();
+    expect(toggleEditing).toBeCalled();
   });
 
   it('clicking save button on edited row should not save if invalid', () => {
     const dataTable = new MockDataTable(twoRows);
     dataTable.isValid.mockReturnValue(false);
-    const editableComponents: any[] = [null];
     const data: MockData = {name: "Hello", number: 1};
-    const buttons = mount(dataTable.getEditButtons(data, {...data}, editableComponents));
-
-    buttons.find(EditableComponent).instance().setState({isEditing: true});
-    buttons.update();
+    const toggleEditing = jest.fn();
+    const buttons = mount(dataTable.getEditButtons(data, {...data}, true, toggleEditing));
     buttons.find('button[aria-label="Save"]').simulate('click');
 
     expect(dataTable.isValid).toBeCalled();
     expect(dataTable.isValid).toBeCalledWith(data);
-    expect(dataTable.updateData).toBeCalledTimes(0);
+    expect(dataTable.updateData).not.toBeCalled();
+    expect(toggleEditing).not.toBeCalled();
   });
 
   it('clicking save button on edited row should save if valid', () => {
     const dataTable = new MockDataTable(twoRows);
     dataTable.isValid.mockReturnValue(true);
-    const editableComponents: any[] = [null];
     const oldValue: MockData = {name: "Hello", number: 1};
     const newValue: MockData = {name: "New Data", number: 2};
-    const buttons = mount(dataTable.getEditButtons(oldValue, newValue, editableComponents));
-
-    buttons.find(EditableComponent).instance().setState({isEditing: true});
-    buttons.update();
-
-    // In test, buttons is not an EditableComponent (despite being an EditableComponent),
-    // so override it
-    const editableComponentMock = new EditableComponent({editor: <input />, viewer: <span>text 3</span>});
-    editableComponents[0] = editableComponentMock;
-    editableComponentMock.stopEditing = jest.fn();
+    const toggleEditing = jest.fn();
+    const buttons = mount(dataTable.getEditButtons(oldValue, newValue, true, toggleEditing));
     buttons.find('button[aria-label="Save"]').simulate('click');
 
     expect(dataTable.isValid).toBeCalled();
     expect(dataTable.isValid).toBeCalledWith(newValue);
     expect(dataTable.updateData).toBeCalled();
     expect(dataTable.updateData).toBeCalledWith(newValue);
-    expect(editableComponentMock.stopEditing).toBeCalled();
+    expect(toggleEditing).toBeCalled();
   });
 
   it('should remove new row when cancel button is clicked', () => {

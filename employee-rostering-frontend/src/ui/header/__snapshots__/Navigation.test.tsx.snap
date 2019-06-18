@@ -46,6 +46,17 @@ exports[`Navigation should activate a navigation link matching the current path 
         Contracts
       </Link>
     </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="employees"
+      key="employees"
+    >
+      <Link
+        to="/employees"
+      >
+        Employees
+      </Link>
+    </NavItem>
   </NavList>
 </Nav>
 `;
