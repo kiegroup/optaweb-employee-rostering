@@ -21,7 +21,7 @@ export interface OptionalInputProps<T> {
   isValid: (value: string) => boolean;
   valueMapper: (value: string) => T;
   valueToString: (value: T) => string;
-  onChange: (value: T|null) => void;
+  onChange: (value: T|null|undefined) => void;
   label: string;
 }
 
@@ -66,7 +66,6 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
               }
             }
             else {
-              this.setState({currentValue: undefined});
               this.props.onChange(undefined);
             }
           }}/>
