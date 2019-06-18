@@ -17,29 +17,13 @@ import React from 'react';
 
 
 export interface EditableComponentProps {
+  isEditing: boolean;
   viewer: JSX.Element;
   editor: JSX.Element;
 }
 
-export interface EditableComponentState {
-  isEditing: boolean;
-}
-
-export class EditableComponent extends React.Component<EditableComponentProps, EditableComponentState> {
-  constructor(props: EditableComponentProps) {
-    super(props)
-    this.state = {isEditing: false};
-  }
-
-  startEditing() {
-    this.setState({isEditing: true});
-  }
-
-  stopEditing() {
-    this.setState({isEditing: false});
-  }
-
+export class EditableComponent extends React.Component<EditableComponentProps> {
   render() {
-    return (this.state.isEditing && this.props.editor) || this.props.viewer;
+    return (this.props.isEditing && this.props.editor) || this.props.viewer;
   }
 }
