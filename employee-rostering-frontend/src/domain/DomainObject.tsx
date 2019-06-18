@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-interface DomainObject {
+export default interface DomainObject {
   tenantId: number;
   id?: number;
   version?: number;
 }
-
-export default DomainObject;
