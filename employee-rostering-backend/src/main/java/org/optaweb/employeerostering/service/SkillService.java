@@ -22,14 +22,18 @@ import javax.persistence.EntityNotFoundException;
 
 import org.optaweb.employeerostering.domain.Skill;
 import org.optaweb.employeerostering.persistence.SkillRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 @Service
 public class SkillService {
 
-    @Autowired
-    private SkillRepository skillRepository;
+    private final SkillRepository skillRepository;
+
+    public SkillService(SkillRepository skillRepository) {
+        this.skillRepository = skillRepository;
+        Assert.notNull(skillRepository, "skillRepository must not be null.");
+    }
 
     public List<Skill> getSkillList(Integer tenantId) {
         return skillRepository.findAll();
