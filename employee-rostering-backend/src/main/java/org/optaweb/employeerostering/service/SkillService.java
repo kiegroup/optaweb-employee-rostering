@@ -57,14 +57,18 @@ public class SkillService {
     }
 
     public void updateSkill(Integer tenantId, Skill skill) {
-        if (skill.getId() != null && skillRepository.findById(skill.getId()).isPresent()) {
+        if (skill.getId() == null) {
+            throw new EntityNotFoundException("Skill id cannot be null.");
+        }
+        else if (!skillRepository.findById(skill.getId()).isPresent()) {
+            throw new EntityNotFoundException("Skill entity not found.");
+        }
+        else {
             Skill skill1 = skillRepository.findById(skill.getId()).get();
 
             skill1.setTenantId(skill.getTenantId());
             skill1.setName(skill.getName());
         }
-        else {
-            throw new EntityNotFoundException("Skill entity not found.");
-        }
+
     }
 }
