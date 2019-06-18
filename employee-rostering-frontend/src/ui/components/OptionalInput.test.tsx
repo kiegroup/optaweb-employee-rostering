@@ -28,14 +28,12 @@ describe('OptionalInput component', () => {
     const optionalInput = new OptionalInput<MockData>(emptyProps);
     expect(optionalInput.state.isChecked).toEqual(false);
     expect(optionalInput.state.inputValue).toEqual(null);
-    expect(optionalInput.state.currentValue).toEqual(null);
   });
 
   it('should be enabled initially if default value is not null', () => {
     const optionalInput = new OptionalInput<MockData>(dataProps);
     expect(optionalInput.state.isChecked).toEqual(true);
     expect(optionalInput.state.inputValue).toEqual(dataProps.defaultValue);
-    expect(optionalInput.state.currentValue).toEqual(dataProps.defaultValue);
   });
 
   it('should call onChange when input changes if valid', () => {
@@ -68,7 +66,7 @@ describe('OptionalInput component', () => {
 
     optionalInput.handleToggle(true);
     expect(optionalInput.setState).toBeCalled();
-    expect(optionalInput.setState).toBeCalledWith({currentValue: null, isChecked: true});
+    expect(optionalInput.setState).toBeCalledWith({isChecked: true});
     expect(emptyProps.onChange).toBeCalled();
     expect(emptyProps.onChange).toBeCalledWith(null);
   });
@@ -79,24 +77,24 @@ describe('OptionalInput component', () => {
 
     optionalInput.handleToggle(false);
     expect(optionalInput.setState).toBeCalled();
-    expect(optionalInput.setState).toBeCalledWith({currentValue: null, isChecked: false});
+    expect(optionalInput.setState).toBeCalledWith({isChecked: false});
     expect(dataProps.onChange).toBeCalled();
     expect(dataProps.onChange).toBeCalledWith(null);
   });
 
-  it('should be load the old value after a toggle', () => {
+  it('should load the old value after a toggle', () => {
     const optionalInput = new OptionalInput<MockData>(dataProps);
     optionalInput.setState = jest.fn();
 
     optionalInput.handleToggle(false);
     expect(optionalInput.setState).toBeCalled();
-    expect(optionalInput.setState).toBeCalledWith({currentValue: null, isChecked: false});
+    expect(optionalInput.setState).toBeCalledWith({isChecked: false});
     expect(dataProps.onChange).toBeCalled();
     expect(dataProps.onChange).toBeCalledWith(null);
 
     optionalInput.handleToggle(true);
     expect(optionalInput.setState).toBeCalled();
-    expect(optionalInput.setState).toBeCalledWith({currentValue: dataProps.defaultValue, isChecked: true});
+    expect(optionalInput.setState).toBeCalledWith({isChecked: true});
     expect(dataProps.onChange).toBeCalled();
     expect(dataProps.onChange).toBeCalledWith(dataProps.defaultValue);
   });

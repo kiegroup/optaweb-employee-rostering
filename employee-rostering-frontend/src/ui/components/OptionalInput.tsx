@@ -27,7 +27,6 @@ export interface OptionalInputProps<T> {
 
 interface OptionalInputState<T> {
   inputValue: T|null;
-  currentValue: T|null;
   isChecked: boolean;
 }
 
@@ -36,7 +35,6 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
     super(props);
     this.state = {
       inputValue: props.defaultValue,
-      currentValue: props.defaultValue,
       isChecked: props.defaultValue !== null
     };
     this.handleToggle = this.handleToggle.bind(this);
@@ -44,11 +42,11 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
 
   handleToggle(isChecked: boolean) {
     if (isChecked) {
-      this.setState({currentValue: this.state.inputValue, isChecked: true});
+      this.setState({isChecked: true});
       this.props.onChange(this.state.inputValue);
     }
     else {
-      this.setState({currentValue: null, isChecked: false});
+      this.setState({isChecked: false});
       this.props.onChange(null);
     }
   }
@@ -64,7 +62,6 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
               const mappedValue = this.props.valueMapper(value);
               this.setState({inputValue: mappedValue});
               if (this.state.isChecked) {
-                this.setState({currentValue: mappedValue});
                 this.props.onChange(mappedValue);
               }
             }
