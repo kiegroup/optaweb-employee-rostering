@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-interface Tenant {
+export default interface Tenant {
   name: string;
   id?: number;
   version?: number;
 }
-
-export default Tenant;

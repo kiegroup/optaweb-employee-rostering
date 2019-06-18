@@ -16,8 +16,6 @@
 
 import DomainObject from './DomainObject';
 
-interface Skill extends DomainObject {
+export default interface Skill extends DomainObject {
   name: string;
 }
-
-export default Skill;
