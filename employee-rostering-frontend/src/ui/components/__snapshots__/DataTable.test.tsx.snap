@@ -1,13 +1,81 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DataTable component should render correctly with a few rows 1`] = `
-<div>
-  <Button
-    isDisabled={false}
-    onClick={[Function]}
+<Card>
+  <div
+    style={
+      Object {
+        "display": "grid",
+        "gridTemplateColumns": "min-content auto min-content max-content",
+      }
+    }
   >
-    Add
-  </Button>
+    <FilterComponent
+      filterListParentId="filter-list"
+      onChange={[Function]}
+    />
+    <span />
+    <Button
+      isDisabled={false}
+      onClick={[Function]}
+    >
+      Add
+    </Button>
+    <Pagination
+      className=""
+      dropDirection="down"
+      itemCount={2}
+      itemsEnd={null}
+      itemsStart={null}
+      onFirstClick={[Function]}
+      onLastClick={[Function]}
+      onNextClick={[Function]}
+      onPageInput={[Function]}
+      onPerPageSelect={[Function]}
+      onPreviousClick={[Function]}
+      onSetPage={[Function]}
+      page={1}
+      perPage={10}
+      perPageOptions={
+        Array [
+          Object {
+            "title": "10",
+            "value": 10,
+          },
+          Object {
+            "title": "20",
+            "value": 20,
+          },
+          Object {
+            "title": "50",
+            "value": 50,
+          },
+          Object {
+            "title": "100",
+            "value": 100,
+          },
+        ]
+      }
+      titles={
+        Object {
+          "currPage": "Current page",
+          "items": "items",
+          "itemsPerPage": "Items per page",
+          "optionsToggle": "Select",
+          "pages": "pages",
+          "paginationTitle": "Pagination",
+          "perPageSuffix": "per page",
+          "toFirstPage": "Go to first page",
+          "toLastPage": "Go to last page",
+          "toNextPage": "Go to next page",
+          "toPreviousPage": "Go to previous page",
+        }
+      }
+      toggleTemplate={[Function]}
+      variant="top"
+      widgetId="pagination-options-menu-top"
+    />
+  </div>
   <Table
     borders={true}
     caption="Data Table"
@@ -19,6 +87,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
           ],
           "props": Object {},
           "title": "Column 1",
+          "transforms": undefined,
         },
         Object {
           "cellTransforms": Array [
@@ -26,6 +95,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
           ],
           "props": Object {},
           "title": "Column 2",
+          "transforms": undefined,
         },
         Object {
           "cellTransforms": Array [
@@ -33,6 +103,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
           ],
           "props": Object {},
           "title": "",
+          "transforms": undefined,
         },
       ]
     }
@@ -44,6 +115,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    onSort={[Function]}
     role="grid"
     rowLabeledBy="simple-node"
     rows={
@@ -222,6 +294,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
         },
       ]
     }
+    sortBy={Object {}}
     variant={null}
   >
     <TableHeader
@@ -233,17 +306,85 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
       rowKey="id"
     />
   </Table>
-</div>
+</Card>
 `;
 
 exports[`DataTable component should render correctly with no rows 1`] = `
-<div>
-  <Button
-    isDisabled={false}
-    onClick={[Function]}
+<Card>
+  <div
+    style={
+      Object {
+        "display": "grid",
+        "gridTemplateColumns": "min-content auto min-content max-content",
+      }
+    }
   >
-    Add
-  </Button>
+    <FilterComponent
+      filterListParentId="filter-list"
+      onChange={[Function]}
+    />
+    <span />
+    <Button
+      isDisabled={false}
+      onClick={[Function]}
+    >
+      Add
+    </Button>
+    <Pagination
+      className=""
+      dropDirection="down"
+      itemCount={0}
+      itemsEnd={null}
+      itemsStart={null}
+      onFirstClick={[Function]}
+      onLastClick={[Function]}
+      onNextClick={[Function]}
+      onPageInput={[Function]}
+      onPerPageSelect={[Function]}
+      onPreviousClick={[Function]}
+      onSetPage={[Function]}
+      page={1}
+      perPage={10}
+      perPageOptions={
+        Array [
+          Object {
+            "title": "10",
+            "value": 10,
+          },
+          Object {
+            "title": "20",
+            "value": 20,
+          },
+          Object {
+            "title": "50",
+            "value": 50,
+          },
+          Object {
+            "title": "100",
+            "value": 100,
+          },
+        ]
+      }
+      titles={
+        Object {
+          "currPage": "Current page",
+          "items": "items",
+          "itemsPerPage": "Items per page",
+          "optionsToggle": "Select",
+          "pages": "pages",
+          "paginationTitle": "Pagination",
+          "perPageSuffix": "per page",
+          "toFirstPage": "Go to first page",
+          "toLastPage": "Go to last page",
+          "toNextPage": "Go to next page",
+          "toPreviousPage": "Go to previous page",
+        }
+      }
+      toggleTemplate={[Function]}
+      variant="top"
+      widgetId="pagination-options-menu-top"
+    />
+  </div>
   <Table
     borders={true}
     caption="Data Table"
@@ -255,6 +396,7 @@ exports[`DataTable component should render correctly with no rows 1`] = `
           ],
           "props": Object {},
           "title": "Column 1",
+          "transforms": undefined,
         },
         Object {
           "cellTransforms": Array [
@@ -262,6 +404,7 @@ exports[`DataTable component should render correctly with no rows 1`] = `
           ],
           "props": Object {},
           "title": "Column 2",
+          "transforms": undefined,
         },
         Object {
           "cellTransforms": Array [
@@ -269,6 +412,7 @@ exports[`DataTable component should render correctly with no rows 1`] = `
           ],
           "props": Object {},
           "title": "",
+          "transforms": undefined,
         },
       ]
     }
@@ -280,9 +424,11 @@ exports[`DataTable component should render correctly with no rows 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    onSort={[Function]}
     role="grid"
     rowLabeledBy="simple-node"
     rows={Array []}
+    sortBy={Object {}}
     variant={null}
   >
     <TableHeader
@@ -294,7 +440,7 @@ exports[`DataTable component should render correctly with no rows 1`] = `
       rowKey="id"
     />
   </Table>
-</div>
+</Card>
 `;
 
 exports[`DataTable component should render editor for new row 1`] = `
@@ -572,13 +718,83 @@ exports[`DataTable component should render editor for new row 1`] = `
 `;
 
 exports[`DataTable component should render viewer initially 1`] = `
-<div>
-  <Button
-    isDisabled={false}
-    onClick={[Function]}
+<article
+  className="pf-c-card"
+>
+  <div
+    style={
+      Object {
+        "display": "grid",
+        "gridTemplateColumns": "min-content auto min-content max-content",
+      }
+    }
   >
-    Add
-  </Button>
+    <FilterComponent
+      filterListParentId="filter-list"
+      onChange={[Function]}
+    />
+    <span />
+    <Button
+      isDisabled={false}
+      onClick={[Function]}
+    >
+      Add
+    </Button>
+    <Pagination
+      className=""
+      dropDirection="down"
+      itemCount={2}
+      itemsEnd={null}
+      itemsStart={null}
+      onFirstClick={[Function]}
+      onLastClick={[Function]}
+      onNextClick={[Function]}
+      onPageInput={[Function]}
+      onPerPageSelect={[Function]}
+      onPreviousClick={[Function]}
+      onSetPage={[Function]}
+      page={1}
+      perPage={10}
+      perPageOptions={
+        Array [
+          Object {
+            "title": "10",
+            "value": 10,
+          },
+          Object {
+            "title": "20",
+            "value": 20,
+          },
+          Object {
+            "title": "50",
+            "value": 50,
+          },
+          Object {
+            "title": "100",
+            "value": 100,
+          },
+        ]
+      }
+      titles={
+        Object {
+          "currPage": "Current page",
+          "items": "items",
+          "itemsPerPage": "Items per page",
+          "optionsToggle": "Select",
+          "pages": "pages",
+          "paginationTitle": "Pagination",
+          "perPageSuffix": "per page",
+          "toFirstPage": "Go to first page",
+          "toLastPage": "Go to last page",
+          "toNextPage": "Go to next page",
+          "toPreviousPage": "Go to previous page",
+        }
+      }
+      toggleTemplate={[Function]}
+      variant="top"
+      widgetId="pagination-options-menu-top"
+    />
+  </div>
   <Table
     borders={true}
     caption="Data Table"
@@ -590,6 +806,7 @@ exports[`DataTable component should render viewer initially 1`] = `
           ],
           "props": Object {},
           "title": "Column 1",
+          "transforms": undefined,
         },
         Object {
           "cellTransforms": Array [
@@ -597,6 +814,7 @@ exports[`DataTable component should render viewer initially 1`] = `
           ],
           "props": Object {},
           "title": "Column 2",
+          "transforms": undefined,
         },
         Object {
           "cellTransforms": Array [
@@ -604,6 +822,7 @@ exports[`DataTable component should render viewer initially 1`] = `
           ],
           "props": Object {},
           "title": "",
+          "transforms": undefined,
         },
       ]
     }
@@ -615,6 +834,7 @@ exports[`DataTable component should render viewer initially 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    onSort={[Function]}
     role="grid"
     rowLabeledBy="simple-node"
     rows={
@@ -793,6 +1013,7 @@ exports[`DataTable component should render viewer initially 1`] = `
         },
       ]
     }
+    sortBy={Object {}}
     variant={null}
   >
     <TableHeader
@@ -804,5 +1025,5 @@ exports[`DataTable component should render viewer initially 1`] = `
       rowKey="id"
     />
   </Table>
-</div>
+</article>
 `;
