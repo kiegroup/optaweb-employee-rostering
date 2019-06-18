@@ -29,7 +29,8 @@ import {
 import {Button, ButtonVariant, Pagination, Card } from '@patternfly/react-core';
 import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { EditableComponent } from './EditableComponent';
-import FilterComponent, {Filter} from './FilterComponent';
+import FilterComponent, { Filter } from './FilterComponent';
+import { toggleElement } from 'util/ImmutableCollectionOperations';
 
 export interface DataTableProps<T> {
   title: string;
@@ -39,6 +40,7 @@ export interface DataTableProps<T> {
 
 interface DataTableState<T> {
   newRowData: Partial<T>|null;
+  editedRows: T[]; 
   page: number;
   perPage: number;
   currentFilter: (rowData: T) => boolean;
@@ -50,12 +52,20 @@ export type PropertySetter<T> = (propertyName: keyof T, value: T[keyof T]|undefi
 export type Sorter<T> = (a: T, b: T) => number;
 
 export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
+  [x: string]: any;
   constructor(props: P) {
     super(props);
     this.createNewRow = this.createNewRow.bind(this);
     this.cancelAddingRow = this.cancelAddingRow.bind(this);
     this.convertDataToTableRow = this.convertDataToTableRow.bind(this);
-    this.state = {newRowData: null, currentFilter: (t) => true, page: 1, perPage: 10, sortBy: {}};
+    this.state = {
+      editedRows: [],
+      newRowData: null,
+      currentFilter: (t) => true,
+      page: 1,
+      perPage: 10,
+      sortBy: {}
+    };
     this.onSetPage = this.onSetPage.bind(this);
     this.onPerPageSelect = this.onPerPageSelect.bind(this);
     this.onSort = this.onSort.bind(this);
@@ -74,6 +84,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
 
   onSetPage(event: any, pageNumber: number): void {
     this.setState({
+      editedRows: [],
       page: pageNumber
     });
   }
@@ -81,6 +92,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
   onPerPageSelect(event: any, perPage: number): void {
     const newPage = Math.floor(((this.state.page - 1) * this.state.perPage) / perPage) + 1;
     this.setState({
+      editedRows: [],
       page: newPage,
       perPage
     });
@@ -116,14 +128,13 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     </span>;
   }
 
-  getEditButtons(originalData: T, editedData: Partial<T>, editableComponents: EditableComponent[]): JSX.Element {
-    return <EditableComponent ref={(c) => {editableComponents[editableComponents.length-1] = c as EditableComponent;}}
+  getEditButtons(originalData: T, editedData: Partial<T>, isEditing: boolean, toggleEditing: () => void): JSX.Element {
+    return <EditableComponent
+      isEditing={isEditing}
       viewer={<span>
         <Button aria-label="Edit"
           variant={ButtonVariant.link}
-          onClick={() => {
-            editableComponents.forEach(c => c.startEditing());
-          }}>
+          onClick={toggleEditing}>
           <EditIcon />
         </Button>
         <Button aria-label="Delete"
@@ -140,34 +151,38 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
           onClick={() => {
             if (this.isValid(editedData)) {
               this.updateData(editedData);
-              editableComponents.forEach(c => c.stopEditing());
+              toggleEditing();
             }
           }}>
           <SaveIcon />
         </Button>
         <Button aria-label="Cancel"
           variant={ButtonVariant.link}
-          onClick={() => {
-            editableComponents.forEach(c => c.stopEditing());
-          }}>
+          onClick={toggleEditing}>
           <CloseIcon />
         </Button>
       </span>}/>;
   }
 
   convertDataToTableRow(data: T): IRow {
+    const isEditing = this.state.editedRows.indexOf(data) !== -1;
     const editedData: Partial<T> = {...data};
-    const viewers = this.displayDataRow(data);
-
     const setProperty = (key: keyof T, value: T[keyof T]|undefined) => editedData[key] = value;
+
+    const viewers = this.displayDataRow(data);
     const editors = this.editDataRow(editedData, setProperty);
-    const length = viewers.length
-    const editableComponents: EditableComponent[] = new Array(length + 1);
     const cellContents = viewers.map((viewer, index) => {return { title:
       <EditableComponent viewer={viewer}
         editor={editors[index]}
-        ref={(c) => editableComponents[index] = c as EditableComponent}
-      />} }).concat([{title: this.getEditButtons(data, editedData, editableComponents)}]);
+        isEditing={isEditing}
+      />} }).concat([{
+        title: this.getEditButtons(data, editedData, isEditing,
+          () => {
+            this.setState(prevState => ({
+              editedRows: toggleElement(prevState.editedRows, data)
+            }));
+          })
+      }]);
     return {
       cells: cellContents
     };
@@ -188,6 +203,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
 
   onSort(event: any, index: number, direction: any) {
     this.setState({
+      editedRows: [],
       sortBy: {
         index,
         direction: direction
@@ -229,7 +245,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
       <Card>
         <div style={{display: "grid", gridTemplateColumns: "min-content auto min-content max-content"}}>
           <FilterComponent filters={this.getFilters()}
-            onChange={(currentFilter) => this.setState({currentFilter})}
+            onChange={(currentFilter) => this.setState({editedRows: [], currentFilter})}
             filterListParentId={"filter-list"}/>
           <span />
           <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>Add</Button>
