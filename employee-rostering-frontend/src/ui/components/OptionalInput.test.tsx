@@ -38,7 +38,7 @@ describe('OptionalInput component', () => {
 
   it('should call onChange when input changes if valid', () => {
     const optionalInput = mount(<OptionalInput {...dataProps}/>);
-    dataProps.isValid.mockReturnValue(true);
+    (dataProps.isValid as jest.Mock).mockReturnValue(true);
 
     (optionalInput.find(TextInput).props().onChange as (value: string) => void)('A');
     expect(dataProps.isValid).toBeCalled()
@@ -51,8 +51,8 @@ describe('OptionalInput component', () => {
 
   it('should not call onChange when input changes if invalid', () => {
     const optionalInput = mount(<OptionalInput {...dataProps}/>);
-    dataProps.isValid.mockReturnValue(false);
-    dataProps.onChange.mockClear();
+    (dataProps.isValid as jest.Mock).mockReturnValue(false);
+    (dataProps.onChange as jest.Mock).mockClear();
 
     (optionalInput.find(TextInput).props().onChange as (value: string) => void)('A');
     expect(dataProps.isValid).toBeCalled()
