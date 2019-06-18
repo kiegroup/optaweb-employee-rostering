@@ -21,7 +21,7 @@ import { AddSpotAction, RemoveSpotAction, UpdateSpotAction, RefreshSpotListActio
 
 export const addSpot: ThunkCommandFactory<Spot, AddSpotAction> = spot =>
   (dispatch, state, client) => {
-    let tenantId = spot.tenantId;
+    const tenantId = spot.tenantId;
     return client.post<Spot>(`/tenant/${tenantId}/spot/add`, spot).then(newSpot => {
       dispatch(actions.addSpot(newSpot))
     });
@@ -29,8 +29,8 @@ export const addSpot: ThunkCommandFactory<Spot, AddSpotAction> = spot =>
 
 export const removeSpot: ThunkCommandFactory<Spot, RemoveSpotAction> = spot =>
   (dispatch, state, client) => {
-    let tenantId = spot.tenantId;
-    let spotId = spot.id;
+    const tenantId = spot.tenantId;
+    const spotId = spot.id;
     return client.delete<boolean>(`/tenant/${tenantId}/spot/${spotId}`).then(isSuccess => {
       if (isSuccess) {
         dispatch(actions.removeSpot(spot));
@@ -40,7 +40,7 @@ export const removeSpot: ThunkCommandFactory<Spot, RemoveSpotAction> = spot =>
 
 export const updateSpot: ThunkCommandFactory<Spot, UpdateSpotAction> = spot =>
   (dispatch, state, client) => {
-    let tenantId = spot.tenantId;
+    const tenantId = spot.tenantId;
     return client.post<Spot>(`/tenant/${tenantId}/spot/update`, spot).then(updatedSpot => {
       dispatch(actions.updateSpot(updatedSpot));
     });
@@ -48,7 +48,7 @@ export const updateSpot: ThunkCommandFactory<Spot, UpdateSpotAction> = spot =>
 
 export const refreshSpotList: ThunkCommandFactory<void, RefreshSpotListAction> = () =>
   (dispatch, state, client) => {
-    let tenantId = state().tenantData.currentTenantId;
+    const tenantId = state().tenantData.currentTenantId;
     return client.get<Spot[]>(`/tenant/${tenantId}/spot/`).then(spotList => {
       dispatch(actions.refreshSpotList(spotList));
     });

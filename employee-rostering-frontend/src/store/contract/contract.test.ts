@@ -18,8 +18,8 @@ import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
 import reducer, { contractOperations } from './index';
-import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete} from 'store/rest/RestServiceClient';
+import { withElement, withoutElement, withUpdatedElement } from 'util/ImmutableCollectionOperations';
+import { onGet, onPost, onDelete, resetRestClientMock } from 'store/rest/RestTestUtils';
 import Contract from 'domain/Contract';
 
 describe('Contract operations', () => {
@@ -44,7 +44,7 @@ describe('Contract operations', () => {
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/`);
 
     store.clearActions();
-    client.get.mockClear();
+    resetRestClientMock(client);
 
     const contractToDelete = mockContractList[0];
     onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, true);
@@ -54,7 +54,7 @@ describe('Contract operations', () => {
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
 
     store.clearActions();
-    client.delete.mockClear()
+    resetRestClientMock(client);
 
     const contractToAdd: Contract = {tenantId: tenantId,
       name: "Contract 1",
@@ -71,7 +71,7 @@ describe('Contract operations', () => {
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/add`, contractToAdd);
 
     store.clearActions();
-    client.post.mockClear()
+    resetRestClientMock(client);
 
     const contractToUpdate: Contract = {tenantId: tenantId,
       name: "Contract 1",
@@ -112,7 +112,7 @@ describe('Contract reducers', () => {
     maximumMinutesPerMonth: 3,
     maximumMinutesPerYear: 4
   };
-  const deletedContract: Contract =       {
+  const deletedContract: Contract = {
     tenantId: 0,
     id: 2,
     version: 0,
