@@ -172,6 +172,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     type="text"
                   />
                 }
+                isEditing={false}
                 viewer={
                   <Text>
                     Contract 1
@@ -191,6 +192,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     valueToString={[Function]}
                   />
                 }
+                isEditing={false}
                 viewer={<Text />}
               />,
             },
@@ -206,6 +208,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     valueToString={[Function]}
                   />
                 }
+                isEditing={false}
                 viewer={<Text />}
               />,
             },
@@ -221,6 +224,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     valueToString={[Function]}
                   />
                 }
+                isEditing={false}
                 viewer={<Text />}
               />,
             },
@@ -236,6 +240,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     valueToString={[Function]}
                   />
                 }
+                isEditing={false}
                 viewer={<Text />}
               />,
             },
@@ -267,6 +272,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     </Button>
                   </span>
                 }
+                isEditing={false}
                 viewer={
                   <span>
                     <Button
@@ -315,6 +321,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     type="text"
                   />
                 }
+                isEditing={false}
                 viewer={
                   <Text>
                     Contract 2
@@ -334,6 +341,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     valueToString={[Function]}
                   />
                 }
+                isEditing={false}
                 viewer={
                   <Text>
                     1
@@ -353,6 +361,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     valueToString={[Function]}
                   />
                 }
+                isEditing={false}
                 viewer={<Text />}
               />,
             },
@@ -368,6 +377,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     valueToString={[Function]}
                   />
                 }
+                isEditing={false}
                 viewer={
                   <Text>
                     10
@@ -387,6 +397,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     valueToString={[Function]}
                   />
                 }
+                isEditing={false}
                 viewer={
                   <Text>
                     120
@@ -422,6 +433,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     </Button>
                   </span>
                 }
+                isEditing={false}
                 viewer={
                   <span>
                     <Button

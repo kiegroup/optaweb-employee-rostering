@@ -66,6 +66,19 @@ exports[`App should render correctly 1`] = `
           exact={true}
           path="/contracts"
         />
+        <Route
+          component={
+            Object {
+              "$$typeof": Symbol(react.memo),
+              "WrappedComponent": [Function],
+              "compare": null,
+              "displayName": "Connect(EmployeesPage)",
+              "type": [Function],
+            }
+          }
+          exact={true}
+          path="/employees"
+        />
       </Switch>
     </PageSection>
   </Page>
