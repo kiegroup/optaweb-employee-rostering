@@ -38,8 +38,6 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-object-literal-type-assertion": "off",
     "@typescript-eslint/no-use-before-define": "off",
-    // Workaround for https://github.com/eslint/typescript-eslint-parser/issues/416
-    "no-undef": "off",
     "header/header": [
       "error", "block", [
         "",
