@@ -43,19 +43,6 @@ describe('Contracts page', () => {
     expect(toJson(editor)).toMatchSnapshot();
   });
 
-  it('should return a contract with the tenantId but no name, id or version on createNewDataInstance', () => {
-    const contractsPage = new ContractsPage(twoContracts);
-    const contract = contractsPage.createNewDataInstance();
-    expect(contract.tenantId).toEqual(twoContracts.tenantId);
-    expect(contract.name).toEqual("");
-    expect(contract.maximumMinutesPerDay).toBeNull();
-    expect(contract.maximumMinutesPerWeek).toBeNull();
-    expect(contract.maximumMinutesPerMonth).toBeNull();
-    expect(contract.maximumMinutesPerYear).toBeNull();
-    expect(contract.id).toBeUndefined();
-    expect(contract.version).toBeUndefined();
-  });
-
   it('should call addContract on addData', () => {
     const contractsPage = new ContractsPage(twoContracts);
     const contract = twoContracts.tableData[1];

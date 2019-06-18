@@ -26,7 +26,10 @@ class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
     <span key={1}>{data.number}</span>]);
   editDataRow = jest.fn((data) => [<input key={0} id="editor" />,
     <input key={1} />]);
+  // @ts-ignore
   isValid = jest.fn();
+  getSorters = jest.fn(() => [null, null]);
+  getFilters = jest.fn();
 
   updateData = jest.fn();
   addData = jest.fn();

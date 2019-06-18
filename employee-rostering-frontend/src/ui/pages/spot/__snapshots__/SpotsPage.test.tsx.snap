@@ -1,13 +1,89 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Spots page should render correctly with a few spots 1`] = `
-<div>
-  <Button
-    isDisabled={false}
-    onClick={[Function]}
+<Card>
+  <div
+    style={
+      Object {
+        "display": "grid",
+        "gridTemplateColumns": "min-content auto min-content max-content",
+      }
+    }
   >
-    Add
-  </Button>
+    <FilterComponent
+      filterListParentId="filter-list"
+      filters={
+        Array [
+          Object {
+            "getComponent": [Function],
+            "name": "Name",
+          },
+        ]
+      }
+      onChange={[Function]}
+    />
+    <span />
+    <Button
+      isDisabled={false}
+      onClick={[Function]}
+    >
+      Add
+    </Button>
+    <Pagination
+      className=""
+      dropDirection="down"
+      itemCount={2}
+      itemsEnd={null}
+      itemsStart={null}
+      onFirstClick={[Function]}
+      onLastClick={[Function]}
+      onNextClick={[Function]}
+      onPageInput={[Function]}
+      onPerPageSelect={[Function]}
+      onPreviousClick={[Function]}
+      onSetPage={[Function]}
+      page={1}
+      perPage={10}
+      perPageOptions={
+        Array [
+          Object {
+            "title": "10",
+            "value": 10,
+          },
+          Object {
+            "title": "20",
+            "value": 20,
+          },
+          Object {
+            "title": "50",
+            "value": 50,
+          },
+          Object {
+            "title": "100",
+            "value": 100,
+          },
+        ]
+      }
+      titles={
+        Object {
+          "currPage": "Current page",
+          "items": "items",
+          "itemsPerPage": "Items per page",
+          "optionsToggle": "Select",
+          "pages": "pages",
+          "paginationTitle": "Pagination",
+          "perPageSuffix": "per page",
+          "toFirstPage": "Go to first page",
+          "toLastPage": "Go to last page",
+          "toNextPage": "Go to next page",
+          "toPreviousPage": "Go to previous page",
+        }
+      }
+      toggleTemplate={[Function]}
+      variant="top"
+      widgetId="pagination-options-menu-top"
+    />
+  </div>
   <Table
     borders={true}
     caption="Spots"
@@ -19,6 +95,9 @@ exports[`Spots page should render correctly with a few spots 1`] = `
           ],
           "props": Object {},
           "title": "Name",
+          "transforms": Array [
+            [Function],
+          ],
         },
         Object {
           "cellTransforms": Array [
@@ -26,6 +105,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
           ],
           "props": Object {},
           "title": "",
+          "transforms": undefined,
         },
       ]
     }
@@ -37,6 +117,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    onSort={[Function]}
     role="grid"
     rowLabeledBy="simple-node"
     rows={
@@ -307,6 +388,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
         },
       ]
     }
+    sortBy={Object {}}
     variant={null}
   >
     <TableHeader
@@ -318,17 +400,93 @@ exports[`Spots page should render correctly with a few spots 1`] = `
       rowKey="id"
     />
   </Table>
-</div>
+</Card>
 `;
 
 exports[`Spots page should render correctly with no spots 1`] = `
-<div>
-  <Button
-    isDisabled={false}
-    onClick={[Function]}
+<Card>
+  <div
+    style={
+      Object {
+        "display": "grid",
+        "gridTemplateColumns": "min-content auto min-content max-content",
+      }
+    }
   >
-    Add
-  </Button>
+    <FilterComponent
+      filterListParentId="filter-list"
+      filters={
+        Array [
+          Object {
+            "getComponent": [Function],
+            "name": "Name",
+          },
+        ]
+      }
+      onChange={[Function]}
+    />
+    <span />
+    <Button
+      isDisabled={false}
+      onClick={[Function]}
+    >
+      Add
+    </Button>
+    <Pagination
+      className=""
+      dropDirection="down"
+      itemCount={0}
+      itemsEnd={null}
+      itemsStart={null}
+      onFirstClick={[Function]}
+      onLastClick={[Function]}
+      onNextClick={[Function]}
+      onPageInput={[Function]}
+      onPerPageSelect={[Function]}
+      onPreviousClick={[Function]}
+      onSetPage={[Function]}
+      page={1}
+      perPage={10}
+      perPageOptions={
+        Array [
+          Object {
+            "title": "10",
+            "value": 10,
+          },
+          Object {
+            "title": "20",
+            "value": 20,
+          },
+          Object {
+            "title": "50",
+            "value": 50,
+          },
+          Object {
+            "title": "100",
+            "value": 100,
+          },
+        ]
+      }
+      titles={
+        Object {
+          "currPage": "Current page",
+          "items": "items",
+          "itemsPerPage": "Items per page",
+          "optionsToggle": "Select",
+          "pages": "pages",
+          "paginationTitle": "Pagination",
+          "perPageSuffix": "per page",
+          "toFirstPage": "Go to first page",
+          "toLastPage": "Go to last page",
+          "toNextPage": "Go to next page",
+          "toPreviousPage": "Go to previous page",
+        }
+      }
+      toggleTemplate={[Function]}
+      variant="top"
+      widgetId="pagination-options-menu-top"
+    />
+  </div>
   <Table
     borders={true}
     caption="Spots"
@@ -340,6 +498,9 @@ exports[`Spots page should render correctly with no spots 1`] = `
           ],
           "props": Object {},
           "title": "Name",
+          "transforms": Array [
+            [Function],
+          ],
         },
         Object {
           "cellTransforms": Array [
@@ -347,6 +508,7 @@ exports[`Spots page should render correctly with no spots 1`] = `
           ],
           "props": Object {},
           "title": "",
+          "transforms": undefined,
         },
       ]
     }
@@ -358,9 +520,11 @@ exports[`Spots page should render correctly with no spots 1`] = `
     gridBreakPoint="grid-md"
     onCollapse={null}
     onExpand={null}
+    onSort={[Function]}
     role="grid"
     rowLabeledBy="simple-node"
     rows={Array []}
+    sortBy={Object {}}
     variant={null}
   >
     <TableHeader
@@ -372,7 +536,7 @@ exports[`Spots page should render correctly with no spots 1`] = `
       rowKey="id"
     />
   </Table>
-</div>
+</Card>
 `;
 
 exports[`Spots page should render the editor correctly 1`] = `
