@@ -20,6 +20,7 @@ import * as actions from './actions';
 import * as skillActions from '../skill/actions';
 import * as spotActions from '../spot/actions';
 import * as contractActions from '../contract/actions';
+import * as employeeActions from '../employee/actions';
 import reducer, { tenantOperations } from './index';
 import {onGet, resetRestClientMock} from 'store/rest/RestTestUtils';
 import Tenant from 'domain/Tenant';
@@ -47,26 +48,28 @@ describe('Tenant operations', () => {
       actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
       skillActions.refreshSkillList([]),
       spotActions.refreshSpotList([]),
-      contractActions.refreshContractList([])
+      contractActions.refreshContractList([]),
+      employeeActions.refreshEmployeeList([])
     ];
 
     onGet(`/tenant/`, mockTenantList);
     onGet(`/tenant/0/skill/`, []);
     onGet(`/tenant/0/spot/`, []);
     onGet(`/tenant/0/contract/`, []);
+    onGet(`/tenant/0/employee/`, []);
     
     await store.dispatch(tenantOperations.refreshTenantList());
     
     let actualRefreshActions: any[] = store.getActions();
-    actualRefreshActions.forEach(x => expect(expectedRefreshActions).toContainEqual(x))
-    expectedRefreshActions.forEach(x => expect(actualRefreshActions).toContainEqual(x))
-    expect(expectedRefreshActions.length).toBe(actualRefreshActions.length)
+    expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
+    expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
 
-    expect(client.get).toHaveBeenCalledTimes(4);
+    expect(client.get).toHaveBeenCalledTimes(5);
     expect(client.get).toHaveBeenCalledWith(`/tenant/`);
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/skill/`);
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/spot/`);
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/contract/`);
+    expect(client.get).toHaveBeenCalledWith(`/tenant/0/employee/`);
 
     store.clearActions();
     resetRestClientMock(client);
@@ -76,21 +79,22 @@ describe('Tenant operations', () => {
       actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
       skillActions.refreshSkillList([]),
       spotActions.refreshSpotList([]),
-      contractActions.refreshContractList([])
+      contractActions.refreshContractList([]),
+      employeeActions.refreshEmployeeList([])
     ];
 
     await store.dispatch(tenantOperations.refreshTenantList());
     
     actualRefreshActions = store.getActions();
-    actualRefreshActions.forEach(x => expect(expectedRefreshActions).toContainEqual(x))
-    expectedRefreshActions.forEach(x => expect(actualRefreshActions).toContainEqual(x))
-    expect(expectedRefreshActions.length).toBe(actualRefreshActions.length)
+    expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
+    expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
 
-    expect(client.get).toHaveBeenCalledTimes(4);
+    expect(client.get).toHaveBeenCalledTimes(5);
     expect(client.get).toHaveBeenCalledWith(`/tenant/`);
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/skill/`);
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/spot/`);
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/contract/`);
+    expect(client.get).toHaveBeenCalledWith(`/tenant/0/employee/`);
 
     store.clearActions();
     resetRestClientMock(client);
@@ -99,20 +103,21 @@ describe('Tenant operations', () => {
       actions.changeTenant(0),
       skillActions.refreshSkillList([]),
       spotActions.refreshSpotList([]),
-      contractActions.refreshContractList([])
+      contractActions.refreshContractList([]),
+      employeeActions.refreshEmployeeList([])
     ];
 
     await store.dispatch(tenantOperations.changeTenant(0));
 
     actualRefreshActions = store.getActions();
-    actualRefreshActions.forEach(x => expect(expectedRefreshActions).toContainEqual(x))
-    expectedRefreshActions.forEach(x => expect(actualRefreshActions).toContainEqual(x))
-    expect(expectedRefreshActions.length).toBe(actualRefreshActions.length)
+    expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
+    expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
 
-    expect(client.get).toHaveBeenCalledTimes(3);
+    expect(client.get).toHaveBeenCalledTimes(4);
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/skill/`);
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/spot/`);
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/contract/`);
+    expect(client.get).toHaveBeenCalledWith(`/tenant/0/employee/`);
   });
 });
 

@@ -140,6 +140,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                     type="text"
                   />
                 }
+                isEditing={false}
                 viewer={
                   <Text>
                     Skill 1
@@ -175,6 +176,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                     </Button>
                   </span>
                 }
+                isEditing={false}
                 viewer={
                   <span>
                     <Button
@@ -223,6 +225,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                     type="text"
                   />
                 }
+                isEditing={false}
                 viewer={
                   <Text>
                     Skill 2
@@ -258,6 +261,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                     </Button>
                   </span>
                 }
+                isEditing={false}
                 viewer={
                   <span>
                     <Button

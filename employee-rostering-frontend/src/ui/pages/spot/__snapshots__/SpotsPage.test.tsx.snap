@@ -140,6 +140,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     type="text"
                   />
                 }
+                isEditing={false}
                 viewer={
                   <Text>
                     Spot 1
@@ -169,6 +170,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     }
                   />
                 }
+                isEditing={false}
                 viewer={
                   <ChipGroup
                     className=""
@@ -207,6 +209,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     </Button>
                   </span>
                 }
+                isEditing={false}
                 viewer={
                   <span>
                     <Button
@@ -255,6 +258,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     type="text"
                   />
                 }
+                isEditing={false}
                 viewer={
                   <Text>
                     Spot 2
@@ -295,6 +299,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     }
                   />
                 }
+                isEditing={false}
                 viewer={
                   <ChipGroup
                     className=""
@@ -356,6 +361,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     </Button>
                   </span>
                 }
+                isEditing={false}
                 viewer={
                   <span>
                     <Button
