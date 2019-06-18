@@ -44,15 +44,6 @@ describe('Skills page', () => {
     expect(toJson(editor)).toMatchSnapshot();
   });
 
-  it('should return a skill with the tenantId but no name, id or version on createNewDataInstance', () => {
-    const skillsPage = new SkillsPage(twoSkills);
-    const skill = skillsPage.createNewDataInstance();
-    expect(skill.tenantId).toEqual(twoSkills.tenantId);
-    expect(skill.name).toEqual("");
-    expect(skill.id).toBeUndefined();
-    expect(skill.version).toBeUndefined();
-  });
-
   it('should call addSkill on addData', () => {
     const skillsPage = new SkillsPage(twoSkills);
     const skill = {name: "Skill", tenantId: 0};

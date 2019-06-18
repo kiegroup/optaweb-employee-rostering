@@ -43,16 +43,6 @@ describe('Spots page', () => {
     expect(toJson(editor)).toMatchSnapshot();
   });
 
-  it('should return a spot with the tenantId but no name, requiredSkillSet id or version on createNewDataInstance', () => {
-    const spotsPage = new SpotsPage(twoSpots);
-    const spot = spotsPage.createNewDataInstance();
-    expect(spot.tenantId).toEqual(twoSpots.tenantId);
-    expect(spot.name).toEqual("");
-    expect(spot.requiredSkillSet).toEqual([]);
-    expect(spot.id).toBeUndefined();
-    expect(spot.version).toBeUndefined();
-  })
-
   it('should call addSpot on addData', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0};
