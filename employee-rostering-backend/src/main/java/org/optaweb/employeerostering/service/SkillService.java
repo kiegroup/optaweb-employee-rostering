@@ -47,6 +47,9 @@ public class SkillService {
         if (skillRepository.findById(id).isPresent()) {
             skillRepository.deleteById(id);
         }
+        else {
+            throw new EntityNotFoundException("No Skill entity found with ID (" + id + ").");
+        }
     }
 
     public void createSkill(Integer tenantId, Skill skill) {
