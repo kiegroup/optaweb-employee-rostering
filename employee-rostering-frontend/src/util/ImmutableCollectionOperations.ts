@@ -16,12 +16,21 @@
 
 import DomainObject from 'domain/DomainObject';
 
+export function toggleElement<T>(collection: T[], element: T): T[] {
+  if (collection.indexOf(element) !== -1) {
+    return collection.filter(e => e !== element);
+  }
+  else {
+    return [...collection, element];
+  }
+}
+
 export function withoutElement<T extends DomainObject>(collection: T[], removedElement: T): T[] {
   return collection.filter(element => element.id !== removedElement.id);
 }
 
 export function withElement<T extends DomainObject>(collection: T[], addedElement: T): T[] {
-  return collection.concat([addedElement]);
+  return [...collection, addedElement];
 }
 
 export function withUpdatedElement<T extends DomainObject>(collection: T[], updatedElement: T): T[] {
