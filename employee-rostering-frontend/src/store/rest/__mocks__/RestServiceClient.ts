@@ -13,15 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const getAnswers: Map<string, any> = new Map();
-const postAnswers: Map<string, any> = new Map();
-const putAnswers: Map<string, any> = new Map();
-const deleteAnswers: Map<string, any> = new Map();
-
-export function onGet(url: string, answer: any) {getAnswers.set(url, answer)}
-export function onPost(url: string, params: any, answer: any) {postAnswers.set(url + JSON.stringify(params), answer)}
-export function onPut(url: string, params: any, answer: any) {putAnswers.set(url + JSON.stringify(params), answer)}
-export function onDelete(url: string, answer: any) {deleteAnswers.set(url, answer)}
+import { getAnswers, postAnswers, putAnswers, deleteAnswers } from 'store/rest/RestTestUtils';
 
 export const mockGet = jest.fn().mockImplementation((url) =>
   Promise.resolve(getAnswers.get(url)));

@@ -42,7 +42,7 @@ export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = ten
 export const refreshTenantList: ThunkCommandFactory<void, RefreshTenantListAction> = () =>
   (dispatch, state, client) => {
     return client.get<Tenant[]>(`/tenant/`).then(tenantList => {
-      let currentTenantId = state().tenantData.currentTenantId;
+      const currentTenantId = state().tenantData.currentTenantId;
       if (tenantList.filter(tenant => tenant.id === currentTenantId).length !== 0) {
         dispatch(actions.refreshTenantList({tenantList: tenantList, currentTenantId: currentTenantId}));
       }

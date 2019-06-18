@@ -21,7 +21,7 @@ import { AddContractAction, RemoveContractAction, UpdateContractAction, RefreshC
 
 export const addContract: ThunkCommandFactory<Contract, AddContractAction> = contract =>
   (dispatch, state, client) => {
-    let tenantId = contract.tenantId;
+    const tenantId = contract.tenantId;
     return client.post<Contract>(`/tenant/${tenantId}/contract/add`, contract).then(newContract => {
       dispatch(actions.addContract(newContract))
     });
@@ -29,8 +29,8 @@ export const addContract: ThunkCommandFactory<Contract, AddContractAction> = con
 
 export const removeContract: ThunkCommandFactory<Contract, RemoveContractAction> = contract =>
   (dispatch, state, client) => {
-    let tenantId = contract.tenantId;
-    let contractId = contract.id;
+    const tenantId = contract.tenantId;
+    const contractId = contract.id;
     return client.delete<boolean>(`/tenant/${tenantId}/contract/${contractId}`).then(isSuccess => {
       if (isSuccess) {
         dispatch(actions.removeContract(contract));
@@ -40,7 +40,7 @@ export const removeContract: ThunkCommandFactory<Contract, RemoveContractAction>
 
 export const updateContract: ThunkCommandFactory<Contract, UpdateContractAction> = contract =>
   (dispatch, state, client) => {
-    let tenantId = contract.tenantId;
+    const tenantId = contract.tenantId;
     return client.post<Contract>(`/tenant/${tenantId}/contract/update`, contract).then(updatedContract => {
       dispatch(actions.updateContract(updatedContract));
     });
@@ -48,7 +48,7 @@ export const updateContract: ThunkCommandFactory<Contract, UpdateContractAction>
 
 export const refreshContractList: ThunkCommandFactory<void, RefreshContractListAction> = () =>
   (dispatch, state, client) => {
-    let tenantId = state().tenantData.currentTenantId;
+    const tenantId = state().tenantData.currentTenantId;
     return client.get<Contract[]>(`/tenant/${tenantId}/contract/`).then(contractList => {
       dispatch(actions.refreshContractList(contractList));
     });
