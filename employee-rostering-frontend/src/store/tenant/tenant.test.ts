@@ -21,7 +21,7 @@ import * as skillActions from '../skill/actions';
 import * as spotActions from '../spot/actions';
 import * as contractActions from '../contract/actions';
 import reducer, { tenantOperations } from './index';
-import {onGet} from 'store/rest/RestServiceClient';
+import {onGet, resetRestClientMock} from 'store/rest/RestTestUtils';
 import Tenant from 'domain/Tenant';
 
 describe('Tenant operations', () => {
@@ -69,7 +69,7 @@ describe('Tenant operations', () => {
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/contract/`);
 
     store.clearActions();
-    client.get.mockClear();
+    resetRestClientMock(client);
 
     mockTenantList[1].id = 0;
     expectedRefreshActions = [
@@ -93,7 +93,7 @@ describe('Tenant operations', () => {
     expect(client.get).toHaveBeenCalledWith(`/tenant/0/contract/`);
 
     store.clearActions();
-    client.get.mockClear();
+    resetRestClientMock(client);
 
     expectedRefreshActions = [
       actions.changeTenant(0),
@@ -160,6 +160,9 @@ const state: AppState = {
         name: "Tenant 1"
       }
     ]
+  },
+  contractList: {
+    contractList: []
   },
   spotList: {
     spotList: []
