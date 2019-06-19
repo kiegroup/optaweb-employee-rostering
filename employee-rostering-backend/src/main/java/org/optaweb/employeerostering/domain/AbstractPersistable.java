@@ -31,13 +31,13 @@ public abstract class AbstractPersistable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @PlanningId
-    protected Long id;
+    private Long id;
 
     @NotNull
-    protected Integer tenantId;
+    private Integer tenantId;
 
     @Version
-    protected Long version;
+    private Long version;
 
     @SuppressWarnings("unused")
     public AbstractPersistable() {
