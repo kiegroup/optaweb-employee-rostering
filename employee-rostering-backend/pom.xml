@@ -61,7 +61,7 @@
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-bom</artifactId>
-        <version>7.22.0.Final</version>
+        <version>7.23.0.Final</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
