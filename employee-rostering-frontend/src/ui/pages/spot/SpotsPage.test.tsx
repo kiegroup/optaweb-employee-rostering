@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { SpotsPage, Props } from './SpotsPage';
+import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
+import { Sorter } from 'ui/components/DataTable';
+import Spot from 'domain/Spot';
 
 describe('Spots page', () => {
   it('should render correctly with no spots', () => {
@@ -43,6 +46,22 @@ describe('Spots page', () => {
     expect(toJson(editor)).toMatchSnapshot();
   });
 
+  it('should update properties on change', () => {
+    const spotsPage = new SpotsPage(twoSpots);
+    const setProperty = jest.fn();
+    const editor = spotsPage.editDataRow(spotsPage.getInitialStateForNewRow(), setProperty);
+    const nameCol = shallow(editor[0]);
+    nameCol.simulate("change", { currentTarget: { value: "Test" } });
+    expect(setProperty).toBeCalled();
+    expect(setProperty).toBeCalledWith("name", "Test");
+
+    setProperty.mockClear();
+    const requiredSkillSetCol = mount(editor[1]);
+    requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList[0]]);
+    expect(setProperty).toBeCalled();
+    expect(setProperty).toBeCalledWith("requiredSkillSet", [twoSpots.skillList[0]]);
+  });
+
   it('should call addSpot on addData', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const spot = {name: "Spot", requiredSkillSet: [], tenantId: 0};
@@ -65,6 +84,24 @@ describe('Spots page', () => {
     spotsPage.removeData(spot);
     expect(twoSpots.removeSpot).toBeCalled();
     expect(twoSpots.removeSpot).toBeCalledWith(spot);
+  });
+
+  it('should return a filter that match by name and skill', () => {
+    const spotsPage = new SpotsPage(twoSpots);
+    const filter = spotsPage.getFilter();
+
+    expect(twoSpots.tableData.filter(filter('1'))).toEqual([twoSpots.tableData[0], twoSpots.tableData[1]]);
+    expect(twoSpots.tableData.filter(filter('Spot 1'))).toEqual([twoSpots.tableData[0]]);
+    expect(twoSpots.tableData.filter(filter('2'))).toEqual([twoSpots.tableData[1]]);
+    expect(twoSpots.tableData.filter(filter('Skill'))).toEqual([twoSpots.tableData[1]]);
+  });
+
+  it('should return a sorter that sort by name', () => {
+    const spotsPage = new SpotsPage(twoSpots);
+    const sorter = spotsPage.getSorters()[0] as Sorter<Spot>;
+    const list = [twoSpots.tableData[1], twoSpots.tableData[0]];
+    expect(list.sort(sorter)).toEqual(twoSpots.tableData);
+    expect(spotsPage.getSorters()[1]).toBeNull();
   });
 
   it('should treat empty name as invalid', () => {
