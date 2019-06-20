@@ -6,20 +6,12 @@ exports[`Skills page should render correctly with a few skills 1`] = `
     style={
       Object {
         "display": "grid",
-        "gridTemplateColumns": "min-content auto min-content max-content",
+        "gridTemplateColumns": "max-content auto min-content max-content",
       }
     }
   >
     <FilterComponent
-      filterListParentId="filter-list"
-      filters={
-        Array [
-          Object {
-            "getComponent": [Function],
-            "name": "Name",
-          },
-        ]
-      }
+      filter={[Function]}
       onChange={[Function]}
     />
     <span />
@@ -315,20 +307,12 @@ exports[`Skills page should render correctly with no skills 1`] = `
     style={
       Object {
         "display": "grid",
-        "gridTemplateColumns": "min-content auto min-content max-content",
+        "gridTemplateColumns": "max-content auto min-content max-content",
       }
     }
   >
     <FilterComponent
-      filterListParentId="filter-list"
-      filters={
-        Array [
-          Object {
-            "getComponent": [Function],
-            "name": "Name",
-          },
-        ]
-      }
+      filter={[Function]}
       onChange={[Function]}
     />
     <span />
