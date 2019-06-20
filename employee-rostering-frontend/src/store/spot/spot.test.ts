@@ -68,6 +68,15 @@ describe('Spot operations', () => {
     store.clearActions();
     resetRestClientMock(client);
 
+    onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, false);
+    await store.dispatch(spotOperations.removeSpot(spotToDelete));
+    expect(store.getActions()).toEqual([]);
+    expect(client.delete).toHaveBeenCalledTimes(1);
+    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/${spotToDelete.id}`);
+
+    store.clearActions();
+    resetRestClientMock(client);
+
     const spotToAdd: Spot = {tenantId: tenantId, name: "New Spot", requiredSkillSet: []};
     const spotWithUpdatedId: Spot = {...spotToAdd, id: 4, version: 0};
     onPost(`/tenant/${tenantId}/spot/add`, spotToAdd, spotWithUpdatedId);
@@ -119,6 +128,9 @@ const state: AppState = {
   tenantData: {
     currentTenantId: 0,
     tenantList: []
+  },
+  employeeList: {
+    employeeList: []
   },
   contractList: {
     contractList: []

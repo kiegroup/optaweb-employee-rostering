@@ -1,12 +1,12 @@
 /*
  * Copyright 2019 Red Hat, Inc. and/or its affiliates.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,87 +14,54 @@
  * limitations under the License.
  */
 import * as React from "react";
-import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
+import { TextInput, Button, ButtonVariant } from "@patternfly/react-core";
+import './FilterComponent.css';
 
 export type Predicate<T> = (value: T) => boolean;
 
-export interface Filter<T> {
-    name: string,
-    getComponent: (setFilter: (newFilter: Predicate<T>|undefined) => void) => JSX.Element
-}
-
 export interface FilterProps<T> {
-    filters: Filter<T>[],
-    filterListParentId: string,
-    onChange: (filter: Predicate<T>) => void
+  filter: (filter: string) => Predicate<T>;
+  onChange: (filter: Predicate<T>) => void;
 }
 
-export interface FilterState<T> {
-    isFilterSelectExpanded: boolean,
-    currentFilterComponent: number,
-    editedFilter: Predicate<T>|undefined,
-    mounted: boolean
+export interface FilterState {
+  filterText: string;
 }
 
-export default class FilterComponent<T> extends React.Component<FilterProps<T>, FilterState<T>> {
-    constructor(props: FilterProps<T>) {
-        super(props);
-        this.state = {
-            isFilterSelectExpanded: false,
-            currentFilterComponent: 0,
-            editedFilter: undefined,
-            mounted: false
-        };
-        this.onFilterSelectToggle = this.onFilterSelectToggle.bind(this);
-        this.onFilterSelectSelect = this.onFilterSelectSelect.bind(this);
-    }
+class FilterComponent<T> extends React.Component<FilterProps<T>, FilterState> {
 
-    componentDidMount() {
-      this.setState({mounted: true})
-    }
+  constructor(props: FilterProps<T>) {
+    super(props);
+    this.state = {filterText: ""};
+    this.updateFilter = this.updateFilter.bind(this);
+  }
 
-    onFilterSelectToggle(isFilterSelectExpanded: boolean) {
-      this.setState({
-        isFilterSelectExpanded
-      });
-    }
+  updateFilter(filterText: string) {
+    this.props.onChange(this.props.filter(filterText));
+    this.setState({filterText});
+  }
 
-    onFilterSelectSelect(event: React.SyntheticEvent<HTMLOptionElement,Event>, selection: string, isPlaceholder: boolean) {
-      this.setState({
-        currentFilterComponent: this.props.filters.findIndex((f) => f.name === selection)
-      });
-    }
-
-    render() {
-        return ((this.props.filters.length !== 0)?
-            <span className="form-group toolbar-pf-filter" style={{display: "grid", gridTemplateColumns: "max-content max-content"}}>
-              <Select
-                variant={SelectVariant.single}
-                aria-label={"Select a filter..."}
-                onToggle={this.onFilterSelectToggle}
-                onSelect={this.onFilterSelectSelect}
-                selections={this.props.filters[this.state.currentFilterComponent].name}
-                isExpanded={this.state.isFilterSelectExpanded}
-              >
-                {this.props.filters.map((option, index) => (
-                  <SelectOption
-                    isDisabled={false}
-                    key={index}
-                    value={option.name}
-                  />
-                ))}
-              </Select>
-              {this.props.filters[this.state.currentFilterComponent].getComponent((filter) => {
-                this.setState({
-                  editedFilter: filter,
-                });
-                if (filter !== undefined) {
-                  this.props.onChange(filter);
-                }
-                else {
-                  this.props.onChange(v => true);
-                }
-              })}
-            </span> : <span />);
-    }
+  render() {
+    return (
+      <div className="search-icons">
+        <TextInput
+          aria-label="Search"
+          placeholder="Search..."
+          value={this.state.filterText}
+          onChange={this.updateFilter} 
+        />
+        <Button
+          variant={ButtonVariant.plain}
+          isDisabled={this.state.filterText.length === 0} 
+          onClick={() => this.updateFilter("")}
+        >
+          <svg style={{verticalAlign: "-0.125em"}} fill="currentColor" height="1em" width="1em" viewBox="0 0 512 512" aria-hidden="true" role="img">
+            <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm121.6 313.1c4.7 4.7 4.7 12.3 0 17L338 377.6c-4.7 4.7-12.3 4.7-17 0L256 312l-65.1 65.6c-4.7 4.7-12.3 4.7-17 0L134.4 338c-4.7-4.7-4.7-12.3 0-17l65.6-65-65.6-65.1c-4.7-4.7-4.7-12.3 0-17l39.6-39.6c4.7-4.7 12.3-4.7 17 0l65 65.7 65.1-65.6c4.7-4.7 12.3-4.7 17 0l39.6 39.6c4.7 4.7 4.7 12.3 0 17L312 256l65.6 65.1z" transform="" />
+          </svg>
+        </Button>
+      </div>
+    );
+  }
 }
+
+export default FilterComponent;
