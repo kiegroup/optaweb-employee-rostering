@@ -49,7 +49,7 @@ describe('OptionalInput component', () => {
     expect(dataProps.onChange).toBeCalledWith({name: 'A'});
   });
 
-  it('should not call onChange when input changes if invalid', () => {
+  it('should call onChange with undefined when input changes if invalid', () => {
     const optionalInput = mount(<OptionalInput {...dataProps} />);
     (dataProps.isValid as jest.Mock).mockReturnValue(false);
     (dataProps.onChange as jest.Mock).mockClear();
@@ -57,7 +57,8 @@ describe('OptionalInput component', () => {
     (optionalInput.find(TextInput).props().onChange as (value: string) => void)('A');
     expect(dataProps.isValid).toBeCalled()
     expect(dataProps.isValid).toBeCalledWith('A');
-    expect(dataProps.onChange).not.toBeCalled();
+    expect(dataProps.onChange).toBeCalled();
+    expect(dataProps.onChange).toBeCalledWith(undefined);
   });
 
   it('should be enabled after a toggle', () => {
