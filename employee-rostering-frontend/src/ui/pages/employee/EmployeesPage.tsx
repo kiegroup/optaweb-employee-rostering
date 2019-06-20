@@ -25,7 +25,9 @@ import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
 import Contract from 'domain/Contract';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
-import { Filter } from 'ui/components/FilterComponent';
+import { Predicate } from 'ui/components/FilterComponent';
+import { stringSorter } from 'util/CommonSorters';
+import { stringFilter } from 'util/CommonFilters';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
@@ -68,31 +70,42 @@ export class EmployeesPage extends DataTable<Employee, Props> {
     return [
       <Text key={0}>{data.name}</Text>,
       <Text key={1}>{data.contract.name}</Text>,
-      <ChipGroup key={2}>{data.skillProficiencySet.map(skill => (
-        <Chip key={skill.name} isReadOnly>
-          {skill.name}
-        </Chip>
-      ))}
+      <ChipGroup key={2}>
+        {data.skillProficiencySet.map(skill => (
+          <Chip key={skill.name} isReadOnly>
+            {skill.name}
+          </Chip>
+        ))}
       </ChipGroup>
     ];
+  }
+
+  getInitialStateForNewRow(): Partial<Employee> {
+    return {
+      skillProficiencySet: []
+    };
   }
   
   editDataRow(data: ReadonlyPartial<Employee>, setProperty: PropertySetter<Employee>): JSX.Element[] {
     return [
-      <TextInput key={0}
+      <TextInput
+        key={0}
         name="name"
         defaultValue={data.name}
         aria-label="Name"
         onChange={(value) => setProperty("name", value)}
       />,
-      <TypeaheadSelectInput key={1}
-        emptyText={"Select contract"}
+      <TypeaheadSelectInput
+        key={1}
+        emptyText="Select contract"
         options={this.props.contractList}
         optionToStringMap={contract => contract.name}
         defaultValue={data.contract}
-        onChange={contract => setProperty("contract", contract)}/>,
-      <MultiTypeaheadSelectInput key={2}
-        emptyText={"Select skill proficiencies"}
+        onChange={contract => setProperty("contract", contract)}
+      />,
+      <MultiTypeaheadSelectInput
+        key={2}
+        emptyText="Select skill proficiencies"
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
         defaultValue={data.skillProficiencySet? data.skillProficiencySet : []}
@@ -108,21 +121,14 @@ export class EmployeesPage extends DataTable<Employee, Props> {
       editedValue.name.length > 0;
   }
 
-  getFilters(): Filter<Employee>[] {
-    return [
-      {
-        name: "Name",
-        getComponent: (setFilter) =>
-        <TextInput aria-label="Name"
-          placeholder="Filter by name..."
-          onChange={v => setFilter(employee => employee.name.includes(v))}
-        />
-      }
-    ];
+  getFilter(): (filter: string) => Predicate<Employee> {
+    return stringFilter(employee => employee.name,
+      employee => employee.contract.name,
+      employee => employee.skillProficiencySet.map(skill => skill.name));
   }
 
   getSorters(): (Sorter<Employee> | null)[] {
-    return [(a,b) => (a.name < b.name)? -1 : (a.name > b.name)? 1 : 0, null, null];
+    return [stringSorter(e => e.name), stringSorter(e => e.contract.name), null];
   }
   
   updateData(data: Employee): void {

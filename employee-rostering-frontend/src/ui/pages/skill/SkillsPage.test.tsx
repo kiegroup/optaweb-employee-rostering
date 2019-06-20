@@ -18,6 +18,7 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { SkillsPage, Props } from './SkillsPage';
 import Skill from 'domain/Skill';
+import { Sorter } from 'ui/components/DataTable';
 
 describe('Skills page', () => {
   it('should render correctly with no skills', () => {
@@ -44,6 +45,21 @@ describe('Skills page', () => {
     expect(toJson(editor)).toMatchSnapshot();
   });
 
+  it('should update properties on change', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const setProperty = jest.fn();
+    const editor = skillsPage.editDataRow({}, setProperty);
+    const nameCol = shallow(editor[0]);
+    nameCol.simulate("change", { currentTarget: { value: "Test" } });
+    expect(setProperty).toBeCalled();
+    expect(setProperty).toBeCalledWith("name", "Test");
+  });
+
+  it('should an empty object on getInitialStateForNewRow', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    expect(skillsPage.getInitialStateForNewRow()).toEqual({});
+  });
+
   it('should call addSkill on addData', () => {
     const skillsPage = new SkillsPage(twoSkills);
     const skill = {name: "Skill", tenantId: 0};
@@ -66,6 +82,21 @@ describe('Skills page', () => {
     skillsPage.removeData(skill);
     expect(twoSkills.removeSkill).toBeCalled();
     expect(twoSkills.removeSkill).toBeCalledWith(skill);
+  });
+
+  it('should return a filter that match by name', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const filter = skillsPage.getFilter();
+
+    expect(twoSkills.tableData.filter(filter('1'))).toEqual([twoSkills.tableData[0]]);
+    expect(twoSkills.tableData.filter(filter('2'))).toEqual([twoSkills.tableData[1]]);
+  });
+
+  it('should return a sorter that sort by name', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+    const sorter = skillsPage.getSorters()[0] as Sorter<Skill>;
+    const list = [twoSkills.tableData[1], twoSkills.tableData[0]];
+    expect(list.sort(sorter)).toEqual(twoSkills.tableData);
   });
 
   it('should treat empty name as invalid', () => {

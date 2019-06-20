@@ -6,20 +6,12 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
     style={
       Object {
         "display": "grid",
-        "gridTemplateColumns": "min-content auto min-content max-content",
+        "gridTemplateColumns": "max-content auto min-content max-content",
       }
     }
   >
     <FilterComponent
-      filterListParentId="filter-list"
-      filters={
-        Array [
-          Object {
-            "getComponent": [Function],
-            "name": "Name",
-          },
-        ]
-      }
+      filter={[Function]}
       onChange={[Function]}
     />
     <span />
@@ -353,7 +345,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
               "title": <EditableComponent
                 editor={
                   <OptionalInput
-                    defaultValue={null}
+                    defaultValue={20}
                     isValid={[Function]}
                     label="Max minutes per week"
                     onChange={[Function]}
@@ -362,7 +354,11 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                   />
                 }
                 isEditing={false}
-                viewer={<Text />}
+                viewer={
+                  <Text>
+                    20
+                  </Text>
+                }
               />,
             },
             Object {
@@ -487,20 +483,12 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
     style={
       Object {
         "display": "grid",
-        "gridTemplateColumns": "min-content auto min-content max-content",
+        "gridTemplateColumns": "max-content auto min-content max-content",
       }
     }
   >
     <FilterComponent
-      filterListParentId="filter-list"
-      filters={
-        Array [
-          Object {
-            "getComponent": [Function],
-            "name": "Name",
-          },
-        ]
-      }
+      filter={[Function]}
       onChange={[Function]}
     />
     <span />
@@ -685,7 +673,7 @@ exports[`Contracts page should render the editor correctly 1`] = `
     key="2"
   >
     <OptionalInput
-      defaultValue={null}
+      defaultValue={20}
       isValid={[Function]}
       key="2"
       label="Max minutes per week"
@@ -748,7 +736,9 @@ exports[`Contracts page should render the viewer correctly 1`] = `
   >
     <Text
       key="2"
-    />
+    >
+      20
+    </Text>
   </td>
   <td
     key="3"
