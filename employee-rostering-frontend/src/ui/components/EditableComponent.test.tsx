@@ -20,25 +20,24 @@ import { EditableComponent, EditableComponentProps } from './EditableComponent';
 
 describe('EditableComponent component', () => {
   it('should render viewer when not editing', () => {
-    const component = shallow(<EditableComponent {...editableComponent} />);
+    const component = shallow(<EditableComponent {...notEditing} />);
     expect(toJson(component)).toMatchSnapshot();
   });
 
   it('should render editor when editing', () => {
-    const component = shallow(<EditableComponent {...editableComponent} />);
-    (component.instance() as EditableComponent).startEditing();
-    expect(toJson(component)).toMatchSnapshot();
-  });
-
-  it('should render viewer when stop editing', () => {
-    const component = shallow(<EditableComponent {...editableComponent} />);
-    (component.instance() as EditableComponent).startEditing();
-    (component.instance() as EditableComponent).stopEditing();
+    const component = shallow(<EditableComponent {...isEditing} />);
     expect(toJson(component)).toMatchSnapshot();
   });
 });
 
-const editableComponent: EditableComponentProps = {
+const notEditing: EditableComponentProps = {
   viewer: <span>Viewer</span>,
-  editor: <div>Editor</div>
+  editor: <div>Editor</div>,
+  isEditing: false
+};
+
+const isEditing: EditableComponentProps = {
+  viewer: <span>Viewer</span>,
+  editor: <div>Editor</div>,
+  isEditing: true
 };

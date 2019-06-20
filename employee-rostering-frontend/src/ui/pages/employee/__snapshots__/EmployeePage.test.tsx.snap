@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Spots page should render correctly with a few spots 1`] = `
+exports[`Employees page should render correctly with a few employees 1`] = `
 <Card>
   <div
     style={
@@ -122,7 +122,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                   <TextInput
                     aria-label="Name"
                     className=""
-                    defaultValue="Spot 1"
+                    defaultValue="Employee 1"
                     isDisabled={false}
                     isReadOnly={false}
                     isRequired={false}
@@ -135,7 +135,60 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                 isEditing={false}
                 viewer={
                   <Text>
-                    Spot 1
+                    Employee 1
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TypeaheadSelectInput
+                    defaultValue={
+                      Object {
+                        "id": 0,
+                        "maximumMinutesPerDay": null,
+                        "maximumMinutesPerMonth": null,
+                        "maximumMinutesPerWeek": null,
+                        "maximumMinutesPerYear": null,
+                        "name": "Contract 1",
+                        "tenantId": 0,
+                        "version": 0,
+                      }
+                    }
+                    emptyText="Select contract"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        Object {
+                          "id": 0,
+                          "maximumMinutesPerDay": null,
+                          "maximumMinutesPerMonth": null,
+                          "maximumMinutesPerWeek": null,
+                          "maximumMinutesPerYear": null,
+                          "name": "Contract 1",
+                          "tenantId": 0,
+                          "version": 0,
+                        },
+                        Object {
+                          "id": 1,
+                          "maximumMinutesPerDay": null,
+                          "maximumMinutesPerMonth": null,
+                          "maximumMinutesPerWeek": null,
+                          "maximumMinutesPerYear": null,
+                          "name": "Contract 2",
+                          "tenantId": 0,
+                          "version": 0,
+                        },
+                      ]
+                    }
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Contract 1
                   </Text>
                 }
               />,
@@ -145,7 +198,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                 editor={
                   <MultiTypeaheadSelectInput
                     defaultValue={Array []}
-                    emptyText="Select required skills"
+                    emptyText="Select skill proficiencies"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -240,7 +293,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                   <TextInput
                     aria-label="Name"
                     className=""
-                    defaultValue="Spot 2"
+                    defaultValue="Employee 2"
                     isDisabled={false}
                     isReadOnly={false}
                     isRequired={false}
@@ -253,7 +306,60 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                 isEditing={false}
                 viewer={
                   <Text>
-                    Spot 2
+                    Employee 2
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TypeaheadSelectInput
+                    defaultValue={
+                      Object {
+                        "id": 1,
+                        "maximumMinutesPerDay": null,
+                        "maximumMinutesPerMonth": null,
+                        "maximumMinutesPerWeek": null,
+                        "maximumMinutesPerYear": null,
+                        "name": "Contract 2",
+                        "tenantId": 0,
+                        "version": 0,
+                      }
+                    }
+                    emptyText="Select contract"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        Object {
+                          "id": 0,
+                          "maximumMinutesPerDay": null,
+                          "maximumMinutesPerMonth": null,
+                          "maximumMinutesPerWeek": null,
+                          "maximumMinutesPerYear": null,
+                          "name": "Contract 1",
+                          "tenantId": 0,
+                          "version": 0,
+                        },
+                        Object {
+                          "id": 1,
+                          "maximumMinutesPerDay": null,
+                          "maximumMinutesPerMonth": null,
+                          "maximumMinutesPerWeek": null,
+                          "maximumMinutesPerYear": null,
+                          "name": "Contract 2",
+                          "tenantId": 0,
+                          "version": 0,
+                        },
+                      ]
+                    }
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Contract 2
                   </Text>
                 }
               />,
@@ -274,7 +380,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                         },
                       ]
                     }
-                    emptyText="Select required skills"
+                    emptyText="Select skill proficiencies"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -401,7 +507,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
 </Card>
 `;
 
-exports[`Spots page should render correctly with no spots 1`] = `
+exports[`Employees page should render correctly with no employees 1`] = `
 <Card>
   <div
     style={
@@ -529,7 +635,7 @@ exports[`Spots page should render correctly with no spots 1`] = `
 </Card>
 `;
 
-exports[`Spots page should render the editor correctly 1`] = `
+exports[`Employees page should render the editor correctly 1`] = `
 <tr>
   <td
     key="0"
@@ -537,7 +643,7 @@ exports[`Spots page should render the editor correctly 1`] = `
     <TextInput
       aria-label="Name"
       className=""
-      defaultValue="Spot 2"
+      defaultValue="Employee 2"
       isDisabled={false}
       isReadOnly={false}
       isRequired={false}
@@ -550,6 +656,52 @@ exports[`Spots page should render the editor correctly 1`] = `
   </td>
   <td
     key="1"
+  >
+    <TypeaheadSelectInput
+      defaultValue={
+        Object {
+          "id": 1,
+          "maximumMinutesPerDay": null,
+          "maximumMinutesPerMonth": null,
+          "maximumMinutesPerWeek": null,
+          "maximumMinutesPerYear": null,
+          "name": "Contract 2",
+          "tenantId": 0,
+          "version": 0,
+        }
+      }
+      emptyText="Select contract"
+      key="1"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract 1",
+            "tenantId": 0,
+            "version": 0,
+          },
+          Object {
+            "id": 1,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract 2",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ]
+      }
+    />
+  </td>
+  <td
+    key="2"
   >
     <MultiTypeaheadSelectInput
       defaultValue={
@@ -564,8 +716,8 @@ exports[`Spots page should render the editor correctly 1`] = `
           },
         ]
       }
-      emptyText="Select required skills"
-      key="1"
+      emptyText="Select skill proficiencies"
+      key="2"
       onChange={[Function]}
       optionToStringMap={[Function]}
       options={
@@ -585,7 +737,7 @@ exports[`Spots page should render the editor correctly 1`] = `
 </tr>
 `;
 
-exports[`Spots page should render the viewer correctly 1`] = `
+exports[`Employees page should render the viewer correctly 1`] = `
 <tr>
   <td
     key="0"
@@ -593,17 +745,26 @@ exports[`Spots page should render the viewer correctly 1`] = `
     <Text
       key="0"
     >
-      Spot 2
+      Employee 2
     </Text>
   </td>
   <td
     key="1"
   >
+    <Text
+      key="1"
+    >
+      Contract 2
+    </Text>
+  </td>
+  <td
+    key="2"
+  >
     <ChipGroup
       className=""
       collapsedText="\${remaining} more"
       expandedText="Show Less"
-      key="1"
+      key="2"
       withToolbar={false}
     >
       <Chip

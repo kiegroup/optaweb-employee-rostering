@@ -13,12 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainObject from './DomainObject';
-import Skill from './Skill';
-import Contract from './Contract';
 
-export default interface Employee extends DomainObject {
-  name: string;
-  contract: Contract;
-  skillProficiencySet: Skill[]; 
+import { Sorter } from "ui/components/DataTable";
+
+export function stringSorter<T>(mapToString: (obj: T) => string): Sorter<T> {
+  return (a,b) => (mapToString(a).toLowerCase() < mapToString(b).toLowerCase())? -1 :
+    (mapToString(a).toLowerCase() > mapToString(b).toLowerCase())? 1 : 0
 }

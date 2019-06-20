@@ -22,7 +22,9 @@ import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Contract from 'domain/Contract';
 import OptionalInput from 'ui/components/OptionalInput';
-import { Filter } from 'ui/components/FilterComponent';
+import { Predicate } from 'ui/components/FilterComponent';
+import { stringSorter } from 'util/CommonSorters';
+import { stringFilter } from 'util/CommonFilters';
 
 interface StateProps extends DataTableProps<Contract> {
   tenantId: number;
@@ -66,16 +68,27 @@ export class ContractsPage extends DataTable<Contract, Props> {
       <Text key={4}>{data.maximumMinutesPerYear}</Text>
     ];
   }
+
+  getInitialStateForNewRow(): Partial<Contract> {
+    return {
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
+    };
+  }
   
   editDataRow(data: ReadonlyPartial<Contract>, setProperty: PropertySetter<Contract>): JSX.Element[] {
     return [
-      <TextInput key={0}
+      <TextInput
+        key={0}
         name="name"
         defaultValue={data.name}
         aria-label="Name"
         onChange={(value) => setProperty("name", value)}
       />,
-      <OptionalInput key={1}
+      <OptionalInput
+        key={1}
         label="Max minutes per day"
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerDay? data.maximumMinutesPerDay : null}
@@ -83,7 +96,8 @@ export class ContractsPage extends DataTable<Contract, Props> {
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
-      <OptionalInput key={2}
+      <OptionalInput
+        key={2}
         label="Max minutes per week"
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerWeek? data.maximumMinutesPerWeek : null}
@@ -91,7 +105,8 @@ export class ContractsPage extends DataTable<Contract, Props> {
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
-      <OptionalInput key={3}
+      <OptionalInput
+        key={3}
         label="Max minutes per month"
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerMonth? data.maximumMinutesPerMonth : null}
@@ -99,7 +114,8 @@ export class ContractsPage extends DataTable<Contract, Props> {
         isValid={value => /^\d+$/.test(value)}
         valueMapper={value => parseInt(value)}
       />,
-      <OptionalInput key={4}
+      <OptionalInput
+        key={4}
         label="Max minutes per year"
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerYear? data.maximumMinutesPerYear : null}
@@ -119,21 +135,12 @@ export class ContractsPage extends DataTable<Contract, Props> {
       editedValue.name.length > 0;
   }
 
-  getFilters(): Filter<Contract>[] {
-    return [
-      {
-        name: "Name",
-        getComponent: (setFilter) =>
-        <TextInput aria-label="Name"
-          placeholder="Filter by name..."
-          onChange={v => setFilter(contract => contract.name.includes(v))}
-        />
-      }
-    ];
+  getFilter(): (filter: string) => Predicate<Contract> {
+    return stringFilter(contract => contract.name);
   }
 
   getSorters(): (Sorter<Contract> | null)[] {
-    return [(a,b) => (a.name < b.name)? -1 : (a.name > b.name)? 1 : 0, null, null, null, null];
+    return [stringSorter(c => c.name), null, null, null, null];
   }
   
   updateData(data: Contract): void {

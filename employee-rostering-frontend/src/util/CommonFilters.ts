@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainObject from './DomainObject';
-import Skill from './Skill';
-import Contract from './Contract';
 
-export default interface Employee extends DomainObject {
-  name: string;
-  contract: Contract;
-  skillProficiencySet: Skill[]; 
+import { Predicate } from 'ui/components/FilterComponent';
+
+export function stringFilter<T>(...mappers: ((obj: T) => string|string[])[]): (filter: string) => Predicate<T> {
+  return (filter) => (obj) => mappers.find(mapper => {
+    const value = mapper(obj);
+    return (typeof value === "string")? value.toLowerCase().includes(filter.toLowerCase()) :
+      value.find(v => v.toLowerCase().includes(filter.toLowerCase())) !== undefined;
+  }) !== undefined;
 }

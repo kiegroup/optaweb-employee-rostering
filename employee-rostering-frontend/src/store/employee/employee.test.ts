@@ -17,130 +17,152 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import reducer, { contractOperations } from './index';
+import reducer, { employeeOperations } from './index';
 import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete} from 'store/rest/RestServiceClient';
-import Contract from 'domain/Contract';
+import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
+import Employee from 'domain/Employee';
 
-describe('Contract operations', () => {
+describe('Employee operations', () => {
   it('should dispatch actions and call client', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const mockContractList: Contract[] = [{
+    
+    const mockEmployee: Employee = {
       tenantId: tenantId,
       id: 0,
       version: 0,
-      name: "Contract 1",
-      maximumMinutesPerDay: null,
-      maximumMinutesPerWeek: null,
-      maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null
-    }];
+      name: "Employee 1",
+      skillProficiencySet: [],
+      contract: {
+        tenantId: tenantId,
+        id: 1,
+        name: "Contract",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null
+      }
+    };
 
-    onGet(`/tenant/${tenantId}/contract/`, mockContractList);
-    await store.dispatch(contractOperations.refreshContractList());
-    expect(store.getActions()).toEqual([actions.refreshContractList(mockContractList)]);
+    const mockEmployeeList: Employee[] = [mockEmployee];
+
+    onGet(`/tenant/${tenantId}/employee/`, mockEmployeeList);
+    await store.dispatch(employeeOperations.refreshEmployeeList());
+    expect(store.getActions()).toEqual([actions.refreshEmployeeList(mockEmployeeList)]);
     expect(client.get).toHaveBeenCalledTimes(1);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/`);
+    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/`);
 
     store.clearActions();
-    client.get.mockClear();
+    resetRestClientMock(client);
 
-    const contractToDelete = mockContractList[0];
-    onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, true);
-    await store.dispatch(contractOperations.removeContract(contractToDelete));
-    expect(store.getActions()).toEqual([actions.removeContract(contractToDelete)]);
+    const employeeToDelete = mockEmployee;
+    onDelete(`/tenant/${tenantId}/employee/${employeeToDelete.id}`, true);
+    await store.dispatch(employeeOperations.removeEmployee(employeeToDelete));
+    expect(store.getActions()).toEqual([actions.removeEmployee(employeeToDelete)]);
     expect(client.delete).toHaveBeenCalledTimes(1);
-    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
+    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/${employeeToDelete.id}`);
 
     store.clearActions();
-    client.delete.mockClear()
+    resetRestClientMock(client);
 
-    const contractToAdd: Contract = {tenantId: tenantId,
-      name: "Contract 1",
-      maximumMinutesPerDay: null,
-      maximumMinutesPerWeek: null,
-      maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null
-    };
-    const contractWithUpdatedId: Contract = {...contractToAdd, id: 4, version: 0};
-    onPost(`/tenant/${tenantId}/contract/add`, contractToAdd, contractWithUpdatedId);
-    await store.dispatch(contractOperations.addContract(contractToAdd));
-    expect(store.getActions()).toEqual([actions.addContract(contractWithUpdatedId)]);
-    expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/add`, contractToAdd);
+    onDelete(`/tenant/${tenantId}/employee/${employeeToDelete.id}`, false);
+    await store.dispatch(employeeOperations.removeEmployee(employeeToDelete));
+    expect(store.getActions()).toEqual([]);
+    expect(client.delete).toHaveBeenCalledTimes(1);
+    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/${employeeToDelete.id}`);
 
     store.clearActions();
-    client.post.mockClear()
+    resetRestClientMock(client);
 
-    const contractToUpdate: Contract = {tenantId: tenantId,
-      name: "Contract 1",
-      id: 4,
-      version: 0,
-      maximumMinutesPerDay: null,
-      maximumMinutesPerWeek: null,
-      maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null
-    };
-    const contractWithUpdatedVersion: Contract = {...contractToUpdate, id: 4, version: 1};
-    onPost(`/tenant/${tenantId}/contract/update`, contractToUpdate, contractWithUpdatedVersion);
-    await store.dispatch(contractOperations.updateContract(contractToUpdate));
-    expect(store.getActions()).toEqual([actions.updateContract(contractWithUpdatedVersion)]);
+    const employeeToAdd: Employee = {...mockEmployee, id: undefined, version: undefined};
+    const employeeWithUpdatedId: Employee = {...employeeToAdd, id: 4, version: 0};
+    onPost(`/tenant/${tenantId}/employee/add`, employeeToAdd, employeeWithUpdatedId);
+    await store.dispatch(employeeOperations.addEmployee(employeeToAdd));
+    expect(store.getActions()).toEqual([actions.addEmployee(employeeWithUpdatedId)]);
     expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/update`, contractToUpdate);
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/add`, employeeToAdd);
+
+    store.clearActions();
+    resetRestClientMock(client);
+
+    const employeeToUpdate: Employee = mockEmployee;
+    const employeeWithUpdatedVersion: Employee = {...mockEmployee, version: 1};
+    onPost(`/tenant/${tenantId}/employee/update`, employeeToUpdate, employeeWithUpdatedVersion);
+    await store.dispatch(employeeOperations.updateEmployee(employeeToUpdate));
+    expect(store.getActions()).toEqual([actions.updateEmployee(employeeWithUpdatedVersion)]);
+    expect(client.post).toHaveBeenCalledTimes(1);
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/update`, employeeToUpdate);
   });
 });
 
-describe('Contract reducers', () => {
-  const addedContract: Contract = {
+describe('Employee reducers', () => {
+  const addedEmployee: Employee = {
     tenantId: 0,
     id: 4,
     version: 0,
-    name: "Contract 4",
-    maximumMinutesPerDay: null,
-    maximumMinutesPerWeek: 1,
-    maximumMinutesPerMonth: 2,
-    maximumMinutesPerYear: 3
+    name: "Employee 1",
+    skillProficiencySet: [],
+    contract: {
+      tenantId: 0,
+      id: 2,
+      name: "Contract",
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
+    }
   };
-  const updatedContract: Contract = {
+  const updatedEmployee: Employee = {
     tenantId: 0,
     id: 1,
     version: 0,
-    name: "Updated Contract 2",
-    maximumMinutesPerDay: 1,
-    maximumMinutesPerWeek: 2,
-    maximumMinutesPerMonth: 3,
-    maximumMinutesPerYear: 4
+    name: "Updated Employee 1",
+    skillProficiencySet: [],
+    contract: {
+      tenantId: 0,
+      id: 1,
+      name: "Contract",
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
+    }
   };
-  const deletedContract: Contract =       {
+  const deletedEmployee: Employee = {
     tenantId: 0,
-    id: 2,
+    id: 1,
     version: 0,
-    name: "Contract 3",
-    maximumMinutesPerDay: 100,
-    maximumMinutesPerWeek: null,
-    maximumMinutesPerMonth: null,
-    maximumMinutesPerYear: 100
+    name: "Employee 1",
+    skillProficiencySet: [],
+    contract: {
+      tenantId: 0,
+      id: 1,
+      name: "Contract",
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
+    }
   };
-  it('add contract', () => {
+  it('add employee', () => {
     expect(
-      reducer(state.contractList, actions.addContract(addedContract))
-    ).toEqual({contractList: withElement(state.contractList.contractList, addedContract)})
+      reducer(state.employeeList, actions.addEmployee(addedEmployee))
+    ).toEqual({employeeList: withElement(state.employeeList.employeeList, addedEmployee)})
   });
-  it('remove contract', () => {
+  it('remove employee', () => {
     expect(
-      reducer(state.contractList, actions.removeContract(deletedContract)),
-    ).toEqual({contractList: withoutElement(state.contractList.contractList, deletedContract)})
+      reducer(state.employeeList, actions.removeEmployee(deletedEmployee)),
+    ).toEqual({employeeList: withoutElement(state.employeeList.employeeList, deletedEmployee)})
   });
-  it('update contract', () => {
+  it('update employee', () => {
     expect(
-      reducer(state.contractList, actions.updateContract(updatedContract)),
-    ).toEqual({contractList: withUpdatedElement(state.contractList.contractList, updatedContract)})
+      reducer(state.employeeList, actions.updateEmployee(updatedEmployee)),
+    ).toEqual({employeeList: withUpdatedElement(state.employeeList.employeeList, updatedEmployee)})
   });
-  it('refresh contract list', () => {
+  it('refresh employee list', () => {
     expect(
-      reducer(state.contractList, actions.refreshContractList([addedContract])),
-    ).toEqual({contractList: [addedContract]});
+      reducer(state.employeeList, actions.refreshEmployeeList([addedEmployee])),
+    ).toEqual({employeeList: [addedEmployee]});
   });
 });
 
@@ -149,57 +171,49 @@ const state: AppState = {
     currentTenantId: 0,
     tenantList: []
   },
-  spotList: {
-    spotList: []
-  },
-  contractList: {
-    contractList: [
-      {
-        tenantId: 0,
-        id: 0,
-        version: 0,
-        name: "Contract 1",
-        maximumMinutesPerDay: null,
-        maximumMinutesPerWeek: null,
-        maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null
-      },
+  employeeList: {
+    employeeList: [
       {
         tenantId: 0,
         id: 1,
         version: 0,
-        name: "Contract 2",
-        maximumMinutesPerDay: null,
-        maximumMinutesPerWeek: 100,
-        maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null
+        name: "Employee 1",
+        skillProficiencySet: [],
+        contract: {
+          tenantId: 0,
+          id: 1,
+          name: "Contract",
+          maximumMinutesPerDay: null,
+          maximumMinutesPerWeek: null,
+          maximumMinutesPerMonth: null,
+          maximumMinutesPerYear: null
+        }
       },
       {
         tenantId: 0,
         id: 2,
         version: 0,
-        name: "Contract 3",
-        maximumMinutesPerDay: 100,
-        maximumMinutesPerWeek: null,
-        maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: 100
+        name: "Employee 2",
+        skillProficiencySet: [],
+        contract: {
+          tenantId: 0,
+          id: 1,
+          name: "Contract",
+          maximumMinutesPerDay: null,
+          maximumMinutesPerWeek: null,
+          maximumMinutesPerMonth: null,
+          maximumMinutesPerYear: null
+        }
       }
     ]
   },
+  spotList: {
+    spotList: []
+  },
+  contractList: {
+    contractList: []
+  },
   skillList: {
-    skillList: [
-      {
-        tenantId: 0,
-        id: 1234,
-        version: 0,
-        name: "Skill 2"
-      },
-      {
-        tenantId: 0,
-        id: 2312,
-        version: 1,
-        name: "Skill 3"
-      }
-    ]
+    skillList: []
   }
 };
