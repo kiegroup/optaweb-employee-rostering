@@ -11,9 +11,3 @@ exports[`EditableComponent component should render viewer when not editing 1`] =
   Viewer
 </span>
 `;
-
-exports[`EditableComponent component should render viewer when stop editing 1`] = `
-<span>
-  Viewer
-</span>
-`;

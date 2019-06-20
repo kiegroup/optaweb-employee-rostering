@@ -17,9 +17,10 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
+import * as employeeActions from 'store/employee/actions';
 import reducer, { contractOperations } from './index';
 import { withElement, withoutElement, withUpdatedElement } from 'util/ImmutableCollectionOperations';
-import { onGet, onPost, onDelete, resetRestClientMock } from 'store/rest/RestTestUtils';
+import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
 import Contract from 'domain/Contract';
 
 describe('Contract operations', () => {
@@ -56,6 +57,15 @@ describe('Contract operations', () => {
     store.clearActions();
     resetRestClientMock(client);
 
+    onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, false);
+    await store.dispatch(contractOperations.removeContract(contractToDelete));
+    expect(store.getActions()).toEqual([]);
+    expect(client.delete).toHaveBeenCalledTimes(1);
+    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
+
+    store.clearActions();
+    resetRestClientMock(client);
+
     const contractToAdd: Contract = {tenantId: tenantId,
       name: "Contract 1",
       maximumMinutesPerDay: null,
@@ -84,10 +94,13 @@ describe('Contract operations', () => {
     };
     const contractWithUpdatedVersion: Contract = {...contractToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/contract/update`, contractToUpdate, contractWithUpdatedVersion);
+    onGet(`/tenant/${tenantId}/employee/`, []);
     await store.dispatch(contractOperations.updateContract(contractToUpdate));
-    expect(store.getActions()).toEqual([actions.updateContract(contractWithUpdatedVersion)]);
+    expect(store.getActions()).toEqual([actions.updateContract(contractWithUpdatedVersion), employeeActions.refreshEmployeeList([])]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/update`, contractToUpdate);
+    expect(client.get).toBeCalledTimes(1);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/employee/`);
   });
 });
 
@@ -149,6 +162,9 @@ const state: AppState = {
     currentTenantId: 0,
     tenantList: []
   },
+  employeeList: {
+    employeeList: []
+  },
   spotList: {
     spotList: []
   },
@@ -187,19 +203,6 @@ const state: AppState = {
     ]
   },
   skillList: {
-    skillList: [
-      {
-        tenantId: 0,
-        id: 1234,
-        version: 0,
-        name: "Skill 2"
-      },
-      {
-        tenantId: 0,
-        id: 2312,
-        version: 1,
-        name: "Skill 3"
-      }
-    ]
+    skillList: []
   }
 };
