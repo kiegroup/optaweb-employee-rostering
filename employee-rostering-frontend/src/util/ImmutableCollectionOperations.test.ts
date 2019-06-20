@@ -81,4 +81,28 @@ describe('Immutable Collection Operations', () => {
     expect(collection).toEqual(copy);
     expect(withUpdated2).toEqual([object1, updatedObject2]);
   });
+
+  it('should not modify the collection when element is not present in the collection in toggleElement', () => {
+    const obj1 = 0;
+    const obj2 = 1;
+
+    const collection = [obj1];
+    const copy = JSON.parse(JSON.stringify(collection));
+    const toggledObj2On =  immutableCollectionOperations.toggleElement(collection, obj2);
+
+    expect(collection).toEqual(copy);
+    expect(toggledObj2On).toEqual([obj1, obj2]);
+  });
+
+  it('should not modify the collection when element is present in the collection in toggleElement', () => {
+    const obj1 = 0;
+    const obj2 = 1;
+
+    const collection = [obj1, obj2];
+    const copy = JSON.parse(JSON.stringify(collection));
+    const toggledObj2On =  immutableCollectionOperations.toggleElement(collection, obj2);
+
+    expect(collection).toEqual(copy);
+    expect(toggledObj2On).toEqual([obj1]);
+  });
 });

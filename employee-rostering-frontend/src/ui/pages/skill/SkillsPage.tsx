@@ -21,7 +21,9 @@ import Skill from 'domain/Skill';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { Filter } from 'ui/components/FilterComponent';
+import { Predicate } from 'ui/components/FilterComponent';
+import { stringSorter } from 'util/CommonSorters';
+import { stringFilter } from 'util/CommonFilters';
 
 interface StateProps extends DataTableProps<Skill> {
   tenantId: number;
@@ -59,12 +61,19 @@ export class SkillsPage extends DataTable<Skill, Props> {
   displayDataRow(data: Skill): JSX.Element[] {
     return [<Text key={0}>{data.name}</Text>];
   }
-  
+
+  getInitialStateForNewRow(): Partial<Skill> {
+    return {};
+  }
+
   editDataRow(data: ReadonlyPartial<Skill>, setProperty: PropertySetter<Skill>): JSX.Element[] {
-    return [<TextInput key={0} name="name"
+    return [<TextInput
+      key={0}
+      name="name"
       aria-label="Name"
       defaultValue={data.name}
-      onChange={(value) => setProperty("name", value)}/>];
+      onChange={(value) => setProperty("name", value)}
+    />];
   }
   
   isValid(data: ReadonlyPartial<Skill>): data is Skill {
@@ -72,21 +81,12 @@ export class SkillsPage extends DataTable<Skill, Props> {
       data.name.length > 0;
   }
 
-  getFilters(): Filter<Skill>[] {
-    return [
-      {
-        name: "Name",
-        getComponent: (setFilter) =>
-        <TextInput aria-label="Name"
-          placeholder="Filter by name..."
-          onChange={v => setFilter(skill => skill.name.includes(v))}
-        />
-      }
-    ];
+  getFilter(): (filter: string) => Predicate<Skill> {
+    return stringFilter((skill) => skill.name);
   }
 
   getSorters(): (Sorter<Skill> | null)[] {
-    return [(a,b) => (a.name < b.name)? -1 : (a.name > b.name)? 1 : 0];
+    return [stringSorter(s => s.name)];
   }
 
   updateData(data: Skill): void {

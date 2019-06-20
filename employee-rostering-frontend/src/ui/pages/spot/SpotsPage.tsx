@@ -23,7 +23,9 @@ import { AppState } from 'store/types';
 import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
-import { Filter } from 'ui/components/FilterComponent';
+import { Predicate } from 'ui/components/FilterComponent';
+import { stringSorter } from 'util/CommonSorters';
+import { stringFilter } from 'util/CommonFilters';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
@@ -63,25 +65,34 @@ export class SpotsPage extends DataTable<Spot, Props> {
   displayDataRow(data: Spot): JSX.Element[] {
     return [
       <Text key={0}>{data.name}</Text>,
-      <ChipGroup key={1}>{data.requiredSkillSet.map(skill => (
-        <Chip key={skill.name} isReadOnly>
-          {skill.name}
-        </Chip>
-      ))}
+      <ChipGroup key={1}>
+        {data.requiredSkillSet.map(skill => (
+          <Chip key={skill.name} isReadOnly>
+            {skill.name}
+          </Chip>
+        ))}
       </ChipGroup>
     ];
+  }
+
+  getInitialStateForNewRow(): Partial<Spot> {
+    return {
+      requiredSkillSet: []
+    };
   }
   
   editDataRow(data: ReadonlyPartial<Spot>, setProperty: PropertySetter<Spot>): JSX.Element[] {
     return [
-      <TextInput key={0}
+      <TextInput
+        key={0}
         name="name"
         defaultValue={data.name}
         aria-label="Name"
         onChange={(value) => setProperty("name",value)}
       />,
-      <MultiTypeaheadSelectInput key={1}
-        emptyText={"Select required skills"}
+      <MultiTypeaheadSelectInput
+        key={1}
+        emptyText="Select required skills"
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
         defaultValue={data.requiredSkillSet? data.requiredSkillSet : []}
@@ -96,21 +107,13 @@ export class SpotsPage extends DataTable<Spot, Props> {
       editedValue.name.length > 0;
   }
 
-  getFilters(): Filter<Spot>[] {
-    return [
-      {
-        name: "Name",
-        getComponent: (setFilter) =>
-        <TextInput aria-label="Name"
-          placeholder="Filter by name..."
-          onChange={v => setFilter(spot => spot.name.includes(v))}
-        />
-      }
-    ];
+  getFilter(): (filter: string) => Predicate<Spot> {
+    return stringFilter(spot => spot.name,
+      spot => spot.requiredSkillSet.map(skill => skill.name));
   }
 
   getSorters(): (Sorter<Spot> | null)[] {
-    return [(a,b) => (a.name < b.name)? -1 : (a.name > b.name)? 1 : 0, null];
+    return [stringSorter(s => s.name), null];
   }
   
   updateData(data: Spot): void {

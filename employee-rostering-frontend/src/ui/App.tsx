@@ -53,7 +53,7 @@ const App: React.FC = () => {
             />
             <Route
               path="/employees"
-              exact={true}
+              exact
               component={EmployeesPage}
             />
           </Switch>
