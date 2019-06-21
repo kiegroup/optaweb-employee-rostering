@@ -15,25 +15,31 @@
  */
 
 import { ActionType, SkillList, SkillAction } from './types';
-import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import DomainObjectView from 'domain/DomainObjectView';
+import Skill from 'domain/Skill';
 
 export const initialState: SkillList = {
-  skillList: []
+  isLoading: true,
+  skillMapById: new Map<number, DomainObjectView<Skill>>()
 };
 
 const skillReducer = (state = initialState, action: SkillAction): SkillList => {
   switch (action.type) {
+    case ActionType.SET_SKILL_LIST_LOADING: {
+      return { ...state, isLoading: action.isLoading };
+    }
     case ActionType.ADD_SKILL: {
-      return { ...initialState, skillList: withElement(state.skillList, action.skill) };
+      return { ...state, skillMapById: mapWithElement(state.skillMapById, action.skill) };
     }
     case ActionType.REMOVE_SKILL: {
-      return { ...initialState, skillList: withoutElement(state.skillList, action.skill) };
+      return { ...state, skillMapById: mapWithoutElement(state.skillMapById, action.skill) };
     }
     case ActionType.UPDATE_SKILL: {
-      return { ...initialState, skillList: withUpdatedElement(state.skillList, action.skill) };
+      return { ...state, skillMapById: mapWithUpdatedElement(state.skillMapById, action.skill) };
     }
     case ActionType.REFRESH_SKILL_LIST: {
-      return { ...initialState, skillList: action.skillList };
+      return { ...state, skillMapById: createIdMapFromList(action.skillList) };
     }
     default:
       return state;

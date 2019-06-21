@@ -51,5 +51,5 @@ export type SpotAction = SetSpotListLoadingAction | AddSpotAction | RemoveSpotAc
 
 export interface SpotList {
   readonly isLoading: boolean;
-  readonly spotMapById: Map<number, DomainObjectView<Spot>>[];
+  readonly spotMapById: Map<number, DomainObjectView<Spot>>;
 }

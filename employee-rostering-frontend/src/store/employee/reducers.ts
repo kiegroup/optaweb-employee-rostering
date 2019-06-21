@@ -15,25 +15,31 @@
  */
 
 import { ActionType, EmployeeList, EmployeeAction } from './types';
-import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import DomainObjectView from 'domain/DomainObjectView';
+import Employee from 'domain/Employee';
 
 export const initialState: EmployeeList = {
-  employeeList: []
+  isLoading: true,
+  employeeMapById: new Map<number, DomainObjectView<Employee>>()
 };
 
 const employeeReducer = (state = initialState, action: EmployeeAction): EmployeeList => {
   switch (action.type) {
+    case ActionType.SET_EMPLOYEE_LIST_LOADING: {
+      return { ...state, isLoading: action.isLoading };
+    }
     case ActionType.ADD_EMPLOYEE: {
-      return { ...initialState, employeeList: withElement(state.employeeList, action.employee) };
+      return { ...state, employeeMapById: mapWithElement(state.employeeMapById, action.employee) };
     }
     case ActionType.REMOVE_EMPLOYEE: {
-      return { ...initialState, employeeList: withoutElement(state.employeeList, action.employee) };
+      return { ...state, employeeMapById: mapWithoutElement(state.employeeMapById, action.employee) };
     }
     case ActionType.UPDATE_EMPLOYEE: {
-      return { ...initialState, employeeList: withUpdatedElement(state.employeeList, action.employee) };
+      return { ...state, employeeMapById: mapWithUpdatedElement(state.employeeMapById, action.employee) };
     }
     case ActionType.REFRESH_EMPLOYEE_LIST: {
-      return { ...initialState, employeeList: action.employeeList };
+      return { ...state, employeeMapById: createIdMapFromList(action.employeeList) };
     }
     default:
       return state;
