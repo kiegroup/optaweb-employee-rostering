@@ -17,10 +17,8 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import * as spotActions from 'store/spot/actions';
-import * as employeeActions from 'store/employee/actions';
-import reducer, { skillOperations } from './index';
-import { withElement, withoutElement, withUpdatedElement } from 'util/ImmutableCollectionOperations';
+import reducer, { skillSelectors, skillOperations } from './index';
+import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import Skill from 'domain/Skill';
 
@@ -49,7 +47,10 @@ describe('Skill operations', () => {
 
     onGet(`/tenant/${tenantId}/skill/`, mockSkillList);
     await store.dispatch(skillOperations.refreshSkillList());
-    expect(store.getActions()).toEqual([actions.refreshSkillList(mockSkillList)]);
+    expect(store.getActions()).toEqual([actions.setIsSkillListLoading(true),
+      actions.refreshSkillList(mockSkillList),
+      actions.setIsSkillListLoading(false)
+    ]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/`);
   });
@@ -97,7 +98,7 @@ describe('Skill operations', () => {
     onGet(`/tenant/${tenantId}/spot/`, []);
     onGet(`/tenant/${tenantId}/employee/`, []);
     await store.dispatch(skillOperations.updateSkill(skillToUpdate));
-    expect(store.getActions()).toEqual([actions.updateSkill(skillWithUpdatedVersion), spotActions.refreshSpotList([]), employeeActions.refreshEmployeeList([])]);
+    expect(store.getActions()).toEqual([actions.updateSkill(skillWithUpdatedVersion)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledTimes(2);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
@@ -110,25 +111,78 @@ describe('Skill reducers', () => {
   const addedSkill: Skill = {tenantId: 0, id: 4321, version: 0, name: "Skill 1"};
   const updatedSkill: Skill = {tenantId: 0, id: 1234, version: 1, name: "Updated Skill 2"};
   const deletedSkill: Skill = {tenantId: 0, id: 2312, version: 0, name: "Skill 3"};
+  it('set is loading', () => {
+    expect(
+      reducer(state.skillList, actions.setIsSkillListLoading(true))
+    ).toEqual({ ...state.skillList, isLoading: true })
+  });
   it('add skill', () => {
     expect(
       reducer(state.skillList, actions.addSkill(addedSkill))
-    ).toEqual({skillList: withElement(state.skillList.skillList, addedSkill)})
+    ).toEqual({ ...state.skillList, skillMapById: mapWithElement(state.skillList.skillMapById, addedSkill)})
   });
   it('remove skill', () => {
     expect(
       reducer(state.skillList, actions.removeSkill(deletedSkill)),
-    ).toEqual({skillList: withoutElement(state.skillList.skillList, deletedSkill)})
+    ).toEqual({ ...state.skillList, skillMapById: mapWithoutElement(state.skillList.skillMapById, deletedSkill)})
   });
   it('update skill', () => {
     expect(
       reducer(state.skillList, actions.updateSkill(updatedSkill)),
-    ).toEqual({skillList: withUpdatedElement(state.skillList.skillList, updatedSkill)})
+    ).toEqual({ ...state.skillList, skillMapById: mapWithUpdatedElement(state.skillList.skillMapById, updatedSkill)})
   });
   it('refresh skill list', () => {
     expect(
       reducer(state.skillList, actions.refreshSkillList([addedSkill])),
-    ).toEqual({skillList: [addedSkill]});
+    ).toEqual({ ...state.skillList, skillMapById: createIdMapFromList([addedSkill]) });
+  });
+});
+
+describe('Skill selectors', () => {
+  it('should throw an error if skill list is loading', () => {
+    expect(() => skillSelectors.getSkillById({
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true }
+      }, 1234)).toThrow();
+  });
+
+  it('should get a skill by id', () => {
+    const skill = skillSelectors.getSkillById(state, 1234);
+    expect(skill).toEqual({
+      tenantId: 0,
+      id: 1234,
+      version: 0,
+      name: "Skill 2"
+    });
+  });
+
+  it('should return an empty list if skill list is loading', () => {
+    const skillList = skillSelectors.getSkillList({
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true }
+      });
+    expect(skillList).toEqual([]);
+  });
+
+  it('should return a list of all skills', () => {
+    const skillList = skillSelectors.getSkillList(state);
+    expect(skillList).toEqual(expect.arrayContaining([
+      {
+        tenantId: 0,
+        id: 1234,
+        version: 0,
+        name: "Skill 2"     
+      },
+      {
+        tenantId: 0,
+        id: 2312,
+        version: 1,
+        name: "Skill 3"
+      }
+    ]));
+    expect(skillList.length).toEqual(2);
   });
 });
 
@@ -138,28 +192,32 @@ const state: AppState = {
     tenantList: []
   },
   employeeList: {
-    employeeList: []
+    isLoading: false,
+    employeeMapById: new Map()
   },
   contractList: {
-    contractList: []
+    isLoading: false,
+    contractMapById: new Map()
   },
   spotList: {
-    spotList: []
+    isLoading: false,
+    spotMapById: new Map()
   },
   skillList: {
-    skillList: [
-      {
+    isLoading: false,
+    skillMapById: new Map([
+      [1234, {
         tenantId: 0,
         id: 1234,
         version: 0,
         name: "Skill 2"
-      },
-      {
+      }],
+      [2312, {
         tenantId: 0,
         id: 2312,
         version: 1,
         name: "Skill 3"
-      }
-    ]
+      }]
+    ])
   }
 };

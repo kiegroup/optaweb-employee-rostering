@@ -21,7 +21,7 @@ import DomainObjectView from 'domain/DomainObjectView';
 
 export const getEmployeeById = (state: AppState, id: number): Employee => {
   if (state.employeeList.isLoading || state.skillList.isLoading || state.contractList.isLoading) {
-      throw Error("Spot list is loading");
+      throw Error("Employee list is loading");
   }
   const employeeView = state.employeeList.employeeMapById.get(id) as DomainObjectView<Employee>;
   return {
@@ -32,7 +32,7 @@ export const getEmployeeById = (state: AppState, id: number): Employee => {
 };
 
 export const getEmployeeList = (state: AppState): Employee[] => {
-  if (state.spotList.isLoading || state.skillList.isLoading || state.contractList.isLoading) {
+  if (state.employeeList.isLoading || state.skillList.isLoading || state.contractList.isLoading) {
     return [];
   }
   const out: Employee[] = [];

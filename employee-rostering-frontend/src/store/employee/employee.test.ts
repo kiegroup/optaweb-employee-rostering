@@ -17,8 +17,8 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import reducer, { employeeOperations } from './index';
-import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
+import reducer, { employeeSelectors, employeeOperations } from './index';
+import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
 import Employee from 'domain/Employee';
 
@@ -48,7 +48,7 @@ describe('Employee operations', () => {
 
     onGet(`/tenant/${tenantId}/employee/`, mockEmployeeList);
     await store.dispatch(employeeOperations.refreshEmployeeList());
-    expect(store.getActions()).toEqual([actions.refreshEmployeeList(mockEmployeeList)]);
+    expect(store.getActions()).toEqual([actions.setIsEmployeeListLoading(true), actions.refreshEmployeeList(mockEmployeeList), actions.setIsEmployeeListLoading(false)]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/`);
 
@@ -144,48 +144,135 @@ describe('Employee reducers', () => {
       maximumMinutesPerYear: null
     }
   };
+  it('set is loading', () => {
+    expect(
+      reducer(state.employeeList, actions.setIsEmployeeListLoading(true))
+    ).toEqual({ ...state.employeeList,
+        isLoading: true
+      })
+  });
   it('add employee', () => {
     expect(
       reducer(state.employeeList, actions.addEmployee(addedEmployee))
-    ).toEqual({employeeList: withElement(state.employeeList.employeeList, addedEmployee)})
+    ).toEqual({ ...state.employeeList,
+        employeeMapById: mapWithElement(state.employeeList.employeeMapById, addedEmployee)
+      })
   });
   it('remove employee', () => {
     expect(
       reducer(state.employeeList, actions.removeEmployee(deletedEmployee)),
-    ).toEqual({employeeList: withoutElement(state.employeeList.employeeList, deletedEmployee)})
+    ).toEqual({ ...state.employeeList, 
+        employeeMapById: mapWithoutElement(state.employeeList.employeeMapById, deletedEmployee)
+      })
   });
   it('update employee', () => {
     expect(
       reducer(state.employeeList, actions.updateEmployee(updatedEmployee)),
-    ).toEqual({employeeList: withUpdatedElement(state.employeeList.employeeList, updatedEmployee)})
+    ).toEqual({ ...state.employeeList,
+        employeeMapById: mapWithUpdatedElement(state.employeeList.employeeMapById, updatedEmployee)
+      })
   });
   it('refresh employee list', () => {
     expect(
       reducer(state.employeeList, actions.refreshEmployeeList([addedEmployee])),
-    ).toEqual({employeeList: [addedEmployee]});
+    ).toEqual({ ...state.employeeList,
+        employeeMapById: createIdMapFromList([addedEmployee])
+    });
   });
 });
 
-const state: AppState = {
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: []
-  },
-  employeeList: {
-    employeeList: [
+describe('Employee selectors', () => {
+  it('should throw an error if employee list, contract list or spot list is loading', () => {
+    expect(() => employeeSelectors.getEmployeeById({
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true }
+      }, 1234)).toThrow();
+    expect(() => employeeSelectors.getEmployeeById({
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true }
+      }, 1234)).toThrow();
+    expect(() => employeeSelectors.getEmployeeById({
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true }
+      }, 1234)).toThrow();
+  });
+
+  it('should get a employee by id', () => {
+    const skill = employeeSelectors.getEmployeeById(state, 1);
+    expect(skill).toEqual({
+      tenantId: 0,
+      id: 1,
+      version: 0,
+      name: "Employee 1",
+      skillProficiencySet: [
+        {
+          tenantId: 0,
+          id: 3,
+          version: 0,
+          name: "Skill 3"
+        }
+      ],
+      contract: {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: "Contract 1",
+        maximumMinutesPerDay: 50,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: 10,
+        maximumMinutesPerYear: null
+      }
+    });
+  });
+
+  it('should return an empty list if employee list, skill list or contract list is loading', () => {
+    let employeeList = employeeSelectors.getEmployeeList({
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true }
+      });
+    expect(employeeList).toEqual([]);
+    employeeList = employeeSelectors.getEmployeeList({
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true }
+      });
+    expect(employeeList).toEqual([]);
+    employeeList = employeeSelectors.getEmployeeList({
+      ...state,
+      employeeList: { 
+        ...state.employeeList, isLoading: true }
+      });
+    expect(employeeList).toEqual([]);
+  });
+
+  it('should return a list of all employee', () => {
+    const employeeList = employeeSelectors.getEmployeeList(state);
+    expect(employeeList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
         id: 1,
         version: 0,
         name: "Employee 1",
-        skillProficiencySet: [],
+        skillProficiencySet: [
+          {
+            tenantId: 0,
+            id: 3,
+            version: 0,
+            name: "Skill 3"
+          }
+        ],
         contract: {
           tenantId: 0,
           id: 1,
-          name: "Contract",
-          maximumMinutesPerDay: null,
+          version: 0,
+          name: "Contract 1",
+          maximumMinutesPerDay: 50,
           maximumMinutesPerWeek: null,
-          maximumMinutesPerMonth: null,
+          maximumMinutesPerMonth: 10,
           maximumMinutesPerYear: null
         }
       },
@@ -198,22 +285,73 @@ const state: AppState = {
         contract: {
           tenantId: 0,
           id: 1,
-          name: "Contract",
-          maximumMinutesPerDay: null,
+          version: 0,
+          name: "Contract 1",
+          maximumMinutesPerDay: 50,
           maximumMinutesPerWeek: null,
-          maximumMinutesPerMonth: null,
+          maximumMinutesPerMonth: 10,
           maximumMinutesPerYear: null
         }
       }
-    ]
+    ]));
+    expect(employeeList.length).toEqual(2);
+  });
+});
+
+const state: AppState = {
+  tenantData: {
+    currentTenantId: 0,
+    tenantList: []
+  },
+  employeeList: {
+    isLoading: false,
+    employeeMapById: new Map([
+      [1, {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: "Employee 1",
+        skillProficiencySet: [3],
+        contract: 1
+      }],
+      [2, {
+        tenantId: 0,
+        id: 2,
+        version: 0,
+        name: "Employee 2",
+        skillProficiencySet: [],
+        contract: 1
+      }]
+    ])
   },
   spotList: {
-    spotList: []
+    isLoading: false,
+    spotMapById: new Map()
   },
   contractList: {
-    contractList: []
+    isLoading: false,
+    contractMapById: new Map([
+      [1, {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: "Contract 1",
+        maximumMinutesPerDay: 50,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: 10,
+        maximumMinutesPerYear: null
+      }]
+    ])
   },
   skillList: {
-    skillList: []
+    isLoading: false,
+    skillMapById: new Map([
+      [3, {
+        tenantId: 0,
+        id: 3,
+        version: 0,
+        name: "Skill 3"
+      }]
+    ])
   }
 };

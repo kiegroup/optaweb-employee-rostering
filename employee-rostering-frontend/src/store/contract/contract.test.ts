@@ -17,9 +17,8 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import * as employeeActions from 'store/employee/actions';
-import reducer, { contractOperations } from './index';
-import { withElement, withoutElement, withUpdatedElement } from 'util/ImmutableCollectionOperations';
+import reducer, { contractSelectors, contractOperations } from './index';
+import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import Contract from 'domain/Contract';
 
@@ -40,7 +39,7 @@ describe('Contract operations', () => {
 
     onGet(`/tenant/${tenantId}/contract/`, mockContractList);
     await store.dispatch(contractOperations.refreshContractList());
-    expect(store.getActions()).toEqual([actions.refreshContractList(mockContractList)]);
+    expect(store.getActions()).toEqual([actions.setIsContractListLoading(true), actions.refreshContractList(mockContractList), actions.setIsContractListLoading(false)]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/`);
   });
@@ -104,7 +103,7 @@ describe('Contract operations', () => {
     onPost(`/tenant/${tenantId}/contract/update`, contractToUpdate, contractWithUpdatedVersion);
     onGet(`/tenant/${tenantId}/employee/`, []);
     await store.dispatch(contractOperations.updateContract(contractToUpdate));
-    expect(store.getActions()).toEqual([actions.updateContract(contractWithUpdatedVersion), employeeActions.refreshEmployeeList([])]);
+    expect(store.getActions()).toEqual([actions.updateContract(contractWithUpdatedVersion)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/update`, contractToUpdate);
     expect(client.get).toBeCalledTimes(1);
@@ -143,41 +142,76 @@ describe('Contract reducers', () => {
     maximumMinutesPerMonth: null,
     maximumMinutesPerYear: 100
   };
+  it('set loading', () => {
+    expect(
+      reducer(state.contractList, actions.setIsContractListLoading(true))
+    ).toEqual({ ...state.contractList, isLoading: true })
+  });
   it('add contract', () => {
     expect(
       reducer(state.contractList, actions.addContract(addedContract))
-    ).toEqual({contractList: withElement(state.contractList.contractList, addedContract)})
+    ).toEqual({ ...state.contractList,
+        contractMapById: mapWithElement(state.contractList.contractMapById, addedContract)
+      })
   });
   it('remove contract', () => {
     expect(
       reducer(state.contractList, actions.removeContract(deletedContract)),
-    ).toEqual({contractList: withoutElement(state.contractList.contractList, deletedContract)})
+    ).toEqual({ ...state.contractList,
+        contractMapById: mapWithoutElement(state.contractList.contractMapById, deletedContract)
+      })
   });
   it('update contract', () => {
     expect(
       reducer(state.contractList, actions.updateContract(updatedContract)),
-    ).toEqual({contractList: withUpdatedElement(state.contractList.contractList, updatedContract)})
+    ).toEqual({ ...state.contractList,
+        contractMapById: mapWithUpdatedElement(state.contractList.contractMapById, updatedContract)
+      })
   });
   it('refresh contract list', () => {
     expect(
       reducer(state.contractList, actions.refreshContractList([addedContract])),
-    ).toEqual({contractList: [addedContract]});
+    ).toEqual({ ...state.contractList, 
+        contractMapById: createIdMapFromList([addedContract])
+      });
   });
 });
 
-const state: AppState = {
-  tenantData: {
-    currentTenantId: 0,
-    tenantList: []
-  },
-  employeeList: {
-    employeeList: []
-  },
-  spotList: {
-    spotList: []
-  },
-  contractList: {
-    contractList: [
+describe('Contract selectors', () => {
+  it('should throw an error if contract list is loading', () => {
+    expect(() => contractSelectors.getContractById({
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true }
+      }, 0)).toThrow();
+  });
+
+  it('should get a contract by id', () => {
+    const contractList = contractSelectors.getContractById(state, 0);
+    expect(contractList).toEqual({
+      tenantId: 0,
+      id: 0,
+      version: 0,
+      name: "Contract 1",
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
+    });
+  });
+
+  it('should return an empty list if contract list is loading', () => {
+    const contractList = contractSelectors.getContractList({
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true }
+      });
+    expect(contractList).toEqual([]);
+  });
+
+  it('should return a list of all contracts', () => {
+    const contractList = contractSelectors.getContractList(state);
+    expect(contractList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
         id: 0,
@@ -208,9 +242,61 @@ const state: AppState = {
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: 100
       }
-    ]
+    ]));
+    expect(contractList.length).toEqual(3);
+  });
+});
+
+const state: AppState = {
+  tenantData: {
+    currentTenantId: 0,
+    tenantList: []
+  },
+  employeeList: {
+    isLoading: false,
+    employeeMapById: new Map()
+  },
+  spotList: {
+    isLoading: false,
+    spotMapById: new Map()
+  },
+  contractList: {
+    isLoading: false,
+    contractMapById: new Map([
+      [0, {
+        tenantId: 0,
+        id: 0,
+        version: 0,
+        name: "Contract 1",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null
+      }],
+      [1, {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: "Contract 2",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: 100,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null
+      }],
+      [2, {
+        tenantId: 0,
+        id: 2,
+        version: 0,
+        name: "Contract 3",
+        maximumMinutesPerDay: 100,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: 100
+      }]
+    ])
   },
   skillList: {
-    skillList: []
+    isLoading: false,
+    skillMapById: new Map()
   }
 };
