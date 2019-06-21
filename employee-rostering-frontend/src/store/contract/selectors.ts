@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { AppState } from '../types';
+import Contract from 'domain/Contract';
 
-import * as contractOperations from './operations';
-import * as contractSelectors from './selectors';
-import reducer from './reducers';
-
-export {
-  contractOperations,
-  contractSelectors
+export const getContractById = (state: AppState, id: number): Contract => {
+  if (state.contractList.isLoading) {
+      throw Error("Contract list is loading");
+  }
+  return state.contractList.contractMapById.get(id) as Contract;
 };
 
-export default reducer;
+export const getContractList = (state: AppState): Contract[] => {
+  if (state.contractList.isLoading) {
+    return [];
+  }
+  const out: Contract[] = [];
+  state.contractList.contractMapById.forEach((value, key) => out.push(getContractById(state, key)));
+  return out;
+};

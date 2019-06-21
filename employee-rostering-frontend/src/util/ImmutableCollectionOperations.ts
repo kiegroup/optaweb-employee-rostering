@@ -15,6 +15,7 @@
  */
 
 import DomainObject from 'domain/DomainObject';
+import DomainObjectView from 'domain/DomainObjectView';
 
 export function toggleElement<T>(collection: T[], element: T): T[] {
   if (collection.indexOf(element) !== -1) {
@@ -37,15 +38,46 @@ export function withUpdatedElement<T extends DomainObject>(collection: T[], upda
   return withElement(withoutElement(collection, updatedElement), updatedElement);
 }
 
-export function mapWithoutElement<T extends DomainObject>(map: Map<number, T>, removedElement: T): Map<number, T> {
-  return collection.filter(element => element.id !== removedElement.id);
+interface ObjectWithKeys {
+  [key: string]: any
 }
 
-export function mapWithElement<T extends DomainObject>(map: Map<number, T>, addedElement: T): Map<number, T> {
-  return [...collection, addedElement];
+export function mapDomainObjectToView<T extends DomainObject>(obj: T): DomainObjectView<T> {
+  let result = {} as ObjectWithKeys;
+  const objWithKeys = obj as ObjectWithKeys;
+  for(const key in obj) {
+    if (objWithKeys[key] !== null && objWithKeys[key].id !== undefined) {
+      result[key] = objWithKeys[key].id;
+    }
+    else if (Array.isArray(objWithKeys[key]) && objWithKeys[key].length > 0 && objWithKeys[key][0].id !== undefined) {
+      result[key] = objWithKeys[key].map((ele: DomainObject)  => ele.id);
+    }
+    else {
+      result[key] = objWithKeys[key];
+    }
+  }
+  return result as DomainObjectView<T>;
 }
 
-export function mapWithUpdatedElement<T extends DomainObject>(map: Map<number, T>, updatedElement: T): Map<number, T> {
-  return withElement(withoutElement(collection, updatedElement), updatedElement);
+export function createIdMapFromList<T extends DomainObject>(collection: T[]): Map<number, DomainObjectView<T>> {
+  const map = new Map<number, DomainObjectView<T>>();
+  collection.forEach(ele => map.set(ele.id as number, mapDomainObjectToView(ele)));
+  return map;
+}
+
+export function mapWithoutElement<T extends DomainObject>(map: Map<number, DomainObjectView<T>>, removedElement: T): Map<number, DomainObjectView<T>> {
+  const copy = new Map<number, DomainObjectView<T>>(map);
+  copy.delete(removedElement.id as number);
+  return copy;
+}
+
+export function mapWithElement<T extends DomainObject>(map: Map<number, DomainObjectView<T>>, addedElement: T): Map<number, DomainObjectView<T>> {
+  const copy = new Map<number, DomainObjectView<T>>(map);
+  copy.set(addedElement.id as number, mapDomainObjectToView(addedElement));
+  return copy;
+}
+
+export function mapWithUpdatedElement<T extends DomainObject>(map: Map<number, DomainObjectView<T>>, updatedElement: T): Map<number, DomainObjectView<T>> {
+  return mapWithElement(map, updatedElement);
 }
 

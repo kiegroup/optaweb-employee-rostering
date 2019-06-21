@@ -17,7 +17,7 @@
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import Spot from 'domain/Spot';
-import { AddSpotAction, RemoveSpotAction, UpdateSpotAction, RefreshSpotListAction } from './types';
+import { SetSpotListLoadingAction, AddSpotAction, RemoveSpotAction, UpdateSpotAction, RefreshSpotListAction } from './types';
 
 export const addSpot: ThunkCommandFactory<Spot, AddSpotAction> = spot =>
   (dispatch, state, client) => {
@@ -47,10 +47,12 @@ export const updateSpot: ThunkCommandFactory<Spot, UpdateSpotAction> = spot =>
     });
   };
 
-export const refreshSpotList: ThunkCommandFactory<void, RefreshSpotListAction> = () =>
+export const refreshSpotList: ThunkCommandFactory<void, SetSpotListLoadingAction | RefreshSpotListAction> = () =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
+    dispatch(actions.setIsSpotListLoading(true));
     return client.get<Spot[]>(`/tenant/${tenantId}/spot/`).then(spotList => {
       dispatch(actions.refreshSpotList(spotList));
+      dispatch(actions.setIsSpotListLoading(false));
     });
   };
