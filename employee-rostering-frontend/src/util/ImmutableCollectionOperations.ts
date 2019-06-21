@@ -36,3 +36,16 @@ export function withElement<T extends DomainObject>(collection: T[], addedElemen
 export function withUpdatedElement<T extends DomainObject>(collection: T[], updatedElement: T): T[] {
   return withElement(withoutElement(collection, updatedElement), updatedElement);
 }
+
+export function mapWithoutElement<T extends DomainObject>(map: Map<number, T>, removedElement: T): Map<number, T> {
+  return collection.filter(element => element.id !== removedElement.id);
+}
+
+export function mapWithElement<T extends DomainObject>(map: Map<number, T>, addedElement: T): Map<number, T> {
+  return [...collection, addedElement];
+}
+
+export function mapWithUpdatedElement<T extends DomainObject>(map: Map<number, T>, updatedElement: T): Map<number, T> {
+  return withElement(withoutElement(collection, updatedElement), updatedElement);
+}
+
