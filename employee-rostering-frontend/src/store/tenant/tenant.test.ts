@@ -45,13 +45,21 @@ describe('Tenant operations', () => {
         name: "Tenant 3"
       }];
 
-      const expectedRefreshActions = [
-        actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
-        skillActions.refreshSkillList([]),
-        spotActions.refreshSpotList([]),
-        contractActions.refreshContractList([]),
-        employeeActions.refreshEmployeeList([])
-      ];
+    let expectedRefreshActions: any[] = [
+      actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
+      skillActions.refreshSkillList([]),
+      spotActions.refreshSpotList([]),
+      contractActions.refreshContractList([]),
+      employeeActions.refreshEmployeeList([]),
+      skillActions.setIsSkillListLoading(true),
+      spotActions.setIsSpotListLoading(true),
+      contractActions.setIsContractListLoading(true),
+      employeeActions.setIsEmployeeListLoading(true),
+      skillActions.setIsSkillListLoading(false),
+      spotActions.setIsSpotListLoading(false),
+      contractActions.setIsContractListLoading(false),
+      employeeActions.setIsEmployeeListLoading(false)
+    ];
 
       onGet(`/tenant/`, mockTenantList);
       onGet(`/tenant/0/skill/`, []);
@@ -104,7 +112,24 @@ describe('Tenant operations', () => {
       onGet(`/tenant/0/contract/`, []);
       onGet(`/tenant/0/employee/`, []);
 
-      await store.dispatch(tenantOperations.refreshTenantList());
+    mockTenantList[1].id = 0;
+    expectedRefreshActions = [
+      actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
+      skillActions.refreshSkillList([]),
+      spotActions.refreshSpotList([]),
+      contractActions.refreshContractList([]),
+      employeeActions.refreshEmployeeList([]),
+      skillActions.setIsSkillListLoading(true),
+      spotActions.setIsSpotListLoading(true),
+      contractActions.setIsContractListLoading(true),
+      employeeActions.setIsEmployeeListLoading(true),
+      skillActions.setIsSkillListLoading(false),
+      spotActions.setIsSpotListLoading(false),
+      contractActions.setIsContractListLoading(false),
+      employeeActions.setIsEmployeeListLoading(false)
+    ];
+
+    await store.dispatch(tenantOperations.refreshTenantList());
     
       const actualRefreshActions = store.getActions();
       expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
@@ -130,12 +155,20 @@ describe('Tenant operations', () => {
       skillActions.refreshSkillList([]),
       spotActions.refreshSpotList([]),
       contractActions.refreshContractList([]),
-      employeeActions.refreshEmployeeList([])
+      employeeActions.refreshEmployeeList([]),
+      skillActions.setIsSkillListLoading(true),
+      spotActions.setIsSpotListLoading(true),
+      contractActions.setIsContractListLoading(true),
+      employeeActions.setIsEmployeeListLoading(true),
+      skillActions.setIsSkillListLoading(false),
+      spotActions.setIsSpotListLoading(false),
+      contractActions.setIsContractListLoading(false),
+      employeeActions.setIsEmployeeListLoading(false)
     ];
 
     await store.dispatch(tenantOperations.changeTenant(0));
 
-    const actualRefreshActions = store.getActions();
+    actualRefreshActions = store.getActions();
     expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
     expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
 
