@@ -13,14 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { AppState } from '../types';
+import Skill from 'domain/Skill';
 
-import * as contractOperations from './operations';
-import * as contractSelectors from './selectors';
-import reducer from './reducers';
-
-export {
-  contractOperations,
-  contractSelectors
+export const getSkillById = (state: AppState, id: number): Skill => {
+  if (state.skillList.isLoading) {
+      throw Error("Skill list is loading");
+  }
+  return state.skillList.skillMapById.get(id) as Skill;
 };
 
-export default reducer;
+export const getSkillList = (state: AppState): Skill[] => {
+  if (state.skillList.isLoading) {
+    return [];
+  }
+  const out: Skill[] = [];
+  state.skillList.skillMapById.forEach((value, key) => out.push(getSkillById(state, key)));
+  return out;
+};
