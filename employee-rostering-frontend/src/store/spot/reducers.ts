@@ -15,25 +15,31 @@
  */
 
 import { ActionType, SpotList, SpotAction } from './types';
-import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import DomainObjectView from 'domain/DomainObjectView';
+import Spot from 'domain/Spot';
 
 export const initialState: SpotList = {
-  spotList: []
+  isLoading: true,
+  spotMapById: new Map<number, DomainObjectView<Spot>>()
 };
 
 const spotReducer = (state = initialState, action: SpotAction): SpotList => {
   switch (action.type) {
+    case ActionType.SET_SPOT_LIST_LOADING: {
+      return { ...state, isLoading: action.isLoading };
+    }
     case ActionType.ADD_SPOT: {
-      return { ...initialState, spotList: withElement(state.spotList, action.spot) };
+      return { ...state, spotMapById: mapWithElement(state.spotMapById, action.spot) };
     }
     case ActionType.REMOVE_SPOT: {
-      return { ...initialState, spotList: withoutElement(state.spotList, action.spot) };
+      return { ...state, spotMapById: mapWithoutElement(state.spotMapById, action.spot) };
     }
     case ActionType.UPDATE_SPOT: {
-      return { ...initialState, spotList: withUpdatedElement(state.spotList, action.spot) };
+      return { ...state, spotMapById: mapWithUpdatedElement(state.spotMapById, action.spot) };
     }
     case ActionType.REFRESH_SPOT_LIST: {
-      return { ...initialState, spotList: action.spotList };
+      return { ...state, spotMapById: createIdMapFromList(action.spotList) };
     }
     default:
       return state;
