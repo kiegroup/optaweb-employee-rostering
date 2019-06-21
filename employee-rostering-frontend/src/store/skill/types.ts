@@ -51,5 +51,5 @@ export type SkillAction = SetSkillListLoadingAction | AddSkillAction | RemoveSki
 
 export interface SkillList {
   readonly isLoading: boolean;
-  readonly skillMapById: Map<number, DomainObjectView<Skill>>[];
+  readonly skillMapById: Map<number, DomainObjectView<Skill>>;
 }

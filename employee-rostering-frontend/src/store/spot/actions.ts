@@ -16,7 +16,12 @@
 
 import Spot from 'domain/Spot';
 import { ActionFactory } from '../types';
-import { ActionType, AddSpotAction, UpdateSpotAction, RemoveSpotAction, RefreshSpotListAction } from './types';
+import { ActionType, SetSpotListLoadingAction, AddSpotAction, UpdateSpotAction, RemoveSpotAction, RefreshSpotListAction } from './types';
+
+export const setIsSpotListLoading: ActionFactory<Boolean, SetSpotListLoadingAction> = (isLoading: Boolean) => ({
+  type: ActionType.SET_SPOT_LIST_LOADING,
+  isLoading: isLoading.valueOf()
+});
 
 export const addSpot: ActionFactory<Spot, AddSpotAction> = newSpot => ({
   type: ActionType.ADD_SPOT,

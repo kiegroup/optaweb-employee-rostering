@@ -17,7 +17,9 @@
 import * as React from 'react';
 import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
-import { employeeOperations } from 'store/employee';
+import { employeeSelectors, employeeOperations } from 'store/employee';
+import { contractSelectors } from 'store/contract';
+import { skillSelectors } from 'store/skill';
 import Employee from 'domain/Employee';
 import { AppState } from 'store/types';
 import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
@@ -35,13 +37,13 @@ interface StateProps extends DataTableProps<Employee> {
   contractList: Contract[];
 }
 
-const mapStateToProps = ({ tenantData, skillList, contractList, employeeList }: AppState): StateProps => ({
+const mapStateToProps = (state: AppState): StateProps => ({
   title: "Spots",
   columnTitles: ["Name", "Contract", "Skill Proficiencies"],
-  tableData: employeeList.employeeList,
-  skillList: skillList.skillList,
-  contractList: contractList.contractList,
-  tenantId: tenantData.currentTenantId
+  tableData: employeeSelectors.getEmployeeList(state),
+  skillList: skillSelectors.getSkillList(state),
+  contractList: contractSelectors.getContractList(state),
+  tenantId: state.tenantData.currentTenantId
 }); 
 
 export interface DispatchProps {

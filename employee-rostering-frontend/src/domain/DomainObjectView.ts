@@ -17,9 +17,10 @@
  import DomainObject from './DomainObject';
 
  type DomainObjectView<T extends DomainObject> = {
-  [K in keyof T]: T[K] extends (DomainObject | null)? number | null :
+  [K in keyof T]: 
     T[K] extends DomainObject[]? number[] :
     T[K] extends DomainObject? number :
+    T[K] extends (DomainObject | null)? number | null :
     T[K];
  }
  
