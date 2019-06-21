@@ -16,12 +16,18 @@
 
 import { Action } from 'redux';
 import Spot from 'domain/Spot';
+import DomainObjectView from 'domain/DomainObjectView';
 
 export enum ActionType {
   ADD_SPOT = 'ADD_SPOT',
   REMOVE_SPOT = 'REMOVE_SPOT',
   UPDATE_SPOT = 'UPDATE_SPOT',
-  REFRESH_SPOT_LIST = 'REFRESH_SPOT_LIST'
+  REFRESH_SPOT_LIST = 'REFRESH_SPOT_LIST',
+  SET_SPOT_LIST_LOADING = 'SET_SPOT_LIST_LOADING'
+}
+
+export interface SetSpotListLoadingAction extends Action<ActionType.SET_SPOT_LIST_LOADING> {
+  readonly isLoading: boolean;
 }
 
 export interface AddSpotAction extends Action<ActionType.ADD_SPOT> {
@@ -40,8 +46,10 @@ export interface RefreshSpotListAction extends Action<ActionType.REFRESH_SPOT_LI
   readonly spotList: Spot[];
 }
 
-export type SpotAction = AddSpotAction | RemoveSpotAction | UpdateSpotAction | RefreshSpotListAction;
+export type SpotAction = SetSpotListLoadingAction | AddSpotAction | RemoveSpotAction |
+  UpdateSpotAction | RefreshSpotListAction;
 
 export interface SpotList {
-  readonly spotList: Spot[];
+  readonly isLoading: boolean;
+  readonly spotMapById: Map<number, DomainObjectView<Spot>>[];
 }
