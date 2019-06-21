@@ -17,8 +17,7 @@
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import Contract from 'domain/Contract';
-import { AddContractAction, RemoveContractAction, UpdateContractAction, RefreshContractListAction } from './types';
-import { employeeOperations } from 'store/employee';
+import { SetContractListLoadingAction, AddContractAction, RemoveContractAction, UpdateContractAction, RefreshContractListAction } from './types';
 
 export const addContract: ThunkCommandFactory<Contract, AddContractAction> = contract =>
   (dispatch, state, client) => {
@@ -45,14 +44,15 @@ export const updateContract: ThunkCommandFactory<Contract, UpdateContractAction>
     const tenantId = contract.tenantId;
     return client.post<Contract>(`/tenant/${tenantId}/contract/update`, contract).then(updatedContract => {
       dispatch(actions.updateContract(updatedContract));
-      dispatch(employeeOperations.refreshEmployeeList());
     });
   };
 
-export const refreshContractList: ThunkCommandFactory<void, RefreshContractListAction> = () =>
+export const refreshContractList: ThunkCommandFactory<void, RefreshContractListAction | SetContractListLoadingAction> = () =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
+    dispatch(actions.setIsContractListLoading(true));
     return client.get<Contract[]>(`/tenant/${tenantId}/contract/`).then(contractList => {
       dispatch(actions.refreshContractList(contractList));
+      dispatch(actions.setIsContractListLoading(false));
     });
   };

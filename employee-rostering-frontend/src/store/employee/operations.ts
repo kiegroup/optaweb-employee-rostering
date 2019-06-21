@@ -17,7 +17,7 @@
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import Employee from 'domain/Employee';
-import { AddEmployeeAction, RemoveEmployeeAction, UpdateEmployeeAction, RefreshEmployeeListAction } from './types';
+import { SetEmployeeListLoadingAction, AddEmployeeAction, RemoveEmployeeAction, UpdateEmployeeAction, RefreshEmployeeListAction } from './types';
 
 export const addEmployee: ThunkCommandFactory<Employee, AddEmployeeAction> = employee =>
   (dispatch, state, client) => {
@@ -47,10 +47,12 @@ export const updateEmployee: ThunkCommandFactory<Employee, UpdateEmployeeAction>
     });
   };
 
-export const refreshEmployeeList: ThunkCommandFactory<void, RefreshEmployeeListAction> = () =>
+export const refreshEmployeeList: ThunkCommandFactory<void, SetEmployeeListLoadingAction | RefreshEmployeeListAction> = () =>
   (dispatch, state, client) => {
     let tenantId = state().tenantData.currentTenantId;
+    dispatch(actions.setIsEmployeeListLoading(true));
     return client.get<Employee[]>(`/tenant/${tenantId}/employee/`).then(employeeList => {
       dispatch(actions.refreshEmployeeList(employeeList));
+      dispatch(actions.setIsEmployeeListLoading(false));
     });
   };

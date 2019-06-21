@@ -16,7 +16,12 @@
 
 import Employee from 'domain/Employee';
 import { ActionFactory } from '../types';
-import { ActionType, AddEmployeeAction, UpdateEmployeeAction, RemoveEmployeeAction, RefreshEmployeeListAction } from './types';
+import { ActionType, SetEmployeeListLoadingAction, AddEmployeeAction, UpdateEmployeeAction, RemoveEmployeeAction, RefreshEmployeeListAction } from './types';
+
+export const setIsEmployeeListLoading: ActionFactory<Boolean, SetEmployeeListLoadingAction> = (isLoading: Boolean) => ({
+  type: ActionType.SET_EMPLOYEE_LIST_LOADING,
+  isLoading: isLoading.valueOf()
+});
 
 export const addEmployee: ActionFactory<Employee, AddEmployeeAction> = newEmployee => ({
   type: ActionType.ADD_EMPLOYEE,
