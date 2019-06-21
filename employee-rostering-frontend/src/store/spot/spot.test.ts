@@ -17,8 +17,8 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import reducer, { spotOperations } from './index';
-import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
+import reducer, { spotSelectors, spotOperations } from './index';
+import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
 import Spot from 'domain/Spot';
 
@@ -51,7 +51,7 @@ describe('Spot operations', () => {
 
     onGet(`/tenant/${tenantId}/spot/`, mockSpotList);
     await store.dispatch(spotOperations.refreshSpotList());
-    expect(store.getActions()).toEqual([actions.refreshSpotList(mockSpotList)]);
+    expect(store.getActions()).toEqual([actions.setIsSpotListLoading(true), actions.refreshSpotList(mockSpotList), actions.setIsSpotListLoading(false)]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/`);
 
@@ -102,25 +102,116 @@ describe('Spot reducers', () => {
   const addedSpot: Spot = {tenantId: 0, id: 4321, version: 0, name: "Spot 1", requiredSkillSet: []};
   const updatedSpot: Spot = {tenantId: 0, id: 1234, version: 1, name: "Updated Spot 2", requiredSkillSet: []};
   const deletedSpot: Spot = {tenantId: 0, id: 2312, version: 0, name: "Spot 3", requiredSkillSet: []};
+  it('set loading', () => {
+    expect(
+      reducer(state.spotList, actions.setIsSpotListLoading(true))
+    ).toEqual({ ...state.spotList,
+        isLoading: true
+      })
+  });
   it('add spot', () => {
     expect(
       reducer(state.spotList, actions.addSpot(addedSpot))
-    ).toEqual({spotList: withElement(state.spotList.spotList, addedSpot)})
+    ).toEqual({ ...state.spotList,
+        spotMapById: mapWithElement(state.spotList.spotMapById, addedSpot)
+      })
   });
   it('remove spot', () => {
     expect(
       reducer(state.spotList, actions.removeSpot(deletedSpot)),
-    ).toEqual({spotList: withoutElement(state.spotList.spotList, deletedSpot)})
+    ).toEqual({ ...state.spotList,
+        spotMapById: mapWithoutElement(state.spotList.spotMapById, deletedSpot)
+      })
   });
   it('update spot', () => {
     expect(
       reducer(state.spotList, actions.updateSpot(updatedSpot)),
-    ).toEqual({spotList: withUpdatedElement(state.spotList.spotList, updatedSpot)})
+    ).toEqual({ ...state.spotList,
+        spotMapById: mapWithUpdatedElement(state.spotList.spotMapById, updatedSpot)
+      })
   });
   it('refresh spot list', () => {
     expect(
       reducer(state.spotList, actions.refreshSpotList([addedSpot])),
-    ).toEqual({spotList: [addedSpot]});
+    ).toEqual({ ...state.spotList,
+        spotMapById: createIdMapFromList([addedSpot])
+      });
+  });
+});
+
+describe('Spot selectors', () => {
+  it('should throw an error if Spot list or Skill is loading', () => {
+    expect(() => spotSelectors.getSpotById({
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true }
+      }, 1234)).toThrow();
+    expect(() => spotSelectors.getSpotById({
+      ...state,
+      spotList: { 
+        ...state.spotList, isLoading: true }
+      }, 1234)).toThrow();
+  });
+
+  it('should get a spot by id', () => {
+    const spot = spotSelectors.getSpotById(state, 1234);
+    expect(spot).toEqual({
+      tenantId: 0,
+      id: 1234,
+      version: 1,
+      name: "Spot 2",
+      requiredSkillSet: [
+        {
+          tenantId: 0,
+          id: 1,
+          version: 0,
+          name: "Skill 1"
+        }
+      ]
+    });
+  });
+
+  it('should return an empty list if spot list or skill list is loading', () => {
+    let spotList = spotSelectors.getSpotList({
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true }
+      });
+    expect(spotList).toEqual([]);
+    spotList = spotSelectors.getSpotList({
+      ...state,
+      spotList: { 
+        ...state.spotList, isLoading: true }
+      }); 
+    expect(spotList).toEqual([]);
+  });
+
+  it('should return a list of all spots', () => {
+    const spotList = spotSelectors.getSpotList(state);
+    expect(spotList).toEqual(expect.arrayContaining([
+      {
+        tenantId: 0,
+        id: 1234,
+        version: 1,
+        name: "Spot 2",
+        requiredSkillSet: [
+          {
+            tenantId: 0,
+            id: 1,
+            version: 0,
+            name: "Skill 1"
+          }
+        ] 
+      },
+      {
+        tenantId: 0,
+        id: 2312,
+        version: 0,
+        name: "Spot 3",
+        requiredSkillSet: []
+      }
+    ]));
+    expect(spotList.length).toEqual(2);
   });
 });
 
@@ -130,30 +221,41 @@ const state: AppState = {
     tenantList: []
   },
   employeeList: {
-    employeeList: []
+    isLoading: false,
+    employeeMapById: new Map()
   },
   contractList: {
-    contractList: []
+    isLoading: false,
+    contractMapById: new Map()
   },
   spotList: {
-    spotList: [
-      {
+    isLoading: false,
+    spotMapById: new Map([
+      [1234, {
         tenantId: 0,
         id: 1234,
         version: 1,
         name: "Spot 2",
-        requiredSkillSet: []
-      },
-      {
+        requiredSkillSet: [1]
+      }],
+      [2312, {
         tenantId: 0,
         id: 2312,
         version: 0,
         name: "Spot 3",
         requiredSkillSet: []
-      }
-    ]
+      }]
+    ])
   },
   skillList: {
-    skillList: []
+    isLoading: false,
+    skillMapById: new Map([
+      [1, {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: "Skill 1"
+      }]
+    ])
   }
 };
