@@ -16,10 +16,8 @@
 
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
-import { spotOperations } from 'store/spot';
 import Skill from 'domain/Skill';
-import { AddSkillAction, RemoveSkillAction, UpdateSkillAction, RefreshSkillListAction } from './types';
-import { employeeOperations } from 'store/employee';
+import { SetSkillListLoadingAction, AddSkillAction, RemoveSkillAction, UpdateSkillAction, RefreshSkillListAction } from './types';
 
 export const addSkill: ThunkCommandFactory<Skill, AddSkillAction> = skill =>
   (dispatch, state, client) => {
@@ -46,17 +44,15 @@ export const updateSkill: ThunkCommandFactory<Skill, UpdateSkillAction> = skill 
     const tenantId = skill.tenantId;
     return client.post<Skill>(`/tenant/${tenantId}/skill/update`, skill).then(updatedSkill => {
       dispatch(actions.updateSkill(updatedSkill));
-      // Need to update spot list, which reference the old skill
-      // (also need to update employee list when it is added)
-      dispatch(spotOperations.refreshSpotList());
-      dispatch(employeeOperations.refreshEmployeeList());
     });
   };
 
-export const refreshSkillList: ThunkCommandFactory<void, RefreshSkillListAction> = () =>
+export const refreshSkillList: ThunkCommandFactory<void, SetSkillListLoadingAction | RefreshSkillListAction> = () =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
+    dispatch(actions.setIsSkillListLoading(true));
     return client.get<Skill[]>(`/tenant/${tenantId}/skill/`).then(skillList => {
       dispatch(actions.refreshSkillList(skillList));
+      dispatch(actions.setIsSkillListLoading(false));
     });
   };

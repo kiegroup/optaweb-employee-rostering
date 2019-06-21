@@ -17,7 +17,8 @@
 import * as React from 'react';
 import {DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
-import {spotOperations} from 'store/spot';
+import { spotSelectors, spotOperations } from 'store/spot';
+import { skillSelectors } from 'store/skill';
 import Spot from 'domain/Spot';
 import { AppState } from 'store/types';
 import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
@@ -32,12 +33,12 @@ interface StateProps extends DataTableProps<Spot> {
   skillList: Skill[];
 }
 
-const mapStateToProps = ({ tenantData, skillList, spotList }: AppState): StateProps => ({
+const mapStateToProps = (state: AppState): StateProps => ({
   title: "Spots",
   columnTitles: ["Name", "Required Skill Set"],
-  tableData: spotList.spotList,
-  skillList: skillList.skillList,
-  tenantId: tenantData.currentTenantId
+  tableData: spotSelectors.getSpotList(state),
+  skillList: skillSelectors.getSkillList(state),
+  tenantId: state.tenantData.currentTenantId
 }); 
 
 export interface DispatchProps {
