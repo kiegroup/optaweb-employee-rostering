@@ -16,7 +16,7 @@
 
 import * as React from 'react';
 import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
-import { contractOperations } from 'store/contract';
+import { contractSelectors, contractOperations } from 'store/contract';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
@@ -30,11 +30,11 @@ interface StateProps extends DataTableProps<Contract> {
   tenantId: number;
 }
 
-const mapStateToProps = ({ tenantData, contractList }: AppState): StateProps => ({
+const mapStateToProps = (state: AppState): StateProps => ({
   title: "Contracts",
   columnTitles: ["Name", "Max Hours Per Day", "Max Hours Per Week", "Max Hours Per Month", "Max Hours Per Year"],
-  tableData: contractList.contractList,
-  tenantId: tenantData.currentTenantId
+  tableData: contractSelectors.getContractList(state),
+  tenantId: state.tenantData.currentTenantId
 }); 
 
 export interface DispatchProps {
