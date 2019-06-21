@@ -16,12 +16,18 @@
 
 import { Action } from 'redux';
 import Skill from 'domain/Skill';
+import DomainObjectView from 'domain/DomainObjectView';
 
 export enum ActionType {
   ADD_SKILL = 'ADD_SKILL',
   REMOVE_SKILL = 'REMOVE_SKILL',
   UPDATE_SKILL = 'UPDATE_SKILL',
-  REFRESH_SKILL_LIST = 'REFRESH_SKILL_LIST'
+  REFRESH_SKILL_LIST = 'REFRESH_SKILL_LIST',
+  SET_SKILL_LIST_LOADING = 'SET_SKILL_LIST_LOADING'
+}
+
+export interface SetSkillListLoadingAction extends Action<ActionType.SET_SKILL_LIST_LOADING> {
+  readonly isLoading: boolean;
 }
 
 export interface AddSkillAction extends Action<ActionType.ADD_SKILL> {
@@ -40,8 +46,10 @@ export interface RefreshSkillListAction extends Action<ActionType.REFRESH_SKILL_
   readonly skillList: Skill[];
 }
 
-export type SkillAction = AddSkillAction | RemoveSkillAction | UpdateSkillAction | RefreshSkillListAction;
+export type SkillAction = SetSkillListLoadingAction | AddSkillAction | RemoveSkillAction |
+  UpdateSkillAction | RefreshSkillListAction;
 
 export interface SkillList {
-  readonly skillList: Skill[];
+  readonly isLoading: boolean;
+  readonly skillMapById: Map<number, DomainObjectView<Skill>>[];
 }
