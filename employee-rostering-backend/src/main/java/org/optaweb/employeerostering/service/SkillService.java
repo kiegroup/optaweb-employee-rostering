@@ -56,11 +56,13 @@ public class SkillService {
         }
     }
 
-    public void createSkill(Integer tenantId, Skill skill) {
+    public Skill createSkill(Integer tenantId, Skill skill) {
         skillRepository.save(skill);
+        return skill;
     }
 
-    public void updateSkill(Integer tenantId, Skill skill) {
+    public Skill updateSkill(Integer tenantId, Skill skill) {
+
         if (skill.getId() == null) {
             throw new EntityNotFoundException("Skill id cannot be null.");
         }
@@ -68,11 +70,10 @@ public class SkillService {
             throw new EntityNotFoundException("Skill entity not found.");
         }
         else {
-            Skill skill1 = skillRepository.findById(skill.getId()).get();
+            skillRepository.deleteById(skill.getId());
+            skillRepository.save(skill);
 
-            skill1.setTenantId(skill.getTenantId());
-            skill1.setName(skill.getName());
+            return skill;
         }
-
     }
 }
