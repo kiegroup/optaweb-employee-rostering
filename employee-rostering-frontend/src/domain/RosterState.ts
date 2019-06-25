@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
-import ContractsPage from './contract/ContractsPage';
-import EmployeesPage from './employee/EmployeesPage';
-import ShiftRosterPage from './shift/ShiftRosterPage';
+import Tenant from "./Tenant";
 
-export { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage };
+export default interface RosterState {
+  publishNotice: number;
+  firstDraftDate: Date;
+  publishLength: number;
+  draftLength: number;
+  unplannedRotationOffset: number;
+  rotationLength: number;
+  lastHistoricDate: Date;
+  timeZone: string;
+  tenant: Tenant;
+}

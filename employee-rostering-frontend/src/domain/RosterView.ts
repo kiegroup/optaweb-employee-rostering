@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
-import ContractsPage from './contract/ContractsPage';
-import EmployeesPage from './employee/EmployeesPage';
-import ShiftRosterPage from './shift/ShiftRosterPage';
+import Employee from './Employee';
+import RosterState from './RosterState';
+import Spot from './Spot';
 
-export { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage };
+export default interface RosterView {
+  tenantId: number;
+  startDate: Date;
+  endDate: Date;
+  spotList: Spot[];
+  employeeList: Employee[];
+  rosterState: RosterState;
+}
