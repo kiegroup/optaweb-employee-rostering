@@ -22,6 +22,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.Skill;
+import org.optaweb.employeerostering.service.SkillService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,65 +33,106 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class SkillControllerTest {
+public class SkillControllerIntegrationTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(SkillControllerIntegrationTest.class);
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private SkillService skillService;
 
     @Test
     public void getSkillListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
                             .get("/tenant/{tenantId}/skill", 0)
                             .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void getSkillTest() throws Exception {
+
+        int tenantId = 2;
+
+        Skill skill = new Skill(tenantId, "name2");
+
+        skillService.createSkill(tenantId, skill);
+
         mvc.perform(MockMvcRequestBuilders
-                            .get("/tenant/{tenantId}/skill/{id}", 0, 0)
+                            .get("/tenant/{tenantId}/skill/{id}", tenantId, skill.getId())
                             .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tenantId", is(tenantId)))
+                .andExpect(jsonPath("$.name", is("name2")));
     }
 
     @Test
     public void deleteSkillTest() throws Exception {
+
+        int tenantId = 3;
+
+        Skill skill = new Skill(tenantId, "name3");
+
+        skillService.createSkill(tenantId, skill);
+
         mvc.perform(MockMvcRequestBuilders
-                            .delete("/tenant/{tenantId}/skill/{id}", 0, 0)
+                            .delete("/tenant/{tenantId}/skill/{id}", tenantId, skill.getId())
                             .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void createSkillTest() throws Exception {
-        String body = (new ObjectMapper()).writeValueAsString(new Skill(0, "myName"));
+
+        int tenantId = 4;
+
+        Skill skill = new Skill(tenantId, "name4");
+
+        skillService.createSkill(tenantId, skill);
+
+        String body = (new ObjectMapper()).writeValueAsString(skill);
         mvc.perform(MockMvcRequestBuilders
-                            .post("/tenant/{tenantId}/skill/add", 0)
+                            .post("/tenant/{tenantId}/skill/add", tenantId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body)
                             .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tenantId", is(tenantId)))
+                .andExpect(jsonPath("$.name", is("name4")));
     }
 
     @Test
     public void updateSkillTest() throws Exception {
-        String body = (new ObjectMapper()).writeValueAsString(new Skill(0, "myName"));
+
+        int tenantId = 5;
+
+        Skill skill = new Skill(tenantId, "name5");
+
+        skillService.createSkill(tenantId, skill);
+
+        String body = (new ObjectMapper()).writeValueAsString(skill);
         mvc.perform(MockMvcRequestBuilders
-                            .put("/tenant/{tenantId}/skill/update", 0)
+                            .put("/tenant/{tenantId}/skill/update", tenantId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(body)
                             .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk());
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tenantId", is(tenantId)))
+                .andExpect(jsonPath("$.name", is("name5")));
     }
 }
