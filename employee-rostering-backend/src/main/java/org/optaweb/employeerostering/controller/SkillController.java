@@ -58,14 +58,12 @@ public class SkillController {
     }
 
     @PostMapping("/tenant/{tenantId}/skill/add")
-    public ResponseEntity<Void> createSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
-        skillService.createSkill(tenantId, skill);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    public ResponseEntity<Skill> createSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
+        return new ResponseEntity<Skill>(skillService.createSkill(tenantId, skill), HttpStatus.OK);
     }
 
     @PutMapping("/tenant/{tenantId}/skill/update")
-    public ResponseEntity<Void> updateSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
-        skillService.updateSkill(tenantId, skill);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    public ResponseEntity<Skill> updateSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
+        return new ResponseEntity<Skill>(skillService.updateSkill(tenantId, skill), HttpStatus.OK);
     }
 }
