@@ -408,7 +408,7 @@
         <module>employee-rostering-gwtui</module>
         <module>employee-rostering-server</module>
         <module>employee-rostering-shared</module>
-        <module>employee-rostering-shared-gwtui</module>
+        <module>employee-rostering-shared-gwt</module>
         <module>employee-rostering-restclient</module>
         <module>employee-rostering-webapp</module>
       </modules>
