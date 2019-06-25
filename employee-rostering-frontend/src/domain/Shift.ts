@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import DomainObject from './DomainObject';
+import Employee from './Employee';
+import Spot from './Spot';
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
-import ContractsPage from './contract/ContractsPage';
-import EmployeesPage from './employee/EmployeesPage';
-import ShiftRosterPage from './shift/ShiftRosterPage';
-
-export { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage };
+export default interface Shift extends DomainObject {
+  startDateTime: Date;
+  endDateTime: Date;
+  spotId: Spot;
+  rotationEmployeeId: Employee | null;
+  employeeId: Employee | null;
+  pinnedByUser: boolean;
+}
