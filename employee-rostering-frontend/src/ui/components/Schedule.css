@@ -1,0 +1,242 @@
+/*
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ :root {
+    --grid-header-column-width: 150px;
+    --grid-soft-line-interval: var(--grid-unit-size);
+    --grid-hard-line-interval: calc(var(--grid-soft-line-interval) * 6);
+    --grid-unit-size: 100px;
+    --grid-row-size: 50px;
+  }
+
+ .viewport-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.2);
+    z-index: 500;
+}
+
+.schedule {
+    display: grid;
+    overflow: scroll;
+}
+
+.date-time-corner {
+	position: sticky;
+    left: 0;
+    grid-column-start: 1;
+    grid-column-end: 1;
+    background-color: white;
+    z-index: 20;
+    border: 1px solid;
+    width: var(--grid-header-column-width);
+}
+
+.date-time-lane {
+    position: sticky;
+    box-sizing: border-box;
+    display: flex;
+    top: 0;
+	z-index: 20;
+}
+
+.date-time-container {
+    display: grid;
+    background-color: white;
+    border-bottom: 1px solid black;
+    grid-template-rows: min-content max-content;
+    grid-auto-columns: var(--grid-unit-size);
+}
+
+.date-tick {
+    font-size: 1.0em;
+    height: 25px;
+    border: 1px solid lightgray;
+    border-right: none;
+    opacity: 0.7;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+    grid-row: 1;
+}
+
+.date-change-tick {
+   border-left: 1px solid lightgray;
+   grid-row: 2;
+}
+
+.time-tick {
+   text-indent: -1.25em;
+   font-size: 0.8em;
+   transform-origin: left;
+   opacity: 0.7;
+   padding-top: 100%;
+   overflow: visible;
+   white-space: nowrap;
+   transform: translateX(-10px) rotateZ(-60deg);
+   grid-row: 2;
+}
+
+.lane-container {
+    display: flex;
+    box-sizing: border-box;
+}
+
+.lane-title {
+    position: sticky;
+    display: block;
+    text-overflow: ellipsis;
+    left: 0;
+    padding-left: 10px;
+    background-color: white;
+    border: 1px solid black;
+    border-top: none;
+    width: var(--grid-header-column-width);
+    z-index: 19;
+}
+
+.lane-content {
+    position: relative;
+	display: inline-grid;
+	grid-auto-flow: row dense;
+	grid-auto-columns: var(--grid-unit-size);
+	grid-auto-rows: var(--grid-row-size);;
+	border-bottom: 1px solid black;
+	border-right: 1px solid black;
+	background-size: var(--grid-soft-line-interval) var(--grid-soft-line-interval),
+	                 var(--grid-hard-line-interval) var(--grid-hard-line-interval),
+	                 50px 50px,
+	                 50px 50px;
+	background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 1px, transparent 1px),
+	                  linear-gradient(to right, rgba(0, 0, 0, 0.8) 1px, transparent 1px),
+	                  repeating-linear-gradient(to right, #ffffff, #ffffff 1px, transparent 10px, transparent 1px),
+	                  repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) 1px, transparent 1px, transparent 50px);
+}
+
+.blob, .spanning-blob {
+	width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    z-index: 10;
+    color: black;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background-color: rgba(166, 214, 181, 0.49);
+    font-size: 1em !important;
+    padding: 26px 2px 2px 2px;
+    padding-top: 10px !important;
+    border-radius: 2px;
+    opacity: 0.8;
+}
+
+.blob {
+	width: calc(100% - 2px);
+    height: calc(100% - 2px);
+}
+
+.score {
+	animation-name: score-highlight;
+	animation-play-state: paused;
+	animation-duration: 100s;
+}
+
+/* TODO: Get UX input on colors */
+@keyframes score-highlight {
+  /* Negative Hard */
+  0% {
+    background-color: rgba(139, 0, 0, 0.49);
+  }
+  
+  /* Negative Medium */ 
+  15% {
+    background-color: rgba(245, 193, 46, 0.49);
+  }
+  
+  /* Negative Soft */
+  30% {
+    background-color: rgba(209, 209, 209, 0.49);
+  }
+  
+  /* Zero Score */
+  50% {
+    background-color: rgba(207, 231, 205, 0.49);
+  }
+  
+  /* Positive Soft */
+  70% {
+    background-color: rgba(63, 156, 53, 0.49);
+  }
+  
+  /* Positive Medium */
+  85% {
+    background-color: rgba(0, 185, 228, 0.49);
+  }
+  
+  /* Positive Hard */
+  100% {
+     background-color: rgba(112, 63, 236, 0.49);
+  }
+} 
+
+.spanning-blob {
+	position: absolute;
+	width: 100%;
+    height: 100%;
+}
+
+.spanning-blob.selected, .blob.selected {
+    border: 2px solid #e3ffec !important;
+    border-radius: 2px;
+    z-index: 1002;
+    box-shadow: inset 0px 0px 20px 6px white;
+}
+
+.spanning-blob:hover, .blob:hover {
+    opacity: 1;
+}
+
+.spanning-blob:active, .blob:active {
+    opacity: 1;
+}
+
+.spanning-blob.historic, .blob.historic {
+}
+
+.spanning-blob.published, .blob.published {
+    border: 1px solid black;
+}
+
+.spanning-blob.draft, .blob.draft {
+    border: 1px dashed black;
+}
+
+.unassigned {
+    background-color: rgba(245, 193, 46, 0.49) !important;
+}
+
+.show-on-hover {
+    display: none;
+}
+
+*:not(.selected):hover > .show-on-hover {
+    display: grid;
+}
+
+*:not(.selected) > .show-on-hover:hover {
+    display: grid;
+}
