@@ -20,7 +20,7 @@ import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import Background from './components/Background';
 import Header from './header/Header';
-import { SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
+import { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
 
 const App: React.FC = () => {
   return (
@@ -55,6 +55,11 @@ const App: React.FC = () => {
               path="/employees"
               exact
               component={EmployeesPage}
+            />
+            <Route
+              path="/shift"
+              exect
+              component={ShiftRosterPage} 
             />
           </Switch>
         </PageSection>
