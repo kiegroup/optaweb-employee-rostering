@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
-import ContractsPage from './contract/ContractsPage';
-import EmployeesPage from './employee/EmployeesPage';
-import ShiftRosterPage from './shift/ShiftRosterPage';
+import DomainObjectView from './DomainObjectView';
+import Shift from './Shift';
+import RosterView from './RosterView';
 
-export { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage };
+export default interface ShiftRosterView extends RosterView {
+  spotIdToShiftViewListMap: Map<number, DomainObjectView<Shift>[]>;
+}

@@ -22,6 +22,7 @@ import { SkillList } from 'store/skill/types';
 import { SpotList } from 'store/spot/types';
 import { ContractList } from './contract/types';
 import { EmployeeList } from './employee/types';
+import { ShiftList } from './shift/types';
 
 /**
  * ThunkCommand is a ThunkAction that has no result (it's typically something like
@@ -61,4 +62,5 @@ export interface AppState {
   readonly spotList: SpotList;
   readonly contractList: ContractList;
   readonly employeeList: EmployeeList;
+  readonly shiftList: ShiftList;
 }

@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
-import ContractsPage from './contract/ContractsPage';
-import EmployeesPage from './employee/EmployeesPage';
-import ShiftRosterPage from './shift/ShiftRosterPage';
+import * as shiftOperations from './operations';
+import * as shiftSelectors from './selectors';
+import reducer from './reducers';
 
-export { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage };
+export {
+  shiftOperations,
+  shiftSelectors
+};
+
+export default reducer;
