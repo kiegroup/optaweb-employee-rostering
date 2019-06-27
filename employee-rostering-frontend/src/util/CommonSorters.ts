@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Sorter } from "ui/components/DataTable";
+import { Sorter } from "types";
 
 export function stringSorter<T>(mapToString: (obj: T) => string): Sorter<T> {
   return (a,b) => (mapToString(a).toLowerCase() < mapToString(b).toLowerCase())? -1 :
