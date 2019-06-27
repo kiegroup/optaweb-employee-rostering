@@ -148,35 +148,35 @@ describe('Employee reducers', () => {
     expect(
       reducer(state.employeeList, actions.setIsEmployeeListLoading(true))
     ).toEqual({ ...state.employeeList,
-        isLoading: true
-      })
+      isLoading: true
+    })
   });
   it('add employee', () => {
     expect(
       reducer(state.employeeList, actions.addEmployee(addedEmployee))
     ).toEqual({ ...state.employeeList,
-        employeeMapById: mapWithElement(state.employeeList.employeeMapById, addedEmployee)
-      })
+      employeeMapById: mapWithElement(state.employeeList.employeeMapById, addedEmployee)
+    })
   });
   it('remove employee', () => {
     expect(
       reducer(state.employeeList, actions.removeEmployee(deletedEmployee)),
     ).toEqual({ ...state.employeeList, 
-        employeeMapById: mapWithoutElement(state.employeeList.employeeMapById, deletedEmployee)
-      })
+      employeeMapById: mapWithoutElement(state.employeeList.employeeMapById, deletedEmployee)
+    })
   });
   it('update employee', () => {
     expect(
       reducer(state.employeeList, actions.updateEmployee(updatedEmployee)),
     ).toEqual({ ...state.employeeList,
-        employeeMapById: mapWithUpdatedElement(state.employeeList.employeeMapById, updatedEmployee)
-      })
+      employeeMapById: mapWithUpdatedElement(state.employeeList.employeeMapById, updatedEmployee)
+    })
   });
   it('refresh employee list', () => {
     expect(
       reducer(state.employeeList, actions.refreshEmployeeList([addedEmployee])),
     ).toEqual({ ...state.employeeList,
-        employeeMapById: createIdMapFromList([addedEmployee])
+      employeeMapById: createIdMapFromList([addedEmployee])
     });
   });
 });
@@ -187,17 +187,17 @@ describe('Employee selectors', () => {
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-      }, 1234)).toThrow();
+    }, 1234)).toThrow();
     expect(() => employeeSelectors.getEmployeeById({
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-      }, 1234)).toThrow();
+    }, 1234)).toThrow();
     expect(() => employeeSelectors.getEmployeeById({
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-      }, 1234)).toThrow();
+    }, 1234)).toThrow();
   });
 
   it('should get a employee by id', () => {
@@ -233,19 +233,19 @@ describe('Employee selectors', () => {
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-      });
+    });
     expect(employeeList).toEqual([]);
     employeeList = employeeSelectors.getEmployeeList({
       ...state,
       contractList: { 
         ...state.contractList, isLoading: true }
-      });
+    });
     expect(employeeList).toEqual([]);
     employeeList = employeeSelectors.getEmployeeList({
       ...state,
       employeeList: { 
         ...state.employeeList, isLoading: true }
-      });
+    });
     expect(employeeList).toEqual([]);
   });
 

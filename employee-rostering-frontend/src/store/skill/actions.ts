@@ -18,9 +18,9 @@ import Skill from 'domain/Skill';
 import { ActionFactory } from '../types';
 import { ActionType,SetSkillListLoadingAction, AddSkillAction, UpdateSkillAction, RemoveSkillAction, RefreshSkillListAction } from './types';
 
-export const setIsSkillListLoading: ActionFactory<Boolean, SetSkillListLoadingAction> = (isLoading: Boolean) => ({
+export const setIsSkillListLoading: ActionFactory<boolean, SetSkillListLoadingAction> = isLoading => ({
   type: ActionType.SET_SKILL_LIST_LOADING,
-  isLoading: isLoading.valueOf()
+  isLoading: isLoading
 });
 
 export const addSkill: ActionFactory<Skill, AddSkillAction> = newSkill => ({
