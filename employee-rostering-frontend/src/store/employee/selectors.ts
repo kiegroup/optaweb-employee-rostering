@@ -21,7 +21,7 @@ import DomainObjectView from 'domain/DomainObjectView';
 
 export const getEmployeeById = (state: AppState, id: number): Employee => {
   if (state.employeeList.isLoading || state.skillList.isLoading || state.contractList.isLoading) {
-      throw Error("Employee list is loading");
+    throw Error("Employee list is loading");
   }
   const employeeView = state.employeeList.employeeMapById.get(id) as DomainObjectView<Employee>;
   return {
