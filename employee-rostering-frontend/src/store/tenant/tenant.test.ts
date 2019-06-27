@@ -22,84 +22,110 @@ import * as spotActions from '../spot/actions';
 import * as contractActions from '../contract/actions';
 import * as employeeActions from '../employee/actions';
 import reducer, { tenantOperations } from './index';
-import {onGet, resetRestClientMock} from 'store/rest/RestTestUtils';
+import { onGet } from 'store/rest/RestTestUtils';
 import Tenant from 'domain/Tenant';
 
 describe('Tenant operations', () => {
-  it('should dispatch actions and call client', async () => {
+  it('should dispatch actions and change tenant when current tenant not in refreshed the tenant list ',
+    async () => {
+      const { store, client } = mockStore(state);
+      const mockTenantList: Tenant[] = [{
+        id: 1,
+        version: 0,
+        name: "Tenant 1"
+      },
+      {
+        id: 2,
+        version: 0,
+        name: "Tenant 2"
+      },
+      {
+        id: 3,
+        version: 0,
+        name: "Tenant 3"
+      }];
+
+      const expectedRefreshActions = [
+        actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
+        skillActions.refreshSkillList([]),
+        spotActions.refreshSpotList([]),
+        contractActions.refreshContractList([]),
+        employeeActions.refreshEmployeeList([])
+      ];
+
+      onGet(`/tenant/`, mockTenantList);
+      onGet(`/tenant/0/skill/`, []);
+      onGet(`/tenant/0/spot/`, []);
+      onGet(`/tenant/0/contract/`, []);
+      onGet(`/tenant/0/employee/`, []);
+    
+      await store.dispatch(tenantOperations.refreshTenantList());
+    
+      const actualRefreshActions = store.getActions();
+      expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
+      expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
+
+      expect(client.get).toHaveBeenCalledTimes(5);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/`);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/0/skill/`);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/0/spot/`);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/0/contract/`);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/0/employee/`);
+    });
+
+  it('should dispatch actions and not change tenant when current tenant is in refreshed tenant list',
+    async () => {
+      const { store, client } = mockStore(state);
+      const mockTenantList: Tenant[] = [{
+        id: 1,
+        version: 0,
+        name: "Tenant 1"
+      },
+      {
+        id: 0,
+        version: 0,
+        name: "Tenant 2"
+      },
+      {
+        id: 3,
+        version: 0,
+        name: "Tenant 3"
+      }];
+      const expectedRefreshActions = [
+        actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
+        skillActions.refreshSkillList([]),
+        spotActions.refreshSpotList([]),
+        contractActions.refreshContractList([]),
+        employeeActions.refreshEmployeeList([])
+      ];
+      onGet(`/tenant/`, mockTenantList);
+      onGet(`/tenant/0/skill/`, []);
+      onGet(`/tenant/0/spot/`, []);
+      onGet(`/tenant/0/contract/`, []);
+      onGet(`/tenant/0/employee/`, []);
+
+      await store.dispatch(tenantOperations.refreshTenantList());
+    
+      const actualRefreshActions = store.getActions();
+      expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
+      expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
+
+      expect(client.get).toHaveBeenCalledTimes(5);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/`);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/0/skill/`);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/0/spot/`);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/0/contract/`);
+      expect(client.get).toHaveBeenCalledWith(`/tenant/0/employee/`);
+    });
+
+  it('should change the tenant and refresh all lists on change tenant', async () => {
     const { store, client } = mockStore(state);
-    const mockTenantList: Tenant[] = [{
-      id: 1,
-      version: 0,
-      name: "Tenant 1"
-    },
-    {
-      id: 2,
-      version: 0,
-      name: "Tenant 2"
-    },
-    {
-      id: 3,
-      version: 0,
-      name: "Tenant 3"
-    }];
-
-    let expectedRefreshActions: any[] = [
-      actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
-      skillActions.refreshSkillList([]),
-      spotActions.refreshSpotList([]),
-      contractActions.refreshContractList([]),
-      employeeActions.refreshEmployeeList([])
-    ];
-
-    onGet(`/tenant/`, mockTenantList);
     onGet(`/tenant/0/skill/`, []);
     onGet(`/tenant/0/spot/`, []);
     onGet(`/tenant/0/contract/`, []);
     onGet(`/tenant/0/employee/`, []);
     
-    await store.dispatch(tenantOperations.refreshTenantList());
-    
-    let actualRefreshActions: any[] = store.getActions();
-    expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
-    expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
-
-    expect(client.get).toHaveBeenCalledTimes(5);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/`);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/0/skill/`);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/0/spot/`);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/0/contract/`);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/0/employee/`);
-
-    store.clearActions();
-    resetRestClientMock(client);
-
-    mockTenantList[1].id = 0;
-    expectedRefreshActions = [
-      actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
-      skillActions.refreshSkillList([]),
-      spotActions.refreshSpotList([]),
-      contractActions.refreshContractList([]),
-      employeeActions.refreshEmployeeList([])
-    ];
-
-    await store.dispatch(tenantOperations.refreshTenantList());
-    
-    actualRefreshActions = store.getActions();
-    expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
-    expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
-
-    expect(client.get).toHaveBeenCalledTimes(5);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/`);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/0/skill/`);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/0/spot/`);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/0/contract/`);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/0/employee/`);
-
-    store.clearActions();
-    resetRestClientMock(client);
-
-    expectedRefreshActions = [
+    const expectedRefreshActions = [
       actions.changeTenant(0),
       skillActions.refreshSkillList([]),
       spotActions.refreshSpotList([]),
@@ -109,7 +135,7 @@ describe('Tenant operations', () => {
 
     await store.dispatch(tenantOperations.changeTenant(0));
 
-    actualRefreshActions = store.getActions();
+    const actualRefreshActions = store.getActions();
     expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
     expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
 
@@ -165,6 +191,9 @@ const state: AppState = {
         name: "Tenant 1"
       }
     ]
+  },
+  employeeList: {
+    employeeList: []
   },
   contractList: {
     contractList: []

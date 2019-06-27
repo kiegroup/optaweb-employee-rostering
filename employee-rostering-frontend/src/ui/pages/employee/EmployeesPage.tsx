@@ -15,9 +15,9 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter, Sorter} from 'ui/components/DataTable';
+import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
-import {employeeOperations} from 'store/employee';
+import { employeeOperations } from 'store/employee';
 import Employee from 'domain/Employee';
 import { AppState } from 'store/types';
 import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
@@ -25,7 +25,7 @@ import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
 import Contract from 'domain/Contract';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
-import { Predicate } from 'ui/components/FilterComponent';
+import { Predicate, Sorter, ReadonlyPartial } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 
@@ -114,11 +114,14 @@ export class EmployeesPage extends DataTable<Employee, Props> {
     ];
   }
   
-  isValid(editedValue: ReadonlyPartial<Employee>): editedValue is Employee {
+  isDataComplete(editedValue: ReadonlyPartial<Employee>): editedValue is Employee {
     return editedValue.name !== undefined &&
       editedValue.contract !== undefined &&
-      editedValue.skillProficiencySet !== undefined &&
-      editedValue.name.length > 0;
+      editedValue.skillProficiencySet !== undefined;
+  }
+
+  isValid(editedValue: Employee): boolean {
+    return editedValue.name.trim().length > 0;
   }
 
   getFilter(): (filter: string) => Predicate<Employee> {

@@ -26,10 +26,11 @@ import {
   SortByDirection,
   ISortBy
 } from '@patternfly/react-table';
-import { Button, ButtonVariant, Pagination, Card } from '@patternfly/react-core';
+import { Button, ButtonVariant, Pagination, Level, LevelItem } from '@patternfly/react-core';
 import { SaveIcon, CloseIcon, EditIcon, TrashIcon } from '@patternfly/react-icons';
 import { EditableComponent } from './EditableComponent';
-import FilterComponent, { Predicate } from './FilterComponent';
+import FilterComponent from './FilterComponent';
+import { Predicate, ReadonlyPartial, Sorter } from "types";
 import { toggleElement } from 'util/ImmutableCollectionOperations';
 
 export interface DataTableProps<T> {
@@ -47,12 +48,9 @@ interface DataTableState<T> {
   sortBy: ISortBy;
 }
 
-export type ReadonlyPartial<T> = { readonly [P in keyof T]?: T[P] };
 export type PropertySetter<T> = (propertyName: keyof T, value: T[keyof T] | undefined) => void;
-export type Sorter<T> = (a: T, b: T) => number;
 
 export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
-  [x: string]: any;
   constructor(props: P) {
     super(props);
     this.createNewRow = this.createNewRow.bind(this);
@@ -73,8 +71,10 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
 
   abstract getInitialStateForNewRow(): Partial<T>;
   abstract displayDataRow(data: T): JSX.Element[];
-  abstract editDataRow(data: ReadonlyPartial<T>, setProperty: (propertyName: keyof T, value: T[keyof T] | undefined) => void): JSX.Element[];
-  abstract isValid(editedValue: ReadonlyPartial<T>): editedValue is T;
+  abstract editDataRow(data: ReadonlyPartial<T>,
+    setProperty: (propertyName: keyof T, value: T[keyof T] | undefined) => void): JSX.Element[];
+  abstract isDataComplete(editedValue: ReadonlyPartial<T>): editedValue is T;
+  abstract isValid(editedValue: T): boolean;
 
   abstract getFilter(): (filter: string) => Predicate<T>;
   abstract getSorters(): (Sorter<T> | null)[]
@@ -115,7 +115,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
           aria-label="Save"
           variant={ButtonVariant.link}
           onClick={() => {
-            if (this.isValid(newData)) {
+            if (this.isDataComplete(newData) && this.isValid(newData)) {
               this.addData(newData);
               this.cancelAddingRow();
             }
@@ -134,7 +134,8 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     );
   }
 
-  getEditButtons(originalData: T, editedData: Partial<T>, isEditing: boolean, toggleEditing: () => void): JSX.Element {
+  getEditButtons(originalData: T, editedData: Partial<T>, isEditing: boolean,
+    toggleEditing: () => void): JSX.Element {
     return (
       <EditableComponent
         isEditing={isEditing}
@@ -164,7 +165,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
               aria-label="Save"
               variant={ButtonVariant.link}
               onClick={() => {
-                if (this.isValid(editedData)) {
+                if (this.isDataComplete(editedData) && this.isValid(editedData)) {
                   this.updateData(editedData);
                   toggleEditing();
                 }
@@ -188,10 +189,14 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
   convertDataToTableRow(data: T): IRow {
     const isEditing = this.state.editedRows.indexOf(data) !== -1;
     const editedData: Partial<T> = { ...data };
-    const setProperty = (key: keyof T, value: T[keyof T] | undefined) => editedData[key] = value;
+
+    const setProperty = (key: keyof T, value: T[keyof T] | undefined) => {
+      editedData[key] = value;
+    };
 
     const viewers = this.displayDataRow(data);
     const editors = this.editDataRow(editedData, setProperty);
+
     const cellContents = viewers.map((viewer, index) => {
       return {
         title:
@@ -240,12 +245,15 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
   }
 
   render() {
-    const setProperty = (key: keyof T, value: T[keyof T] | undefined) => this.setState(prevState =>
-      ({ ...prevState, newRowData: { ...prevState.newRowData, [key]: value } }));
+    const setProperty = (key: keyof T, value: T[keyof T] | undefined) => {
+      this.setState(prevState => ({ newRowData: { ...prevState.newRowData, [key]: value } }));
+    };
+    
     const additionalRows: IRow[] = (this.state.newRowData !== null) ?
       [
         {
-          cells: this.editDataRow(this.state.newRowData, setProperty).map(c => { return { title: c } })
+          cells: this.editDataRow(this.state.newRowData, setProperty)
+            .map(c => { return { title: c } })
             .concat([{ title: this.getAddButtons(this.state.newRowData) }])
         }
       ] : [];
@@ -269,28 +277,37 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
       return { title: t, cellTransforms: [headerCol], props: {}, transforms: (sorters[index] !== null) ? [sortable] : undefined };
     }).concat([{ title: '', cellTransforms: [headerCol], props: {}, transforms: undefined }]);
     return (
-      <Card>
-        <div style={{ display: "grid", gridTemplateColumns: "max-content auto min-content max-content" }}>
-          <FilterComponent
-            filter={this.getFilter()}
-            onChange={(currentFilter) => this.setState({ editedRows: [], currentFilter })}
-          />
-          <span />
-          <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>Add</Button>
-          <Pagination
-            itemCount={filteredRows.length}
-            perPage={this.state.perPage}
-            page={this.state.page}
-            onSetPage={this.onSetPage}
-            widgetId="pagination-options-menu-top"
-            onPerPageSelect={this.onPerPageSelect}
-          />
-        </div>
+      <>
+        <Level
+          gutter="sm"
+          style={{
+            padding: "5px 5px 5px 5px",
+            backgroundColor: "var(--pf-global--BackgroundColor--200)"
+          }}
+        >
+          <LevelItem>
+            <FilterComponent
+              filter={this.getFilter()}
+              onChange={(currentFilter) => this.setState({ editedRows: [], currentFilter })}
+            />
+          </LevelItem>
+          <LevelItem style={{ display: "flex" }}>
+            <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>Add</Button>
+            <Pagination
+              itemCount={filteredRows.length}
+              perPage={this.state.perPage}
+              page={this.state.page}
+              onSetPage={this.onSetPage}
+              widgetId="pagination-options-menu-top"
+              onPerPageSelect={this.onPerPageSelect}
+            />
+          </LevelItem>
+        </Level>
         <Table caption={this.props.title} sortBy={this.state.sortBy} onSort={this.onSort} cells={columns} rows={rows}>
           <TableHeader />
           <TableBody />
         </Table>
-      </Card>
+      </>
     );
   }
 }
