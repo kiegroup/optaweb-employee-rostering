@@ -35,6 +35,7 @@ export const removeSpot: ThunkCommandFactory<Spot, RemoveSpotAction> = spot =>
       if (isSuccess) {
         dispatch(actions.removeSpot(spot));
       }
+      // TODO: Handle unsuccessful deletion
     });
   };
 

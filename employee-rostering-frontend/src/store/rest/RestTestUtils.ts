@@ -28,6 +28,10 @@ export function onDelete(url: string, answer: any) {deleteAnswers.set(url, answe
 type MockedFunction = ReturnType<typeof jest.fn>;
 
 export function resetRestClientMock(mock: RestServiceClient) {
+  getAnswers.clear();
+  postAnswers.clear();
+  putAnswers.clear();
+  deleteAnswers.clear();
   (mock.get as MockedFunction).mockClear();
   (mock.post as MockedFunction).mockClear();
   (mock.put as MockedFunction).mockClear();

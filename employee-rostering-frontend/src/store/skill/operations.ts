@@ -37,6 +37,7 @@ export const removeSkill: ThunkCommandFactory<Skill, RemoveSkillAction> = skill 
       if (isSuccess) {
         dispatch(actions.removeSkill(skill));
       }
+      // TODO: Handle unsuccessful deletion
     });
   };
 

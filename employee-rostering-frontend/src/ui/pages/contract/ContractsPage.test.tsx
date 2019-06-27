@@ -139,6 +139,34 @@ describe('Contracts page', () => {
     expect(list.sort(sorter)).toEqual(twoContracts.tableData);
   });
 
+  it('should treat incompleted data as incomplete', () => {
+    const contractsPage = new ContractsPage(twoContracts);
+
+    const noName = { ...twoContracts.tableData[1], name: undefined };
+    const result1 = contractsPage.isDataComplete(noName);
+    expect(result1).toEqual(false);
+
+    const noMaxHoursPerDay = { ...twoContracts.tableData[1], maximumMinutesPerDay: undefined };
+    const result2 = contractsPage.isDataComplete(noMaxHoursPerDay);
+    expect(result2).toEqual(false);
+
+    const noMaxHoursPerWeek = { ...twoContracts.tableData[1], maximumMinutesPerWeek: undefined };
+    const result3 = contractsPage.isDataComplete(noMaxHoursPerWeek);
+    expect(result3).toEqual(false);
+
+    const noMaxHoursPerMonth = { ...twoContracts.tableData[1], maximumMinutesPerMonth: undefined };
+    const result4 = contractsPage.isDataComplete(noMaxHoursPerMonth);
+    expect(result4).toEqual(false);
+
+    const noMaxHoursPerYear = { ...twoContracts.tableData[1], maximumMinutesPerYear: undefined };
+    const result5 = contractsPage.isDataComplete(noMaxHoursPerYear);
+    expect(result5).toEqual(false);
+
+    const completed = { ...twoContracts.tableData[1] };
+    const result6 = contractsPage.isDataComplete(completed);
+    expect(result6).toEqual(true);
+  });
+
   it('should treat empty name as invalid', () => {
     const contractsPage = new ContractsPage(twoContracts);
     const contract = {...twoContracts.tableData[1], name: ""};
