@@ -12,6 +12,7 @@ jobs:
           - "$HOME/.sonar/cache"
           - "$HOME/.sonar/native-sonar-scanner"
       before_install:
+        - "npm i -g npm@6.9.0"
         - "cd employee-rostering-frontend"
       # most important checks first
       script:
