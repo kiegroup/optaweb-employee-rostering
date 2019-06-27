@@ -136,7 +136,43 @@ describe('Employees page', () => {
     expect(employeesPage.getSorters()[2]).toBeNull();
   });
 
-  it('should treat empty name or empty contract as invalid', () => {
+  it('should treat incompleted data as incomplete', () => {
+    const employeesPage = new EmployeesPage(twoEmployees);
+    const noName = {
+      tenantId: 0,
+      skillProficiencySet: [],
+      contract: twoEmployees.contractList[0]
+    };
+    const result1 = employeesPage.isDataComplete(noName);
+    expect(result1).toEqual(false);
+
+    const noSkills = {
+      tenantId: 0,
+      name: "Name",
+      contract: twoEmployees.contractList[0]
+    };
+    const result2 = employeesPage.isDataComplete(noSkills);
+    expect(result2).toEqual(false);
+
+    const noContract = {
+      tenantId: 0,
+      name: "Name",
+      skillProficiencySet: []
+    };
+    const result3 = employeesPage.isDataComplete(noContract);
+    expect(result3).toEqual(false);
+
+    const completed = {
+      tenantId: 0,
+      name: "Name",
+      skillProficiencySet: [],
+      contract: twoEmployees.contractList[0]
+    };
+    const result4 = employeesPage.isDataComplete(completed);
+    expect(result4).toEqual(true);
+  });
+
+  it('should treat empty name as invalid', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
     const noName = {
       tenantId: 0,
@@ -146,14 +182,6 @@ describe('Employees page', () => {
     };
     const result1 = employeesPage.isValid(noName);
     expect(result1).toEqual(false);
-
-    const noContract = {
-      tenantId: 0,
-      name: "Name",
-      skillProficiencySet: [],
-    };
-    const result2 = employeesPage.isValid(noContract);
-    expect(result2).toEqual(false);
   });
 
   it('should treat non-empty name as valid', () => {

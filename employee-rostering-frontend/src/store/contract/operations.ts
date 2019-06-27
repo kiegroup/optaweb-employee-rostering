@@ -36,6 +36,7 @@ export const removeContract: ThunkCommandFactory<Contract, RemoveContractAction>
       if (isSuccess) {
         dispatch(actions.removeContract(contract));
       }
+      // TODO: Handle unsuccessful deletion
     });
   };
 

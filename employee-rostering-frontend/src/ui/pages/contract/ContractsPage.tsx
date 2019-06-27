@@ -15,14 +15,14 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter, Sorter} from 'ui/components/DataTable';
-import {contractOperations} from 'store/contract';
+import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
+import { contractOperations } from 'store/contract';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Contract from 'domain/Contract';
 import OptionalInput from 'ui/components/OptionalInput';
-import { Predicate } from 'ui/components/FilterComponent';
+import { Predicate, Sorter, ReadonlyPartial } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 
@@ -126,13 +126,16 @@ export class ContractsPage extends DataTable<Contract, Props> {
     ];
   }
   
-  isValid(editedValue: ReadonlyPartial<Contract>): editedValue is Contract {
+  isDataComplete(editedValue: ReadonlyPartial<Contract>): editedValue is Contract {
     return editedValue.name !== undefined &&
       editedValue.maximumMinutesPerDay !== undefined &&
       editedValue.maximumMinutesPerWeek !== undefined &&
       editedValue.maximumMinutesPerMonth !== undefined &&
-      editedValue.maximumMinutesPerYear !== undefined &&
-      editedValue.name.length > 0;
+      editedValue.maximumMinutesPerYear !== undefined;
+  }
+
+  isValid(editedValue: Contract): boolean {
+    return editedValue.name.trim().length > 0;
   }
 
   getFilter(): (filter: string) => Predicate<Contract> {
@@ -148,7 +151,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
   }
   
   addData(data: Contract): void {
-    this.props.addContract({...data, tenantId: this.props.tenantId});
+    this.props.addContract({ ...data, tenantId: this.props.tenantId });
   }
 
   removeData(data: Contract): void {

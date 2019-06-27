@@ -15,13 +15,13 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter, Sorter} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
 import {skillOperations} from 'store/skill';
 import Skill from 'domain/Skill';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { Predicate } from 'ui/components/FilterComponent';
+import { Predicate, Sorter, ReadonlyPartial } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 
@@ -67,18 +67,23 @@ export class SkillsPage extends DataTable<Skill, Props> {
   }
 
   editDataRow(data: ReadonlyPartial<Skill>, setProperty: PropertySetter<Skill>): JSX.Element[] {
-    return [<TextInput
-      key={0}
-      name="name"
-      aria-label="Name"
-      defaultValue={data.name}
-      onChange={(value) => setProperty("name", value)}
-    />];
+    return [
+      <TextInput
+        key="0"
+        name="name"
+        aria-label="Name"
+        defaultValue={data.name}
+        onChange={(value) => setProperty("name", value)}
+      />
+    ];
   }
   
-  isValid(data: ReadonlyPartial<Skill>): data is Skill {
-    return data.name !== undefined && 
-      data.name.length > 0;
+  isDataComplete(data: ReadonlyPartial<Skill>): data is Skill {
+    return data.name !== undefined;
+  }
+
+  isValid(editedValue: Skill): boolean {
+    return editedValue.name.trim().length > 0;
   }
 
   getFilter(): (filter: string) => Predicate<Skill> {
