@@ -47,7 +47,7 @@ export interface RefreshEmployeeListAction extends Action<ActionType.REFRESH_EMP
 }
 
 export type EmployeeAction = SetEmployeeListLoadingAction | AddEmployeeAction | RemoveEmployeeAction |
-  UpdateEmployeeAction | RefreshEmployeeListAction;
+UpdateEmployeeAction | RefreshEmployeeListAction;
 
 export interface EmployeeList {
   readonly isLoading: boolean;

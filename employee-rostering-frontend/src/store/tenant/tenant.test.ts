@@ -45,21 +45,21 @@ describe('Tenant operations', () => {
         name: "Tenant 3"
       }];
 
-    let expectedRefreshActions: any[] = [
-      actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
-      skillActions.refreshSkillList([]),
-      spotActions.refreshSpotList([]),
-      contractActions.refreshContractList([]),
-      employeeActions.refreshEmployeeList([]),
-      skillActions.setIsSkillListLoading(true),
-      spotActions.setIsSpotListLoading(true),
-      contractActions.setIsContractListLoading(true),
-      employeeActions.setIsEmployeeListLoading(true),
-      skillActions.setIsSkillListLoading(false),
-      spotActions.setIsSpotListLoading(false),
-      contractActions.setIsContractListLoading(false),
-      employeeActions.setIsEmployeeListLoading(false)
-    ];
+      let expectedRefreshActions: any[] = [
+        actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
+        skillActions.refreshSkillList([]),
+        spotActions.refreshSpotList([]),
+        contractActions.refreshContractList([]),
+        employeeActions.refreshEmployeeList([]),
+        skillActions.setIsSkillListLoading(true),
+        spotActions.setIsSpotListLoading(true),
+        contractActions.setIsContractListLoading(true),
+        employeeActions.setIsEmployeeListLoading(true),
+        skillActions.setIsSkillListLoading(false),
+        spotActions.setIsSpotListLoading(false),
+        contractActions.setIsContractListLoading(false),
+        employeeActions.setIsEmployeeListLoading(false)
+      ];
 
       onGet(`/tenant/`, mockTenantList);
       onGet(`/tenant/0/skill/`, []);
@@ -99,37 +99,30 @@ describe('Tenant operations', () => {
         version: 0,
         name: "Tenant 3"
       }];
-      const expectedRefreshActions = [
-        actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
-        skillActions.refreshSkillList([]),
-        spotActions.refreshSpotList([]),
-        contractActions.refreshContractList([]),
-        employeeActions.refreshEmployeeList([])
-      ];
       onGet(`/tenant/`, mockTenantList);
       onGet(`/tenant/0/skill/`, []);
       onGet(`/tenant/0/spot/`, []);
       onGet(`/tenant/0/contract/`, []);
       onGet(`/tenant/0/employee/`, []);
 
-    mockTenantList[1].id = 0;
-    expectedRefreshActions = [
-      actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
-      skillActions.refreshSkillList([]),
-      spotActions.refreshSpotList([]),
-      contractActions.refreshContractList([]),
-      employeeActions.refreshEmployeeList([]),
-      skillActions.setIsSkillListLoading(true),
-      spotActions.setIsSpotListLoading(true),
-      contractActions.setIsContractListLoading(true),
-      employeeActions.setIsEmployeeListLoading(true),
-      skillActions.setIsSkillListLoading(false),
-      spotActions.setIsSpotListLoading(false),
-      contractActions.setIsContractListLoading(false),
-      employeeActions.setIsEmployeeListLoading(false)
-    ];
+      mockTenantList[1].id = 0;
+      const expectedRefreshActions = [
+        actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
+        skillActions.refreshSkillList([]),
+        spotActions.refreshSpotList([]),
+        contractActions.refreshContractList([]),
+        employeeActions.refreshEmployeeList([]),
+        skillActions.setIsSkillListLoading(true),
+        spotActions.setIsSpotListLoading(true),
+        contractActions.setIsContractListLoading(true),
+        employeeActions.setIsEmployeeListLoading(true),
+        skillActions.setIsSkillListLoading(false),
+        spotActions.setIsSpotListLoading(false),
+        contractActions.setIsContractListLoading(false),
+        employeeActions.setIsEmployeeListLoading(false)
+      ];
 
-    await store.dispatch(tenantOperations.refreshTenantList());
+      await store.dispatch(tenantOperations.refreshTenantList());
     
       const actualRefreshActions = store.getActions();
       expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
@@ -168,7 +161,7 @@ describe('Tenant operations', () => {
 
     await store.dispatch(tenantOperations.changeTenant(0));
 
-    actualRefreshActions = store.getActions();
+    const actualRefreshActions = store.getActions();
     expect(actualRefreshActions).toEqual(expect.arrayContaining(expectedRefreshActions));
     expect(actualRefreshActions.length).toEqual(expectedRefreshActions.length);
 
@@ -226,15 +219,19 @@ const state: AppState = {
     ]
   },
   employeeList: {
-    employeeList: []
+    isLoading: false,
+    employeeMapById: new Map()
   },
   contractList: {
-    contractList: []
+    isLoading: false,
+    contractMapById: new Map()
   },
   spotList: {
-    spotList: []
+    isLoading: false,
+    spotMapById: new Map()
   },
   skillList: {
-    skillList: []
+    isLoading: false,
+    skillMapById: new Map()
   }
 };
