@@ -47,7 +47,7 @@ export interface RefreshSpotListAction extends Action<ActionType.REFRESH_SPOT_LI
 }
 
 export type SpotAction = SetSpotListLoadingAction | AddSpotAction | RemoveSpotAction |
-  UpdateSpotAction | RefreshSpotListAction;
+UpdateSpotAction | RefreshSpotListAction;
 
 export interface SpotList {
   readonly isLoading: boolean;

@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
- import DomainObject from './DomainObject';
+import DomainObject from './DomainObject';
 
  type DomainObjectView<T extends DomainObject> = {
-  [K in keyof T]: 
-    T[K] extends DomainObject[]? number[] :
-    T[K] extends DomainObject? number :
-    T[K] extends (DomainObject | null)? number | null :
-    T[K];
+   [K in keyof T]: 
+   T[K] extends DomainObject[]? number[] :
+     T[K] extends DomainObject? number :
+       T[K] extends (DomainObject | null)? number | null :
+         T[K];
  }
  
- export default DomainObjectView;
+/* eslint-disable no-undef */
+export default DomainObjectView;
+/* eslint-enable no-undef */

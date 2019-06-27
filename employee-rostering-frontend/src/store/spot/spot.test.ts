@@ -106,36 +106,36 @@ describe('Spot reducers', () => {
     expect(
       reducer(state.spotList, actions.setIsSpotListLoading(true))
     ).toEqual({ ...state.spotList,
-        isLoading: true
-      })
+      isLoading: true
+    })
   });
   it('add spot', () => {
     expect(
       reducer(state.spotList, actions.addSpot(addedSpot))
     ).toEqual({ ...state.spotList,
-        spotMapById: mapWithElement(state.spotList.spotMapById, addedSpot)
-      })
+      spotMapById: mapWithElement(state.spotList.spotMapById, addedSpot)
+    })
   });
   it('remove spot', () => {
     expect(
       reducer(state.spotList, actions.removeSpot(deletedSpot)),
     ).toEqual({ ...state.spotList,
-        spotMapById: mapWithoutElement(state.spotList.spotMapById, deletedSpot)
-      })
+      spotMapById: mapWithoutElement(state.spotList.spotMapById, deletedSpot)
+    })
   });
   it('update spot', () => {
     expect(
       reducer(state.spotList, actions.updateSpot(updatedSpot)),
     ).toEqual({ ...state.spotList,
-        spotMapById: mapWithUpdatedElement(state.spotList.spotMapById, updatedSpot)
-      })
+      spotMapById: mapWithUpdatedElement(state.spotList.spotMapById, updatedSpot)
+    })
   });
   it('refresh spot list', () => {
     expect(
       reducer(state.spotList, actions.refreshSpotList([addedSpot])),
     ).toEqual({ ...state.spotList,
-        spotMapById: createIdMapFromList([addedSpot])
-      });
+      spotMapById: createIdMapFromList([addedSpot])
+    });
   });
 });
 
@@ -145,12 +145,12 @@ describe('Spot selectors', () => {
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-      }, 1234)).toThrow();
+    }, 1234)).toThrow();
     expect(() => spotSelectors.getSpotById({
       ...state,
       spotList: { 
         ...state.spotList, isLoading: true }
-      }, 1234)).toThrow();
+    }, 1234)).toThrow();
   });
 
   it('should get a spot by id', () => {
@@ -176,13 +176,13 @@ describe('Spot selectors', () => {
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-      });
+    });
     expect(spotList).toEqual([]);
     spotList = spotSelectors.getSpotList({
       ...state,
       spotList: { 
         ...state.spotList, isLoading: true }
-      }); 
+    }); 
     expect(spotList).toEqual([]);
   });
 

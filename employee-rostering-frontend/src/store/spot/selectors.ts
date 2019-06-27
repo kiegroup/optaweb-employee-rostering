@@ -20,7 +20,7 @@ import DomainObjectView from 'domain/DomainObjectView';
 
 export const getSpotById = (state: AppState, id: number): Spot => {
   if (state.spotList.isLoading || state.skillList.isLoading) {
-      throw Error("Spot list is loading");
+    throw Error("Spot list is loading");
   }
   const spotView = state.spotList.spotMapById.get(id) as DomainObjectView<Spot>;
   return {
