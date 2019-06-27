@@ -16,8 +16,7 @@
 import * as React from "react";
 import { TextInput, Button, ButtonVariant } from "@patternfly/react-core";
 import './FilterComponent.css';
-
-export type Predicate<T> = (value: T) => boolean;
+import { Predicate } from "types";
 
 export interface FilterProps<T> {
   filter: (filter: string) => Predicate<T>;

@@ -27,8 +27,8 @@ class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
   getInitialStateForNewRow = jest.fn(() => ({}));
   editDataRow = jest.fn((data) => [<input key={0} id="editor" />,
     <input key={1} />]);
-  // @ts-ignore
   isValid = jest.fn();
+  isDataComplete = jest.fn() as any;
   getSorters = jest.fn(() => [null, stringSorter((d: MockData) => String(d.number))]);
   getFilter = jest.fn((() => (filter: string) => (t: MockData) => Boolean(true)));
 
@@ -61,7 +61,7 @@ describe('DataTable component', () => {
 
   it('should render viewer initially', () => {
     const dataTable = new MockDataTable(twoRows);
-    const table = shallow(dataTable.render());
+    const table = shallow(<div>{dataTable.render()}</div>);
     expect(toJson(table)).toMatchSnapshot();
   });
 
@@ -100,7 +100,7 @@ describe('DataTable component', () => {
     expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, {}, expect.any(Function));
     expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[0], expect.any(Function));
     expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(3, twoRows.tableData[1], expect.any(Function));
-    expect(toJson(shallow(dataTable.instance().render() as JSX.Element))).toMatchSnapshot();
+    expect(toJson(shallow(<div>{dataTable.instance().render()}</div>))).toMatchSnapshot();
   });
 
   it('clicking edit button should edit row', () => {
@@ -133,14 +133,31 @@ describe('DataTable component', () => {
     expect(toggleEditing).toBeCalled();
   });
 
+  it('should not save edited row when save button is clicked if incomplete', () => {
+    const dataTable = new MockDataTable(twoRows);
+    dataTable.isDataComplete.mockReturnValue(false);
+
+    const data: MockData = {name: "Hello", number: 1};
+    const toggleEditing = jest.fn();
+    const buttons = mount(dataTable.getEditButtons(data, {...data}, true, toggleEditing));
+    buttons.find('button[aria-label="Save"]').simulate('click');
+    expect(dataTable.isDataComplete).toBeCalled();
+    expect(dataTable.isDataComplete).toBeCalledWith(data);
+    expect(dataTable.isValid).not.toBeCalled();
+    expect(dataTable.addData).not.toBeCalled();
+  });
+
   it('clicking save button on edited row should not save if invalid', () => {
     const dataTable = new MockDataTable(twoRows);
     dataTable.isValid.mockReturnValue(false);
+    dataTable.isDataComplete.mockReturnValue(true);
     const data: MockData = {name: "Hello", number: 1};
     const toggleEditing = jest.fn();
     const buttons = mount(dataTable.getEditButtons(data, {...data}, true, toggleEditing));
     buttons.find('button[aria-label="Save"]').simulate('click');
 
+    expect(dataTable.isDataComplete).toBeCalled();
+    expect(dataTable.isDataComplete).toBeCalledWith(data);
     expect(dataTable.isValid).toBeCalled();
     expect(dataTable.isValid).toBeCalledWith(data);
     expect(dataTable.updateData).not.toBeCalled();
@@ -150,12 +167,15 @@ describe('DataTable component', () => {
   it('clicking save button on edited row should save if valid', () => {
     const dataTable = new MockDataTable(twoRows);
     dataTable.isValid.mockReturnValue(true);
+    dataTable.isDataComplete.mockReturnValue(true);
     const oldValue: MockData = {name: "Hello", number: 1};
     const newValue: MockData = {name: "New Data", number: 2};
     const toggleEditing = jest.fn();
     const buttons = mount(dataTable.getEditButtons(oldValue, newValue, true, toggleEditing));
     buttons.find('button[aria-label="Save"]').simulate('click');
 
+    expect(dataTable.isDataComplete).toBeCalled();
+    expect(dataTable.isDataComplete).toBeCalledWith(newValue);
     expect(dataTable.isValid).toBeCalled();
     expect(dataTable.isValid).toBeCalledWith(newValue);
     expect(dataTable.updateData).toBeCalled();
@@ -173,26 +193,45 @@ describe('DataTable component', () => {
     expect(dataTable.cancelAddingRow).toBeCalled();
   });
 
+  it('should not save new row when save button is clicked if incomplete', () => {
+    const dataTable = new MockDataTable(twoRows);
+    dataTable.isDataComplete.mockReturnValue(false);
+
+    const dataStore: any = ['New Data', 1];
+    const buttons = mount(dataTable.getAddButtons(dataStore));
+    buttons.find('button[aria-label="Save"]').simulate('click');
+    expect(dataTable.isDataComplete).toBeCalled();
+    expect(dataTable.isDataComplete).toBeCalledWith(dataStore);
+    expect(dataTable.isValid).not.toBeCalled();
+    expect(dataTable.addData).not.toBeCalled();
+  });
+
   it('should not save new row when save button is clicked if invalid', () => {
     const dataTable = new MockDataTable(twoRows);
+    dataTable.isDataComplete.mockReturnValue(true);
     dataTable.isValid.mockReturnValue(false);
 
     const dataStore: any = ['New Data', 1];
     const buttons = mount(dataTable.getAddButtons(dataStore));
     buttons.find('button[aria-label="Save"]').simulate('click');
+    expect(dataTable.isDataComplete).toBeCalled();
+    expect(dataTable.isDataComplete).toBeCalledWith(dataStore);
     expect(dataTable.isValid).toBeCalled();
     expect(dataTable.isValid).toBeCalledWith(dataStore);
-    expect(dataTable.addData).toBeCalledTimes(0);
+    expect(dataTable.addData).not.toBeCalled();
   });
 
   it('should save new row when save button is clicked if valid', () => {
     const dataTable = new MockDataTable(twoRows);
+    dataTable.isDataComplete.mockReturnValue(true);
     dataTable.isValid.mockReturnValue(true);
     dataTable.cancelAddingRow = jest.fn();
 
     const dataStore: any = ['New Data', 1];
     const buttons = mount(dataTable.getAddButtons(dataStore));
     buttons.find('button[aria-label="Save"]').simulate('click');
+    expect(dataTable.isDataComplete).toBeCalled();
+    expect(dataTable.isDataComplete).toBeCalledWith(dataStore);
     expect(dataTable.isValid).toBeCalled();
     expect(dataTable.isValid).toBeCalledWith(dataStore);
     expect(dataTable.addData).toBeCalled();

@@ -20,12 +20,12 @@ import * as actions from './actions';
 import * as spotActions from 'store/spot/actions';
 import * as employeeActions from 'store/employee/actions';
 import reducer, { skillOperations } from './index';
-import {withElement, withoutElement, withUpdatedElement} from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
+import { withElement, withoutElement, withUpdatedElement } from 'util/ImmutableCollectionOperations';
+import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import Skill from 'domain/Skill';
 
 describe('Skill operations', () => {
-  it('should dispatch actions and call client', async () => {
+  it('should dispatch actions and call client on refresh skill list', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const mockSkillList = [{
@@ -52,41 +52,46 @@ describe('Skill operations', () => {
     expect(store.getActions()).toEqual([actions.refreshSkillList(mockSkillList)]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/`);
-
-    store.clearActions();
-    resetRestClientMock(client);
-
-    const skillToDelete: Skill = {tenantId: tenantId, id: 3214, name: "test"};
+  });
+  
+  it('should dispatch actions and call client on a successful delete skill', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const skillToDelete: Skill = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
     onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, true);
     await store.dispatch(skillOperations.removeSkill(skillToDelete));
     expect(store.getActions()).toEqual([actions.removeSkill(skillToDelete)]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
+  });
 
-    store.clearActions();
-    resetRestClientMock(client);
-
+  it('should call client but not dispatch actions on a failed delete skill', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const skillToDelete: Skill = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
     onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, false);
     await store.dispatch(skillOperations.removeSkill(skillToDelete));
     expect(store.getActions()).toEqual([]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
-
-    store.clearActions();
-    resetRestClientMock(client);
-
-    const skillToAdd: Skill = {tenantId: tenantId, name: "test"};
+  });
+    
+  it('should dispatch actions and call client on add skill', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const skillToAdd: Skill = { tenantId: tenantId, name: "test" };
     const skillWithUpdatedId: Skill = {...skillToAdd, id: 4, version: 0};
     onPost(`/tenant/${tenantId}/skill/add`, skillToAdd, skillWithUpdatedId);
     await store.dispatch(skillOperations.addSkill(skillToAdd));
     expect(store.getActions()).toEqual([actions.addSkill(skillWithUpdatedId)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/add`, skillToAdd);
+  });
 
-    store.clearActions();
-    resetRestClientMock(client);
-
-    const skillToUpdate: Skill = {tenantId: tenantId, name: "test", id: 4, version: 0};
+  it('should dispatch actions and call client on update skill', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const skillToUpdate: Skill = { tenantId: tenantId, name: "test" , id: 4, version: 0 };
     const skillWithUpdatedVersion: Skill = {...skillToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
     onGet(`/tenant/${tenantId}/spot/`, []);
