@@ -1,81 +1,92 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Employees page should render correctly with a few employees 1`] = `
-<Card>
-  <div
+<Fragment>
+  <Level
+    className=""
+    gutter="sm"
     style={
       Object {
-        "display": "grid",
-        "gridTemplateColumns": "max-content auto min-content max-content",
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
       }
     }
   >
-    <FilterComponent
-      filter={[Function]}
-      onChange={[Function]}
-    />
-    <span />
-    <Button
-      isDisabled={false}
-      onClick={[Function]}
-    >
-      Add
-    </Button>
-    <Pagination
-      className=""
-      dropDirection="down"
-      itemCount={2}
-      itemsEnd={null}
-      itemsStart={null}
-      onFirstClick={[Function]}
-      onLastClick={[Function]}
-      onNextClick={[Function]}
-      onPageInput={[Function]}
-      onPerPageSelect={[Function]}
-      onPreviousClick={[Function]}
-      onSetPage={[Function]}
-      page={1}
-      perPage={10}
-      perPageOptions={
-        Array [
-          Object {
-            "title": "10",
-            "value": 10,
-          },
-          Object {
-            "title": "20",
-            "value": 20,
-          },
-          Object {
-            "title": "50",
-            "value": 50,
-          },
-          Object {
-            "title": "100",
-            "value": 100,
-          },
-        ]
-      }
-      titles={
+    <LevelItem>
+      <FilterComponent
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
         Object {
-          "currPage": "Current page",
-          "items": "items",
-          "itemsPerPage": "Items per page",
-          "optionsToggle": "Select",
-          "pages": "pages",
-          "paginationTitle": "Pagination",
-          "perPageSuffix": "per page",
-          "toFirstPage": "Go to first page",
-          "toLastPage": "Go to last page",
-          "toNextPage": "Go to next page",
-          "toPreviousPage": "Go to previous page",
+          "display": "flex",
         }
       }
-      toggleTemplate={[Function]}
-      variant="top"
-      widgetId="pagination-options-menu-top"
-    />
-  </div>
+    >
+      <Button
+        isDisabled={false}
+        onClick={[Function]}
+      >
+        Add
+      </Button>
+      <Pagination
+        className=""
+        dropDirection="down"
+        itemCount={2}
+        itemsEnd={null}
+        itemsStart={null}
+        onFirstClick={[Function]}
+        onLastClick={[Function]}
+        onNextClick={[Function]}
+        onPageInput={[Function]}
+        onPerPageSelect={[Function]}
+        onPreviousClick={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        perPageOptions={
+          Array [
+            Object {
+              "title": "10",
+              "value": 10,
+            },
+            Object {
+              "title": "20",
+              "value": 20,
+            },
+            Object {
+              "title": "50",
+              "value": 50,
+            },
+            Object {
+              "title": "100",
+              "value": 100,
+            },
+          ]
+        }
+        titles={
+          Object {
+            "currPage": "Current page",
+            "items": "items",
+            "itemsPerPage": "Items per page",
+            "optionsToggle": "Select",
+            "pages": "pages",
+            "paginationTitle": "Pagination",
+            "perPageSuffix": "per page",
+            "toFirstPage": "Go to first page",
+            "toLastPage": "Go to last page",
+            "toNextPage": "Go to next page",
+            "toPreviousPage": "Go to previous page",
+          }
+        }
+        toggleTemplate={[Function]}
+        variant="top"
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
   <Table
     borders={true}
     caption="Spots"
@@ -504,85 +515,96 @@ exports[`Employees page should render correctly with a few employees 1`] = `
       rowKey="id"
     />
   </Table>
-</Card>
+</Fragment>
 `;
 
 exports[`Employees page should render correctly with no employees 1`] = `
-<Card>
-  <div
+<Fragment>
+  <Level
+    className=""
+    gutter="sm"
     style={
       Object {
-        "display": "grid",
-        "gridTemplateColumns": "max-content auto min-content max-content",
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
       }
     }
   >
-    <FilterComponent
-      filter={[Function]}
-      onChange={[Function]}
-    />
-    <span />
-    <Button
-      isDisabled={false}
-      onClick={[Function]}
-    >
-      Add
-    </Button>
-    <Pagination
-      className=""
-      dropDirection="down"
-      itemCount={0}
-      itemsEnd={null}
-      itemsStart={null}
-      onFirstClick={[Function]}
-      onLastClick={[Function]}
-      onNextClick={[Function]}
-      onPageInput={[Function]}
-      onPerPageSelect={[Function]}
-      onPreviousClick={[Function]}
-      onSetPage={[Function]}
-      page={1}
-      perPage={10}
-      perPageOptions={
-        Array [
-          Object {
-            "title": "10",
-            "value": 10,
-          },
-          Object {
-            "title": "20",
-            "value": 20,
-          },
-          Object {
-            "title": "50",
-            "value": 50,
-          },
-          Object {
-            "title": "100",
-            "value": 100,
-          },
-        ]
-      }
-      titles={
+    <LevelItem>
+      <FilterComponent
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
         Object {
-          "currPage": "Current page",
-          "items": "items",
-          "itemsPerPage": "Items per page",
-          "optionsToggle": "Select",
-          "pages": "pages",
-          "paginationTitle": "Pagination",
-          "perPageSuffix": "per page",
-          "toFirstPage": "Go to first page",
-          "toLastPage": "Go to last page",
-          "toNextPage": "Go to next page",
-          "toPreviousPage": "Go to previous page",
+          "display": "flex",
         }
       }
-      toggleTemplate={[Function]}
-      variant="top"
-      widgetId="pagination-options-menu-top"
-    />
-  </div>
+    >
+      <Button
+        isDisabled={false}
+        onClick={[Function]}
+      >
+        Add
+      </Button>
+      <Pagination
+        className=""
+        dropDirection="down"
+        itemCount={0}
+        itemsEnd={null}
+        itemsStart={null}
+        onFirstClick={[Function]}
+        onLastClick={[Function]}
+        onNextClick={[Function]}
+        onPageInput={[Function]}
+        onPerPageSelect={[Function]}
+        onPreviousClick={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        perPageOptions={
+          Array [
+            Object {
+              "title": "10",
+              "value": 10,
+            },
+            Object {
+              "title": "20",
+              "value": 20,
+            },
+            Object {
+              "title": "50",
+              "value": 50,
+            },
+            Object {
+              "title": "100",
+              "value": 100,
+            },
+          ]
+        }
+        titles={
+          Object {
+            "currPage": "Current page",
+            "items": "items",
+            "itemsPerPage": "Items per page",
+            "optionsToggle": "Select",
+            "pages": "pages",
+            "paginationTitle": "Pagination",
+            "perPageSuffix": "per page",
+            "toFirstPage": "Go to first page",
+            "toLastPage": "Go to last page",
+            "toNextPage": "Go to next page",
+            "toPreviousPage": "Go to previous page",
+          }
+        }
+        toggleTemplate={[Function]}
+        variant="top"
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
   <Table
     borders={true}
     caption="Spots"
@@ -632,7 +654,7 @@ exports[`Employees page should render correctly with no employees 1`] = `
       rowKey="id"
     />
   </Table>
-</Card>
+</Fragment>
 `;
 
 exports[`Employees page should render the editor correctly 1`] = `

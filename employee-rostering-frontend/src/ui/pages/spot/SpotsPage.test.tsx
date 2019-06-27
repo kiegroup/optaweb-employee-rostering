@@ -104,6 +104,22 @@ describe('Spots page', () => {
     expect(spotsPage.getSorters()[1]).toBeNull();
   });
 
+  it('should treat incompleted data as incomplete', () => {
+    const spotsPage = new SpotsPage(twoSpots);
+
+    const noName = { tenantId: 0, requiredSkillSet: [] };
+    const result1 = spotsPage.isDataComplete(noName);
+    expect(result1).toEqual(false);
+
+    const noRequiredSkillSet = { tenantId: 0, name: "Name" };
+    const result2 = spotsPage.isDataComplete(noRequiredSkillSet);
+    expect(result2).toEqual(false);
+
+    const completed = { tenantId: 0, name: "Name", requiredSkillSet: [] };
+    const result3 = spotsPage.isDataComplete(completed);
+    expect(result3).toEqual(true);
+  });
+
   it('should treat empty name as invalid', () => {
     const spotsPage = new SpotsPage(twoSpots);
     const components = {tenantId: 0, name: "", requiredSkillSet: []};

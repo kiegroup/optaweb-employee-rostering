@@ -15,7 +15,7 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, ReadonlyPartial, PropertySetter, Sorter} from 'ui/components/DataTable';
+import {DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
 import {spotOperations} from 'store/spot';
 import Spot from 'domain/Spot';
@@ -23,7 +23,7 @@ import { AppState } from 'store/types';
 import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
-import { Predicate } from 'ui/components/FilterComponent';
+import { Predicate, ReadonlyPartial, Sorter } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 
@@ -101,10 +101,13 @@ export class SpotsPage extends DataTable<Spot, Props> {
     ];
   }
   
-  isValid(editedValue: ReadonlyPartial<Spot>): editedValue is Spot {
+  isDataComplete(editedValue: ReadonlyPartial<Spot>): editedValue is Spot {
     return editedValue.name !== undefined &&
-      editedValue.requiredSkillSet !== undefined &&
-      editedValue.name.length > 0;
+      editedValue.requiredSkillSet !== undefined;
+  }
+
+  isValid(editedValue: Spot): boolean {
+    return editedValue.name.trim().length > 0;
   }
 
   getFilter(): (filter: string) => Predicate<Spot> {

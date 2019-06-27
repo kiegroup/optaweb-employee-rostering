@@ -18,7 +18,7 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { SkillsPage, Props } from './SkillsPage';
 import Skill from 'domain/Skill';
-import { Sorter } from 'ui/components/DataTable';
+import { Sorter, ReadonlyPartial } from 'ui/components/DataTable';
 
 describe('Skills page', () => {
   it('should render correctly with no skills', () => {
@@ -97,6 +97,18 @@ describe('Skills page', () => {
     const sorter = skillsPage.getSorters()[0] as Sorter<Skill>;
     const list = [twoSkills.tableData[1], twoSkills.tableData[0]];
     expect(list.sort(sorter)).toEqual(twoSkills.tableData);
+  });
+
+  it('should treat incompleted data as incomplete', () => {
+    const skillsPage = new SkillsPage(twoSkills);
+
+    const noName: ReadonlyPartial<Skill> = { tenantId: 0 };
+    const result1 = skillsPage.isDataComplete(noName);
+    expect(result1).toEqual(false);
+
+    const completed: ReadonlyPartial<Skill> = { tenantId: 0, name: "Name" };
+    const result2 = skillsPage.isDataComplete(completed);
+    expect(result2).toEqual(true);
   });
 
   it('should treat empty name as invalid', () => {

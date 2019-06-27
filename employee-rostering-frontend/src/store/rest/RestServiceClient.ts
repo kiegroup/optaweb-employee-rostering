@@ -26,6 +26,8 @@ export default class RestServiceClient {
     });
   }
 
+  // TODO: Handle failed REST requests
+
   get<T>(url: string): Promise<T> {
     return this.restClient.get<T>(url).then(res => res.data);
   }
