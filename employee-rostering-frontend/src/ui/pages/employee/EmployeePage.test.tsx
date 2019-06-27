@@ -19,7 +19,7 @@ import * as React from 'react';
 import { EmployeesPage, Props } from './EmployeesPage';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
-import { Sorter } from 'ui/components/DataTable';
+import { Sorter } from 'types';
 import Employee from 'domain/Employee';
 
 describe('Employees page', () => {
