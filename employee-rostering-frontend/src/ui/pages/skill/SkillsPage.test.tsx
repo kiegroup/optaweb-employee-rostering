@@ -18,7 +18,7 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { SkillsPage, Props } from './SkillsPage';
 import Skill from 'domain/Skill';
-import { Sorter, ReadonlyPartial } from 'ui/components/DataTable';
+import { Sorter, ReadonlyPartial } from 'types';
 
 describe('Skills page', () => {
   it('should render correctly with no skills', () => {
