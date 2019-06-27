@@ -15,8 +15,8 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
-import {skillOperations} from 'store/skill';
+import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
+import { skillOperations } from 'store/skill';
 import Skill from 'domain/Skill';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';

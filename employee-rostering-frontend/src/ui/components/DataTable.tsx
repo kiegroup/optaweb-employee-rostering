@@ -71,8 +71,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
 
   abstract getInitialStateForNewRow(): Partial<T>;
   abstract displayDataRow(data: T): JSX.Element[];
-  abstract editDataRow(data: ReadonlyPartial<T>,
-    setProperty: (propertyName: keyof T, value: T[keyof T] | undefined) => void): JSX.Element[];
+  abstract editDataRow(data: ReadonlyPartial<T>, setProperty:  PropertySetter<T>): JSX.Element[];
   abstract isDataComplete(editedValue: ReadonlyPartial<T>): editedValue is T;
   abstract isValid(editedValue: T): boolean;
 
