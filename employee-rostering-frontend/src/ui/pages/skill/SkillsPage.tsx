@@ -29,11 +29,11 @@ interface StateProps extends DataTableProps<Skill> {
   tenantId: number;
 }
 
-const mapStateToProps = ({ tenantData, skillList }: AppState): StateProps => ({
+const mapStateToProps = (state: AppState): StateProps => ({
   title: "Skills",
   columnTitles: ["Name"],
-  tableData: skillList.skillList,
-  tenantId: tenantData.currentTenantId
+  tableData: skillSelectors.getSkillList(state),
+  tenantId: state.tenantData.currentTenantId
 }); 
 
 export interface DispatchProps {
