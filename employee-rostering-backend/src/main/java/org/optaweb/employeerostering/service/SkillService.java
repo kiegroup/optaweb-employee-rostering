@@ -23,7 +23,6 @@ import javax.persistence.EntityNotFoundException;
 import org.optaweb.employeerostering.domain.Skill;
 import org.optaweb.employeerostering.persistence.SkillRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 @Service
 public class SkillService {
@@ -32,7 +31,6 @@ public class SkillService {
 
     public SkillService(SkillRepository skillRepository) {
         this.skillRepository = skillRepository;
-        Assert.notNull(skillRepository, "skillRepository must not be null.");
     }
 
     public List<Skill> getSkillList(Integer tenantId) {
@@ -44,7 +42,7 @@ public class SkillService {
             return skillRepository.findById(id).get();
         }
 
-        throw new EntityNotFoundException("No Skill entity found with ID (" + id + ").");
+        throw new EntityNotFoundException("No skill entity found with id (" + id + ").");
     }
 
     public void deleteSkill(Integer tenantId, Long id) {
@@ -52,13 +50,12 @@ public class SkillService {
             skillRepository.deleteById(id);
         }
         else {
-            throw new EntityNotFoundException("No Skill entity found with ID (" + id + ").");
+            throw new EntityNotFoundException("No skill entity found with id (" + id + ").");
         }
     }
 
     public Skill createSkill(Integer tenantId, Skill skill) {
-        skillRepository.save(skill);
-        return skill;
+        return skillRepository.save(skill);
     }
 
     public Skill updateSkill(Integer tenantId, Skill skill) {
@@ -71,9 +68,7 @@ public class SkillService {
         }
         else {
             skillRepository.deleteById(skill.getId());
-            skillRepository.save(skill);
-
-            return skill;
+            return skillRepository.save(skill);
         }
     }
 }
