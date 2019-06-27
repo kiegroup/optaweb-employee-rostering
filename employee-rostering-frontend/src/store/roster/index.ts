@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainObject from './DomainObject';
-import Employee from './Employee';
-import Spot from './Spot';
 
-export default interface Shift extends DomainObject {
-  startDateTime: Date;
-  endDateTime: Date;
-  spot: Spot;
-  rotationEmployee: Employee | null;
-  employee: Employee | null;
-  pinnedByUser: boolean;
-}
+import * as rosterOperations from './operations';
+import * as rosterSelectors from './selectors';
+import reducer from './reducers';
+
+export {
+  rosterOperations,
+  rosterSelectors
+};
+
+export default reducer;

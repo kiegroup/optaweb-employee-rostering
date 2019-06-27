@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 import DomainObject from './DomainObject';
-import Employee from './Employee';
-import Spot from './Spot';
+import DomainObjectView from './DomainObjectView';
+import Shift from './Shift';
 
-export default interface Shift extends DomainObject {
-  startDateTime: Date;
-  endDateTime: Date;
-  spot: Spot;
-  rotationEmployee: Employee | null;
-  employee: Employee | null;
-  pinnedByUser: boolean;
-}
+export const shiftViewToDomainObjectView = (view: ShiftView): DomainObjectView<Shift> => ({
+        ...view,
+        employee: view.employeeId,
+        spot: view.spotId,
+        rotationEmployee: view.rotationEmployeeId
+  }); 
+
+export default interface ShiftView extends DomainObject {
+    startDateTime: Date;
+    endDateTime: Date;
+    spotId: number;
+    rotationEmployeeId: number | null;
+    employeeId: number | null;
+    pinnedByUser: boolean;
+  }
