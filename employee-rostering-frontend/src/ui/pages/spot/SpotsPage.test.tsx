@@ -18,7 +18,7 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { SpotsPage, Props } from './SpotsPage';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
-import { Sorter } from 'ui/components/DataTable';
+import { Sorter } from 'types';
 import Spot from 'domain/Spot';
 
 describe('Spots page', () => {

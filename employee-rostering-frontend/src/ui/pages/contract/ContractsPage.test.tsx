@@ -18,7 +18,7 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { ContractsPage, Props } from './ContractsPage';
 import OptionalInput from 'ui/components/OptionalInput';
-import { Sorter } from 'ui/components/DataTable';
+import { Sorter } from 'types';
 import Contract from 'domain/Contract';
 
 describe('Contracts page', () => {
