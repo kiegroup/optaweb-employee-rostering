@@ -95,15 +95,10 @@ describe('Skill operations', () => {
     const skillToUpdate: Skill = { tenantId: tenantId, name: "test" , id: 4, version: 0 };
     const skillWithUpdatedVersion: Skill = {...skillToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
-    onGet(`/tenant/${tenantId}/spot/`, []);
-    onGet(`/tenant/${tenantId}/employee/`, []);
     await store.dispatch(skillOperations.updateSkill(skillToUpdate));
     expect(store.getActions()).toEqual([actions.updateSkill(skillWithUpdatedVersion)]);
     expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.get).toHaveBeenCalledTimes(2);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/`);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/`);
   });
 });
 
@@ -144,7 +139,7 @@ describe('Skill selectors', () => {
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-      }, 1234)).toThrow();
+    }, 1234)).toThrow();
   });
 
   it('should get a skill by id', () => {
@@ -162,7 +157,7 @@ describe('Skill selectors', () => {
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-      });
+    });
     expect(skillList).toEqual([]);
   });
 

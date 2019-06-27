@@ -41,7 +41,9 @@ export type ThunkCommand<A extends Action> = ThunkAction<any, AppState, RestServ
 export type ActionFactory<V, A extends Action> = V extends void ?
   // https://stackoverflow.com/questions/55646272/conditional-method-parameters-based-on-generic-type
   () => A : // nullary
-  (value: V) => A; // unary
+  V extends boolean?
+    (value: boolean) => A : // boolean unary
+    (value: V) => A; // unary
 
 /**
  * Factory method that takes a value and creates a @type {ThunkCommand}.

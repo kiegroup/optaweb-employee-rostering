@@ -47,7 +47,16 @@ describe('Contract operations', () => {
   it('should dispatch actions and call client on a successful delete contract', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const contractToDelete = state.contractList.contractList[0];
+    const contractToDelete = {
+      tenantId: tenantId,
+      id: 0,
+      version: 0,
+      name: "Contract 1",
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
+    }
 
     onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, true);
     await store.dispatch(contractOperations.removeContract(contractToDelete));
@@ -59,7 +68,16 @@ describe('Contract operations', () => {
   it('should call client but not dispatch actions on a failed delete contract', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const contractToDelete = state.contractList.contractList[0];
+    const contractToDelete = {
+      tenantId: tenantId,
+      id: 0,
+      version: 0,
+      name: "Contract 1",
+      maximumMinutesPerDay: null,
+      maximumMinutesPerWeek: null,
+      maximumMinutesPerMonth: null,
+      maximumMinutesPerYear: null
+    }
     
     onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, false);
     await store.dispatch(contractOperations.removeContract(contractToDelete));
@@ -101,13 +119,10 @@ describe('Contract operations', () => {
 
     const contractWithUpdatedVersion: Contract = {...contractToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/contract/update`, contractToUpdate, contractWithUpdatedVersion);
-    onGet(`/tenant/${tenantId}/employee/`, []);
     await store.dispatch(contractOperations.updateContract(contractToUpdate));
     expect(store.getActions()).toEqual([actions.updateContract(contractWithUpdatedVersion)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/update`, contractToUpdate);
-    expect(client.get).toBeCalledTimes(1);
-    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/employee/`);
   });
 });
 
@@ -151,29 +166,29 @@ describe('Contract reducers', () => {
     expect(
       reducer(state.contractList, actions.addContract(addedContract))
     ).toEqual({ ...state.contractList,
-        contractMapById: mapWithElement(state.contractList.contractMapById, addedContract)
-      })
+      contractMapById: mapWithElement(state.contractList.contractMapById, addedContract)
+    })
   });
   it('remove contract', () => {
     expect(
       reducer(state.contractList, actions.removeContract(deletedContract)),
     ).toEqual({ ...state.contractList,
-        contractMapById: mapWithoutElement(state.contractList.contractMapById, deletedContract)
-      })
+      contractMapById: mapWithoutElement(state.contractList.contractMapById, deletedContract)
+    })
   });
   it('update contract', () => {
     expect(
       reducer(state.contractList, actions.updateContract(updatedContract)),
     ).toEqual({ ...state.contractList,
-        contractMapById: mapWithUpdatedElement(state.contractList.contractMapById, updatedContract)
-      })
+      contractMapById: mapWithUpdatedElement(state.contractList.contractMapById, updatedContract)
+    })
   });
   it('refresh contract list', () => {
     expect(
       reducer(state.contractList, actions.refreshContractList([addedContract])),
     ).toEqual({ ...state.contractList, 
-        contractMapById: createIdMapFromList([addedContract])
-      });
+      contractMapById: createIdMapFromList([addedContract])
+    });
   });
 });
 
@@ -183,7 +198,7 @@ describe('Contract selectors', () => {
       ...state,
       contractList: { 
         ...state.contractList, isLoading: true }
-      }, 0)).toThrow();
+    }, 0)).toThrow();
   });
 
   it('should get a contract by id', () => {
@@ -205,7 +220,7 @@ describe('Contract selectors', () => {
       ...state,
       contractList: { 
         ...state.contractList, isLoading: true }
-      });
+    });
     expect(contractList).toEqual([]);
   });
 

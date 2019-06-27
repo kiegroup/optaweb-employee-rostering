@@ -47,7 +47,7 @@ export interface RefreshContractListAction extends Action<ActionType.REFRESH_CON
 }
 
 export type ContractAction = SetContractListLoadingAction | AddContractAction | RemoveContractAction |
-  UpdateContractAction | RefreshContractListAction;
+UpdateContractAction | RefreshContractListAction;
 
 export interface ContractList {
   readonly isLoading: boolean;

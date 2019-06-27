@@ -47,7 +47,7 @@ export interface RefreshSkillListAction extends Action<ActionType.REFRESH_SKILL_
 }
 
 export type SkillAction = SetSkillListLoadingAction | AddSkillAction | RemoveSkillAction |
-  UpdateSkillAction | RefreshSkillListAction;
+UpdateSkillAction | RefreshSkillListAction;
 
 export interface SkillList {
   readonly isLoading: boolean;
