@@ -154,10 +154,10 @@ describe('Immutable Collection Operations', () => {
   it('should return a new map with the entry added in mapWithElement', () => {
     const map = new Map<number, DomainObjectView<MockDomainObject>>([
       [0, {
-          tenantId: 0,
-          id: 0,
-          version: 0,
-          domainObj: 3
+        tenantId: 0,
+        id: 0,
+        version: 0,
+        domainObj: 3
       }]
     ]);
 
@@ -190,17 +190,17 @@ describe('Immutable Collection Operations', () => {
   it('should return a new map with the entry removed in mapWithoutElement', () => {
     const map = new Map<number, DomainObjectView<MockDomainObject>>([
       [0, {
-          tenantId: 0,
-          id: 0,
-          version: 0,
-          domainObj: 3
+        tenantId: 0,
+        id: 0,
+        version: 0,
+        domainObj: 3
       }],
       [1, {
         tenantId: 0,
         id: 1,
         version: 0,
         domainObj: 2
-    }]
+      }]
     ]);
 
     const obj = {
@@ -226,17 +226,17 @@ describe('Immutable Collection Operations', () => {
   it('should return a new map with the entry update in mapWithUpdatedElement', () => {
     const map = new Map<number, DomainObjectView<MockDomainObject>>([
       [0, {
-          tenantId: 0,
-          id: 0,
-          version: 0,
-          domainObj: 3
+        tenantId: 0,
+        id: 0,
+        version: 0,
+        domainObj: 3
       }],
       [1, {
         tenantId: 0,
         id: 1,
         version: 0,
         domainObj: 2
-    }]
+      }]
     ]);
 
     const obj = {

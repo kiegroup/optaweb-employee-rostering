@@ -18,7 +18,7 @@ import Skill from 'domain/Skill';
 
 export const getSkillById = (state: AppState, id: number): Skill => {
   if (state.skillList.isLoading) {
-      throw Error("Skill list is loading");
+    throw Error("Skill list is loading");
   }
   return state.skillList.skillMapById.get(id) as Skill;
 };
