@@ -20,11 +20,11 @@ import * as actions from './actions';
 import * as employeeActions from 'store/employee/actions';
 import reducer, { contractOperations } from './index';
 import { withElement, withoutElement, withUpdatedElement } from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
+import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import Contract from 'domain/Contract';
 
 describe('Contract operations', () => {
-  it('should dispatch actions and call client', async () => {
+  it('should dispatch actions and call client on refresh contract list', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const mockContractList: Contract[] = [{
@@ -43,29 +43,35 @@ describe('Contract operations', () => {
     expect(store.getActions()).toEqual([actions.refreshContractList(mockContractList)]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/`);
+  });
 
-    store.clearActions();
-    resetRestClientMock(client);
+  it('should dispatch actions and call client on a successful delete contract', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const contractToDelete = state.contractList.contractList[0];
 
-    const contractToDelete = mockContractList[0];
     onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, true);
     await store.dispatch(contractOperations.removeContract(contractToDelete));
     expect(store.getActions()).toEqual([actions.removeContract(contractToDelete)]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
+  });
 
-    store.clearActions();
-    resetRestClientMock(client);
-
+  it('should call client but not dispatch actions on a failed delete contract', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const contractToDelete = state.contractList.contractList[0];
+    
     onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, false);
     await store.dispatch(contractOperations.removeContract(contractToDelete));
     expect(store.getActions()).toEqual([]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
+  });
 
-    store.clearActions();
-    resetRestClientMock(client);
-
+  it('should dispatch actions and call client on add contract', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
     const contractToAdd: Contract = {tenantId: tenantId,
       name: "Contract 1",
       maximumMinutesPerDay: null,
@@ -79,10 +85,11 @@ describe('Contract operations', () => {
     expect(store.getActions()).toEqual([actions.addContract(contractWithUpdatedId)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/add`, contractToAdd);
+  });
 
-    store.clearActions();
-    resetRestClientMock(client);
-
+  it('should dispatch actions and call client on update contract', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
     const contractToUpdate: Contract = {tenantId: tenantId,
       name: "Contract 1",
       id: 4,
@@ -92,6 +99,7 @@ describe('Contract operations', () => {
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null
     };
+
     const contractWithUpdatedVersion: Contract = {...contractToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/contract/update`, contractToUpdate, contractWithUpdatedVersion);
     onGet(`/tenant/${tenantId}/employee/`, []);
