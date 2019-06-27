@@ -39,7 +39,7 @@ export function withUpdatedElement<T extends DomainObject>(collection: T[], upda
 }
 
 interface ObjectWithKeys {
-  [key: string]: any
+  [key: string]: any;
 }
 
 export function mapDomainObjectToView<T extends DomainObject>(obj: T): DomainObjectView<T> {
