@@ -25,15 +25,13 @@ export function onPost(url: string, params: any, answer: any) {postAnswers.set(u
 export function onPut(url: string, params: any, answer: any) {putAnswers.set(url + JSON.stringify(params), answer)}
 export function onDelete(url: string, answer: any) {deleteAnswers.set(url, answer)}
 
-type MockedFunction = ReturnType<typeof jest.fn>;
-
-export function resetRestClientMock(mock: RestServiceClient) {
+export function resetRestClientMock(mock: jest.Mocked<RestServiceClient>) {
   getAnswers.clear();
   postAnswers.clear();
   putAnswers.clear();
   deleteAnswers.clear();
-  (mock.get as MockedFunction).mockClear();
-  (mock.post as MockedFunction).mockClear();
-  (mock.put as MockedFunction).mockClear();
-  (mock.delete as MockedFunction).mockClear();
+  mock.get.mockClear();
+  mock.post.mockClear();
+  mock.put.mockClear();
+  mock.delete.mockClear();
 }
