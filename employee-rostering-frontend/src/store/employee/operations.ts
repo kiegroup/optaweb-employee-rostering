@@ -35,6 +35,7 @@ export const removeEmployee: ThunkCommandFactory<Employee, RemoveEmployeeAction>
       if (isSuccess) {
         dispatch(actions.removeEmployee(employee));
       }
+      // TODO: Handle unsuccessful deletion
     });
   };
 

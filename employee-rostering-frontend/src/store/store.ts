@@ -39,7 +39,7 @@ export function configureStore(
 
   const restServiceClient = new RestServiceClient(restBaseURL);
 
-  const middlewares = [createLogger(), thunk.withExtraArgument(restServiceClient)];
+  const middlewares = [thunk.withExtraArgument(restServiceClient), createLogger()];
   const middlewareEnhancer = applyMiddleware(...middlewares);
 
   const enhancers = [middlewareEnhancer];
