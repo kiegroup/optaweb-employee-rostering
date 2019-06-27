@@ -36,7 +36,7 @@ export interface ScheduleState {
   cssVariables: React.CSSProperties;
 }
 
-export default class Schedule<T extends DomainObject> extends React.Component<ScheduleProps<T>, ScheduleState> {
+export default abstract class Schedule<T extends DomainObject> extends React.Component<ScheduleProps<T>, ScheduleState> {
   
   windowResizeListener: (e: UIEvent) => void;
 
@@ -151,54 +151,7 @@ export default class Schedule<T extends DomainObject> extends React.Component<Sc
     );
   }
 
-  getDataLane(title: string, row: number, gridCount: number): JSX.Element {
-    const gridItemWidth = parseInt(this.getCSSVariable("--grid-unit-size"));
-    const rowHeight = parseInt(this.getCSSVariable("--grid-row-size"));
-
-    return (
-      <div className="lane-container" key={title}>
-        <div className="lane-title">{title}</div>
-        <GridLayout
-          className="lane-content"
-          cols={gridCount}
-          rowHeight={rowHeight}
-          width={gridCount * gridItemWidth}
-          margin={[5,5]}
-          style={{
-            width: gridCount * gridItemWidth + "px"
-          }}
-        >
-          {
-            this.props.rowData[row].map((data) => {
-              const dataStartDate = this.props.dataGetStartDate(data);
-              const dataEndDate = this.props.dataGetEndDate(data);
-              
-              const startPositionInGrid = moment(dataStartDate).diff(this.props.startDate, "minutes") / this.props.minDurationInMinutes;
-              const endPositionInGrid = moment(dataEndDate).diff(this.props.startDate, "minutes") / this.props.minDurationInMinutes;
-
-              return (
-                <span
-                  className="blob"
-                  key={data.id}
-                  data-grid={{
-                    i: String(data.id),
-                    x: startPositionInGrid,
-                    y: 1,
-                    w: endPositionInGrid - startPositionInGrid,
-                    h: 1,
-                    minH: 1,
-                    maxH: 1
-                  }}
-                >
-                  {this.props.dataToNameMap(data)}
-                </span>
-              );
-            })
-          }
-        </GridLayout>
-      </div>
-    );
-  }
+  abstract getDataLane(title: string, row: number, gridCount: number): JSX.Element;
 
   render() {
     const gridCount = moment(this.props.endDate.getTime()).diff(this.props.startDate.getTime(), "minutes") / this.props.minDurationInMinutes;
