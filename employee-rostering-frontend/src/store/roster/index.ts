@@ -16,11 +16,11 @@
 
 import * as rosterOperations from './operations';
 import * as rosterSelectors from './selectors';
-import reducer from './reducers';
+import { rosterStateReducer, shiftRosterViewReducer } from './reducers';
 
 export {
   rosterOperations,
-  rosterSelectors
+  rosterSelectors,
+  rosterStateReducer,
+  shiftRosterViewReducer
 };
-
-export default reducer;

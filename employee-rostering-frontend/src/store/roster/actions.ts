@@ -15,36 +15,38 @@
  */
 
 import { ActionFactory } from '../types';
-import { ActionType, SetRosterStateIsLoadingAction, SetRosterStateAction,
+import { RosterStateActionType, ShiftRosterViewActionType, SolverActionType, SetRosterStateIsLoadingAction, SetRosterStateAction,
   SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateRosterEarlyAction }
   from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
+import { PaginationData } from 'types';
 
 export const setRosterStateIsLoading: ActionFactory<boolean, SetRosterStateIsLoadingAction> = isLoading => ({
-  type: ActionType.SET_ROSTER_STATE_IS_LOADING,
+  type: RosterStateActionType.SET_ROSTER_STATE_IS_LOADING,
   isLoading: isLoading
 });
 
 export const setRosterState: ActionFactory<RosterState, SetRosterStateAction> = newRosterState => ({
-  type: ActionType.SET_ROSTER_STATE,
+  type: RosterStateActionType.SET_ROSTER_STATE,
   rosterState: newRosterState
 });
 
 export const setShiftRosterIsLoading: ActionFactory<boolean, SetShiftRosterIsLoadingAction> = isLoading => ({
-  type: ActionType.SET_SHIFT_ROSTER_IS_LOADING,
+  type: ShiftRosterViewActionType.SET_SHIFT_ROSTER_IS_LOADING,
   isLoading: isLoading
 });
 
-export const setShiftRosterView: ActionFactory<ShiftRosterView, SetShiftRosterViewAction> = shiftRosterView => ({
-  type: ActionType.SET_SHIFT_ROSTER_VIEW,
-  shiftRoster: shiftRosterView
+export const setShiftRosterView: ActionFactory<{ shiftRoster: ShiftRosterView, paginationData: PaginationData }, SetShiftRosterViewAction> = parmas => ({
+  type: ShiftRosterViewActionType.SET_SHIFT_ROSTER_VIEW,
+  shiftRoster: parmas.shiftRoster,
+  paginationData: parmas.paginationData
 });
 
 export const solveRoster: ActionFactory<void, SolveRosterAction> = () => ({
-  type: ActionType.SOLVE_ROSTER
+  type: SolverActionType.SOLVE_ROSTER
 });
 
 export const terminateRosterEarly: ActionFactory<void, TerminateRosterEarlyAction> = () => ({
-  type: ActionType.TERMINATE_ROSTER_EARLY
+  type: SolverActionType.TERMINATE_ROSTER_EARLY
 });
