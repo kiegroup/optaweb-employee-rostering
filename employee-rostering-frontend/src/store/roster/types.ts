@@ -15,40 +15,51 @@
  */
 
 import { Action } from 'redux';
-import ShiftView from 'domain/ShiftView';
+import ShiftRosterView from 'domain/ShiftRosterView';
+import RosterView from 'domain/RosterView';
+import RosterState from 'domain/RosterState';
 
 export enum ActionType {
-  ADD_SHIFT = 'ADD_SHIFT',
-  REMOVE_SHIFT = 'REMOVE_SHIFT',
-  UPDATE_SHIFT = 'UPDATE_SHIFT',
-  REFRESH_SHIFT_LIST = 'REFRESH_SHIFT_LIST',
-  SET_SHIFT_LIST_LOADING = 'SET_SHIFT_LIST_LOADING'
+  SET_ROSTER_STATE_IS_LOADING = 'SET_ROSTER_STATE_IS_LOADING',
+  SET_ROSTER_STATE = 'SET_ROSTER_STATE',
+  SET_SHIFT_ROSTER_IS_LOADING = 'SET_SHIFT_ROSTER_IS_LOADING',
+  SET_SHIFT_ROSTER_VIEW = 'SET_SHIFT_ROSTER_VIEW',
+  SOLVE_ROSTER = 'SOLVE_ROSTER',
+  TERMINATE_ROSTER_EARLY = 'TERMINATE_ROSTER_EARLY'
 }
 
-export interface SetShiftListLoadingAction extends Action<ActionType.SET_SHIFT_LIST_LOADING> {
+export interface SetRosterStateIsLoadingAction extends Action<ActionType.SET_ROSTER_STATE_IS_LOADING> {
+  isLoading: boolean;
+}
+
+
+export interface SetRosterStateAction extends Action<ActionType.SET_ROSTER_STATE> {
+  readonly rosterState: RosterState;
+}
+
+export interface SetShiftRosterIsLoadingAction extends Action<ActionType.SET_SHIFT_ROSTER_IS_LOADING> {
+  isLoading: boolean;
+}
+
+export interface SetShiftRosterViewAction extends Action<ActionType.SET_SHIFT_ROSTER_VIEW> {
+  readonly shiftRoster: ShiftRosterView;
+}
+
+export interface SolveRosterAction extends Action<ActionType.SOLVE_ROSTER> {
+}
+
+export interface TerminateRosterEarlyAction extends Action<ActionType.TERMINATE_ROSTER_EARLY> {
+}
+
+export type RosterAction = SetRosterStateIsLoadingAction | SetRosterStateAction | SetShiftRosterIsLoadingAction
+  | SetShiftRosterViewAction | SolveRosterAction | TerminateRosterEarlyAction;
+
+export interface CurrentRosterState {
   readonly isLoading: boolean;
+  readonly rosterState: RosterState;
 }
 
-export interface AddShiftAction extends Action<ActionType.ADD_SHIFT> {
-  readonly shift: ShiftView;
-}
-
-export interface RemoveShiftAction extends Action<ActionType.REMOVE_SHIFT> {
-  readonly shift: ShiftView;
-}
-
-export interface UpdateShiftAction extends Action<ActionType.UPDATE_SHIFT> {
-  readonly shift: ShiftView;
-}
-
-export interface RefreshShiftListAction extends Action<ActionType.REFRESH_SHIFT_LIST> {
-  readonly shiftList: ShiftView[];
-}
-
-export type ShiftAction = SetShiftListLoadingAction | AddShiftAction | RemoveShiftAction |
-  UpdateShiftAction | RefreshShiftListAction;
-
-export interface ShiftList {
+export interface CurrentShiftRoster {
   readonly isLoading: boolean;
-  readonly shiftMapById: Map<number, ShiftView>;
+  readonly shiftRosterView: ShiftRosterView;
 }

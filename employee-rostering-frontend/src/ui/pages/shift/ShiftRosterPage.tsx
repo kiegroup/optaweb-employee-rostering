@@ -116,7 +116,13 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     const endDate = moment(startDate).add(7, "days").toDate();
     return (
       <>
-        <Level gutter="sm">
+        <Level
+          gutter="sm"
+          style={{
+            padding: "5px 5px 5px 5px",
+            backgroundColor: "var(--pf-global--BackgroundColor--100)"
+          }}
+        >
           <LevelItem>
             <WeekPicker
               value={this.state.firstDayInWeek}
