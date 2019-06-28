@@ -133,7 +133,7 @@ export class ShiftRosterPage extends React.Component<Props> {
       toDate: this.props.endDate as Date,
       pagination: {
         ...this.props.paginationData,
-        pageNumber: page
+        pageNumber: page - 1
       }
     });
   }
