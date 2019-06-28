@@ -16,8 +16,6 @@
 
 package org.optaweb.employeerostering.controller;
 
-//SpringBootTest loads entire application, WebMvcTest only loads controller and its dependencies
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +31,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -63,9 +60,11 @@ public class SkillControllerIntegrationTest {
     @Test
     public void getSkillTest() throws Exception {
 
-        int tenantId = 2;
+        int tenantId = 1;
+        String name = "name1";
 
-        Skill skill = new Skill(tenantId, "name2");
+        Skill skill = new Skill(tenantId, name);
+        skill.setId(1L);
 
         skillService.createSkill(tenantId, skill);
 
@@ -75,15 +74,17 @@ public class SkillControllerIntegrationTest {
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tenantId", is(tenantId)))
-                .andExpect(jsonPath("$.name", is("name2")));
+                .andExpect(jsonPath("$.name", is(name)));
     }
 
     @Test
     public void deleteSkillTest() throws Exception {
 
-        int tenantId = 3;
+        int tenantId = 2;
+        String name = "name2";
 
-        Skill skill = new Skill(tenantId, "name3");
+        Skill skill = new Skill(tenantId, name);
+        skill.setId(2L);
 
         skillService.createSkill(tenantId, skill);
 
@@ -97,11 +98,11 @@ public class SkillControllerIntegrationTest {
     @Test
     public void createSkillTest() throws Exception {
 
-        int tenantId = 4;
+        int tenantId = 3;
+        String name = "name3";
 
-        Skill skill = new Skill(tenantId, "name4");
-
-        skillService.createSkill(tenantId, skill);
+        Skill skill = new Skill(tenantId, name);
+        skill.setId(5L);
 
         String body = (new ObjectMapper()).writeValueAsString(skill);
         mvc.perform(MockMvcRequestBuilders
@@ -112,15 +113,17 @@ public class SkillControllerIntegrationTest {
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tenantId", is(tenantId)))
-                .andExpect(jsonPath("$.name", is("name4")));
+                .andExpect(jsonPath("$.name", is(name)));
     }
 
     @Test
     public void updateSkillTest() throws Exception {
 
-        int tenantId = 5;
+        int tenantId = 4;
+        String name = "name4";
 
-        Skill skill = new Skill(tenantId, "name5");
+        Skill skill = new Skill(tenantId, name);
+        skill.setId(4L);
 
         skillService.createSkill(tenantId, skill);
 
@@ -133,6 +136,6 @@ public class SkillControllerIntegrationTest {
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.tenantId", is(tenantId)))
-                .andExpect(jsonPath("$.name", is("name5")));
+                .andExpect(jsonPath("$.name", is(name)));
     }
 }
