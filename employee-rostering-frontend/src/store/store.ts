@@ -28,6 +28,7 @@ import spotReducer from './spot/reducers';
 import contractReducer from './contract/reducers';
 import employeeReducer from './employee/reducers';
 import shiftListReducer from './shift/reducers';
+import rosterReducer from './roster/reducers';
 
 export interface StoreConfig {
   readonly restBaseURL: string;
@@ -53,7 +54,9 @@ export function configureStore(
     spotList: spotReducer,
     contractList: contractReducer,
     employeeList: employeeReducer,
-    shiftList: shiftListReducer
+    shiftList: shiftListReducer,
+    rosterState: rosterReducer,
+    shiftRoster: rosterReducer
   });
 
   /* if (process.env.NODE_ENV !== 'production' && module.hot) {
