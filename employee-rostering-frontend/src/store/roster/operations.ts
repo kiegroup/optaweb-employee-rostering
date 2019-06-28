@@ -18,30 +18,28 @@ import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import Shift from 'domain/Shift';
 import ShiftView from 'domain/ShiftView';
-import { SetShiftListLoadingAction, AddShiftAction, RemoveShiftAction, UpdateShiftAction, RefreshShiftListAction } from './types';
+import { SetRosterStateIsLoadingAction, SetRosterStateAction,
+  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateRosterEarlyAction } from './types';
+import RosterState from 'domain/RosterState';
+import ShiftRosterView from 'domain/ShiftRosterView';
 
-export const addShift: ThunkCommandFactory<Shift, AddShiftAction> = shift =>
+export const getRosterState: ThunkCommandFactory<Shift, SetRosterStateIsLoadingAction | SetRosterStateAction> = () =>
   (dispatch, state, client) => {
-    const tenantId = shift.tenantId;
-    return client.post<ShiftView>(`/tenant/${tenantId}/shift/add`, shift).then(newShift => {
-      dispatch(actions.addShift(newShift))
+    const tenantId = state().tenantData.currentTenantId;
+    dispatch(actions.setRosterStateIsLoading(true));
+    return client.get<RosterState>(`/tenant/${tenantId}/roster/state`).then(newRosterState => {
+      dispatch(actions.setRosterState(newRosterState));
+      dispatch(actions.setRosterStateIsLoading(false));
     });
   };
 
-export const removeShift: ThunkCommandFactory<Shift, RemoveShiftAction> = shift =>
+export const getCurrentShiftRoster: ThunkCommandFactory<Shift, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = () =>
   (dispatch, state, client) => {
-    const tenantId = shift.tenantId;
-    const shiftId = shift.id;
-    return client.delete<boolean>(`/tenant/${tenantId}/shift/${shiftId}`).then(isSuccess => {
-      if (isSuccess) {
-        dispatch(actions.removeShift(
-          {
-            ...shift,
-            spotId: shift.spot.id as number,
-            employeeId: shift.employee? shift.employee.id as number : null,
-            rotationEmployeeId: shift.rotationEmployee? shift.rotationEmployee.id as number : null
-          }));
-      }
+    const tenantId = state().tenantData.currentTenantId;
+    dispatch(actions.setShiftRosterIsLoading(true));
+    return client.get<ShiftRosterView>(`/tenant/${tenantId}/roster/shiftRosterView/current`).then(newShiftRosterView => {
+      dispatch(actions.setShiftRosterView(newShiftRosterView));
+      dispatch(actions.setShiftRosterIsLoading(false));
     });
   };
 

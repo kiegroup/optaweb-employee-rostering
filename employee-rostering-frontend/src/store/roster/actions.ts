@@ -15,30 +15,36 @@
  */
 
 import { ActionFactory } from '../types';
-import { ActionType, SetShiftListLoadingAction, AddShiftAction, UpdateShiftAction, RemoveShiftAction, RefreshShiftListAction } from './types';
-import ShiftView from 'domain/ShiftView';
+import { ActionType, SetRosterStateIsLoadingAction, SetRosterStateAction,
+  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateRosterEarlyAction }
+  from './types';
+import RosterState from 'domain/RosterState';
+import ShiftRosterView from 'domain/ShiftRosterView';
 
-export const setIsShiftListLoading: ActionFactory<Boolean, SetShiftListLoadingAction> = (isLoading: Boolean) => ({
-  type: ActionType.SET_SHIFT_LIST_LOADING,
-  isLoading: isLoading.valueOf()
+export const setRosterStateIsLoading: ActionFactory<boolean, SetRosterStateIsLoadingAction> = isLoading => ({
+  type: ActionType.SET_ROSTER_STATE_IS_LOADING,
+  isLoading: isLoading
 });
 
-export const addShift: ActionFactory<ShiftView, AddShiftAction> = newShift => ({
-  type: ActionType.ADD_SHIFT,
-  shift: newShift
+export const setRosterState: ActionFactory<RosterState, SetRosterStateAction> = newRosterState => ({
+  type: ActionType.SET_ROSTER_STATE,
+  rosterState: newRosterState
 });
 
-export const removeShift: ActionFactory<ShiftView, RemoveShiftAction> = deletedShift => ({
-  type: ActionType.REMOVE_SHIFT,
-  shift: deletedShift
+export const setShiftRosterIsLoading: ActionFactory<boolean, SetShiftRosterIsLoadingAction> = isLoading => ({
+  type: ActionType.SET_SHIFT_ROSTER_IS_LOADING,
+  isLoading: isLoading
 });
 
-export const updateShift: ActionFactory<ShiftView, UpdateShiftAction> = updatedShift => ({
-  type: ActionType.UPDATE_SHIFT,
-  shift: updatedShift
+export const setShiftRosterView: ActionFactory<ShiftRosterView, SetShiftRosterViewAction> = shiftRosterView => ({
+  type: ActionType.SET_SHIFT_ROSTER_VIEW,
+  shiftRoster: shiftRosterView
 });
 
-export const refreshShiftList: ActionFactory<ShiftView[], RefreshShiftListAction> = newShiftList => ({
-  type: ActionType.REFRESH_SHIFT_LIST,
-  shiftList: newShiftList
+export const solveRoster: ActionFactory<void, SolveRosterAction> = () => ({
+  type: ActionType.SOLVE_ROSTER
+});
+
+export const terminateRosterEarly: ActionFactory<void, TerminateRosterEarlyAction> = () => ({
+  type: ActionType.TERMINATE_ROSTER_EARLY
 });
