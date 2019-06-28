@@ -14,35 +14,44 @@
  * limitations under the License.
  */
 
-import { ActionType, ShiftAction, ShiftList } from './types';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
-import ShiftView from 'domain/ShiftView';
+import { RosterStateActionType, ShiftRosterViewActionType, RosterStateAction, ShiftRosterViewAction, CurrentRosterState, CurrentShiftRoster } from './types';
 
-export const initialState: ShiftList = {
+export const initialRosterState: CurrentRosterState = {
   isLoading: true,
-  shiftMapById: new Map<number, ShiftView>()
+  rosterState: null
 };
 
-const shiftReducer = (state = initialState, action: ShiftAction): ShiftList => {
+export const initialShiftRosterState: CurrentShiftRoster = {
+  isLoading: true,
+  pagination: {
+    pageNumber: 0,
+    itemsPerPage: 10
+  },
+  shiftRosterView: null
+};
+
+export const rosterStateReducer = (state = initialRosterState, action: RosterStateAction): CurrentRosterState => {
   switch (action.type) {
-    case ActionType.SET_SHIFT_LIST_LOADING: {
+    case RosterStateActionType.SET_ROSTER_STATE_IS_LOADING: {
       return { ...state, isLoading: action.isLoading };
     }
-    case ActionType.ADD_SHIFT: {
-      return { ...state, shiftMapById: mapWithElement(state.shiftMapById, action.shift) };
-    }
-    case ActionType.REMOVE_SHIFT: {
-      return { ...state, shiftMapById: mapWithoutElement(state.shiftMapById, action.shift) };
-    }
-    case ActionType.UPDATE_SHIFT: {
-      return { ...state, shiftMapById: mapWithUpdatedElement(state.shiftMapById, action.shift) };
-    }
-    case ActionType.REFRESH_SHIFT_LIST: {
-      return { ...state, shiftMapById: createIdMapFromList(action.shiftList) };
+    case RosterStateActionType.SET_ROSTER_STATE: {
+      return { ...state, rosterState: action.rosterState };
     }
     default:
       return state;
   }
 };
 
-export default shiftReducer;
+export const shiftRosterViewReducer = (state = initialShiftRosterState, action: ShiftRosterViewAction): CurrentShiftRoster => {
+  switch (action.type) {
+    case ShiftRosterViewActionType.SET_SHIFT_ROSTER_IS_LOADING: {
+      return { ...state, isLoading: action.isLoading };
+    }
+    case ShiftRosterViewActionType.SET_SHIFT_ROSTER_VIEW: {
+      return { ...state, shiftRosterView: action.shiftRoster };
+    }
+    default:
+      return state;
+  }
+}

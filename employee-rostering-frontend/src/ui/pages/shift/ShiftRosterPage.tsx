@@ -17,34 +17,46 @@ import React from "react";
 import Shift from "domain/Shift";
 import Spot from "domain/Spot";
 import { AppState } from "store/types";
+import { rosterOperations, rosterSelectors } from "store/roster";
 import { spotSelectors } from "store/spot";
-import { shiftSelectors } from "store/shift";
 import { connect } from 'react-redux';
 import GridLayout from 'react-grid-layout';
 import WeekPicker from 'ui/components/WeekPicker';
 import Schedule from 'ui/components/Schedule';
 import moment from 'moment';
 import { Level, LevelItem, Button, Pagination } from "@patternfly/react-core";
+import { PaginationData } from "types";
 
 interface StateProps {
+  isLoading: boolean;
   spotList: Spot[];
-  shiftList: Shift[];
+  spotIdToShiftListMap: Map<number, Shift[]>;
+  startDate: Date | null;
+  endDate: Date | null;
+  paginationData: PaginationData;
+  totalNumOfSpots: number;
 }
   
 const mapStateToProps = (state: AppState): StateProps => ({
-  spotList: spotSelectors.getSpotList(state),
-  shiftList: shiftSelectors.getShiftList(state)
+  isLoading: state.shiftRoster.isLoading,
+  spotList: rosterSelectors.getSpotListInShiftRoster(state),
+  spotIdToShiftListMap: rosterSelectors.getSpotListInShiftRoster(state)
+    .reduce((prev, curr) => prev.set(curr.id as number,
+      rosterSelectors.getShiftListForSpot(state, curr)),
+    new Map<number, Shift[]>()),
+  startDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
+  endDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
+  paginationData: state.shiftRoster.pagination,
+  totalNumOfSpots: spotSelectors.getSpotList(state).length
 }); 
   
 export interface DispatchProps {
+  getShiftRoster: typeof rosterOperations.getShiftRoster;
 }
   
 const mapDispatchToProps: DispatchProps = {
+  getShiftRoster: rosterOperations.getShiftRoster
 };
-
-export interface State {
-  firstDayInWeek: Date;
-}
   
 export type Props = StateProps & DispatchProps;
 
@@ -71,8 +83,8 @@ export class ShiftSchedule extends Schedule<Shift> {
               const dataStartDate = this.props.dataGetStartDate(data);
               const dataEndDate = this.props.dataGetEndDate(data);
               
-              const startPositionInGrid = moment(dataStartDate).diff(this.props.startDate, "minutes") / this.props.minDurationInMinutes;
-              const endPositionInGrid = moment(dataEndDate).diff(this.props.startDate, "minutes") / this.props.minDurationInMinutes;
+              const startPositionInGrid = Math.max(0, moment(dataStartDate).diff(this.props.startDate, "minutes") / this.props.minDurationInMinutes);
+              const endPositionInGrid = Math.min(gridCount, moment(dataEndDate).diff(this.props.startDate, "minutes") / this.props.minDurationInMinutes);
 
               return (
                 <span
@@ -99,21 +111,52 @@ export class ShiftSchedule extends Schedule<Shift> {
   }
 }
 
-export class ShiftRosterPage extends React.Component<Props, State> {
+export class ShiftRosterPage extends React.Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.state = {
-      firstDayInWeek: new Date(),
-    };
+    this.onDateChange = this.onDateChange.bind(this);
+    this.onSetPage = this.onSetPage.bind(this);
+    this.onPerPageSelect = this.onPerPageSelect.bind(this);
+  }
+
+  onDateChange(startDate: Date, endDate: Date) {
+    this.props.getShiftRoster({
+      fromDate: startDate,
+      toDate: endDate,
+      pagination: this.props.paginationData
+    });
+  }
+
+  onSetPage(event: any, page: number) {
+    this.props.getShiftRoster({
+      fromDate: this.props.startDate as Date,
+      toDate: this.props.endDate as Date,
+      pagination: {
+        ...this.props.paginationData,
+        pageNumber: page
+      }
+    });
+  }
+
+  onPerPageSelect(event: any, perPage: number) {
+    this.props.getShiftRoster({
+      fromDate: this.props.startDate as Date,
+      toDate: this.props.endDate as Date,
+      pagination: {
+        ...this.props.paginationData,
+        itemsPerPage: perPage
+      }
+    });
   }
 
   render() {
-    if (this.props.shiftList.length === 0 || this.props.spotList.length === 0) {
-      return (<div />);
+    if (this.props.isLoading || this.props.spotList.length === 0) {
+      return <div />;
     }
 
-    const startDate = moment.min(this.props.shiftList.map(s => moment(s.startDateTime))).toDate();
-    const endDate = moment(startDate).add(7, "days").toDate();
+    const startDate = this.props.startDate as Date;
+    const endDate = this.props.endDate as Date;
+
     return (
       <>
         <Level
@@ -125,15 +168,21 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         >
           <LevelItem>
             <WeekPicker
-              value={this.state.firstDayInWeek}
-              onChange={(fd, ld) => this.setState({ firstDayInWeek: fd })}
+              value={this.props.startDate as Date}
+              onChange={this.onDateChange}
             />
           </LevelItem>
           <LevelItem style={{display: "flex"}}>
             <Button>Publish</Button>
             <Button>Schedule</Button>
             <Button>Refresh</Button>
-            <Pagination itemCount={10} />
+            <Pagination
+              itemCount={this.props.totalNumOfSpots}
+              page={this.props.paginationData.pageNumber + 1}
+              perPage={this.props.paginationData.itemsPerPage}
+              onSetPage={this.onSetPage}
+              onPerPageSelect={this.onPerPageSelect}
+            />
             <Button>Create Shift</Button>
           </LevelItem>
         </Level>
@@ -141,7 +190,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           startDate={startDate}
           endDate={endDate}
           rowTitles={this.props.spotList.map(spot => spot.name)}
-          rowData={this.props.spotList.map(spot => this.props.shiftList.filter(shift => shift.spot.id === spot.id && moment(shift.startDateTime).isBefore(endDate)))}
+          rowData={this.props.spotList.map(spot => this.props.spotIdToShiftListMap.get(spot.id as number) as Shift[])}
           dataToNameMap={s => (s.employee !== null)? s.employee.name : "Unassigned"}
           dataGetStartDate={s => s.startDateTime}
           dataGetEndDate={s => s.endDateTime}
@@ -152,4 +201,13 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ShiftRosterPage);
+export default connect(mapStateToProps, mapDispatchToProps, null, {
+  areStatesEqual: (next, prev) => {
+    if (next.shiftRoster.isLoading) {
+      return true;
+    }
+    else {
+      return next === prev;
+    }
+  }
+})(ShiftRosterPage);
