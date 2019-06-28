@@ -18,9 +18,9 @@ import { ActionFactory } from '../types';
 import { ActionType, SetShiftListLoadingAction, AddShiftAction, UpdateShiftAction, RemoveShiftAction, RefreshShiftListAction } from './types';
 import ShiftView from 'domain/ShiftView';
 
-export const setIsShiftListLoading: ActionFactory<Boolean, SetShiftListLoadingAction> = (isLoading: Boolean) => ({
+export const setIsShiftListLoading: ActionFactory<boolean, SetShiftListLoadingAction> = isLoading => ({
   type: ActionType.SET_SHIFT_LIST_LOADING,
-  isLoading: isLoading.valueOf()
+  isLoading: isLoading
 });
 
 export const addShift: ActionFactory<ShiftView, AddShiftAction> = newShift => ({
