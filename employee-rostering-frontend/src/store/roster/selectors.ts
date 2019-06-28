@@ -15,35 +15,37 @@
  */
 import { AppState } from '../types';
 import { employeeSelectors } from '../employee';
-import { spotSelectors } from '../spot';
 import ShiftView from 'domain/ShiftView';
 import Shift from 'domain/Shift';
+import Spot from 'domain/Spot';
+import ShiftRosterView from 'domain/ShiftRosterView';
 
 function isLoading(state: AppState) {
   return state.spotList.isLoading || state.employeeList.isLoading || state.skillList.isLoading ||
-    state.shiftList.isLoading;
+    state.contractList.isLoading || state.shiftRoster.isLoading ||
+    state.rosterState.isLoading;
 }
 
-export const getShiftById = (state: AppState, id: number): Shift => {
-  if (isLoading(state)) {
-      throw Error("Shift list is loading");
-  }
-  const view = state.shiftList.shiftMapById.get(id) as ShiftView;
-  return {
-    ...view,
-    spot: spotSelectors.getSpotById(state, view.spotId),
-    rotationEmployee: (view.rotationEmployeeId !== null)?
-      employeeSelectors.getEmployeeById(state, view.rotationEmployeeId) : null,
-    employee: (view.employeeId !== null)?
-      employeeSelectors.getEmployeeById(state, view.employeeId) : null,
-  };
-};
-
-export const getShiftList = (state: AppState): Shift[] => {
+export const getSpotListInShiftRoster = (state: AppState): Spot[] => {
   if (isLoading(state)) {
     return [];
   }
-  const out: Shift[] = [];
-  state.shiftList.shiftMapById.forEach((value, key) => out.push(getShiftById(state, key)));
-  return out;
+  return (state.shiftRoster.shiftRosterView as ShiftRosterView).spotList;
+};
+
+export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
+  if (isLoading(state)) {
+      throw Error("Shift Roster is loading");
+  }
+  if ((spot.id as number) in (state.shiftRoster.shiftRosterView as ShiftRosterView).spotIdToShiftViewListMap) {
+    return ((state.shiftRoster.shiftRosterView as ShiftRosterView).spotIdToShiftViewListMap[spot.id as number] as ShiftView[]).map(sv => ({
+      ...sv,
+      spot: spot,
+      rotationEmployee: (sv.rotationEmployeeId !== null)? employeeSelectors.getEmployeeById(state, sv.rotationEmployeeId) : null,
+      employee: (sv.employeeId !== null)? employeeSelectors.getEmployeeById(state, sv.employeeId) : null
+    }));
+  }
+  else {
+    return [];
+  }
 };

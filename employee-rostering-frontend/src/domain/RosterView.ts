@@ -20,8 +20,8 @@ import Spot from './Spot';
 
 export default interface RosterView {
   tenantId: number;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   spotList: Spot[];
   employeeList: Employee[];
   rosterState: RosterState;
