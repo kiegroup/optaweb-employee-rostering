@@ -16,3 +16,10 @@
 export type Predicate<T> = (value: T) => boolean;
 export type ReadonlyPartial<T> = { readonly [P in keyof T]?: T[P] };
 export type Sorter<T> = (a: T, b: T) => number;
+export type PaginationData = {
+    itemsPerPage: number;
+    pageNumber: number;
+}
+export type ObjectNumberMap<T> = {
+    [index: number]: T;
+}

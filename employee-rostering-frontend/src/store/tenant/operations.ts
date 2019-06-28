@@ -21,15 +21,16 @@ import { ChangeTenantAction, RefreshTenantListAction } from './types';
 import {skillOperations} from 'store/skill';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
-import { shiftOperations } from 'store/shift';
+import { rosterOperations } from 'store/roster';
 import { spotOperations } from 'store/spot';
 import { contractOperations } from 'store/contract';
 import { employeeOperations } from 'store/employee';
 
 function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>): Promise<any> {
   return Promise.all([
-    dispatch(shiftOperations.refreshShiftList()),
     dispatch(skillOperations.refreshSkillList()),
+    dispatch(rosterOperations.getCurrentShiftRoster({ pageNumber: 0, itemsPerPage: 10 })),
+    dispatch(rosterOperations.getRosterState()),
     dispatch(spotOperations.refreshSpotList()),
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList())
