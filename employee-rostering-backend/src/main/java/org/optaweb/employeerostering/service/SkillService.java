@@ -17,7 +17,9 @@
 package org.optaweb.employeerostering.service;
 
 import java.util.List;
+import java.util.Optional;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 
 import org.optaweb.employeerostering.domain.Skill;
@@ -25,7 +27,7 @@ import org.optaweb.employeerostering.persistence.SkillRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SkillService {
+public class SkillService extends AbstractRestService {
 
     private final SkillRepository skillRepository;
 
@@ -38,37 +40,66 @@ public class SkillService {
     }
 
     public Skill getSkill(Integer tenantId, Long id) {
-        if (skillRepository.findById(id).isPresent()) {
-            return skillRepository.findById(id).get();
+
+        Optional<Skill> skillOptional = skillRepository.findById(id);
+
+        if (!skillOptional.isPresent()) {
+            throw new EntityNotFoundException("No Skill entity found with ID (" + id + ").");
         }
 
-        throw new EntityNotFoundException("No skill entity found with id (" + id + ").");
+        validateTenantIdParameter(tenantId, skillOptional.get());
+        return skillRepository.findById(id).get();
     }
 
     public void deleteSkill(Integer tenantId, Long id) {
-        if (skillRepository.findById(id).isPresent()) {
-            skillRepository.deleteById(id);
+
+        Optional<Skill> skillOptional = skillRepository.findById(id);
+
+        if (!skillOptional.isPresent()) {
+            throw new EntityNotFoundException("No Skill entity found with ID (" + id + ").");
         }
-        else {
-            throw new EntityNotFoundException("No skill entity found with id (" + id + ").");
-        }
+
+        validateTenantIdParameter(tenantId, skillOptional.get());
+        skillRepository.deleteById(id);
     }
 
     public Skill createSkill(Integer tenantId, Skill skill) {
+
+        validateTenantIdParameter(tenantId, skill);
+
+        //If name is null
+        if (skill.getName() == null) {
+            throw new IllegalStateException("Skill entity name with tenantId (" + tenantId + ") cannot be null.");
+        }
+        //Skill with ID already exists
+        else if (skillRepository.findById(skill.getId()).isPresent()) {
+            throw new EntityExistsException("Skill entity with ID (" + skill.getId() + ") already exists.");
+        }
+
         return skillRepository.save(skill);
     }
 
     public Skill updateSkill(Integer tenantId, Skill skill) {
 
-        if (skill.getId() == null) {
-            throw new EntityNotFoundException("Skill id cannot be null.");
+        validateTenantIdParameter(tenantId, skill);
+
+        Optional<Skill> skillOptional = skillRepository.findById(skill.getId());
+
+        //If name is null
+        if (skill.getName() == null) {
+            throw new IllegalStateException("Skill entity name with tenantId (" + tenantId + ") cannot be null.");
         }
-        else if (!skillRepository.findById(skill.getId()).isPresent()) {
-            throw new EntityNotFoundException("Skill entity not found.");
+        //Skill not found
+        else if (!skillOptional.isPresent()) {
+            throw new EntityNotFoundException("Skill entity with ID (" + skill.getId() + ") not found.");
         }
-        else {
-            skillRepository.deleteById(skill.getId());
-            return skillRepository.save(skill);
+        //Skill changes tenantId
+        else if (!skillOptional.get().getTenantId().equals(skill.getTenantId())) {
+            throw new IllegalStateException("Skill entity with tenantId (" + skillOptional.get().getTenantId()
+                    + ") cannot change tenants.");
         }
+
+        skillRepository.deleteById(skill.getId());
+        return skillRepository.save(skill);
     }
 }
