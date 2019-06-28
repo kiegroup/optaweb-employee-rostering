@@ -16,14 +16,20 @@
 
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
-import Shift from 'domain/Shift';
-import ShiftView from 'domain/ShiftView';
 import { SetRosterStateIsLoadingAction, SetRosterStateAction,
   SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateRosterEarlyAction } from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
+import { PaginationData } from 'types';
+import moment from 'moment';
 
-export const getRosterState: ThunkCommandFactory<Shift, SetRosterStateIsLoadingAction | SetRosterStateAction> = () =>
+export type RosterSliceInfo = {
+  pagination: PaginationData;
+  fromDate: Date;
+  toDate: Date;
+};
+
+export const getRosterState: ThunkCommandFactory<void, SetRosterStateIsLoadingAction | SetRosterStateAction> = () =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
     dispatch(actions.setRosterStateIsLoading(true));
@@ -33,30 +39,26 @@ export const getRosterState: ThunkCommandFactory<Shift, SetRosterStateIsLoadingA
     });
   };
 
-export const getCurrentShiftRoster: ThunkCommandFactory<Shift, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = () =>
+export const getCurrentShiftRoster: ThunkCommandFactory<PaginationData, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = pagination =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
     dispatch(actions.setShiftRosterIsLoading(true));
-    return client.get<ShiftRosterView>(`/tenant/${tenantId}/roster/shiftRosterView/current`).then(newShiftRosterView => {
-      dispatch(actions.setShiftRosterView(newShiftRosterView));
+    return client.get<ShiftRosterView>(`/tenant/${tenantId}/roster/shiftRosterView/current?p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`).then(newShiftRosterView => {
+      dispatch(actions.setShiftRosterView({ shiftRoster: newShiftRosterView, paginationData: pagination }));
       dispatch(actions.setShiftRosterIsLoading(false));
     });
   };
 
-export const updateShift: ThunkCommandFactory<Shift, UpdateShiftAction> = shift =>
-  (dispatch, state, client) => {
-    const tenantId = shift.tenantId;
-    return client.post<ShiftView>(`/tenant/${tenantId}/shift/update`, shift).then(updatedShift => {
-      dispatch(actions.updateShift(updatedShift));
-    });
-  };
-
-export const refreshShiftList: ThunkCommandFactory<void, SetShiftListLoadingAction | RefreshShiftListAction> = () =>
+export const getShiftRoster: ThunkCommandFactory<RosterSliceInfo, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = params =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
-    dispatch(actions.setIsShiftListLoading(true));
-    return client.get<ShiftView[]>(`/tenant/${tenantId}/shift/`).then(shiftList => {
-      dispatch(actions.refreshShiftList(shiftList));
-      dispatch(actions.setIsShiftListLoading(false));
+    const fromDateAsString = moment(params.fromDate).format("YYYY-MM-DD");
+    const toDateAsString = moment(params.toDate).add(1, "day").format("YYYY-MM-DD");
+    dispatch(actions.setShiftRosterIsLoading(true));
+    return client.get<ShiftRosterView>(`/tenant/${tenantId}/roster/shiftRosterView?` +
+    `p=${params.pagination.pageNumber}&n=${params.pagination.itemsPerPage}` +
+    `&startDate=${fromDateAsString}&endDate=${toDateAsString}`).then(newShiftRosterView => {
+      dispatch(actions.setShiftRosterView({ shiftRoster: newShiftRosterView, paginationData: params.pagination }));
+      dispatch(actions.setShiftRosterIsLoading(false));
     });
   };

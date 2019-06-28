@@ -15,9 +15,10 @@
  */
 
 import DomainObjectView from './DomainObjectView';
-import Shift from './Shift';
+import ShiftView from './ShiftView';
 import RosterView from './RosterView';
+import { ObjectNumberMap } from 'types';
 
 export default interface ShiftRosterView extends RosterView {
-  spotIdToShiftViewListMap: Map<number, DomainObjectView<Shift>[]>;
+  spotIdToShiftViewListMap: ObjectNumberMap<ShiftView[]>;
 }
