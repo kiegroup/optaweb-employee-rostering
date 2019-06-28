@@ -49,7 +49,7 @@ export const shiftRosterViewReducer = (state = initialShiftRosterState, action: 
       return { ...state, isLoading: action.isLoading };
     }
     case ShiftRosterViewActionType.SET_SHIFT_ROSTER_VIEW: {
-      return { ...state, shiftRosterView: action.shiftRoster };
+      return { ...state, shiftRosterView: action.shiftRoster, pagination: action.paginationData };
     }
     default:
       return state;
