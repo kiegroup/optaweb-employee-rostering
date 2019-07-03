@@ -16,11 +16,13 @@
 
 package org.optaweb.employeerostering.persistence;
 
+import java.util.List;
+
 import org.optaweb.employeerostering.domain.Skill;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SkillRepository extends JpaRepository <Skill, Long> {
-
+    List<Skill> findAllByTenantId(Integer tenantId);
 }
