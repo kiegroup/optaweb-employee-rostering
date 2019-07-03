@@ -73,13 +73,21 @@ public class SkillService extends AbstractRestService {
 
         validateTenantIdParameter(tenantId, skill);
 
+        String name = skill.getName();
+
         //If name is null
-        if (skill.getName() == null) {
+        if (name == null) {
             throw new IllegalStateException("Skill entity name with tenantId (" + tenantId + ") cannot be null.");
         }
-        //Skill with ID already exists
-        else if (skillRepository.findById(skill.getId()).isPresent()) {
-            throw new EntityExistsException("Skill entity with ID (" + skill.getId() + ") already exists.");
+
+        List<Skill> skillList = skillRepository.findAllByTenantId(tenantId);
+
+        for (Skill s : skillList) {
+            //If skill already exists
+            if (s.getName().equals(name)) {
+                throw new EntityExistsException("Skill entity with tenantId (" + tenantId + ") and name (" + name
+                        + ") already exists.");
+            }
         }
 
         return skillRepository.save(skill);
