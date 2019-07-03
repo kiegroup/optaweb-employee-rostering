@@ -52,9 +52,8 @@ public class SkillController {
     }
 
     @DeleteMapping("/tenant/{tenantId}/skill/{id}")
-    public ResponseEntity<Void> deleteSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
-        skillService.deleteSkill(tenantId, id);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    public ResponseEntity<Boolean> deleteSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
+        return new ResponseEntity<Boolean>(skillService.deleteSkill(tenantId, id), HttpStatus.OK);
     }
 
     @PostMapping("/tenant/{tenantId}/skill/add")
