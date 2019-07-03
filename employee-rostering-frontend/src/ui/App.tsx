@@ -20,7 +20,7 @@ import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import Background from './components/Background';
 import Header from './header/Header';
-import { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
+import { ShiftRosterPage1, SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
 
 const App: React.FC = () => {
   return (
@@ -59,7 +59,7 @@ const App: React.FC = () => {
             <Route
               path="/shift"
               exect
-              component={ShiftRosterPage} 
+              component={ShiftRosterPage1} 
             />
           </Switch>
         </PageSection>
