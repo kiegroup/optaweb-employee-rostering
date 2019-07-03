@@ -38,7 +38,7 @@ public class SkillService extends AbstractRestService {
 
     @Transactional
     public List<Skill> getSkillList(Integer tenantId) {
-        return skillRepository.findAll();
+        return skillRepository.findAllByTenantId(tenantId);
     }
 
     @Transactional
