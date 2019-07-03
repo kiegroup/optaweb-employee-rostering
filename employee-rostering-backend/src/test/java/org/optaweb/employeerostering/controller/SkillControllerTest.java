@@ -16,7 +16,12 @@
 
 package org.optaweb.employeerostering.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+
+import javax.persistence.EntityExistsException;
+import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.Skill;
@@ -24,118 +29,292 @@ import org.optaweb.employeerostering.service.SkillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@AutoConfigureMockMvc
-public class SkillControllerIntegrationTest {
+@Transactional
+public class SkillControllerTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(SkillControllerIntegrationTest.class);
-
-    @Autowired
-    private MockMvc mvc;
+    private static final Logger logger = LoggerFactory.getLogger(SkillControllerTest.class);
 
     @Autowired
     private SkillService skillService;
 
     @Test
-    public void getSkillListTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                            .get("/tenant/{tenantId}/skill", 0)
-                            .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk());
+    public void getSkillListTest() {
+        Integer tenantId = 1;
+        Integer tenantId2 = 2;
+        String name = "name";
+        String name2 = "name2";
+
+        Skill skill = new Skill(tenantId, name);
+        Skill skill2 = new Skill(tenantId, name2);
+        Skill skill3 = new Skill(tenantId2, name);
+
+        skillService.createSkill(tenantId, skill);
+        skillService.createSkill(tenantId, skill2);
+        skillService.createSkill(tenantId2, skill3);
+
+        List<Skill> skillList = skillService.getSkillList(tenantId);
+        List<Skill> skillList2 = skillService.getSkillList(tenantId2);
+
+        assertEquals(skillList.get(0), skill);
+        assertEquals(skillList.get(1), skill2);
+        assertEquals(skillList2.get(0), skill3);
     }
 
     @Test
-    public void getSkillTest() throws Exception {
-
-        int tenantId = 1;
-        String name = "name1";
+    public void getSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-        skill.setId(1L);
 
         skillService.createSkill(tenantId, skill);
 
-        mvc.perform(MockMvcRequestBuilders
-                            .get("/tenant/{tenantId}/skill/{id}", tenantId, skill.getId())
-                            .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tenantId", is(tenantId)))
-                .andExpect(jsonPath("$.name", is(name)));
+        Skill returnSkill = skillService.getSkill(tenantId, skill.getId());
+
+        assertEquals(returnSkill.getTenantId(), (Integer) 1);
+        assertEquals(returnSkill.getName(), "name");
     }
 
     @Test
-    public void deleteSkillTest() throws Exception {
-
-        int tenantId = 2;
-        String name = "name2";
+    public void getNonExistentSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-        skill.setId(2L);
 
         skillService.createSkill(tenantId, skill);
 
-        mvc.perform(MockMvcRequestBuilders
-                            .delete("/tenant/{tenantId}/skill/{id}", tenantId, skill.getId())
-                            .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk());
+        try {
+            skillService.getSkill(1, -1L);
+        }
+        catch (EntityNotFoundException e) {
+            String expectedMessage = "No Skill entity found with ID (-1).";
+            assertEquals(expectedMessage, e.getMessage());
+        }
     }
 
     @Test
-    public void createSkillTest() throws Exception {
-
-        int tenantId = 3;
-        String name = "name3";
-
-        Skill skill = new Skill(tenantId, name);
-        skill.setId(5L);
-
-        String body = (new ObjectMapper()).writeValueAsString(skill);
-        mvc.perform(MockMvcRequestBuilders
-                            .post("/tenant/{tenantId}/skill/add", tenantId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body)
-                            .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tenantId", is(tenantId)))
-                .andExpect(jsonPath("$.name", is(name)));
-    }
-
-    @Test
-    public void updateSkillTest() throws Exception {
-
-        int tenantId = 4;
-        String name = "name4";
+    public void getNonMatchingSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-        skill.setId(4L);
 
         skillService.createSkill(tenantId, skill);
 
-        String body = (new ObjectMapper()).writeValueAsString(skill);
-        mvc.perform(MockMvcRequestBuilders
-                            .put("/tenant/{tenantId}/skill/update", tenantId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body)
-                            .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tenantId", is(tenantId)))
-                .andExpect(jsonPath("$.name", is(name)));
+        try {
+            skillService.getSkill(2, skill.getId());
+        }
+        catch (IllegalStateException e) {
+            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void deleteSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skill = new Skill(tenantId, name);
+
+        skillService.createSkill(tenantId, skill);
+
+        assertEquals(skillService.deleteSkill(tenantId, skill.getId()), true);
+    }
+
+    @Test
+    public void deleteNonExistentSkillTest() {
+        try {
+            skillService.deleteSkill(1, -1L);
+        }
+        catch (EntityNotFoundException e) {
+            String expectedMessage = "No Skill entity found with ID (-1).";
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void deleteNonMatchingSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skill = new Skill(tenantId, name);
+
+        skillService.createSkill(tenantId, skill);
+
+        try {
+            skillService.deleteSkill(2, skill.getId());
+        }
+        catch (IllegalStateException e) {
+            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void createSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skill = new Skill(tenantId, name);
+
+        Skill returnSkill = skillService.createSkill(tenantId, skill);
+
+        assertEquals(returnSkill.getTenantId(), (Integer) 1);
+        assertEquals(returnSkill.getName(), "name");
+    }
+
+    @Test
+    public void createNonMatchingSkillTest(){
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skill = new Skill(tenantId, name);
+
+        try {
+            skillService.createSkill(2, skill);
+        }
+        catch (IllegalStateException e) {
+            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void createNullSkillTest() {
+        Integer tenantId = 1;
+        String name = null;
+
+        Skill skill = new Skill(tenantId, name);
+
+        try {
+            skillService.createSkill(tenantId, skill);
+        }
+        catch (IllegalStateException e) {
+            String expectedMessage = "Skill entity name with tenantId (1) cannot be null.";
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void createExistentSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skill = new Skill(tenantId, name);
+
+        skillService.createSkill(tenantId, skill);
+
+        Skill skill1 = new Skill(tenantId, name);
+
+        try {
+            skillService.createSkill(tenantId, skill1);
+        }
+        catch (EntityExistsException e) {
+            String expectedMessage = "Skill entity with tenantId (1) and name (name) already exists.";
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void updateSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skill = new Skill(tenantId, name);
+
+        skillService.createSkill(tenantId, skill);
+
+        Skill skill2 = new Skill(tenantId, "name2");
+        skill2.setId(skill.getId());
+
+        Skill returnSkill = skillService.updateSkill(tenantId, skill2);
+
+        assertEquals(returnSkill.getTenantId(), (Integer) 1);
+        assertEquals(returnSkill.getName(), "name2");
+    }
+
+    @Test
+    public void updateNonMatchingSkillTest(){
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skill = new Skill(tenantId, name);
+
+        skillService.createSkill(tenantId, skill);
+
+        Skill skill2 = new Skill(tenantId, "name2");
+
+        try {
+            skillService.updateSkill(2, skill2);
+        }
+        catch (IllegalStateException e) {
+            String expectedMessage = "The tenantId (2) does not match the persistable (name2)'s tenantId (1).";
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void updateNullSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skill = new Skill(tenantId, name);
+
+        skillService.createSkill(tenantId, skill);
+
+        Skill skill2 = new Skill(tenantId, null);
+        skill2.setId(skill.getId());
+
+        try {
+            skillService.updateSkill(tenantId, skill2);
+        }
+        catch (IllegalStateException e) {
+            String expectedMessage = "Skill entity name with tenantId (1) cannot be null.";
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void updateNonExistentSkillTest() {
+        Skill skill = new Skill(1, "name");
+        skill.setId(-1L);
+
+        try {
+            skillService.updateSkill(1, skill);
+        }
+        catch (EntityNotFoundException e) {
+            String expectedMessage = "Skill entity with ID (-1) not found.";
+            assertEquals(expectedMessage, e.getMessage());
+        }
+    }
+
+    @Test
+    public void updateChangeTenantIdSkillTest() {
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skill = new Skill(tenantId, name);
+
+        skillService.createSkill(tenantId, skill);
+
+        Skill skill2 = new Skill(2, name);
+        skill2.setId(skill.getId());
+
+        try {
+            skillService.updateSkill(2, skill2);
+        }
+        catch (IllegalStateException e) {
+            String expectedMessage = "Skill entity with tenantId (1) cannot change tenants.";
+            assertEquals(expectedMessage, e.getMessage());
+        }
     }
 }
