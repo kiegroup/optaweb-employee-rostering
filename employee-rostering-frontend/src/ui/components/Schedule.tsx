@@ -17,7 +17,6 @@ import React from 'react';
 import moment from 'moment';
 import './Schedule.css';
 import DomainObject from 'domain/DomainObject';
-import GridLayout from 'react-grid-layout';
 
 export interface ScheduleProps<T extends DomainObject> {
   startDate: Date;
