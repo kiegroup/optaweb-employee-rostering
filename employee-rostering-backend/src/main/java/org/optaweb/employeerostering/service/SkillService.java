@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.Skill;
 import org.optaweb.employeerostering.persistence.SkillRepository;
@@ -35,10 +36,12 @@ public class SkillService extends AbstractRestService {
         this.skillRepository = skillRepository;
     }
 
+    @Transactional
     public List<Skill> getSkillList(Integer tenantId) {
         return skillRepository.findAll();
     }
 
+    @Transactional
     public Skill getSkill(Integer tenantId, Long id) {
 
         Optional<Skill> skillOptional = skillRepository.findById(id);
@@ -51,7 +54,8 @@ public class SkillService extends AbstractRestService {
         return skillRepository.findById(id).get();
     }
 
-    public void deleteSkill(Integer tenantId, Long id) {
+    @Transactional
+    public Boolean deleteSkill(Integer tenantId, Long id) {
 
         Optional<Skill> skillOptional = skillRepository.findById(id);
 
@@ -61,8 +65,10 @@ public class SkillService extends AbstractRestService {
 
         validateTenantIdParameter(tenantId, skillOptional.get());
         skillRepository.deleteById(id);
+        return true;
     }
 
+    @Transactional
     public Skill createSkill(Integer tenantId, Skill skill) {
 
         validateTenantIdParameter(tenantId, skill);
@@ -79,6 +85,7 @@ public class SkillService extends AbstractRestService {
         return skillRepository.save(skill);
     }
 
+    @Transactional
     public Skill updateSkill(Integer tenantId, Skill skill) {
 
         validateTenantIdParameter(tenantId, skill);
