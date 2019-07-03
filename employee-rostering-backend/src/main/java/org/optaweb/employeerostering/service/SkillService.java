@@ -43,7 +43,6 @@ public class SkillService extends AbstractRestService {
 
     @Transactional
     public Skill getSkill(Integer tenantId, Long id) {
-
         Optional<Skill> skillOptional = skillRepository.findById(id);
 
         if (!skillOptional.isPresent()) {
@@ -56,7 +55,6 @@ public class SkillService extends AbstractRestService {
 
     @Transactional
     public Boolean deleteSkill(Integer tenantId, Long id) {
-
         Optional<Skill> skillOptional = skillRepository.findById(id);
 
         if (!skillOptional.isPresent()) {
@@ -70,7 +68,6 @@ public class SkillService extends AbstractRestService {
 
     @Transactional
     public Skill createSkill(Integer tenantId, Skill skill) {
-
         validateTenantIdParameter(tenantId, skill);
 
         String name = skill.getName();
@@ -95,7 +92,6 @@ public class SkillService extends AbstractRestService {
 
     @Transactional
     public Skill updateSkill(Integer tenantId, Skill skill) {
-
         validateTenantIdParameter(tenantId, skill);
 
         Optional<Skill> skillOptional = skillRepository.findById(skill.getId());
