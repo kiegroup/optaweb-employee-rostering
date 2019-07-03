@@ -18,6 +18,6 @@ import SkillsPage from './skill/SkillsPage';
 import SpotsPage from './spot/SpotsPage';
 import ContractsPage from './contract/ContractsPage';
 import EmployeesPage from './employee/EmployeesPage';
-import ShiftRosterPage from './shift/ShiftRosterPage';
+import ShiftRosterPage1 from './shift/ShiftRosterPageProposal2';
 
-export { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage };
+export { ShiftRosterPage1, SkillsPage, SpotsPage, ContractsPage, EmployeesPage };

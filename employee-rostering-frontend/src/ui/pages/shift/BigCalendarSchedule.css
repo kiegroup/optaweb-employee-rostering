@@ -13,19 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export type Predicate<T> = (value: T) => boolean;
-export type ReadonlyPartial<T> = { readonly [P in keyof T]?: T[P] };
-export type Sorter<T> = (a: T, b: T) => number;
-export type PaginationData = {
-    itemsPerPage: number;
-    pageNumber: number;
-}
-export type ObjectNumberMap<T> = {
-    [index: number]: T;
+.rbc-time-view {
+    background-color: var(--pf-global--BackgroundColor--100)
 }
 
-export function mapObjectNumberMap<F,T>(map: ObjectNumberMap<F>, mapper: (value: F) => T): ObjectNumberMap<T> {
-    const out:  ObjectNumberMap<T> = {}
-    Object.keys(map).forEach(key => out[parseInt(key)] = mapper(map[parseInt(key)]));
-    return out;
+.rbc-event {
+    color: black;
+    background-color: #bee1f4;
 }
