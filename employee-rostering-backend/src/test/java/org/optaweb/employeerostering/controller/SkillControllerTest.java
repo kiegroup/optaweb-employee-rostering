@@ -18,7 +18,6 @@ package org.optaweb.employeerostering.controller;
 
 import java.util.List;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
@@ -200,26 +199,6 @@ public class SkillControllerTest {
         }
         catch (IllegalStateException e) {
             String expectedMessage = "Skill entity name with tenantId (1) cannot be null.";
-            assertEquals(expectedMessage, e.getMessage());
-        }
-    }
-
-    @Test
-    public void createExistentSkillTest() {
-        Integer tenantId = 1;
-        String name = "name";
-
-        Skill skill = new Skill(tenantId, name);
-
-        skillService.createSkill(tenantId, skill);
-
-        Skill skill1 = new Skill(tenantId, name);
-
-        try {
-            skillService.createSkill(tenantId, skill1);
-        }
-        catch (EntityExistsException e) {
-            String expectedMessage = "Skill entity with tenantId (1) and name (name) already exists.";
             assertEquals(expectedMessage, e.getMessage());
         }
     }
