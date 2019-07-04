@@ -19,11 +19,17 @@ package org.optaweb.employeerostering.domain;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
 public class Skill extends AbstractPersistable {
 
+    @NotNull
+    @Size(min = 1, max = 120)
+    @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
 
     @SuppressWarnings("unused")

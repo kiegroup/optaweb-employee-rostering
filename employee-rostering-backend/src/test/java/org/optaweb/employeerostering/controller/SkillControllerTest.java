@@ -188,22 +188,6 @@ public class SkillControllerTest {
     }
 
     @Test
-    public void createNullSkillTest() {
-        Integer tenantId = 1;
-        String name = null;
-
-        Skill skill = new Skill(tenantId, name);
-
-        try {
-            skillService.createSkill(tenantId, skill);
-        }
-        catch (IllegalStateException e) {
-            String expectedMessage = "Skill entity name with tenantId (1) cannot be null.";
-            assertEquals(expectedMessage, e.getMessage());
-        }
-    }
-
-    @Test
     public void updateSkillTest() {
         Integer tenantId = 1;
         String name = "name";
@@ -237,27 +221,6 @@ public class SkillControllerTest {
         }
         catch (IllegalStateException e) {
             String expectedMessage = "The tenantId (2) does not match the persistable (name2)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
-    }
-
-    @Test
-    public void updateNullSkillTest() {
-        Integer tenantId = 1;
-        String name = "name";
-
-        Skill skill = new Skill(tenantId, name);
-
-        skillService.createSkill(tenantId, skill);
-
-        Skill skill2 = new Skill(tenantId, null);
-        skill2.setId(skill.getId());
-
-        try {
-            skillService.updateSkill(tenantId, skill2);
-        }
-        catch (IllegalStateException e) {
-            String expectedMessage = "Skill entity name with tenantId (1) cannot be null.";
             assertEquals(expectedMessage, e.getMessage());
         }
     }
