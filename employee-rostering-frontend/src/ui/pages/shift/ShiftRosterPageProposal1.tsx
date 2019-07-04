@@ -33,7 +33,6 @@ interface StateProps {
   spotIdToShiftListMap: Map<number, Shift[]>;
   startDate: Date | null;
   endDate: Date | null;
-  paginationData: PaginationData;
   totalNumOfSpots: number;
 }
   
@@ -46,7 +45,6 @@ const mapStateToProps = (state: AppState): StateProps => ({
     new Map<number, Shift[]>()),
   startDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
   endDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
-  paginationData: state.shiftRoster.pagination,
   totalNumOfSpots: spotSelectors.getSpotList(state).length
 }); 
   
@@ -111,39 +109,52 @@ export class ShiftSchedule extends Schedule<Shift> {
   }
 }
 
-export class ShiftRosterPage extends React.Component<Props> {
+interface State {
+  paginationData: PaginationData;
+}
+
+export class ShiftRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.onDateChange = this.onDateChange.bind(this);
     this.onSetPage = this.onSetPage.bind(this);
     this.onPerPageSelect = this.onPerPageSelect.bind(this);
+
+    this.state = {
+      paginationData: {
+        pageNumber: 0,
+        itemsPerPage: 10
+      }
+    };
   }
 
   onDateChange(startDate: Date, endDate: Date) {
     this.props.getShiftRoster({
       fromDate: startDate,
       toDate: endDate,
-      pagination: this.props.paginationData
+      pagination: this.state.paginationData
     });
   }
 
   onSetPage(event: any, page: number) {
+    this.setState(prevState => ({ paginationData: { ...prevState.paginationData, pageNumber: page - 1 }}))
     this.props.getShiftRoster({
       fromDate: this.props.startDate as Date,
       toDate: this.props.endDate as Date,
       pagination: {
-        ...this.props.paginationData,
+        ...this.state.paginationData,
         pageNumber: page - 1
       }
     });
   }
 
   onPerPageSelect(event: any, perPage: number) {
+    this.setState(prevState => ({ paginationData: { ...prevState.paginationData, itemsPerPage: perPage }}))
     this.props.getShiftRoster({
       fromDate: this.props.startDate as Date,
       toDate: this.props.endDate as Date,
       pagination: {
-        ...this.props.paginationData,
+        ...this.state.paginationData,
         itemsPerPage: perPage
       }
     });
@@ -178,8 +189,8 @@ export class ShiftRosterPage extends React.Component<Props> {
             <Button>Refresh</Button>
             <Pagination
               itemCount={this.props.totalNumOfSpots}
-              page={this.props.paginationData.pageNumber + 1}
-              perPage={this.props.paginationData.itemsPerPage}
+              page={this.state.paginationData.pageNumber + 1}
+              perPage={this.state.paginationData.itemsPerPage}
               onSetPage={this.onSetPage}
               onPerPageSelect={this.onPerPageSelect}
             />

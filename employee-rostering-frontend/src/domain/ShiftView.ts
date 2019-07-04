@@ -17,6 +17,18 @@ import DomainObject from './DomainObject';
 import DomainObjectView from './DomainObjectView';
 import Shift from './Shift';
 
+export const shiftToShiftView = (shift: Shift): ShiftView => ({
+  id: shift.id,
+  version: shift.version,
+  tenantId: shift.tenantId,
+  pinnedByUser: shift.pinnedByUser,
+  startDateTime: shift.startDateTime,
+  endDateTime: shift.endDateTime,
+  spotId: shift.spot.id as number,
+  employeeId: shift.employee? shift.employee.id as number : null,
+  rotationEmployeeId: shift.rotationEmployee? shift.rotationEmployee.id as number : null
+}); 
+
 export const shiftViewToDomainObjectView = (view: ShiftView): DomainObjectView<Shift> => ({
         ...view,
         employee: view.employeeId,
