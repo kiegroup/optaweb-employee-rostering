@@ -85,6 +85,8 @@ public class SkillService extends AbstractRestService {
                     + ") cannot change tenants.");
         }
 
-        return skillRepository.save(skill);
+        Skill databaseSkill = skillOptional.get();
+        databaseSkill.setName(skill.getName());
+        return skillRepository.save(databaseSkill);
     }
 }
