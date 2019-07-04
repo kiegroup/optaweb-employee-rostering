@@ -37,10 +37,9 @@ export const setShiftRosterIsLoading: ActionFactory<boolean, SetShiftRosterIsLoa
   isLoading: isLoading
 });
 
-export const setShiftRosterView: ActionFactory<{ shiftRoster: ShiftRosterView, paginationData: PaginationData }, SetShiftRosterViewAction> = parmas => ({
+export const setShiftRosterView: ActionFactory<ShiftRosterView, SetShiftRosterViewAction> = shiftRosterView => ({
   type: ShiftRosterViewActionType.SET_SHIFT_ROSTER_VIEW,
-  shiftRoster: parmas.shiftRoster,
-  paginationData: parmas.paginationData
+  shiftRoster: shiftRosterView
 });
 
 export const solveRoster: ActionFactory<void, SolveRosterAction> = () => ({
