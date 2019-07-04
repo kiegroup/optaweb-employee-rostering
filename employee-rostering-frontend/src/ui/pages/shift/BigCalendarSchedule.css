@@ -21,3 +21,11 @@
     color: black;
     background-color: #bee1f4;
 }
+
+.rbc-allday-cell {
+    display: none;
+}
+  
+.rbc-time-view .rbc-header {
+    border-bottom: none;
+}

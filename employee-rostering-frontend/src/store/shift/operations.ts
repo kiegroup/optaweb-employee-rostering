@@ -17,14 +17,54 @@
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import Shift from 'domain/Shift';
-import ShiftView from 'domain/ShiftView';
+import ShiftView, { shiftToShiftView } from 'domain/ShiftView';
 import { SetShiftListLoadingAction, AddShiftAction, RemoveShiftAction, UpdateShiftAction, RefreshShiftListAction } from './types';
+import moment from 'moment';
+import Spot from 'domain/Spot';
+import Employee from 'domain/Employee';
+import DomainObject from 'domain/DomainObject';
+import { refreshShiftRoster } from 'store/roster/operations';
+
+interface KindaShift extends DomainObject {
+  startDateTime: string;
+  endDateTime: string;
+  spot: Spot;
+  rotationEmployee: Employee | null;
+  employee: Employee | null;
+  pinnedByUser: boolean;
+}
+
+interface KindaShiftView extends DomainObject {
+  startDateTime: string;
+  endDateTime: string;
+  spotId: number;
+  rotationEmployeeId: number | null;
+  employeeId: number | null;
+  pinnedByUser: boolean;
+}
+
+function shiftAdapter(shift: Shift): KindaShiftView {
+  return {
+    ...shiftToShiftView(shift),
+    startDateTime: moment(shift.startDateTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+    endDateTime: moment(shift.endDateTime).local().format("YYYY-MM-DDTHH:mm:ss")
+  };
+}
+
+function kindaShiftViewAdapter(kindaShiftView: KindaShiftView): ShiftView {
+  return {
+    ...kindaShiftView,
+    startDateTime: moment(kindaShiftView.startDateTime).toDate(),
+    endDateTime: moment(kindaShiftView.endDateTime).toDate()
+  };
+}
 
 export const addShift: ThunkCommandFactory<Shift, AddShiftAction> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
-    return client.post<ShiftView>(`/tenant/${tenantId}/shift/add`, shift).then(newShift => {
-      dispatch(actions.addShift(newShift))
+    return client.post<KindaShiftView>(`/tenant/${tenantId}/shift/add`, shiftAdapter(shift)).then(newShift => {
+      dispatch(actions.addShift(kindaShiftViewAdapter(newShift)))
+      dispatch(refreshShiftRoster());
     });
   };
 
@@ -41,6 +81,7 @@ export const removeShift: ThunkCommandFactory<Shift, RemoveShiftAction> = shift 
             employeeId: shift.employee? shift.employee.id as number : null,
             rotationEmployeeId: shift.rotationEmployee? shift.rotationEmployee.id as number : null
           }));
+        dispatch(refreshShiftRoster());
       }
     });
   };
@@ -48,8 +89,9 @@ export const removeShift: ThunkCommandFactory<Shift, RemoveShiftAction> = shift 
 export const updateShift: ThunkCommandFactory<Shift, UpdateShiftAction> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
-    return client.post<ShiftView>(`/tenant/${tenantId}/shift/update`, shift).then(updatedShift => {
-      dispatch(actions.updateShift(updatedShift));
+    return client.put<KindaShiftView>(`/tenant/${tenantId}/shift/update`, shiftAdapter(shift)).then(updatedShift => {
+      dispatch(actions.updateShift(kindaShiftViewAdapter(updatedShift)));
+      dispatch(refreshShiftRoster());
     });
   };
 
@@ -57,8 +99,9 @@ export const refreshShiftList: ThunkCommandFactory<void, SetShiftListLoadingActi
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
     dispatch(actions.setIsShiftListLoading(true));
-    return client.get<ShiftView[]>(`/tenant/${tenantId}/shift/`).then(shiftList => {
-      dispatch(actions.refreshShiftList(shiftList));
+    return client.get<KindaShiftView[]>(`/tenant/${tenantId}/shift/`).then(shiftList => {
+      dispatch(actions.refreshShiftList(shiftList.map(kindaShiftViewAdapter)));
       dispatch(actions.setIsShiftListLoading(false));
+      dispatch(refreshShiftRoster());
     });
   };

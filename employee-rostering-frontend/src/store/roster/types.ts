@@ -49,7 +49,6 @@ export interface SetShiftRosterIsLoadingAction extends Action<ShiftRosterViewAct
 
 export interface SetShiftRosterViewAction extends Action<ShiftRosterViewActionType.SET_SHIFT_ROSTER_VIEW> {
   readonly shiftRoster: ShiftRosterView;
-  readonly paginationData: PaginationData;
 }
 
 export interface SolveRosterAction extends Action<SolverActionType.SOLVE_ROSTER> {
@@ -69,6 +68,5 @@ export interface CurrentRosterState {
 
 export interface CurrentShiftRoster {
   readonly isLoading: boolean;
-  readonly pagination: PaginationData;
   readonly shiftRosterView: ShiftRosterView | null;
 }

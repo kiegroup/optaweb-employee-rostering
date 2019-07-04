@@ -17,157 +17,213 @@ import React from "react";
 import Shift from "domain/Shift";
 import Spot from "domain/Spot";
 import { AppState } from "store/types";
+import { shiftOperations } from "store/shift"; 
 import { rosterOperations, rosterSelectors } from "store/roster";
 import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
-import { Level, LevelItem, Button, Pagination } from "@patternfly/react-core";
-import { PaginationData } from "types";
+import { Level, LevelItem, Button, Title } from "@patternfly/react-core";
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
+import EditShiftModal from './EditShiftModal';
 import './BigCalendarSchedule.css';
+
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
+import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
+import { updateShift } from "store/shift/operations";
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 interface StateProps {
   isLoading: boolean;
-  spotList: Spot[];
+  allSpotList: Spot[];
+  shownSpotList: Spot[];
   spotIdToShiftListMap: Map<number, Shift[]>;
   startDate: Date | null;
   endDate: Date | null;
-  paginationData: PaginationData;
   totalNumOfSpots: number;
 }
   
 const mapStateToProps = (state: AppState): StateProps => ({
   isLoading: state.shiftRoster.isLoading,
-  spotList: rosterSelectors.getSpotListInShiftRoster(state),
+  allSpotList: spotSelectors.getSpotList(state),
+  shownSpotList: rosterSelectors.getSpotListInShiftRoster(state),
   spotIdToShiftListMap: rosterSelectors.getSpotListInShiftRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForSpot(state, curr)),
     new Map<number, Shift[]>()),
   startDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
   endDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
-  paginationData: state.shiftRoster.pagination,
   totalNumOfSpots: spotSelectors.getSpotList(state).length
 }); 
   
 export interface DispatchProps {
-  getShiftRoster: typeof rosterOperations.getShiftRoster;
+  addShift: typeof shiftOperations.addShift;
+  removeShift: typeof shiftOperations.removeShift;
+  updateShift: typeof shiftOperations.updateShift;
+  getShiftRosterFor: typeof rosterOperations.getShiftRosterFor;
 }
   
 const mapDispatchToProps: DispatchProps = {
-  getShiftRoster: rosterOperations.getShiftRoster
+  addShift: shiftOperations.addShift,
+  removeShift: shiftOperations.removeShift,
+  updateShift: shiftOperations.updateShift,
+  getShiftRosterFor: rosterOperations.getShiftRosterFor
 };
   
 export type Props = StateProps & DispatchProps;
+interface State {
+  isCreatingOrEditingShift: boolean;
+  selectedShift?: Shift;
+}
 
-export class ShiftRosterPage extends React.Component<Props> {
+export class ShiftRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.onDateChange = this.onDateChange.bind(this);
-    this.onSetPage = this.onSetPage.bind(this);
-    this.onPerPageSelect = this.onPerPageSelect.bind(this);
+    this.onUpdateSpotList = this.onUpdateSpotList.bind(this);
+    this.addShift = this.addShift.bind(this);
+    this.updateShift = this.updateShift.bind(this);
+    this.state = {
+      isCreatingOrEditingShift: false
+    };
   }
 
   onDateChange(startDate: Date, endDate: Date) {
-    this.props.getShiftRoster({
+    this.props.getShiftRosterFor({
       fromDate: startDate,
       toDate: endDate,
-      pagination: this.props.paginationData
+      spotList: this.props.shownSpotList
     });
   }
 
-  onSetPage(event: any, page: number) {
-    this.props.getShiftRoster({
-      fromDate: this.props.startDate as Date,
-      toDate: this.props.endDate as Date,
-      pagination: {
-        ...this.props.paginationData,
-        pageNumber: page - 1
-      }
-    });
+  onUpdateSpotList(spot: Spot|undefined) {
+    if (spot) {
+      this.props.getShiftRosterFor({
+        fromDate: this.props.startDate as Date,
+        toDate: this.props.endDate as Date,
+        spotList: [spot]
+      });
+    }
   }
 
-  onPerPageSelect(event: any, perPage: number) {
-    this.props.getShiftRoster({
-      fromDate: this.props.startDate as Date,
-      toDate: this.props.endDate as Date,
-      pagination: {
-        ...this.props.paginationData,
-        itemsPerPage: perPage
-      }
-    });
+  addShift(addedShift: Shift) {
+    this.props.addShift(addedShift);
+  }
+
+  updateShift(updatedShift: Shift) {
+    this.props.updateShift(updatedShift);
   }
 
   render() {
-    if (this.props.isLoading || this.props.spotList.length === 0) {
+    if (this.props.isLoading || this.props.shownSpotList.length <= 0) {
       return <div />;
     }
 
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
-    const shifts = Array.from(this.props.spotIdToShiftListMap.values())
-      .reduce((prev, curr) => prev.concat(curr));
     const localizer = momentLocalizer(moment);
+    const spot = this.props.shownSpotList[0];
 
     return (
       <>
         <Level
           gutter="sm"
           style={{
+            height: "60px",
             padding: "5px 5px 5px 5px",
             backgroundColor: "var(--pf-global--BackgroundColor--100)"
           }}
         >
-          <LevelItem>
+          <LevelItem style={{display: "flex"}}>
             <WeekPicker
               value={this.props.startDate as Date}
               onChange={this.onDateChange}
+            />
+            <TypeaheadSelectInput
+              emptyText="Select Spots"
+              optionToStringMap={spot => spot.name}
+              options={this.props.allSpotList}
+              defaultValue={this.props.shownSpotList[0]}
+              onChange={this.onUpdateSpotList}
             />
           </LevelItem>
           <LevelItem style={{display: "flex"}}>
             <Button>Publish</Button>
             <Button>Schedule</Button>
             <Button>Refresh</Button>
-            <Pagination
-              itemCount={this.props.totalNumOfSpots}
-              page={this.props.paginationData.pageNumber + 1}
-              perPage={this.props.paginationData.itemsPerPage}
-              onSetPage={this.onSetPage}
-              onPerPageSelect={this.onPerPageSelect}
-            />
             <Button>Create Shift</Button>
           </LevelItem>
         </Level>
         <div style={{
-          height: "85%"
+          height: "calc(100% - 60px)"
         }}
         >
-          <DragAndDropCalendar
-            date={startDate}
-            length={moment.duration(moment(startDate).to(moment(endDate))).asDays()}
-            localizer={localizer}
-            events={shifts.map(shift => ({
-              ...shift,
-              start: shift.startDateTime,
-              end: shift.endDateTime
-            }))}
-            titleAccessor={shift => shift.employee? shift.employee.name : "Unassigned"}
-            allDayAccessor={shift => false}
-            resources={this.props.spotList}
-            resourceIdAccessor="id"
-            resourceTitleAccessor="name"
-            resourceAccessor={shift => shift.spot.id}
-            startAccessor={shift => moment(shift.startDateTime).toDate()}
-            endAccessor={shift => moment(shift.endDateTime).toDate()}
-            toolbar={false}
-            view="week"
-            views={["week"]}
-            selectable
-            showMultiDayTimes
+          <EditShiftModal
+            isOpen={this.state.isCreatingOrEditingShift}
+            shift={this.state.selectedShift}
+            onSave={this.updateShift}
+            onClose={() => this.setState({ isCreatingOrEditingShift: false })}
           />
+          <Title size="md">{spot.name}</Title>
+          <div style={{
+            height: "calc(100% - 20px)"
+          }}
+          >
+            <DragAndDropCalendar
+              key={spot.id}
+              date={startDate}
+              length={moment.duration(moment(startDate).to(moment(endDate))).asDays()}
+              localizer={localizer}
+              events={(this.props.spotIdToShiftListMap.get(spot.id as number) as Shift[]) as any[]}
+              titleAccessor={shift => shift.employee? shift.employee.name : "Unassigned"}
+              allDayAccessor={shift => false}
+              startAccessor={shift => moment(shift.startDateTime).toDate()}
+              endAccessor={shift => moment(shift.endDateTime).toDate()}
+              toolbar={false}
+              view="week"
+              views={["week"]}
+              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date; action: "select"|"click"|"doubleClick" }) => {
+                if (slotInfo.action === "select") {
+                  this.addShift({
+                    tenantId: spot.tenantId,
+                    startDateTime: moment(slotInfo.start).toDate(),
+                    endDateTime: moment(slotInfo.end).toDate(),
+                    spot: spot,
+                    employee: null,
+                    rotationEmployee: null,
+                    pinnedByUser: false
+                  });
+                }
+              }
+              }
+              onEventDrop={(args: {event: Shift; start: string|Date; end: string|Date}) =>
+                this.updateShift({...args.event,
+                  startDateTime: moment(args.start).toDate(),
+                  endDateTime: moment(args.end).toDate()
+                })
+              }
+              onEventResize={(args: {event: Shift; start: string|Date; end: string|Date}) =>
+                this.updateShift({...args.event,
+                  startDateTime: moment(args.start).toDate(),
+                  endDateTime: moment(args.end).toDate()
+                })
+              }
+              onView={() => {}}
+              onNavigate={() => {}} 
+              onSelectEvent={shift => {
+                this.setState({
+                  selectedShift: shift,
+                  isCreatingOrEditingShift: true
+                })
+              }}
+              timeslots={4}
+              selectable
+              resizable
+              showMultiDayTimes
+            />
+          </div>
         </div>
       </>
     );
