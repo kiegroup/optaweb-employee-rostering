@@ -19,7 +19,6 @@ package org.optaweb.employeerostering.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
@@ -75,16 +74,6 @@ public class SkillService extends AbstractRestService {
         //If name is null
         if (name == null) {
             throw new IllegalStateException("Skill entity name with tenantId (" + tenantId + ") cannot be null.");
-        }
-
-        List<Skill> skillList = skillRepository.findAllByTenantId(tenantId);
-
-        for (Skill s : skillList) {
-            //If skill already exists
-            if (s.getName().equals(name)) {
-                throw new EntityExistsException("Skill entity with tenantId (" + tenantId + ") and name (" + name
-                        + ") already exists.");
-            }
         }
 
         return skillRepository.save(skill);
