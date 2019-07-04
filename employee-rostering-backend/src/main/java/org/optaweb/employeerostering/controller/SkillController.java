@@ -29,9 +29,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/tenant/{tenantId}/skill")
 public class SkillController {
 
     private final SkillService skillService;
@@ -41,27 +43,27 @@ public class SkillController {
         Assert.notNull(skillService, "skillService must not be null.");
     }
 
-    @GetMapping("/tenant/{tenantId}/skill")
+    @GetMapping
     public ResponseEntity<List> getSkillList(@PathVariable Integer tenantId) {
         return new ResponseEntity<List>(skillService.getSkillList(tenantId), HttpStatus.OK);
     }
 
-    @GetMapping("/tenant/{tenantId}/skill/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Skill> getSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
         return new ResponseEntity<Skill>(skillService.getSkill(tenantId, id), HttpStatus.OK);
     }
 
-    @DeleteMapping("/tenant/{tenantId}/skill/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
         return new ResponseEntity<Boolean>(skillService.deleteSkill(tenantId, id), HttpStatus.OK);
     }
 
-    @PostMapping("/tenant/{tenantId}/skill/add")
+    @PostMapping("/add")
     public ResponseEntity<Skill> createSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
         return new ResponseEntity<Skill>(skillService.createSkill(tenantId, skill), HttpStatus.OK);
     }
 
-    @PutMapping("/tenant/{tenantId}/skill/update")
+    @PutMapping("/update")
     public ResponseEntity<Skill> updateSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
         return new ResponseEntity<Skill>(skillService.updateSkill(tenantId, skill), HttpStatus.OK);
     }
