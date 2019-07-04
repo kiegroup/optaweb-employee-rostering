@@ -85,21 +85,15 @@ public class SkillService extends AbstractRestService {
 
         Optional<Skill> skillOptional = skillRepository.findById(skill.getId());
 
-        //If name is null
         if (skill.getName() == null) {
             throw new IllegalStateException("Skill entity name with tenantId (" + tenantId + ") cannot be null.");
-        }
-        //Skill not found
-        else if (!skillOptional.isPresent()) {
+        } else if (!skillOptional.isPresent()) {
             throw new EntityNotFoundException("Skill entity with ID (" + skill.getId() + ") not found.");
-        }
-        //Skill changes tenantId
-        else if (!skillOptional.get().getTenantId().equals(skill.getTenantId())) {
+        } else if (!skillOptional.get().getTenantId().equals(skill.getTenantId())) {
             throw new IllegalStateException("Skill entity with tenantId (" + skillOptional.get().getTenantId()
                     + ") cannot change tenants.");
         }
 
-        skillRepository.deleteById(skill.getId());
         return skillRepository.save(skill);
     }
 }
