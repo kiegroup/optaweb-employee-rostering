@@ -69,13 +69,6 @@ public class SkillService extends AbstractRestService {
     public Skill createSkill(Integer tenantId, Skill skill) {
         validateTenantIdParameter(tenantId, skill);
 
-        String name = skill.getName();
-
-        //If name is null
-        if (name == null) {
-            throw new IllegalStateException("Skill entity name with tenantId (" + tenantId + ") cannot be null.");
-        }
-
         return skillRepository.save(skill);
     }
 
@@ -85,9 +78,7 @@ public class SkillService extends AbstractRestService {
 
         Optional<Skill> skillOptional = skillRepository.findById(skill.getId());
 
-        if (skill.getName() == null) {
-            throw new IllegalStateException("Skill entity name with tenantId (" + tenantId + ") cannot be null.");
-        } else if (!skillOptional.isPresent()) {
+        if (!skillOptional.isPresent()) {
             throw new EntityNotFoundException("Skill entity with ID (" + skill.getId() + ") not found.");
         } else if (!skillOptional.get().getTenantId().equals(skill.getTenantId())) {
             throw new IllegalStateException("Skill entity with tenantId (" + skillOptional.get().getTenantId()
