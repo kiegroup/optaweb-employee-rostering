@@ -98,7 +98,6 @@ TypeaheadSelectState<T>
           ariaLabelledBy={titleId}
           placeholderText={emptyText}
         >
-          <SelectOption isDisabled={false} key={-1} value="" />
           {this.props.options.map((option, index) => (
             <SelectOption
               isDisabled={false}
