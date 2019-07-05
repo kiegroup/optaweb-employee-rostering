@@ -16,7 +16,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Button, InputGroup, Label, Form, Modal } from '@patternfly/react-core';
+import { Button, Switch, InputGroup, Label, Form, Modal } from '@patternfly/react-core';
 import DatePicker from 'react-datepicker';
 
 import Shift from 'domain/Shift';
@@ -137,7 +137,7 @@ class EditShiftModal extends React.Component<Props, State> {
               options={this.props.employeeList}
               optionToStringMap={employee => employee? employee.name : "Unassigned"}
               onChange={employee => this.setState(prevState => ({
-                editedValue: { ...prevState.editedValue, employee: employee? employee : null }
+                editedValue: { ...prevState.editedValue, employee: (employee !== undefined)? employee : null }
               }))}
             />
           </InputGroup>
@@ -145,11 +145,21 @@ class EditShiftModal extends React.Component<Props, State> {
             <Label>Rotation Employee</Label>
             <TypeaheadSelectInput
               emptyText="None"
-              defaultValue={this.props.shift? this.props.shift.employee : undefined}
+              defaultValue={this.props.shift? this.props.shift.rotationEmployee : undefined}
               options={this.props.employeeList}
               optionToStringMap={employee => employee? employee.name : "None"}
               onChange={employee => this.setState(prevState => ({
-                editedValue: { ...prevState.editedValue, rotationEmployee: employee? employee : null }
+                editedValue: { ...prevState.editedValue, rotationEmployee: (employee !== undefined)? employee : null }
+              }))}
+            />
+          </InputGroup>
+          <InputGroup>
+            <Label>Is Pinned</Label>
+            <Switch
+              aria-label="Is Pinned"
+              isChecked={this.state.editedValue.pinnedByUser}
+              onChange={isPinned => this.setState(prevState => ({
+                editedValue: { ...prevState.editedValue, pinnedByUser: isPinned }
               }))}
             />
           </InputGroup>
