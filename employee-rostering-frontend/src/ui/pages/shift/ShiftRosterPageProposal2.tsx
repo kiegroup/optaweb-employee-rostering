@@ -163,7 +163,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           <EditShiftModal
             isOpen={this.state.isCreatingOrEditingShift}
             shift={this.state.selectedShift}
-            onSave={this.updateShift}
+            onSave={shift => {
+              this.updateShift(shift);
+              this.setState({ isCreatingOrEditingShift: false });
+            }}
             onClose={() => this.setState({ isCreatingOrEditingShift: false })}
           />
           <Title size="md">{spot.name}</Title>

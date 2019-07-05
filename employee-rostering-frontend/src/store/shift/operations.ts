@@ -74,13 +74,7 @@ export const removeShift: ThunkCommandFactory<Shift, RemoveShiftAction> = shift 
     const shiftId = shift.id;
     return client.delete<boolean>(`/tenant/${tenantId}/shift/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
-        dispatch(actions.removeShift(
-          {
-            ...shift,
-            spotId: shift.spot.id as number,
-            employeeId: shift.employee? shift.employee.id as number : null,
-            rotationEmployeeId: shift.rotationEmployee? shift.rotationEmployee.id as number : null
-          }));
+        dispatch(actions.removeShift(shiftToShiftView(shift)));
         dispatch(refreshShiftRoster());
       }
     });

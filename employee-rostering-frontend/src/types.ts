@@ -24,6 +24,15 @@ export type ObjectNumberMap<T> = {
     [index: number]: T;
 }
 
+export interface ServerSideExceptionInfo {
+  i18nKey: string;
+  exceptionMessage: string;
+  messageParameters: string[];
+  exceptionClass: string;
+  stackTrace: string[];
+  exceptionCause: ServerSideExceptionInfo|null;
+}
+
 export function mapObjectNumberMap<F,T>(map: ObjectNumberMap<F>, mapper: (value: F) => T): ObjectNumberMap<T> {
     const out:  ObjectNumberMap<T> = {}
     Object.keys(map).forEach(key => out[parseInt(key)] = mapper(map[parseInt(key)]));

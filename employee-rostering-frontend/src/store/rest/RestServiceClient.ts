@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosResponse } from 'axios';
+
+import { showServerError, showServerErrorMessage } from 'ui/Alerts';
+import { ServerSideExceptionInfo } from 'types';
 
 export default class RestServiceClient {
 
@@ -22,25 +25,41 @@ export default class RestServiceClient {
 
   constructor(baseURL: string) {
     this.restClient = axios.create({
-      baseURL: baseURL
+      baseURL: baseURL,
+      validateStatus: () => true
     });
+    this.handleResponse = this.handleResponse.bind(this);
   }
 
-  // TODO: Handle failed REST requests
-
   get<T>(url: string): Promise<T> {
-    return this.restClient.get<T>(url).then(res => res.data);
+    return this.restClient.get<T>(url).then(this.handleResponse);
   }
 
   post<T>(url: string, params: any): Promise<T> {
-    return this.restClient.post<T>(url, params).then(res => res.data);
+    return this.restClient.post<T>(url, params).then(this.handleResponse);
   }
 
   put<T>(url: string, params: any): Promise<T> {
-    return this.restClient.put<T>(url, params).then(res => res.data);
+    return this.restClient.put<T>(url, params).then(this.handleResponse);
   }
 
   delete<T>(url: string): Promise<T> {
-    return this.restClient.delete<T>(url).then(res => res.data);
+    return this.restClient.delete<T>(url)
+      .then(this.handleResponse);
+  }
+
+  handleResponse<T>(res: AxiosResponse<T>): Promise<T> {
+    if (200 <= res.status && res.status <= 300) {
+      return Promise.resolve(res.data);
+    }
+    else {
+      if (res.headers["content-type"] === "application/json") {
+        showServerError(res.data as unknown as ServerSideExceptionInfo)
+      }
+      else {
+        showServerErrorMessage(res.statusText);
+      }
+      return Promise.reject(res.status);
+    }
   }
 }

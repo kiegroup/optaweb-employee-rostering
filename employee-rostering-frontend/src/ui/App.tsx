@@ -20,6 +20,7 @@ import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import Background from './components/Background';
 import Header from './header/Header';
+import Alerts, { setAlertRef } from './Alerts';
 import { ShiftRosterPage1, ShiftRosterPage2, SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
 
 const App: React.FC = () => {
@@ -29,12 +30,14 @@ const App: React.FC = () => {
         <Background />
         <PageSection
           style={{
+            position: 'relative',
             display: 'flex',
             flexDirection: 'column',
             overflowY: 'auto',
             height: '100%',
           }}
         >
+          <Alerts setRef={setAlertRef} />
           <Switch>
             <Route
               path="/skills"
