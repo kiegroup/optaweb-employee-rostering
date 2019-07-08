@@ -31,7 +31,7 @@ import './BigCalendarSchedule.css';
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
-import { solveRoster } from "store/roster/actions";
+import { showInfoMessage } from "ui/Alerts";
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
@@ -65,6 +65,7 @@ export interface DispatchProps {
   removeShift: typeof shiftOperations.removeShift;
   updateShift: typeof shiftOperations.updateShift;
   getShiftRosterFor: typeof rosterOperations.getShiftRosterFor;
+  refreshShiftRoster: typeof rosterOperations.refreshShiftRoster;
   solveRoster: typeof rosterOperations.solveRoster;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
 }
@@ -74,6 +75,7 @@ const mapDispatchToProps: DispatchProps = {
   removeShift: shiftOperations.removeShift,
   updateShift: shiftOperations.updateShift,
   getShiftRosterFor: rosterOperations.getShiftRosterFor,
+  refreshShiftRoster: rosterOperations.refreshShiftRoster,
   solveRoster: rosterOperations.solveRoster,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly
 };
@@ -90,6 +92,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     this.onDateChange = this.onDateChange.bind(this);
     this.onUpdateSpotList = this.onUpdateSpotList.bind(this);
     this.addShift = this.addShift.bind(this);
+    this.deleteShift = this.deleteShift.bind(this);
     this.updateShift = this.updateShift.bind(this);
     this.state = {
       isCreatingOrEditingShift: false
@@ -120,6 +123,11 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
   updateShift(updatedShift: Shift) {
     this.props.updateShift(updatedShift);
+  }
+
+
+  deleteShift(deletedShift: Shift) {
+    this.props.removeShift(deletedShift);
   }
 
   render() {
@@ -172,8 +180,25 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               </Button>
             )
             }
-            <Button>Refresh</Button>
-            <Button>Create Shift</Button>
+            <Button
+              onClick={() => {
+                this.props.refreshShiftRoster();
+                showInfoMessage("Info", "The Shift Roster was refreshed.");
+              }
+              }
+            >
+              Refresh
+            </Button>
+            <Button
+              onClick={() => {
+                this.setState({
+                  selectedShift: undefined,
+                  isCreatingOrEditingShift: true
+                })
+              }}
+            >
+              Create Shift
+            </Button>
           </LevelItem>
         </Level>
         <div style={{
@@ -183,8 +208,18 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           <EditShiftModal
             isOpen={this.state.isCreatingOrEditingShift}
             shift={this.state.selectedShift}
+            onDelete={(shift) => {
+              this.deleteShift(shift);
+              this.setState({ isCreatingOrEditingShift: false });
+            }
+            }
             onSave={shift => {
-              this.updateShift(shift);
+              if (this.state.selectedShift !== undefined) {
+                this.updateShift(shift);
+              }
+              else {
+                this.addShift(shift);
+              }
               this.setState({ isCreatingOrEditingShift: false });
             }}
             onClose={() => this.setState({ isCreatingOrEditingShift: false })}
