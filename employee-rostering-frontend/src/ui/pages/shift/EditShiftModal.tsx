@@ -64,7 +64,12 @@ class EditShiftModal extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    if (this.props.shift !== undefined && this.props.shift.id !== prevState.editedValue.id) {
+    if (this.props.shift === undefined && prevState.editedValue.id !== undefined) {
+      // eslint-disable-next-line react/no-did-update-set-state
+      this.setState({ editedValue: {} });
+    }
+    else if (this.props.shift !== undefined &&
+      (this.props.shift.id !== prevState.editedValue.id || this.props.shift.version !== prevState.editedValue.version)) {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({ editedValue: this.props.shift });
     }

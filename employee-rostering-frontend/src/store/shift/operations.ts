@@ -23,6 +23,7 @@ import moment from 'moment';
 import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import DomainObject from 'domain/DomainObject';
+import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
 import { refreshShiftRoster } from 'store/roster/operations';
 
 interface KindaShift extends DomainObject {
@@ -63,6 +64,7 @@ export const addShift: ThunkCommandFactory<Shift, AddShiftAction> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     return client.post<KindaShiftView>(`/tenant/${tenantId}/shift/add`, shiftAdapter(shift)).then(newShift => {
+      showSuccessMessage("Successfully added Shift", `A new Shift starting at ${moment(shift.startDateTime).format("LLL")} and ending at ${moment(shift.endDateTime).format("LLL")} was successfully added.`)
       dispatch(actions.addShift(kindaShiftViewAdapter(newShift)))
       dispatch(refreshShiftRoster());
     });
@@ -74,8 +76,12 @@ export const removeShift: ThunkCommandFactory<Shift, RemoveShiftAction> = shift 
     const shiftId = shift.id;
     return client.delete<boolean>(`/tenant/${tenantId}/shift/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
+        showSuccessMessage("Successfully deleted Shift", `The Shift with id ${shift.id} starting at ${moment(shift.startDateTime).format("LLL")} and ending at ${moment(shift.endDateTime).format("LLL")} was successfully deleted.`)
         dispatch(actions.removeShift(shiftToShiftView(shift)));
         dispatch(refreshShiftRoster());
+      }
+      else {
+        showErrorMessage("Error deleting Shift", `The Shift with id ${shift.id} starting at ${moment(shift.startDateTime).format("LLL")} and ending at ${moment(shift.endDateTime).format("LLL")} could not be deleted.`);
       }
     });
   };
@@ -84,6 +90,7 @@ export const updateShift: ThunkCommandFactory<Shift, UpdateShiftAction> = shift 
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     return client.put<KindaShiftView>(`/tenant/${tenantId}/shift/update`, shiftAdapter(shift)).then(updatedShift => {
+      showSuccessMessage("Successfully updated Shift", `The Shift with id "${shift.id}" was successfully updated.`);
       dispatch(actions.updateShift(kindaShiftViewAdapter(updatedShift)));
       dispatch(refreshShiftRoster());
     });

@@ -16,6 +16,7 @@
 
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
+import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
 import Contract from 'domain/Contract';
 import { SetContractListLoadingAction, AddContractAction, RemoveContractAction, UpdateContractAction, RefreshContractListAction } from './types';
 
@@ -23,6 +24,7 @@ export const addContract: ThunkCommandFactory<Contract, AddContractAction> = con
   (dispatch, state, client) => {
     const tenantId = contract.tenantId;
     return client.post<Contract>(`/tenant/${tenantId}/contract/add`, contract).then(newContract => {
+      showSuccessMessage("Successfully added Contract", `The Contract "${newContract.name}" was successfully added.`)
       dispatch(actions.addContract(newContract))
     });
   };
@@ -33,9 +35,12 @@ export const removeContract: ThunkCommandFactory<Contract, RemoveContractAction>
     const contractId = contract.id;
     return client.delete<boolean>(`/tenant/${tenantId}/contract/${contractId}`).then(isSuccess => {
       if (isSuccess) {
+        showSuccessMessage("Successfully deleted Contract", `The Contract "${contract.name}" was successfully deleted.`)
         dispatch(actions.removeContract(contract));
       }
-      // TODO: Handle unsuccessful deletion
+      else {
+        showErrorMessage("Error deleting Contract", `The Contract "${contract.name}" could not be deleted.`);
+      }
     });
   };
 
@@ -43,6 +48,7 @@ export const updateContract: ThunkCommandFactory<Contract, UpdateContractAction>
   (dispatch, state, client) => {
     const tenantId = contract.tenantId;
     return client.post<Contract>(`/tenant/${tenantId}/contract/update`, contract).then(updatedContract => {
+      showSuccessMessage("Successfully updated Contract", `The Contract with id "${contract.id}" was successfully updated.`);
       dispatch(actions.updateContract(updatedContract));
     });
   };
