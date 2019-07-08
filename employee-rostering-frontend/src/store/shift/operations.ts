@@ -20,33 +20,27 @@ import Shift from 'domain/Shift';
 import ShiftView, { shiftToShiftView } from 'domain/ShiftView';
 import { SetShiftListLoadingAction, AddShiftAction, RemoveShiftAction, UpdateShiftAction, RefreshShiftListAction } from './types';
 import moment from 'moment';
-import Spot from 'domain/Spot';
-import Employee from 'domain/Employee';
 import DomainObject from 'domain/DomainObject';
 import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
 import { refreshShiftRoster } from 'store/roster/operations';
+import HardMediumSoftScore, { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 
-interface KindaShift extends DomainObject {
-  startDateTime: string;
-  endDateTime: string;
-  spot: Spot;
-  rotationEmployee: Employee | null;
-  employee: Employee | null;
-  pinnedByUser: boolean;
-}
-
-interface KindaShiftView extends DomainObject {
+export interface KindaShiftView extends DomainObject {
   startDateTime: string;
   endDateTime: string;
   spotId: number;
   rotationEmployeeId: number | null;
   employeeId: number | null;
   pinnedByUser: boolean;
+  indictmentScore?: string;
 }
 
 function shiftAdapter(shift: Shift): KindaShiftView {
+  const shiftClone = { ...shift };
+  delete shiftClone.indictmentScore;
+
   return {
-    ...shiftToShiftView(shift),
+    ...shiftToShiftView(shiftClone) as any,
     startDateTime: moment(shift.startDateTime).local().format("YYYY-MM-DDTHH:mm:ss"),
     endDateTime: moment(shift.endDateTime).local().format("YYYY-MM-DDTHH:mm:ss")
   };
@@ -56,7 +50,8 @@ function kindaShiftViewAdapter(kindaShiftView: KindaShiftView): ShiftView {
   return {
     ...kindaShiftView,
     startDateTime: moment(kindaShiftView.startDateTime).toDate(),
-    endDateTime: moment(kindaShiftView.endDateTime).toDate()
+    endDateTime: moment(kindaShiftView.endDateTime).toDate(),
+    indictmentScore: getHardMediumSoftScoreFromString(kindaShiftView.indictmentScore as string)
   };
 }
 
