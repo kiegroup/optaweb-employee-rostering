@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-import { ThunkCommandFactory } from '../types';
+import { ThunkCommandFactory, AppState } from '../types';
 import * as actions from './actions';
 import { SetRosterStateIsLoadingAction, SetRosterStateAction,
-  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateRosterEarlyAction } from './types';
+  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction } from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
 import { PaginationData, ObjectNumberMap, mapObjectNumberMap } from 'types';
 import moment from 'moment';
 import ShiftView from 'domain/ShiftView';
 import Spot from 'domain/Spot';
+import { showInfoMessage } from 'ui/Alerts';
+import { ThunkDispatch } from 'redux-thunk';
+import RestServiceClient from 'store/rest';
 
 export type RosterSliceInfo = {
   fromDate: Date;
@@ -41,6 +44,50 @@ interface KindaShiftRosterView extends Omit<ShiftRosterView, "spotIdToShiftViewL
 
 let lastCalledShiftRosterArgs: any | null;
 let lastCalledShiftRoster: ThunkCommandFactory<any, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> | null = null;
+
+let stopSolvingRosterTimeout: NodeJS.Timeout|null = null;
+let autoRefreshShiftRosterDuringSolvingIntervalTimeout: NodeJS.Timeout|null = null;
+
+function stopSolvingRoster(dispatch: ThunkDispatch<AppState, RestServiceClient, TerminateSolvingRosterEarlyAction>) {
+  if (stopSolvingRosterTimeout !== null) {
+    clearTimeout(stopSolvingRosterTimeout);
+    stopSolvingRosterTimeout = null;
+  }
+  if (autoRefreshShiftRosterDuringSolvingIntervalTimeout !== null) {
+    clearInterval(autoRefreshShiftRosterDuringSolvingIntervalTimeout);
+    autoRefreshShiftRosterDuringSolvingIntervalTimeout = null;
+  }
+  dispatch(actions.terminateSolvingRosterEarly());
+  Promise.all([
+    dispatch(refreshShiftRoster())
+  ]).then(() => {
+    showInfoMessage("Finished Solving Roster", `Finished Solving Roster at ${moment(new Date()).format("LLL")}`);
+  });
+}
+
+export const solveRoster: ThunkCommandFactory<void, SolveRosterAction> = () => 
+  (dispatch, state, client) => {
+    const tenantId = state().tenantData.currentTenantId;
+    return client.post(`/tenant/${tenantId}/roster/solve`, {}).then(() => {
+      let solvingStartTime: number = new Date().getTime();
+      const updateInterval = 1000;
+      const solvingLength = 30 * 1000;
+      dispatch(actions.solveRoster());
+      showInfoMessage("Started Solving Roster", `Started Solving Roster at ${moment(solvingStartTime).format("LLL")}.`);
+      autoRefreshShiftRosterDuringSolvingIntervalTimeout = setInterval(() => {
+        dispatch(refreshShiftRoster());
+      },updateInterval);
+      stopSolvingRosterTimeout = setTimeout(() => stopSolvingRoster(dispatch), solvingLength);
+    });
+  }
+
+
+export const terminateSolvingRosterEarly: ThunkCommandFactory<void, TerminateSolvingRosterEarlyAction> = () => 
+  (dispatch, state, client) => {
+    const tenantId = state().tenantData.currentTenantId;
+    return client.post(`/tenant/${tenantId}/roster/terminate`, {}).then(() => stopSolvingRoster(dispatch));
+  }
+
 
 export const refreshShiftRoster: ThunkCommandFactory<void, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = () =>
   (dispatch, state, client) => {

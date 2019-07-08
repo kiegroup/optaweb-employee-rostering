@@ -16,7 +16,7 @@
 
 import { ActionFactory } from '../types';
 import { RosterStateActionType, ShiftRosterViewActionType, SolverActionType, SetRosterStateIsLoadingAction, SetRosterStateAction,
-  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateRosterEarlyAction }
+  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction }
   from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
@@ -46,6 +46,6 @@ export const solveRoster: ActionFactory<void, SolveRosterAction> = () => ({
   type: SolverActionType.SOLVE_ROSTER
 });
 
-export const terminateRosterEarly: ActionFactory<void, TerminateRosterEarlyAction> = () => ({
-  type: SolverActionType.TERMINATE_ROSTER_EARLY
+export const terminateSolvingRosterEarly: ActionFactory<void, TerminateSolvingRosterEarlyAction> = () => ({
+  type: SolverActionType.TERMINATE_SOLVING_ROSTER_EARLY
 });
