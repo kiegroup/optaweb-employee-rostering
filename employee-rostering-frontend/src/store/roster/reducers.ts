@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-import { RosterStateActionType, ShiftRosterViewActionType, RosterStateAction, ShiftRosterViewAction, CurrentRosterState, CurrentShiftRoster } from './types';
+import { RosterStateActionType, SolverAction, ShiftRosterViewActionType, RosterStateAction, ShiftRosterViewAction, CurrentSolverState, CurrentRosterState, CurrentShiftRoster, SolverActionType } from './types';
+
+export const initalSolverState: CurrentSolverState = {
+  isSolving: false
+}
 
 export const initialRosterState: CurrentRosterState = {
   isLoading: true,
@@ -46,6 +50,19 @@ export const shiftRosterViewReducer = (state = initialShiftRosterState, action: 
     }
     case ShiftRosterViewActionType.SET_SHIFT_ROSTER_VIEW: {
       return { ...state, shiftRosterView: action.shiftRoster };
+    }
+    default:
+      return state;
+  }
+}
+
+export const solverReducer = (state = initalSolverState, action: SolverAction): CurrentSolverState => {
+  switch (action.type) {
+    case SolverActionType.SOLVE_ROSTER: {
+      return { ...state, isSolving: true };
+    }
+    case SolverActionType.TERMINATE_SOLVING_ROSTER_EARLY: {
+      return { ...state, isSolving: false };
     }
     default:
       return state;
