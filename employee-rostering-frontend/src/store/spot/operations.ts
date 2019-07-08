@@ -16,6 +16,7 @@
 
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
+import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
 import Spot from 'domain/Spot';
 import { SetSpotListLoadingAction, AddSpotAction, RemoveSpotAction, UpdateSpotAction, RefreshSpotListAction } from './types';
 
@@ -23,6 +24,7 @@ export const addSpot: ThunkCommandFactory<Spot, AddSpotAction> = spot =>
   (dispatch, state, client) => {
     const tenantId = spot.tenantId;
     return client.post<Spot>(`/tenant/${tenantId}/spot/add`, spot).then(newSpot => {
+      showSuccessMessage("Successfully added Spot", `The Spot "${newSpot.name}" was successfully added.`)
       dispatch(actions.addSpot(newSpot))
     });
   };
@@ -33,9 +35,12 @@ export const removeSpot: ThunkCommandFactory<Spot, RemoveSpotAction> = spot =>
     const spotId = spot.id;
     return client.delete<boolean>(`/tenant/${tenantId}/spot/${spotId}`).then(isSuccess => {
       if (isSuccess) {
+        showSuccessMessage("Successfully deleted Spot", `The Spot "${spot.name}" was successfully deleted.`)
         dispatch(actions.removeSpot(spot));
       }
-      // TODO: Handle unsuccessful deletion
+      else {
+        showErrorMessage("Error deleting Spot", `The Spot "${spot.name}" could not be deleted.`);
+      }
     });
   };
 
@@ -43,6 +48,7 @@ export const updateSpot: ThunkCommandFactory<Spot, UpdateSpotAction> = spot =>
   (dispatch, state, client) => {
     const tenantId = spot.tenantId;
     return client.post<Spot>(`/tenant/${tenantId}/spot/update`, spot).then(updatedSpot => {
+      showSuccessMessage("Successfully updated Spot", `The Spot with id "${spot.id}" was successfully updated.`);
       dispatch(actions.updateSpot(updatedSpot));
     });
   };
