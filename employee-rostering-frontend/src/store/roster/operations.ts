@@ -26,17 +26,14 @@ import ShiftView from 'domain/ShiftView';
 import Spot from 'domain/Spot';
 import { showInfoMessage } from 'ui/Alerts';
 import { ThunkDispatch } from 'redux-thunk';
+import { KindaShiftView } from 'store/shift/operations';
 import RestServiceClient from 'store/rest';
+import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 
 export type RosterSliceInfo = {
   fromDate: Date;
   toDate: Date;
 };
-
-interface KindaShiftView extends Omit<Omit<ShiftView, "startDateTime">, "endDateTime"> {
-  startDateTime: string,
-  endDateTime: string 
-}
 
 interface KindaShiftRosterView extends Omit<ShiftRosterView, "spotIdToShiftViewListMap"> {
   spotIdToShiftViewListMap: ObjectNumberMap<KindaShiftView[]>;
@@ -113,7 +110,8 @@ function convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView: KindaS
       shiftViewList.map(shiftView => ({
       ...shiftView,
       startDateTime: new Date(shiftView.startDateTime),
-      endDateTime: new Date(shiftView.endDateTime)
+      endDateTime: new Date(shiftView.endDateTime),
+      indictmentScore: getHardMediumSoftScoreFromString(shiftView.indictmentScore as string)
     })))
   };
 }
