@@ -15,33 +15,44 @@
  */
 
 import Tenant from 'domain/Tenant';
-import { ThunkCommandFactory } from '../types';
+import { ThunkCommandFactory, AppState } from '../types';
 import * as actions from './actions';
 import { ChangeTenantAction, RefreshTenantListAction } from './types';
 import {skillOperations} from 'store/skill';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import { rosterOperations } from 'store/roster';
-import { spotOperations } from 'store/spot';
+import { spotOperations, spotSelectors } from 'store/spot';
 import { contractOperations } from 'store/contract';
 import { employeeOperations } from 'store/employee';
+import moment from 'moment';
 
-function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>): Promise<any> {
+function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>, state: () => AppState): Promise<any> {
   return Promise.all([
     dispatch(skillOperations.refreshSkillList()),
-    dispatch(rosterOperations.getCurrentShiftRoster({ pageNumber: 0, itemsPerPage: 10 })),
     dispatch(rosterOperations.getRosterState()),
     dispatch(spotOperations.refreshSpotList()),
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList())
   ]
-  );
+  ).then(() => {
+    const startDate = moment(new Date()).startOf('week').toDate();
+    const endDate = moment(new Date()).endOf('week').toDate();
+    const spotList = spotSelectors.getSpotList(state());
+    const shownSpots = (spotList.length > 0)? [spotList[0]] : [];
+
+    dispatch(rosterOperations.getShiftRosterFor({
+      fromDate: startDate,
+      toDate: endDate,
+      spotList: shownSpots
+    }));
+  });
 }
 
 export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId =>
   (dispatch, state, client) => {
     dispatch(actions.changeTenant(tenantId));
-    return refreshData(dispatch);
+    return refreshData(dispatch, state);
   };
 
 export const refreshTenantList: ThunkCommandFactory<void, RefreshTenantListAction> = () =>
@@ -58,7 +69,7 @@ export const refreshTenantList: ThunkCommandFactory<void, RefreshTenantListActio
       // TODO: this case occurs iff there are no tenants; need a special screen for that
         dispatch(actions.refreshTenantList({tenantList: tenantList, currentTenantId: 0}))
       }
-      refreshData(dispatch);
+      refreshData(dispatch, state);
     });
   };
 
