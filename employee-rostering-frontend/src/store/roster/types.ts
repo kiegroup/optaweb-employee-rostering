@@ -31,7 +31,7 @@ export enum ShiftRosterViewActionType {
 
 export enum SolverActionType {
   SOLVE_ROSTER = 'SOLVE_ROSTER',
-  TERMINATE_ROSTER_EARLY = 'TERMINATE_ROSTER_EARLY'
+  TERMINATE_SOLVING_ROSTER_EARLY = 'TERMINATE_SOLVING_ROSTER_EARLY'
 }
 
 export interface SetRosterStateIsLoadingAction extends Action<RosterStateActionType.SET_ROSTER_STATE_IS_LOADING> {
@@ -54,12 +54,12 @@ export interface SetShiftRosterViewAction extends Action<ShiftRosterViewActionTy
 export interface SolveRosterAction extends Action<SolverActionType.SOLVE_ROSTER> {
 }
 
-export interface TerminateRosterEarlyAction extends Action<SolverActionType.TERMINATE_ROSTER_EARLY> {
+export interface TerminateSolvingRosterEarlyAction extends Action<SolverActionType.TERMINATE_SOLVING_ROSTER_EARLY> {
 }
 
 export type RosterStateAction = SetRosterStateIsLoadingAction | SetRosterStateAction;
 export type ShiftRosterViewAction = SetShiftRosterIsLoadingAction | SetShiftRosterViewAction;
-export type SolverAction = SolveRosterAction | TerminateRosterEarlyAction;
+export type SolverAction = SolveRosterAction | TerminateSolvingRosterEarlyAction;
 
 export interface CurrentRosterState {
   readonly isLoading: boolean;
@@ -69,4 +69,8 @@ export interface CurrentRosterState {
 export interface CurrentShiftRoster {
   readonly isLoading: boolean;
   readonly shiftRosterView: ShiftRosterView | null;
+}
+
+export interface CurrentSolverState {
+  readonly isSolving: boolean;
 }

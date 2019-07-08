@@ -31,11 +31,12 @@ import './BigCalendarSchedule.css';
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
-import { updateShift } from "store/shift/operations";
+import { solveRoster } from "store/roster/actions";
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 interface StateProps {
+  isSolving: boolean;
   isLoading: boolean;
   allSpotList: Spot[];
   shownSpotList: Spot[];
@@ -46,6 +47,7 @@ interface StateProps {
 }
   
 const mapStateToProps = (state: AppState): StateProps => ({
+  isSolving: state.solverState.isSolving,
   isLoading: state.shiftRoster.isLoading,
   allSpotList: spotSelectors.getSpotList(state),
   shownSpotList: rosterSelectors.getSpotListInShiftRoster(state),
@@ -63,13 +65,17 @@ export interface DispatchProps {
   removeShift: typeof shiftOperations.removeShift;
   updateShift: typeof shiftOperations.updateShift;
   getShiftRosterFor: typeof rosterOperations.getShiftRosterFor;
+  solveRoster: typeof rosterOperations.solveRoster;
+  terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
 }
   
 const mapDispatchToProps: DispatchProps = {
   addShift: shiftOperations.addShift,
   removeShift: shiftOperations.removeShift,
   updateShift: shiftOperations.updateShift,
-  getShiftRosterFor: rosterOperations.getShiftRosterFor
+  getShiftRosterFor: rosterOperations.getShiftRosterFor,
+  solveRoster: rosterOperations.solveRoster,
+  terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly
 };
   
 export type Props = StateProps & DispatchProps;
@@ -151,7 +157,21 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           </LevelItem>
           <LevelItem style={{display: "flex"}}>
             <Button>Publish</Button>
-            <Button>Schedule</Button>
+            {(!this.props.isSolving &&
+              (
+                <Button
+                  onClick={this.props.solveRoster}
+                >
+                  Schedule
+                </Button>
+              )) || (
+              <Button
+                onClick={this.props.terminateSolvingRosterEarly}
+              >
+                Terminate Early
+              </Button>
+            )
+            }
             <Button>Refresh</Button>
             <Button>Create Shift</Button>
           </LevelItem>
