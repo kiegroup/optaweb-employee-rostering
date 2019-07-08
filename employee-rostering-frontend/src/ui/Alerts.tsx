@@ -32,6 +32,10 @@ export function setAlertRef(newAlertRef: Alerts): void {
   alertRef = newAlertRef;
 }
 
+export function showInfoMessage(title: string, message: string) {
+  showMessage("info", title, message);
+}
+
 export function showSuccessMessage(title: string, message: string) {
   showMessage("success", title, message);
 }
