@@ -17,12 +17,14 @@
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import Skill from 'domain/Skill';
+import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
 import { SetSkillListLoadingAction, AddSkillAction, RemoveSkillAction, UpdateSkillAction, RefreshSkillListAction } from './types';
 
 export const addSkill: ThunkCommandFactory<Skill, AddSkillAction> = skill =>
   (dispatch, state, client) => {
     const tenantId = skill.tenantId;
     return client.post<Skill>(`/tenant/${tenantId}/skill/add`, skill).then(newSkill => {
+      showSuccessMessage("Successfully added Skill", `The Skill "${newSkill.name}" was successfully added.`);
       dispatch(actions.addSkill(newSkill))
     });
   };
@@ -33,9 +35,12 @@ export const removeSkill: ThunkCommandFactory<Skill, RemoveSkillAction> = skill 
     const skillId = skill.id;
     return client.delete<boolean>(`/tenant/${tenantId}/skill/${skillId}`).then(isSuccess => {
       if (isSuccess) {
+        showSuccessMessage("Successfully deleted Skill", `The Skill "${skill.name}" was successfully deleted.`);
         dispatch(actions.removeSkill(skill));
       }
-      // TODO: Handle unsuccessful deletion
+      else {
+        showErrorMessage("Error deleting Skill", `The Skill "${skill.name}" could not be deleted.`);
+      }
     });
   };
 
@@ -43,6 +48,7 @@ export const updateSkill: ThunkCommandFactory<Skill, UpdateSkillAction> = skill 
   (dispatch, state, client) => {
     const tenantId = skill.tenantId;
     return client.post<Skill>(`/tenant/${tenantId}/skill/update`, skill).then(updatedSkill => {
+      showSuccessMessage("Successfully updated Skill", `The Skill with id "${skill.id}" was successfully updated.`);
       dispatch(actions.updateSkill(updatedSkill));
     });
   };

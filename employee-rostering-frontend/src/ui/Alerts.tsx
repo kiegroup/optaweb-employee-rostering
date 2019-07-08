@@ -32,6 +32,10 @@ export function setAlertRef(newAlertRef: Alerts): void {
   alertRef = newAlertRef;
 }
 
+export function showSuccessMessage(title: string, message: string) {
+  showMessage("success", title, message);
+}
+
 export function showServerError(exceptionInfo: ServerSideExceptionInfo) {
   if (alertRef !== null) {
     alertRef.addAlert({
@@ -53,11 +57,19 @@ export function showServerError(exceptionInfo: ServerSideExceptionInfo) {
 }
 
 export function showServerErrorMessage(message: string) {
+  showErrorMessage("Server Error", message);
+}
+
+export function showErrorMessage(title: string, message: string) {
+  showMessage("danger", title, message);
+}
+
+export function showMessage(variant: "success" | "danger" | "warning" | "info", title: string, message: string) {
   if (alertRef !== null) {
     alertRef.addAlert({
-      title: "Server Error",
-      variant: "danger",
-      message: <Text>{message}</Text>
+      title: title,
+      variant: variant,
+      message: <span>{message}</span>
     });
   }
 }

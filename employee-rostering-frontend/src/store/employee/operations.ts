@@ -16,6 +16,7 @@
 
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
+import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
 import Employee from 'domain/Employee';
 import { SetEmployeeListLoadingAction, AddEmployeeAction, RemoveEmployeeAction, UpdateEmployeeAction, RefreshEmployeeListAction } from './types';
 
@@ -23,6 +24,7 @@ export const addEmployee: ThunkCommandFactory<Employee, AddEmployeeAction> = emp
   (dispatch, state, client) => {
     let tenantId = employee.tenantId;
     return client.post<Employee>(`/tenant/${tenantId}/employee/add`, employee).then(newEmployee => {
+      showSuccessMessage("Successfully added Employee", `The Employee "${newEmployee.name}" was successfully added.`)
       dispatch(actions.addEmployee(newEmployee))
     });
   };
@@ -33,9 +35,12 @@ export const removeEmployee: ThunkCommandFactory<Employee, RemoveEmployeeAction>
     let employeeId = employee.id;
     return client.delete<boolean>(`/tenant/${tenantId}/employee/${employeeId}`).then(isSuccess => {
       if (isSuccess) {
+        showSuccessMessage("Successfully deleted Employee", `The Employee "${employee.name}" was successfully deleted.`)
         dispatch(actions.removeEmployee(employee));
       }
-      // TODO: Handle unsuccessful deletion
+      else {
+        showErrorMessage("Error deleting Employee", `The Employee "${employee.name}" could not be deleted.`);
+      }
     });
   };
 
@@ -43,6 +48,7 @@ export const updateEmployee: ThunkCommandFactory<Employee, UpdateEmployeeAction>
   (dispatch, state, client) => {
     let tenantId = employee.tenantId;
     return client.post<Employee>(`/tenant/${tenantId}/employee/update`, employee).then(updatedEmployee => {
+      showSuccessMessage("Successfully updated Employee", `The Employee with id "${employee.id}" was successfully updated.`);
       dispatch(actions.updateEmployee(updatedEmployee));
     });
   };
