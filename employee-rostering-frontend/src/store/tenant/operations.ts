@@ -25,9 +25,11 @@ import { rosterOperations } from 'store/roster';
 import { spotOperations, spotSelectors } from 'store/spot';
 import { contractOperations } from 'store/contract';
 import { employeeOperations } from 'store/employee';
+import * as rosterActions from 'store/roster/actions';
 import moment from 'moment';
 
 function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>, state: () => AppState): Promise<any> {
+  dispatch(rosterActions.setShiftRosterIsLoading(true));
   return Promise.all([
     dispatch(skillOperations.refreshSkillList()),
     dispatch(rosterOperations.getRosterState()),
@@ -36,16 +38,19 @@ function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>, state: () => 
     dispatch(employeeOperations.refreshEmployeeList())
   ]
   ).then(() => {
-    const startDate = moment(new Date()).startOf('week').toDate();
-    const endDate = moment(new Date()).endOf('week').toDate();
-    const spotList = spotSelectors.getSpotList(state());
-    const shownSpots = (spotList.length > 0)? [spotList[0]] : [];
+    const rosterState = state().rosterState.rosterState;
+    if (rosterState !== null) {
+      const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
+      const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
+      const spotList = spotSelectors.getSpotList(state());
+      const shownSpots = (spotList.length > 0)? [spotList[0]] : [];
 
-    dispatch(rosterOperations.getShiftRosterFor({
-      fromDate: startDate,
-      toDate: endDate,
-      spotList: shownSpots
-    }));
+      dispatch(rosterOperations.getShiftRosterFor({
+        fromDate: startDate,
+        toDate: endDate,
+        spotList: shownSpots
+      }));
+    }
   });
 }
 

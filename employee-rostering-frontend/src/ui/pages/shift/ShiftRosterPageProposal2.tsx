@@ -28,10 +28,12 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import EditShiftModal from './EditShiftModal';
 import './BigCalendarSchedule.css';
+import Color from 'color';
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { showInfoMessage } from "ui/Alerts";
+import RosterState from "domain/RosterState";
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
@@ -44,6 +46,7 @@ interface StateProps {
   startDate: Date | null;
   endDate: Date | null;
   totalNumOfSpots: number;
+  rosterState: RosterState | null;
 }
   
 const mapStateToProps = (state: AppState): StateProps => ({
@@ -57,7 +60,8 @@ const mapStateToProps = (state: AppState): StateProps => ({
     new Map<number, Shift[]>()),
   startDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
   endDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
-  totalNumOfSpots: spotSelectors.getSpotList(state).length
+  totalNumOfSpots: spotSelectors.getSpotList(state).length,
+  rosterState: state.rosterState.rosterState
 }); 
   
 export interface DispatchProps {
@@ -277,6 +281,66 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 })
               }}
               timeslots={4}
+              eventPropGetter={(event: Shift, start, end, isSelected) => {
+                let style: React.CSSProperties = {};
+
+                // NOTE: React Big Calendar breaks/does not look pretty with translucent colors!
+                if (event.indictmentScore !== undefined && event.indictmentScore.hardScore < 0) {
+                  const fromColor = Color("rgb(139, 0, 0)", "rgb");
+                  const toColor = Color("rgb(245, 193, 46)", "rgb");
+                  style = {...style, backgroundColor: fromColor.mix(toColor, (20 + event.indictmentScore.hardScore) / 100).hex() };
+                }
+                else if (event.indictmentScore !== undefined && event.indictmentScore.mediumScore < 0) {
+                  style = {...style, backgroundColor: "rgb(245, 193, 46)" };
+                }
+                else if (event.indictmentScore !== undefined && event.indictmentScore.softScore < 0) {
+                  const fromColor = Color("rgb(245, 193, 46)", "rgb");
+                  const toColor = Color("rgb(209, 209, 209)", "rgb");
+                  style = {...style, backgroundColor: fromColor.mix(toColor, (20 + event.indictmentScore.softScore) / 100).hex() };
+                }
+                else if (event.indictmentScore !== undefined && event.indictmentScore.softScore > 0) {
+                  const fromColor = Color("rgb(207, 231, 205)", "rgb");
+                  const toColor = Color("rgb(63, 156, 53)", "rgb");
+                  style = {...style, backgroundColor: fromColor.mix(toColor, (20 + event.indictmentScore.softScore) / 100).hex() };
+                }
+                else {
+                  // Zero score
+                  style = {...style, backgroundColor: "rgb(207, 231, 205)" };
+                }
+                
+                if (this.props.rosterState !== null && moment(start).isBefore(this.props.rosterState.firstDraftDate)) {
+                  // Published
+                  style = {
+                    ...style,
+                    border: "1px solid",
+                    backgroundColor: Color(style.backgroundColor).lighten(0.15).hex()
+                  };
+                }
+                else {
+                  // Draft
+                  style = {
+                    ...style,
+                    border: "1px dashed"
+                  };
+                }
+                return { style: style };
+              }}
+              dayPropGetter={(date) => {
+                if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
+                  return {
+                    style: {
+                      backgroundColor: "var(--pf-global--BackgroundColor--300)"
+                    }
+                  }
+                }
+                else {
+                  return {
+                    style: {
+                      backgroundColor: "var(--pf-global--BackgroundColor--100)"
+                    }
+                  }
+                }
+              }}
               selectable
               resizable
               showMultiDayTimes

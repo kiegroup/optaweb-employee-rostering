@@ -16,6 +16,7 @@
 import DomainObject from './DomainObject';
 import DomainObjectView from './DomainObjectView';
 import Shift from './Shift';
+import HardMediumSoftScore from './HardMediumSoftScore';
 
 export const shiftToShiftView = (shift: Shift): ShiftView => ({
   id: shift.id,
@@ -26,7 +27,8 @@ export const shiftToShiftView = (shift: Shift): ShiftView => ({
   endDateTime: shift.endDateTime,
   spotId: shift.spot.id as number,
   employeeId: shift.employee? shift.employee.id as number : null,
-  rotationEmployeeId: shift.rotationEmployee? shift.rotationEmployee.id as number : null
+  rotationEmployeeId: shift.rotationEmployee? shift.rotationEmployee.id as number : null,
+  indictmentScore: shift.indictmentScore
 }); 
 
 export const shiftViewToDomainObjectView = (view: ShiftView): DomainObjectView<Shift> => ({
@@ -43,4 +45,5 @@ export default interface ShiftView extends DomainObject {
     rotationEmployeeId: number | null;
     employeeId: number | null;
     pinnedByUser: boolean;
+    indictmentScore?: HardMediumSoftScore;
   }
