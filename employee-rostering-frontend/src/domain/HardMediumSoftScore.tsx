@@ -13,17 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainObject from './DomainObject';
-import Employee from './Employee';
-import Spot from './Spot';
-import HardMediumSoftScore from './HardMediumSoftScore';
+export function getHardMediumSoftScoreFromString(hardMediumSoftScore: string) {
+  const components = hardMediumSoftScore.split("/");
+  return {
+    hardScore: parseInt(components[0]),
+    mediumScore: parseInt(components[1]),
+    softScore: parseInt(components[2])
+  };
+}
 
-export default interface Shift extends DomainObject {
-  startDateTime: Date;
-  endDateTime: Date;
-  spot: Spot;
-  rotationEmployee: Employee | null;
-  employee: Employee | null;
-  pinnedByUser: boolean;
-  indictmentScore?: HardMediumSoftScore;
+export default interface HardMediumSoftScore {
+  hardScore: number;
+  mediumScore: number;
+  softScore: number;
 }
