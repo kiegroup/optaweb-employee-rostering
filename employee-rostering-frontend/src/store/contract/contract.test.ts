@@ -202,8 +202,8 @@ describe('Contract selectors', () => {
   });
 
   it('should get a contract by id', () => {
-    const contractList = contractSelectors.getContractById(state, 0);
-    expect(contractList).toEqual({
+    const contract = contractSelectors.getContractById(state, 0);
+    expect(contract).toEqual({
       tenantId: 0,
       id: 0,
       version: 0,
