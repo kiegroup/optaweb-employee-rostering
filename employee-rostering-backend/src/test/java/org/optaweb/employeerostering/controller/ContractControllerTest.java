@@ -91,8 +91,7 @@ public class ContractControllerTest {
 
         try {
             contractService.getContract(1, -1L);
-        }
-        catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             String expectedMessage = "No Contract entity found with ID (-1).";
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -109,8 +108,7 @@ public class ContractControllerTest {
 
         try {
             contractService.getContract(2, contract.getId());
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -132,8 +130,7 @@ public class ContractControllerTest {
     public void deleteNonExistentContractTest() {
         try {
             contractService.deleteContract(1, -1L);
-        }
-        catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             String expectedMessage = "No Contract entity found with ID (-1).";
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -150,8 +147,7 @@ public class ContractControllerTest {
 
         try {
             contractService.deleteContract(2, contract.getId());
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -178,8 +174,7 @@ public class ContractControllerTest {
 
         try {
             contractService.createContract(2, contract);
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -215,8 +210,7 @@ public class ContractControllerTest {
 
         try {
             contractService.updateContract(2, contract2);
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             String expectedMessage = "The tenantId (2) does not match the persistable (name2)'s tenantId (1).";
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -229,8 +223,7 @@ public class ContractControllerTest {
 
         try {
             contractService.updateContract(1, contract);
-        }
-        catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             String expectedMessage = "Contract entity with ID (-1) not found.";
             assertEquals(expectedMessage, e.getMessage());
         }
@@ -250,8 +243,7 @@ public class ContractControllerTest {
 
         try {
             contractService.updateContract(2, contract2);
-        }
-        catch (IllegalStateException e) {
+        } catch (IllegalStateException e) {
             String expectedMessage = "Contract entity with tenantId (1) cannot change tenants.";
             assertEquals(expectedMessage, e.getMessage());
         }
