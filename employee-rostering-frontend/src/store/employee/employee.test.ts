@@ -190,19 +190,19 @@ describe('Employee selectors', () => {
     }, 1234)).toThrow();
     expect(() => employeeSelectors.getEmployeeById({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
+      contractList: { 
+        ...state.contractList, isLoading: true }
     }, 1234)).toThrow();
     expect(() => employeeSelectors.getEmployeeById({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
+      spotList: { 
+        ...state.spotList, isLoading: true }
     }, 1234)).toThrow();
   });
 
   it('should get a employee by id', () => {
-    const skill = employeeSelectors.getEmployeeById(state, 1);
-    expect(skill).toEqual({
+    const employee = employeeSelectors.getEmployeeById(state, 1);
+    expect(employee).toEqual({
       tenantId: 0,
       id: 1,
       version: 0,
