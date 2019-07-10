@@ -104,7 +104,7 @@ class EditShiftModal extends React.Component<Props, State> {
           [
             <Button variant={ButtonVariant.tertiary} key={0} onClick={this.props.onClose}>Close</Button>
           ].concat(this.props.shift? [
-            <Button variant={ButtonVariant.danger} key={0} onClick={() => this.props.onDelete(this.props.shift as Shift)}>Delete</Button>
+            <Button variant={ButtonVariant.danger} key={1} onClick={() => this.props.onDelete(this.props.shift as Shift)}>Delete</Button>
           ] : []).concat([
             <Button key={2} onClick={this.onSave}>Save</Button>
           ])

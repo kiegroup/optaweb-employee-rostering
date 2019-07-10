@@ -25,19 +25,19 @@ import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
 import { refreshShiftRoster } from 'store/roster/operations';
 import HardMediumSoftScore, { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 
-export interface KindaShiftView extends DomainObject {
-  startDateTime: string;
-  endDateTime: string;
-  spotId: number;
-  rotationEmployeeId: number | null;
-  employeeId: number | null;
-  pinnedByUser: boolean;
-  indictmentScore?: string;
-}
+export type KindaShiftView = Pick<ShiftView, Exclude<keyof ShiftView, "indictmentScore">> & { indictmentScore?: string };
 
-function shiftAdapter(shift: Shift): KindaShiftView {
+export function shiftAdapter(shift: Shift): KindaShiftView {
   const shiftClone = { ...shift };
   delete shiftClone.indictmentScore;
+  
+  // Since property P is related to indictments iff it is an array,
+  // We can remove all indictments by deleting all keys that are arrays
+  for(const key in shiftClone) {
+    if (Array.isArray((shiftClone as {[P: string]: any})[key])) {
+      delete (shiftClone as {[P: string]: any})[key];
+    }
+  }
 
   return {
     ...shiftToShiftView(shiftClone) as any,
@@ -46,12 +46,22 @@ function shiftAdapter(shift: Shift): KindaShiftView {
   };
 }
 
-function kindaShiftViewAdapter(kindaShiftView: KindaShiftView): ShiftView {
+export function kindaShiftViewAdapter(kindaShiftView: KindaShiftView): ShiftView {
+  const kindaShiftViewClone: any = { ...kindaShiftView };
+  kindaShiftViewClone.indictmentScore = getHardMediumSoftScoreFromString(kindaShiftView.indictmentScore as string);
+  
+  // Since property P is related to indictments iff it is an array,
+  // We can convert all indictments by mapping all keys that are arrays
+  for(const key in kindaShiftViewClone) {
+    if (Array.isArray(kindaShiftViewClone[key])) {
+      kindaShiftViewClone[key] = kindaShiftViewClone[key].map((s: any) => ({ ...s, score: getHardMediumSoftScoreFromString(s.score) }));
+    }
+  }
+
   return {
-    ...kindaShiftView,
+    ...kindaShiftViewClone,
     startDateTime: moment(kindaShiftView.startDateTime).toDate(),
     endDateTime: moment(kindaShiftView.endDateTime).toDate(),
-    indictmentScore: getHardMediumSoftScoreFromString(kindaShiftView.indictmentScore as string)
   };
 }
 

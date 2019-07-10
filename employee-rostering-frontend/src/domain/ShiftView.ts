@@ -17,6 +17,14 @@ import DomainObject from './DomainObject';
 import DomainObjectView from './DomainObjectView';
 import Shift from './Shift';
 import HardMediumSoftScore from './HardMediumSoftScore';
+import RequiredSkillViolation from './indictment/RequiredSkillViolation';
+import UnavailableEmployeeViolation from './indictment/UnavaliableEmployeeViolation';
+import DesiredTimeslotForEmployeeReward from './indictment/DesiredTimeslotForEmployeeReward';
+import UndesiredTimeslotForEmployeePenalty from './indictment/UndesiredTimeslotForEmployeePenalty';
+import RotationViolationPenalty from './indictment/RotationViolationPenalty';
+import UnassignedShiftPenalty from './indictment/UnassignedShiftPenalty';
+import ContractMinutesViolation from './indictment/ContractMinutesViolation';
+import ShiftEmployeeConflictViolation from './indictment/ShiftEmployeeConflictViolation';
 
 export const shiftToShiftView = (shift: Shift): ShiftView => ({
   id: shift.id,
@@ -46,4 +54,12 @@ export default interface ShiftView extends DomainObject {
     employeeId: number | null;
     pinnedByUser: boolean;
     indictmentScore?: HardMediumSoftScore;
+    requiredSkillViolationList?: RequiredSkillViolation[];
+    unavailableEmployeeViolationList?: UnavailableEmployeeViolation[];
+    shiftEmployeeConflictList?: ShiftEmployeeConflictViolation[];
+    desiredTimeslotForEmployeeRewardList?: DesiredTimeslotForEmployeeReward[];
+    undesiredTimeslotForEmployeePenaltyList?: UndesiredTimeslotForEmployeePenalty[];
+    rotationViolationPenaltyList?: RotationViolationPenalty[];
+    unassignedShiftPenaltyList?: UnassignedShiftPenalty[];
+    contractMinutesViolationPenaltyList?: ContractMinutesViolation[];
   }

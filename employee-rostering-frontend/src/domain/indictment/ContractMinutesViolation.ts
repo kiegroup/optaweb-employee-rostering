@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export function getHardMediumSoftScoreFromString(hardMediumSoftScore: string) {
-  const components = hardMediumSoftScore.split("/");
-  return {
-    hardScore: parseInt(components[0]),
-    mediumScore: parseInt(components[1]),
-    softScore: parseInt(components[2])
-  };
-}
+import ConstraintMatch from './ConstraintMatch';
+import Employee from '../Employee';
 
-export default interface HardMediumSoftScore {
-  hardScore: number;
-  mediumScore: number;
-  softScore: number;
+
+export default interface ContractMinutesViolation extends ConstraintMatch {
+    employee: Employee;
+    type: "DAY"|"WEEK"|"MONTH"|"YEAR";
+    minutesWorked: number;
 }
