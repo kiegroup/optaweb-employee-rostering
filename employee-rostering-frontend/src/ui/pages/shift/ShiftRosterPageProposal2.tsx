@@ -72,6 +72,7 @@ export interface DispatchProps {
   getShiftRosterFor: typeof rosterOperations.getShiftRosterFor;
   refreshShiftRoster: typeof rosterOperations.refreshShiftRoster;
   solveRoster: typeof rosterOperations.solveRoster;
+  publishRoster: typeof rosterOperations.publish;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
 }
   
@@ -82,6 +83,7 @@ const mapDispatchToProps: DispatchProps = {
   getShiftRosterFor: rosterOperations.getShiftRosterFor,
   refreshShiftRoster: rosterOperations.refreshShiftRoster,
   solveRoster: rosterOperations.solveRoster,
+  publishRoster: rosterOperations.publish,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly
 };
   
@@ -169,7 +171,11 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             />
           </LevelItem>
           <LevelItem style={{display: "flex"}}>
-            <Button>Publish</Button>
+            <Button
+              onClick={this.props.publishRoster}
+            >
+              Publish
+            </Button>
             {(!this.props.isSolving &&
               (
                 <Button

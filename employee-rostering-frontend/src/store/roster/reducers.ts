@@ -15,6 +15,7 @@
  */
 
 import { RosterStateActionType, SolverAction, ShiftRosterViewActionType, RosterStateAction, ShiftRosterViewAction, CurrentSolverState, CurrentRosterState, CurrentShiftRoster, SolverActionType } from './types';
+import moment from 'moment';
 
 export const initalSolverState: CurrentSolverState = {
   isSolving: false
@@ -37,6 +38,20 @@ export const rosterStateReducer = (state = initialRosterState, action: RosterSta
     }
     case RosterStateActionType.SET_ROSTER_STATE: {
       return { ...state, rosterState: action.rosterState };
+    }
+    case RosterStateActionType.PUBLISH_ROSTER: {
+      if (state.rosterState) {
+      const publishedDuration = moment(action.publishResult.publishedToDate)
+        .diff(action.publishResult.publishedFromDate, "days");
+      return { ...state, rosterState: {
+        ...state.rosterState,
+        firstDraftDate: action.publishResult.publishedToDate,
+        unplannedRotationOffset: (state.rosterState.unplannedRotationOffset + publishedDuration) % state.rosterState.rotationLength
+      } };
+    }
+    else {
+      return { ...state, rosterState: null };
+    }
     }
     default:
       return state;
