@@ -34,6 +34,7 @@ import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { showInfoMessage } from "ui/Alerts";
 import RosterState from "domain/RosterState";
+import ShiftEvent, { getShiftColor } from "./ShiftEvent";
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
 
@@ -273,57 +274,25 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 })
               }
               onView={() => {}}
-              onNavigate={() => {}} 
-              onSelectEvent={shift => {
-                this.setState({
-                  selectedShift: shift,
-                  isCreatingOrEditingShift: true
-                })
-              }}
+              onNavigate={() => {}}
               timeslots={4}
               eventPropGetter={(event: Shift, start, end, isSelected) => {
-                let style: React.CSSProperties = {};
-
-                // NOTE: React Big Calendar breaks/does not look pretty with translucent colors!
-                if (event.indictmentScore !== undefined && event.indictmentScore.hardScore < 0) {
-                  const fromColor = Color("rgb(139, 0, 0)", "rgb");
-                  const toColor = Color("rgb(245, 193, 46)", "rgb");
-                  style = {...style, backgroundColor: fromColor.mix(toColor, (20 + event.indictmentScore.hardScore) / 100).hex() };
-                }
-                else if (event.indictmentScore !== undefined && event.indictmentScore.mediumScore < 0) {
-                  style = {...style, backgroundColor: "rgb(245, 193, 46)" };
-                }
-                else if (event.indictmentScore !== undefined && event.indictmentScore.softScore < 0) {
-                  const fromColor = Color("rgb(245, 193, 46)", "rgb");
-                  const toColor = Color("rgb(209, 209, 209)", "rgb");
-                  style = {...style, backgroundColor: fromColor.mix(toColor, (20 + event.indictmentScore.softScore) / 100).hex() };
-                }
-                else if (event.indictmentScore !== undefined && event.indictmentScore.softScore > 0) {
-                  const fromColor = Color("rgb(207, 231, 205)", "rgb");
-                  const toColor = Color("rgb(63, 156, 53)", "rgb");
-                  style = {...style, backgroundColor: fromColor.mix(toColor, (20 + event.indictmentScore.softScore) / 100).hex() };
-                }
-                else {
-                  // Zero score
-                  style = {...style, backgroundColor: "rgb(207, 231, 205)" };
-                }
+                const color = getShiftColor(event);
                 
                 if (this.props.rosterState !== null && moment(start).isBefore(this.props.rosterState.firstDraftDate)) {
                   // Published
-                  style = {
-                    ...style,
+                  return { style: {
                     border: "1px solid",
-                    backgroundColor: Color(style.backgroundColor).lighten(0.15).hex()
-                  };
+                    backgroundColor: Color(color).saturate(-0.5).hex()
+                  } };
                 }
                 else {
                   // Draft
-                  style = {
-                    ...style,
+                  return { style: {
+                    backgroundColor: color,
                     border: "1px dashed"
-                  };
+                  } };
                 }
-                return { style: style };
               }}
               dayPropGetter={(date) => {
                 if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
@@ -341,9 +310,25 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                   }
                 }
               }}
+              
               selectable
               resizable
               showMultiDayTimes
+              components={{
+                event: (props) => ShiftEvent(
+                  {
+                    ...props,
+                    onEdit: () => {
+                      this.setState({
+                        selectedShift: props.event,
+                        isCreatingOrEditingShift: true
+                      })
+                    },
+                    onDelete: () => {
+                      this.deleteShift(props.event)
+                    }
+                  })
+              }}
             />
           </div>
         </div>
