@@ -22,6 +22,7 @@ import { PaginationData } from 'types';
 export enum RosterStateActionType {
   SET_ROSTER_STATE_IS_LOADING = 'SET_ROSTER_STATE_IS_LOADING',
   SET_ROSTER_STATE = 'SET_ROSTER_STATE',
+  PUBLISH_ROSTER = 'PUBLISH_ROSTER'
 }
 
 export enum ShiftRosterViewActionType {
@@ -35,7 +36,7 @@ export enum SolverActionType {
 }
 
 export interface SetRosterStateIsLoadingAction extends Action<RosterStateActionType.SET_ROSTER_STATE_IS_LOADING> {
-  isLoading: boolean;
+  readonly isLoading: boolean;
 }
 
 
@@ -43,8 +44,12 @@ export interface SetRosterStateAction extends Action<RosterStateActionType.SET_R
   readonly rosterState: RosterState;
 }
 
+export interface PublishRosterAction extends Action<RosterStateActionType.PUBLISH_ROSTER> {
+  readonly publishResult: PublishResult;
+}
+
 export interface SetShiftRosterIsLoadingAction extends Action<ShiftRosterViewActionType.SET_SHIFT_ROSTER_IS_LOADING> {
-  isLoading: boolean;
+  readonly isLoading: boolean;
 }
 
 export interface SetShiftRosterViewAction extends Action<ShiftRosterViewActionType.SET_SHIFT_ROSTER_VIEW> {
@@ -57,9 +62,14 @@ export interface SolveRosterAction extends Action<SolverActionType.SOLVE_ROSTER>
 export interface TerminateSolvingRosterEarlyAction extends Action<SolverActionType.TERMINATE_SOLVING_ROSTER_EARLY> {
 }
 
-export type RosterStateAction = SetRosterStateIsLoadingAction | SetRosterStateAction;
+export type RosterStateAction = SetRosterStateIsLoadingAction | SetRosterStateAction | PublishRosterAction;
 export type ShiftRosterViewAction = SetShiftRosterIsLoadingAction | SetShiftRosterViewAction;
 export type SolverAction = SolveRosterAction | TerminateSolvingRosterEarlyAction;
+
+export interface PublishResult {
+  readonly publishedFromDate: Date;
+  readonly publishedToDate: Date;
+}
 
 export interface CurrentRosterState {
   readonly isLoading: boolean;
