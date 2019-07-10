@@ -22,13 +22,11 @@ import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
 import { PaginationData, ObjectNumberMap, mapObjectNumberMap } from 'types';
 import moment from 'moment';
-import ShiftView from 'domain/ShiftView';
 import Spot from 'domain/Spot';
 import { showInfoMessage } from 'ui/Alerts';
 import { ThunkDispatch } from 'redux-thunk';
-import { KindaShiftView } from 'store/shift/operations';
+import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/operations';
 import RestServiceClient from 'store/rest';
-import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 
 export type RosterSliceInfo = {
   fromDate: Date;
@@ -107,12 +105,7 @@ function convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView: KindaS
   return {
     ...newShiftRosterView,
     spotIdToShiftViewListMap: mapObjectNumberMap(newShiftRosterView.spotIdToShiftViewListMap, shiftViewList =>
-      shiftViewList.map(shiftView => ({
-      ...shiftView,
-      startDateTime: new Date(shiftView.startDateTime),
-      endDateTime: new Date(shiftView.endDateTime),
-      indictmentScore: getHardMediumSoftScoreFromString(shiftView.indictmentScore as string)
-    })))
+      shiftViewList.map(kindaShiftViewAdapter))
   };
 }
 
