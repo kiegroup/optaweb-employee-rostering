@@ -17,13 +17,13 @@
 import { ThunkCommandFactory, AppState } from '../types';
 import * as actions from './actions';
 import { SetRosterStateIsLoadingAction, SetRosterStateAction,
-  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction } from './types';
+  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction, PublishRosterAction, PublishResult } from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
 import { PaginationData, ObjectNumberMap, mapObjectNumberMap } from 'types';
 import moment from 'moment';
 import Spot from 'domain/Spot';
-import { showInfoMessage } from 'ui/Alerts';
+import { showInfoMessage, showSuccessMessage } from 'ui/Alerts';
 import { ThunkDispatch } from 'redux-thunk';
 import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/operations';
 import RestServiceClient from 'store/rest';
@@ -100,6 +100,22 @@ export const getRosterState: ThunkCommandFactory<void, SetRosterStateIsLoadingAc
       dispatch(actions.setRosterStateIsLoading(false));
     });
   };
+
+export const publish: ThunkCommandFactory<void, PublishRosterAction> = () =>
+  (dispatch, state, client) => {
+    const tenantId = state().tenantData.currentTenantId;
+    return client.post<{
+      publishedFromDate: string;
+      publishedToDate: string;
+    }>(`/tenant/${tenantId}/roster/publishAndProvision`, {}).then(pr => {
+      dispatch(actions.publishRoster({
+        publishedFromDate: moment(pr.publishedFromDate).toDate(),
+        publishedToDate: moment(pr.publishedToDate).toDate()
+      }));
+      dispatch(refreshShiftRoster());
+      showSuccessMessage("Published Roster", `Published from ${moment(pr.publishedFromDate).format("LL")} to ${moment(pr.publishedToDate).format("LL")}.`);
+    });
+  }
 
 function convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView: KindaShiftRosterView): ShiftRosterView {
   return {
