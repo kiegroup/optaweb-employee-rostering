@@ -13,24 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.rbc-time-view {
-    background-color: var(--pf-global--BackgroundColor--100)
-}
+import HardMediumSoftScore from '../HardMediumSoftScore';
 
-.rbc-event {
-    color: black;
-    background-color: #bee1f4;
-}
-
-.rbc-allday-cell {
-    display: none;
-}
-  
-.rbc-time-view .rbc-header {
-    border-bottom: none;
-}
-
-.shift-tooltip {
-    background-color: var(--pf-global--BackgroundColor--200) !important;
-    opacity: 1 !important;
+export default interface ConstraintMatch {
+    score: HardMediumSoftScore;
 }
