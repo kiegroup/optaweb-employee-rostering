@@ -78,4 +78,6 @@ public class EmployeeController {
         employee.setVersion(employeeDTO.getVersion());
         return new ResponseEntity<>(employeeService.updateEmployee(tenantId, employee), HttpStatus.OK);
     }
+
+    //TODO: Add EmployeeAvailability CRUD handlers
 }
