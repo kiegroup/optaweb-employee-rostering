@@ -15,12 +15,17 @@
  */
 
 import { ActionFactory } from '../types';
-import { RosterStateActionType, ShiftRosterViewActionType, SolverActionType, SetRosterStateIsLoadingAction, SetRosterStateAction,
-  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction }
+import { RosterStateActionType, ShiftRosterViewActionType, SolverActionType, PublishRosterAction, SetRosterStateIsLoadingAction, SetRosterStateAction,
+  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction, PublishResult }
   from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
 import { PaginationData } from 'types';
+
+export const publishRoster: ActionFactory<PublishResult, PublishRosterAction> = (pr) => ({
+  type: RosterStateActionType.PUBLISH_ROSTER,
+  publishResult: pr
+});
 
 export const setRosterStateIsLoading: ActionFactory<boolean, SetRosterStateIsLoadingAction> = isLoading => ({
   type: RosterStateActionType.SET_ROSTER_STATE_IS_LOADING,
