@@ -36,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -110,12 +111,9 @@ public class SpotControllerTest {
 
     @Test
     public void getNonExistentSpotTest() {
-        try {
-            spotService.getSpot(1, -1L);
-        } catch (EntityNotFoundException e) {
-            String expectedMessage = "No Spot entity found with ID (-1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> spotService.getSpot(1, -1L))
+                .withMessage("No Spot entity found with ID (-1).");
     }
 
     @Test
@@ -133,12 +131,9 @@ public class SpotControllerTest {
 
         spotService.createSpot(tenantId, spot);
 
-        try {
-            spotService.getSpot(2, spot.getId());
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> spotService.getSpot(2, spot.getId()))
+                .withMessage("The tenantId (2) does not match the persistable (name)'s tenantId (1).");
     }
 
     @Test
@@ -161,12 +156,9 @@ public class SpotControllerTest {
 
     @Test
     public void deleteNonExistentSpotTest() {
-        try {
-            spotService.deleteSpot(1, -1L);
-        } catch (EntityNotFoundException e) {
-            String expectedMessage = "No Spot entity found with ID (-1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> spotService.deleteSpot(1, -1L))
+                .withMessage("No Spot entity found with ID (-1).");
     }
 
     @Test
@@ -184,12 +176,9 @@ public class SpotControllerTest {
 
         spotService.createSpot(tenantId, spot);
 
-        try {
-            spotService.deleteSpot(2, spot.getId());
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> spotService.deleteSpot(2, spot.getId()))
+                .withMessage("The tenantId (2) does not match the persistable (name)'s tenantId (1).");
     }
 
     @Test
@@ -225,12 +214,9 @@ public class SpotControllerTest {
 
         Spot spot = new Spot(tenantId, name, testSkillSet);
 
-        try {
-            spotService.createSpot(2, spot);
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> spotService.createSpot(2, spot))
+                .withMessage("The tenantId (2) does not match the persistable (name)'s tenantId (1).");
     }
 
     @Test
@@ -275,12 +261,9 @@ public class SpotControllerTest {
 
         Spot spot2 = new Spot(tenantId, "name2", testSkillSet);
 
-        try {
-            spotService.updateSpot(2, spot2);
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name2)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> spotService.updateSpot(2, spot2))
+                .withMessage("The tenantId (2) does not match the persistable (name2)'s tenantId (1).");
     }
 
     @Test
@@ -288,12 +271,9 @@ public class SpotControllerTest {
         Spot spot = new Spot(1, "name", Collections.emptySet());
         spot.setId(-1L);
 
-        try {
-            spotService.updateSpot(1, spot);
-        } catch (EntityNotFoundException e) {
-            String expectedMessage = "Spot entity with ID (-1) not found.";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> spotService.updateSpot(1, spot))
+                .withMessage("Spot entity with ID (-1) not found.");
     }
 
     @Test
@@ -314,11 +294,8 @@ public class SpotControllerTest {
         Spot spot2 = new Spot(2, name, testSkillSet);
         spot2.setId(spot.getId());
 
-        try {
-            spotService.updateSpot(2, spot2);
-        } catch (IllegalStateException e) {
-            String expectedMessage = "Spot entity with tenantId (1) cannot change tenants.";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> spotService.updateSpot(2, spot2))
+                .withMessage("Spot entity with tenantId (1) cannot change tenants.");
     }
 }
