@@ -652,6 +652,7 @@
       <id>sonar</id>
       <properties>
         <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
         <sonar.organization>kiegroup</sonar.organization>
         <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
         <!--suppress UnresolvedMavenProperty -->
