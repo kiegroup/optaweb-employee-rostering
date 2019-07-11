@@ -400,7 +400,7 @@
     <profile>
       <id>sonar</id>
       <properties>
-        <sonar.projectKey>kiegroup_optaweb-vehicle-routing</sonar.projectKey>
+        <sonar.projectKey>kiegroup_optaweb-employee-rostering</sonar.projectKey>
         <sonar.organization>kiegroup</sonar.organization>
         <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
         <!--suppress UnresolvedMavenProperty -->
