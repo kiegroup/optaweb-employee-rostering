@@ -22,8 +22,10 @@ export interface ScheduleProps<T extends DomainObject> {
   startDate: Date;
   endDate: Date;
   minDurationInMinutes: number;
+  hourDividersInDay: number;
   rowTitles: string[];
   rowData: T[][];
+  updateData: (data: T) => void;
   dataGetStartDate: (data: T) => Date;
   dataGetEndDate: (data: T) => Date;
   dataToNameMap: (data: T) => string;
@@ -45,7 +47,7 @@ export default abstract class Schedule<T extends DomainObject> extends React.Com
     this.getDataLane = this.getDataLane.bind(this);
     this.getCSSVariable = this.getCSSVariable.bind(this);
     const gridCount = moment(this.props.endDate.getTime()).diff(this.props.startDate.getTime(), "minutes") / this.props.minDurationInMinutes;
-    const gridUnitSize = Math.max(((window.innerWidth - 200) / gridCount), 45);
+    const gridUnitSize = Math.max((window.innerWidth - 200) / gridCount, 10);
     this.state = {
       cssVariables: {
         "--grid-unit-size": gridUnitSize + "px",
@@ -57,7 +59,7 @@ export default abstract class Schedule<T extends DomainObject> extends React.Com
 
     this.windowResizeListener = (e) => {
       const currentGridCount = moment(this.props.endDate.getTime()).diff(this.props.startDate.getTime(), "minutes") / this.props.minDurationInMinutes;
-      const gridUnitSize =  Math.max(((e.target as Window).outerWidth - 200) / currentGridCount, 45);
+      const gridUnitSize =  Math.max(((e.target as Window).outerWidth - 200) / currentGridCount, 10);
       this.setCSSVariable("--grid-unit-size", gridUnitSize + "px");
       this.setCSSVariable("--grid-soft-line-interval", gridUnitSize + "px");
       this.setCSSVariable("--grid-hard-line-interval", gridUnitSize * (moment.duration(1, "day").asMinutes() / this.props.minDurationInMinutes) + "px");
@@ -100,6 +102,8 @@ export default abstract class Schedule<T extends DomainObject> extends React.Com
 
   getDateTimeLane(durationInDays: number, gridCount: number): JSX.Element {
     const gridUnitsPerDay = (60 * 24) / this.props.minDurationInMinutes;
+    const minutesPerDivider = (60 * 24) / this.props.hourDividersInDay;
+    const gridUnitsPerDivider = minutesPerDivider / this.props.minDurationInMinutes;
     return (
       <div className="date-time-lane">
         <div className="date-time-corner" />
@@ -131,14 +135,17 @@ export default abstract class Schedule<T extends DomainObject> extends React.Com
             })
           }
           {
-            Array.from(new Array(gridCount)).map((v, index) => {
+            Array.from(new Array(Math.floor(gridCount / (minutesPerDivider / this.props.minDurationInMinutes)))).map((v, index) => {
+              if (index % this.props.hourDividersInDay === 0) {
+                return (<></>);
+              }
               const date = moment(this.props.startDate)
-                .add(this.props.minDurationInMinutes * index, "minutes");
+                .add(minutesPerDivider * index, "minutes");
               return (
                 <div
                   key={date.format("LLLL")}
                   className="time-tick"
-                  style={this.getGridPosition(index, index)}
+                  style={this.getGridPosition(index * gridUnitsPerDivider, index * gridUnitsPerDivider)}
                 >
                   {date.format("LT")}
                 </div>
@@ -148,6 +155,14 @@ export default abstract class Schedule<T extends DomainObject> extends React.Com
         </div>
       </div>
     );
+  }
+
+  getPositionInGrid(gridCount: number, date: Date): number {
+    return Math.min(gridCount, Math.max(0, moment(date).diff(this.props.startDate, "minutes") / this.props.minDurationInMinutes));
+  }
+
+  getDateFromPositionInGrid(gridPosition: number): Date {
+    return moment(this.props.startDate).add(gridPosition * this.props.minDurationInMinutes, "minutes").toDate();
   }
 
   abstract getDataLane(title: string, row: number, gridCount: number): JSX.Element;

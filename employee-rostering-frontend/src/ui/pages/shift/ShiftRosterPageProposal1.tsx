@@ -25,7 +25,9 @@ import WeekPicker from 'ui/components/WeekPicker';
 import Schedule from 'ui/components/Schedule';
 import moment from 'moment';
 import { Level, LevelItem, Button, Pagination } from "@patternfly/react-core";
+import ShiftEvent, { getShiftColor } from "./ShiftEvent";
 import { PaginationData } from "types";
+import { shiftOperations } from "store/shift";
 
 interface StateProps {
   isLoading: boolean;
@@ -50,10 +52,12 @@ const mapStateToProps = (state: AppState): StateProps => ({
   
 export interface DispatchProps {
   getShiftRoster: typeof rosterOperations.getShiftRoster;
+  updateShift: typeof shiftOperations.updateShift;
 }
   
 const mapDispatchToProps: DispatchProps = {
-  getShiftRoster: rosterOperations.getShiftRoster
+  getShiftRoster: rosterOperations.getShiftRoster,
+  updateShift: shiftOperations.updateShift
 };
   
 export type Props = StateProps & DispatchProps;
@@ -62,6 +66,19 @@ export class ShiftSchedule extends Schedule<Shift> {
   getDataLane(title: string, row: number, gridCount: number): JSX.Element {
     const gridItemWidth = parseInt(this.getCSSVariable("--grid-unit-size"));
     const rowHeight = parseInt(this.getCSSVariable("--grid-row-size"));
+    const updateGridItem: GridLayout.ItemCallback = (layout, oldItem, newItem) => {
+      const startDateTime = this.getDateFromPositionInGrid(newItem.x);
+      const endDateTime = this.getDateFromPositionInGrid(newItem.x + newItem.w);
+      const shift = this.props.rowData[row].find(s => String(s.id) === newItem.i) as Shift;
+      if (shift.startDateTime.getTime() === startDateTime.getTime() && shift.endDateTime.getTime() === endDateTime.getTime()) {
+        return;
+      }
+      this.props.updateData({
+        ...shift,
+        startDateTime: startDateTime,
+        endDateTime: endDateTime
+      });
+    }
 
     return (
       <div className="lane-container" key={title}>
@@ -75,19 +92,24 @@ export class ShiftSchedule extends Schedule<Shift> {
           style={{
             width: gridCount * gridItemWidth + "px"
           }}
+          onDragStop={updateGridItem}
+          onResizeStop={updateGridItem}
         >
           {
             this.props.rowData[row].map((data) => {
               const dataStartDate = this.props.dataGetStartDate(data);
               const dataEndDate = this.props.dataGetEndDate(data);
               
-              const startPositionInGrid = Math.max(0, moment(dataStartDate).diff(this.props.startDate, "minutes") / this.props.minDurationInMinutes);
-              const endPositionInGrid = Math.min(gridCount, moment(dataEndDate).diff(this.props.startDate, "minutes") / this.props.minDurationInMinutes);
+              const startPositionInGrid = this.getPositionInGrid(gridCount, dataStartDate);
+              const endPositionInGrid =this.getPositionInGrid(gridCount, dataEndDate);
 
               return (
                 <span
                   className="blob"
                   key={data.id}
+                  style={{
+                    backgroundColor: getShiftColor(data)
+                  }}
                   data-grid={{
                     i: String(data.id),
                     x: startPositionInGrid,
@@ -98,7 +120,12 @@ export class ShiftSchedule extends Schedule<Shift> {
                     maxH: 1
                   }}
                 >
-                  {this.props.dataToNameMap(data)}
+                  <ShiftEvent
+                    event={data}
+                    title={this.props.dataToNameMap(data)}
+                    onEdit={() => {}}
+                    onDelete={() => {}}
+                  />
                 </span>
               );
             })
@@ -205,7 +232,9 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           dataToNameMap={s => (s.employee !== null)? s.employee.name : "Unassigned"}
           dataGetStartDate={s => s.startDateTime}
           dataGetEndDate={s => s.endDateTime}
-          minDurationInMinutes={60 * 4}
+          minDurationInMinutes={30}
+          hourDividersInDay={8}
+          updateData={this.props.updateShift}
         />
       </>
     );
