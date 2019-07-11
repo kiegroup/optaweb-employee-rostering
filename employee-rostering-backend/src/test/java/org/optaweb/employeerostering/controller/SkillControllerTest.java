@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -90,12 +91,9 @@ public class SkillControllerTest {
 
         skillService.createSkill(tenantId, skill);
 
-        try {
-            skillService.getSkill(1, -1L);
-        } catch (EntityNotFoundException e) {
-            String expectedMessage = "No Skill entity found with ID (-1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> skillService.getSkill(1, -1L))
+                .withMessage("No Skill entity found with ID (-1).");
     }
 
     @Test
@@ -107,12 +105,9 @@ public class SkillControllerTest {
 
         skillService.createSkill(tenantId, skill);
 
-        try {
-            skillService.getSkill(2, skill.getId());
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> skillService.getSkill(2, skill.getId()))
+                .withMessage("The tenantId (2) does not match the persistable (name)'s tenantId (1).");
     }
 
     @Test
@@ -129,12 +124,9 @@ public class SkillControllerTest {
 
     @Test
     public void deleteNonExistentSkillTest() {
-        try {
-            skillService.deleteSkill(1, -1L);
-        } catch (EntityNotFoundException e) {
-            String expectedMessage = "No Skill entity found with ID (-1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> skillService.deleteSkill(1, -1L))
+                .withMessage("No Skill entity found with ID (-1).");
     }
 
     @Test
@@ -146,12 +138,9 @@ public class SkillControllerTest {
 
         skillService.createSkill(tenantId, skill);
 
-        try {
-            skillService.deleteSkill(2, skill.getId());
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> skillService.deleteSkill(2, skill.getId()))
+                .withMessage("The tenantId (2) does not match the persistable (name)'s tenantId (1).");
     }
 
     @Test
@@ -174,12 +163,9 @@ public class SkillControllerTest {
 
         Skill skill = new Skill(tenantId, name);
 
-        try {
-            skillService.createSkill(2, skill);
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> skillService.createSkill(2, skill))
+                .withMessage("The tenantId (2) does not match the persistable (name)'s tenantId (1).");
     }
 
     @Test
@@ -211,12 +197,9 @@ public class SkillControllerTest {
 
         Skill skill2 = new Skill(tenantId, "name2");
 
-        try {
-            skillService.updateSkill(2, skill2);
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name2)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> skillService.updateSkill(2, skill2))
+                .withMessage("The tenantId (2) does not match the persistable (name2)'s tenantId (1).");
     }
 
     @Test
@@ -224,12 +207,9 @@ public class SkillControllerTest {
         Skill skill = new Skill(1, "name");
         skill.setId(-1L);
 
-        try {
-            skillService.updateSkill(1, skill);
-        } catch (EntityNotFoundException e) {
-            String expectedMessage = "Skill entity with ID (-1) not found.";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> skillService.updateSkill(1, skill))
+                .withMessage("Skill entity with ID (-1) not found.");
     }
 
     @Test
@@ -244,11 +224,8 @@ public class SkillControllerTest {
         Skill skill2 = new Skill(2, name);
         skill2.setId(skill.getId());
 
-        try {
-            skillService.updateSkill(2, skill2);
-        } catch (IllegalStateException e) {
-            String expectedMessage = "Skill entity with tenantId (1) cannot change tenants.";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> skillService.updateSkill(2, skill2))
+                .withMessage("Skill entity with tenantId (1) cannot change tenants.");
     }
 }
