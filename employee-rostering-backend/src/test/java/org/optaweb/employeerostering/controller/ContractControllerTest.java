@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
@@ -61,9 +62,9 @@ public class ContractControllerTest {
         List<Contract> contractList = contractService.getContractList(tenantId);
         List<Contract> contractList2 = contractService.getContractList(tenantId2);
 
-        assertEquals(contractList.get(0), contract);
-        assertEquals(contractList.get(1), contract2);
-        assertEquals(contractList2.get(0), contract3);
+        assertEquals(contract, contractList.get(0));
+        assertEquals(contract2, contractList.get(1));
+        assertEquals(contract3, contractList2.get(0));
     }
 
     @Test
@@ -77,7 +78,12 @@ public class ContractControllerTest {
 
         Contract returnContract = contractService.getContract(tenantId, contract.getId());
 
-        assertEquals(returnContract, contract);
+        assertEquals(tenantId, returnContract.getTenantId());
+        assertEquals(name, returnContract.getName());
+        assertEquals(contract.getMaximumMinutesPerDay(), returnContract.getMaximumMinutesPerDay());
+        assertEquals(contract.getMaximumMinutesPerWeek(), returnContract.getMaximumMinutesPerWeek());
+        assertEquals(contract.getMaximumMinutesPerMonth(), returnContract.getMaximumMinutesPerMonth());
+        assertEquals(contract.getMaximumMinutesPerYear(), returnContract.getMaximumMinutesPerYear());
     }
 
     @Test
@@ -89,12 +95,9 @@ public class ContractControllerTest {
 
         contractService.createContract(tenantId, contract);
 
-        try {
-            contractService.getContract(1, -1L);
-        } catch (EntityNotFoundException e) {
-            String expectedMessage = "No Contract entity found with ID (-1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> contractService.getContract(1, -1L))
+                .withMessage("No Contract entity found with ID (-1).");
     }
 
     @Test
@@ -106,12 +109,9 @@ public class ContractControllerTest {
 
         contractService.createContract(tenantId, contract);
 
-        try {
-            contractService.getContract(2, contract.getId());
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> contractService.getContract(2, contract.getId()))
+                .withMessage("The tenantId (2) does not match the persistable (name)'s tenantId (1).");
     }
 
     @Test
@@ -123,17 +123,14 @@ public class ContractControllerTest {
 
         contractService.createContract(tenantId, contract);
 
-        assertEquals(contractService.deleteContract(tenantId, contract.getId()), true);
+        assertEquals(true, contractService.deleteContract(tenantId, contract.getId()));
     }
 
     @Test
     public void deleteNonExistentContractTest() {
-        try {
-            contractService.deleteContract(1, -1L);
-        } catch (EntityNotFoundException e) {
-            String expectedMessage = "No Contract entity found with ID (-1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> contractService.deleteContract(1, -1L))
+                .withMessage("No Contract entity found with ID (-1).");
     }
 
     @Test
@@ -145,12 +142,9 @@ public class ContractControllerTest {
 
         contractService.createContract(tenantId, contract);
 
-        try {
-            contractService.deleteContract(2, contract.getId());
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> contractService.deleteContract(2, contract.getId()))
+                .withMessage("The tenantId (2) does not match the persistable (name)'s tenantId (1).");
     }
 
     @Test
@@ -162,7 +156,12 @@ public class ContractControllerTest {
 
         Contract returnContract = contractService.createContract(tenantId, contract);
 
-        assertEquals(returnContract, contract);
+        assertEquals(tenantId, returnContract.getTenantId());
+        assertEquals(name, returnContract.getName());
+        assertEquals(contract.getMaximumMinutesPerDay(), returnContract.getMaximumMinutesPerDay());
+        assertEquals(contract.getMaximumMinutesPerWeek(), returnContract.getMaximumMinutesPerWeek());
+        assertEquals(contract.getMaximumMinutesPerMonth(), returnContract.getMaximumMinutesPerMonth());
+        assertEquals(contract.getMaximumMinutesPerYear(), returnContract.getMaximumMinutesPerYear());
     }
 
     @Test
@@ -172,12 +171,9 @@ public class ContractControllerTest {
 
         Contract contract = new Contract(tenantId, name);
 
-        try {
-            contractService.createContract(2, contract);
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> contractService.createContract(2, contract))
+                .withMessage("The tenantId (2) does not match the persistable (name)'s tenantId (1).");
     }
 
     @Test
@@ -194,7 +190,12 @@ public class ContractControllerTest {
 
         Contract returnContract = contractService.updateContract(tenantId, contract2);
 
-        assertEquals(returnContract, contract2);
+        assertEquals(tenantId, returnContract.getTenantId());
+        assertEquals("name2", returnContract.getName());
+        assertEquals(contract2.getMaximumMinutesPerDay(), returnContract.getMaximumMinutesPerDay());
+        assertEquals(contract2.getMaximumMinutesPerWeek(), returnContract.getMaximumMinutesPerWeek());
+        assertEquals(contract2.getMaximumMinutesPerMonth(), returnContract.getMaximumMinutesPerMonth());
+        assertEquals(contract2.getMaximumMinutesPerYear(), returnContract.getMaximumMinutesPerYear());
     }
 
     @Test
@@ -208,12 +209,9 @@ public class ContractControllerTest {
 
         Contract contract2 = new Contract(tenantId, "name2");
 
-        try {
-            contractService.updateContract(2, contract2);
-        } catch (IllegalStateException e) {
-            String expectedMessage = "The tenantId (2) does not match the persistable (name2)'s tenantId (1).";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> contractService.updateContract(2, contract2))
+                .withMessage("The tenantId (2) does not match the persistable (name2)'s tenantId (1).");
     }
 
     @Test
@@ -221,12 +219,9 @@ public class ContractControllerTest {
         Contract contract = new Contract(1, "name");
         contract.setId(-1L);
 
-        try {
-            contractService.updateContract(1, contract);
-        } catch (EntityNotFoundException e) {
-            String expectedMessage = "Contract entity with ID (-1) not found.";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(EntityNotFoundException.class)
+                .isThrownBy(() -> contractService.updateContract(1, contract))
+                .withMessage("Contract entity with ID (-1) not found.");
     }
 
     @Test
@@ -241,11 +236,8 @@ public class ContractControllerTest {
         Contract contract2 = new Contract(2, name);
         contract2.setId(contract.getId());
 
-        try {
-            contractService.updateContract(2, contract2);
-        } catch (IllegalStateException e) {
-            String expectedMessage = "Contract entity with tenantId (1) cannot change tenants.";
-            assertEquals(expectedMessage, e.getMessage());
-        }
+        assertThatExceptionOfType(IllegalStateException.class)
+                .isThrownBy(() -> contractService.updateContract(2, contract2))
+                .withMessage("Contract entity with tenantId (1) cannot change tenants.");
     }
 }
