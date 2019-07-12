@@ -49,7 +49,7 @@ public class SkillService extends AbstractRestService {
         }
 
         validateTenantIdParameter(tenantId, skillOptional.get());
-        return skillRepository.findById(id).get();
+        return skillOptional.get();
     }
 
     @Transactional

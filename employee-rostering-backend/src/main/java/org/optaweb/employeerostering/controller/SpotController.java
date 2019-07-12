@@ -45,26 +45,26 @@ public class SpotController {
 
     @GetMapping
     public ResponseEntity<List> getSpotList(@PathVariable Integer tenantId) {
-        return new ResponseEntity<List>(spotService.getSpotList(tenantId), HttpStatus.OK);
+        return new ResponseEntity<>(spotService.getSpotList(tenantId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Spot> getSpot(@PathVariable Integer tenantId, @PathVariable Long id) {
-        return new ResponseEntity<Spot>(spotService.getSpot(tenantId, id), HttpStatus.OK);
+        return new ResponseEntity<>(spotService.getSpot(tenantId, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteSpot(@PathVariable Integer tenantId, @PathVariable Long id) {
-        return new ResponseEntity<Boolean>(spotService.deleteSpot(tenantId, id), HttpStatus.OK);
+        return new ResponseEntity<>(spotService.deleteSpot(tenantId, id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Spot> createSpot(@PathVariable Integer tenantId, @RequestBody Spot spot) {
-        return new ResponseEntity<Spot>(spotService.createSpot(tenantId, spot), HttpStatus.OK);
+        return new ResponseEntity<>(spotService.createSpot(tenantId, spot), HttpStatus.OK);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Spot> updateSpot(@PathVariable Integer tenantId, @RequestBody Spot spot) {
-        return new ResponseEntity<Spot>(spotService.updateSpot(tenantId, spot), HttpStatus.OK);
+        return new ResponseEntity<>(spotService.updateSpot(tenantId, spot), HttpStatus.OK);
     }
 }

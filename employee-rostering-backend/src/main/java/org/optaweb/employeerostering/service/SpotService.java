@@ -49,7 +49,7 @@ public class SpotService extends AbstractRestService {
         }
 
         validateTenantIdParameter(tenantId, spotOptional.get());
-        return spotRepository.findById(id).get();
+        return spotOptional.get();
     }
 
     @Transactional

@@ -62,9 +62,9 @@ public class SkillControllerTest {
         List<Skill> skillList = skillService.getSkillList(tenantId);
         List<Skill> skillList2 = skillService.getSkillList(tenantId2);
 
-        assertEquals(skillList.get(0), skill);
-        assertEquals(skillList.get(1), skill2);
-        assertEquals(skillList2.get(0), skill3);
+        assertEquals(skill, skillList.get(0));
+        assertEquals(skill2, skillList.get(1));
+        assertEquals(skill3, skillList2.get(0));
     }
 
     @Test
@@ -78,8 +78,8 @@ public class SkillControllerTest {
 
         Skill returnSkill = skillService.getSkill(tenantId, skill.getId());
 
-        assertEquals(returnSkill.getTenantId(), (Integer) 1);
-        assertEquals(returnSkill.getName(), "name");
+        assertEquals((Integer) 1, returnSkill.getTenantId());
+        assertEquals("name", returnSkill.getName());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class SkillControllerTest {
 
         skillService.createSkill(tenantId, skill);
 
-        assertEquals(skillService.deleteSkill(tenantId, skill.getId()), true);
+        assertEquals(true, skillService.deleteSkill(tenantId, skill.getId()));
     }
 
     @Test
@@ -152,8 +152,8 @@ public class SkillControllerTest {
 
         Skill returnSkill = skillService.createSkill(tenantId, skill);
 
-        assertEquals(returnSkill.getTenantId(), (Integer) 1);
-        assertEquals(returnSkill.getName(), "name");
+        assertEquals((Integer) 1, returnSkill.getTenantId());
+        assertEquals("name", returnSkill.getName());
     }
 
     @Test
@@ -182,8 +182,8 @@ public class SkillControllerTest {
 
         Skill returnSkill = skillService.updateSkill(tenantId, skill2);
 
-        assertEquals(returnSkill.getTenantId(), (Integer) 1);
-        assertEquals(returnSkill.getName(), "name2");
+        assertEquals((Integer) 1, returnSkill.getTenantId());
+        assertEquals("name2", returnSkill.getName());
     }
 
     @Test
