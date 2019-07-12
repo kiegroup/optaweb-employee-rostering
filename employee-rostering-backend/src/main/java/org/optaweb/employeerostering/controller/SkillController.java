@@ -18,7 +18,8 @@ package org.optaweb.employeerostering.controller;
 
 import java.util.List;
 
-import org.optaweb.employeerostering.domain.Skill;
+import org.optaweb.employeerostering.domain.skill.Skill;
+import org.optaweb.employeerostering.domain.skill.SkillDTO;
 import org.optaweb.employeerostering.service.SkillService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tenant/{tenantId}/skill")
+@RequestMapping("/rest/tenant/{tenantId}/skill")
 public class SkillController {
 
     private final SkillService skillService;
@@ -59,12 +60,18 @@ public class SkillController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Skill> createSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
+    public ResponseEntity<Skill> createSkill(@PathVariable Integer tenantId, @RequestBody SkillDTO skillDTO) {
+        Skill skill = new Skill(skillDTO.getTenantId(), skillDTO.getName());
+        skill.setId(skillDTO.getId());
+        skill.setVersion(skillDTO.getVersion());
         return new ResponseEntity<>(skillService.createSkill(tenantId, skill), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Skill> updateSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
+    public ResponseEntity<Skill> updateSkill(@PathVariable Integer tenantId, @RequestBody SkillDTO skillDTO) {
+        Skill skill = new Skill(skillDTO.getTenantId(), skillDTO.getName());
+        skill.setId(skillDTO.getId());
+        skill.setVersion(skillDTO.getVersion());
         return new ResponseEntity<>(skillService.updateSkill(tenantId, skill), HttpStatus.OK);
     }
 }

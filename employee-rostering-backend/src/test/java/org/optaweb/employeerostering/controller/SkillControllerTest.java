@@ -23,7 +23,7 @@ import javax.transaction.Transactional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.optaweb.employeerostering.domain.Skill;
+import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.service.SkillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
