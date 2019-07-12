@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.persistence;
+package org.optaweb.employeerostering.domain.spot;
 
-import java.util.List;
+import java.util.Set;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface SkillRepository extends JpaRepository <Skill, Long> {
-    List<Skill> findAllByTenantId(Integer tenantId);
+public class SpotDTO extends Spot {
+
+    public SpotDTO(Integer tenantId, String name, Set<Skill> requiredSkillSet) {
+        super(tenantId, name, requiredSkillSet);
+    }
 }

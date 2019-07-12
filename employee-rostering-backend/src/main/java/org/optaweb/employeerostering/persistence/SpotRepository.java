@@ -18,7 +18,7 @@ package org.optaweb.employeerostering.persistence;
 
 import java.util.List;
 
-import org.optaweb.employeerostering.domain.Spot;
+import org.optaweb.employeerostering.domain.spot.Spot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
