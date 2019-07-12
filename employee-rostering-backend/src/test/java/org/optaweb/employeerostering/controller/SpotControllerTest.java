@@ -82,9 +82,9 @@ public class SpotControllerTest {
         List<Spot> spotList = spotService.getSpotList(tenantId);
         List<Spot> spotList2 = spotService.getSpotList(tenantId2);
 
-        assertEquals(spotList.get(0), spot);
-        assertEquals(spotList.get(1), spot2);
-        assertEquals(spotList2.get(0), spot3);
+        assertEquals(spot, spotList.get(0));
+        assertEquals(spot2, spotList.get(1));
+        assertEquals(spot3, spotList2.get(0));
     }
 
     @Test
@@ -104,9 +104,9 @@ public class SpotControllerTest {
 
         Spot returnSpot = spotService.getSpot(tenantId, spot.getId());
 
-        assertEquals(returnSpot.getTenantId(), (Integer) 1);
-        assertEquals(returnSpot.getName(), "name");
-        assertEquals(returnSpot.getRequiredSkillSet(), spot.getRequiredSkillSet());
+        assertEquals((Integer) 1, returnSpot.getTenantId());
+        assertEquals("name", returnSpot.getName());
+        assertEquals(spot.getRequiredSkillSet(), returnSpot.getRequiredSkillSet());
     }
 
     @Test
@@ -151,7 +151,7 @@ public class SpotControllerTest {
 
         spotService.createSpot(tenantId, spot);
 
-        assertEquals(spotService.deleteSpot(tenantId, spot.getId()), true);
+        assertEquals(true, spotService.deleteSpot(tenantId, spot.getId()));
     }
 
     @Test
@@ -196,9 +196,9 @@ public class SpotControllerTest {
 
         Spot returnSpot = spotService.createSpot(tenantId, spot);
 
-        assertEquals(returnSpot.getTenantId(), (Integer) 1);
-        assertEquals(returnSpot.getName(), "name");
-        assertEquals(returnSpot.getRequiredSkillSet(), spot.getRequiredSkillSet());
+        assertEquals((Integer) 1, returnSpot.getTenantId());
+        assertEquals("name", returnSpot.getName());
+        assertEquals(spot.getRequiredSkillSet(), returnSpot.getRequiredSkillSet());
     }
 
     @Test
@@ -239,9 +239,9 @@ public class SpotControllerTest {
 
         Spot returnSpot = spotService.updateSpot(tenantId, spot2);
 
-        assertEquals(returnSpot.getTenantId(), (Integer) 1);
-        assertEquals(returnSpot.getName(), "name2");
-        assertEquals(returnSpot.getRequiredSkillSet(), spot2.getRequiredSkillSet());
+        assertEquals((Integer) 1, returnSpot.getTenantId());
+        assertEquals("name2", returnSpot.getName());
+        assertEquals(spot2.getRequiredSkillSet(), returnSpot.getRequiredSkillSet());
     }
 
     @Test
