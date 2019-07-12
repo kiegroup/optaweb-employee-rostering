@@ -233,7 +233,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           dataGetStartDate={s => s.startDateTime}
           dataGetEndDate={s => s.endDateTime}
           minDurationInMinutes={30}
-          hourDividersInDay={8}
+          hourDividersInDay={6}
           updateData={this.props.updateShift}
         />
       </>

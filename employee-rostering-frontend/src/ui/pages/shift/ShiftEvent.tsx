@@ -140,7 +140,7 @@ function getShiftEmployeeConflictViolations(shift: Shift): JSX.Element {
         {shift.shiftEmployeeConflictList.map((v, index) => (
           <li key={String(index)}>
             The Employee &quot;
-            {(shift.employee as Employee).name}
+            {(v.leftShift.employee as Employee).name}
             &quot; is assigned to a conflicting shift:
             {" " + ((v.leftShift.id === shift.id)?
               v.rightShift.spot.name + ", " + moment(v.rightShift.startDateTime).format("LT") + "-" + moment(v.rightShift.endDateTime).format("LT") :
