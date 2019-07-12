@@ -184,27 +184,6 @@
                 <goal>report</goal>
               </goals>
             </execution>
-            <execution>
-              <id>default-check</id>
-              <goals>
-                <goal>check</goal>
-              </goals>
-              <configuration>
-                <haltOnFailure>true</haltOnFailure>
-                <rules>
-                  <rule>
-                    <element>BUNDLE</element>
-                    <limits>
-                      <limit>
-                        <counter>LINE</counter>
-                        <value>COVEREDRATIO</value>
-                        <minimum>0.5</minimum>
-                      </limit>
-                    </limits>
-                  </rule>
-                </rules>
-              </configuration>
-            </execution>
           </executions>
         </plugin>
         <plugin>
@@ -342,6 +321,17 @@
           <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.codehaus.cargo</groupId>
+            <artifactId>cargo-maven2-plugin</artifactId>
+            <configuration>
+              <configuration>
+                <properties>
+                  <cargo.start.jvmargs>${jacoco.agent.line}</cargo.start.jvmargs>
+                </properties>
+              </configuration>
+            </configuration>
           </plugin>
         </plugins>
       </build>
