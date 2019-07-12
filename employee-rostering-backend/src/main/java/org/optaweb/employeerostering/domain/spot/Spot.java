@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.domain;
+package org.optaweb.employeerostering.domain.spot;
 
 import java.util.Set;
 
@@ -29,6 +29,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.optaweb.employeerostering.domain.AbstractPersistable;
+import org.optaweb.employeerostering.domain.skill.Skill;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}),

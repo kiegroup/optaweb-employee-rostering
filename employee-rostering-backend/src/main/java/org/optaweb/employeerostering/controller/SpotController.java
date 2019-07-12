@@ -18,7 +18,8 @@ package org.optaweb.employeerostering.controller;
 
 import java.util.List;
 
-import org.optaweb.employeerostering.domain.Spot;
+import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.spot.SpotDTO;
 import org.optaweb.employeerostering.service.SpotService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/tenant/{tenantId}/spot")
+@RequestMapping("/rest/tenant/{tenantId}/spot")
 public class SpotController {
 
     private final SpotService spotService;
@@ -59,12 +60,18 @@ public class SpotController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Spot> createSpot(@PathVariable Integer tenantId, @RequestBody Spot spot) {
+    public ResponseEntity<Spot> createSpot(@PathVariable Integer tenantId, @RequestBody SpotDTO spotDTO) {
+        Spot spot = new Spot(spotDTO.getTenantId(), spotDTO.getName(), spotDTO.getRequiredSkillSet());
+        spot.setId(spotDTO.getId());
+        spot.setVersion(spotDTO.getVersion());
         return new ResponseEntity<>(spotService.createSpot(tenantId, spot), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Spot> updateSpot(@PathVariable Integer tenantId, @RequestBody Spot spot) {
+    public ResponseEntity<Spot> updateSpot(@PathVariable Integer tenantId, @RequestBody SpotDTO spotDTO) {
+        Spot spot = new Spot(spotDTO.getTenantId(), spotDTO.getName(), spotDTO.getRequiredSkillSet());
+        spot.setId(spotDTO.getId());
+        spot.setVersion(spotDTO.getVersion());
         return new ResponseEntity<>(spotService.updateSpot(tenantId, spot), HttpStatus.OK);
     }
 }
