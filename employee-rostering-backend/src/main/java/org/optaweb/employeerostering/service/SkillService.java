@@ -22,7 +22,7 @@ import java.util.Optional;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
-import org.optaweb.employeerostering.domain.Skill;
+import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.persistence.SkillRepository;
 import org.springframework.stereotype.Service;
 
