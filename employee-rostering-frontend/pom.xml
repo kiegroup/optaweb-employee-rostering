@@ -81,7 +81,7 @@
       <id>sonar</id>
       <properties>
         <sonar.sources>src</sonar.sources>
-        <sonar.test.inclusions>optaweb-employee-rostering-frontend/**/*test.ts,optaweb-employee-rostering-frontend/**/*test.tsx</sonar.test.inclusions>
+        <sonar.test.inclusions>**/*test.ts,**/*test.tsx</sonar.test.inclusions>
         <sonar.typescript.lcov.reportPaths>coverage/lcov.info</sonar.typescript.lcov.reportPaths>
       </properties>
     </profile>
