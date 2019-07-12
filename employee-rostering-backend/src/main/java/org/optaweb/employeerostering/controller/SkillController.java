@@ -45,26 +45,26 @@ public class SkillController {
 
     @GetMapping
     public ResponseEntity<List> getSkillList(@PathVariable Integer tenantId) {
-        return new ResponseEntity<List>(skillService.getSkillList(tenantId), HttpStatus.OK);
+        return new ResponseEntity<>(skillService.getSkillList(tenantId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Skill> getSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
-        return new ResponseEntity<Skill>(skillService.getSkill(tenantId, id), HttpStatus.OK);
+        return new ResponseEntity<>(skillService.getSkill(tenantId, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
-        return new ResponseEntity<Boolean>(skillService.deleteSkill(tenantId, id), HttpStatus.OK);
+        return new ResponseEntity<>(skillService.deleteSkill(tenantId, id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Skill> createSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
-        return new ResponseEntity<Skill>(skillService.createSkill(tenantId, skill), HttpStatus.OK);
+        return new ResponseEntity<>(skillService.createSkill(tenantId, skill), HttpStatus.OK);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Skill> updateSkill(@PathVariable Integer tenantId, @RequestBody Skill skill) {
-        return new ResponseEntity<Skill>(skillService.updateSkill(tenantId, skill), HttpStatus.OK);
+        return new ResponseEntity<>(skillService.updateSkill(tenantId, skill), HttpStatus.OK);
     }
 }
