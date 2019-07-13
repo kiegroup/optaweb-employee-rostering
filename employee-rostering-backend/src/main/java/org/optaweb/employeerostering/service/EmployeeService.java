@@ -89,6 +89,8 @@ public class EmployeeService extends AbstractRestService {
 
         Employee databaseEmployee = employeeOptional.get();
         databaseEmployee.setName(employee.getName());
+        databaseEmployee.setSkillProficiencySet(employee.getSkillProficiencySet());
+        databaseEmployee.setContract(employee.getContract());
         return employeeRepository.save(databaseEmployee);
     }
 
@@ -101,4 +103,6 @@ public class EmployeeService extends AbstractRestService {
             }
         }
     }
+
+    //TODO: Add EmployeeAvailability CRUD methods
 }
