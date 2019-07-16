@@ -202,7 +202,7 @@ public class SpotControllerTest {
     }
 
     @Test
-    public void createNonMatchingSpotTest(){
+    public void createNonMatchingSpotTest() {
         Integer tenantId = 1;
         String name = "name";
 
