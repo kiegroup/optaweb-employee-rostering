@@ -19,6 +19,22 @@ import DomainObject from 'domain/DomainObject';
 import DomainObjectView from 'domain/DomainObjectView';
 
 describe('Immutable Collection Operations', () => {
+  it('should create a copy with element removed in objectWithout', () => {
+    const original = {
+      "a": 10,
+      "b": "Hello",
+      "c": null
+    };
+    const expected = {
+      "a": 10,
+      "c": null
+    }
+    const originalCopy = { ...original };
+    const actual = immutableCollectionOperations.objectWithout(original, "b");
+    expect(actual).toEqual(expected);
+    expect(original).toEqual(originalCopy);
+  });
+  
   it('should not modify the collection on without element', () => {
     const object1: DomainObject = {
       tenantId: 0,

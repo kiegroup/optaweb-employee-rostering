@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosInstance, AxiosResponse, AxiosStatic } from 'axios';
 
 import { showServerError, showServerErrorMessage } from 'ui/Alerts';
 import { ServerSideExceptionInfo } from 'types';
@@ -23,7 +23,7 @@ export default class RestServiceClient {
 
   restClient: AxiosInstance;
 
-  constructor(baseURL: string) {
+  constructor(baseURL: string, axios: AxiosStatic) {
     this.restClient = axios.create({
       baseURL: baseURL,
       validateStatus: () => true

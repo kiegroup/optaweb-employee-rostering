@@ -19,6 +19,7 @@ import ShiftView from 'domain/ShiftView';
 import Shift from 'domain/Shift';
 import Spot from 'domain/Spot';
 import ShiftRosterView from 'domain/ShiftRosterView';
+import { objectWithout } from 'util/ImmutableCollectionOperations';
 
 function isLoading(state: AppState) {
   return state.spotList.isLoading || state.employeeList.isLoading || state.skillList.isLoading ||
@@ -39,7 +40,7 @@ export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
   }
   if ((spot.id as number) in (state.shiftRoster.shiftRosterView as ShiftRosterView).spotIdToShiftViewListMap) {
     return ((state.shiftRoster.shiftRosterView as ShiftRosterView).spotIdToShiftViewListMap[spot.id as number] as ShiftView[]).map(sv => ({
-      ...sv,
+      ...objectWithout(sv, "spotId", "rotationEmployeeId", "employeeId"),
       spot: spot,
       rotationEmployee: (sv.rotationEmployeeId !== null)? employeeSelectors.getEmployeeById(state, sv.rotationEmployeeId) : null,
       employee: (sv.employeeId !== null)? employeeSelectors.getEmployeeById(state, sv.employeeId) : null

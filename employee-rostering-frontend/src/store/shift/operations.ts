@@ -15,32 +15,23 @@
  */
 
 import { ThunkCommandFactory } from '../types';
-import * as actions from './actions';
 import Shift from 'domain/Shift';
 import ShiftView, { shiftToShiftView } from 'domain/ShiftView';
-import { SetShiftListLoadingAction, AddShiftAction, RemoveShiftAction, UpdateShiftAction, RefreshShiftListAction } from './types';
 import moment from 'moment';
-import DomainObject from 'domain/DomainObject';
 import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
 import { refreshShiftRoster } from 'store/roster/operations';
-import HardMediumSoftScore, { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
+import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
+import { objectWithout } from 'util/ImmutableCollectionOperations';
 
-export type KindaShiftView = Pick<ShiftView, Exclude<keyof ShiftView, "indictmentScore">> & { indictmentScore?: string };
+type KindaShiftView1 = Pick<ShiftView, Exclude<keyof ShiftView, "indictmentScore">> & { indictmentScore?: string };
+type KindaShiftView2 = Pick<KindaShiftView1, Exclude<keyof KindaShiftView1, "startDateTime">> & { startDateTime: string };
+type KindaShiftView3 = Pick<KindaShiftView2, Exclude<keyof KindaShiftView2, "endDateTime">> & { endDateTime: string };
+export type KindaShiftView = KindaShiftView3;
 
 export function shiftAdapter(shift: Shift): KindaShiftView {
-  const shiftClone = { ...shift };
-  delete shiftClone.indictmentScore;
-  
-  // Since property P is related to indictments iff it is an array,
-  // We can remove all indictments by deleting all keys that are arrays
-  for(const key in shiftClone) {
-    if (Array.isArray((shiftClone as {[P: string]: any})[key])) {
-      delete (shiftClone as {[P: string]: any})[key];
-    }
-  }
-
   return {
-    ...shiftToShiftView(shiftClone) as any,
+    ...objectWithout(shiftToShiftView(shift), "indictmentScore", "startDateTime", "endDateTime",
+      ...Object.keys(shift).filter(k => Array.isArray((shift as {[P: string]: any})[k])) as (keyof ShiftView)[]) as any,
     startDateTime: moment(shift.startDateTime).local().format("YYYY-MM-DDTHH:mm:ss"),
     endDateTime: moment(shift.endDateTime).local().format("YYYY-MM-DDTHH:mm:ss")
   };
@@ -65,24 +56,22 @@ export function kindaShiftViewAdapter(kindaShiftView: KindaShiftView): ShiftView
   };
 }
 
-export const addShift: ThunkCommandFactory<Shift, AddShiftAction> = shift =>
+export const addShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     return client.post<KindaShiftView>(`/tenant/${tenantId}/shift/add`, shiftAdapter(shift)).then(newShift => {
-      showSuccessMessage("Successfully added Shift", `A new Shift starting at ${moment(shift.startDateTime).format("LLL")} and ending at ${moment(shift.endDateTime).format("LLL")} was successfully added.`)
-      dispatch(actions.addShift(kindaShiftViewAdapter(newShift)))
+      showSuccessMessage("Successfully added Shift", `A new Shift starting at ${moment(newShift.startDateTime).format("LLL")} and ending at ${moment(newShift.endDateTime).format("LLL")} was successfully added.`)
       dispatch(refreshShiftRoster());
     });
   };
 
-export const removeShift: ThunkCommandFactory<Shift, RemoveShiftAction> = shift =>
+export const removeShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     const shiftId = shift.id;
     return client.delete<boolean>(`/tenant/${tenantId}/shift/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
         showSuccessMessage("Successfully deleted Shift", `The Shift with id ${shift.id} starting at ${moment(shift.startDateTime).format("LLL")} and ending at ${moment(shift.endDateTime).format("LLL")} was successfully deleted.`)
-        dispatch(actions.removeShift(shiftToShiftView(shift)));
         dispatch(refreshShiftRoster());
       }
       else {
@@ -91,23 +80,11 @@ export const removeShift: ThunkCommandFactory<Shift, RemoveShiftAction> = shift 
     });
   };
 
-export const updateShift: ThunkCommandFactory<Shift, UpdateShiftAction> = shift =>
+export const updateShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     return client.put<KindaShiftView>(`/tenant/${tenantId}/shift/update`, shiftAdapter(shift)).then(updatedShift => {
       showSuccessMessage("Successfully updated Shift", `The Shift with id "${shift.id}" was successfully updated.`);
-      dispatch(actions.updateShift(kindaShiftViewAdapter(updatedShift)));
-      dispatch(refreshShiftRoster());
-    });
-  };
-
-export const refreshShiftList: ThunkCommandFactory<void, SetShiftListLoadingAction | RefreshShiftListAction> = () =>
-  (dispatch, state, client) => {
-    const tenantId = state().tenantData.currentTenantId;
-    dispatch(actions.setIsShiftListLoading(true));
-    return client.get<KindaShiftView[]>(`/tenant/${tenantId}/shift/`).then(shiftList => {
-      dispatch(actions.refreshShiftList(shiftList.map(kindaShiftViewAdapter)));
-      dispatch(actions.setIsShiftListLoading(false));
       dispatch(refreshShiftRoster());
     });
   };
