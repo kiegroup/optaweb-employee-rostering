@@ -21,7 +21,7 @@ import './App.css';
 import Background from './components/Background';
 import Header from './header/Header';
 import Alerts, { setAlertRef } from './Alerts';
-import { ShiftRosterPage1, ShiftRosterPage2, SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
+import { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
 
 const App: React.FC = () => {
   return (
@@ -60,14 +60,9 @@ const App: React.FC = () => {
               component={EmployeesPage}
             />
             <Route
-              path="/shift1"
+              path="/shift"
               exect
-              component={ShiftRosterPage1} 
-            />
-            <Route
-              path="/shift2"
-              exect
-              component={ShiftRosterPage2} 
+              component={ShiftRosterPage} 
             />
           </Switch>
         </PageSection>

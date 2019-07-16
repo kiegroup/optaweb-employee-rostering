@@ -273,8 +273,8 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     const rows = additionalRows.concat(rowsOnPage);
 
     const columns: ICell[] = this.props.columnTitles.map((t, index) => {
-      return { title: t, cellTransforms: [headerCol], props: {}, transforms: (sorters[index] !== null) ? [sortable] : undefined };
-    }).concat([{ title: '', cellTransforms: [headerCol], props: {}, transforms: undefined }]);
+      return { title: t, cellTransforms: [headerCol], props: {}, transforms: (sorters[index] !== null) ? [sortable] : undefined } as any;
+    }).concat([{ title: '', cellTransforms: [headerCol], props: {}, transforms: undefined } as any]) as any;
     return (
       <>
         <Level

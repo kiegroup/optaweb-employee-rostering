@@ -91,9 +91,9 @@ TypeaheadSelectState<T>
           variant={SelectVariant.typeahead}
           aria-label={emptyText}
           onToggle={this.onToggle}
-          onSelect={this.onSelect}
+          onSelect={this.onSelect as any}
           onClear={this.clearSelection}
-          selections={selection}
+          selections={selection as any}
           isExpanded={isExpanded}
           ariaLabelledBy={titleId}
           placeholderText={emptyText}
