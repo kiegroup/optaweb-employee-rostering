@@ -16,6 +16,7 @@
 
 import { ThunkCommandFactory, AppState } from '../types';
 import * as actions from './actions';
+import * as operations from './operations'; // Hack used for mocking
 import { SetRosterStateIsLoadingAction, SetRosterStateAction,
   SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction, PublishRosterAction, PublishResult } from './types';
 import RosterState from 'domain/RosterState';
@@ -54,7 +55,7 @@ function stopSolvingRoster(dispatch: ThunkDispatch<AppState, RestServiceClient, 
   }
   dispatch(actions.terminateSolvingRosterEarly());
   Promise.all([
-    dispatch(refreshShiftRoster())
+    dispatch(operations.refreshShiftRoster())
   ]).then(() => {
     showInfoMessage("Finished Solving Roster", `Finished Solving Roster at ${moment(new Date()).format("LLL")}`);
   });
@@ -70,7 +71,7 @@ export const solveRoster: ThunkCommandFactory<void, SolveRosterAction> = () =>
       dispatch(actions.solveRoster());
       showInfoMessage("Started Solving Roster", `Started Solving Roster at ${moment(solvingStartTime).format("LLL")}.`);
       autoRefreshShiftRosterDuringSolvingIntervalTimeout = setInterval(() => {
-        dispatch(refreshShiftRoster());
+        dispatch(operations.refreshShiftRoster());
       },updateInterval);
       stopSolvingRosterTimeout = setTimeout(() => stopSolvingRoster(dispatch), solvingLength);
     });
@@ -112,7 +113,7 @@ export const publish: ThunkCommandFactory<void, PublishRosterAction> = () =>
         publishedFromDate: moment(pr.publishedFromDate).toDate(),
         publishedToDate: moment(pr.publishedToDate).toDate()
       }));
-      dispatch(refreshShiftRoster());
+      dispatch(operations.refreshShiftRoster());
       showSuccessMessage("Published Roster", `Published from ${moment(pr.publishedFromDate).format("LL")} to ${moment(pr.publishedToDate).format("LL")}.`);
     });
   }

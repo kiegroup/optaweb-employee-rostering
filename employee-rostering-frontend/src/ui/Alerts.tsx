@@ -18,7 +18,7 @@ import { Alert, AlertActionCloseButton, Text, Title, Button, ButtonVariant, Moda
 import { ServerSideExceptionInfo } from 'types';
 import './Alerts.css';
 
-interface AlertInfo {
+export interface AlertInfo {
   id?: number;
   timeoutId?: number;
   title: string;
@@ -140,7 +140,7 @@ export default class Alerts extends React.Component<Props, State> {
     }, 10000);
     this.setState(prevState => ({
       alerts: prevState.alerts.concat([{ ...alert, id: alertId, timeoutId }]),
-      alertToClassNames: prevState.alertToClassNames.set(alertId, "fade-and-slide-in "),
+      alertToClassNames: prevState.alertToClassNames.set(alertId, "fade-and-slide-in"),
       alertCount: prevState.alertCount + 1
     }));
   }

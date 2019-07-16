@@ -19,9 +19,13 @@ exports[`App should render correctly 1`] = `
           "flexDirection": "column",
           "height": "100%",
           "overflowY": "auto",
+          "position": "relative",
         }
       }
     >
+      <Alerts
+        setRef={[Function]}
+      />
       <Switch>
         <Route
           component={
@@ -74,6 +78,32 @@ exports[`App should render correctly 1`] = `
           }
           exact={true}
           path="/employees"
+        />
+        <Route
+          component={
+            Object {
+              "$$typeof": Symbol(react.memo),
+              "WrappedComponent": [Function],
+              "compare": null,
+              "displayName": "Connect(ShiftRosterPage)",
+              "type": [Function],
+            }
+          }
+          exect={true}
+          path="/shift1"
+        />
+        <Route
+          component={
+            Object {
+              "$$typeof": Symbol(react.memo),
+              "WrappedComponent": [Function],
+              "compare": null,
+              "displayName": "Connect(ShiftRosterPage)",
+              "type": [Function],
+            }
+          }
+          exect={true}
+          path="/shift2"
         />
       </Switch>
     </PageSection>

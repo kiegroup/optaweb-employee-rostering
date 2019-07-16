@@ -42,6 +42,14 @@ interface ObjectWithKeys {
   [key: string]: any;
 }
 
+export function objectWithout<F>(obj: F, ...without: (keyof F)[]): F {
+  const copy: ObjectWithKeys = {
+    ...obj
+  };
+  without.forEach(key => delete copy[key as string]);
+  return copy as F;
+}
+
 export function mapDomainObjectToView<T extends DomainObject>(obj: T): DomainObjectView<T> {
   let result = {} as ObjectWithKeys;
   const objWithKeys = obj as ObjectWithKeys;

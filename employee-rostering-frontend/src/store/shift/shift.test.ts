@@ -16,163 +16,295 @@
 
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
-import * as actions from './actions';
-import reducer, { skillSelectors, skillOperations } from './index';
+import * as alerts from 'ui/Alerts';
+import * as rosterOperations from 'store/roster/operations';
+import { shiftOperations } from './index';
+import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './operations';
 import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
-import Skill from 'domain/Skill';
+import { onGet, onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
+import Shift from 'domain/Shift';
+import moment from 'moment';
 
-describe('Skill operations', () => {
-  it('should dispatch actions and call client', async () => {
+describe('Shift operations', () => {
+  it('should dispatch actions and call client on addShift', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const mockSkillList = [{
-      tenantId: tenantId,
-      id: 0,
-      version: 0,
-      name: "Skill 1"
-    },
-    {
-      tenantId: tenantId,
-      id: 1,
-      version: 0,
-      name: "Skill 2"
-    },
-    {
-      tenantId: tenantId,
-      id: 2,
-      version: 0,
-      name: "Skill 3"
-    }];
+    const shiftStartTime = moment("2018-01-01T09:00").toDate();
+    const shiftEndTime = moment("2018-01-01T12:00").toDate();
 
-    onGet(`/tenant/${tenantId}/skill/`, mockSkillList);
-    await store.dispatch(skillOperations.refreshSkillList());
-    expect(store.getActions()).toEqual([actions.setIsSkillListLoading(true),
-      actions.refreshSkillList(mockSkillList),
-      actions.setIsSkillListLoading(false)
-    ]);
-    expect(client.get).toHaveBeenCalledTimes(1);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/`);
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
+    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
 
-    store.clearActions();
-    resetRestClientMock(client);
+    const addedShift: Shift = {
+        tenantId: tenantId,
+        startDateTime: shiftStartTime,
+        endDateTime: shiftEndTime,
+        spot: {
+            tenantId: 0,
+            id: 20,
+            name: "Spot",
+            requiredSkillSet: []
+        },
+        employee: null,
+        rotationEmployee: null,
+        pinnedByUser: true
+    };
 
-    const skillToDelete: Skill = {tenantId: tenantId, id: 3214, name: "test"};
-    onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, true);
-    await store.dispatch(skillOperations.removeSkill(skillToDelete));
-    expect(store.getActions()).toEqual([actions.removeSkill(skillToDelete)]);
-    expect(client.delete).toHaveBeenCalledTimes(1);
-    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
+    onPost(`/tenant/${tenantId}/shift/add`, shiftAdapter(addedShift), shiftAdapter(addedShift));
 
-    store.clearActions();
-    resetRestClientMock(client);
+    await store.dispatch(shiftOperations.addShift(addedShift));
 
-    onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, false);
-    await store.dispatch(skillOperations.removeSkill(skillToDelete));
-    expect(store.getActions()).toEqual([]);
-    expect(client.delete).toHaveBeenCalledTimes(1);
-    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
+    expect(client.post).toBeCalled();
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/shift/add`, shiftAdapter(addedShift));
+    expect(mockRefreshShiftRoster).toBeCalled();
 
-    store.clearActions();
-    resetRestClientMock(client);
+    expect(mockShowSuccessMessage).toBeCalled();
+    expect(mockShowSuccessMessage).toBeCalledWith("Successfully added Shift", `A new Shift starting at ${moment(addedShift.startDateTime).format("LLL")} and ending at ${moment(addedShift.endDateTime).format("LLL")} was successfully added.`);
+  });
 
-    const skillToAdd: Skill = {tenantId: tenantId, name: "test"};
-    const skillWithUpdatedId: Skill = {...skillToAdd, id: 4, version: 0};
-    onPost(`/tenant/${tenantId}/skill/add`, skillToAdd, skillWithUpdatedId);
-    await store.dispatch(skillOperations.addSkill(skillToAdd));
-    expect(store.getActions()).toEqual([actions.addSkill(skillWithUpdatedId)]);
-    expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/add`, skillToAdd);
+  it('should dispatch actions and call client on a successful delete shift', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const shiftStartTime = moment("2018-01-01T09:00").toDate();
+    const shiftEndTime = moment("2018-01-01T12:00").toDate();
 
-    store.clearActions();
-    resetRestClientMock(client);
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
+    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
 
-    const skillToUpdate: Skill = {tenantId: tenantId, name: "test", id: 4, version: 0};
-    const skillWithUpdatedVersion: Skill = {...skillToUpdate, id: 4, version: 1};
-    onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
-    await store.dispatch(skillOperations.updateSkill(skillToUpdate));
-    expect(store.getActions()).toEqual([actions.updateSkill(skillWithUpdatedVersion)]);
-    expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
+    const deletedShift: Shift = {
+        tenantId: tenantId,
+        startDateTime: shiftStartTime,
+        endDateTime: shiftEndTime,
+        id: 10,
+        version: 0,
+        spot: {
+            tenantId: 0,
+            id: 20,
+            name: "Spot",
+            requiredSkillSet: []
+        },
+        employee: null,
+        rotationEmployee: null,
+        pinnedByUser: true
+    };
+
+    onDelete(`/tenant/${tenantId}/shift/${deletedShift.id}`, true);
+
+    await store.dispatch(shiftOperations.removeShift(deletedShift));
+
+    expect(client.delete).toBeCalled();
+    expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/shift/${deletedShift.id}`);
+    expect(mockRefreshShiftRoster).toBeCalled();
+
+    expect(mockShowSuccessMessage).toBeCalled();
+    expect(mockShowSuccessMessage).toBeCalledWith("Successfully deleted Shift", `The Shift with id ${deletedShift.id} starting at ${moment(deletedShift.startDateTime).format("LLL")} and ending at ${moment(deletedShift.endDateTime).format("LLL")} was successfully deleted.`);
+  });
+
+  it('should call client but not dispatch actions on a failed delete shift', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const shiftStartTime = moment("2018-01-01T09:00").toDate();
+    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
+    const mockShowErrorMessage = jest.spyOn(alerts, "showErrorMessage");
+
+    const deletedShift: Shift = {
+        tenantId: tenantId,
+        startDateTime: shiftStartTime,
+        endDateTime: shiftEndTime,
+        id: 10,
+        version: 0,
+        spot: {
+            tenantId: 0,
+            id: 20,
+            name: "Spot",
+            requiredSkillSet: []
+        },
+        employee: null,
+        rotationEmployee: null,
+        pinnedByUser: true
+    };
+
+    onDelete(`/tenant/${tenantId}/shift/${deletedShift.id}`, false);
+
+    await store.dispatch(shiftOperations.removeShift(deletedShift));
+
+    expect(client.delete).toBeCalled();
+    expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/shift/${deletedShift.id}`);
+    expect(mockRefreshShiftRoster).not.toBeCalled();
+
+    expect(mockShowErrorMessage).toBeCalled();
+    expect(mockShowErrorMessage).toBeCalledWith("Error deleting Shift", `The Shift with id ${deletedShift.id} starting at ${moment(deletedShift.startDateTime).format("LLL")} and ending at ${moment(deletedShift.endDateTime).format("LLL")} could not be deleted.`);
+  });
+
+  it('should dispatch actions and call client on updateShift', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const shiftStartTime = moment("2018-01-01T09:00").toDate();
+    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
+    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
+
+    const updatedShift: Shift = {
+        tenantId: tenantId,
+        id: 11,
+        version: 0,
+        startDateTime: shiftStartTime,
+        endDateTime: shiftEndTime,
+        spot: {
+            tenantId: 0,
+            id: 20,
+            name: "Spot",
+            requiredSkillSet: []
+        },
+        employee: null,
+        rotationEmployee: null,
+        pinnedByUser: true
+    };
+
+    const updatedShiftWithUpdatedVersion: Shift = {
+      ...updatedShift,
+      version: 1
+    };
+
+    onPut(`/tenant/${tenantId}/shift/update`, shiftAdapter(updatedShift), shiftAdapter(updatedShiftWithUpdatedVersion));
+
+    await store.dispatch(shiftOperations.updateShift(updatedShift));
+
+    expect(client.put).toBeCalled();
+    expect(client.put).toBeCalledWith(`/tenant/${tenantId}/shift/update`, shiftAdapter(updatedShift));
+    expect(mockRefreshShiftRoster).toBeCalled();
+
+    expect(mockShowSuccessMessage).toBeCalled();
+    expect(mockShowSuccessMessage).toBeCalledWith("Successfully updated Shift", `The Shift with id "${updatedShiftWithUpdatedVersion.id}" was successfully updated.`);
   });
 });
 
-describe('Skill reducers', () => {
-  const addedSkill: Skill = {tenantId: 0, id: 4321, version: 0, name: "Skill 1"};
-  const updatedSkill: Skill = {tenantId: 0, id: 1234, version: 1, name: "Updated Skill 2"};
-  const deletedSkill: Skill = {tenantId: 0, id: 2312, version: 0, name: "Skill 3"};
-  it('set is loading', () => {
-    expect(
-      reducer(state.skillList, actions.setIsSkillListLoading(true))
-    ).toEqual({ ...state.skillList, isLoading: true })
-  });
-  it('add skill', () => {
-    expect(
-      reducer(state.skillList, actions.addSkill(addedSkill))
-    ).toEqual({ ...state.skillList, skillMapById: mapWithElement(state.skillList.skillMapById, addedSkill)})
-  });
-  it('remove skill', () => {
-    expect(
-      reducer(state.skillList, actions.removeSkill(deletedSkill)),
-    ).toEqual({ ...state.skillList, skillMapById: mapWithoutElement(state.skillList.skillMapById, deletedSkill)})
-  });
-  it('update skill', () => {
-    expect(
-      reducer(state.skillList, actions.updateSkill(updatedSkill)),
-    ).toEqual({ ...state.skillList, skillMapById: mapWithUpdatedElement(state.skillList.skillMapById, updatedSkill)})
-  });
-  it('refresh skill list', () => {
-    expect(
-      reducer(state.skillList, actions.refreshSkillList([addedSkill])),
-    ).toEqual({ ...state.skillList, skillMapById: createIdMapFromList([addedSkill]) });
-  });
-});
-
-describe('Skill selectors', () => {
-  it('should throw an error if skill list is loading', () => {
-    expect(() => skillSelectors.getSkillById({
-      ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
-      }, 1234)).toThrow();
-  });
-
-  it('should get a skill by id', () => {
-    const skill = skillSelectors.getSkillById(state, 1234);
-    expect(skill).toEqual({
+describe('shift adapters', () => {
+  it('shiftAdapter should convert a Shift to a KindaShiftView', () => {
+    const shiftStartTime = moment("2018-01-01T09:00").toDate();
+    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+    const shift: Shift = {
       tenantId: 0,
-      id: 1234,
+      id: 11,
       version: 0,
-      name: "Skill 2"
+      startDateTime: shiftStartTime,
+      endDateTime: shiftEndTime,
+      spot: {
+          tenantId: 0,
+          id: 20,
+          name: "Spot",
+          requiredSkillSet: []
+      },
+      employee: {
+        tenantId: 10,
+        id: 20,
+        version: 0,
+        name: "Bill",
+        contract: {
+          tenantId: 0,
+          id: 100,
+          version: 0,
+          name: "Contract",
+          maximumMinutesPerDay: null,
+          maximumMinutesPerWeek: null,
+          maximumMinutesPerMonth: null,
+          maximumMinutesPerYear: null
+        },
+        skillProficiencySet: []
+      },
+      rotationEmployee: null,
+      pinnedByUser: true,
+      indictmentScore: { hardScore: 0, mediumScore: 0, softScore: 0},
+      desiredTimeslotForEmployeeRewardList: [],
+      shiftEmployeeConflictList: [],
+    };
+
+    expect(shiftAdapter(shift)).toEqual({
+      tenantId: 0,
+      id: 11,
+      version: 0,
+      startDateTime: moment(shiftStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      endDateTime: moment(shiftEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      spotId: 20,
+      employeeId: 20,
+      rotationEmployeeId: null,
+      pinnedByUser: true
     });
   });
 
-  it('should return an empty list if skill list is loading', () => {
-    const skillList = skillSelectors.getSkillList({
-      ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
-      });
-    expect(skillList).toEqual([]);
-  });
+  it('kindaShiftAdapter should convert a KindaShiftView to a ShiftView', () => {
+    const shiftStartTime = moment("2018-01-01T09:00").toDate();
+    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+    const kindaShiftView: KindaShiftView = {
+      tenantId: 0,
+      id: 11,
+      version: 0,
+      startDateTime: moment(shiftStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      endDateTime: moment(shiftEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      spotId: 20,
+      employeeId: null,
+      rotationEmployeeId: null,
+      pinnedByUser: true,
+      indictmentScore: "5hard/0medium/-14soft",
+      // @ts-ignore
+      unassignedShiftPenaltyList: [{
+        score: "5hard/0medium/-14soft",
+        shift: {
+          tenantId: 0,
+          id: 11,
+          version: 0,
+          startDateTime: shiftStartTime,
+          endDateTime: shiftEndTime,
+          spot: {
+            tenantId: 0,
+            id: 20,
+            version: 0,
+            name: "Spot",
+            requiredSkillSet: []
+          },
+          employee: null,
+          rotationEmployee: null,
+          pinnedByUser: true
+        }
+      }]
+    };
 
-  it('should return a list of all skills', () => {
-    const skillList = skillSelectors.getSkillList(state);
-    expect(skillList).toEqual(expect.arrayContaining([
-      {
-        tenantId: 0,
-        id: 1234,
-        version: 0,
-        name: "Skill 2"     
-      },
-      {
-        tenantId: 0,
-        id: 2312,
-        version: 1,
-        name: "Skill 3"
-      }
-    ]));
-    expect(skillList.length).toEqual(2);
+    expect(kindaShiftViewAdapter(kindaShiftView)).toEqual({
+      tenantId: 0,
+      id: 11,
+      version: 0,
+      startDateTime: shiftStartTime,
+      endDateTime: shiftEndTime,
+      spotId: 20,
+      employeeId: null,
+      rotationEmployeeId: null,
+      pinnedByUser: true,
+      indictmentScore: { hardScore: 5, mediumScore: 0, softScore: -14 },
+      // @ts-ignore
+      unassignedShiftPenaltyList: [{
+        score: { hardScore: 5, mediumScore: 0, softScore: -14 },
+        shift: {
+          tenantId: 0,
+          id: 11,
+          version: 0,
+          startDateTime: shiftStartTime,
+          endDateTime: shiftEndTime,
+          spot: {
+            tenantId: 0,
+            id: 20,
+            version: 0,
+            name: "Spot",
+            requiredSkillSet: []
+          },
+          employee: null,
+          rotationEmployee: null,
+          pinnedByUser: true
+        }
+      }]
+    });
   });
 });
 
@@ -209,5 +341,16 @@ const state: AppState = {
         name: "Skill 3"
       }]
     ])
+  },
+  rosterState: {
+    isLoading: true,
+    rosterState: null
+  },
+  shiftRoster: {
+    isLoading: true,
+    shiftRosterView: null
+  },
+  solverState: {
+    isSolving: false
   }
 };
