@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from "react";
+import React, { PropsWithChildren, ReactElement, ReactNode } from "react";
 import Shift from "domain/Shift";
 import Spot from "domain/Spot";
 import { AppState } from "store/types";
@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
 import { Level, LevelItem, Button, Title } from "@patternfly/react-core";
-import { Calendar, momentLocalizer } from 'react-big-calendar'
+import { Calendar, momentLocalizer, Event as CalendarEvent } from 'react-big-calendar'
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 import EditShiftModal from './EditShiftModal';
 import './BigCalendarSchedule.css';
@@ -35,8 +35,6 @@ import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { showInfoMessage } from "ui/Alerts";
 import RosterState from "domain/RosterState";
 import ShiftEvent, { getShiftColor } from "./ShiftEvent";
-
-const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 interface StateProps {
   isSolving: boolean;
@@ -93,6 +91,28 @@ interface State {
   selectedShift?: Shift;
 }
 
+function EventWrapper(props: PropsWithChildren<{
+  event: Shift;
+  style: React.CSSProperties;
+}>): JSX.Element {
+  const gridRowStart = parseInt(props.style.top as string) + 1;
+  const gridRowEnd = parseInt(props.style.height as string) + gridRowStart;
+
+  return (
+    <div
+      className="rbc-event"
+      style={{
+        gridRowStart: gridRowStart,
+        gridRowEnd: gridRowEnd,
+        backgroundColor: "transparent",
+        border: "none"
+      }}
+    >
+      {props.children}
+    </div>
+  );
+}
+
 export class ShiftRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -146,7 +166,6 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     const endDate = this.props.endDate as Date;
     const localizer = momentLocalizer(moment);
     const spot = this.props.shownSpotList[0];
-
     return (
       <>
         <Level
@@ -240,7 +259,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             height: "calc(100% - 20px)"
           }}
           >
-            <DragAndDropCalendar
+            <Calendar
               key={spot.id}
               date={startDate}
               length={moment.duration(moment(startDate).to(moment(endDate))).asDays()}
@@ -267,18 +286,6 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 }
               }
               }
-              onEventDrop={(args: {event: Shift; start: string|Date; end: string|Date}) =>
-                this.updateShift({...args.event,
-                  startDateTime: moment(args.start).toDate(),
-                  endDateTime: moment(args.end).toDate()
-                })
-              }
-              onEventResize={(args: {event: Shift; start: string|Date; end: string|Date}) =>
-                this.updateShift({...args.event,
-                  startDateTime: moment(args.start).toDate(),
-                  endDateTime: moment(args.end).toDate()
-                })
-              }
               onView={() => {}}
               onNavigate={() => {}}
               timeslots={4}
@@ -287,17 +294,21 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 
                 if (this.props.rosterState !== null && moment(start).isBefore(this.props.rosterState.firstDraftDate)) {
                   // Published
-                  return { style: {
-                    border: "1px solid",
-                    backgroundColor: Color(color).saturate(-0.5).hex()
-                  } };
+                  return {
+                    style: {
+                      border: "1px solid",
+                      backgroundColor: Color(color).saturate(-0.5).hex()
+                    }
+                  };
                 }
                 else {
                   // Draft
-                  return { style: {
-                    backgroundColor: color,
-                    border: "1px dashed"
-                  } };
+                  return {
+                    style: {
+                      backgroundColor: color,
+                      border: "1px dashed"
+                    } 
+                  };
                 }
               }}
               dayPropGetter={(date) => {
@@ -316,11 +327,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                   }
                 }
               }}
-              
               selectable
-              resizable
               showMultiDayTimes
               components={{
+                eventWrapper: (params) => EventWrapper(params as any),
                 event: (props) => ShiftEvent(
                   {
                     ...props,
