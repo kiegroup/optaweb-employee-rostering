@@ -214,5 +214,16 @@ const state: AppState = {
         name: "Skill 3"
       }]
     ])
+  },
+  rosterState: {
+    isLoading: true,
+    rosterState: null
+  },
+  shiftRoster: {
+    isLoading: true,
+    shiftRosterView: null
+  },
+  solverState: {
+    isSolving: false
   }
 };

@@ -25,6 +25,7 @@ import RotationViolationPenalty from './indictment/RotationViolationPenalty';
 import UnassignedShiftPenalty from './indictment/UnassignedShiftPenalty';
 import ContractMinutesViolation from './indictment/ContractMinutesViolation';
 import ShiftEmployeeConflictViolation from './indictment/ShiftEmployeeConflictViolation';
+import { objectWithout } from 'util/ImmutableCollectionOperations';
 
 export const shiftToShiftView = (shift: Shift): ShiftView => ({
   id: shift.id,
@@ -40,7 +41,7 @@ export const shiftToShiftView = (shift: Shift): ShiftView => ({
 }); 
 
 export const shiftViewToDomainObjectView = (view: ShiftView): DomainObjectView<Shift> => ({
-        ...view,
+        ...objectWithout(view, "employeeId", "spotId", "rotationEmployeeId"),
         employee: view.employeeId,
         spot: view.spotId,
         rotationEmployee: view.rotationEmployeeId

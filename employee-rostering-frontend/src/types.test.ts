@@ -13,15 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { ObjectNumberMap, mapObjectNumberMap } from './types';
 
-import * as rosterOperations from './operations';
-import * as rosterSelectors from './selectors';
-import { solverReducer, rosterStateReducer, shiftRosterViewReducer } from './reducers';
+describe('Type operations', () => {
+    it("mapObjectNumberMap should correctly map an ObjectNumberMap to a JavaScript Map", () => {
+        const objectNumberMap: ObjectNumberMap<string> = {
+            10: "A",
+            1: "BB",
+            4: "CCC"
+        };
 
-export {
-  rosterOperations,
-  rosterSelectors,
-  solverReducer,
-  rosterStateReducer,
-  shiftRosterViewReducer
-};
+        const expectedMap: ObjectNumberMap<number> = {
+            10: 1,
+            1: 2,
+            4: 3
+        };
+
+        const actualMap = mapObjectNumberMap(objectNumberMap, x => x.length);
+        expect(actualMap).toEqual(expectedMap);
+    });
+});

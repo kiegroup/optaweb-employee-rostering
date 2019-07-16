@@ -25,8 +25,9 @@ import { resetRestClientMock } from 'store/rest/RestTestUtils';
 jest.mock('./rest/RestServiceClient');
 
 export const mockStore = (state: AppState) => {
-  const client: jest.Mocked<RestServiceClient> = new RestServiceClient('') as any;
+  const client: jest.Mocked<RestServiceClient> = new RestServiceClient('', {} as any) as any;
   resetRestClientMock(client);
+  jest.clearAllMocks();
 
   const middlewares: Middleware[] = [thunk.withExtraArgument(client)];
   type DispatchExts = ThunkDispatch<AppState, RestServiceClient, SkillAction | TenantAction>;
