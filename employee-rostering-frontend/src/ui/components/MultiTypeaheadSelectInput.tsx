@@ -96,7 +96,7 @@ MultiTypeaheadSelectState<T>>  {
           variant={SelectVariant.typeaheadMulti}
           aria-label={emptyText}
           onToggle={this.onToggle}
-          onSelect={this.onSelect}
+          onSelect={this.onSelect as any}
           onClear={this.clearSelection}
           selections={selections}
           isExpanded={isExpanded}
