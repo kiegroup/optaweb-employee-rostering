@@ -59,24 +59,13 @@ exports[`Navigation should activate a navigation link matching the current path 
     </NavItem>
     <NavItem
       isActive={false}
-      itemId="shift1"
-      key="shift1"
+      itemId="shift"
+      key="shift"
     >
       <Link
-        to="/shift1"
+        to="/shift"
       >
-        Shift1
-      </Link>
-    </NavItem>
-    <NavItem
-      isActive={false}
-      itemId="shift2"
-      key="shift2"
-    >
-      <Link
-        to="/shift2"
-      >
-        Shift2
+        Shift
       </Link>
     </NavItem>
   </NavList>
