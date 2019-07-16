@@ -90,20 +90,7 @@ exports[`App should render correctly 1`] = `
             }
           }
           exect={true}
-          path="/shift1"
-        />
-        <Route
-          component={
-            Object {
-              "$$typeof": Symbol(react.memo),
-              "WrappedComponent": [Function],
-              "compare": null,
-              "displayName": "Connect(ShiftRosterPage)",
-              "type": [Function],
-            }
-          }
-          exect={true}
-          path="/shift2"
+          path="/shift"
         />
       </Switch>
     </PageSection>
