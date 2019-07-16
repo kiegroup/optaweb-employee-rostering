@@ -15,12 +15,7 @@
  */
 
 import * as shiftOperations from './operations';
-import * as shiftSelectors from './selectors';
-import reducer from './reducers';
 
 export {
-  shiftOperations,
-  shiftSelectors
+  shiftOperations
 };
-
-export default reducer;

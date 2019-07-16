@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-import * as rosterOperations from './operations';
-import * as rosterSelectors from './selectors';
-import { solverReducer, rosterStateReducer, shiftRosterViewReducer } from './reducers';
+
+const setAlertRef = jest.fn();
+const showInfoMessage = jest.fn();
+const showSuccessMessage = jest.fn();
+const showServerError = jest.fn();
+const showServerErrorMessage = jest.fn();
+const showErrorMessage = jest.fn();
+const showMessage = jest.fn();
 
 export {
-  rosterOperations,
-  rosterSelectors,
-  solverReducer,
-  rosterStateReducer,
-  shiftRosterViewReducer
+  setAlertRef,
+  showInfoMessage,
+  showSuccessMessage,
+  showServerError,
+  showServerErrorMessage,
+  showErrorMessage,
+  showMessage
 };
