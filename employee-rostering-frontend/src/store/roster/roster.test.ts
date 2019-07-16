@@ -17,162 +17,492 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import reducer, { skillSelectors, skillOperations } from './index';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
-import Skill from 'domain/Skill';
+import * as alerts from 'ui/Alerts';
+import { rosterStateReducer, shiftRosterViewReducer, rosterSelectors, rosterOperations, solverReducer } from './index';
+import { resetRestClientMock, onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
+import MockDate from 'mockdate';
+import moment from 'moment';
+import Spot from 'domain/Spot';
+import ShiftRosterView from 'domain/ShiftRosterView';
 
-describe('Skill operations', () => {
-  it('should dispatch actions and call client', async () => {
+const mockShiftRoster: ShiftRosterView = {
+  tenantId: 0,
+  startDate: moment("2018-01-01", "YYYY-MM-DD").toISOString(),
+  endDate: moment("2018-01-01", "YYYY-MM-DD").toISOString(),
+  spotList: [{
+    tenantId: 0,
+    id: 10,
+    version: 0,
+    name: "Spot",
+    requiredSkillSet: []
+  }],
+  employeeList: [],
+  rosterState: {
+    publishNotice: 0,
+    firstDraftDate: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+    publishLength: 0,
+    draftLength: 0,
+    unplannedRotationOffset: 5,
+    rotationLength: 10,
+    lastHistoricDate: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+    timeZone: "",
+    tenant: {
+      name: "Tenant"
+    }
+  },
+  spotIdToShiftViewListMap: {
+    10: [{
+      tenantId: 0,
+      startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+      endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+      spotId: 10,
+      employeeId: null,
+      rotationEmployeeId: null,
+      indictmentScore: {
+        hardScore: 0,
+        mediumScore: 0,
+        softScore: 0
+      },
+      pinnedByUser: false
+    }]
+  }
+};
+
+describe('Roster operations', () => {
+  it('should dispatch actions and call client on solve roster', async () => {
+    const showInfoMessageMock = jest.spyOn(alerts, "showInfoMessage");
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster").mockImplementation(() => () => {});;
+    jest.useFakeTimers();
+    const solvingStartTime = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    MockDate.set(solvingStartTime);
+
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const mockSkillList = [{
-      tenantId: tenantId,
-      id: 0,
-      version: 0,
-      name: "Skill 1"
-    },
-    {
-      tenantId: tenantId,
-      id: 1,
-      version: 0,
-      name: "Skill 2"
-    },
-    {
-      tenantId: tenantId,
-      id: 2,
-      version: 0,
-      name: "Skill 3"
-    }];
 
-    onGet(`/tenant/${tenantId}/skill/`, mockSkillList);
-    await store.dispatch(skillOperations.refreshSkillList());
-    expect(store.getActions()).toEqual([actions.setIsSkillListLoading(true),
-      actions.refreshSkillList(mockSkillList),
-      actions.setIsSkillListLoading(false)
+    onPost(`/tenant/${tenantId}/roster/solve`, {}, {});
+    await store.dispatch(rosterOperations.solveRoster());
+    expect(store.getActions()).toEqual([actions.solveRoster()]);
+    expect(showInfoMessageMock).toBeCalled();
+    expect(showInfoMessageMock).toBeCalledWith("Started Solving Roster", `Started Solving Roster at ${moment(solvingStartTime).format("LLL")}.`);
+    expect(client.post).toHaveBeenCalledTimes(1);
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/solve`, {});
+
+    jest.advanceTimersByTime(1000);
+    await Promise.resolve(); // hack to wait for the refresh action to finish
+
+    expect(mockRefreshShiftRoster).toBeCalled();
+  });
+
+  it('should dispatch actions and call client on terminate solving roster', async () => {
+    const showInfoMessageMock = jest.spyOn(alerts, "showInfoMessage");
+    const solvingEndTime = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    MockDate.set(solvingEndTime);
+
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster").mockImplementation(() => () => {});;
+
+    onPost(`/tenant/${tenantId}/roster/terminate`, {}, {});
+    await(store.dispatch(rosterOperations.terminateSolvingRosterEarly()));
+
+    expect(client.post).toHaveBeenCalledTimes(1);
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/terminate`, {});
+    
+    expect(store.getActions()).toEqual([
+      actions.terminateSolvingRosterEarly()
     ]);
-    expect(client.get).toHaveBeenCalledTimes(1);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/`);
 
-    store.clearActions();
-    resetRestClientMock(client);
+    expect(mockRefreshShiftRoster).toBeCalled();
+    expect(showInfoMessageMock).toBeCalled();
+    expect(showInfoMessageMock).toBeCalledWith("Finished Solving Roster", `Finished Solving Roster at ${moment(solvingEndTime).format("LLL")}`);
+  });
 
-    const skillToDelete: Skill = {tenantId: tenantId, id: 3214, name: "test"};
-    onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, true);
-    await store.dispatch(skillOperations.removeSkill(skillToDelete));
-    expect(store.getActions()).toEqual([actions.removeSkill(skillToDelete)]);
-    expect(client.delete).toHaveBeenCalledTimes(1);
-    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
+  it('should dispatch the last shift roster REST call on refreshShiftRoster', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    jest.spyOn(rosterOperations, "refreshShiftRoster").mockRestore();
 
-    store.clearActions();
-    resetRestClientMock(client);
+    const testOperation = async (operation: () => void, method: 'get'|'post', restURL: string, restArg?: any) => {
+      store.clearActions();
+      resetRestClientMock(client);
 
-    onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, false);
-    await store.dispatch(skillOperations.removeSkill(skillToDelete));
-    expect(store.getActions()).toEqual([]);
-    expect(client.delete).toHaveBeenCalledTimes(1);
-    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
+      switch (method) {
+        case 'get': {
+          onGet(restURL, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+          break;
+        }
 
-    store.clearActions();
-    resetRestClientMock(client);
+        case 'post': {
+          onPost(restURL, restArg, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+          break;
+        }
+      }
 
-    const skillToAdd: Skill = {tenantId: tenantId, name: "test"};
-    const skillWithUpdatedId: Skill = {...skillToAdd, id: 4, version: 0};
-    onPost(`/tenant/${tenantId}/skill/add`, skillToAdd, skillWithUpdatedId);
-    await store.dispatch(skillOperations.addSkill(skillToAdd));
-    expect(store.getActions()).toEqual([actions.addSkill(skillWithUpdatedId)]);
-    expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/add`, skillToAdd);
+      await operation();
+      store.clearActions();
 
-    store.clearActions();
-    resetRestClientMock(client);
+      await store.dispatch(rosterOperations.refreshShiftRoster());
 
-    const skillToUpdate: Skill = {tenantId: tenantId, name: "test", id: 4, version: 0};
-    const skillWithUpdatedVersion: Skill = {...skillToUpdate, id: 4, version: 1};
-    onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
-    await store.dispatch(skillOperations.updateSkill(skillToUpdate));
-    expect(store.getActions()).toEqual([actions.updateSkill(skillWithUpdatedVersion)]);
-    expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
+      expect(store.getActions()).toEqual([
+        actions.setShiftRosterIsLoading(true),
+        actions.setShiftRosterView({ ...mockShiftRoster, spotIdToShiftViewListMap: {} }),
+        actions.setShiftRosterIsLoading(false)
+      ]);
+
+      switch (method) {
+        case 'get': {
+          expect(client.get).toBeCalledTimes(2);
+          expect(client.get).toHaveBeenNthCalledWith(1, restURL);
+          expect(client.get).toHaveBeenNthCalledWith(2, restURL);
+          break;
+        };
+
+        case 'post': {
+          expect(client.post).toBeCalledTimes(2);
+          expect(client.post).toHaveBeenNthCalledWith(1, restURL, restArg);
+          expect(client.post).toHaveBeenNthCalledWith(2, restURL, restArg);
+          break;
+        }
+      }
+    };
+
+    const paginationInfo = {
+      pageNumber: 0,
+      itemsPerPage: 10
+    };
+    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    const toDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    
+    await testOperation(async () => await store.dispatch(rosterOperations.getCurrentShiftRoster(paginationInfo)),
+      'get',
+      `/tenant/${tenantId}/roster/shiftRosterView/current?p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}`
+    );
+
+    await testOperation(async () => await store.dispatch(rosterOperations.getShiftRoster({
+        fromDate: fromDate,
+        toDate: toDate,
+        pagination: paginationInfo
+      })),
+      'get',
+      `/tenant/${tenantId}/roster/shiftRosterView?` +
+      `p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}` +
+      `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`
+    );
+
+    await testOperation(async () => await store.dispatch(rosterOperations.getShiftRosterFor({
+        fromDate: fromDate,
+        toDate: toDate,
+        spotList: []
+      })),
+      'post',
+      `/tenant/${tenantId}/roster/shiftRosterView/for?` +
+      `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+      []
+    );
+  });
+
+  it('should dispatch actions and call client on getRosterState', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const rosterState = mockShiftRoster.rosterState;
+    
+    onGet(`/tenant/${tenantId}/roster/state`, rosterState);
+    await store.dispatch(rosterOperations.getRosterState());
+
+    expect(store.getActions()).toEqual([
+      actions.setRosterStateIsLoading(true),
+      actions.setRosterState(rosterState),
+      actions.setRosterStateIsLoading(false)
+    ]);
+
+    expect(client.get).toBeCalledTimes(1);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/state`);
+  });
+
+
+  it('should dispatch actions and call client on publish', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster").mockImplementation(() => () => {});
+
+    onPost(`/tenant/${tenantId}/roster/publishAndProvision`, {}, {
+      publishedFromDate: "2018-01-01",
+      publishedToDate: "2018-01-08"
+    });
+
+    await store.dispatch(rosterOperations.publish());
+
+    expect(store.getActions()).toEqual([
+      actions.publishRoster({
+        publishedFromDate: moment("2018-01-01").toDate(),
+        publishedToDate: moment("2018-01-08").toDate()
+      })
+    ]);
+
+    expect(client.post).toBeCalledTimes(1);
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/publishAndProvision`, {});
+
+    expect(mockRefreshShiftRoster).toBeCalled();
+    expect(mockShowSuccessMessage).toBeCalled();
+    expect(mockShowSuccessMessage).toBeCalledWith("Published Roster",
+    `Published from ${moment("2018-01-01").format("LL")} to ${moment("2018-01-08").format("LL")}.`);
+  });
+
+  it('should dispatch actions and call client on getCurrentShiftRoster', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const pagination = {
+      pageNumber: 0,
+      itemsPerPage: 10
+    };
+    
+    onGet(`/tenant/${tenantId}/roster/shiftRosterView/current?p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+    await store.dispatch(rosterOperations.getCurrentShiftRoster(pagination));
+
+    expect(store.getActions()).toEqual([
+      actions.setShiftRosterIsLoading(true),
+      actions.setShiftRosterView({ ...mockShiftRoster, spotIdToShiftViewListMap: {} }),
+      actions.setShiftRosterIsLoading(false)
+    ]);
+
+    expect(client.get).toBeCalledTimes(1);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/current?p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`);
+  });
+
+  it('should dispatch actions and call client on getShiftRoster', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
+
+    const pagination = {
+      pageNumber: 0,
+      itemsPerPage: 10
+    };
+    
+    onGet(`/tenant/${tenantId}/roster/shiftRosterView?` +
+    `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
+    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+    await store.dispatch(rosterOperations.getShiftRoster({
+      fromDate: fromDate,
+      toDate: toDate,
+      pagination: pagination
+    }));
+
+    expect(store.getActions()).toEqual([
+      actions.setShiftRosterIsLoading(true),
+      actions.setShiftRosterView({ ...mockShiftRoster, spotIdToShiftViewListMap: {} }),
+      actions.setShiftRosterIsLoading(false)
+    ]);
+
+    expect(client.get).toBeCalledTimes(1);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView?` +
+    `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
+    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`);
+  });
+
+  it('should dispatch actions and call client on getShiftRosterFor', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const spotList: Spot[] = [];
+    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
+    
+    onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
+    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+    spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+    await store.dispatch(rosterOperations.getShiftRosterFor({
+      fromDate: fromDate,
+      toDate: toDate,
+      spotList: spotList
+    }));
+
+    expect(store.getActions()).toEqual([
+      actions.setShiftRosterIsLoading(true),
+      actions.setShiftRosterView({ ...mockShiftRoster, spotIdToShiftViewListMap: {} }),
+      actions.setShiftRosterIsLoading(false)
+    ]);
+
+    expect(client.post).toBeCalledTimes(1);
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
+    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, []);
   });
 });
 
-describe('Skill reducers', () => {
-  const addedSkill: Skill = {tenantId: 0, id: 4321, version: 0, name: "Skill 1"};
-  const updatedSkill: Skill = {tenantId: 0, id: 1234, version: 1, name: "Updated Skill 2"};
-  const deletedSkill: Skill = {tenantId: 0, id: 2312, version: 0, name: "Skill 3"};
-  it('set is loading', () => {
+describe('Roster reducers', () => {
+  it('set is roster state loading', () => {
     expect(
-      reducer(state.skillList, actions.setIsSkillListLoading(true))
-    ).toEqual({ ...state.skillList, isLoading: true })
-  });
-  it('add skill', () => {
-    expect(
-      reducer(state.skillList, actions.addSkill(addedSkill))
-    ).toEqual({ ...state.skillList, skillMapById: mapWithElement(state.skillList.skillMapById, addedSkill)})
-  });
-  it('remove skill', () => {
-    expect(
-      reducer(state.skillList, actions.removeSkill(deletedSkill)),
-    ).toEqual({ ...state.skillList, skillMapById: mapWithoutElement(state.skillList.skillMapById, deletedSkill)})
-  });
-  it('update skill', () => {
-    expect(
-      reducer(state.skillList, actions.updateSkill(updatedSkill)),
-    ).toEqual({ ...state.skillList, skillMapById: mapWithUpdatedElement(state.skillList.skillMapById, updatedSkill)})
-  });
-  it('refresh skill list', () => {
-    expect(
-      reducer(state.skillList, actions.refreshSkillList([addedSkill])),
-    ).toEqual({ ...state.skillList, skillMapById: createIdMapFromList([addedSkill]) });
-  });
-});
-
-describe('Skill selectors', () => {
-  it('should throw an error if skill list is loading', () => {
-    expect(() => skillSelectors.getSkillById({
-      ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
-      }, 1234)).toThrow();
+      rosterStateReducer(state.rosterState, actions.setRosterStateIsLoading(true))
+    ).toEqual({ ...state.rosterState, isLoading: true });
   });
 
-  it('should get a skill by id', () => {
-    const skill = skillSelectors.getSkillById(state, 1234);
-    expect(skill).toEqual({
-      tenantId: 0,
-      id: 1234,
-      version: 0,
-      name: "Skill 2"
+  it('set roster state', () => {
+    expect(
+      rosterStateReducer(state.rosterState, actions.setRosterState(mockShiftRoster.rosterState))
+    ).toEqual({ ...state.rosterState, rosterState: mockShiftRoster.rosterState });
+  });
+
+  it('publishes correctly', () => {
+    expect(
+      rosterStateReducer(state.rosterState, actions.publishRoster({
+        publishedFromDate: moment("2019-01-01", "YYYY-MM-DD").toDate(),
+        publishedToDate: moment("2019-01-08", "YYYY-MM-DD").toDate()
+      }))
+    ).toEqual({ ...state.rosterState, rosterState: {
+      ...mockShiftRoster.rosterState,
+      firstDraftDate: moment("2019-01-08", "YYYY-MM-DD").toDate(),
+      unplannedRotationOffset: (mockShiftRoster.rosterState.unplannedRotationOffset + 7) % mockShiftRoster.rosterState.rotationLength
+      }
     });
   });
 
-  it('should return an empty list if skill list is loading', () => {
-    const skillList = skillSelectors.getSkillList({
-      ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
-      });
-    expect(skillList).toEqual([]);
+  it('set is shift roster loading', () => {
+    expect(
+      shiftRosterViewReducer(state.shiftRoster, actions.setShiftRosterIsLoading(true))
+    ).toEqual({ ...state.shiftRoster, isLoading: true });
   });
 
-  it('should return a list of all skills', () => {
-    const skillList = skillSelectors.getSkillList(state);
-    expect(skillList).toEqual(expect.arrayContaining([
-      {
-        tenantId: 0,
-        id: 1234,
-        version: 0,
-        name: "Skill 2"     
-      },
-      {
-        tenantId: 0,
-        id: 2312,
-        version: 1,
-        name: "Skill 3"
+  it('set shift roster', () => {
+    expect(
+      shiftRosterViewReducer(state.shiftRoster, actions.setShiftRosterView({
+        ...mockShiftRoster, tenantId: 1
+      }))
+    ).toEqual({ ...state.shiftRoster, shiftRosterView: {
+      ...mockShiftRoster,
+      tenantId: 1
+    } });
+  });
+
+  it('set solving during solving', () => {
+    expect(
+      solverReducer(state.solverState, actions.solveRoster())
+    ).toEqual({
+      isSolving: true
+    });
+  });
+
+  it('unset solving after termination', () => {
+    expect(
+      solverReducer(state.solverState, actions.terminateSolvingRosterEarly())
+    ).toEqual({
+      isSolving: false
+    });
+  });
+});
+
+describe('Roster selectors', () => {
+  it('should return an empty list if loading on getSpotListInShiftRoster', () => {
+    expect(rosterSelectors.getSpotListInShiftRoster({ 
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true
       }
-    ]));
-    expect(skillList.length).toEqual(2);
+    })).toEqual([]);
+    expect(rosterSelectors.getSpotListInShiftRoster({ 
+      ...state,
+      spotList: { 
+        ...state.spotList, isLoading: true
+      }
+    })).toEqual([]);
+    expect(rosterSelectors.getSpotListInShiftRoster({ 
+      ...state,
+      employeeList: { 
+        ...state.employeeList, isLoading: true
+      }
+    })).toEqual([]);
+    expect(rosterSelectors.getSpotListInShiftRoster({ 
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true
+      }
+    })).toEqual([]);
+    expect(rosterSelectors.getSpotListInShiftRoster({ 
+      ...state,
+      shiftRoster: { 
+        ...state.shiftRoster, isLoading: true
+      }
+    })).toEqual([]);
+    expect(rosterSelectors.getSpotListInShiftRoster({ 
+      ...state,
+      rosterState: { 
+        ...state.rosterState, isLoading: true
+      }
+    })).toEqual([]);
+  });
+
+  it('should return the spotList in shift roster in getSpotListInShiftRoster', () => {
+    expect(rosterSelectors.getSpotListInShiftRoster(state)).toEqual(mockShiftRoster.spotList);
+  });
+
+  it('should throw an exception if loading in getShiftListForSpot', () => {
+    expect(() => rosterSelectors.getShiftListForSpot({ 
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true
+      }
+    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    expect(() => rosterSelectors.getShiftListForSpot({ 
+      ...state,
+      spotList: { 
+        ...state.spotList, isLoading: true
+      }
+    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    expect(() => rosterSelectors.getShiftListForSpot({ 
+      ...state,
+      employeeList: { 
+        ...state.employeeList, isLoading: true
+      }
+    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    expect(() => rosterSelectors.getShiftListForSpot({ 
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true
+      }
+    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    expect(() => rosterSelectors.getShiftListForSpot({ 
+      ...state,
+      shiftRoster: { 
+        ...state.shiftRoster, isLoading: true
+      }
+    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+    expect(() => rosterSelectors.getShiftListForSpot({ 
+      ...state,
+      rosterState: { 
+        ...state.rosterState, isLoading: true
+      }
+    }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
+  });
+
+  it('should return the shift list for a given spot in getShiftListForSpot', () => {
+    expect(rosterSelectors.getShiftListForSpot(state, mockShiftRoster.spotList[0]))
+      .toEqual([
+        {
+          tenantId: 0,
+          startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+          endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+          spot: mockShiftRoster.spotList[0],
+          employee: null,
+          rotationEmployee: null,
+          indictmentScore: {
+            hardScore: 0,
+            mediumScore: 0,
+            softScore: 0
+          },
+          pinnedByUser: false
+        }
+      ]);
+  });
+
+  it('should return an empty list if spot not in roster getShiftListForSpot', () => {
+    expect(rosterSelectors.getShiftListForSpot(state, {
+      tenantId: 0,
+      id: 999,
+      version: 0,
+      name: "Missing Spot",
+      requiredSkillSet: []
+    }))
+      .toEqual([]);
   });
 });
 
@@ -191,23 +521,29 @@ const state: AppState = {
   },
   spotList: {
     isLoading: false,
-    spotMapById: new Map()
+    spotMapById: new Map([[
+      10, {
+        tenantId: 0,
+        id: 10,
+        version: 0,
+        name: "Spot",
+        requiredSkillSet: []
+      }
+    ]])
   },
   skillList: {
     isLoading: false,
-    skillMapById: new Map([
-      [1234, {
-        tenantId: 0,
-        id: 1234,
-        version: 0,
-        name: "Skill 2"
-      }],
-      [2312, {
-        tenantId: 0,
-        id: 2312,
-        version: 1,
-        name: "Skill 3"
-      }]
-    ])
+    skillMapById: new Map()
+  },
+  rosterState: {
+    isLoading: false,
+    rosterState: mockShiftRoster.rosterState 
+  },
+  shiftRoster: {
+    isLoading: false,
+    shiftRosterView: mockShiftRoster
+  },
+  solverState: {
+    isSolving: false
   }
 };

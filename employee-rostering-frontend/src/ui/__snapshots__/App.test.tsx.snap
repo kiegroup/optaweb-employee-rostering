@@ -7,25 +7,25 @@ exports[`App should render correctly 1`] = `
     className=""
     header={<Header />}
     isManagedSidebar={false}
-    onPageResize={null}
+    onPageResize={[Function]}
     sidebar={null}
     skipToContent={null}
   >
     <Background />
     <PageSection
-      className=""
-      noPadding={false}
-      noPaddingMobile={false}
       style={
         Object {
           "display": "flex",
           "flexDirection": "column",
           "height": "100%",
           "overflowY": "auto",
+          "position": "relative",
         }
       }
-      variant="default"
     >
+      <Alerts
+        setRef={[Function]}
+      />
       <Switch>
         <Route
           component={
@@ -78,6 +78,32 @@ exports[`App should render correctly 1`] = `
           }
           exact={true}
           path="/employees"
+        />
+        <Route
+          component={
+            Object {
+              "$$typeof": Symbol(react.memo),
+              "WrappedComponent": [Function],
+              "compare": null,
+              "displayName": "Connect(ShiftRosterPage)",
+              "type": [Function],
+            }
+          }
+          exect={true}
+          path="/shift1"
+        />
+        <Route
+          component={
+            Object {
+              "$$typeof": Symbol(react.memo),
+              "WrappedComponent": [Function],
+              "compare": null,
+              "displayName": "Connect(ShiftRosterPage)",
+              "type": [Function],
+            }
+          }
+          exect={true}
+          path="/shift2"
         />
       </Switch>
     </PageSection>

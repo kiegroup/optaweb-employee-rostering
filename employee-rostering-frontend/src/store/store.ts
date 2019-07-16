@@ -27,7 +27,7 @@ import skillReducer from './skill/reducers';
 import spotReducer from './spot/reducers';
 import contractReducer from './contract/reducers';
 import employeeReducer from './employee/reducers';
-import shiftListReducer from './shift/reducers';
+import axios from 'axios';
 import { rosterStateReducer, shiftRosterViewReducer, solverReducer } from './roster/reducers';
 
 export interface StoreConfig {
@@ -39,7 +39,7 @@ export function configureStore(
   preloadedState?: AppState,
 ): Store<AppState> {
 
-  const restServiceClient = new RestServiceClient(restBaseURL);
+  const restServiceClient = new RestServiceClient(restBaseURL, axios);
 
   const middlewares = [thunk.withExtraArgument(restServiceClient), createLogger()];
   const middlewareEnhancer = applyMiddleware(...middlewares);
@@ -54,7 +54,6 @@ export function configureStore(
     spotList: spotReducer,
     contractList: contractReducer,
     employeeList: employeeReducer,
-    shiftList: shiftListReducer,
     rosterState: rosterStateReducer,
     shiftRoster: shiftRosterViewReducer,
     solverState: solverReducer

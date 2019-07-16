@@ -13,7 +13,7 @@ exports[`TypeaheadSelectInput component should render correctly 1`] = `
     ariaLabelClear="Clear all"
     ariaLabelRemove="Remove"
     ariaLabelToggle="Options menu"
-    ariaLabelTypeAhead={null}
+    ariaLabelTypeAhead=""
     ariaLabelledBy="typeahead-select-id"
     className=""
     isExpanded={false}
@@ -23,25 +23,16 @@ exports[`TypeaheadSelectInput component should render correctly 1`] = `
     onToggle={[Function]}
     placeholderText="Enter some data"
     selections={null}
+    toggleId={null}
     variant="typeahead"
-    width={null}
+    width=""
   >
     <SelectOption
       className=""
       index={0}
+      isChecked={false}
       isDisabled={false}
-      isPlaceholder={false}
-      isSelected={false}
-      key="-1"
-      keyHandler={[Function]}
-      onClick={[Function]}
-      sendRef={[Function]}
-      value=""
-    />
-    <SelectOption
-      className=""
-      index={0}
-      isDisabled={false}
+      isFocused={false}
       isPlaceholder={false}
       isSelected={false}
       key="Option 1"
@@ -53,7 +44,9 @@ exports[`TypeaheadSelectInput component should render correctly 1`] = `
     <SelectOption
       className=""
       index={0}
+      isChecked={false}
       isDisabled={false}
+      isFocused={false}
       isPlaceholder={false}
       isSelected={false}
       key="Option 2"
@@ -65,7 +58,9 @@ exports[`TypeaheadSelectInput component should render correctly 1`] = `
     <SelectOption
       className=""
       index={0}
+      isChecked={false}
       isDisabled={false}
+      isFocused={false}
       isPlaceholder={false}
       isSelected={false}
       key="Option 3"
