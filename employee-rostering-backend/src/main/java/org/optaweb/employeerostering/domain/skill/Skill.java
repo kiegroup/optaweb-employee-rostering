@@ -32,7 +32,7 @@ public class Skill extends AbstractPersistable {
     @NotNull
     @Size(min = 1, max = 120)
     @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
-    protected String name;
+    private String name;
 
     @SuppressWarnings("unused")
     public Skill() {
