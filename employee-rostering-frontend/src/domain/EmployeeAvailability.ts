@@ -16,7 +16,7 @@
 import DomainObject from './DomainObject';
 import Employee from './Employee';
 
-export default interface EmployeeAvailability {
+export default interface EmployeeAvailability extends DomainObject {
   employee: Employee;
   startDateTime: Date;
   endDateTime: Date;

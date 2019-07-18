@@ -19,14 +19,16 @@ import Shift from "domain/Shift";
 import { Text, Popover, Button, ButtonVariant, List } from "@patternfly/react-core";
 import moment from "moment";
 import Employee from "domain/Employee";
-import { convertHardMediumSoftScoreToString, isScoreZero } from 'domain/HardMediumSoftScore';
+import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
 import { EditIcon, TrashIcon } from "@patternfly/react-icons";
 import Color from 'color';
 
 import "./BigCalendarSchedule.css";
 
-function getIndictments(shift: Shift): JSX.Element {
-  return (
+const EMPTY_ELEMENT = (<></>); 
+
+export function getIndictments(shift: Shift): JSX.Element {
+  const indictmentList = (
     <List>
       {getRequiredSkillViolations(shift)}
       {getContractMinutesViolations(shift)}
@@ -35,14 +37,22 @@ function getIndictments(shift: Shift): JSX.Element {
       {getUnassignedShiftPenalties(shift)}
       {getRotationViolationPenalties(shift)}
       {getUndesiredTimeslotForEmployeePenalties(shift)}
-      {getDesiredTimeslotForEmployeeReward(shift)}
+      {getDesiredTimeslotForEmployeeRewards(shift)}
     </List>
+  );
+
+  if (React.Children.count(indictmentList) === 0){
+    return EMPTY_ELEMENT;
+  }
+  return (
+    <>
+      <Text>Indictments:</Text>
+      {indictmentList}
+    </>
   );
 }
 
-const EMPTY_ELEMENT = (<></>); 
-
-function getRequiredSkillViolations(shift: Shift): JSX.Element {
+export function getRequiredSkillViolations(shift: Shift): JSX.Element {
   if (shift.requiredSkillViolationList) {
     return (
       <>
@@ -70,7 +80,7 @@ function getRequiredSkillViolations(shift: Shift): JSX.Element {
   return EMPTY_ELEMENT;
 }
 
-function getContractMinutesViolations(shift: Shift): JSX.Element {
+export function getContractMinutesViolations(shift: Shift): JSX.Element {
   if (shift.contractMinutesViolationPenaltyList) {
     return (
       <>
@@ -107,7 +117,7 @@ function getContractMinutesViolations(shift: Shift): JSX.Element {
   return EMPTY_ELEMENT;
 }
 
-function getUnavaliableEmployeeViolations(shift: Shift): JSX.Element {
+export function getUnavaliableEmployeeViolations(shift: Shift): JSX.Element {
   if (shift.unavailableEmployeeViolationList) {
     return (
       <>
@@ -133,7 +143,7 @@ function getUnavaliableEmployeeViolations(shift: Shift): JSX.Element {
 // NOTE: ShiftEmployeeConflict refer to indictments from two constraints:
 // - "At most one shift assignment per day per employee"
 // - "No 2 shifts within 10 hours from each other"
-function getShiftEmployeeConflictViolations(shift: Shift): JSX.Element {
+export function getShiftEmployeeConflictViolations(shift: Shift): JSX.Element {
   if (shift.shiftEmployeeConflictList) {
     return (
       <>
@@ -157,7 +167,7 @@ function getShiftEmployeeConflictViolations(shift: Shift): JSX.Element {
   return EMPTY_ELEMENT;
 } 
 
-function getRotationViolationPenalties(shift: Shift): JSX.Element {
+export function getRotationViolationPenalties(shift: Shift): JSX.Element {
   if (shift.rotationViolationPenaltyList) {
     return (
       <>
@@ -178,7 +188,7 @@ function getRotationViolationPenalties(shift: Shift): JSX.Element {
   return EMPTY_ELEMENT;
 }
 
-function getUnassignedShiftPenalties(shift: Shift): JSX.Element {
+export function getUnassignedShiftPenalties(shift: Shift): JSX.Element {
   if (shift.unassignedShiftPenaltyList) {
     return (
       <>
@@ -195,7 +205,7 @@ function getUnassignedShiftPenalties(shift: Shift): JSX.Element {
   return EMPTY_ELEMENT
 }
 
-function getUndesiredTimeslotForEmployeePenalties(shift: Shift) {
+export function getUndesiredTimeslotForEmployeePenalties(shift: Shift) {
   if (shift.undesiredTimeslotForEmployeePenaltyList) {
     return (
       <>
@@ -218,7 +228,7 @@ function getUndesiredTimeslotForEmployeePenalties(shift: Shift) {
   return EMPTY_ELEMENT;
 }
 
-function getDesiredTimeslotForEmployeeReward(shift: Shift) {
+export function getDesiredTimeslotForEmployeeRewards(shift: Shift) {
   if (shift.desiredTimeslotForEmployeeRewardList) {
     return (
       <>
@@ -241,28 +251,34 @@ function getDesiredTimeslotForEmployeeReward(shift: Shift) {
   return EMPTY_ELEMENT;
 }
 
-export function getShiftColor(shift: Shift) {
+export const NEGATIVE_HARD_SCORE_COLOR = Color("rgb(139, 0, 0)", "rgb");
+export const NEGATIVE_MEDIUM_SCORE_COLOR = Color("rgb(245, 193, 46)", "rgb");
+export const NEGATIVE_SOFT_SCORE_COLOR =  Color("rgb(209, 209, 209)", "rgb");
+export const ZERO_SCORE_COLOR = Color("rgb(207, 231, 205)", "rgb");
+export const POSITIVE_SOFT_SCORE_COLOR = Color("rgb(63, 156, 53)", "rgb");
+
+export function getShiftColor(shift: Shift): string {
   if (shift.indictmentScore !== undefined && shift.indictmentScore.hardScore < 0) {
-    const fromColor = Color("rgb(139, 0, 0)", "rgb");
-    const toColor = Color("rgb(245, 193, 46)", "rgb");
+    const fromColor = NEGATIVE_HARD_SCORE_COLOR;
+    const toColor = NEGATIVE_MEDIUM_SCORE_COLOR;
     return fromColor.mix(toColor, (20 + shift.indictmentScore.hardScore) / 100).hex();
   }
   else if (shift.indictmentScore !== undefined && shift.indictmentScore.mediumScore < 0) {
-    return "rgb(245, 193, 46)";
+    return NEGATIVE_MEDIUM_SCORE_COLOR.hex();
   }
   else if (shift.indictmentScore !== undefined && shift.indictmentScore.softScore < 0) {
-    const fromColor = Color("rgb(245, 193, 46)", "rgb");
-    const toColor = Color("rgb(209, 209, 209)", "rgb");
+    const fromColor = NEGATIVE_MEDIUM_SCORE_COLOR;
+    const toColor = NEGATIVE_SOFT_SCORE_COLOR;
     return fromColor.mix(toColor, (20 + shift.indictmentScore.softScore) / 100).hex();
   }
   else if (shift.indictmentScore !== undefined && shift.indictmentScore.softScore > 0) {
-    const fromColor = Color("rgb(207, 231, 205)", "rgb");
-    const toColor = Color("rgb(63, 156, 53)", "rgb");
+    const fromColor = ZERO_SCORE_COLOR;
+    const toColor = POSITIVE_SOFT_SCORE_COLOR;
     return fromColor.mix(toColor, (20 + shift.indictmentScore.softScore) / 100).hex();
   }
   else {
     // Zero score
-    return "rgb(207, 231, 205)";
+    return ZERO_SCORE_COLOR.hex();
   }
 }
 
@@ -305,12 +321,7 @@ const ShiftEvent: React.FC<EventProps<Shift> & {
           {" " + (props.event.indictmentScore? convertHardMediumSoftScoreToString(props.event.indictmentScore)
             : "N/A")}
           <br />
-          {(!props.event.indictmentScore || isScoreZero(props.event.indictmentScore))? EMPTY_ELEMENT : (
-            <>
-              <Text>Indictments:</Text>
-              {getIndictments(props.event)}
-            </>
-          )}
+          {getIndictments(props.event)}
         </span>
       )
     }

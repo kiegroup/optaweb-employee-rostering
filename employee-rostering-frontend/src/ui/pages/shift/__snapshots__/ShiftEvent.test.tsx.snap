@@ -1,0 +1,369 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
+Array [
+  <li
+    key="0"
+  >
+    The Employee "
+    Employee 1
+    " have exceeded their maximum
+     daily 
+    minutes; They have worked
+     20 
+    this
+     day
+    ; they are allowed to work at most
+     10
+    <br />
+    Penalty: -1 Hard
+  </li>,
+  <li
+    key="1"
+  >
+    The Employee "
+    Employee 1
+    " have exceeded their maximum
+     weekly 
+    minutes; They have worked
+     80 
+    this
+     week
+    ; they are allowed to work at most
+     70
+    <br />
+    Penalty: -1 Hard
+  </li>,
+  <li
+    key="2"
+  >
+    The Employee "
+    Employee 1
+    " have exceeded their maximum
+     monthly 
+    minutes; They have worked
+     600 
+    this
+     month
+    ; they are allowed to work at most
+     500
+    <br />
+    Penalty: -1 Hard
+  </li>,
+  <li
+    key="3"
+  >
+    The Employee "
+    Employee 1
+    " have exceeded their maximum
+     yearly 
+    minutes; They have worked
+     7000 
+    this
+     year
+    ; they are allowed to work at most
+     6000
+    <br />
+    Penalty: -1 Hard
+  </li>,
+]
+`;
+
+exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 1`] = `
+<li
+  key="0"
+>
+  The Employee "
+  Employee 1
+  " desires to work from
+   July 1, 2018 9:00 AM 
+  to
+   July 1, 2018 5:00 PM
+  .
+  <br />
+  Reward: -1 Soft
+</li>
+`;
+
+exports[`ShiftEvent getIndictments should render correctly with indictments 1`] = `
+Array [
+  <Text>
+    <p
+      className=""
+      data-pf-content={true}
+    >
+      Indictments:
+    </p>
+  </Text>,
+  <List>
+    <ul
+      className="pf-c-list"
+    >
+      <li
+        key="0"
+      >
+        The Employee "
+        Employee 1
+        " does not have the following skills which are required for the Spot "
+        Spot
+        ":
+        <List>
+          <ul
+            className="pf-c-list"
+          >
+            <li
+              key="3"
+            >
+              Skill
+            </li>
+          </ul>
+        </List>
+        Penalty: -10 Hard
+      </li>
+      <li
+        key="1"
+      >
+        The Shift's Employee "
+        Employee 1
+        " does not match the Shift's Rotation Employee "
+        Rotation Employee
+        ".
+        <br />
+        Penalty: -100 Soft
+      </li>
+    </ul>
+  </List>,
+]
+`;
+
+exports[`ShiftEvent getIndictments should render correctly with no indictments 1`] = `
+Array [
+  <Text>
+    <p
+      className=""
+      data-pf-content={true}
+    >
+      Indictments:
+    </p>
+  </Text>,
+  <List>
+    <ul
+      className="pf-c-list"
+    />
+  </List>,
+]
+`;
+
+exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
+<li
+  key="0"
+>
+  The Employee "
+  Employee 1
+  " does not have the following skills which are required for the Spot "
+  Spot
+  ":
+  <List>
+    <ul
+      className="pf-c-list"
+    >
+      <li
+        key="3"
+      >
+        Skill
+      </li>
+    </ul>
+  </List>
+  Penalty: -10 Hard
+</li>
+`;
+
+exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = `
+<li
+  key="1"
+>
+  The Shift's Employee "
+  Employee 1
+  " does not match the Shift's Rotation Employee "
+  Rotation Employee
+  ".
+  <br />
+  Penalty: -100 Soft
+</li>
+`;
+
+exports[`ShiftEvent getShiftColor should return a color depending on score 1`] = `
+Object {
+  "negativeHardColor": "#9B1D07",
+  "negativeMediumColor": "#F5C12E",
+  "negativeSoftColor": "#F1C33E",
+  "positiveSoftColor": "#ABD4A7",
+  "zeroColor": "#CFE7CD",
+}
+`;
+
+exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1`] = `
+Array [
+  <li
+    key="0"
+  >
+    The Employee "
+    Employee 1
+    " is assigned to a conflicting shift:
+     Spot, 10:00 AM-5:00 PM
+    .
+    <br />
+    Penalty: -1 Hard
+  </li>,
+  <li
+    key="1"
+  >
+    The Employee "
+    Employee 1
+    " is assigned to a conflicting shift:
+     Spot, 8:00 AM-5:00 PM
+    .
+    <br />
+    Penalty: -1 Hard
+  </li>,
+]
+`;
+
+exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
+<li
+  key="1"
+>
+  The Shift is unassigned.
+  <br />
+  Penalty: -1 Medium
+</li>
+`;
+
+exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`] = `
+<li
+  key="0"
+>
+  The Employee "
+  Employee 1
+  " is unavailable from
+   July 1, 2018 9:00 AM 
+  to
+   July 1, 2018 5:00 PM
+  .
+  <br />
+  Penalty: -1 Hard
+</li>
+`;
+
+exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render correctly 1`] = `
+<li
+  key="0"
+>
+  The Employee "
+  Employee 1
+  " does not want to work from
+   July 1, 2018 9:00 AM 
+  to
+   July 1, 2018 5:00 PM
+  .
+  <br />
+  Penalty: -1 Soft
+</li>
+`;
+
+exports[`ShiftEvent should render correctly 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label=""
+  bodyContent={
+    <span
+      style={
+        Object {
+          "display": "block",
+          "maxHeight": "20vh",
+          "overflowY": "auto",
+          "pointerEvents": "all",
+        }
+      }
+    >
+      Shift Indictment Score:
+       0
+      <br />
+      <React.Fragment>
+        <Text>
+          Indictments:
+        </Text>
+        <List>
+          <React.Fragment />
+          <React.Fragment />
+          <React.Fragment />
+          <React.Fragment />
+          <React.Fragment />
+          <React.Fragment />
+          <React.Fragment />
+          <React.Fragment />
+        </List>
+      </React.Fragment>
+    </span>
+  }
+  className="my-popup"
+  closeBtnAriaLabel="Close"
+  enableFlip={true}
+  footerContent={null}
+  headerContent={
+    <span>
+      <Text>
+        Spot, 9:00 AM-5:00 PM: Employee 1
+      </Text>
+      <Button
+        onClick={[Function]}
+        variant="link"
+      >
+        <EditIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+      <Button
+        onClick={[Function]}
+        variant="link"
+      >
+        <TrashIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+    </span>
+  }
+  hideOnOutsideClick={true}
+  isVisible={null}
+  key="1"
+  maxWidth="calc(1.5rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="right"
+  shouldClose={[Function]}
+  zIndex={9999}
+>
+  <span
+    data-for="1"
+    data-tip={true}
+    style={
+      Object {
+        "display": "flex",
+        "height": "100%",
+        "width": "100%",
+      }
+    }
+  >
+    Employee
+  </span>
+</Popover>
+`;
