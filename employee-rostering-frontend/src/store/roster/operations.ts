@@ -105,10 +105,7 @@ export const getRosterState: ThunkCommandFactory<void, SetRosterStateIsLoadingAc
 export const publish: ThunkCommandFactory<void, PublishRosterAction> = () =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
-    return client.post<{
-      publishedFromDate: string;
-      publishedToDate: string;
-    }>(`/tenant/${tenantId}/roster/publishAndProvision`, {}).then(pr => {
+    return client.post<PublishResult>(`/tenant/${tenantId}/roster/publishAndProvision`, {}).then(pr => {
       dispatch(actions.publishRoster({
         publishedFromDate: moment(pr.publishedFromDate).toDate(),
         publishedToDate: moment(pr.publishedToDate).toDate()

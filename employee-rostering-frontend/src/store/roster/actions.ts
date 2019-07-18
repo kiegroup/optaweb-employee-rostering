@@ -20,7 +20,6 @@ import { RosterStateActionType, ShiftRosterViewActionType, SolverActionType, Pub
   from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
-import { PaginationData } from 'types';
 
 export const publishRoster: ActionFactory<PublishResult, PublishRosterAction> = (pr) => ({
   type: RosterStateActionType.PUBLISH_ROSTER,
