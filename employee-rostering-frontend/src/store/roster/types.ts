@@ -17,7 +17,6 @@
 import { Action } from 'redux';
 import ShiftRosterView from 'domain/ShiftRosterView';
 import RosterState from 'domain/RosterState';
-import { PaginationData } from 'types';
 
 export enum RosterStateActionType {
   SET_ROSTER_STATE_IS_LOADING = 'SET_ROSTER_STATE_IS_LOADING',
