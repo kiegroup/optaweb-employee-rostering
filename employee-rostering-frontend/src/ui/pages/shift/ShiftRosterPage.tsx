@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { PropsWithChildren, ReactElement, ReactNode } from "react";
+import React, { PropsWithChildren } from "react";
 import Shift from "domain/Shift";
 import Spot from "domain/Spot";
 import { AppState } from "store/types";
@@ -24,13 +24,12 @@ import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
 import { Level, LevelItem, Button, Title } from "@patternfly/react-core";
-import { Calendar, momentLocalizer, Event as CalendarEvent } from 'react-big-calendar'
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
+import { Calendar, momentLocalizer } from 'react-big-calendar'
 import EditShiftModal from './EditShiftModal';
 import './BigCalendarSchedule.css';
 import Color from 'color';
 
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
+import 'react-big-calendar/lib/css/react-big-calendar.css';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { showInfoMessage } from "ui/Alerts";
 import RosterState from "domain/RosterState";
