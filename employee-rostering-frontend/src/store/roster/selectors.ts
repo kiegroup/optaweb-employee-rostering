@@ -15,7 +15,6 @@
  */
 import { AppState } from '../types';
 import { employeeSelectors } from '../employee';
-import ShiftView from 'domain/ShiftView';
 import Shift from 'domain/Shift';
 import Spot from 'domain/Spot';
 import ShiftRosterView from 'domain/ShiftRosterView';
