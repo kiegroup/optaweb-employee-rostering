@@ -50,8 +50,8 @@ public class EmployeeRestControllerTest {
     private String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
 
     private ResponseEntity<List<Employee>> getEmployees(Integer tenantId) {
-        return restTemplate.exchange(employeePathURI, HttpMethod.GET, null, new ParameterizedTypeReference
-                <List<Employee>>() {}, tenantId);
+        return restTemplate.exchange(employeePathURI, HttpMethod.GET, null,
+                                     new ParameterizedTypeReference<List<Employee>>() {}, tenantId);
     }
 
     private ResponseEntity<Employee> getEmployee(Integer tenantId, Long id) {
