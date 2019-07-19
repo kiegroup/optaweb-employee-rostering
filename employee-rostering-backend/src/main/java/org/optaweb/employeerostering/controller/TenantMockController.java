@@ -34,7 +34,7 @@ public class TenantMockController {
     final Tenant TENANT = createTenant();
 
     @GetMapping
-    public ResponseEntity<List> getTenantList() {
+    public ResponseEntity<List<Tenant>> getTenantList() {
         return new ResponseEntity<>(Arrays.asList(TENANT), HttpStatus.OK);
     }
 

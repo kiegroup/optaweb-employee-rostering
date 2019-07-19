@@ -35,10 +35,10 @@ public class Tenant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @PlanningId
-    protected Integer id;
+    private Integer id;
 
     @Version
-    protected Long version;
+    private Long version;
 
     @NotNull
     @Size(min = 1, max = 120)
