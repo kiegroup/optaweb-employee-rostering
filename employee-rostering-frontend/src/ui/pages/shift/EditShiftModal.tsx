@@ -115,6 +115,7 @@ export class EditShiftModal extends React.Component<Props, State> {
           <InputGroup>
             <Label>Shift Start</Label>
             <DatePicker
+              aria-label="Shift Start"
               selected={this.state.editedValue.startDateTime}
               onChange={date => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, startDateTime: (date !== null)? date : undefined  }
@@ -126,6 +127,7 @@ export class EditShiftModal extends React.Component<Props, State> {
           <InputGroup>
             <Label>Shift End</Label>
             <DatePicker
+              aria-label="Shift End"
               selected={this.state.editedValue.endDateTime}
               onChange={date => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, endDateTime: (date !== null)? date : undefined  }
@@ -137,6 +139,7 @@ export class EditShiftModal extends React.Component<Props, State> {
           <InputGroup>
             <Label>Spot</Label>
             <TypeaheadSelectInput
+              aria-label="Spot"
               emptyText="Select a Spot"
               defaultValue={this.props.shift? this.props.shift.spot : undefined}
               options={this.props.spotList}
@@ -149,6 +152,7 @@ export class EditShiftModal extends React.Component<Props, State> {
           <InputGroup>
             <Label>Employee</Label>
             <TypeaheadSelectInput
+              aria-label="Employee"
               emptyText="Unassigned"
               defaultValue={this.props.shift? this.props.shift.employee : undefined}
               options={this.props.employeeList}
@@ -161,6 +165,7 @@ export class EditShiftModal extends React.Component<Props, State> {
           <InputGroup>
             <Label>Rotation Employee</Label>
             <TypeaheadSelectInput
+              aria-label="Rotation Employee"
               emptyText="None"
               defaultValue={this.props.shift? this.props.shift.rotationEmployee : undefined}
               options={this.props.employeeList}
