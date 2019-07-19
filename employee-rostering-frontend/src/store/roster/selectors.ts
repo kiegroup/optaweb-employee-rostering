@@ -39,7 +39,7 @@ export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
       throw Error("Shift Roster is loading");
   }
   if ((spot.id as number) in (state.shiftRoster.shiftRosterView as ShiftRosterView).spotIdToShiftViewListMap) {
-    return ((state.shiftRoster.shiftRosterView as ShiftRosterView).spotIdToShiftViewListMap[spot.id as number] as ShiftView[]).map(sv => ({
+    return ((state.shiftRoster.shiftRosterView as ShiftRosterView).spotIdToShiftViewListMap[spot.id as number]).map(sv => ({
       ...objectWithout(sv, "spotId", "rotationEmployeeId", "employeeId"),
       spot: spot,
       rotationEmployee: (sv.rotationEmployeeId !== null)? employeeSelectors.getEmployeeById(state, sv.rotationEmployeeId) : null,

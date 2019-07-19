@@ -259,7 +259,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     const sorters = this.getSorters();
     let sortedRows = [...this.props.tableData];
     if (this.state.sortBy.index !== undefined) {
-      sortedRows.sort(sorters[this.state.sortBy.index as number] as Sorter<T>);
+      sortedRows.sort(sorters[this.state.sortBy.index] as Sorter<T>);
       // @ts-ignore
       if (this.state.sortBy.direction === SortByDirection.desc) {
         sortedRows.reverse();

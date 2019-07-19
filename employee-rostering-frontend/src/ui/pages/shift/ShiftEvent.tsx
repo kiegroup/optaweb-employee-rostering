@@ -87,7 +87,7 @@ export function getContractMinutesViolations(shift: Shift): JSX.Element {
         {shift.contractMinutesViolationPenaltyList.map((v, index) => (
           <li key={String(index)}>
             The Employee &quot;
-            {(v.employee as Employee).name}
+            {v.employee.name}
             &quot; have exceeded their maximum
             {" " + (v.type === "DAY"? "daily" :
               v.type === "WEEK"? "weekly" :
