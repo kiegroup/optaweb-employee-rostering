@@ -26,14 +26,13 @@ import moment from 'moment';
 import { Level, LevelItem, Button, Title } from "@patternfly/react-core";
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import EditShiftModal from './EditShiftModal';
-import './BigCalendarSchedule.css';
 import Color from 'color';
-
-import 'react-big-calendar/lib/css/react-big-calendar.css';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { showInfoMessage } from "ui/Alerts";
 import RosterState from "domain/RosterState";
 import ShiftEvent, { getShiftColor } from "./ShiftEvent";
+
+import './BigCalendarSchedule.css';
 
 interface StateProps {
   isSolving: boolean;
