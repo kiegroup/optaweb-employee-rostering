@@ -45,7 +45,7 @@ public class SpotController {
     }
 
     @GetMapping
-    public ResponseEntity<List> getSpotList(@PathVariable Integer tenantId) {
+    public ResponseEntity<List<Spot>> getSpotList(@PathVariable Integer tenantId) {
         return new ResponseEntity<>(spotService.getSpotList(tenantId), HttpStatus.OK);
     }
 
