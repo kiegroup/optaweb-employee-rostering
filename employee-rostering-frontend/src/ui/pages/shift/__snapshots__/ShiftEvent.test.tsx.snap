@@ -76,9 +76,9 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
   The Employee "
   Employee 1
   " desires to work from
-   July 1, 2018 9:00 AM 
+   July 1, 2018 1:00 PM 
   to
-   July 1, 2018 5:00 PM
+   July 1, 2018 9:00 PM
   .
   <br />
   Reward: -1 Soft
@@ -210,7 +210,7 @@ Array [
     The Employee "
     Employee 1
     " is assigned to a conflicting shift:
-     Spot, 10:00 AM-5:00 PM
+     Spot, 2:00 PM-9:00 PM
     .
     <br />
     Penalty: -1 Hard
@@ -221,7 +221,7 @@ Array [
     The Employee "
     Employee 1
     " is assigned to a conflicting shift:
-     Spot, 8:00 AM-5:00 PM
+     Spot, 12:00 PM-9:00 PM
     .
     <br />
     Penalty: -1 Hard
@@ -246,9 +246,9 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
   The Employee "
   Employee 1
   " is unavailable from
-   July 1, 2018 9:00 AM 
+   July 1, 2018 1:00 PM 
   to
-   July 1, 2018 5:00 PM
+   July 1, 2018 9:00 PM
   .
   <br />
   Penalty: -1 Hard
@@ -262,9 +262,9 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
   The Employee "
   Employee 1
   " does not want to work from
-   July 1, 2018 9:00 AM 
+   July 1, 2018 1:00 PM 
   to
-   July 1, 2018 5:00 PM
+   July 1, 2018 9:00 PM
   .
   <br />
   Penalty: -1 Soft
@@ -313,7 +313,7 @@ exports[`ShiftEvent should render correctly 1`] = `
   headerContent={
     <span>
       <Text>
-        Spot, 9:00 AM-5:00 PM: Employee 1
+        Spot, 1:00 PM-9:00 PM: Employee 1
       </Text>
       <Button
         onClick={[Function]}
