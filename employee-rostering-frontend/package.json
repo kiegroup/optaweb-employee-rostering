@@ -32,7 +32,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es))/\"",
+    "test": "TZ=UTC react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es))/\"",
     "eject": "react-scripts eject",
     "coverage": "npm run test -- --coverage --watchAll=false",
     "lint": "./node_modules/eslint/bin/eslint.js ./src --ext .ts,.tsx",
@@ -94,8 +94,7 @@
   },
   "jest": {
     "snapshotSerializers": [
-      "enzyme-to-json/serializer",
-      "./src/serializers/date-serializer.ts"
+      "enzyme-to-json/serializer"
     ]
   }
 }
