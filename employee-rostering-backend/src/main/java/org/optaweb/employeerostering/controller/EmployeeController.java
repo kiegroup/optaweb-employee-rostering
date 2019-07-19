@@ -45,7 +45,7 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public ResponseEntity<List> getEmployeeList(@PathVariable Integer tenantId) {
+    public ResponseEntity<List<Employee>> getEmployeeList(@PathVariable Integer tenantId) {
         return new ResponseEntity<>(employeeService.getEmployeeList(tenantId), HttpStatus.OK);
     }
 
