@@ -43,8 +43,8 @@ public class ContractRestControllerTest {
     private String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
 
     private ResponseEntity<List<Contract>> getContracts(Integer tenantId) {
-        return contractRestTemplate.exchange(contractPathURI, HttpMethod.GET, null, new ParameterizedTypeReference
-                <List<Contract>>() {}, tenantId);
+        return contractRestTemplate.exchange(contractPathURI, HttpMethod.GET, null,
+                                             new ParameterizedTypeReference<List<Contract>>() {}, tenantId);
     }
 
     private ResponseEntity<Contract> getContract(Integer tenantId, Long id) {
