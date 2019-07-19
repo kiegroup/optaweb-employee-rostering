@@ -49,9 +49,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class SpotServiceUnitTest {
+public class SpotServiceTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(SpotServiceUnitTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(SpotServiceTest.class);
 
     @Autowired
     private MockMvc mvc;
