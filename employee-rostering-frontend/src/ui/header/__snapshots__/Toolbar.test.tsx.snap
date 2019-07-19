@@ -15,26 +15,30 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
         direction="down"
         dropdownItems={
           Array [
-            <Item
+            <DropdownItem
               className=""
               component="a"
               data-tenantid={1}
-              href="#"
+              href=""
               isDisabled={false}
               isHovered={false}
+              tooltip={null}
+              tooltipProps={Object {}}
             >
               Tenant 1
-            </Item>,
-            <Item
+            </DropdownItem>,
+            <DropdownItem
               className=""
               component="a"
               data-tenantid={2}
-              href="#"
+              href=""
               isDisabled={false}
               isHovered={false}
+              tooltip={null}
+              tooltipProps={Object {}}
             >
               Tenant 2
-            </Item>,
+            </DropdownItem>,
           ]
         }
         isGrouped={false}
@@ -74,6 +78,7 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
       >
         <BellIcon
           color="currentColor"
+          noVerticalAlign={false}
           size="sm"
           title={null}
         />
@@ -89,6 +94,7 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
       >
         <CogIcon
           color="currentColor"
+          noVerticalAlign={false}
           size="sm"
           title={null}
         />
@@ -113,26 +119,30 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
         direction="down"
         dropdownItems={
           Array [
-            <Item
+            <DropdownItem
               className=""
               component="a"
               data-tenantid={1}
-              href="#"
+              href=""
               isDisabled={false}
               isHovered={false}
+              tooltip={null}
+              tooltipProps={Object {}}
             >
               Tenant 1
-            </Item>,
-            <Item
+            </DropdownItem>,
+            <DropdownItem
               className=""
               component="a"
               data-tenantid={2}
-              href="#"
+              href=""
               isDisabled={false}
               isHovered={false}
+              tooltip={null}
+              tooltipProps={Object {}}
             >
               Tenant 2
-            </Item>,
+            </DropdownItem>,
           ]
         }
         isGrouped={false}
@@ -172,6 +182,7 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
       >
         <BellIcon
           color="currentColor"
+          noVerticalAlign={false}
           size="sm"
           title={null}
         />
@@ -187,6 +198,7 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
       >
         <CogIcon
           color="currentColor"
+          noVerticalAlign={false}
           size="sm"
           title={null}
         />
@@ -216,6 +228,7 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
       >
         <BellIcon
           color="currentColor"
+          noVerticalAlign={false}
           size="sm"
           title={null}
         />
@@ -231,6 +244,7 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
       >
         <CogIcon
           color="currentColor"
+          noVerticalAlign={false}
           size="sm"
           title={null}
         />
