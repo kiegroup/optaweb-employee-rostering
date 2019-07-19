@@ -73,7 +73,6 @@ public class ContractServiceTest {
 
         Contract contract = new Contract(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
                                          maximumMinutesPerMonth, maximumMinutesPerYear);
-
         contractService.createContract(tenantId, contract);
 
         mvc.perform(MockMvcRequestBuilders
@@ -106,7 +105,6 @@ public class ContractServiceTest {
         String name = "name";
 
         Contract contract = new Contract(tenantId, name);
-
         contractService.createContract(tenantId, contract);
 
         assertThatExceptionOfType(NestedServletException.class)
@@ -123,7 +121,6 @@ public class ContractServiceTest {
         String name = "name";
 
         Contract contract = new Contract(tenantId, name);
-
         contractService.createContract(tenantId, contract);
 
         mvc.perform(MockMvcRequestBuilders
@@ -148,7 +145,6 @@ public class ContractServiceTest {
         String name = "name";
 
         Contract contract = new Contract(tenantId, name);
-
         contractService.createContract(tenantId, contract);
 
         assertThatExceptionOfType(NestedServletException.class)
@@ -214,7 +210,6 @@ public class ContractServiceTest {
         Integer maximumMinutesPerYear = 12000;
 
         Contract contract = new Contract(tenantId, name);
-
         contractService.createContract(tenantId, contract);
 
         Contract contract2 = new Contract(tenantId, "name2", maximumMinutesPerDay, maximumMinutesPerWeek,
@@ -243,7 +238,6 @@ public class ContractServiceTest {
         String name = "name";
 
         Contract contract = new Contract(tenantId, name);
-
         contractService.createContract(tenantId, contract);
 
         Contract contract2 = new Contract(tenantId, "name2");
@@ -279,7 +273,6 @@ public class ContractServiceTest {
         String name = "name";
 
         Contract contract = new Contract(tenantId, name);
-
         contractService.createContract(tenantId, contract);
 
         Contract contract2 = new Contract(2, name);
