@@ -195,6 +195,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     >
                       <SaveIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -206,6 +207,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     >
                       <CloseIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -222,6 +224,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     >
                       <EditIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -233,6 +236,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     >
                       <TrashIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -347,6 +351,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     >
                       <SaveIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -358,6 +363,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     >
                       <CloseIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -374,6 +380,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     >
                       <EditIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -385,6 +392,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                     >
                       <TrashIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />

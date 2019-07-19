@@ -7,15 +7,12 @@ exports[`App should render correctly 1`] = `
     className=""
     header={<Header />}
     isManagedSidebar={false}
-    onPageResize={null}
+    onPageResize={[Function]}
     sidebar={null}
     skipToContent={null}
   >
     <Background />
     <PageSection
-      className=""
-      noPadding={false}
-      noPaddingMobile={false}
       style={
         Object {
           "display": "flex",
@@ -24,7 +21,6 @@ exports[`App should render correctly 1`] = `
           "overflowY": "auto",
         }
       }
-      variant="default"
     >
       <Switch>
         <Route

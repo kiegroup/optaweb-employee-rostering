@@ -28,7 +28,7 @@
 
   <groupId>org.optaweb.employeerostering</groupId>
   <artifactId>optaweb-employee-rostering-backend</artifactId>
-  <version>7.24.0-SNAPSHOT</version>
+  <version>7.25.0-SNAPSHOT</version>
   <name>optaweb-employee-rostering-backend</name>
   <description>Employee Rostering as a Service Spring Boot Backend</description>
 
