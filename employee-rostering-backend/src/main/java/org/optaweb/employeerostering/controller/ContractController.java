@@ -45,7 +45,7 @@ public class ContractController {
     }
 
     @GetMapping
-    public ResponseEntity<List> getContractList(@PathVariable Integer tenantId) {
+    public ResponseEntity<List<Contract>> getContractList(@PathVariable Integer tenantId) {
         return new ResponseEntity<>(contractService.getContractList(tenantId), HttpStatus.OK);
     }
 
