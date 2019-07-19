@@ -205,6 +205,108 @@ describe('Edit Shift Modal', () => {
     editShiftModal.find("Form").simulate("submit", event);
     expect(event.preventDefault).toBeCalled();
   });
+
+  it('should update the start date when the start date is changed', () => {
+    const editShiftModal = shallow(<EditShiftModal
+      {...baseProps}
+      isOpen
+      onSave={jest.fn()}
+      onClose={jest.fn()}
+      onDelete={jest.fn()}
+    />);
+    editShiftModal.find('DatePicker[aria-label="Shift Start"]').simulate("change", new Date("2019-01-01T09:00"));
+    expect(editShiftModal.state("editedValue")).toEqual({
+      startDateTime: new Date("2019-01-01T09:00")
+    });
+    editShiftModal.find('DatePicker[aria-label="Shift Start"]').simulate("change", null);
+    expect(editShiftModal.state("editedValue")).toEqual({
+      startDateTime: undefined
+    });
+  });
+
+  it('should update the end date when the end date is changed', () => {
+    const editShiftModal = shallow(<EditShiftModal
+      {...baseProps}
+      isOpen
+      onSave={jest.fn()}
+      onClose={jest.fn()}
+      onDelete={jest.fn()}
+    />);
+    editShiftModal.find('DatePicker[aria-label="Shift End"]').simulate("change", new Date("2019-01-01T09:00"));
+    expect(editShiftModal.state("editedValue")).toEqual({
+      endDateTime: new Date("2019-01-01T09:00")
+    });
+    editShiftModal.find('DatePicker[aria-label="Shift End"]').simulate("change", null);
+    expect(editShiftModal.state("editedValue")).toEqual({
+      endDateTime: undefined
+    });
+  });
+
+  it('should update the spot when the spot is changed', () => {
+    const editShiftModal = shallow(<EditShiftModal
+      {...baseProps}
+      isOpen
+      onSave={jest.fn()}
+      onClose={jest.fn()}
+      onDelete={jest.fn()}
+    />);
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Spot"]').simulate("change", spot);
+    expect(editShiftModal.state("editedValue")).toEqual({
+      spot: spot
+    });
+  });
+
+  it('should update the employee when the employee is changed', () => {
+    const editShiftModal = shallow(<EditShiftModal
+      {...baseProps}
+      isOpen
+      onSave={jest.fn()}
+      onClose={jest.fn()}
+      onDelete={jest.fn()}
+    />);
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate("change", employee);
+    expect(editShiftModal.state("editedValue")).toEqual({
+      employee: employee
+    });
+
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate("change", undefined);
+    expect(editShiftModal.state("editedValue")).toEqual({
+      employee: null
+    });
+  });
+
+  it('should update the rotation employee when the rotation employee is changed', () => {
+    const editShiftModal = shallow(<EditShiftModal
+      {...baseProps}
+      isOpen
+      onSave={jest.fn()}
+      onClose={jest.fn()}
+      onDelete={jest.fn()}
+    />);
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Rotation Employee"]').simulate("change", employee);
+    expect(editShiftModal.state("editedValue")).toEqual({
+      rotationEmployee: employee
+    });
+
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Rotation Employee"]').simulate("change", undefined);
+    expect(editShiftModal.state("editedValue")).toEqual({
+      rotationEmployee: null
+    });
+  });
+
+  it('should update isPinned when isPinnedis changed', () => {
+    const editShiftModal = shallow(<EditShiftModal
+      {...baseProps}
+      isOpen
+      onSave={jest.fn()}
+      onClose={jest.fn()}
+      onDelete={jest.fn()}
+    />);
+    editShiftModal.find('Switch[aria-label="Is Pinned"]').simulate("change", true);
+    expect(editShiftModal.state("editedValue")).toEqual({
+      pinnedByUser: true
+    });
+  });
 });
 
 const spot: Spot = {

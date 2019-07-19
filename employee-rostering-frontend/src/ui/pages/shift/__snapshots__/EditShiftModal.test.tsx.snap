@@ -38,6 +38,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
       </Label>
       <DatePicker
         allowSameDay={false}
+        aria-label="Shift Start"
         dateFormat="MMMM dd, hh:mm a"
         dateFormatCalendar="LLLL yyyy"
         disabled={false}
@@ -77,6 +78,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
       </Label>
       <DatePicker
         allowSameDay={false}
+        aria-label="Shift End"
         dateFormat="MMMM dd, hh:mm a"
         dateFormatCalendar="LLLL yyyy"
         disabled={false}
@@ -115,6 +117,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
         Spot
       </Label>
       <TypeaheadSelectInput
+        aria-label="Spot"
         emptyText="Select a Spot"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -143,6 +146,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
         Employee
       </Label>
       <TypeaheadSelectInput
+        aria-label="Employee"
         emptyText="Unassigned"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -181,6 +185,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
         Rotation Employee
       </Label>
       <TypeaheadSelectInput
+        aria-label="Rotation Employee"
         emptyText="None"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -270,6 +275,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
       </Label>
       <DatePicker
         allowSameDay={false}
+        aria-label="Shift Start"
         dateFormat="MMMM dd, hh:mm a"
         dateFormatCalendar="LLLL yyyy"
         disabled={false}
@@ -309,6 +315,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
       </Label>
       <DatePicker
         allowSameDay={false}
+        aria-label="Shift End"
         dateFormat="MMMM dd, hh:mm a"
         dateFormatCalendar="LLLL yyyy"
         disabled={false}
@@ -347,6 +354,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
         Spot
       </Label>
       <TypeaheadSelectInput
+        aria-label="Spot"
         emptyText="Select a Spot"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -375,6 +383,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
         Employee
       </Label>
       <TypeaheadSelectInput
+        aria-label="Employee"
         emptyText="Unassigned"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -413,6 +422,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
         Rotation Employee
       </Label>
       <TypeaheadSelectInput
+        aria-label="Rotation Employee"
         emptyText="None"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -509,6 +519,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
       </Label>
       <DatePicker
         allowSameDay={false}
+        aria-label="Shift Start"
         dateFormat="MMMM dd, hh:mm a"
         dateFormatCalendar="LLLL yyyy"
         disabled={false}
@@ -549,6 +560,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
       </Label>
       <DatePicker
         allowSameDay={false}
+        aria-label="Shift End"
         dateFormat="MMMM dd, hh:mm a"
         dateFormatCalendar="LLLL yyyy"
         disabled={false}
@@ -588,6 +600,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
         Spot
       </Label>
       <TypeaheadSelectInput
+        aria-label="Spot"
         defaultValue={
           Object {
             "id": 2,
@@ -632,6 +645,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
         Employee
       </Label>
       <TypeaheadSelectInput
+        aria-label="Employee"
         defaultValue={
           Object {
             "contract": Object {
@@ -696,6 +710,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
         Rotation Employee
       </Label>
       <TypeaheadSelectInput
+        aria-label="Rotation Employee"
         defaultValue={
           Object {
             "contract": Object {
