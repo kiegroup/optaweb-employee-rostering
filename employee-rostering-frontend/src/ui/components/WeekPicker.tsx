@@ -58,6 +58,7 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
     return (
       <div className="week-picker-container">
         <Button
+          aria-label="Previous Week"
           variant={ButtonVariant.plain}
           onClick={() => this.goToWeekContaining(moment(this.props.value).subtract(1, "w").toDate())}
         >
@@ -77,6 +78,7 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
           required
         />
         <Button
+          aria-label="Next Week"
           variant={ButtonVariant.plain}
           onClick={() => this.goToWeekContaining(moment(this.props.value).add(1, "w").toDate())}
         >
