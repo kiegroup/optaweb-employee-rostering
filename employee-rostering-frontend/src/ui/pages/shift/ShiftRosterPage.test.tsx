@@ -20,10 +20,17 @@ import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
 import { ShiftRosterPage } from './ShiftRosterPage';
-import moment from 'moment';
 import RosterState from 'domain/RosterState';
+import moment from 'moment-timezone';
+import "moment/locale/en-ca";
 
 describe('Shift Roster Page', () => {
+  beforeAll(() => {
+    process.env.TZ = "UTC";
+    moment.tz.setDefault("UTC");
+    moment.locale('en-ca');
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
