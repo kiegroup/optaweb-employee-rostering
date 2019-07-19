@@ -25,12 +25,6 @@ import moment from 'moment-timezone';
 import "moment/locale/en-ca";
 
 describe('Shift Roster Page', () => {
-  beforeAll(() => {
-    process.env.TZ = "UTC";
-    moment.tz.setDefault("UTC");
-    moment.locale('en-ca');
-  });
-
   beforeEach(() => {
     jest.clearAllMocks();
   });
