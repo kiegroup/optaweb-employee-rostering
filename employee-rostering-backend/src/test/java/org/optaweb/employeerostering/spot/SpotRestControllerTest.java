@@ -36,12 +36,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class SpotRestControllerIT {
+public class SpotRestControllerTest {
 
     @Autowired
     private TestRestTemplate spotRestTemplate;
 
     private String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
+
+    private ResponseEntity<List<Spot>> getSpots(Integer tenantId) {
+        return spotRestTemplate.exchange(spotPathURI, HttpMethod.GET, null, new ParameterizedTypeReference
+                <List<Spot>>() {}, tenantId);
+    }
+
+    private ResponseEntity<Spot> getSpot(Integer tenantId, Long id) {
+        return spotRestTemplate.getForEntity(spotPathURI + id, Spot.class, tenantId);
+    }
+
+    private void deleteSpot(Integer tenantId, Long id) {
+        spotRestTemplate.delete(spotPathURI + id, tenantId);
+    }
+
+    private ResponseEntity<Spot> addSpot(Integer tenantId, Spot spot) {
+        return spotRestTemplate.postForEntity(spotPathURI + "add", spot, Spot.class, tenantId);
+    }
+
+    private ResponseEntity<Spot> updateSpot(Integer tenantId, HttpEntity<Spot> request) {
+        return spotRestTemplate.exchange(spotPathURI + "update", HttpMethod.PUT, request, Spot.class, tenantId);
+    }
 
     @Test
     public void getSpotListTest() {
@@ -54,19 +75,12 @@ public class SpotRestControllerIT {
         Spot spot2 = new Spot(tenantId, name2, Collections.emptySet());
         Spot spot3 = new Spot(tenantId2, name, Collections.emptySet());
 
-        ResponseEntity<Spot> postResponse = spotRestTemplate.postForEntity(spotPathURI + "add", spot, Spot.class
-                , tenantId);
-        ResponseEntity<Spot> postResponse2 = spotRestTemplate.postForEntity(spotPathURI + "add", spot2, Spot.class
-                , tenantId);
-        ResponseEntity<Spot> postResponse3 = spotRestTemplate.postForEntity(spotPathURI + "add", spot3, Spot.class
-                , tenantId2);
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
+        ResponseEntity<Spot> postResponse2 = addSpot(tenantId, spot2);
+        ResponseEntity<Spot> postResponse3 = addSpot(tenantId2, spot3);
 
-        ResponseEntity<List<Spot>> response = spotRestTemplate.exchange(spotPathURI, HttpMethod.GET, null,
-                                                                          new ParameterizedTypeReference
-                                                                                  <List<Spot>>() {}, tenantId);
-        ResponseEntity<List<Spot>> response2 = spotRestTemplate.exchange(spotPathURI, HttpMethod.GET, null,
-                                                                           new ParameterizedTypeReference
-                                                                                   <List<Spot>>() {}, tenantId2);
+        ResponseEntity<List<Spot>> response = getSpots(tenantId);
+        ResponseEntity<List<Spot>> response2 = getSpots(tenantId2);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).contains(postResponse.getBody());
@@ -75,9 +89,9 @@ public class SpotRestControllerIT {
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response2.getBody()).contains(postResponse3.getBody());
 
-        spotRestTemplate.delete(spotPathURI + postResponse.getBody().getId(), tenantId);
-        spotRestTemplate.delete(spotPathURI + postResponse2.getBody().getId(), tenantId);
-        spotRestTemplate.delete(spotPathURI + postResponse3.getBody().getId(), tenantId2);
+        deleteSpot(tenantId, postResponse.getBody().getId());
+        deleteSpot(tenantId, postResponse2.getBody().getId());
+        deleteSpot(tenantId2, postResponse3.getBody().getId());
     }
 
     @Test
@@ -87,16 +101,14 @@ public class SpotRestControllerIT {
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
 
-        ResponseEntity<Spot> postResponse = spotRestTemplate.postForEntity(spotPathURI + "add", spot, Spot.class
-                , tenantId);
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
 
-        ResponseEntity<Spot> response = spotRestTemplate.getForEntity(spotPathURI + postResponse.getBody().getId(),
-                                                                        Spot.class, tenantId);
+        ResponseEntity<Spot> response = getSpot(tenantId, postResponse.getBody().getId());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isEqualTo(postResponse.getBody());
 
-        spotRestTemplate.delete(spotPathURI + postResponse.getBody().getId(), tenantId);
+        deleteSpot(tenantId, postResponse.getBody().getId());
     }
 
     @Test
@@ -106,14 +118,11 @@ public class SpotRestControllerIT {
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
 
-        ResponseEntity<Spot> postResponse = spotRestTemplate.postForEntity(spotPathURI + "add", spot, Spot.class
-                , tenantId);
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
 
-        spotRestTemplate.delete(spotPathURI + postResponse.getBody().getId(), tenantId);
+        deleteSpot(tenantId, postResponse.getBody().getId());
 
-        ResponseEntity<List<Spot>> response = spotRestTemplate.exchange(spotPathURI, HttpMethod.GET, null,
-                                                                          new ParameterizedTypeReference
-                                                                                  <List<Spot>>() {}, tenantId);
+        ResponseEntity<List<Spot>> response = getSpots(tenantId);
 
         assertThat(response.getBody()).isEmpty();
     }
@@ -125,16 +134,14 @@ public class SpotRestControllerIT {
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
 
-        ResponseEntity<Spot> postResponse = spotRestTemplate.postForEntity(spotPathURI + "add", spot, Spot.class
-                , tenantId);
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
 
-        ResponseEntity<Spot> response = spotRestTemplate.getForEntity(spotPathURI + postResponse.getBody().getId(),
-                                                                        Spot.class, tenantId);
+        ResponseEntity<Spot> response = getSpot(tenantId, postResponse.getBody().getId());
 
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(postResponse.getBody()).isEqualTo(response.getBody());
 
-        spotRestTemplate.delete(spotPathURI + postResponse.getBody().getId(), tenantId);
+        deleteSpot(tenantId, postResponse.getBody().getId());
     }
 
     @Test
@@ -144,22 +151,19 @@ public class SpotRestControllerIT {
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
 
-        ResponseEntity<Spot> postResponse = spotRestTemplate.postForEntity(spotPathURI + "add", spot, Spot.class
-                , tenantId);
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
 
         Spot spot2 = new Spot(tenantId, "name2", Collections.emptySet());
         spot2.setId(postResponse.getBody().getId());
         HttpEntity<Spot> request = new HttpEntity<>(spot2);
 
-        ResponseEntity<Spot> putResponse = spotRestTemplate.exchange(spotPathURI + "update", HttpMethod.PUT,
-                                                                       request, Spot.class, tenantId);
+        ResponseEntity<Spot> putResponse = updateSpot(tenantId, request);
 
-        ResponseEntity<Spot> response = spotRestTemplate.getForEntity(spotPathURI + putResponse.getBody().getId(),
-                                                                        Spot.class, tenantId);
+        ResponseEntity<Spot> response = getSpot(tenantId, putResponse.getBody().getId());
 
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(putResponse.getBody()).isEqualTo(response.getBody());
 
-        spotRestTemplate.delete(spotPathURI + putResponse.getBody().getId(), tenantId);
+        deleteSpot(tenantId, putResponse.getBody().getId());
     }
 }
