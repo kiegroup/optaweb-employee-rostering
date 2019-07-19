@@ -64,8 +64,7 @@ public class SpotServiceTest {
 
     private Skill createSkill(Integer tenantId, String name) {
         Skill skill = new Skill(tenantId, name);
-        Skill out = skillService.createSkill(tenantId, skill);
-        return out;
+        return skillService.createSkill(tenantId, skill);
     }
 
     @Test
@@ -84,12 +83,12 @@ public class SpotServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
         Spot spot = new Spot(tenantId, name, testSkillSet);
-
         spotService.createSpot(tenantId, spot);
 
         mvc.perform(MockMvcRequestBuilders
@@ -120,12 +119,12 @@ public class SpotServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
         Spot spot = new Spot(tenantId, name, testSkillSet);
-
         spotService.createSpot(tenantId, spot);
 
         assertThatExceptionOfType(NestedServletException.class)
@@ -143,12 +142,12 @@ public class SpotServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
         Spot spot = new Spot(tenantId, name, testSkillSet);
-
         spotService.createSpot(tenantId, spot);
 
         mvc.perform(MockMvcRequestBuilders
@@ -174,12 +173,12 @@ public class SpotServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
         Spot spot = new Spot(tenantId, name, testSkillSet);
-
         spotService.createSpot(tenantId, spot);
 
         assertThatExceptionOfType(NestedServletException.class)
@@ -196,6 +195,7 @@ public class SpotServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -222,6 +222,7 @@ public class SpotServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -245,12 +246,12 @@ public class SpotServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
-
         spotService.createSpot(tenantId, spot);
 
         Spot spot2 = new Spot(tenantId, "name2", testSkillSet);
@@ -276,12 +277,12 @@ public class SpotServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
-
         spotService.createSpot(tenantId, spot);
 
         Spot spot2 = new Spot(tenantId, "name2", testSkillSet);
@@ -318,12 +319,12 @@ public class SpotServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
-
         spotService.createSpot(tenantId, spot);
 
         Spot spot2 = new Spot(2, name, testSkillSet);

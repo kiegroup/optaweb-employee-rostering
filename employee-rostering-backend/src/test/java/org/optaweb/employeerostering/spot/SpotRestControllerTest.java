@@ -44,8 +44,8 @@ public class SpotRestControllerTest {
     private String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
 
     private ResponseEntity<List<Spot>> getSpots(Integer tenantId) {
-        return spotRestTemplate.exchange(spotPathURI, HttpMethod.GET, null, new ParameterizedTypeReference
-                <List<Spot>>() {}, tenantId);
+        return spotRestTemplate.exchange(spotPathURI, HttpMethod.GET, null,
+                                         new ParameterizedTypeReference<List<Spot>>() {}, tenantId);
     }
 
     private ResponseEntity<Spot> getSpot(Integer tenantId, Long id) {
@@ -100,7 +100,6 @@ public class SpotRestControllerTest {
         String name = "name";
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
-
         ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
 
         ResponseEntity<Spot> response = getSpot(tenantId, postResponse.getBody().getId());
@@ -117,7 +116,6 @@ public class SpotRestControllerTest {
         String name = "name";
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
-
         ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
 
         deleteSpot(tenantId, postResponse.getBody().getId());
@@ -133,7 +131,6 @@ public class SpotRestControllerTest {
         String name = "name";
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
-
         ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
 
         ResponseEntity<Spot> response = getSpot(tenantId, postResponse.getBody().getId());
@@ -150,7 +147,6 @@ public class SpotRestControllerTest {
         String name = "name";
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
-
         ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
 
         Spot spot2 = new Spot(tenantId, "name2", Collections.emptySet());
