@@ -68,7 +68,6 @@ public class SkillServiceTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         skillService.createSkill(tenantId, skill);
 
         mvc.perform(MockMvcRequestBuilders
@@ -97,7 +96,6 @@ public class SkillServiceTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         skillService.createSkill(tenantId, skill);
 
         assertThatExceptionOfType(NestedServletException.class)
@@ -114,7 +112,6 @@ public class SkillServiceTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         skillService.createSkill(tenantId, skill);
 
         mvc.perform(MockMvcRequestBuilders
@@ -139,7 +136,6 @@ public class SkillServiceTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         skillService.createSkill(tenantId, skill);
 
         assertThatExceptionOfType(NestedServletException.class)
@@ -192,7 +188,6 @@ public class SkillServiceTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         skillService.createSkill(tenantId, skill);
 
         Skill skill2 = new Skill(tenantId, "name2");
@@ -216,7 +211,6 @@ public class SkillServiceTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         skillService.createSkill(tenantId, skill);
 
         Skill skill2 = new Skill(tenantId, "name2");
@@ -252,7 +246,6 @@ public class SkillServiceTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         skillService.createSkill(tenantId, skill);
 
         Skill skill2 = new Skill(2, name);
