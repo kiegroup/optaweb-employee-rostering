@@ -23,7 +23,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
       <WeekPicker
         aria-label="Select Week to View"
         onChange={[Function]}
-        value={2018-07-01T04:00:00.000+00:00}
+        value={2018-07-01T00:00:00.000Z}
       />
       <TypeaheadSelectInput
         aria-label="Select Spot"
@@ -133,7 +133,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
             "eventWrapper": [Function],
           }
         }
-        date={2018-07-01T04:00:00.000+00:00}
+        date={2018-07-01T00:00:00.000Z}
         dayPropGetter={[Function]}
         endAccessor={[Function]}
         eventPropGetter={[Function]}
@@ -166,7 +166,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
                 "tenantId": 0,
                 "version": 0,
               },
-              "endDateTime": 2018-07-01T21:00:00.000+00:00,
+              "endDateTime": 2018-07-01T17:00:00.000Z,
               "id": 1,
               "indictmentScore": Object {
                 "hardScore": 0,
@@ -215,7 +215,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
                 "tenantId": 0,
                 "version": 0,
               },
-              "startDateTime": 2018-07-01T13:00:00.000+00:00,
+              "startDateTime": 2018-07-01T09:00:00.000Z,
               "tenantId": 0,
               "unassignedShiftPenaltyList": Array [],
               "unavailableEmployeeViolationList": Array [],
@@ -294,7 +294,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
       <WeekPicker
         aria-label="Select Week to View"
         onChange={[Function]}
-        value={2018-07-01T04:00:00.000+00:00}
+        value={2018-07-01T00:00:00.000Z}
       />
       <TypeaheadSelectInput
         aria-label="Select Spot"
@@ -404,7 +404,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
             "eventWrapper": [Function],
           }
         }
-        date={2018-07-01T04:00:00.000+00:00}
+        date={2018-07-01T00:00:00.000Z}
         dayPropGetter={[Function]}
         endAccessor={[Function]}
         eventPropGetter={[Function]}
@@ -437,7 +437,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
-              "endDateTime": 2018-07-01T21:00:00.000+00:00,
+              "endDateTime": 2018-07-01T17:00:00.000Z,
               "id": 1,
               "indictmentScore": Object {
                 "hardScore": 0,
@@ -486,7 +486,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
-              "startDateTime": 2018-07-01T13:00:00.000+00:00,
+              "startDateTime": 2018-07-01T09:00:00.000Z,
               "tenantId": 0,
               "unassignedShiftPenaltyList": Array [],
               "unavailableEmployeeViolationList": Array [],
@@ -567,7 +567,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
       <WeekPicker
         aria-label="Select Week to View"
         onChange={[Function]}
-        value={2018-07-01T04:00:00.000+00:00}
+        value={2018-07-01T00:00:00.000Z}
       />
       <TypeaheadSelectInput
         aria-label="Select Spot"
@@ -677,7 +677,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
             "eventWrapper": [Function],
           }
         }
-        date={2018-07-01T04:00:00.000+00:00}
+        date={2018-07-01T00:00:00.000Z}
         dayPropGetter={[Function]}
         endAccessor={[Function]}
         eventPropGetter={[Function]}
@@ -710,7 +710,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
-              "endDateTime": 2018-07-01T21:00:00.000+00:00,
+              "endDateTime": 2018-07-01T17:00:00.000Z,
               "id": 1,
               "indictmentScore": Object {
                 "hardScore": 0,
@@ -759,7 +759,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
-              "startDateTime": 2018-07-01T13:00:00.000+00:00,
+              "startDateTime": 2018-07-01T09:00:00.000Z,
               "tenantId": 0,
               "unassignedShiftPenaltyList": Array [],
               "unavailableEmployeeViolationList": Array [],
