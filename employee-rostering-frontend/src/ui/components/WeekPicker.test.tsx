@@ -21,6 +21,7 @@ import * as React from 'react';
 import WeekPicker, { WeekPickerProps, WeekPickerState } from './WeekPicker';
 import { TextInput } from '@patternfly/react-core';
 import moment from 'moment';
+import 'moment/locale/en-ca'; 
 import MockDate from 'mockdate';
 
 interface MockData {
@@ -29,7 +30,7 @@ interface MockData {
 
 describe('WeekPicker component', () => {
   beforeAll(() => {
-    moment.locale('en');
+    moment.locale('en-ca');
   });
 
   it('should render correctly when closed', () => {
