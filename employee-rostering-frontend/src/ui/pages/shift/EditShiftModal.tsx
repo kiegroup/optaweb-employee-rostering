@@ -57,7 +57,7 @@ interface State {
   editedValue: Partial<Shift>;
 }
 
-class EditShiftModal extends React.Component<Props, State> {
+export class EditShiftModal extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
@@ -68,7 +68,7 @@ class EditShiftModal extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    if (this.props.shift === undefined && prevState.editedValue.pinnedByUser === undefined) {
+    if (this.props.shift === undefined && prevProps.shift !== undefined) {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({ editedValue: {
         tenantId: this.props.tenantId,
@@ -102,11 +102,11 @@ class EditShiftModal extends React.Component<Props, State> {
         isOpen={this.props.isOpen}
         actions={
           [
-            <Button variant={ButtonVariant.tertiary} key={0} onClick={this.props.onClose}>Close</Button>
+            <Button aria-label="Close Modal" variant={ButtonVariant.tertiary} key={0} onClick={this.props.onClose}>Close</Button>
           ].concat(this.props.shift? [
-            <Button variant={ButtonVariant.danger} key={1} onClick={() => this.props.onDelete(this.props.shift as Shift)}>Delete</Button>
+            <Button aria-label="Delete" variant={ButtonVariant.danger} key={1} onClick={() => this.props.onDelete(this.props.shift as Shift)}>Delete</Button>
           ] : []).concat([
-            <Button key={2} onClick={this.onSave}>Save</Button>
+            <Button aria-label="Save" key={2} onClick={this.onSave}>Save</Button>
           ])
         }
         isSmall
