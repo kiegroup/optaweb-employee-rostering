@@ -94,7 +94,8 @@
   },
   "jest": {
     "snapshotSerializers": [
-      "enzyme-to-json/serializer"
+      "enzyme-to-json/serializer",
+      "./src/serializers/date-serializer.ts"
     ]
   }
 }

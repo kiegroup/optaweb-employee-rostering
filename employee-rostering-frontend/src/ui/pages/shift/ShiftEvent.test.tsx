@@ -25,12 +25,6 @@ import moment from 'moment-timezone';
 import "moment/locale/en-ca";
 
 describe('ShiftEvent', () => {
-  beforeAll(() => {
-    process.env.TZ = "UTC";
-    moment.tz.setDefault("UTC");
-    moment.locale('en-ca');
-  });
-
   it('getRequiredSkillViolations should render correctly', () => {
     const shift: Shift = {
       ...baseShift,
