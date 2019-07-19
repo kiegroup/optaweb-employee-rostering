@@ -248,6 +248,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     >
                       <SaveIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -259,6 +260,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     >
                       <CloseIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -275,6 +277,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     >
                       <EditIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -286,6 +289,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     >
                       <TrashIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -453,6 +457,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     >
                       <SaveIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -464,6 +469,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     >
                       <CloseIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -480,6 +486,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     >
                       <EditIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -491,6 +498,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     >
                       <TrashIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />

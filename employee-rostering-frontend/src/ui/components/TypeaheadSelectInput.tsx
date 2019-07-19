@@ -61,7 +61,7 @@ TypeaheadSelectState<T>
   }
 
   onSelect(
-    event: React.SyntheticEvent<HTMLOptionElement, Event>,
+    event: any,
     selection: string,
     isPlaceholder: boolean
   ) {
@@ -93,19 +93,21 @@ TypeaheadSelectState<T>
           onToggle={this.onToggle}
           onSelect={this.onSelect}
           onClear={this.clearSelection}
-          selections={selection}
+          selections={selection as any}
           isExpanded={isExpanded}
           ariaLabelledBy={titleId}
           placeholderText={emptyText}
         >
           <SelectOption isDisabled={false} key={-1} value="" />
-          {this.props.options.map((option, index) => (
-            <SelectOption
-              isDisabled={false}
-              key={this.props.optionToStringMap(option)}
-              value={this.props.optionToStringMap(option)}
-            />
-          ))}
+          <>
+            {this.props.options.map((option, index) => (
+              <SelectOption
+                isDisabled={false}
+                key={this.props.optionToStringMap(option)}
+                value={this.props.optionToStringMap(option)}
+              />
+            ))}
+          </>
         </Select>
       </div>
     );

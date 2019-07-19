@@ -51,7 +51,7 @@ MultiTypeaheadSelectState<T>>  {
     });
   }
 
-  onSelect(event: React.SyntheticEvent<HTMLOptionElement,Event>, selection: string, isPlaceholder: boolean) {
+  onSelect(event: any, selection: string, isPlaceholder: boolean) {
     const { selected } = this.state;
     const selectedOption = this.props.options.find((option) => this.props.optionToStringMap(option) === selection) as T;
     if (selected.map(this.props.optionToStringMap).includes(selection)) {
