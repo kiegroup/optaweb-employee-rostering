@@ -89,7 +89,7 @@ interface State {
   selectedShift?: Shift;
 }
 
-function EventWrapper(props: PropsWithChildren<{
+export function EventWrapper(props: PropsWithChildren<{
   event: Shift;
   style: React.CSSProperties;
 }>): JSX.Element {
@@ -119,6 +119,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     this.addShift = this.addShift.bind(this);
     this.deleteShift = this.deleteShift.bind(this);
     this.updateShift = this.updateShift.bind(this);
+    this.getShiftStyle = this.getShiftStyle.bind(this);
+    this.getDayStyle = this.getDayStyle.bind(this);
     this.state = {
       isCreatingOrEditingShift: false
     };
@@ -153,6 +155,46 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
   deleteShift(deletedShift: Shift) {
     this.props.removeShift(deletedShift);
+  }
+
+  getShiftStyle(shift: Shift): { style: React.CSSProperties } {
+    const color = getShiftColor(shift);
+                
+    if (this.props.rosterState !== null && moment(shift.startDateTime).isBefore(this.props.rosterState.firstDraftDate)) {
+      // Published
+      return {
+        style: {
+          border: "1px solid",
+          backgroundColor: Color(color).saturate(-0.5).hex()
+        }
+      };
+    }
+    else {
+      // Draft
+      return {
+        style: {
+          backgroundColor: color,
+          border: "1px dashed"
+        } 
+      };
+    }
+  }
+
+  getDayStyle(date: Date): { style: React.CSSProperties } {
+    if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
+      return {
+        style: {
+          backgroundColor: "var(--pf-global--BackgroundColor--300)"
+        }
+      }
+    }
+    else {
+      return {
+        style: {
+          backgroundColor: "var(--pf-global--BackgroundColor--100)"
+        }
+      }
+    }
   }
 
   render() {
@@ -295,44 +337,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               onView={() => {}}
               onNavigate={() => {}}
               timeslots={4}
-              eventPropGetter={(event: Shift, start, end, isSelected) => {
-                const color = getShiftColor(event);
-                
-                if (this.props.rosterState !== null && moment(start).isBefore(this.props.rosterState.firstDraftDate)) {
-                  // Published
-                  return {
-                    style: {
-                      border: "1px solid",
-                      backgroundColor: Color(color).saturate(-0.5).hex()
-                    }
-                  };
-                }
-                else {
-                  // Draft
-                  return {
-                    style: {
-                      backgroundColor: color,
-                      border: "1px dashed"
-                    } 
-                  };
-                }
-              }}
-              dayPropGetter={(date) => {
-                if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
-                  return {
-                    style: {
-                      backgroundColor: "var(--pf-global--BackgroundColor--300)"
-                    }
-                  }
-                }
-                else {
-                  return {
-                    style: {
-                      backgroundColor: "var(--pf-global--BackgroundColor--100)"
-                    }
-                  }
-                }
-              }}
+              eventPropGetter={this.getShiftStyle}
+              dayPropGetter={this.getDayStyle}
               selectable
               showMultiDayTimes
               components={{
