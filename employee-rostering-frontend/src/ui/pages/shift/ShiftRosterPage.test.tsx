@@ -34,6 +34,33 @@ describe('Shift Roster Page', () => {
     />);
     expect(toJson(shiftRosterPage)).toMatchSnapshot();
   });
+
+  it('should render correctly when loading', () => {
+    const shiftRosterPage = shallow(<ShiftRosterPage
+      {...baseProps}
+      isLoading
+      allSpotList={[]}
+      shownSpotList={[]}
+      spotIdToShiftListMap={new Map()}
+    />);
+    expect(toJson(shiftRosterPage)).toMatchSnapshot();
+  });
+
+  it('should render correctly when solving', () => {
+    const shiftRosterPage = shallow(<ShiftRosterPage
+      {...baseProps}
+      isSolving
+    />);
+    expect(toJson(shiftRosterPage)).toMatchSnapshot();
+  });
+
+  it('should render correctly when creating a new shift via button', () => {
+    const shiftRosterPage = shallow(<ShiftRosterPage
+      {...baseProps}
+    />);
+    shiftRosterPage.find('Button[aria-label="Create Shift"]').simulate("click");
+    expect(toJson(shiftRosterPage)).toMatchSnapshot();
+  });
 });
 
 const spot: Spot = {

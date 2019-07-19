@@ -176,11 +176,13 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         >
           <LevelItem style={{display: "flex"}}>
             <WeekPicker
+              aria-label="Select Week to View"
               value={this.props.startDate as Date}
               onChange={this.onDateChange}
             />
             <TypeaheadSelectInput
-              emptyText="Select Spots"
+              aria-label="Select Spot"
+              emptyText="Select Spot"
               optionToStringMap={spot => spot.name}
               options={this.props.allSpotList}
               defaultValue={this.props.shownSpotList[0]}
@@ -189,6 +191,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           </LevelItem>
           <LevelItem style={{display: "flex"}}>
             <Button
+              aria-label="Publish"
               onClick={this.props.publishRoster}
             >
               Publish
@@ -196,12 +199,14 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             {(!this.props.isSolving &&
               (
                 <Button
+                  aria-label="Solve"
                   onClick={this.props.solveRoster}
                 >
                   Schedule
                 </Button>
               )) || (
               <Button
+                aria-label="Terminate Early"
                 onClick={this.props.terminateSolvingRosterEarly}
               >
                 Terminate Early
@@ -209,6 +214,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             )
             }
             <Button
+              aria-label="Refresh"
               onClick={() => {
                 this.props.refreshShiftRoster();
                 showInfoMessage("Info", "The Shift Roster was refreshed.");
@@ -218,6 +224,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               Refresh
             </Button>
             <Button
+              aria-label="Create Shift"
               onClick={() => {
                 this.setState({
                   selectedShift: undefined,
@@ -234,6 +241,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         }}
         >
           <EditShiftModal
+            aria-label="Edit Shift"
             isOpen={this.state.isCreatingOrEditingShift}
             shift={this.state.selectedShift}
             onDelete={(shift) => {
