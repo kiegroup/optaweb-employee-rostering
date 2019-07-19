@@ -43,8 +43,8 @@ public class SkillRestControllerTest {
     private String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
 
     private ResponseEntity<List<Skill>> getSkills(Integer tenantId) {
-        return skillRestTemplate.exchange(skillPathURI, HttpMethod.GET, null, new ParameterizedTypeReference
-                <List<Skill>>() {}, tenantId);
+        return skillRestTemplate.exchange(skillPathURI, HttpMethod.GET, null,
+                                          new ParameterizedTypeReference<List<Skill>>() {}, tenantId);
     }
 
     private ResponseEntity<Skill> getSkill(Integer tenantId, Long id) {
@@ -99,7 +99,6 @@ public class SkillRestControllerTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         ResponseEntity<Skill> postResponse = addSkill(tenantId, skill);
 
         ResponseEntity<Skill> response = getSkill(tenantId, postResponse.getBody().getId());
@@ -116,7 +115,6 @@ public class SkillRestControllerTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         ResponseEntity<Skill> postResponse = addSkill(tenantId, skill);
 
         deleteSkill(tenantId, postResponse.getBody().getId());
@@ -132,7 +130,6 @@ public class SkillRestControllerTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         ResponseEntity<Skill> postResponse = addSkill(tenantId, skill);
 
         ResponseEntity<Skill> response = getSkill(tenantId, postResponse.getBody().getId());
@@ -149,7 +146,6 @@ public class SkillRestControllerTest {
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
-
         ResponseEntity<Skill> postResponse = addSkill(tenantId, skill);
 
         Skill skill2 = new Skill(tenantId, "name2");
