@@ -101,7 +101,6 @@ public class EmployeeServiceTest {
         Contract contract = createContract(tenantId, name);
 
         Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-
         employeeService.createEmployee(tenantId, employee);
 
         mvc.perform(MockMvcRequestBuilders
@@ -133,6 +132,7 @@ public class EmployeeServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -140,7 +140,6 @@ public class EmployeeServiceTest {
         Contract contract = createContract(tenantId, name);
 
         Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-
         employeeService.createEmployee(tenantId, employee);
 
         assertThatExceptionOfType(NestedServletException.class)
@@ -158,6 +157,7 @@ public class EmployeeServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -165,7 +165,6 @@ public class EmployeeServiceTest {
         Contract contract = createContract(tenantId, name);
 
         Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-
         employeeService.createEmployee(tenantId, employee);
 
         mvc.perform(MockMvcRequestBuilders
@@ -191,6 +190,7 @@ public class EmployeeServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -198,7 +198,6 @@ public class EmployeeServiceTest {
         Contract contract = createContract(tenantId, name);
 
         Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-
         employeeService.createEmployee(tenantId, employee);
 
         assertThatExceptionOfType(NestedServletException.class)
@@ -215,6 +214,7 @@ public class EmployeeServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -244,6 +244,7 @@ public class EmployeeServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -269,6 +270,7 @@ public class EmployeeServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -276,7 +278,6 @@ public class EmployeeServiceTest {
         Contract contract = createContract(tenantId, name);
 
         Employee employee = new Employee(tenantId, name, contract, Collections.emptySet());
-
         employeeService.createEmployee(tenantId, employee);
 
         Employee employee2 = new Employee(tenantId, "name2", contract, testSkillSet);
@@ -303,6 +304,7 @@ public class EmployeeServiceTest {
 
         Skill skillA = createSkill(tenantId, "A");
         Skill skillB = createSkill(tenantId, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -310,7 +312,6 @@ public class EmployeeServiceTest {
         Contract contract = createContract(tenantId, name);
 
         Employee employee = new Employee(tenantId, name, contract, Collections.emptySet());
-
         employeeService.createEmployee(tenantId, employee);
 
         Employee employee2 = new Employee(tenantId, "name2", contract, testSkillSet);
@@ -350,6 +351,7 @@ public class EmployeeServiceTest {
 
         Skill skillA = createSkill(tenantId2, "A");
         Skill skillB = createSkill(tenantId2, "B");
+
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
@@ -358,7 +360,6 @@ public class EmployeeServiceTest {
         Contract contract2 = createContract(tenantId2, name);
 
         Employee employee = new Employee(tenantId, name, contract, Collections.emptySet());
-
         employeeService.createEmployee(tenantId, employee);
 
         Employee employee2 = new Employee(2, name, contract2, testSkillSet);
