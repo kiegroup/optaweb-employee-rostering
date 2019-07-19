@@ -45,7 +45,7 @@ public class SkillController {
     }
 
     @GetMapping
-    public ResponseEntity<List> getSkillList(@PathVariable Integer tenantId) {
+    public ResponseEntity<List<Skill>> getSkillList(@PathVariable Integer tenantId) {
         return new ResponseEntity<>(skillService.getSkillList(tenantId), HttpStatus.OK);
     }
 
