@@ -20,10 +20,17 @@ import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
 import ShiftEvent, * as shiftEvent from './ShiftEvent';
-import moment from 'moment';
 import EmployeeAvailability from 'domain/EmployeeAvailability';
+import moment from 'moment-timezone';
+import "moment/locale/en-ca";
 
 describe('ShiftEvent', () => {
+  beforeAll(() => {
+    process.env.TZ = "UTC";
+    moment.tz.setDefault("UTC");
+    moment.locale('en-ca');
+  });
+
   it('getRequiredSkillViolations should render correctly', () => {
     const shift: Shift = {
       ...baseShift,
