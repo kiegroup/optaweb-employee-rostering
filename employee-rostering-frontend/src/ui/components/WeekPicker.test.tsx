@@ -13,23 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow, mount } from 'enzyme';
+import { shallow } from 'enzyme';
 //@ts-ignore
 import DatePicker from '@wojtekmaj/react-daterange-picker';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import WeekPicker, { WeekPickerProps, WeekPickerState } from './WeekPicker';
-import { TextInput } from '@patternfly/react-core';
-import moment from 'moment';
-import 'moment/locale/en-ca'; 
-import MockDate from 'mockdate';
+import WeekPicker from './WeekPicker';
+import moment from 'moment-timezone';
+import "moment/locale/en-ca";
 
-interface MockData {
-  name: string;
-}
+import MockDate from 'mockdate';
 
 describe('WeekPicker component', () => {
   beforeAll(() => {
+    process.env.TZ = "UTC";
+    moment.tz.setDefault("UTC");
     moment.locale('en-ca');
   });
 
