@@ -258,6 +258,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     >
                       <SaveIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -269,6 +270,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     >
                       <CloseIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -285,6 +287,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     >
                       <EditIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -296,6 +299,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     >
                       <TrashIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -423,6 +427,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     >
                       <SaveIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -434,6 +439,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     >
                       <CloseIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -450,6 +456,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     >
                       <EditIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />
@@ -461,6 +468,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     >
                       <TrashIcon
                         color="currentColor"
+                        noVerticalAlign={false}
                         size="sm"
                         title={null}
                       />

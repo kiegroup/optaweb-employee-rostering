@@ -13,7 +13,7 @@ exports[`MultiTypeaheadSelectInput component should render correctly 1`] = `
     ariaLabelClear="Clear all"
     ariaLabelRemove="Remove"
     ariaLabelToggle="Options menu"
-    ariaLabelTypeAhead={null}
+    ariaLabelTypeAhead=""
     ariaLabelledBy="multi-typeahead-select-id"
     className=""
     isExpanded={false}
@@ -23,13 +23,16 @@ exports[`MultiTypeaheadSelectInput component should render correctly 1`] = `
     onToggle={[Function]}
     placeholderText="Enter some data"
     selections={Array []}
+    toggleId={null}
     variant="typeaheadmulti"
-    width={null}
+    width=""
   >
     <SelectOption
       className=""
       index={0}
+      isChecked={false}
       isDisabled={false}
+      isFocused={false}
       isPlaceholder={false}
       isSelected={false}
       key="Option 1"
@@ -41,7 +44,9 @@ exports[`MultiTypeaheadSelectInput component should render correctly 1`] = `
     <SelectOption
       className=""
       index={0}
+      isChecked={false}
       isDisabled={false}
+      isFocused={false}
       isPlaceholder={false}
       isSelected={false}
       key="Option 2"
@@ -53,7 +58,9 @@ exports[`MultiTypeaheadSelectInput component should render correctly 1`] = `
     <SelectOption
       className=""
       index={0}
+      isChecked={false}
       isDisabled={false}
+      isFocused={false}
       isPlaceholder={false}
       isSelected={false}
       key="Option 3"
