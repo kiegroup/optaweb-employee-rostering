@@ -23,6 +23,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RosterStateRepository extends JpaRepository <RosterState, Long> {
+public interface RosterStateRepository extends JpaRepository<RosterState, Long> {
     Optional<RosterState> findByTenantId(Integer tenantId);
 }
