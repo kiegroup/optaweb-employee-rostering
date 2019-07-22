@@ -61,7 +61,8 @@ public class Roster extends AbstractPersistable {
     public Roster() {}
 
     public Roster(Long id, Integer tenantId, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
-                  List<EmployeeAvailability> employeeAvailabilityList, RosterParametrization rosterParametrization, RosterState rosterState, List<Shift> shiftList) {
+                  List<EmployeeAvailability> employeeAvailabilityList, RosterParametrization rosterParametrization,
+                  RosterState rosterState, List<Shift> shiftList) {
         super(id, tenantId);
         this.skillList = skillList;
         this.spotList = spotList;
