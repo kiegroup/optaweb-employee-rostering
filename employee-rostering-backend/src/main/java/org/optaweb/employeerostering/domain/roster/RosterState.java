@@ -23,6 +23,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -56,6 +57,7 @@ public class RosterState extends AbstractPersistable {
 
     @OneToOne
     @NotNull
+    @JoinColumn(name = "tenantId", updatable = false, insertable = false)
     private Tenant tenant;
 
     @SuppressWarnings("unused")
