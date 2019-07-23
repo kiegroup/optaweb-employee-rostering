@@ -20,8 +20,7 @@ import * as alerts from 'ui/Alerts';
 import * as rosterOperations from 'store/roster/operations';
 import { shiftOperations } from './index';
 import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './operations';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
-import { onGet, onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
+import { onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
 import Shift from 'domain/Shift';
 import moment from 'moment';
 
@@ -36,18 +35,18 @@ describe('Shift operations', () => {
     const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
 
     const addedShift: Shift = {
-        tenantId: tenantId,
-        startDateTime: shiftStartTime,
-        endDateTime: shiftEndTime,
-        spot: {
-            tenantId: 0,
-            id: 20,
-            name: "Spot",
-            requiredSkillSet: []
-        },
-        employee: null,
-        rotationEmployee: null,
-        pinnedByUser: true
+      tenantId: tenantId,
+      startDateTime: shiftStartTime,
+      endDateTime: shiftEndTime,
+      spot: {
+        tenantId: 0,
+        id: 20,
+        name: "Spot",
+        requiredSkillSet: []
+      },
+      employee: null,
+      rotationEmployee: null,
+      pinnedByUser: true
     };
 
     onPost(`/tenant/${tenantId}/shift/add`, shiftAdapter(addedShift), shiftAdapter(addedShift));
@@ -72,20 +71,20 @@ describe('Shift operations', () => {
     const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
 
     const deletedShift: Shift = {
-        tenantId: tenantId,
-        startDateTime: shiftStartTime,
-        endDateTime: shiftEndTime,
-        id: 10,
-        version: 0,
-        spot: {
-            tenantId: 0,
-            id: 20,
-            name: "Spot",
-            requiredSkillSet: []
-        },
-        employee: null,
-        rotationEmployee: null,
-        pinnedByUser: true
+      tenantId: tenantId,
+      startDateTime: shiftStartTime,
+      endDateTime: shiftEndTime,
+      id: 10,
+      version: 0,
+      spot: {
+        tenantId: 0,
+        id: 20,
+        name: "Spot",
+        requiredSkillSet: []
+      },
+      employee: null,
+      rotationEmployee: null,
+      pinnedByUser: true
     };
 
     onDelete(`/tenant/${tenantId}/shift/${deletedShift.id}`, true);
@@ -110,20 +109,20 @@ describe('Shift operations', () => {
     const mockShowErrorMessage = jest.spyOn(alerts, "showErrorMessage");
 
     const deletedShift: Shift = {
-        tenantId: tenantId,
-        startDateTime: shiftStartTime,
-        endDateTime: shiftEndTime,
-        id: 10,
-        version: 0,
-        spot: {
-            tenantId: 0,
-            id: 20,
-            name: "Spot",
-            requiredSkillSet: []
-        },
-        employee: null,
-        rotationEmployee: null,
-        pinnedByUser: true
+      tenantId: tenantId,
+      startDateTime: shiftStartTime,
+      endDateTime: shiftEndTime,
+      id: 10,
+      version: 0,
+      spot: {
+        tenantId: 0,
+        id: 20,
+        name: "Spot",
+        requiredSkillSet: []
+      },
+      employee: null,
+      rotationEmployee: null,
+      pinnedByUser: true
     };
 
     onDelete(`/tenant/${tenantId}/shift/${deletedShift.id}`, false);
@@ -148,20 +147,20 @@ describe('Shift operations', () => {
     const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
 
     const updatedShift: Shift = {
-        tenantId: tenantId,
-        id: 11,
-        version: 0,
-        startDateTime: shiftStartTime,
-        endDateTime: shiftEndTime,
-        spot: {
-            tenantId: 0,
-            id: 20,
-            name: "Spot",
-            requiredSkillSet: []
-        },
-        employee: null,
-        rotationEmployee: null,
-        pinnedByUser: true
+      tenantId: tenantId,
+      id: 11,
+      version: 0,
+      startDateTime: shiftStartTime,
+      endDateTime: shiftEndTime,
+      spot: {
+        tenantId: 0,
+        id: 20,
+        name: "Spot",
+        requiredSkillSet: []
+      },
+      employee: null,
+      rotationEmployee: null,
+      pinnedByUser: true
     };
 
     const updatedShiftWithUpdatedVersion: Shift = {
@@ -193,10 +192,10 @@ describe('shift adapters', () => {
       startDateTime: shiftStartTime,
       endDateTime: shiftEndTime,
       spot: {
-          tenantId: 0,
-          id: 20,
-          name: "Spot",
-          requiredSkillSet: []
+        tenantId: 0,
+        id: 20,
+        name: "Spot",
+        requiredSkillSet: []
       },
       employee: {
         tenantId: 10,

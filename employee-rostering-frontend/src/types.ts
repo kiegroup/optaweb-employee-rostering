@@ -16,12 +16,12 @@
 export type Predicate<T> = (value: T) => boolean;
 export type ReadonlyPartial<T> = { readonly [P in keyof T]?: T[P] };
 export type Sorter<T> = (a: T, b: T) => number;
-export type PaginationData = {
-    itemsPerPage: number;
-    pageNumber: number;
+export interface PaginationData {
+  itemsPerPage: number;
+  pageNumber: number;
 }
-export type ObjectNumberMap<T> = {
-    [index: number]: T;
+export interface ObjectNumberMap<T> {
+  [index: number]: T;
 }
 
 export interface ServerSideExceptionInfo {
@@ -34,7 +34,7 @@ export interface ServerSideExceptionInfo {
 }
 
 export function mapObjectNumberMap<F,T>(map: ObjectNumberMap<F>, mapper: (value: F) => T): ObjectNumberMap<T> {
-    const out:  ObjectNumberMap<T> = {}
-    Object.keys(map).forEach(key => out[parseInt(key)] = mapper(map[parseInt(key)]));
-    return out;
+  const out:  ObjectNumberMap<T> = {}
+  Object.keys(map).forEach(key => out[parseInt(key)] = mapper(map[parseInt(key)]));
+  return out;
 }
