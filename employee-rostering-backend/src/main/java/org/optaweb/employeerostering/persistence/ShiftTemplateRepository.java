@@ -20,9 +20,16 @@ import java.util.List;
 
 import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ShiftTemplateRepository extends JpaRepository<ShiftTemplate, Long> {
+
+    @Query("select distinct sa from ShiftTemplate sa " +
+            "left join fetch sa.spot s " +
+            "left join fetch sa.rotationEmployee re " +
+            "where sa.tenantId = :tenantId " +
+            "order by sa.startDayOffset, sa.startTime, s.name, re.name")
     List<ShiftTemplate> findAllByTenantId(Integer tenantId);
 }
