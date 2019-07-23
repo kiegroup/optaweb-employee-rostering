@@ -20,9 +20,14 @@ import java.util.List;
 
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, Long> {
+
+    @Query("select c from Contract c " +
+            "where c.tenantId = :tenantId " +
+            "order by LOWER(c.name)")
     List<Contract> findAllByTenantId(Integer tenantId);
 }
