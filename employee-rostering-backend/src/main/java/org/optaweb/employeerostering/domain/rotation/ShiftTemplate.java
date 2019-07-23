@@ -56,7 +56,8 @@ public class ShiftTemplate extends AbstractPersistable {
     public ShiftTemplate() {
     }
 
-    public ShiftTemplate(Integer tenantId, Spot spot, int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime) {
+    public ShiftTemplate(Integer tenantId, Spot spot, int startDayOffset, LocalTime startTime, int endDayOffset,
+                         LocalTime endTime) {
         this(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, null);
     }
 
@@ -72,7 +73,8 @@ public class ShiftTemplate extends AbstractPersistable {
         this.endTime = endTime;
     }
 
-    public ShiftTemplate(Integer rotationLength, ShiftTemplateView shiftTemplateView, Spot spot, Employee rotationEmployee) {
+    public ShiftTemplate(Integer rotationLength, ShiftTemplateView shiftTemplateView, Spot spot,
+                         Employee rotationEmployee) {
         super(shiftTemplateView);
         this.spot = spot;
         this.rotationEmployee = rotationEmployee;
@@ -95,7 +97,8 @@ public class ShiftTemplate extends AbstractPersistable {
         this.endDayOffset = endDayAfterStartDay % rotationLength;
     }
 
-    public Shift createShiftOnDate(LocalDate startDate, int rotationLength, ZoneId zoneId, boolean defaultToRotationEmployee) {
+    public Shift createShiftOnDate(LocalDate startDate, int rotationLength, ZoneId zoneId,
+                                   boolean defaultToRotationEmployee) {
         LocalDateTime startDateTime = startDate.atTime(getStartTime());
 
         LocalDate endDate;
@@ -108,7 +111,8 @@ public class ShiftTemplate extends AbstractPersistable {
         }
         LocalDateTime endDateTime = endDate.atTime(getEndTime());
 
-        OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime, zoneId.getRules().getOffset(startDateTime));
+        OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime,
+                                                               zoneId.getRules().getOffset(startDateTime));
         OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime));
         Shift shift = new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, rotationEmployee);
         if (defaultToRotationEmployee) {
