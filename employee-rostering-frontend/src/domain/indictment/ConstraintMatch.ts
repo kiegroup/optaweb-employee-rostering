@@ -16,5 +16,5 @@
 import HardMediumSoftScore from '../HardMediumSoftScore';
 
 export default interface ConstraintMatch {
-    score: HardMediumSoftScore;
+  score: HardMediumSoftScore;
 }

@@ -41,26 +41,26 @@ export const shiftToShiftView = (shift: Shift): ShiftView => ({
 }); 
 
 export const shiftViewToDomainObjectView = (view: ShiftView): DomainObjectView<Shift> => ({
-        ...objectWithout(view, "employeeId", "spotId", "rotationEmployeeId"),
-        employee: view.employeeId,
-        spot: view.spotId,
-        rotationEmployee: view.rotationEmployeeId
-  }); 
+  ...objectWithout(view, "employeeId", "spotId", "rotationEmployeeId"),
+  employee: view.employeeId,
+  spot: view.spotId,
+  rotationEmployee: view.rotationEmployeeId
+}); 
 
 export default interface ShiftView extends DomainObject {
-    startDateTime: Date;
-    endDateTime: Date;
-    spotId: number;
-    rotationEmployeeId: number | null;
-    employeeId: number | null;
-    pinnedByUser: boolean;
-    indictmentScore?: HardMediumSoftScore;
-    requiredSkillViolationList?: RequiredSkillViolation[];
-    unavailableEmployeeViolationList?: UnavailableEmployeeViolation[];
-    shiftEmployeeConflictList?: ShiftEmployeeConflictViolation[];
-    desiredTimeslotForEmployeeRewardList?: DesiredTimeslotForEmployeeReward[];
-    undesiredTimeslotForEmployeePenaltyList?: UndesiredTimeslotForEmployeePenalty[];
-    rotationViolationPenaltyList?: RotationViolationPenalty[];
-    unassignedShiftPenaltyList?: UnassignedShiftPenalty[];
-    contractMinutesViolationPenaltyList?: ContractMinutesViolation[];
-  }
+  startDateTime: Date;
+  endDateTime: Date;
+  spotId: number;
+  rotationEmployeeId: number | null;
+  employeeId: number | null;
+  pinnedByUser: boolean;
+  indictmentScore?: HardMediumSoftScore;
+  requiredSkillViolationList?: RequiredSkillViolation[];
+  unavailableEmployeeViolationList?: UnavailableEmployeeViolation[];
+  shiftEmployeeConflictList?: ShiftEmployeeConflictViolation[];
+  desiredTimeslotForEmployeeRewardList?: DesiredTimeslotForEmployeeReward[];
+  undesiredTimeslotForEmployeePenaltyList?: UndesiredTimeslotForEmployeePenalty[];
+  rotationViolationPenaltyList?: RotationViolationPenalty[];
+  unassignedShiftPenaltyList?: UnassignedShiftPenalty[];
+  contractMinutesViolationPenaltyList?: ContractMinutesViolation[];
+}

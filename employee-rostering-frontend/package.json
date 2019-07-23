@@ -89,7 +89,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "CI=true npm test"
+      "pre-push": "npm run lint && CI=true npm test"
     }
   },
   "jest": {

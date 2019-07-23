@@ -18,7 +18,7 @@ import Employee from '../Employee';
 
 
 export default interface ContractMinutesViolation extends ConstraintMatch {
-    employee: Employee;
-    type: "DAY"|"WEEK"|"MONTH"|"YEAR";
-    minutesWorked: number;
+  employee: Employee;
+  type: "DAY"|"WEEK"|"MONTH"|"YEAR";
+  minutesWorked: number;
 }
