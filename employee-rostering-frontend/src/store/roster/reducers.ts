@@ -41,17 +41,17 @@ export const rosterStateReducer = (state = initialRosterState, action: RosterSta
     }
     case RosterStateActionType.PUBLISH_ROSTER: {
       if (state.rosterState) {
-      const publishedDuration = moment(action.publishResult.publishedToDate)
-        .diff(action.publishResult.publishedFromDate, "days");
-      return { ...state, rosterState: {
-        ...state.rosterState,
-        firstDraftDate: action.publishResult.publishedToDate,
-        unplannedRotationOffset: (state.rosterState.unplannedRotationOffset + publishedDuration) % state.rosterState.rotationLength
-      } };
-    }
-    else {
-      return { ...state, rosterState: null };
-    }
+        const publishedDuration = moment(action.publishResult.publishedToDate)
+          .diff(action.publishResult.publishedFromDate, "days");
+        return { ...state, rosterState: {
+          ...state.rosterState,
+          firstDraftDate: action.publishResult.publishedToDate,
+          unplannedRotationOffset: (state.rosterState.unplannedRotationOffset + publishedDuration) % state.rosterState.rotationLength
+        } };
+      }
+      else {
+        return { ...state, rosterState: null };
+      }
     }
     default:
       return state;

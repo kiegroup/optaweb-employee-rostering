@@ -35,7 +35,7 @@ export const getSpotListInShiftRoster = (state: AppState): Spot[] => {
 
 export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
   if (isLoading(state)) {
-      throw Error("Shift Roster is loading");
+    throw Error("Shift Roster is loading");
   }
   if ((spot.id as number) in (state.shiftRoster.shiftRosterView as ShiftRosterView).spotIdToShiftViewListMap) {
     return ((state.shiftRoster.shiftRosterView as ShiftRosterView).spotIdToShiftViewListMap[spot.id as number]).map(sv => ({
