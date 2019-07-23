@@ -18,7 +18,7 @@ import { ThunkCommandFactory, AppState } from '../types';
 import * as actions from './actions';
 import * as operations from './operations'; // Hack used for mocking
 import { SetRosterStateIsLoadingAction, SetRosterStateAction,
-  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction, PublishRosterAction, PublishResult } from './types';
+  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction, PublishRosterAction, PublishResult, SetAvailabilityRosterIsLoadingAction, SetAvailabilityRosterViewAction } from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
 import { PaginationData, ObjectNumberMap, mapObjectNumberMap } from 'types';
@@ -29,6 +29,9 @@ import { ThunkDispatch } from 'redux-thunk';
 import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/operations';
 import RestServiceClient from 'store/rest';
 import { AddAlertAction } from 'store/alert/types';
+import Employee from 'domain/Employee';
+import AvailabilityRosterView from 'domain/AvailabilityRosterView';
+import { KindaEmployeeAvailabilityView } from 'store/availability/operations';
 
 export interface RosterSliceInfo {
   fromDate: Date;
@@ -39,8 +42,17 @@ interface KindaShiftRosterView extends Omit<ShiftRosterView, "spotIdToShiftViewL
   spotIdToShiftViewListMap: ObjectNumberMap<KindaShiftView[]>;
 }
 
+interface KindaAvailabilityRosterView extends Omit<AvailabilityRosterView, "employeeIdToShiftViewListMap" | "employeeIdToAvailabilityViewListMap" | "unassignedShiftViewList" > {
+  employeeIdToShiftViewListMap: ObjectNumberMap<KindaShiftView[]>;
+  employeeIdToAvailabilityViewListMap: ObjectNumberMap<KindaEmployeeAvailabilityView>,
+  unassignedShiftViewList: KindaShiftView[];
+}
+
 let lastCalledShiftRosterArgs: any | null;
 let lastCalledShiftRoster: ThunkCommandFactory<any, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> | null = null;
+
+let lastCalledAvailabilityRosterArgs: any | null;
+let lastCalledAvailabilityRoster: ThunkCommandFactory<any, SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> | null = null;
 
 let stopSolvingRosterTimeout: NodeJS.Timeout|null = null;
 let autoRefreshShiftRosterDuringSolvingIntervalTimeout: NodeJS.Timeout|null = null;
@@ -87,6 +99,13 @@ export const terminateSolvingRosterEarly: ThunkCommandFactory<void, TerminateSol
 
 
 export const refreshShiftRoster: ThunkCommandFactory<void, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = () =>
+  (dispatch, state, client) => {
+    if (lastCalledShiftRosterArgs !== null && lastCalledShiftRoster !== null) {
+      dispatch(lastCalledShiftRoster(lastCalledShiftRosterArgs));
+    }
+  }
+
+export const refreshAvailabilityRoster: ThunkCommandFactory<void, SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = () =>
   (dispatch, state, client) => {
     if (lastCalledShiftRosterArgs !== null && lastCalledShiftRoster !== null) {
       dispatch(lastCalledShiftRoster(lastCalledShiftRosterArgs));
