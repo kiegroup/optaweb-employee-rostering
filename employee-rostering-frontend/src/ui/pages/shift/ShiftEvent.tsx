@@ -23,7 +23,8 @@ import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
 import { EditIcon, TrashIcon } from "@patternfly/react-icons";
 import Color from 'color';
 
-import "./BigCalendarSchedule.css";
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import './ReactBigCalendarOverrides.css';
 
 const EMPTY_ELEMENT = (<></>); 
 

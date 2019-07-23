@@ -13,37 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+ /* TODO: remove me when react-big-calendar displays concurrent events properly */
+ /* Start of Hack */
 .rbc-events-container {
-    display: grid;
-    grid-template-rows: repeat(100, 1fr);
+    display: grid !important;
+    grid-template-rows: repeat(100, 1fr) !important;
 }
   
 .rbc-day-slot .rbc-event {
-    position: static;
+    position: static !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
 }
+/* End of Hack */
 
+
+/* Change the background color to match PatternFly */
 .rbc-time-view {
-    background-color: var(--pf-global--BackgroundColor--100)
+    background-color: var(--pf-global--BackgroundColor--100) !important;
 }
 
 .rbc-event {
-    color: black;
+    color: black !important;
     background-color: #bee1f4;
 }
 
+/* Hide the all day cell */
 .rbc-allday-cell {
-    display: none;
+    display: none !important;
 }
   
 .rbc-time-view .rbc-header {
-    border-bottom: none;
-}
-
-.shift-tooltip {
-    background-color: var(--pf-global--BackgroundColor--200) !important;
-    opacity: 1 !important;
+    border-bottom: none !important;
 }
