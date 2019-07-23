@@ -32,7 +32,8 @@ import { showInfoMessage } from "ui/Alerts";
 import RosterState from "domain/RosterState";
 import ShiftEvent, { getShiftColor } from "./ShiftEvent";
 
-import './BigCalendarSchedule.css';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import './ReactBigCalendarOverrides.css';
 
 interface StateProps {
   isSolving: boolean;
