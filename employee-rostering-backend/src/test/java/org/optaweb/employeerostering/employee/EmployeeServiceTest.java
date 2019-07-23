@@ -45,6 +45,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.util.NestedServletException;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -171,16 +172,20 @@ public class EmployeeServiceTest {
                             .delete("/rest/tenant/{tenantId}/employee/{id}", tenantId, employee.getId())
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string("true"));
     }
 
     @Test
-    public void deleteNonExistentEmployeeTest() {
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .delete("/rest/tenant/{tenantId}/employee/{id}", 1, -1L)))
-                .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                                     "Exception: No Employee entity found with ID (-1).");
+    public void deleteNonExistentEmployeeTest() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                            .delete("/rest/tenant/{tenantId}/employee/{id}", 1, -1L)
+                            .accept(MediaType.APPLICATION_JSON))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
+                .andExpect(content().string("false"));
     }
 
     @Test
