@@ -29,10 +29,10 @@ import { ThunkDispatch } from 'redux-thunk';
 import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/operations';
 import RestServiceClient from 'store/rest';
 
-export type RosterSliceInfo = {
+export interface RosterSliceInfo {
   fromDate: Date;
   toDate: Date;
-};
+}
 
 interface KindaShiftRosterView extends Omit<ShiftRosterView, "spotIdToShiftViewListMap"> {
   spotIdToShiftViewListMap: ObjectNumberMap<KindaShiftView[]>;
@@ -136,7 +136,7 @@ export const getCurrentShiftRoster: ThunkCommandFactory<PaginationData, SetShift
     });
   };
 
-export const getShiftRoster: ThunkCommandFactory<RosterSliceInfo & { pagination: PaginationData; }, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = params =>
+export const getShiftRoster: ThunkCommandFactory<RosterSliceInfo & { pagination: PaginationData }, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = params =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
     const fromDateAsString = moment(params.fromDate).format("YYYY-MM-DD");

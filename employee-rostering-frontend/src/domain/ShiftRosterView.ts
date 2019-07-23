@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import DomainObjectView from './DomainObjectView';
 import ShiftView from './ShiftView';
 import RosterView from './RosterView';
 import { ObjectNumberMap } from 'types';

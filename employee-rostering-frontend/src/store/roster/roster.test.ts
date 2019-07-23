@@ -19,7 +19,7 @@ import { AppState } from '../types';
 import * as actions from './actions';
 import * as alerts from 'ui/Alerts';
 import { rosterStateReducer, shiftRosterViewReducer, rosterSelectors, rosterOperations, solverReducer } from './index';
-import { resetRestClientMock, onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
+import { resetRestClientMock, onGet, onPost } from 'store/rest/RestTestUtils';
 import MockDate from 'mockdate';
 import moment from 'moment';
 import Spot from 'domain/Spot';
@@ -71,7 +71,7 @@ const mockShiftRoster: ShiftRosterView = {
 describe('Roster operations', () => {
   it('should dispatch actions and call client on solve roster', async () => {
     const showInfoMessageMock = jest.spyOn(alerts, "showInfoMessage");
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster").mockImplementation(() => () => {});;
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster").mockImplementation(() => () => {});
     jest.useFakeTimers();
     const solvingStartTime = moment("2018-01-01", "YYYY-MM-DD").toDate();
     MockDate.set(solvingStartTime);
@@ -100,7 +100,7 @@ describe('Roster operations', () => {
 
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster").mockImplementation(() => () => {});;
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster").mockImplementation(() => () => {});
 
     onPost(`/tenant/${tenantId}/roster/terminate`, {}, {});
     await(store.dispatch(rosterOperations.terminateSolvingRosterEarly()));
@@ -155,7 +155,7 @@ describe('Roster operations', () => {
           expect(client.get).toHaveBeenNthCalledWith(1, restURL);
           expect(client.get).toHaveBeenNthCalledWith(2, restURL);
           break;
-        };
+        }
 
         case 'post': {
           expect(client.post).toBeCalledTimes(2);
@@ -179,25 +179,25 @@ describe('Roster operations', () => {
     );
 
     await testOperation(async () => await store.dispatch(rosterOperations.getShiftRoster({
-        fromDate: fromDate,
-        toDate: toDate,
-        pagination: paginationInfo
-      })),
-      'get',
-      `/tenant/${tenantId}/roster/shiftRosterView?` +
+      fromDate: fromDate,
+      toDate: toDate,
+      pagination: paginationInfo
+    })),
+    'get',
+    `/tenant/${tenantId}/roster/shiftRosterView?` +
       `p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}` +
       `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`
     );
 
     await testOperation(async () => await store.dispatch(rosterOperations.getShiftRosterFor({
-        fromDate: fromDate,
-        toDate: toDate,
-        spotList: []
-      })),
-      'post',
-      `/tenant/${tenantId}/roster/shiftRosterView/for?` +
+      fromDate: fromDate,
+      toDate: toDate,
+      spotList: []
+    })),
+    'post',
+    `/tenant/${tenantId}/roster/shiftRosterView/for?` +
       `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
-      []
+    []
     );
   });
 
@@ -246,7 +246,7 @@ describe('Roster operations', () => {
     expect(mockRefreshShiftRoster).toBeCalled();
     expect(mockShowSuccessMessage).toBeCalled();
     expect(mockShowSuccessMessage).toBeCalledWith("Published Roster",
-    `Published from ${moment("2018-01-01").format("LL")} to ${moment("2018-01-08").format("LL")}.`);
+      `Published from ${moment("2018-01-01").format("LL")} to ${moment("2018-01-08").format("LL")}.`);
   });
 
   it('should dispatch actions and call client on getCurrentShiftRoster', async () => {
@@ -353,7 +353,7 @@ describe('Roster reducers', () => {
       ...mockShiftRoster.rosterState,
       firstDraftDate: moment("2019-01-08", "YYYY-MM-DD").toDate(),
       unplannedRotationOffset: (mockShiftRoster.rosterState.unplannedRotationOffset + 7) % mockShiftRoster.rosterState.rotationLength
-      }
+    }
     });
   });
 
