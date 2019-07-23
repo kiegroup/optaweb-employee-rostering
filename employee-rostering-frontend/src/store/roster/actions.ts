@@ -16,10 +16,11 @@
 
 import { ActionFactory } from '../types';
 import { RosterStateActionType, ShiftRosterViewActionType, SolverActionType, PublishRosterAction, SetRosterStateIsLoadingAction, SetRosterStateAction,
-  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction, PublishResult }
+  SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction, PublishResult, SetAvailabilityRosterIsLoadingAction, SetAvailabilityRosterViewAction, AvailabilityRosterViewActionType }
   from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
+import AvailabilityRosterView from 'domain/AvailabilityRosterView';
 
 export const publishRoster: ActionFactory<PublishResult, PublishRosterAction> = (pr) => ({
   type: RosterStateActionType.PUBLISH_ROSTER,
@@ -45,6 +46,18 @@ export const setShiftRosterView: ActionFactory<ShiftRosterView, SetShiftRosterVi
   type: ShiftRosterViewActionType.SET_SHIFT_ROSTER_VIEW,
   shiftRoster: shiftRosterView
 });
+
+
+export const setAvailabilityRosterIsLoading: ActionFactory<boolean, SetAvailabilityRosterIsLoadingAction> = isLoading => ({
+  type: AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_IS_LOADING,
+  isLoading: isLoading
+});
+
+export const setAvailabilityRosterView: ActionFactory<AvailabilityRosterView, SetAvailabilityRosterViewAction> = availabilityRosterView => ({
+  type: AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_VIEW,
+  availabilityRoster: availabilityRosterView
+});
+
 
 export const solveRoster: ActionFactory<void, SolveRosterAction> = () => ({
   type: SolverActionType.SOLVE_ROSTER

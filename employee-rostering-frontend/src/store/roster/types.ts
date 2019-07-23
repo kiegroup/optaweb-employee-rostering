@@ -16,12 +16,18 @@
 
 import { Action } from 'redux';
 import ShiftRosterView from 'domain/ShiftRosterView';
+import AvailabilityRosterView from 'domain/AvailabilityRosterView';
 import RosterState from 'domain/RosterState';
 
 export enum RosterStateActionType {
   SET_ROSTER_STATE_IS_LOADING = 'SET_ROSTER_STATE_IS_LOADING',
   SET_ROSTER_STATE = 'SET_ROSTER_STATE',
   PUBLISH_ROSTER = 'PUBLISH_ROSTER'
+}
+
+export enum AvailabilityRosterViewActionType {
+  SET_AVAILABILITY_ROSTER_IS_LOADING = 'SET_AVAILABILITY_ROSTER_IS_LOADING',
+  SET_AVAILABILITY_ROSTER_VIEW = 'SET_AVAILABILITY_ROSTER_VIEW'
 }
 
 export enum ShiftRosterViewActionType {
@@ -55,6 +61,14 @@ export interface SetShiftRosterViewAction extends Action<ShiftRosterViewActionTy
   readonly shiftRoster: ShiftRosterView;
 }
 
+export interface SetAvailabilityRosterIsLoadingAction extends Action<AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_IS_LOADING> {
+  readonly isLoading: boolean;
+}
+
+export interface SetAvailabilityRosterViewAction extends Action<AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_VIEW> {
+  readonly availabilityRoster: AvailabilityRosterView;
+}
+
 export interface SolveRosterAction extends Action<SolverActionType.SOLVE_ROSTER> {
 }
 
@@ -78,6 +92,11 @@ export interface CurrentRosterState {
 export interface CurrentShiftRoster {
   readonly isLoading: boolean;
   readonly shiftRosterView: ShiftRosterView | null;
+}
+
+export interface CurrentAvailabilityRoster {
+  readonly isLoading: boolean;
+  readonly availabilityRosterView: AvailabilityRosterView | null;
 }
 
 export interface CurrentSolverState {
