@@ -22,159 +22,160 @@ const mockPost = jest.fn();
 const mockPut = jest.fn();
 const mockDelete = jest.fn();
 const mockCreate = jest.fn(() => ({
-    get: mockGet,
-    post: mockPost,
-    put: mockPut,
-    delete: mockDelete
+  get: mockGet,
+  post: mockPost,
+  put: mockPut,
+  delete: mockDelete
 }));
 
 const axois: AxiosStatic = {
-    create: mockCreate
+  create: mockCreate
 } as any;
 
-beforeEach(() => {;
-    mockGet.mockClear();
-    mockPost.mockClear();
-    mockPut.mockClear();
-    mockDelete.mockClear();
-    mockCreate.mockClear();
+beforeEach(() => {
+  mockGet.mockClear();
+  mockPost.mockClear();
+  mockPut.mockClear();
+  mockDelete.mockClear();
+  mockCreate.mockClear();
 });
 
 describe("Rest Service Client", () => {
-    it("Should call axois constructor with correct arguments", () => {
-        const baseURL = "/rest";
-        const restServiceClient = new RestServiceClient(baseURL, axois);
-        expect(mockCreate).toBeCalled();
-        expect(mockCreate).toBeCalledWith({
-            baseURL: baseURL,
-            validateStatus: expect.any(Function)
-        });
+  it("Should call axois constructor with correct arguments", () => {
+    const baseURL = "/rest";
+    const restServiceClient = new RestServiceClient(baseURL, axois);
+    expect(mockCreate).toBeCalled();
+    expect(mockCreate).toBeCalledWith({
+      baseURL: baseURL,
+      validateStatus: expect.any(Function)
     });
+    expect(restServiceClient).toEqual(expect.any(RestServiceClient));
+  });
 
-    it("Should call axios.get on get", async () => {
-        const baseURL = "/rest";
-        const restServiceClient = new RestServiceClient(baseURL, axois);
-        const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
-        const targetURL = "/endpoint";
-        const response = {
-            status: 200,
-            data: {},
-            statusText: "Ok",
-            headers: {},
-            config: {}
-        };
-        mockGet.mockReturnValue(Promise.resolve(response));
-        await restServiceClient.get(targetURL);
+  it("Should call axios.get on get", async () => {
+    const baseURL = "/rest";
+    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
+    const targetURL = "/endpoint";
+    const response = {
+      status: 200,
+      data: {},
+      statusText: "Ok",
+      headers: {},
+      config: {}
+    };
+    mockGet.mockReturnValue(Promise.resolve(response));
+    await restServiceClient.get(targetURL);
 
-        expect(mockGet).toBeCalled();
-        expect(mockGet).toBeCalledWith("/endpoint");
-        expect(handleResponseSpy).toBeCalledWith(response);
-    });
+    expect(mockGet).toBeCalled();
+    expect(mockGet).toBeCalledWith("/endpoint");
+    expect(handleResponseSpy).toBeCalledWith(response);
+  });
 
-    it("Should call axios.post on post", async () => {
-        const baseURL = "/rest";
-        const restServiceClient = new RestServiceClient(baseURL, axois);
-        const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
-        const targetURL = "/endpoint";
-        const data = {
-            a: "Hello",
-            b: 2
-        };
-        const response = {
-            status: 200,
-            data: {},
-            statusText: "Ok",
-            headers: {},
-            config: {}
-        };
-        mockPost.mockReturnValue(Promise.resolve(response));
-        await restServiceClient.post(targetURL, data);
+  it("Should call axios.post on post", async () => {
+    const baseURL = "/rest";
+    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
+    const targetURL = "/endpoint";
+    const data = {
+      a: "Hello",
+      b: 2
+    };
+    const response = {
+      status: 200,
+      data: {},
+      statusText: "Ok",
+      headers: {},
+      config: {}
+    };
+    mockPost.mockReturnValue(Promise.resolve(response));
+    await restServiceClient.post(targetURL, data);
 
-        expect(mockPost).toBeCalled();
-        expect(mockPost).toBeCalledWith("/endpoint", data);
-        expect(handleResponseSpy).toBeCalledWith(response);
-    });
+    expect(mockPost).toBeCalled();
+    expect(mockPost).toBeCalledWith("/endpoint", data);
+    expect(handleResponseSpy).toBeCalledWith(response);
+  });
 
-    it("Should call axios.put on put", async () => {
-        const baseURL = "/rest";
-        const restServiceClient = new RestServiceClient(baseURL, axois);
-        const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
-        const targetURL = "/endpoint";
-        const data = {
-            a: "Hello",
-            b: 2
-        };
-        const response = {
-            status: 200,
-            data: {},
-            statusText: "Ok",
-            headers: {},
-            config: {}
-        };
-        mockPut.mockReturnValue(Promise.resolve(response));
-        await restServiceClient.put(targetURL, data);
+  it("Should call axios.put on put", async () => {
+    const baseURL = "/rest";
+    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
+    const targetURL = "/endpoint";
+    const data = {
+      a: "Hello",
+      b: 2
+    };
+    const response = {
+      status: 200,
+      data: {},
+      statusText: "Ok",
+      headers: {},
+      config: {}
+    };
+    mockPut.mockReturnValue(Promise.resolve(response));
+    await restServiceClient.put(targetURL, data);
 
-        expect(mockPut).toBeCalled();
-        expect(mockPut).toBeCalledWith("/endpoint", data);
-        expect(handleResponseSpy).toBeCalledWith(response);
-    });
+    expect(mockPut).toBeCalled();
+    expect(mockPut).toBeCalledWith("/endpoint", data);
+    expect(handleResponseSpy).toBeCalledWith(response);
+  });
 
-    it("Should call axios.delete on delete", async () => {
-        const baseURL = "/rest";
-        const restServiceClient = new RestServiceClient(baseURL, axois);
-        const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
-        const targetURL = "/endpoint";
-        const response = {
-            status: 200,
-            data: {},
-            statusText: "Ok",
-            headers: {},
-            config: {}
-        };
-        mockDelete.mockReturnValue(Promise.resolve(response));
-        await restServiceClient.delete(targetURL);
+  it("Should call axios.delete on delete", async () => {
+    const baseURL = "/rest";
+    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
+    const targetURL = "/endpoint";
+    const response = {
+      status: 200,
+      data: {},
+      statusText: "Ok",
+      headers: {},
+      config: {}
+    };
+    mockDelete.mockReturnValue(Promise.resolve(response));
+    await restServiceClient.delete(targetURL);
 
-        expect(mockDelete).toBeCalled();
-        expect(mockDelete).toBeCalledWith("/endpoint");
-        expect(handleResponseSpy).toBeCalledWith(response);
-    });
+    expect(mockDelete).toBeCalled();
+    expect(mockDelete).toBeCalledWith("/endpoint");
+    expect(handleResponseSpy).toBeCalledWith(response);
+  });
 
-    it("Should resolves to the value on success", async () => {
-        const baseURL = "/rest";
-        const restServiceClient = new RestServiceClient(baseURL, axois);
-        const data = {
-            a: "Test",
-            b: 2
-        };
+  it("Should resolves to the value on success", async () => {
+    const baseURL = "/rest";
+    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const data = {
+      a: "Test",
+      b: 2
+    };
 
-        const response = {
-            status: 200,
-            data: data,
-            statusText: "Ok",
-            headers: {},
-            config: {}
-        };
+    const response = {
+      status: 200,
+      data: data,
+      statusText: "Ok",
+      headers: {},
+      config: {}
+    };
 
-        expect(restServiceClient.handleResponse(response)).resolves.toEqual(data);
-    });
+    expect(restServiceClient.handleResponse(response)).resolves.toEqual(data);
+  });
 
-    it("Should reject the promise on failure", async () => {
-        const showServerErrorMessageMock = jest.spyOn(alerts, "showServerErrorMessage");
-        const baseURL = "/rest";
-        const restServiceClient = new RestServiceClient(baseURL, axois);
-        const data = {
-            a: "Test",
-            b: 2
-        };
-        const errorStatus = "I am a teapot";
-        const response = {
-            status: 404,
-            data: data,
-            statusText: errorStatus,
-            headers: {},
-            config: {}
-        };
-        expect(restServiceClient.handleResponse(response)).rejects;
-        expect(showServerErrorMessageMock).toBeCalledWith(errorStatus);
-    });
+  it("Should reject the promise on failure", async () => {
+    const showServerErrorMessageMock = jest.spyOn(alerts, "showServerErrorMessage");
+    const baseURL = "/rest";
+    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const data = {
+      a: "Test",
+      b: 2
+    };
+    const errorStatus = "I am a teapot";
+    const response = {
+      status: 404,
+      data: data,
+      statusText: errorStatus,
+      headers: {},
+      config: {}
+    };
+    await expect(restServiceClient.handleResponse(response)).rejects.toEqual(404);
+    expect(showServerErrorMessageMock).toBeCalledWith(errorStatus);
+  });
 });
