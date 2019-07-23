@@ -35,7 +35,8 @@ public class ShiftTemplateView extends AbstractPersistable implements HasTimeslo
     public ShiftTemplateView(Integer rotationLength, ShiftTemplate shiftTemplate) {
         super(shiftTemplate);
         this.spotId = shiftTemplate.getSpot().getId();
-        this.rotationEmployeeId = (shiftTemplate.getRotationEmployee() != null) ? shiftTemplate.getRotationEmployee().getId() : null;
+        this.rotationEmployeeId = (shiftTemplate.getRotationEmployee() != null) ?
+                shiftTemplate.getRotationEmployee().getId() : null;
         this.durationBetweenRotationStartAndTemplateStart = Duration
                 .ofDays(shiftTemplate.getStartDayOffset()).plusSeconds(shiftTemplate
                                                                                .getStartTime().toSecondOfDay());
@@ -46,7 +47,8 @@ public class ShiftTemplateView extends AbstractPersistable implements HasTimeslo
                 .minusSeconds(shiftTemplate.getStartTime().toSecondOfDay());
     }
 
-    public ShiftTemplateView(Integer tenantId, Long spotId, Duration durationBetweenRotationStartAndTemplateStart, Duration shiftTemplateDuration, Long rotationEmployeeId) {
+    public ShiftTemplateView(Integer tenantId, Long spotId, Duration durationBetweenRotationStartAndTemplateStart,
+                             Duration shiftTemplateDuration, Long rotationEmployeeId) {
         super(tenantId);
         this.spotId = spotId;
         this.durationBetweenRotationStartAndTemplateStart = durationBetweenRotationStartAndTemplateStart;
