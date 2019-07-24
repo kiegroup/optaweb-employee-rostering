@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.controller;
+package org.optaweb.employeerostering.service.tenant;
 
 import java.util.Arrays;
 import java.util.List;

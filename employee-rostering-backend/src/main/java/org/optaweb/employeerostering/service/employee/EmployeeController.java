@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.controller;
+package org.optaweb.employeerostering.service.employee;
 
 import java.util.List;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeDTO;
-import org.optaweb.employeerostering.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -44,7 +43,7 @@ public class EmployeeController {
         Assert.notNull(employeeService, "employeeService must not be null.");
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<Employee>> getEmployeeList(@PathVariable Integer tenantId) {
         return new ResponseEntity<>(employeeService.getEmployeeList(tenantId), HttpStatus.OK);
     }

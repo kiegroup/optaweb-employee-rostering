@@ -27,7 +27,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.optaweb.employeerostering.domain.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}),

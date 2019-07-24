@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.controller;
+package org.optaweb.employeerostering.service.skill;
 
 import java.util.List;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.SkillDTO;
-import org.optaweb.employeerostering.service.SkillService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -44,7 +43,7 @@ public class SkillController {
         Assert.notNull(skillService, "skillService must not be null.");
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<Skill>> getSkillList(@PathVariable Integer tenantId) {
         return new ResponseEntity<>(skillService.getSkillList(tenantId), HttpStatus.OK);
     }
