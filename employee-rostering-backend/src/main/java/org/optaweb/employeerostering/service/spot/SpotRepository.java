@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.persistence;
+package org.optaweb.employeerostering.service.spot;
 
 import java.util.List;
 
-import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.spot.Spot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ContractRepository extends JpaRepository<Contract, Long> {
+public interface SpotRepository extends JpaRepository<Spot, Long> {
 
-    @Query("select c from Contract c " +
-            "where c.tenantId = :tenantId " +
-            "order by LOWER(c.name)")
-    List<Contract> findAllByTenantId(Integer tenantId);
+    @Query("select s from Spot s " +
+            "where s.tenantId = :tenantId " +
+            "order by LOWER(s.name)")
+    List<Spot> findAllByTenantId(Integer tenantId);
 }

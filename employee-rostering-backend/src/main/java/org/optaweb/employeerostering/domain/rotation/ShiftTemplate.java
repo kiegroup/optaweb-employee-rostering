@@ -26,7 +26,7 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
-import org.optaweb.employeerostering.domain.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.domain.shift.Shift;

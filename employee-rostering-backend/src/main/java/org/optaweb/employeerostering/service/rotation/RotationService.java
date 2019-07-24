@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.service;
+package org.optaweb.employeerostering.service.rotation;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,7 +28,10 @@ import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
 import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.domain.spot.Spot;
-import org.optaweb.employeerostering.persistence.ShiftTemplateRepository;
+import org.optaweb.employeerostering.service.common.AbstractRestService;
+import org.optaweb.employeerostering.service.employee.EmployeeService;
+import org.optaweb.employeerostering.service.roster.RosterService;
+import org.optaweb.employeerostering.service.spot.SpotService;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 

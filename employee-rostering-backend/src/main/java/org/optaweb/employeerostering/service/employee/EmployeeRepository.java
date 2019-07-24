@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.persistence;
+package org.optaweb.employeerostering.service.employee;
 
 import java.util.List;
 
-import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
+import org.optaweb.employeerostering.domain.employee.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ShiftTemplateRepository extends JpaRepository<ShiftTemplate, Long> {
+public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    @Query("select distinct sa from ShiftTemplate sa " +
-            "left join fetch sa.spot s " +
-            "left join fetch sa.rotationEmployee re " +
-            "where sa.tenantId = :tenantId " +
-            "order by sa.startDayOffset, sa.startTime, s.name, re.name")
-    List<ShiftTemplate> findAllByTenantId(Integer tenantId);
+    @Query("select e from Employee e " +
+            "where e.tenantId = :tenantId " +
+            "order by LOWER(e.name)")
+    List<Employee> findAllByTenantId(Integer tenantId);
 }

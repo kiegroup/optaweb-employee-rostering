@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.util;
+package org.optaweb.employeerostering.service.contract;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
+import java.util.List;
 
-public class DateTimeUtil {
+import org.optaweb.employeerostering.domain.contract.Contract;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-    public static LocalDateTime toLocalDateTimeInZone(OffsetDateTime dateTime, ZoneId zoneId) {
-        return LocalDateTime.ofEpochSecond(dateTime.toEpochSecond(), dateTime.getNano(),
-                                           zoneId.getRules().getOffset(dateTime.toInstant()));
-    }
+@Repository
+public interface ContractRepository extends JpaRepository<Contract, Long> {
+
+    @Query("select c from Contract c " +
+            "where c.tenantId = :tenantId " +
+            "order by LOWER(c.name)")
+    List<Contract> findAllByTenantId(Integer tenantId);
 }

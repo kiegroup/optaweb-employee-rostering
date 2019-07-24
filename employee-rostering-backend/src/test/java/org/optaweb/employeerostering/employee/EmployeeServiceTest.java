@@ -29,9 +29,9 @@ import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.skill.Skill;
-import org.optaweb.employeerostering.service.ContractService;
-import org.optaweb.employeerostering.service.EmployeeService;
-import org.optaweb.employeerostering.service.SkillService;
+import org.optaweb.employeerostering.service.contract.ContractService;
+import org.optaweb.employeerostering.service.employee.EmployeeService;
+import org.optaweb.employeerostering.service.skill.SkillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +81,7 @@ public class EmployeeServiceTest {
     @Test
     public void getEmployeeListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/employee", 1)
+                            .get("/rest/tenant/{tenantId}/employee/", 1)
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());

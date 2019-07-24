@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.controller;
+package org.optaweb.employeerostering.service.spot;
 
 import java.util.List;
 
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.SpotDTO;
-import org.optaweb.employeerostering.service.SpotService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -44,7 +43,7 @@ public class SpotController {
         Assert.notNull(spotService, "spotService must not be null.");
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<Spot>> getSpotList(@PathVariable Integer tenantId) {
         return new ResponseEntity<>(spotService.getSpotList(tenantId), HttpStatus.OK);
     }

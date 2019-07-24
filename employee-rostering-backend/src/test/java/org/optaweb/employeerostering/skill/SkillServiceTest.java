@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
-import org.optaweb.employeerostering.service.SkillService;
+import org.optaweb.employeerostering.service.skill.SkillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,7 @@ public class SkillServiceTest {
     @Test
     public void getSkillListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/skill", 1)
+                            .get("/rest/tenant/{tenantId}/skill/", 1)
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());

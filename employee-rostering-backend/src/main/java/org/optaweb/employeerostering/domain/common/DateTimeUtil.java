@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.persistence;
+package org.optaweb.employeerostering.domain.common;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 
-import org.optaweb.employeerostering.domain.employee.Employee;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+public class DateTimeUtil {
 
-@Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-
-    @Query("select e from Employee e " +
-            "where e.tenantId = :tenantId " +
-            "order by LOWER(e.name)")
-    List<Employee> findAllByTenantId(Integer tenantId);
+    public static LocalDateTime toLocalDateTimeInZone(OffsetDateTime dateTime, ZoneId zoneId) {
+        return LocalDateTime.ofEpochSecond(dateTime.toEpochSecond(), dateTime.getNano(),
+                                           zoneId.getRules().getOffset(dateTime.toInstant()));
+    }
 }
