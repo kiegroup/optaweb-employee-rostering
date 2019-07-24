@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.domain;
+package org.optaweb.employeerostering.domain.common;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.service;
+package org.optaweb.employeerostering.service.employee;
 
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +25,7 @@ import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.skill.Skill;
-import org.optaweb.employeerostering.persistence.EmployeeRepository;
+import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.springframework.stereotype.Service;
 
 @Service

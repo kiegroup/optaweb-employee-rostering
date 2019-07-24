@@ -29,8 +29,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.optaweb.employeerostering.domain.AbstractPersistable;
-import org.optaweb.employeerostering.domain.HasTimeslot;
+import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.HasTimeslot;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.persistence;
+package org.optaweb.employeerostering.service.common;
 
-import java.util.List;
+import java.util.Objects;
 
-import org.optaweb.employeerostering.domain.spot.Spot;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 
-@Repository
-public interface SpotRepository extends JpaRepository<Spot, Long> {
+public class AbstractRestService {
 
-    @Query("select s from Spot s " +
-            "where s.tenantId = :tenantId " +
-            "order by LOWER(s.name)")
-    List<Spot> findAllByTenantId(Integer tenantId);
+    protected void validateTenantIdParameter(Integer tenantId, AbstractPersistable persistable) {
+        if (!Objects.equals(persistable.getTenantId(), tenantId)) {
+            throw new IllegalStateException("The tenantId (" + tenantId + ") does not match the persistable ("
+                    + persistable + ")'s tenantId (" + persistable.getTenantId() + ").");
+        }
+    }
 }

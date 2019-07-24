@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.persistence;
+package org.optaweb.employeerostering.domain.common;
 
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
-import org.optaweb.employeerostering.domain.skill.Skill;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+public interface HasTimeslot {
 
-@Repository
-public interface SkillRepository extends JpaRepository<Skill, Long> {
+    public static LocalDateTime EPOCH = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
 
-    @Query("select s from Skill s " +
-            "where s.tenantId = :tenantId " +
-            "order by LOWER(s.name)")
-    List<Skill> findAllByTenantId(Integer tenantId);
+    /**
+     * If the HasTimeslot is based on LocalDateTime, its reference will be HasTimeslot.EPOCH
+     */
+    Duration getDurationBetweenReferenceAndStart();
+
+    Duration getDurationOfTimeslot();
 }

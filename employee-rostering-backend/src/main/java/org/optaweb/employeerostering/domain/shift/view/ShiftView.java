@@ -25,8 +25,9 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
-import org.optaweb.employeerostering.domain.AbstractPersistable;
-import org.optaweb.employeerostering.domain.HasTimeslot;
+import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.DateTimeUtil;
+import org.optaweb.employeerostering.domain.common.HasTimeslot;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.spot.Spot;
@@ -38,7 +39,6 @@ import org.optaweb.employeerostering.domain.violation.ShiftEmployeeConflict;
 import org.optaweb.employeerostering.domain.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.domain.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmployeePenalty;
-import org.optaweb.employeerostering.util.DateTimeUtil;
 
 public class ShiftView extends AbstractPersistable implements HasTimeslot {
 
