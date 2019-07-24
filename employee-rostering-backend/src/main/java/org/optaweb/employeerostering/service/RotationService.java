@@ -137,7 +137,6 @@ public class RotationService extends AbstractRestService {
 
     @Transactional
     public Boolean deleteShiftTemplate(Integer tenantId, Long id) {
-
         Optional<ShiftTemplate> shiftTemplateOptional = shiftTemplateRepository.findById(id);
 
         if (!shiftTemplateOptional.isPresent()) {
