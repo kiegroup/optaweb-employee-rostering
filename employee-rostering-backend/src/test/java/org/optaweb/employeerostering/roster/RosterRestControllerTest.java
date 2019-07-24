@@ -39,7 +39,7 @@ public class RosterRestControllerTest {
     }
 
     @Test
-    public void getRosterTest() {
+    public void getRosterStateTest() {
         //TODO: Implement getRosterTest when Tenant CRUD methods are implemented - the 'tenantId' column in RosterState
         // links to primary key (tenantId) in Tenant
     }
