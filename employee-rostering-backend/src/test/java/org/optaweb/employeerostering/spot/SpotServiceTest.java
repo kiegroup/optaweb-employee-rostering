@@ -28,8 +28,8 @@ import org.junit.runner.RunWith;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
-import org.optaweb.employeerostering.service.SkillService;
-import org.optaweb.employeerostering.service.SpotService;
+import org.optaweb.employeerostering.service.skill.SkillService;
+import org.optaweb.employeerostering.service.spot.SpotService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +71,7 @@ public class SpotServiceTest {
     @Test
     public void getSpotListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/spot", 1)
+                            .get("/rest/tenant/{tenantId}/spot/", 1)
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());

@@ -21,7 +21,7 @@ import java.time.DayOfWeek;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 
-import org.optaweb.employeerostering.domain.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 
 @Entity
 public class RosterParametrization extends AbstractPersistable {

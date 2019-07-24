@@ -19,8 +19,8 @@ package org.optaweb.employeerostering.domain.rotation.view;
 import java.time.Duration;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.optaweb.employeerostering.domain.AbstractPersistable;
-import org.optaweb.employeerostering.domain.HasTimeslot;
+import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.HasTimeslot;
 import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
 
 public class ShiftTemplateView extends AbstractPersistable implements HasTimeslot {

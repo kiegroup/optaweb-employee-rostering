@@ -29,7 +29,7 @@ import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.optaweb.employeerostering.domain.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "employee_id", "startDateTime", "endDateTime"}))

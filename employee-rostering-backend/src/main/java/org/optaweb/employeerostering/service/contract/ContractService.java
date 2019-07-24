@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.service;
+package org.optaweb.employeerostering.service.contract;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.contract.Contract;
-import org.optaweb.employeerostering.persistence.ContractRepository;
+import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.springframework.stereotype.Service;
 
 @Service

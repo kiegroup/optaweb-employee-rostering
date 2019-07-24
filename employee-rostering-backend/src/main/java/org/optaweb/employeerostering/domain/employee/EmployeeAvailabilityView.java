@@ -24,9 +24,9 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.optaweb.employeerostering.domain.AbstractPersistable;
-import org.optaweb.employeerostering.domain.HasTimeslot;
-import org.optaweb.employeerostering.util.DateTimeUtil;
+import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.DateTimeUtil;
+import org.optaweb.employeerostering.domain.common.HasTimeslot;
 
 public class EmployeeAvailabilityView extends AbstractPersistable implements HasTimeslot {
 

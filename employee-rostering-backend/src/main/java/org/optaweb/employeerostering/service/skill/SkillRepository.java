@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.service;
+package org.optaweb.employeerostering.service.skill;
 
-import java.util.Objects;
+import java.util.List;
 
-import org.optaweb.employeerostering.domain.AbstractPersistable;
+import org.optaweb.employeerostering.domain.skill.Skill;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-public class AbstractRestService {
+@Repository
+public interface SkillRepository extends JpaRepository<Skill, Long> {
 
-    protected void validateTenantIdParameter(Integer tenantId, AbstractPersistable persistable) {
-        if (!Objects.equals(persistable.getTenantId(), tenantId)) {
-            throw new IllegalStateException("The tenantId (" + tenantId + ") does not match the persistable ("
-                    + persistable + ")'s tenantId (" + persistable.getTenantId() + ").");
-        }
-    }
+    @Query("select s from Skill s " +
+            "where s.tenantId = :tenantId " +
+            "order by LOWER(s.name)")
+    List<Skill> findAllByTenantId(Integer tenantId);
 }

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.domain;
+package org.optaweb.employeerostering.service.roster;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.Optional;
 
-public interface HasTimeslot {
+import org.optaweb.employeerostering.domain.roster.RosterState;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-    public static LocalDateTime EPOCH = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+@Repository
+public interface RosterStateRepository extends JpaRepository<RosterState, Long> {
 
-    /**
-     * If the HasTimeslot is based on LocalDateTime, its reference will be HasTimeslot.EPOCH
-     */
-    Duration getDurationBetweenReferenceAndStart();
-
-    Duration getDurationOfTimeslot();
+    @Query("select distinct rs from RosterState rs " +
+            "where rs.tenantId = :tenantId")
+    Optional<RosterState> findByTenantId(Integer tenantId);
 }

@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.controller;
+package org.optaweb.employeerostering.service.roster;
 
 import org.optaweb.employeerostering.domain.roster.RosterState;
-import org.optaweb.employeerostering.service.RosterService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
