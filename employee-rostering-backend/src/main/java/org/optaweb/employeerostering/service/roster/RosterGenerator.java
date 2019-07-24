@@ -16,13 +16,41 @@
 
 package org.optaweb.employeerostering.service.roster;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
+import org.optaweb.employeerostering.domain.roster.Roster;
+import org.optaweb.employeerostering.domain.roster.RosterState;
+import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
+import org.optaweb.employeerostering.domain.shift.Shift;
+import org.optaweb.employeerostering.domain.skill.Skill;
+import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.Tenant;
+import org.optaweb.employeerostering.service.admin.SystemPropertiesRetriever;
 import org.optaweb.employeerostering.service.common.generator.StringDataGenerator;
 import org.optaweb.employeerostering.service.contract.ContractRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
@@ -30,6 +58,9 @@ import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.springframework.stereotype.Component;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class RosterGenerator {
@@ -340,5 +371,340 @@ public class RosterGenerator {
         this.rosterStateRepository = rosterStateRepository;
         this.shiftTemplateRepository = shiftTemplateRepository;
         random = new Random(37);
+    }
+
+    @PostConstruct
+    public void setUpGeneratedData() {
+        //TODO: Check if Tenant list is empty before generating data. Application crashes from trying to recreate
+        // existing entities
+        ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
+        setUpGeneratedData(zoneId);
+    }
+
+    public void setUpGeneratedData(ZoneId zoneId) {
+        random = new Random(37);
+        tenantNameGenerator.predictMaximumSizeAndReset(12);
+        generateRoster(10, 7, hospitalGeneratorType, zoneId);
+        generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(10, 7, guardSecurityGeneratorType, zoneId);
+        generateRoster(10, 7, callCenterGeneratorType, zoneId);
+        generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
+        generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+    }
+
+    public Roster generateRoster(int spotListSize, int lengthInDays) {
+        ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
+        return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId);
+    }
+
+    @Transactional
+    public Roster generateRoster(int spotListSize,
+                                 int lengthInDays,
+                                 GeneratorType generatorType,
+                                 ZoneId zoneId) {
+        int maxShiftSizePerDay = generatorType.timeslotRangeList.size() + EXTRA_SHIFT_THRESHOLDS.length;
+        // The average employee works 5 days out of 7
+        int employeeListSize = spotListSize * maxShiftSizePerDay * 7 / 5;
+        int skillListSize = (spotListSize + 4) / 5;
+
+        Tenant tenant = createTenant(generatorType, employeeListSize);
+
+        // TODO: Remove artificial setting of tenant fields once Tenant CRUD is implemented
+        tenant.setId(1);
+        tenant.setVersion(0L);
+
+        Integer tenantId = tenant.getId();
+        RosterParametrization rosterParametrization = createTenantConfiguration(generatorType, tenantId, zoneId);
+        RosterState rosterState = createRosterState(generatorType, tenant, zoneId, lengthInDays);
+
+        List<Skill> skillList = createSkillList(generatorType, tenantId, skillListSize);
+        List<Spot> spotList = createSpotList(generatorType, tenantId, spotListSize, skillList);
+        List<Contract> contractList = createContractList(tenantId);
+        List<Employee> employeeList = createEmployeeList(generatorType, tenantId, employeeListSize, contractList,
+                                                         skillList);
+        List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId, rosterState, spotList,
+                                                                        employeeList);
+        List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterParametrization, rosterState, spotList,
+                                                shiftTemplateList);
+        List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
+                generatorType, tenantId, rosterParametrization, rosterState, employeeList, shiftList);
+
+        return new Roster((long) tenantId, tenantId, skillList, spotList, employeeList, employeeAvailabilityList,
+                          rosterParametrization, rosterState, shiftList);
+    }
+
+    private Tenant createTenant(GeneratorType generatorType, int employeeListSize) {
+        String tenantName = generatorType.tenantNamePrefix + " " + tenantNameGenerator.generateNextValue() + " ("
+                + employeeListSize + " employees)";
+        Tenant tenant = new Tenant(tenantName);
+
+        //TODO: Persist tenant in TenantRepository once CRUD is implemented
+        //return tenantRepository.save(tenant);
+        return tenant;
+    }
+
+    private RosterParametrization createTenantConfiguration(GeneratorType generatorType, Integer tenantId,
+                                                            ZoneId zoneId) {
+        RosterParametrization rosterParametrization = new RosterParametrization();
+        rosterParametrization.setTenantId(tenantId);
+
+        //TODO: Persist rosterParametrization in RosterParametrization once CRUD is implemented
+        //return rosterParametrizationRepository.save(rosterParametrization);
+        return rosterParametrization;
+    }
+
+    private RosterState createRosterState(GeneratorType generatorType, Tenant tenant, ZoneId zoneId, int lengthInDays) {
+        RosterState rosterState = new RosterState();
+        rosterState.setTenantId(tenant.getId());
+        int publishNotice = 14;
+        rosterState.setPublishNotice(publishNotice);
+        LocalDate firstDraftDate = LocalDate.now()
+                .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                .plusDays(publishNotice);
+        rosterState.setFirstDraftDate(firstDraftDate);
+        // publishLength is read-only and set to 7 days
+        //rosterState.setPublishLength(7);
+        rosterState.setDraftLength(14);
+        rosterState.setUnplannedRotationOffset(0);
+        rosterState.setRotationLength(generatorType.rotationLength);
+        rosterState.setLastHistoricDate(LocalDate.now().minusDays(1));
+        rosterState.setTimeZone(zoneId);
+        rosterState.setTenant(tenant);
+        return rosterStateRepository.save(rosterState);
+    }
+
+    private List<Skill> createSkillList(GeneratorType generatorType, Integer tenantId, int size) {
+        List<Skill> skillList = new ArrayList<>(size);
+        generatorType.skillNameGenerator.predictMaximumSizeAndReset(size);
+        for (int i = 0; i < size; i++) {
+            String name = generatorType.skillNameGenerator.generateNextValue();
+            Skill skill = new Skill(tenantId, name);
+            skillList.add(skillRepository.save(skill));
+        }
+        return skillList;
+    }
+
+    private List<Spot> createSpotList(GeneratorType generatorType, Integer tenantId, int size, List<Skill> skillList) {
+        List<Spot> spotList = new ArrayList<>(size);
+        generatorType.spotNameGenerator.predictMaximumSizeAndReset(size);
+        for (int i = 0; i < size; i++) {
+            String name = generatorType.spotNameGenerator.generateNextValue();
+            Set<Skill> requiredSkillSet = new HashSet<>(extractRandomSubList(skillList, 0.5, 0.9, 1.0));
+            Spot spot = new Spot(tenantId, name, requiredSkillSet);
+            spotList.add(spotRepository.save(spot));
+        }
+        return spotList;
+    }
+
+    private List<Contract> createContractList(Integer tenantId) {
+        List<Contract> contractList = new ArrayList<>(3);
+        Contract contract = new Contract(tenantId, "Part Time Contract");
+        contractList.add(contractRepository.save(contract));
+
+        contract = new Contract(tenantId, "Max 16 Hours Per Week Contract", null, 16 * 60, null, null);
+        contractList.add(contractRepository.save(contract));
+
+        contract = new Contract(tenantId, "Max 16 Hours Per Week, 32 Hours Per Month Contract", null, 16 * 60, 32 * 60,
+                                null);
+        contractList.add(contractRepository.save(contract));
+
+        return contractList;
+    }
+
+    private List<Employee> createEmployeeList(GeneratorType generatorType, Integer tenantId, int size,
+                                              List<Contract> contractList, List<Skill> generalSkillList) {
+        List<Employee> employeeList = new ArrayList<>(size);
+        employeeNameGenerator.predictMaximumSizeAndReset(size);
+        for (int i = 0; i < size; i++) {
+            String name = employeeNameGenerator.generateNextValue();
+            HashSet<Skill> skillProficiencySet = new HashSet<>(extractRandomSubList(generalSkillList,
+                                                                                    0.1, 0.3, 0.5, 0.7, 0.9, 1.0));
+            Employee employee = new Employee(tenantId, name,
+                                             contractList.get(generateRandomIntFromThresholds(0.7, 0.5)),
+                                             skillProficiencySet);
+            employeeList.add(employeeRepository.save(employee));
+        }
+        return employeeList;
+    }
+
+    private List<ShiftTemplate> createShiftTemplateList(GeneratorType generatorType,
+                                                        Integer tenantId,
+                                                        RosterState rosterState,
+                                                        List<Spot> spotList,
+                                                        List<Employee> employeeList) {
+        int rotationLength = rosterState.getRotationLength();
+        List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength *
+                                                                        generatorType.timeslotRangeList.size());
+        List<Employee> remainingEmployeeList = employeeList.stream()
+                .filter((e) -> e.getContract().getMaximumMinutesPerWeek() == null)
+                .collect(Collectors.toCollection(ArrayList::new));
+        for (Spot spot : spotList) {
+            List<Employee> rotationEmployeeList = remainingEmployeeList.stream()
+                    .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()))
+                    .limit(generatorType.rotationEmployeeListSize).collect(toList());
+            remainingEmployeeList.removeAll(rotationEmployeeList);
+            // For every day in the rotation (independent of publishLength and draftLength)
+            for (int startDayOffset = 0; startDayOffset < rotationLength; startDayOffset++) {
+                // Fill the offset day with shift templates
+                for (int timeslotRangesIndex = 0; timeslotRangesIndex < generatorType.timeslotRangeList.size();
+                        timeslotRangesIndex++) {
+                    Pair<LocalTime, LocalTime> timeslotRange = generatorType.timeslotRangeList.get(timeslotRangesIndex);
+                    LocalTime startTime = timeslotRange.getLeft();
+                    LocalTime endTime = timeslotRange.getRight();
+                    int endDayOffset = startDayOffset;
+                    if (endTime.compareTo(startTime) < 0) {
+                        endDayOffset = (startDayOffset + 1) % rotationLength;
+                    }
+                    int rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator
+                            .apply(startDayOffset, timeslotRangesIndex);
+                    if (rotationEmployeeIndex < 0 || rotationEmployeeIndex >= generatorType.rotationEmployeeListSize) {
+                        throw new IllegalStateException(
+                                "The rotationEmployeeIndexCalculator for generatorType (" +
+                                        generatorType.tenantNamePrefix + ") returns an invalid rotationEmployeeIndex ("
+                                        + rotationEmployeeIndex + ") for startDayOffset (" + startDayOffset
+                                        + ") and timeslotRangesIndex (" + timeslotRangesIndex + ").");
+                    }
+                    // There might be less employees than we need (overconstrained planning)
+                    Employee rotationEmployee = rotationEmployeeIndex >= rotationEmployeeList.size() ? null :
+                            rotationEmployeeList.get(rotationEmployeeIndex);
+                    ShiftTemplate shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime,
+                                                                    endDayOffset, endTime, rotationEmployee);
+                    shiftTemplateList.add(shiftTemplateRepository.save(shiftTemplate));
+                }
+            }
+        }
+        return shiftTemplateList;
+    }
+
+    private List<Shift> createShiftList(GeneratorType generatorType,
+                                        Integer tenantId,
+                                        RosterParametrization rosterParametrization,
+                                        RosterState rosterState,
+                                        List<Spot> spotList,
+                                        List<ShiftTemplate> shiftTemplateList) {
+        ZoneId zoneId = rosterState.getTimeZone();
+        int rotationLength = rosterState.getRotationLength();
+        LocalDate date = rosterState.getLastHistoricDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        LocalDate firstDraftDate = rosterState.getFirstDraftDate();
+        LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
+
+        List<Shift> shiftList = new ArrayList<>();
+        Map<Pair<Integer, Spot>, List<ShiftTemplate>> dayOffsetAndSpotToShiftTemplateListMap = shiftTemplateList
+                .stream()
+                .collect(groupingBy(shiftTemplate -> Pair.of(shiftTemplate.getStartDayOffset(),
+                                                             shiftTemplate.getSpot())));
+        int dayOffset = 0;
+        while (date.compareTo(firstUnplannedDate) < 0) {
+            for (Spot spot : spotList) {
+                List<ShiftTemplate> subShiftTemplateList = dayOffsetAndSpotToShiftTemplateListMap.get(Pair.of(dayOffset,
+                                                                                                              spot));
+                for (ShiftTemplate shiftTemplate : subShiftTemplateList) {
+                    boolean defaultToRotationEmployee = date.compareTo(firstDraftDate) < 0;
+                    Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
+                                                                  zoneId, defaultToRotationEmployee);
+                    // TODO: Persist shift in shiftRepository once Shift CRUD is implemented
+                    //shiftList.add(shiftRepository.save(shift));
+                    shiftList.add(shift);
+                }
+                if (date.compareTo(firstDraftDate) >= 0) {
+                    int extraShiftCount = generateRandomIntFromThresholds(EXTRA_SHIFT_THRESHOLDS);
+                    for (int i = 0; i < extraShiftCount; i++) {
+                        ShiftTemplate shiftTemplate = extractRandomElement(subShiftTemplateList);
+                        Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
+                                                                      zoneId, false);
+                        // TODO: Persist shift in shiftRepository once Shift CRUD is implemented
+                        //shiftList.add(shiftRepository.save(shift));
+                        shiftList.add(shift);
+                    }
+                }
+            }
+            date = date.plusDays(1);
+            dayOffset = (dayOffset + 1) % rotationLength;
+        }
+        rosterState.setUnplannedRotationOffset(dayOffset);
+        return shiftList;
+    }
+
+    private List<EmployeeAvailability> createEmployeeAvailabilityList(GeneratorType generatorType,
+                                                                      Integer tenantId,
+                                                                      RosterParametrization rosterParametrization,
+                                                                      RosterState rosterState,
+                                                                      List<Employee> employeeList,
+                                                                      List<Shift> shiftList) {
+        ZoneId zoneId = rosterState.getTimeZone();
+        // Generate a feasible published schedule: no EmployeeAvailability instancer during the published period
+        // nor on the first draft day (because they might overlap with shift on the last published day)
+        LocalDate date = rosterState.getFirstDraftDate().plusDays(1);
+        LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
+        List<EmployeeAvailability> employeeAvailabilityList = new ArrayList<>();
+        Map<LocalDate, List<Shift>> startDayToShiftListMap = shiftList.stream()
+                .collect(groupingBy(shift -> shift.getStartDateTime().toLocalDate()));
+
+        while (date.compareTo(firstUnplannedDate) < 0) {
+            List<Shift> dayShiftList = startDayToShiftListMap.get(date);
+            List<Employee> availableEmployeeList = new ArrayList<>(employeeList);
+            int stateCount = (employeeList.size() - dayShiftList.size()) / 4;
+            if (stateCount <= 0) {
+                // Heavy overconstrained planning (more shifts than employees)
+                stateCount = 1;
+            }
+            for (EmployeeAvailabilityState state : EmployeeAvailabilityState.values()) {
+                for (int i = 0; i < stateCount; i++) {
+                    Employee employee = availableEmployeeList.remove(random.nextInt(availableEmployeeList.size()));
+                    LocalDateTime startDateTime = date.atTime(LocalTime.MIN);
+                    LocalDateTime endDateTime = date.plusDays(1).atTime(LocalTime.MIN);
+                    OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime,
+                                                                           zoneId.getRules().getOffset(startDateTime));
+                    OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime,
+                                                                         zoneId.getRules().getOffset(endDateTime));
+                    EmployeeAvailability employeeAvailability = new EmployeeAvailability(tenantId, employee,
+                                                                                         startOffsetDateTime,
+                                                                                         endOffsetDateTime);
+                    employeeAvailability.setState(state);
+                    // TODO: Persist employeeAvailability in employeeAvailabilityRepository once employeeAvailability
+                    //  CRUD is implemented
+                    //employeeAvailabilityList.add(employeeAvailabilityRepository.save(employeeAvailability));
+                    employeeAvailabilityList.add(employeeAvailability);
+                }
+            }
+            date = date.plusDays(1);
+        }
+        return employeeAvailabilityList;
+    }
+
+    private <E> E extractRandomElement(List<E> list) {
+        return list.get(random.nextInt(list.size()));
+    }
+
+    private <E> List<E> extractRandomSubList(List<E> list, double... thresholds) {
+        int size = generateRandomIntFromThresholds(thresholds);
+        if (size > list.size()) {
+            size = list.size();
+        }
+        return extractRandomSubListOfSize(list, size);
+    }
+
+    private <E> List<E> extractRandomSubListOfSize(List<E> list, int size) {
+        List<E> subList = new ArrayList<>(list);
+        Collections.shuffle(subList, random);
+        // Remove elements not in the sublist (so it can be garbage collected)
+        subList.subList(size, subList.size()).clear();
+        return subList;
+    }
+
+    private int generateRandomIntFromThresholds(double... thresholds) {
+        double randomDouble = random.nextDouble();
+        for (int i = 0; i < thresholds.length; i++) {
+            if (randomDouble < thresholds[i]) {
+                return i;
+            }
+        }
+        return thresholds.length;
     }
 }
