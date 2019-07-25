@@ -33,7 +33,7 @@ describe('ShiftEvent', () => {
         shift: baseShift
       }]
     };
-    const requiredSkillViolations = mount(shiftEvent.getRequiredSkillViolations(shift));
+    const requiredSkillViolations = mount(<>{shiftEvent.getRequiredSkillViolations(shift)}</>);
     expect(toJson(requiredSkillViolations)).toMatchSnapshot();
   });
 
@@ -68,7 +68,7 @@ describe('ShiftEvent', () => {
       ]
     };
 
-    const contractMinutesViolations = mount(shiftEvent.getContractMinutesViolations(shift));
+    const contractMinutesViolations = mount(<>{shiftEvent.getContractMinutesViolations(shift)}</>);
     expect(toJson(contractMinutesViolations)).toMatchSnapshot();
   });
 
@@ -85,7 +85,7 @@ describe('ShiftEvent', () => {
         shift: baseShift
       }]
     };
-    const unavailableEmployeeViolations = mount(shiftEvent.getUnavaliableEmployeeViolations(shift));
+    const unavailableEmployeeViolations = mount(<>{shiftEvent.getUnavailableEmployeeViolations(shift)}</>);
     expect(toJson(unavailableEmployeeViolations)).toMatchSnapshot();
   });
 
@@ -105,7 +105,7 @@ describe('ShiftEvent', () => {
         }
       ]
     };
-    const shiftEmployeeConflictViolations = mount(shiftEvent.getShiftEmployeeConflictViolations(shift));
+    const shiftEmployeeConflictViolations = mount(<>{shiftEvent.getShiftEmployeeConflictViolations(shift)}</>);
     expect(toJson(shiftEmployeeConflictViolations)).toMatchSnapshot();
   });
 
@@ -119,7 +119,7 @@ describe('ShiftEvent', () => {
         }
       ]
     };
-    const rotationViolationPenalties = mount(shiftEvent.getRotationViolationPenalties(shift));
+    const rotationViolationPenalties = mount(<>{shiftEvent.getRotationViolationPenalties(shift)}</>);
     expect(toJson(rotationViolationPenalties)).toMatchSnapshot();
   });
 
@@ -133,7 +133,7 @@ describe('ShiftEvent', () => {
         }
       ]
     };
-    const unassignedShiftPenalties = mount(shiftEvent.getUnassignedShiftPenalties(shift));
+    const unassignedShiftPenalties = mount(<>{shiftEvent.getUnassignedShiftPenalties(shift)}</>);
     expect(toJson(unassignedShiftPenalties)).toMatchSnapshot();
   });
 
@@ -150,7 +150,7 @@ describe('ShiftEvent', () => {
         shift: baseShift
       }]
     };
-    const undesiredTimeslotForEmployeePenalties = mount(shiftEvent.getUndesiredTimeslotForEmployeePenalties(shift));
+    const undesiredTimeslotForEmployeePenalties = mount(<>{shiftEvent.getUndesiredTimeslotForEmployeePenalties(shift)}</>);
     expect(toJson(undesiredTimeslotForEmployeePenalties)).toMatchSnapshot();
   });
 
@@ -167,12 +167,12 @@ describe('ShiftEvent', () => {
         shift: baseShift
       }]
     };
-    const desiredTimeslotForEmployeeRewards = mount(shiftEvent.getDesiredTimeslotForEmployeeRewards(shift));
+    const desiredTimeslotForEmployeeRewards = mount(<>{shiftEvent.getDesiredTimeslotForEmployeeRewards(shift)}</>);
     expect(toJson(desiredTimeslotForEmployeeRewards)).toMatchSnapshot();
   });
 
   it('getIndictments should render correctly with no indictments', () => {
-    const indictments = mount(shiftEvent.getIndictments(baseShift));
+    const indictments = mount(<>{shiftEvent.getIndictments(baseShift)}</>);
     expect(toJson(indictments)).toMatchSnapshot();
   });
 
@@ -190,7 +190,7 @@ describe('ShiftEvent', () => {
         }
       ]
     };
-    const indictments = mount(shiftEvent.getIndictments(shift));
+    const indictments = mount(<>{shiftEvent.getIndictments(shift)}</>);
     expect(toJson(indictments)).toMatchSnapshot();
   });
 

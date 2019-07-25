@@ -87,7 +87,7 @@ exports[`App should render correctly 1`] = `
               "type": [Function],
             }
           }
-          exect={true}
+          exact={true}
           path="/shift"
         />
       </Switch>

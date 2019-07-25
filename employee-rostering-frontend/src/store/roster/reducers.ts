@@ -17,7 +17,7 @@
 import { RosterStateActionType, SolverAction, ShiftRosterViewActionType, RosterStateAction, ShiftRosterViewAction, CurrentSolverState, CurrentRosterState, CurrentShiftRoster, SolverActionType } from './types';
 import moment from 'moment';
 
-export const initalSolverState: CurrentSolverState = {
+export const initialSolverState: CurrentSolverState = {
   isSolving: false
 }
 
@@ -71,7 +71,7 @@ export const shiftRosterViewReducer = (state = initialShiftRosterState, action: 
   }
 }
 
-export const solverReducer = (state = initalSolverState, action: SolverAction): CurrentSolverState => {
+export const solverReducer = (state = initialSolverState, action: SolverAction): CurrentSolverState => {
   switch (action.type) {
     case SolverActionType.SOLVE_ROSTER: {
       return { ...state, isSolving: true };
