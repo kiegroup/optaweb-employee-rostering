@@ -35,6 +35,8 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -52,11 +54,6 @@ import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.admin.SystemPropertiesRetriever;
 import org.optaweb.employeerostering.service.common.generator.StringDataGenerator;
-import org.optaweb.employeerostering.service.contract.ContractRepository;
-import org.optaweb.employeerostering.service.employee.EmployeeRepository;
-import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
-import org.optaweb.employeerostering.service.skill.SkillRepository;
-import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.springframework.stereotype.Component;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -331,21 +328,8 @@ public class RosterGenerator {
 
     private Random random;
 
-    // TODO: Make fields 'final' once Benchmark is added
-    private SkillRepository skillRepository;
-    private SpotRepository spotRepository;
-    private ContractRepository contractRepository;
-    private EmployeeRepository employeeRepository;
-    private RosterStateRepository rosterStateRepository;
-    private ShiftTemplateRepository shiftTemplateRepository;
-
-    // TODO: Add ShiftRepository once Shift CRUD is implemented
-
-    // TODO: Add EmployeeAvailabilityRepository once EmployeeAvailability CRUD is implemented
-
-    // TODO: Add RosterParametrizationRepository once RosterParametrization CRUD is implemented
-
-    // TODO: Add TenantRepository once Tenant CRUD is implemented
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @SuppressWarnings("unused")
     public RosterGenerator() {
@@ -353,23 +337,10 @@ public class RosterGenerator {
 
     /**
      * For benchmark only
-     * @param skillRepository never null
-     * @param spotRepository never null
-     * @param contractRepository never null
-     * @param employeeRepository never null
-     * @param rosterStateRepository never null
-     * @param shiftTemplateRepository never null
+     * @param entityManager never null
      */
-    public RosterGenerator(SkillRepository skillRepository, SpotRepository spotRepository,
-                           ContractRepository contractRepository, EmployeeRepository employeeRepository,
-                           RosterStateRepository rosterStateRepository,
-                           ShiftTemplateRepository shiftTemplateRepository) {
-        this.skillRepository = skillRepository;
-        this.spotRepository = spotRepository;
-        this.contractRepository = contractRepository;
-        this.employeeRepository = employeeRepository;
-        this.rosterStateRepository = rosterStateRepository;
-        this.shiftTemplateRepository = shiftTemplateRepository;
+    public RosterGenerator(EntityManager entityManager) {
+        this.entityManager = entityManager;
         random = new Random(37);
     }
 
@@ -403,7 +374,6 @@ public class RosterGenerator {
         return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId);
     }
 
-    @Transactional
     public Roster generateRoster(int spotListSize,
                                  int lengthInDays,
                                  GeneratorType generatorType,
@@ -414,11 +384,6 @@ public class RosterGenerator {
         int skillListSize = (spotListSize + 4) / 5;
 
         Tenant tenant = createTenant(generatorType, employeeListSize);
-
-        // TODO: Remove artificial setting of tenant fields once Tenant CRUD is implemented
-        tenant.setId(1);
-        tenant.setVersion(0L);
-
         Integer tenantId = tenant.getId();
         RosterParametrization rosterParametrization = createTenantConfiguration(generatorType, tenantId, zoneId);
         RosterState rosterState = createRosterState(generatorType, tenant, zoneId, lengthInDays);
@@ -439,26 +404,25 @@ public class RosterGenerator {
                           rosterParametrization, rosterState, shiftList);
     }
 
+    @Transactional
     private Tenant createTenant(GeneratorType generatorType, int employeeListSize) {
         String tenantName = generatorType.tenantNamePrefix + " " + tenantNameGenerator.generateNextValue() + " ("
                 + employeeListSize + " employees)";
         Tenant tenant = new Tenant(tenantName);
-
-        //TODO: Persist tenant in TenantRepository once CRUD is implemented
-        //return tenantRepository.save(tenant);
+        entityManager.persist(tenant);
         return tenant;
     }
 
+    @Transactional
     private RosterParametrization createTenantConfiguration(GeneratorType generatorType, Integer tenantId,
                                                             ZoneId zoneId) {
         RosterParametrization rosterParametrization = new RosterParametrization();
         rosterParametrization.setTenantId(tenantId);
-
-        //TODO: Persist rosterParametrization in RosterParametrization once CRUD is implemented
-        //return rosterParametrizationRepository.save(rosterParametrization);
+        entityManager.persist(rosterParametrization);
         return rosterParametrization;
     }
 
+    @Transactional
     private RosterState createRosterState(GeneratorType generatorType, Tenant tenant, ZoneId zoneId, int lengthInDays) {
         RosterState rosterState = new RosterState();
         rosterState.setTenantId(tenant.getId());
@@ -476,20 +440,24 @@ public class RosterGenerator {
         rosterState.setLastHistoricDate(LocalDate.now().minusDays(1));
         rosterState.setTimeZone(zoneId);
         rosterState.setTenant(tenant);
-        return rosterStateRepository.save(rosterState);
+        entityManager.persist(rosterState);
+        return rosterState;
     }
 
+    @Transactional
     private List<Skill> createSkillList(GeneratorType generatorType, Integer tenantId, int size) {
         List<Skill> skillList = new ArrayList<>(size);
         generatorType.skillNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = generatorType.skillNameGenerator.generateNextValue();
             Skill skill = new Skill(tenantId, name);
-            skillList.add(skillRepository.save(skill));
+            entityManager.persist(skill);
+            skillList.add(skill);
         }
         return skillList;
     }
 
+    @Transactional
     private List<Spot> createSpotList(GeneratorType generatorType, Integer tenantId, int size, List<Skill> skillList) {
         List<Spot> spotList = new ArrayList<>(size);
         generatorType.spotNameGenerator.predictMaximumSizeAndReset(size);
@@ -497,26 +465,32 @@ public class RosterGenerator {
             String name = generatorType.spotNameGenerator.generateNextValue();
             Set<Skill> requiredSkillSet = new HashSet<>(extractRandomSubList(skillList, 0.5, 0.9, 1.0));
             Spot spot = new Spot(tenantId, name, requiredSkillSet);
-            spotList.add(spotRepository.save(spot));
+            entityManager.persist(spot);
+            spotList.add(spot);
         }
         return spotList;
     }
 
+    @Transactional
     private List<Contract> createContractList(Integer tenantId) {
         List<Contract> contractList = new ArrayList<>(3);
         Contract contract = new Contract(tenantId, "Part Time Contract");
-        contractList.add(contractRepository.save(contract));
+        entityManager.persist(contract);
+        contractList.add(contract);
 
         contract = new Contract(tenantId, "Max 16 Hours Per Week Contract", null, 16 * 60, null, null);
-        contractList.add(contractRepository.save(contract));
+        entityManager.persist(contract);
+        contractList.add(contract);
 
-        contract = new Contract(tenantId, "Max 16 Hours Per Week, 32 Hours Per Month Contract", null, 16 * 60, 32 * 60,
-                                null);
-        contractList.add(contractRepository.save(contract));
+        contract = new Contract(tenantId, "Max 16 Hours Per Week, 32 Hours Per Month Contract",
+                                null, 16 * 60, 32 * 60, null);
+        entityManager.persist(contract);
+        contractList.add(contract);
 
         return contractList;
     }
 
+    @Transactional
     private List<Employee> createEmployeeList(GeneratorType generatorType, Integer tenantId, int size,
                                               List<Contract> contractList, List<Skill> generalSkillList) {
         List<Employee> employeeList = new ArrayList<>(size);
@@ -528,11 +502,13 @@ public class RosterGenerator {
             Employee employee = new Employee(tenantId, name,
                                              contractList.get(generateRandomIntFromThresholds(0.7, 0.5)),
                                              skillProficiencySet);
-            employeeList.add(employeeRepository.save(employee));
+            entityManager.persist(employee);
+            employeeList.add(employee);
         }
         return employeeList;
     }
 
+    @Transactional
     private List<ShiftTemplate> createShiftTemplateList(GeneratorType generatorType,
                                                         Integer tenantId,
                                                         RosterState rosterState,
@@ -575,13 +551,15 @@ public class RosterGenerator {
                             rotationEmployeeList.get(rotationEmployeeIndex);
                     ShiftTemplate shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime,
                                                                     endDayOffset, endTime, rotationEmployee);
-                    shiftTemplateList.add(shiftTemplateRepository.save(shiftTemplate));
+                    entityManager.persist(shiftTemplate);
+                    shiftTemplateList.add(shiftTemplate);
                 }
             }
         }
         return shiftTemplateList;
     }
 
+    @Transactional
     private List<Shift> createShiftList(GeneratorType generatorType,
                                         Integer tenantId,
                                         RosterParametrization rosterParametrization,
@@ -608,8 +586,7 @@ public class RosterGenerator {
                     boolean defaultToRotationEmployee = date.compareTo(firstDraftDate) < 0;
                     Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
                                                                   zoneId, defaultToRotationEmployee);
-                    // TODO: Persist shift in shiftRepository once Shift CRUD is implemented
-                    //shiftList.add(shiftRepository.save(shift));
+                    entityManager.persist(shift);
                     shiftList.add(shift);
                 }
                 if (date.compareTo(firstDraftDate) >= 0) {
@@ -618,8 +595,7 @@ public class RosterGenerator {
                         ShiftTemplate shiftTemplate = extractRandomElement(subShiftTemplateList);
                         Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
                                                                       zoneId, false);
-                        // TODO: Persist shift in shiftRepository once Shift CRUD is implemented
-                        //shiftList.add(shiftRepository.save(shift));
+                        entityManager.persist(shift);
                         shiftList.add(shift);
                     }
                 }
@@ -631,6 +607,7 @@ public class RosterGenerator {
         return shiftList;
     }
 
+    @Transactional
     private List<EmployeeAvailability> createEmployeeAvailabilityList(GeneratorType generatorType,
                                                                       Integer tenantId,
                                                                       RosterParametrization rosterParametrization,
@@ -667,9 +644,7 @@ public class RosterGenerator {
                                                                                          startOffsetDateTime,
                                                                                          endOffsetDateTime);
                     employeeAvailability.setState(state);
-                    // TODO: Persist employeeAvailability in employeeAvailabilityRepository once employeeAvailability
-                    //  CRUD is implemented
-                    //employeeAvailabilityList.add(employeeAvailabilityRepository.save(employeeAvailability));
+                    entityManager.persist(employeeAvailability);
                     employeeAvailabilityList.add(employeeAvailability);
                 }
             }
