@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
-import org.optaweb.employeerostering.domain.common.DateTimeUtil;
+import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 import org.optaweb.employeerostering.domain.common.HasTimeslot;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.Shift;
@@ -106,8 +106,8 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
                      HardMediumSoftLongScore indictmentScore) {
         super(shift);
         this.spotId = shift.getSpot().getId();
-        this.startDateTime = DateTimeUtil.toLocalDateTimeInZone(shift.getStartDateTime(), zoneId);
-        this.endDateTime = DateTimeUtil.toLocalDateTimeInZone(shift.getEndDateTime(), zoneId);
+        this.startDateTime = DateTimeUtils.toLocalDateTimeInZone(shift.getStartDateTime(), zoneId);
+        this.endDateTime = DateTimeUtils.toLocalDateTimeInZone(shift.getEndDateTime(), zoneId);
         this.pinnedByUser = shift.isPinnedByUser();
         this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
