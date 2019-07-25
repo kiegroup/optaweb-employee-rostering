@@ -22,6 +22,7 @@ export interface TypeaheadSelectProps<T> {
   defaultValue: T | undefined;
   optionToStringMap: (option: T) => string;
   onChange: (selected: T | undefined) => void;
+  optional?: boolean; 
 }
 
 export interface TypeaheadSelectState<T> {
@@ -97,17 +98,15 @@ TypeaheadSelectState<T>
           isExpanded={isExpanded}
           ariaLabelledBy={titleId}
           placeholderText={emptyText}
+          required={!this.props.optional}
         >
-          <SelectOption isDisabled={false} key={-1} value="" />
-          <>
-            {this.props.options.map((option, index) => (
-              <SelectOption
-                isDisabled={false}
-                key={this.props.optionToStringMap(option)}
-                value={this.props.optionToStringMap(option)}
-              />
-            ))}
-          </>
+          {this.props.options.map((option) => (
+            <SelectOption
+              isDisabled={false}
+              key={this.props.optionToStringMap(option)}
+              value={this.props.optionToStringMap(option)}
+            />
+          ))}
         </Select>
       </div>
     );

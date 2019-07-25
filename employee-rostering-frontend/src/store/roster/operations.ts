@@ -24,10 +24,11 @@ import ShiftRosterView from 'domain/ShiftRosterView';
 import { PaginationData, ObjectNumberMap, mapObjectNumberMap } from 'types';
 import moment from 'moment';
 import Spot from 'domain/Spot';
-import { showInfoMessage, showSuccessMessage } from 'ui/Alerts';
+import { alert } from 'store/alert';
 import { ThunkDispatch } from 'redux-thunk';
 import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/operations';
 import RestServiceClient from 'store/rest';
+import { AddAlertAction } from 'store/alert/types';
 
 export interface RosterSliceInfo {
   fromDate: Date;
@@ -44,7 +45,7 @@ let lastCalledShiftRoster: ThunkCommandFactory<any, SetShiftRosterIsLoadingActio
 let stopSolvingRosterTimeout: NodeJS.Timeout|null = null;
 let autoRefreshShiftRosterDuringSolvingIntervalTimeout: NodeJS.Timeout|null = null;
 
-function stopSolvingRoster(dispatch: ThunkDispatch<AppState, RestServiceClient, TerminateSolvingRosterEarlyAction>) {
+function stopSolvingRoster(dispatch: ThunkDispatch<AppState, RestServiceClient, AddAlertAction | TerminateSolvingRosterEarlyAction>) {
   if (stopSolvingRosterTimeout !== null) {
     clearTimeout(stopSolvingRosterTimeout);
     stopSolvingRosterTimeout = null;
@@ -57,11 +58,11 @@ function stopSolvingRoster(dispatch: ThunkDispatch<AppState, RestServiceClient, 
   Promise.all([
     dispatch(operations.refreshShiftRoster())
   ]).then(() => {
-    showInfoMessage("Finished Solving Roster", `Finished Solving Roster at ${moment(new Date()).format("LLL")}`);
+    dispatch(alert.showInfoMessage("finishSolvingRoster", { finishSolvingTime: moment(new Date()).format("LLL") }));
   });
 }
 
-export const solveRoster: ThunkCommandFactory<void, SolveRosterAction> = () => 
+export const solveRoster: ThunkCommandFactory<void,  AddAlertAction | SolveRosterAction> = () => 
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
     return client.post(`/tenant/${tenantId}/roster/solve`, {}).then(() => {
@@ -69,7 +70,7 @@ export const solveRoster: ThunkCommandFactory<void, SolveRosterAction> = () =>
       const updateInterval = 1000;
       const solvingLength = 30 * 1000;
       dispatch(actions.solveRoster());
-      showInfoMessage("Started Solving Roster", `Started Solving Roster at ${moment(solvingStartTime).format("LLL")}.`);
+      dispatch(alert.showInfoMessage("startSolvingRoster", { startSolvingTime: moment(solvingStartTime).format("LLL") }));
       autoRefreshShiftRosterDuringSolvingIntervalTimeout = setInterval(() => {
         dispatch(operations.refreshShiftRoster());
       },updateInterval);
@@ -102,7 +103,7 @@ export const getRosterState: ThunkCommandFactory<void, SetRosterStateIsLoadingAc
     });
   };
 
-export const publish: ThunkCommandFactory<void, PublishRosterAction> = () =>
+export const publish: ThunkCommandFactory<void,  AddAlertAction | PublishRosterAction> = () =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
     return client.post<PublishResult>(`/tenant/${tenantId}/roster/publishAndProvision`, {}).then(pr => {
@@ -111,7 +112,7 @@ export const publish: ThunkCommandFactory<void, PublishRosterAction> = () =>
         publishedToDate: moment(pr.publishedToDate).toDate()
       }));
       dispatch(operations.refreshShiftRoster());
-      showSuccessMessage("Published Roster", `Published from ${moment(pr.publishedFromDate).format("LL")} to ${moment(pr.publishedToDate).format("LL")}.`);
+      dispatch(alert.showSuccessMessage("publish", { from: moment(pr.publishedFromDate).format("LL"), to: moment(pr.publishedToDate).format("LL") }));
     });
   }
 

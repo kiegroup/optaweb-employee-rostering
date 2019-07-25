@@ -18,7 +18,7 @@ import { ThunkCommandFactory } from '../types';
 import Shift from 'domain/Shift';
 import ShiftView, { shiftToShiftView } from 'domain/ShiftView';
 import moment from 'moment';
-import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
+import { alert } from 'store/alert';
 import { refreshShiftRoster } from 'store/roster/operations';
 import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
@@ -60,7 +60,7 @@ export const addShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     return client.post<KindaShiftView>(`/tenant/${tenantId}/shift/add`, shiftAdapter(shift)).then(newShift => {
-      showSuccessMessage("Successfully added Shift", `A new Shift starting at ${moment(newShift.startDateTime).format("LLL")} and ending at ${moment(newShift.endDateTime).format("LLL")} was successfully added.`)
+      dispatch(alert.showSuccessMessage("addShift", { startDateTime: moment(newShift.startDateTime).format("LLL"), endDateTime: moment(newShift.endDateTime).format("LLL") }));
       dispatch(refreshShiftRoster());
     });
   };
@@ -71,11 +71,11 @@ export const removeShift: ThunkCommandFactory<Shift, any> = shift =>
     const shiftId = shift.id;
     return client.delete<boolean>(`/tenant/${tenantId}/shift/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
-        showSuccessMessage("Successfully deleted Shift", `The Shift with id ${shift.id} starting at ${moment(shift.startDateTime).format("LLL")} and ending at ${moment(shift.endDateTime).format("LLL")} was successfully deleted.`)
+        dispatch(alert.showSuccessMessage("removeShift", { id: shift.id, startDateTime: moment(shift.startDateTime).format("LLL"), endDateTime: moment(shift.endDateTime).format("LLL") }));
         dispatch(refreshShiftRoster());
       }
       else {
-        showErrorMessage("Error deleting Shift", `The Shift with id ${shift.id} starting at ${moment(shift.startDateTime).format("LLL")} and ending at ${moment(shift.endDateTime).format("LLL")} could not be deleted.`);
+        dispatch(alert.showErrorMessage("removeShiftError", { id: shift.id, startDateTime: moment(shift.startDateTime).format("LLL"), endDateTime: moment(shift.endDateTime).format("LLL") }));
       }
     });
   };
@@ -84,7 +84,7 @@ export const updateShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     return client.put<KindaShiftView>(`/tenant/${tenantId}/shift/update`, shiftAdapter(shift)).then(updatedShift => {
-      showSuccessMessage("Successfully updated Shift", `The Shift with id "${shift.id}" was successfully updated.`);
+      dispatch(alert.showSuccessMessage("updateShift", { id: updatedShift.id }));
       dispatch(refreshShiftRoster());
     });
   };

@@ -55,6 +55,7 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
   }
 
   render() {
+    const locale = moment.locale();
     return (
       <div className="week-picker-container">
         <Button
@@ -68,6 +69,10 @@ export default class WeekPicker extends React.Component<WeekPickerProps, WeekPic
         </Button>
         <DatePicker
           className="week-picker"
+          locale={
+            /* moment intreprets "en" as "en-US", this intreprets "en" as "en-GB" */
+            locale === "en"? "en-US" : locale
+          }
           value={[this.getFirstDayInWeek(this.props.value),this.getLastDayInWeek(this.props.value)]}
           onChange={() => this.goToCurrentWeek()}
           onClickDay={(value: Date) => this.goToWeekContaining(value)}

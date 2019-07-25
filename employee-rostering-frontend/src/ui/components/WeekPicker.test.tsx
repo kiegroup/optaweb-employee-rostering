@@ -25,6 +25,10 @@ import "moment/locale/en-ca";
 import MockDate from 'mockdate';
 
 describe('WeekPicker component', () => {
+  beforeAll(() => {
+    moment.locale("en");
+  });
+  
   it('should render correctly when closed', () => {
     const weekPicker = shallow(<WeekPicker value={moment("2019-07-03").toDate()} onChange={jest.fn()} />);
     expect(toJson(weekPicker)).toMatchSnapshot();

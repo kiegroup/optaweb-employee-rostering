@@ -13,20 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.fade-and-slide-in {
-  animation: slide-in 2.0s;
-}
+import { useEffect, useRef } from 'react';
 
-.fade-and-slide-out {
-  animation: slide-out 2.0s;
-}
-
-@keyframes slide-in {
-  from { transform: translateY(-100%); opacity: 0;}
-  to { transform: translateY(0%); opacity: 1; }
-}
-
-@keyframes slide-out {
-  from   { transform: translateY(0); opacity: 1;}
-  to { transform: translateY(-100%); opacity: 0;}
+// From https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+export function useInterval(callback: Function, delay: number|null) {
+  const savedCallback = useRef<Function>();
+  
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+  
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      (savedCallback.current as Function)();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
 }

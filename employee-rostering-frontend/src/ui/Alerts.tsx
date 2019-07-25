@@ -14,199 +14,105 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { Alert, AlertActionCloseButton, Text, Title, Button, ButtonVariant, Modal } from '@patternfly/react-core';
-import { ServerSideExceptionInfo } from 'types';
+import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
+import { useTranslation, Trans } from 'react-i18next';
 import './Alerts.css';
+import { connect } from 'react-redux';
+import { AlertInfo } from 'store/alert/types';
+import { AppState } from 'store/types';
+import * as alertOperations from 'store/alert/operations';
+import moment from 'moment';
+import { useInterval } from 'util/FunctionalComponentUtils';
 
-export interface AlertInfo {
-  id?: number;
-  timeoutId?: number;
-  title: string;
-  message: JSX.Element;
-  variant: "success" | "danger" | "warning" | "info";
-}
-
-let alertRef: Alerts|null = null;
-
-export function setAlertRef(newAlertRef: Alerts): void {
-  alertRef = newAlertRef;
-}
-
-export function showInfoMessage(title: string, message: string) {
-  showMessage("info", title, message);
-}
-
-export function showSuccessMessage(title: string, message: string) {
-  showMessage("success", title, message);
-}
-
-export function showServerError(exceptionInfo: ServerSideExceptionInfo) {
-  if (alertRef !== null) {
-    alertRef.addAlert({
-      title: "Server Error",
-      variant: "danger",
-      message: (
-        <span>
-          {exceptionInfo.exceptionMessage}
-          <Button
-            variant={ButtonVariant.link}
-            onClick={() => alertRef? alertRef.setServerSideException(exceptionInfo) : null}
-          >
-            See Stack Trace.
-          </Button>
-        </span>
-      )
-    });
-  }
-}
-
-export function showServerErrorMessage(message: string) {
-  showErrorMessage("Server Error", message);
-}
-
-export function showErrorMessage(title: string, message: string) {
-  showMessage("danger", title, message);
-}
-
-export function showMessage(variant: "success" | "danger" | "warning" | "info", title: string, message: string) {
-  if (alertRef !== null) {
-    alertRef.addAlert({
-      title: title,
-      variant: variant,
-      message: <span>{message}</span>
-    });
-  }
-}
-
-function createStackTrace(exceptionInfo: ServerSideExceptionInfo|null): JSX.Element {
-  if (exceptionInfo === null) {
-    return (<></>);
-  }
-  else {
-    return (
-      <>
-        <Title size="md">
-          {exceptionInfo.exceptionClass + ": " + exceptionInfo.exceptionMessage}
-        </Title>
-        {exceptionInfo.stackTrace.map(line => (
-          <Text key={line}>{line}</Text>
-        ))}
-        {
-          exceptionInfo.exceptionCause? (
-            <>
-              <Text>Caused By</Text>
-              {createStackTrace(exceptionInfo.exceptionCause)}
-            </>
-          ): (<></>)
-        }
-      </>
-    );
-  }
-}
-
-interface Props {
-  setRef: (alertRef: Alerts) => void;
-}
-
-interface State {
-  alertCount: number;
+interface StateProps {
   alerts: AlertInfo[];
-  alertToClassNames: Map<number, string>;
-  serverErrorInfo: ServerSideExceptionInfo|null;
 }
 
-export default class Alerts extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      alertCount: 0,
-      alerts: [],
-      serverErrorInfo: null,
-      alertToClassNames: new Map()
-    };
-    this.addAlert = this.addAlert.bind(this);
-    this.removeAlert = this.removeAlert.bind(this);
-    this.setServerSideException = this.setServerSideException.bind(this);
-    props.setRef(this);
-  }
+interface DispatchProps {
+  removeAlert: typeof alertOperations.removeAlert;
+}
 
-  addAlert(alert: AlertInfo) {
-    const alertId = this.state.alertCount;
-    const timeoutId = window.setTimeout(() => {
-      this.setState(prevState => ({
-        alertToClassNames: prevState.alertToClassNames.set(alertId, "fade-and-slide-out")
-      }));
-      window.setTimeout(() => this.removeAlert(alertId), 2000);
-    }, 10000);
-    this.setState(prevState => ({
-      alerts: prevState.alerts.concat([{ ...alert, id: alertId, timeoutId }]),
-      alertToClassNames: prevState.alertToClassNames.set(alertId, "fade-and-slide-in"),
-      alertCount: prevState.alertCount + 1
-    }));
-  }
-  
-  removeAlert(alertId: number) {
-    this.setState(prevState => {
-      const alertToClassNameMap = new Map<number,string>(prevState.alertToClassNames);
-      alertToClassNameMap.delete(alertId);
-      return {
-        alerts: prevState.alerts.filter(alert => alert.id !== alertId),
-        alertToClassNames: alertToClassNameMap
+const mapStateToProps = (state: AppState): StateProps => ({
+  alerts: state.alerts.alertList
+});
+
+const mapDispatchToProps: DispatchProps = {
+  removeAlert: alertOperations.removeAlert
+}
+
+export type Props = StateProps & DispatchProps;
+
+const Alerts: React.FC<Props> = (props) => {
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+
+  const { t } = useTranslation();
+  const [ hoveredOverAlerts, hoveredOverAlertsSetter ] = React.useState([] as number[]);
+  const shouldUpdateNextSecond = props.alerts.filter(alert => 
+    hoveredOverAlerts.find(id => id === alert.id) === undefined).length > 0;
+
+  const additionClassNames = (alert: AlertInfo) => {
+    const secondsFromEvent = moment.duration(moment().diff(moment(alert.createdAt))).asSeconds();
+
+    if (hoveredOverAlerts.find(id => id === alert.id) !== undefined) {
+      return ""
+    }
+    if (secondsFromEvent < 3) {
+      return "fade-and-slide-in";
+    }
+    else if (secondsFromEvent > 10) {
+      if (secondsFromEvent > 12) {
+        props.removeAlert(alert);
       }
-    });
-  }
+      return "fade-and-slide-out";
+    }
+    else {
+      return "";
+    }
+  };
 
-  setServerSideException(exception: ServerSideExceptionInfo) {
-    this.setState({ serverErrorInfo: exception });
-  }
+  useInterval(forceUpdate, shouldUpdateNextSecond? 1000 : null);
 
-  render() {
-    return (
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        display: 'grid',
-        gridAutoRows: 'auto',
-        gridTemplateColumns: 'auto',
-        paddingTop: '5px',
-        gridRowGap: '5px',
-        overflowY: 'auto',
-        background: 'transparent',
-        zIndex: 10000
-      }}
-      >
-        {this.state.alerts.map(alert => (
-          <Alert
-            className={this.state.alertToClassNames.get(alert.id as number)}
-            key={alert.id}
-            title={alert.title}
-            variant={alert.variant}
-            onMouseEnter={() => window.clearTimeout(alert.timeoutId as number)}
-            action={(
-              <AlertActionCloseButton
-                onClose={() => this.removeAlert(alert.id as number)} 
-              />
-            )}
-          >
-            {alert.message}
-          </Alert>
-        ))}
-        <Modal
-          title="Server Side Error"
-          isOpen={this.state.serverErrorInfo !== null}
-          onClose={() => this.setState({ serverErrorInfo: null })}
-          actions={(
-            <Button
-              onClick={() => this.setState({ serverErrorInfo: null })}
-            >
-              Close
-            </Button>
+  return (
+    <div style={{
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      display: 'grid',
+      gridAutoRows: 'auto',
+      gridTemplateColumns: 'auto',
+      paddingTop: '5px',
+      gridRowGap: '5px',
+      overflowY: 'auto',
+      background: 'transparent',
+      zIndex: 10000
+    }}
+    >
+      {props.alerts.map(alert => (
+        <Alert
+          className={additionClassNames(alert)}
+          key={alert.id}
+          title={t("alerts." + alert.i18nKey + ".title")}
+          variant={alert.variant}
+          onMouseEnter={() => {
+            hoveredOverAlertsSetter(hoveredOverAlerts.concat([alert.id as number]));
+          }}
+          action={(
+            <AlertActionCloseButton
+              onClose={() => props.removeAlert(alert)} 
+            />
           )}
         >
-          {createStackTrace(this.state.serverErrorInfo)}
-        </Modal>
-      </div>
-    );
-  }
+          <Trans
+            i18nKey={"alerts." + alert.i18nKey + ".message"}
+            values={alert.params}
+            components={alert.components}
+          />
+        </Alert>
+      ))}
+    </div>
+  );
 }
+
+export { Alerts };
+export default connect(mapStateToProps, mapDispatchToProps)(Alerts);

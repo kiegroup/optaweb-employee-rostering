@@ -26,15 +26,19 @@ export function toggleElement<T>(collection: T[], element: T): T[] {
   }
 }
 
-export function withoutElement<T extends DomainObject>(collection: T[], removedElement: T): T[] {
-  return collection.filter(element => element.id !== removedElement.id);
+export function withoutElementWithId<T extends { id?: number }>(collection: T[], removedElementId: number): T[] {
+  return collection.filter(element => element.id !== removedElementId);
 }
 
-export function withElement<T extends DomainObject>(collection: T[], addedElement: T): T[] {
+export function withoutElement<T extends { id?: number }>(collection: T[], removedElement: T): T[] {
+  return withoutElementWithId(collection, removedElement.id as number);
+}
+
+export function withElement<T extends { id?: number }>(collection: T[], addedElement: T): T[] {
   return [...collection, addedElement];
 }
 
-export function withUpdatedElement<T extends DomainObject>(collection: T[], updatedElement: T): T[] {
+export function withUpdatedElement<T extends { id?: number }>(collection: T[], updatedElement: T): T[] {
   return withElement(withoutElement(collection, updatedElement), updatedElement);
 }
 

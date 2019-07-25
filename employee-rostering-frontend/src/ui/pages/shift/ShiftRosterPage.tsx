@@ -28,7 +28,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar'
 import EditShiftModal from './EditShiftModal';
 import Color from 'color';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
-import { showInfoMessage } from "ui/Alerts";
+import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
 import ShiftEvent, { getShiftColor } from "./ShiftEvent";
 
@@ -71,6 +71,7 @@ export interface DispatchProps {
   solveRoster: typeof rosterOperations.solveRoster;
   publishRoster: typeof rosterOperations.publish;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
+  showInfoMessage: typeof alert.showInfoMessage;
 }
   
 const mapDispatchToProps: DispatchProps = {
@@ -81,8 +82,9 @@ const mapDispatchToProps: DispatchProps = {
   refreshShiftRoster: rosterOperations.refreshShiftRoster,
   solveRoster: rosterOperations.solveRoster,
   publishRoster: rosterOperations.publish,
-  terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly
-};
+  terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
+  showInfoMessage: alert.showInfoMessage
+}
   
 export type Props = StateProps & DispatchProps;
 interface State {
@@ -234,6 +236,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           </LevelItem>
           <LevelItem style={{display: "flex"}}>
             <Button
+              style={{margin: "5px"}}
               aria-label="Publish"
               onClick={this.props.publishRoster}
             >
@@ -242,6 +245,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             {(!this.props.isSolving &&
               (
                 <Button
+                  style={{margin: "5px"}}
                   aria-label="Solve"
                   onClick={this.props.solveRoster}
                 >
@@ -249,6 +253,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 </Button>
               )) || (
               <Button
+                style={{margin: "5px"}}
                 aria-label="Terminate Early"
                 onClick={this.props.terminateSolvingRosterEarly}
               >
@@ -257,16 +262,18 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             )
             }
             <Button
+              style={{margin: "5px"}}
               aria-label="Refresh"
               onClick={() => {
                 this.props.refreshShiftRoster();
-                showInfoMessage("Info", "The Shift Roster was refreshed.");
+                this.props.showInfoMessage("shiftRosterRefresh");
               }
               }
             >
               Refresh
             </Button>
             <Button
+              style={{margin: "5px"}}
               aria-label="Create Shift"
               onClick={() => {
                 this.setState({
