@@ -61,7 +61,7 @@ const App: React.FC = () => {
             />
             <Route
               path="/shift"
-              exect
+              exact
               component={ShiftRosterPage} 
             />
           </Switch>
