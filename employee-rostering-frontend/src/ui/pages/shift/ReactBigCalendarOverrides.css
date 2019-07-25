@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
- /* TODO: remove me when react-big-calendar displays concurrent events properly */
- /* Start of Hack */
+/* TODO: remove me when react-big-calendar displays concurrent events properly */
+/* See: https://github.com/intljusticemission/react-big-calendar/issues/1397 */
+
+/* Start of Hack */
 .rbc-events-container {
     display: grid !important;
     grid-template-rows: repeat(100, 1fr) !important;

@@ -13,20 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-.fade-and-slide-in {
-  animation: slide-in 2.0s;
-}
 
-.fade-and-slide-out {
-  animation: slide-out 2.0s;
-}
+import * as alert from './operations';
+import reducer from './reducers';
 
-@keyframes slide-in {
-  from { transform: translateY(-100%); opacity: 0;}
-  to { transform: translateY(0%); opacity: 1; }
-}
+export {
+  alert
+};
 
-@keyframes slide-out {
-  from   { transform: translateY(0); opacity: 1;}
-  to { transform: translateY(-100%); opacity: 0;}
-}
+export default reducer;

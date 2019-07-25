@@ -17,6 +17,7 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
+import { alert } from 'store/alert';
 import reducer, { contractSelectors, contractOperations } from './index';
 import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
@@ -60,7 +61,7 @@ describe('Contract operations', () => {
 
     onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, true);
     await store.dispatch(contractOperations.removeContract(contractToDelete));
-    expect(store.getActions()).toEqual([actions.removeContract(contractToDelete)]);
+    expect(store.getActions()).toEqual([alert.showSuccessMessage("removeContract", { name: contractToDelete.name }), actions.removeContract(contractToDelete)]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
   });
@@ -81,7 +82,7 @@ describe('Contract operations', () => {
     
     onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, false);
     await store.dispatch(contractOperations.removeContract(contractToDelete));
-    expect(store.getActions()).toEqual([]);
+    expect(store.getActions()).toEqual([alert.showErrorMessage("removeContractError", { name: contractToDelete.name })]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
   });
@@ -99,7 +100,7 @@ describe('Contract operations', () => {
     const contractWithUpdatedId: Contract = {...contractToAdd, id: 4, version: 0};
     onPost(`/tenant/${tenantId}/contract/add`, contractToAdd, contractWithUpdatedId);
     await store.dispatch(contractOperations.addContract(contractToAdd));
-    expect(store.getActions()).toEqual([actions.addContract(contractWithUpdatedId)]);
+    expect(store.getActions()).toEqual([alert.showSuccessMessage("addContract", { name: contractToAdd.name }), actions.addContract(contractWithUpdatedId)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/add`, contractToAdd);
   });
@@ -120,7 +121,7 @@ describe('Contract operations', () => {
     const contractWithUpdatedVersion: Contract = {...contractToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/contract/update`, contractToUpdate, contractWithUpdatedVersion);
     await store.dispatch(contractOperations.updateContract(contractToUpdate));
-    expect(store.getActions()).toEqual([actions.updateContract(contractWithUpdatedVersion)]);
+    expect(store.getActions()).toEqual([alert.showSuccessMessage("updateContract", { id: contractToUpdate.id }), actions.updateContract(contractWithUpdatedVersion)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/update`, contractToUpdate);
   });
@@ -313,5 +314,20 @@ const state: AppState = {
   skillList: {
     isLoading: false,
     skillMapById: new Map()
+  },
+  rosterState: {
+    isLoading: true,
+    rosterState: null
+  },
+  shiftRoster: {
+    isLoading: true,
+    shiftRosterView: null
+  },
+  solverState: {
+    isSolving: false
+  },
+  alerts: {
+    alertList: [],
+    idGeneratorIndex: 0
   }
 };

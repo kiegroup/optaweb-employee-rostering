@@ -94,24 +94,44 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
       <Button
         aria-label="Publish"
         onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Publish
       </Button>
       <Button
         aria-label="Solve"
         onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Schedule
       </Button>
       <Button
         aria-label="Refresh"
         onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Refresh
       </Button>
       <Button
         aria-label="Create Shift"
         onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Create Shift
       </Button>
@@ -365,24 +385,44 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
       <Button
         aria-label="Publish"
         onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Publish
       </Button>
       <Button
         aria-label="Solve"
         onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Schedule
       </Button>
       <Button
         aria-label="Refresh"
         onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Refresh
       </Button>
       <Button
         aria-label="Create Shift"
         onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Create Shift
       </Button>
@@ -638,24 +678,44 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
       <Button
         aria-label="Publish"
         onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Publish
       </Button>
       <Button
         aria-label="Terminate Early"
         onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Terminate Early
       </Button>
       <Button
         aria-label="Refresh"
         onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Refresh
       </Button>
       <Button
         aria-label="Create Shift"
         onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
       >
         Create Shift
       </Button>

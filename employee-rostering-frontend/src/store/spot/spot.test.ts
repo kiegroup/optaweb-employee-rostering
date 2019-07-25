@@ -17,13 +17,14 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
+import { alert } from 'store/alert';
 import reducer, { spotSelectors, spotOperations } from './index';
 import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
+import {onGet, onPost, onDelete} from 'store/rest/RestTestUtils';
 import Spot from 'domain/Spot';
 
 describe('Spot operations', () => {
-  it('should dispatch actions and call client', async () => {
+  it('should dispatch actions and call client on refresh spot list', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const mockSpotList: Spot[] = [{
@@ -54,45 +55,68 @@ describe('Spot operations', () => {
     expect(store.getActions()).toEqual([actions.setIsSpotListLoading(true), actions.refreshSpotList(mockSpotList), actions.setIsSpotListLoading(false)]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/`);
+  });
 
-    store.clearActions();
-    resetRestClientMock(client);
+  it('should dispatch actions and call client on successful delete', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
 
-    const spotToDelete: Spot = mockSpotList[0];
+    const spotToDelete: Spot = {
+      tenantId: tenantId,
+      id: 0,
+      version: 0,
+      name: "Spot 1",
+      requiredSkillSet: []
+    };
     onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, true);
     await store.dispatch(spotOperations.removeSpot(spotToDelete));
-    expect(store.getActions()).toEqual([actions.removeSpot(spotToDelete)]);
+    expect(store.getActions()).toEqual([alert.showSuccessMessage("removeSpot", { name: spotToDelete.name }), actions.removeSpot(spotToDelete)]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/${spotToDelete.id}`);
 
-    store.clearActions();
-    resetRestClientMock(client);
+  });
+
+  it('should not dispatch actions but call client on a failed delete', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+
+    const spotToDelete: Spot = {
+      tenantId: tenantId,
+      id: 0,
+      version: 0,
+      name: "Spot 1",
+      requiredSkillSet: []
+    };
 
     onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, false);
     await store.dispatch(spotOperations.removeSpot(spotToDelete));
-    expect(store.getActions()).toEqual([]);
+    expect(store.getActions()).toEqual([alert.showErrorMessage("removeSpotError", { name: spotToDelete.name })]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/${spotToDelete.id}`);
+  });
 
-    store.clearActions();
-    resetRestClientMock(client);
+  it('should dispatch actions and call client on add', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
 
     const spotToAdd: Spot = {tenantId: tenantId, name: "New Spot", requiredSkillSet: []};
     const spotWithUpdatedId: Spot = {...spotToAdd, id: 4, version: 0};
     onPost(`/tenant/${tenantId}/spot/add`, spotToAdd, spotWithUpdatedId);
     await store.dispatch(spotOperations.addSpot(spotToAdd));
-    expect(store.getActions()).toEqual([actions.addSpot(spotWithUpdatedId)]);
+    expect(store.getActions()).toEqual([alert.showSuccessMessage("addSpot", { name: spotToAdd.name }), actions.addSpot(spotWithUpdatedId)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/add`, spotToAdd);
+  });
 
-    store.clearActions();
-    resetRestClientMock(client);
-
+  it('should dispatch actions and call client on update', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    
     const spotToUpdate: Spot = {tenantId: tenantId, name: "Updated Spot", id: 4, version: 0, requiredSkillSet: []};
-    const spotWithUpdatedVersion: Spot = {...spotToAdd, version: 1};
+    const spotWithUpdatedVersion: Spot = {...spotToUpdate, version: 1};
     onPost(`/tenant/${tenantId}/spot/update`, spotToUpdate, spotWithUpdatedVersion);
     await store.dispatch(spotOperations.updateSpot(spotToUpdate));
-    expect(store.getActions()).toEqual([actions.updateSpot(spotWithUpdatedVersion)]);
+    expect(store.getActions()).toEqual([alert.showSuccessMessage("updateSpot", { id: spotToUpdate.id }), actions.updateSpot(spotWithUpdatedVersion)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/update`, spotToUpdate);
   });
@@ -257,5 +281,20 @@ const state: AppState = {
         name: "Skill 1"
       }]
     ])
+  },
+  rosterState: {
+    isLoading: true,
+    rosterState: null
+  },
+  shiftRoster: {
+    isLoading: true,
+    shiftRosterView: null
+  },
+  solverState: {
+    isSolving: false
+  },
+  alerts: {
+    alertList: [],
+    idGeneratorIndex: 0
   }
 };

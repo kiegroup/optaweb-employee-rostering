@@ -17,38 +17,39 @@
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import Skill from 'domain/Skill';
-import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
+import { alert } from 'store/alert';
 import { SetSkillListLoadingAction, AddSkillAction, RemoveSkillAction, UpdateSkillAction, RefreshSkillListAction } from './types';
+import { AddAlertAction } from 'store/alert/types';
 
-export const addSkill: ThunkCommandFactory<Skill, AddSkillAction> = skill =>
+export const addSkill: ThunkCommandFactory<Skill,  AddAlertAction | AddSkillAction> = skill =>
   (dispatch, state, client) => {
     const tenantId = skill.tenantId;
     return client.post<Skill>(`/tenant/${tenantId}/skill/add`, skill).then(newSkill => {
-      showSuccessMessage("Successfully added Skill", `The Skill "${newSkill.name}" was successfully added.`);
+      dispatch(alert.showSuccessMessage("addSkill", { name: newSkill.name }));
       dispatch(actions.addSkill(newSkill))
     });
   };
 
-export const removeSkill: ThunkCommandFactory<Skill, RemoveSkillAction> = skill =>
+export const removeSkill: ThunkCommandFactory<Skill,  AddAlertAction | RemoveSkillAction> = skill =>
   (dispatch, state, client) => {
     const tenantId = skill.tenantId;
     const skillId = skill.id;
     return client.delete<boolean>(`/tenant/${tenantId}/skill/${skillId}`).then(isSuccess => {
       if (isSuccess) {
-        showSuccessMessage("Successfully deleted Skill", `The Skill "${skill.name}" was successfully deleted.`);
+        dispatch(alert.showSuccessMessage("removeSkill", { name: skill.name }));
         dispatch(actions.removeSkill(skill));
       }
       else {
-        showErrorMessage("Error deleting Skill", `The Skill "${skill.name}" could not be deleted.`);
+        dispatch(alert.showErrorMessage("removeSkillError", { name: skill.name }));
       }
     });
   };
 
-export const updateSkill: ThunkCommandFactory<Skill, UpdateSkillAction> = skill =>
+export const updateSkill: ThunkCommandFactory<Skill,  AddAlertAction |UpdateSkillAction> = skill =>
   (dispatch, state, client) => {
     const tenantId = skill.tenantId;
     return client.post<Skill>(`/tenant/${tenantId}/skill/update`, skill).then(updatedSkill => {
-      showSuccessMessage("Successfully updated Skill", `The Skill with id "${skill.id}" was successfully updated.`);
+      dispatch(alert.showSuccessMessage("updateSkill", { id: skill.id }));
       dispatch(actions.updateSkill(updatedSkill));
     });
   };

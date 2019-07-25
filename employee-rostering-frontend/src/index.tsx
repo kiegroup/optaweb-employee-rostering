@@ -18,19 +18,32 @@ import '@patternfly/react-core/dist/styles/base.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { configureStore } from './store';
 import { BrowserRouter } from 'react-router-dom';
+import { SpinnerIcon } from '@patternfly/react-icons';
 import './index.css';
 import App from './ui/App';
 
+// import i18n (needs to be bundled)
+import './i18n';
+import { configureStore } from 'store';
+
 const store = configureStore({
-  restBaseURL: '/rest',
+  restBaseURL: '/rest'
 });
+
+const LoadingSpinner: React.FC = () => (
+  <>
+    <SpinnerIcon />
+    Loading...
+  </>
+);
 
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <React.Suspense fallback={<LoadingSpinner />}> 
+        <App />
+      </React.Suspense>
     </BrowserRouter>
   </Provider>,
   document.getElementById('root') as HTMLElement,

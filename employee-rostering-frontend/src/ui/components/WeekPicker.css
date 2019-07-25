@@ -14,7 +14,6 @@
  * limitations under the License.
  */
  .week-picker-container {
-    display: "flex";
     background-color: var(--pf-global--BackgroundColor--100);
  }
 

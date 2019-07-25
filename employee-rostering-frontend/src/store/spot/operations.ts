@@ -16,39 +16,40 @@
 
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
-import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
+import { alert } from 'store/alert';
 import Spot from 'domain/Spot';
 import { SetSpotListLoadingAction, AddSpotAction, RemoveSpotAction, UpdateSpotAction, RefreshSpotListAction } from './types';
+import { AddAlertAction } from 'store/alert/types';
 
-export const addSpot: ThunkCommandFactory<Spot, AddSpotAction> = spot =>
+export const addSpot: ThunkCommandFactory<Spot,  AddAlertAction | AddSpotAction> = spot =>
   (dispatch, state, client) => {
     const tenantId = spot.tenantId;
     return client.post<Spot>(`/tenant/${tenantId}/spot/add`, spot).then(newSpot => {
-      showSuccessMessage("Successfully added Spot", `The Spot "${newSpot.name}" was successfully added.`)
+      dispatch(alert.showSuccessMessage("addSpot", { name: newSpot.name }));
       dispatch(actions.addSpot(newSpot))
     });
   };
 
-export const removeSpot: ThunkCommandFactory<Spot, RemoveSpotAction> = spot =>
+export const removeSpot: ThunkCommandFactory<Spot,  AddAlertAction | RemoveSpotAction> = spot =>
   (dispatch, state, client) => {
     const tenantId = spot.tenantId;
     const spotId = spot.id;
     return client.delete<boolean>(`/tenant/${tenantId}/spot/${spotId}`).then(isSuccess => {
       if (isSuccess) {
-        showSuccessMessage("Successfully deleted Spot", `The Spot "${spot.name}" was successfully deleted.`)
+        dispatch(alert.showSuccessMessage("removeSpot", { name: spot.name }));
         dispatch(actions.removeSpot(spot));
       }
       else {
-        showErrorMessage("Error deleting Spot", `The Spot "${spot.name}" could not be deleted.`);
+        dispatch(alert.showErrorMessage("removeSpotError", { name: spot.name }));
       }
     });
   };
 
-export const updateSpot: ThunkCommandFactory<Spot, UpdateSpotAction> = spot =>
+export const updateSpot: ThunkCommandFactory<Spot, AddAlertAction | UpdateSpotAction> = spot =>
   (dispatch, state, client) => {
     const tenantId = spot.tenantId;
     return client.post<Spot>(`/tenant/${tenantId}/spot/update`, spot).then(updatedSpot => {
-      showSuccessMessage("Successfully updated Spot", `The Spot with id "${spot.id}" was successfully updated.`);
+      dispatch(alert.showSuccessMessage("updateSpot", { id: updatedSpot.id }));
       dispatch(actions.updateSpot(updatedSpot));
     });
   };
