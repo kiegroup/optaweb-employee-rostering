@@ -1,0 +1,209 @@
+/*
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.optaweb.employeerostering.service.solver;
+    dialect "java"
+
+import java.time.temporal.ChronoUnit;
+import java.time.DayOfWeek;
+import java.time.Duration;
+import java.time.temporal.IsoFields;
+
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreHolder;
+import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
+import org.optaweb.employeerostering.domain.shift.Shift;
+import org.optaweb.employeerostering.domain.skill.Skill;
+import org.optaweb.employeerostering.domain.roster.Roster;
+import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.common.DateTimeUtils;
+
+global HardMediumSoftLongScoreHolder scoreHolder;
+
+// ############################################################################
+// Hard constraints
+// ############################################################################
+
+rule "Required skill for a shift"
+    when
+        Shift(
+                employee != null,
+                !getEmployee().hasSkills(getSpot().getRequiredSkillSet()))
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -100);
+end
+
+rule "Unavailable time slot for an employee"
+    when
+        EmployeeAvailability(
+                state == EmployeeAvailabilityState.UNAVAILABLE,
+                $e : employee,
+                $startDateTime : startDateTime,
+                $endDateTime : endDateTime)
+        Shift(
+                employee == $e,
+                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
+                                                   startDateTime, endDateTime))
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -50);
+end
+
+rule "At most one shift assignment per day per employee"
+    when
+        $s : Shift(
+                employee != null,
+                $e : employee,
+                $leftDay : startDateTime.toLocalDate())
+        Shift(
+                employee == $e,
+                startDateTime.toLocalDate() == $leftDay,
+                this != $s)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -10);
+end
+
+rule "No 2 shifts within 10 hours from each other"
+    when
+        $s : Shift(
+                employee != null,
+                $e : employee,
+                $leftEndDateTime : endDateTime)
+        Shift(
+                employee == $e,
+                $leftEndDateTime <= endDateTime,
+                $leftEndDateTime.until(startDateTime, ChronoUnit.HOURS) < 10,
+                this != $s)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "Daily minutes must not exceed contract maximum"
+    when
+        $employee : Employee($contract : contract, $contract.getMaximumMinutesPerDay() != null)
+        $s : Shift(employee == $employee, $startDateTime : startDateTime)
+        Number( intValue > $contract.getMaximumMinutesPerDay() ) from accumulate(
+            Shift(employee == $employee, $shiftStart : startDateTime,
+            $shiftEnd : endDateTime,
+            $shiftStart.toLocalDate().equals($startDateTime.toLocalDate())),
+            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "Weekly minutes must not exceed contract maximum"
+    when
+        $rosterParametrization : RosterParametrization()
+        $employee : Employee($contract : contract, $contract.getMaximumMinutesPerWeek() != null)
+        $s : Shift(employee == $employee, $startDateTime : startDateTime)
+        Number( intValue > $contract.getMaximumMinutesPerWeek() ) from accumulate(
+            Shift(employee == $employee, $shiftStart : startDateTime,
+            $shiftEnd : endDateTime,
+            DateTimeUtils.sameWeek($rosterParametrization.getWeekStartDay(), $shiftStart, $startDateTime)),
+            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "Monthly minutes must not exceed contract maximum"
+    when
+        $employee : Employee($contract : contract, $contract.getMaximumMinutesPerMonth() != null)
+        $s : Shift(employee == $employee, $startDateTime : startDateTime)
+        Number( intValue > $contract.getMaximumMinutesPerMonth() ) from accumulate(
+            Shift(employee == $employee, $shiftStart : startDateTime,
+            $shiftEnd : endDateTime,
+            $shiftStart.getMonth() == $startDateTime.getMonth(),
+            $shiftStart.getYear() == $startDateTime.getYear()),
+            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "Yearly minutes must not exceed contract maximum"
+    when
+        $employee : Employee($contract : contract, $contract.getMaximumMinutesPerYear() != null)
+        $s : Shift(employee == $employee, $startDateTime : startDateTime)
+        Number( intValue > $contract.getMaximumMinutesPerYear() ) from accumulate(
+            Shift(employee == $employee, $shiftStart : startDateTime,
+            $shiftEnd : endDateTime,
+            $shiftStart.getYear() == $startDateTime.getYear()),
+            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+
+// ############################################################################
+// Medium constraints
+// ############################################################################
+
+rule "Assign every shift"
+    when
+        Shift(employee == null)
+    then
+        scoreHolder.addMediumConstraintMatch(kcontext, -1);
+end
+
+
+// ############################################################################
+// Soft constraints
+// ############################################################################
+
+rule "Undesired time slot for an employee"
+    when
+    	$rosterParametrization : RosterParametrization(undesiredTimeSlotWeight != 0)
+        EmployeeAvailability(
+                state == EmployeeAvailabilityState.UNDESIRED,
+                $e : employee,
+                $startDateTime : startDateTime,
+                $endDateTime : endDateTime)
+        Shift(
+                employee == $e,
+                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
+                                                   startDateTime, endDateTime))
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getUndesiredTimeSlotWeight());
+end
+
+rule "Desired time slot for an employee"
+    when
+        $rosterParametrization : RosterParametrization(desiredTimeSlotWeight != 0)
+        EmployeeAvailability(
+                state == EmployeeAvailabilityState.DESIRED,
+                $e : employee,
+                $startDateTime : startDateTime,
+                $endDateTime : endDateTime)
+        Shift(
+                employee == $e,
+                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
+                                                   startDateTime, endDateTime))
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, +$rosterParametrization.getDesiredTimeSlotWeight());
+end
+
+rule "Employee is not rotation employee"
+    when
+    	$rosterParametrization : RosterParametrization(rotationEmployeeMatchWeight != 0)
+        Shift(
+                rotationEmployee != null, employee != null, employee != rotationEmployee)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getRotationEmployeeMatchWeight());
+end
