@@ -294,7 +294,7 @@ describe('Edit Shift Modal', () => {
     });
   });
 
-  it('should update isPinned when isPinnedis changed', () => {
+  it('should update isPinned when isPinned is changed', () => {
     const editShiftModal = shallow(<EditShiftModal
       {...baseProps}
       isOpen

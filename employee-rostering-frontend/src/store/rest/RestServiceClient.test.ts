@@ -28,7 +28,7 @@ const mockCreate = jest.fn(() => ({
   delete: mockDelete
 }));
 
-const axois: AxiosStatic = {
+const axios: AxiosStatic = {
   create: mockCreate
 } as any;
 
@@ -41,9 +41,9 @@ beforeEach(() => {
 });
 
 describe("Rest Service Client", () => {
-  it("Should call axois constructor with correct arguments", () => {
+  it("Should call axios constructor with correct arguments", () => {
     const baseURL = "/rest";
-    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const restServiceClient = new RestServiceClient(baseURL, axios);
     expect(mockCreate).toBeCalled();
     expect(mockCreate).toBeCalledWith({
       baseURL: baseURL,
@@ -54,7 +54,7 @@ describe("Rest Service Client", () => {
 
   it("Should call axios.get on get", async () => {
     const baseURL = "/rest";
-    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const restServiceClient = new RestServiceClient(baseURL, axios);
     const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
     const targetURL = "/endpoint";
     const response = {
@@ -74,7 +74,7 @@ describe("Rest Service Client", () => {
 
   it("Should call axios.post on post", async () => {
     const baseURL = "/rest";
-    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const restServiceClient = new RestServiceClient(baseURL, axios);
     const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
     const targetURL = "/endpoint";
     const data = {
@@ -98,7 +98,7 @@ describe("Rest Service Client", () => {
 
   it("Should call axios.put on put", async () => {
     const baseURL = "/rest";
-    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const restServiceClient = new RestServiceClient(baseURL, axios);
     const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
     const targetURL = "/endpoint";
     const data = {
@@ -122,7 +122,7 @@ describe("Rest Service Client", () => {
 
   it("Should call axios.delete on delete", async () => {
     const baseURL = "/rest";
-    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const restServiceClient = new RestServiceClient(baseURL, axios);
     const handleResponseSpy = jest.spyOn(restServiceClient, "handleResponse");
     const targetURL = "/endpoint";
     const response = {
@@ -142,7 +142,7 @@ describe("Rest Service Client", () => {
 
   it("Should resolves to the value on success", async () => {
     const baseURL = "/rest";
-    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const restServiceClient = new RestServiceClient(baseURL, axios);
     const data = {
       a: "Test",
       b: 2
@@ -163,7 +163,7 @@ describe("Rest Service Client", () => {
     const dispatch = jest.fn();
 
     const baseURL = "/rest";
-    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const restServiceClient = new RestServiceClient(baseURL, axios);
     const data = {
       a: "Test",
       b: 2
@@ -183,7 +183,7 @@ describe("Rest Service Client", () => {
 
   it("Should throw an Error if dispatch is not set", async () => {
     const baseURL = "/rest";
-    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const restServiceClient = new RestServiceClient(baseURL, axios);
     const data = {
       a: "Test",
       b: 2
