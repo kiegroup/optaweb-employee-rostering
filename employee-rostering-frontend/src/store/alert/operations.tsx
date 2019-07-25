@@ -30,7 +30,7 @@ export function showSuccessMessage(i18nKey: string, params?: ObjectStringMap, co
   return showMessage("success", i18nKey, params, components);
 }
 
-const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerSideExceptionInfo>> = (props) => {
+export const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerSideExceptionInfo>> = (props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dialogBody = createStackTrace(props);
   const { t } = useTranslation();
@@ -39,6 +39,7 @@ const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerSideExce
     <>
       {t(props.i18nKey, props.messageParameters)}
       <Button
+        aria-label="Show Stack Trace"
         variant={ButtonVariant.link}
         onClick={() => setIsOpen(true)}
       >
@@ -50,6 +51,7 @@ const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerSideExce
         onClose={() => setIsOpen(false)}
         actions={(
           <Button
+            aria-label="Close"
             onClick={() => setIsOpen(false)}
           >
             Close

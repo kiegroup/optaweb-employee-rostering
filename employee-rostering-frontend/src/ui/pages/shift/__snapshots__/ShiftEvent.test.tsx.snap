@@ -293,16 +293,7 @@ exports[`ShiftEvent should render correctly 1`] = `
         <Text>
           Indictments:
         </Text>
-        <List>
-          <React.Fragment />
-          <React.Fragment />
-          <React.Fragment />
-          <React.Fragment />
-          <React.Fragment />
-          <React.Fragment />
-          <React.Fragment />
-          <React.Fragment />
-        </List>
+        <List />
       </React.Fragment>
     </span>
   }
