@@ -17,6 +17,7 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
+import { alert } from 'store/alert';
 import reducer, { employeeSelectors, employeeOperations } from './index';
 import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
@@ -58,7 +59,7 @@ describe('Employee operations', () => {
     const employeeToDelete = mockEmployee;
     onDelete(`/tenant/${tenantId}/employee/${employeeToDelete.id}`, true);
     await store.dispatch(employeeOperations.removeEmployee(employeeToDelete));
-    expect(store.getActions()).toEqual([actions.removeEmployee(employeeToDelete)]);
+    expect(store.getActions()).toEqual([alert.showSuccessMessage("removeEmployee", { name: employeeToDelete.name }), actions.removeEmployee(employeeToDelete)]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/${employeeToDelete.id}`);
 
@@ -67,7 +68,7 @@ describe('Employee operations', () => {
 
     onDelete(`/tenant/${tenantId}/employee/${employeeToDelete.id}`, false);
     await store.dispatch(employeeOperations.removeEmployee(employeeToDelete));
-    expect(store.getActions()).toEqual([]);
+    expect(store.getActions()).toEqual([alert.showErrorMessage("removeEmployeeError", { name: employeeToDelete.name })]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/${employeeToDelete.id}`);
 
@@ -78,7 +79,7 @@ describe('Employee operations', () => {
     const employeeWithUpdatedId: Employee = {...employeeToAdd, id: 4, version: 0};
     onPost(`/tenant/${tenantId}/employee/add`, employeeToAdd, employeeWithUpdatedId);
     await store.dispatch(employeeOperations.addEmployee(employeeToAdd));
-    expect(store.getActions()).toEqual([actions.addEmployee(employeeWithUpdatedId)]);
+    expect(store.getActions()).toEqual([alert.showSuccessMessage("addEmployee", { name: employeeToAdd.name }), actions.addEmployee(employeeWithUpdatedId)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/add`, employeeToAdd);
 
@@ -89,7 +90,7 @@ describe('Employee operations', () => {
     const employeeWithUpdatedVersion: Employee = {...mockEmployee, version: 1};
     onPost(`/tenant/${tenantId}/employee/update`, employeeToUpdate, employeeWithUpdatedVersion);
     await store.dispatch(employeeOperations.updateEmployee(employeeToUpdate));
-    expect(store.getActions()).toEqual([actions.updateEmployee(employeeWithUpdatedVersion)]);
+    expect(store.getActions()).toEqual([alert.showSuccessMessage("updateEmployee", { id: employeeToUpdate.id }), actions.updateEmployee(employeeWithUpdatedVersion)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/update`, employeeToUpdate);
   });
@@ -353,5 +354,20 @@ const state: AppState = {
         name: "Skill 3"
       }]
     ])
+  },
+  rosterState: {
+    isLoading: true,
+    rosterState: null
+  },
+  shiftRoster: {
+    isLoading: true,
+    shiftRosterView: null
+  },
+  solverState: {
+    isSolving: false
+  },
+  alerts: {
+    alertList: [],
+    idGeneratorIndex: 0
   }
 };

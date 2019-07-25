@@ -22,25 +22,12 @@ exports[`TypeaheadSelectInput component should render correctly 1`] = `
     onSelect={[Function]}
     onToggle={[Function]}
     placeholderText="Enter some data"
+    required={true}
     selections={null}
     toggleId={null}
     variant="typeahead"
     width=""
   >
-    <SelectOption
-      className=""
-      index={0}
-      isChecked={false}
-      isDisabled={false}
-      isFocused={false}
-      isPlaceholder={false}
-      isSelected={false}
-      key="-1"
-      keyHandler={[Function]}
-      onClick={[Function]}
-      sendRef={[Function]}
-      value=""
-    />
     <SelectOption
       className=""
       index={0}

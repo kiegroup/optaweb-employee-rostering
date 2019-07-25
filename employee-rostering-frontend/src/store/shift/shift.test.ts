@@ -16,7 +16,7 @@
 
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
-import * as alerts from 'ui/Alerts';
+import { alert } from 'store/alert';
 import * as rosterOperations from 'store/roster/operations';
 import { shiftOperations } from './index';
 import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './operations';
@@ -32,7 +32,6 @@ describe('Shift operations', () => {
     const shiftEndTime = moment("2018-01-01T12:00").toDate();
 
     const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
-    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
 
     const addedShift: Shift = {
       tenantId: tenantId,
@@ -55,10 +54,11 @@ describe('Shift operations', () => {
 
     expect(client.post).toBeCalled();
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/shift/add`, shiftAdapter(addedShift));
-    expect(mockRefreshShiftRoster).toBeCalled();
-
-    expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("Successfully added Shift", `A new Shift starting at ${moment(addedShift.startDateTime).format("LLL")} and ending at ${moment(addedShift.endDateTime).format("LLL")} was successfully added.`);
+    expect(mockRefreshShiftRoster).toBeCalled()
+    
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("addShift", { startDateTime: moment(addedShift.startDateTime).format("LLL"), endDateTime: moment(addedShift.endDateTime).format("LLL") })
+    ]);
   });
 
   it('should dispatch actions and call client on a successful delete shift', async () => {
@@ -68,7 +68,6 @@ describe('Shift operations', () => {
     const shiftEndTime = moment("2018-01-01T12:00").toDate();
 
     const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
-    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
 
     const deletedShift: Shift = {
       tenantId: tenantId,
@@ -95,8 +94,9 @@ describe('Shift operations', () => {
     expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/shift/${deletedShift.id}`);
     expect(mockRefreshShiftRoster).toBeCalled();
 
-    expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("Successfully deleted Shift", `The Shift with id ${deletedShift.id} starting at ${moment(deletedShift.startDateTime).format("LLL")} and ending at ${moment(deletedShift.endDateTime).format("LLL")} was successfully deleted.`);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("removeShift", { id: deletedShift.id, startDateTime: moment(deletedShift.startDateTime).format("LLL"), endDateTime: moment(deletedShift.endDateTime).format("LLL") })
+    ]);
   });
 
   it('should call client but not dispatch actions on a failed delete shift', async () => {
@@ -106,7 +106,6 @@ describe('Shift operations', () => {
     const shiftEndTime = moment("2018-01-01T12:00").toDate();
 
     const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
-    const mockShowErrorMessage = jest.spyOn(alerts, "showErrorMessage");
 
     const deletedShift: Shift = {
       tenantId: tenantId,
@@ -133,8 +132,9 @@ describe('Shift operations', () => {
     expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/shift/${deletedShift.id}`);
     expect(mockRefreshShiftRoster).not.toBeCalled();
 
-    expect(mockShowErrorMessage).toBeCalled();
-    expect(mockShowErrorMessage).toBeCalledWith("Error deleting Shift", `The Shift with id ${deletedShift.id} starting at ${moment(deletedShift.startDateTime).format("LLL")} and ending at ${moment(deletedShift.endDateTime).format("LLL")} could not be deleted.`);
+    expect(store.getActions()).toEqual([
+      alert.showErrorMessage("removeShiftError", { id: deletedShift.id, startDateTime: moment(deletedShift.startDateTime).format("LLL"), endDateTime: moment(deletedShift.endDateTime).format("LLL") })
+    ]);
   });
 
   it('should dispatch actions and call client on updateShift', async () => {
@@ -144,7 +144,6 @@ describe('Shift operations', () => {
     const shiftEndTime = moment("2018-01-01T12:00").toDate();
 
     const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
-    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
 
     const updatedShift: Shift = {
       tenantId: tenantId,
@@ -176,8 +175,9 @@ describe('Shift operations', () => {
     expect(client.put).toBeCalledWith(`/tenant/${tenantId}/shift/update`, shiftAdapter(updatedShift));
     expect(mockRefreshShiftRoster).toBeCalled();
 
-    expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("Successfully updated Shift", `The Shift with id "${updatedShiftWithUpdatedVersion.id}" was successfully updated.`);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("updateShift", { id: updatedShift.id })
+    ]);
   });
 });
 
@@ -351,5 +351,9 @@ const state: AppState = {
   },
   solverState: {
     isSolving: false
+  },
+  alerts: {
+    alertList: [],
+    idGeneratorIndex: 0
   }
 };

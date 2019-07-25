@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as alerts from "ui/Alerts";
+import { alert } from "store/alert";
 import RestServiceClient from "./RestServiceClient";
 import { AxiosStatic } from "axios";
 
@@ -160,13 +160,15 @@ describe("Rest Service Client", () => {
   });
 
   it("Should reject the promise on failure", async () => {
-    const showServerErrorMessageMock = jest.spyOn(alerts, "showServerErrorMessage");
+    const dispatch = jest.fn();
+
     const baseURL = "/rest";
     const restServiceClient = new RestServiceClient(baseURL, axois);
     const data = {
       a: "Test",
       b: 2
     };
+    restServiceClient.setDispatch(dispatch);
     const errorStatus = "I am a teapot";
     const response = {
       status: 404,
@@ -176,6 +178,25 @@ describe("Rest Service Client", () => {
       config: {}
     };
     await expect(restServiceClient.handleResponse(response)).rejects.toEqual(404);
-    expect(showServerErrorMessageMock).toBeCalledWith(errorStatus);
+    expect(dispatch).toBeCalledWith(alert.showServerErrorMessage("I am a teapot"));
+  });
+
+  it("Should throw an Error if dispatch is not set", async () => {
+    const baseURL = "/rest";
+    const restServiceClient = new RestServiceClient(baseURL, axois);
+    const data = {
+      a: "Test",
+      b: 2
+    };
+
+    const errorStatus = "I am a teapot";
+    const response = {
+      status: 404,
+      data: data,
+      statusText: errorStatus,
+      headers: {},
+      config: {}
+    };
+    await expect(() => restServiceClient.handleResponse(response)).toThrow();
   });
 });
