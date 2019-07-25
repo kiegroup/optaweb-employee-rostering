@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
+import { ActionFactory } from '../types';
+import { ActionType, AlertInfo, AddAlertAction, RemoveAlertAction } from './types';
 
-const setAlertRef = jest.fn();
-const showInfoMessage = jest.fn();
-const showSuccessMessage = jest.fn();
-const showServerError = jest.fn();
-const showServerErrorMessage = jest.fn();
-const showErrorMessage = jest.fn();
-const showMessage = jest.fn();
+export const addAlert: ActionFactory<AlertInfo, AddAlertAction> = newAlert => ({
+  type: ActionType.ADD_ALERT,
+  alertInfo: newAlert
+});
 
-export {
-  setAlertRef,
-  showInfoMessage,
-  showSuccessMessage,
-  showServerError,
-  showServerErrorMessage,
-  showErrorMessage,
-  showMessage
-};
+export const removeAlert: ActionFactory<number, RemoveAlertAction> = id => ({
+  type: ActionType.REMOVE_ALERT,
+  id: id
+});

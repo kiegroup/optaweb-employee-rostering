@@ -27,6 +27,7 @@ import skillReducer from './skill/reducers';
 import spotReducer from './spot/reducers';
 import contractReducer from './contract/reducers';
 import employeeReducer from './employee/reducers';
+import alertReducer from './alert/reducers';
 import axios from 'axios';
 import { rosterStateReducer, shiftRosterViewReducer, solverReducer } from './roster/reducers';
 
@@ -56,16 +57,20 @@ export function configureStore(
     employeeList: employeeReducer,
     rosterState: rosterStateReducer,
     shiftRoster: shiftRosterViewReducer,
-    solverState: solverReducer
+    solverState: solverReducer,
+    alerts: alertReducer
   });
 
   /* if (process.env.NODE_ENV !== 'production' && module.hot) {
     module.hot.accept('./reducers', () => store.replaceReducer(rootReducer));
   } */
 
-  return createStore(
+  const store = createStore(
     rootReducer,
     preloadedState,
     composedEnhancers,
   );
+
+  restServiceClient.setDispatch(store.dispatch);
+  return store;
 }

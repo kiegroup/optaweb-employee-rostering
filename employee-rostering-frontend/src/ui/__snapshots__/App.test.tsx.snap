@@ -23,9 +23,7 @@ exports[`App should render correctly 1`] = `
         }
       }
     >
-      <Alerts
-        setRef={[Function]}
-      />
+      <Connect(Alerts) />
       <Switch>
         <Route
           component={
