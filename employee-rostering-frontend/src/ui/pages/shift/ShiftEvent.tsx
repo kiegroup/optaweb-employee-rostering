@@ -26,14 +26,12 @@ import Color from 'color';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './ReactBigCalendarOverrides.css';
 
-const EMPTY_ELEMENT = (<></>); 
-
-export function getIndictments(shift: Shift): JSX.Element {
+export function getIndictments(shift: Shift): React.ReactNode {
   const indictmentList = (
     <List>
       {getRequiredSkillViolations(shift)}
       {getContractMinutesViolations(shift)}
-      {getUnavaliableEmployeeViolations(shift)}
+      {getUnavailableEmployeeViolations(shift)}
       {getShiftEmployeeConflictViolations(shift)}
       {getUnassignedShiftPenalties(shift)}
       {getRotationViolationPenalties(shift)}
@@ -43,7 +41,7 @@ export function getIndictments(shift: Shift): JSX.Element {
   );
 
   if (React.Children.count(indictmentList) === 0){
-    return EMPTY_ELEMENT;
+    return null;
   }
   return (
     <>
@@ -53,203 +51,171 @@ export function getIndictments(shift: Shift): JSX.Element {
   );
 }
 
-export function getRequiredSkillViolations(shift: Shift): JSX.Element {
+export function getRequiredSkillViolations(shift: Shift): React.ReactNode[] {
   if (shift.requiredSkillViolationList) {
-    return (
-      <>
-        {shift.requiredSkillViolationList.map((v, index) => (
-          <li key={String(index)}>
+    return shift.requiredSkillViolationList.map((v, index) => (
+      <li key={String(index)}>
             The Employee &quot;
-            {(v.shift.employee as Employee).name}
+        {(v.shift.employee as Employee).name}
             &quot; does not have the following skills which are required
             for the Spot &quot;
-            {v.shift.spot.name}
+        {v.shift.spot.name}
             &quot;:
-            <List>
-              {v.shift.spot.requiredSkillSet.filter(skill =>
-                (v.shift.employee as Employee).skillProficiencySet
-                  .find(s => s.id === skill.id) === undefined)
-                .map(skill => <li key={skill.id}>{skill.name}</li>)
-              }
-            </List>
-            {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
-          </li>
-        ))}
-      </>
-    );
+        <List>
+          {v.shift.spot.requiredSkillSet.filter(skill =>
+            (v.shift.employee as Employee).skillProficiencySet
+              .find(s => s.id === skill.id) === undefined)
+            .map(skill => <li key={skill.id}>{skill.name}</li>)
+          }
+        </List>
+        {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
+      </li>
+    ))
   }
-  return EMPTY_ELEMENT;
+  return [];
 }
 
-export function getContractMinutesViolations(shift: Shift): JSX.Element {
+export function getContractMinutesViolations(shift: Shift): React.ReactNode[] {
   if (shift.contractMinutesViolationPenaltyList) {
-    return (
-      <>
-        {shift.contractMinutesViolationPenaltyList.map((v, index) => (
-          <li key={String(index)}>
+    return shift.contractMinutesViolationPenaltyList.map((v, index) => (
+      <li key={String(index)}>
             The Employee &quot;
-            {v.employee.name}
+        {v.employee.name}
             &quot; have exceeded their maximum
-            {" " + (v.type === "DAY"? "daily" :
-              v.type === "WEEK"? "weekly" :
-                v.type === "MONTH"? "monthly" :
-                  "yearly") + " "}
+        {" " + (v.type === "DAY"? "daily" :
+          v.type === "WEEK"? "weekly" :
+            v.type === "MONTH"? "monthly" :
+              "yearly") + " "}
             minutes; They have worked
-            {" " + v.minutesWorked + " "}
+        {" " + v.minutesWorked + " "}
             this 
-            {" " + (v.type === "DAY"? "day" :
-              v.type === "WEEK"? "week" :
-                v.type === "MONTH"? "month" :
-                  "year")
-            }
+        {" " + (v.type === "DAY"? "day" :
+          v.type === "WEEK"? "week" :
+            v.type === "MONTH"? "month" :
+              "year")
+        }
             ; they are allowed to work at most
-            {" " + (v.type === "DAY"? v.employee.contract.maximumMinutesPerDay :
-              v.type === "WEEK"? v.employee.contract.maximumMinutesPerWeek :
-                v.type === "MONTH"? v.employee.contract.maximumMinutesPerMonth :
-                  v.employee.contract.maximumMinutesPerYear)
-            }
-            <br />
-            {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
-          </li>
-        ))}
-      </>
-    );
+        {" " + (v.type === "DAY"? v.employee.contract.maximumMinutesPerDay :
+          v.type === "WEEK"? v.employee.contract.maximumMinutesPerWeek :
+            v.type === "MONTH"? v.employee.contract.maximumMinutesPerMonth :
+              v.employee.contract.maximumMinutesPerYear)
+        }
+        <br />
+        {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
+      </li>
+    ))
   }
-  return EMPTY_ELEMENT;
+  return [];
 }
 
-export function getUnavaliableEmployeeViolations(shift: Shift): JSX.Element {
+export function getUnavailableEmployeeViolations(shift: Shift): React.ReactNode[] {
   if (shift.unavailableEmployeeViolationList) {
-    return (
-      <>
-        {shift.unavailableEmployeeViolationList.map((v, index) => (
-          <li key={String(index)}>
+    return shift.unavailableEmployeeViolationList.map((v, index) => (
+      <li key={String(index)}>
             The Employee &quot;
-            {v.employeeAvailability.employee.name}
+        {v.employeeAvailability.employee.name}
             &quot; is unavailable from
-            {" " + moment(v.employeeAvailability.startDateTime).format("LLL") + " "}
+        {" " + moment(v.employeeAvailability.startDateTime).format("LLL") + " "}
             to
-            {" " + moment(v.employeeAvailability.endDateTime).format("LLL")}
+        {" " + moment(v.employeeAvailability.endDateTime).format("LLL")}
             .
-            <br />
-            {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
-          </li>
-        ))}
-      </>
-    );
+        <br />
+        {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
+      </li>
+    ));
   }
-  return EMPTY_ELEMENT;
+  return [];
 }
 
 // NOTE: ShiftEmployeeConflict refer to indictments from two constraints:
 // - "At most one shift assignment per day per employee"
 // - "No 2 shifts within 10 hours from each other"
-export function getShiftEmployeeConflictViolations(shift: Shift): JSX.Element {
+export function getShiftEmployeeConflictViolations(shift: Shift): React.ReactNode[] {
   if (shift.shiftEmployeeConflictList) {
-    return (
-      <>
-        {shift.shiftEmployeeConflictList.map((v, index) => (
-          <li key={String(index)}>
+    return shift.shiftEmployeeConflictList.map((v, index) => (
+      <li key={String(index)}>
             The Employee &quot;
-            {(v.leftShift.employee as Employee).name}
+        {(v.leftShift.employee as Employee).name}
             &quot; is assigned to a conflicting shift:
-            {" " + ((v.leftShift.id === shift.id)?
-              v.rightShift.spot.name + ", " + moment(v.rightShift.startDateTime).format("LT") + "-" + moment(v.rightShift.endDateTime).format("LT") :
-              v.leftShift.spot.name + ", " + moment(v.leftShift.startDateTime).format("LT") + "-" + moment(v.leftShift.endDateTime).format("LT") 
-            )}
+        {" " + ((v.leftShift.id === shift.id)?
+          v.rightShift.spot.name + ", " + moment(v.rightShift.startDateTime).format("LT") + "-" + moment(v.rightShift.endDateTime).format("LT") :
+          v.leftShift.spot.name + ", " + moment(v.leftShift.startDateTime).format("LT") + "-" + moment(v.leftShift.endDateTime).format("LT") 
+        )}
             .
-            <br />
-            {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
-          </li>
-        ))}
-      </>
-    );
+        <br />
+        {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
+      </li>
+    ));
   }
-  return EMPTY_ELEMENT;
+  return [];
 } 
 
-export function getRotationViolationPenalties(shift: Shift): JSX.Element {
+export function getRotationViolationPenalties(shift: Shift): React.ReactNode[] {
   if (shift.rotationViolationPenaltyList) {
-    return (
-      <>
-        {shift.rotationViolationPenaltyList.map((v, index) => (
-          <li key={v.shift.id}>
+    return shift.rotationViolationPenaltyList.map((v, index) => (
+      <li key={v.shift.id}>
             The Shift&apos;s Employee &quot;
-            {(v.shift.employee as Employee).name}
+        {(v.shift.employee as Employee).name}
             &quot; does not match the Shift&apos;s Rotation Employee &quot;
-            {(v.shift.rotationEmployee as Employee).name}
+        {(v.shift.rotationEmployee as Employee).name}
             &quot;.
-            <br />
-            {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
-          </li>
-        ))}
-      </>
-    );
+        <br />
+        {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
+      </li>
+    ));
   }
-  return EMPTY_ELEMENT;
+  return [];
 }
 
-export function getUnassignedShiftPenalties(shift: Shift): JSX.Element {
+export function getUnassignedShiftPenalties(shift: Shift): React.ReactNode[] {
   if (shift.unassignedShiftPenaltyList) {
-    return (
-      <>
-        {shift.unassignedShiftPenaltyList.map((v, index) => (
-          <li key={v.shift.id}>
+    return shift.unassignedShiftPenaltyList.map((v, index) => (
+      <li key={v.shift.id}>
             The Shift is unassigned. 
-            <br />
-            {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
-          </li>
-        ))}
-      </>
-    );
+        <br />
+        {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
+      </li>
+    ));
   }
-  return EMPTY_ELEMENT
+  return []
 }
 
-export function getUndesiredTimeslotForEmployeePenalties(shift: Shift) {
+export function getUndesiredTimeslotForEmployeePenalties(shift: Shift): React.ReactNode[] {
   if (shift.undesiredTimeslotForEmployeePenaltyList) {
-    return (
-      <>
-        {shift.undesiredTimeslotForEmployeePenaltyList.map((v, index) => (
-          <li key={String(index)}>
+    return shift.undesiredTimeslotForEmployeePenaltyList.map((v, index) => (
+      <li key={String(index)}>
             The Employee &quot;
-            {v.employeeAvailability.employee.name}
+        {v.employeeAvailability.employee.name}
             &quot; does not want to work from
-            {" " + moment(v.employeeAvailability.startDateTime).format("LLL") + " "}
+        {" " + moment(v.employeeAvailability.startDateTime).format("LLL") + " "}
             to
-            {" " + moment(v.employeeAvailability.endDateTime).format("LLL")}
+        {" " + moment(v.employeeAvailability.endDateTime).format("LLL")}
             .
-            <br />
-            {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
-          </li>
-        ))}
-      </>
-    );
+        <br />
+        {"Penalty: " + convertHardMediumSoftScoreToString(v.score)}
+      </li>
+    ));
   }
-  return EMPTY_ELEMENT;
+  return [];
 }
 
-export function getDesiredTimeslotForEmployeeRewards(shift: Shift) {
+export function getDesiredTimeslotForEmployeeRewards(shift: Shift): React.ReactNode[] {
   if (shift.desiredTimeslotForEmployeeRewardList) {
-    return (
-      <>
-        {shift.desiredTimeslotForEmployeeRewardList.map((v, index) => (
-          <li key={String(index)}>
+    return shift.desiredTimeslotForEmployeeRewardList.map((v, index) => (
+      <li key={String(index)}>
             The Employee &quot;
-            {v.employeeAvailability.employee.name}
+        {v.employeeAvailability.employee.name}
             &quot; desires to work from
-            {" " + moment(v.employeeAvailability.startDateTime).format("LLL") + " "}
+        {" " + moment(v.employeeAvailability.startDateTime).format("LLL") + " "}
             to
-            {" " + moment(v.employeeAvailability.endDateTime).format("LLL")}
+        {" " + moment(v.employeeAvailability.endDateTime).format("LLL")}
             .
-            <br />
-            {"Reward: " + convertHardMediumSoftScoreToString(v.score)}
-          </li>
-        ))}
-      </>
-    );
+        <br />
+        {"Reward: " + convertHardMediumSoftScoreToString(v.score)}
+      </li>
+    ));
   }
-  return EMPTY_ELEMENT;
+  return [];
 }
 
 export const NEGATIVE_HARD_SCORE_COLOR = Color("rgb(139, 0, 0)", "rgb");

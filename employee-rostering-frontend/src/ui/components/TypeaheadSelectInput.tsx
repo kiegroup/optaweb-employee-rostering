@@ -72,6 +72,7 @@ TypeaheadSelectState<T>
 
     this.props.onChange(selectedOption);
     this.setState({
+      isExpanded: false,
       selected: selectedOption
     });
   }

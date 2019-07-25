@@ -54,8 +54,10 @@ describe('TypeaheadSelectInput component', () => {
     const defaultValue = {name: "Option 2"};
     const select = mount(<TypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
     const event: any = {};
+    select.setState({ isExpanded: true });
     (select.instance() as Select).onSelect(event, "Option 1", false);
-    expect((select.instance() as Select).state.selected).toEqual({ name: "Option 1"} );
+    expect(select.state("selected")).toEqual({ name: "Option 1"} );
+    expect(select.state("isExpanded")).toEqual(false);
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith({ name: "Option 1" });
   });

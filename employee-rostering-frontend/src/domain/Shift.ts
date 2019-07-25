@@ -18,7 +18,7 @@ import Employee from './Employee';
 import Spot from './Spot';
 import HardMediumSoftScore from './HardMediumSoftScore';
 import RequiredSkillViolation from './indictment/RequiredSkillViolation';
-import UnavailableEmployeeViolation from './indictment/UnavaliableEmployeeViolation';
+import UnavailableEmployeeViolation from './indictment/UnavailableEmployeeViolation';
 import ShiftEmployeeConflictViolation from './indictment/ShiftEmployeeConflictViolation';
 import DesiredTimeslotForEmployeeReward from './indictment/DesiredTimeslotForEmployeeReward';
 import UndesiredTimeslotForEmployeePenalty from './indictment/UndesiredTimeslotForEmployeePenalty';

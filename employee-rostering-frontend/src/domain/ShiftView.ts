@@ -18,7 +18,7 @@ import DomainObjectView from './DomainObjectView';
 import Shift from './Shift';
 import HardMediumSoftScore from './HardMediumSoftScore';
 import RequiredSkillViolation from './indictment/RequiredSkillViolation';
-import UnavailableEmployeeViolation from './indictment/UnavaliableEmployeeViolation';
+import UnavailableEmployeeViolation from './indictment/UnavailableEmployeeViolation';
 import DesiredTimeslotForEmployeeReward from './indictment/DesiredTimeslotForEmployeeReward';
 import UndesiredTimeslotForEmployeePenalty from './indictment/UndesiredTimeslotForEmployeePenalty';
 import RotationViolationPenalty from './indictment/RotationViolationPenalty';

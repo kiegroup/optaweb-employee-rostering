@@ -34,6 +34,28 @@ describe('Immutable Collection Operations', () => {
     expect(actual).toEqual(expected);
     expect(original).toEqual(originalCopy);
   });
+
+  it('should not modify the collection on without element with id', () => {
+    const object1: DomainObject = {
+      tenantId: 0,
+      id: 0,
+      version: 0
+    };
+    const object2: DomainObject = {
+      tenantId: 0,
+      id: 1,
+      version: 0
+    };
+    const collection: DomainObject[] = [object1, object2];
+    const copy: DomainObject[] = JSON.parse(JSON.stringify(collection));
+    const without1 = immutableCollectionOperations.withoutElementWithId(collection, 0);
+    expect(collection).toEqual(copy);
+    expect(without1).toEqual([object2]);
+
+    const without2 = immutableCollectionOperations.withoutElementWithId(collection, 1);
+    expect(collection).toEqual(copy);
+    expect(without2).toEqual([object1]);
+  });
   
   it('should not modify the collection on without element', () => {
     const object1: DomainObject = {

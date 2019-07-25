@@ -219,6 +219,10 @@ describe('Tenant operations', () => {
       },
       solverState: {
         isSolving: false
+      },
+      alerts: {
+        alertList: [],
+        idGeneratorIndex: 0
       }
     };
     
@@ -315,5 +319,9 @@ const state: AppState = {
   },
   solverState: {
     isSolving: false
+  },
+  alerts: {
+    alertList: [],
+    idGeneratorIndex: 0
   }
 };
