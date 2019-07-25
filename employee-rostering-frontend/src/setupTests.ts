@@ -13,8 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import MockDate from 'mockdate';
+import moment from 'moment';
 
 configure({ adapter: new Adapter() });
+
+const mockDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
+MockDate.set(mockDate);
+
+const mockTranslate = jest.fn().mockImplementation(k => k);
+export { mockTranslate };
+jest.mock('react-i18next', () => ({
+  // this mock makes sure any components using the translate HoC receive the t function as a prop
+  withTranslation: () => (Component: any) => {
+    Component.defaultProps = { ...Component.defaultProps, t: mockTranslate };
+    return () => Component;
+  },
+
+  useTranslation: () => ({ t: mockTranslate }),
+  Trans: jest.requireActual("react-i18next").Trans
+}));

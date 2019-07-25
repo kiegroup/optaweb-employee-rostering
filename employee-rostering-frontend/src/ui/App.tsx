@@ -20,7 +20,7 @@ import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import Background from './components/Background';
 import Header from './header/Header';
-import Alerts, { setAlertRef } from './Alerts';
+import Alerts from './Alerts';
 import { ShiftRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
 
 const App: React.FC = () => {
@@ -37,7 +37,7 @@ const App: React.FC = () => {
             height: '100%',
           }}
         >
-          <Alerts setRef={setAlertRef} />
+          <Alerts />
           <Switch>
             <Route
               path="/skills"

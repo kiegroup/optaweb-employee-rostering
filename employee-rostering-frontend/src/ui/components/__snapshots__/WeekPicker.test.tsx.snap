@@ -70,6 +70,7 @@ exports[`WeekPicker component should render correctly when closed 1`] = `
       />
     }
     isOpen={false}
+    locale="en-US"
     name="daterange"
     onCalendarClose={[Function]}
     onCalendarOpen={[Function]}
@@ -180,6 +181,7 @@ exports[`WeekPicker component should render correctly when opened 1`] = `
       />
     }
     isOpen={true}
+    locale="en-US"
     name="daterange"
     onCalendarClose={[Function]}
     onCalendarOpen={[Function]}

@@ -17,7 +17,7 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import * as alerts from 'ui/Alerts';
+import { alert } from 'store/alert';
 import { rosterStateReducer, shiftRosterViewReducer, rosterSelectors, rosterOperations, solverReducer } from './index';
 import { resetRestClientMock, onGet, onPost } from 'store/rest/RestTestUtils';
 import MockDate from 'mockdate';
@@ -70,7 +70,6 @@ const mockShiftRoster: ShiftRosterView = {
 
 describe('Roster operations', () => {
   it('should dispatch actions and call client on solve roster', async () => {
-    const showInfoMessageMock = jest.spyOn(alerts, "showInfoMessage");
     const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster").mockImplementation(() => () => {});
     jest.useFakeTimers();
     const solvingStartTime = moment("2018-01-01", "YYYY-MM-DD").toDate();
@@ -81,9 +80,7 @@ describe('Roster operations', () => {
 
     onPost(`/tenant/${tenantId}/roster/solve`, {}, {});
     await store.dispatch(rosterOperations.solveRoster());
-    expect(store.getActions()).toEqual([actions.solveRoster()]);
-    expect(showInfoMessageMock).toBeCalled();
-    expect(showInfoMessageMock).toBeCalledWith("Started Solving Roster", `Started Solving Roster at ${moment(solvingStartTime).format("LLL")}.`);
+    expect(store.getActions()).toEqual([actions.solveRoster(), alert.showInfoMessage("startSolvingRoster", { startSolvingTime: moment(solvingStartTime).format("LLL") })]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/solve`, {});
 
@@ -94,7 +91,6 @@ describe('Roster operations', () => {
   });
 
   it('should dispatch actions and call client on terminate solving roster', async () => {
-    const showInfoMessageMock = jest.spyOn(alerts, "showInfoMessage");
     const solvingEndTime = moment("2018-01-01", "YYYY-MM-DD").toDate();
     MockDate.set(solvingEndTime);
 
@@ -109,12 +105,11 @@ describe('Roster operations', () => {
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/terminate`, {});
     
     expect(store.getActions()).toEqual([
-      actions.terminateSolvingRosterEarly()
+      actions.terminateSolvingRosterEarly(),
+      alert.showInfoMessage("finishSolvingRoster", { finishSolvingTime: moment(solvingEndTime).format("LLL") })
     ]);
 
     expect(mockRefreshShiftRoster).toBeCalled();
-    expect(showInfoMessageMock).toBeCalled();
-    expect(showInfoMessageMock).toBeCalledWith("Finished Solving Roster", `Finished Solving Roster at ${moment(solvingEndTime).format("LLL")}`);
   });
 
   it('should dispatch the last shift roster REST call on refreshShiftRoster', async () => {
@@ -223,7 +218,6 @@ describe('Roster operations', () => {
   it('should dispatch actions and call client on publish', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
     const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster").mockImplementation(() => () => {});
 
     onPost(`/tenant/${tenantId}/roster/publishAndProvision`, {}, {
@@ -237,16 +231,15 @@ describe('Roster operations', () => {
       actions.publishRoster({
         publishedFromDate: moment("2018-01-01").toDate(),
         publishedToDate: moment("2018-01-08").toDate()
-      })
+      }),
+      alert.showSuccessMessage("publish",
+        { from: moment("2018-01-01").format("LL"), to: moment("2018-01-08").format("LL") })
     ]);
 
     expect(client.post).toBeCalledTimes(1);
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/publishAndProvision`, {});
 
     expect(mockRefreshShiftRoster).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("Published Roster",
-      `Published from ${moment("2018-01-01").format("LL")} to ${moment("2018-01-08").format("LL")}.`);
   });
 
   it('should dispatch actions and call client on getCurrentShiftRoster', async () => {
@@ -545,5 +538,9 @@ const state: AppState = {
   },
   solverState: {
     isSolving: false
+  },
+  alerts: {
+    alertList: [],
+    idGeneratorIndex: 0
   }
 };

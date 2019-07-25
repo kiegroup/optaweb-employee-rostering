@@ -16,19 +16,27 @@
 
 import { AxiosInstance, AxiosResponse, AxiosStatic } from 'axios';
 
-import { showServerError, showServerErrorMessage } from 'ui/Alerts';
+import { alert } from 'store/alert';
 import { ServerSideExceptionInfo } from 'types';
+import { ThunkDispatch } from 'redux-thunk';
+import { AppState } from 'store/types';
 
 export default class RestServiceClient {
 
   restClient: AxiosInstance;
+  dispatch: ThunkDispatch<AppState, any, any> | null;
 
   constructor(baseURL: string, axios: AxiosStatic) {
     this.restClient = axios.create({
       baseURL: baseURL,
       validateStatus: () => true
     });
+    this.dispatch = null;
     this.handleResponse = this.handleResponse.bind(this);
+  }
+
+  setDispatch(dispatch: ThunkDispatch<AppState, any, any>) {
+    this.dispatch = dispatch;
   }
 
   get<T>(url: string): Promise<T> {
@@ -52,14 +60,17 @@ export default class RestServiceClient {
     if (200 <= res.status && res.status <= 300) {
       return Promise.resolve(res.data);
     }
-    else {
+    else if (this.dispatch !== null) {
       if (res.headers["content-type"] === "application/json") {
-        showServerError(res.data as unknown as ServerSideExceptionInfo)
+        this.dispatch(alert.showServerError(res.data as unknown as ServerSideExceptionInfo))
       }
       else {
-        showServerErrorMessage(res.statusText);
+        this.dispatch(alert.showServerErrorMessage(res.statusText));
       }
       return Promise.reject(res.status);
+    }
+    else {
+      throw Error("Dispatch was not passed to RestServiceClient");
     }
   }
 }

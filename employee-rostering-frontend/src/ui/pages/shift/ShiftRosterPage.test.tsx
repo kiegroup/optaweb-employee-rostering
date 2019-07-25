@@ -19,11 +19,10 @@ import * as React from 'react';
 import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
-import { EventWrapper, ShiftRosterPage } from './ShiftRosterPage';
+import { EventWrapper, ShiftRosterPage, Props } from './ShiftRosterPage';
 import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
 import "moment/locale/en-ca";
-import * as alerts from 'ui/Alerts';
 import { getShiftColor } from './ShiftEvent';
 import color from 'color';
 
@@ -194,14 +193,13 @@ describe('Shift Roster Page', () => {
   });
 
   it('should call refreshShiftRoster and show an info message when the refresh button is clicked', () => {
-    const showInfoMessageMock = jest.spyOn(alerts, "showInfoMessage");
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
     shiftRosterPage.find('Button[aria-label="Refresh"]').simulate("click");
     expect(baseProps.refreshShiftRoster).toBeCalled();
-    expect(showInfoMessageMock).toBeCalled();
-    expect(showInfoMessageMock).toBeCalledWith("Info", "The Shift Roster was refreshed.");
+    expect(baseProps.showInfoMessage).toBeCalled();
+    expect(baseProps.showInfoMessage).toBeCalledWith("shiftRosterRefresh");
   });
 
   it('call deleteShift when the EditShiftModal delete a shift', () => {
@@ -460,7 +458,7 @@ const rosterState: RosterState = {
   timeZone: "EST"
 };
 
-const baseProps = {
+const baseProps: Props = {
   isSolving: false,
   isLoading: false,
   allSpotList: [spot],
@@ -479,5 +477,6 @@ const baseProps = {
   refreshShiftRoster: jest.fn(),
   solveRoster: jest.fn(),
   publishRoster:jest.fn(),
-  terminateSolvingRosterEarly: jest.fn()
+  terminateSolvingRosterEarly: jest.fn(),
+  showInfoMessage: jest.fn()
 }
