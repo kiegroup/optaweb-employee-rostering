@@ -16,6 +16,7 @@
 
 import { Action } from 'redux';
 import { AlertInfo } from 'store/alert/types';
+import { BasicObject } from 'types';
 
 export enum ActionType {
   ADD_ALERT = 'ADD_ALERT',
@@ -32,13 +33,18 @@ export interface RemoveAlertAction extends Action<ActionType.REMOVE_ALERT> {
 
 export type AlertAction = AddAlertAction | RemoveAlertAction;
 
+export enum AlertComponent {
+  SERVER_SIDE_EXCEPTION_DIALOG = 'SERVER_SIDE_EXCEPTION_DIALOG'
+}
+
 export interface AlertInfo {
   id?: number;
   createdAt?: Date;
   i18nKey: string;
   variant: "success" | "danger" | "warning" | "info";
-  params: any;
-  components?: React.ReactNode[];
+  params: BasicObject;
+  components: AlertComponent[];
+  componentProps: BasicObject[];
 }
 
 export interface AlertList {
