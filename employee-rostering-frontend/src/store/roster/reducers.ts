@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RosterStateActionType, SolverAction, ShiftRosterViewActionType, RosterStateAction, ShiftRosterViewAction, CurrentSolverState, CurrentRosterState, CurrentShiftRoster, SolverActionType } from './types';
+import { RosterStateActionType, SolverAction, ShiftRosterViewActionType, RosterStateAction, ShiftRosterViewAction, CurrentSolverState, CurrentRosterState, CurrentShiftRoster, SolverActionType, CurrentAvailabilityRoster, AvailabilityRosterViewActionType, AvailabilityRosterViewAction } from './types';
 import moment from 'moment';
 
 export const initialSolverState: CurrentSolverState = {
@@ -30,6 +30,11 @@ export const initialShiftRosterState: CurrentShiftRoster = {
   isLoading: true,
   shiftRosterView: null
 };
+
+export const initialAvailabilityRosterState: CurrentAvailabilityRoster = {
+  isLoading: true,
+  availabilityRosterView: null
+}
 
 export const rosterStateReducer = (state = initialRosterState, action: RosterStateAction): CurrentRosterState => {
   switch (action.type) {
@@ -70,6 +75,20 @@ export const shiftRosterViewReducer = (state = initialShiftRosterState, action: 
       return state;
   }
 }
+
+export const availabilityRosterReducer = (state = initialAvailabilityRosterState, action: AvailabilityRosterViewAction): CurrentAvailabilityRoster => {
+  switch (action.type) {
+    case AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_IS_LOADING: {
+      return { ...state, isLoading: action.isLoading };
+    }
+    case AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_VIEW: {
+      return { ...state, availabilityRosterView: action.availabilityRoster };
+    }
+    default:
+      return state;
+  }
+}
+
 
 export const solverReducer = (state = initialSolverState, action: SolverAction): CurrentSolverState => {
   switch (action.type) {

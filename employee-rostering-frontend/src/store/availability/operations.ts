@@ -18,13 +18,13 @@ import { ThunkCommandFactory } from '../types';
 import EmployeeAvailability from 'domain/EmployeeAvailability';
 import EmployeeAvailabilityView, { availabilityToAvailabilityView } from 'domain/EmployeeAvailabilityView';
 import moment from 'moment';
-import { showSuccessMessage, showErrorMessage } from 'ui/Alerts';
+import { alert } from 'store/alert';
 import { refreshShiftRoster, refreshAvailabilityRoster } from 'store/roster/operations';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
 
 export interface KindaEmployeeAvailabilityView extends Omit<EmployeeAvailabilityView, "startDateTime" | "endDateTime"> {
-  startDateTime: string,
-  endDateTime: string,
+  startDateTime: string;
+  endDateTime: string;
 }
 
 export function availabilityAdapter(employeeAvailability: EmployeeAvailability): KindaEmployeeAvailabilityView {
@@ -47,7 +47,7 @@ export const addEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, 
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
     return client.post<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/shift/add`, availabilityAdapter(employeeAvailability)).then(newEmployeeAvailability => {
-      showSuccessMessage("Successfully added Availability", `A new Availability for ${employeeAvailability.employee.name} starting at ${moment(newEmployeeAvailability.startDateTime).format("LLL")} and ending at ${moment(newEmployeeAvailability.endDateTime).format("LLL")} was successfully added.`)
+      dispatch(alert.showSuccessMessage("addAvailability", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
@@ -59,12 +59,12 @@ export const removeEmployeeAvailability: ThunkCommandFactory<EmployeeAvailabilit
     const shiftId = employeeAvailability.id;
     return client.delete<boolean>(`/tenant/${tenantId}/shift/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
-        showSuccessMessage("Successfully deleted Availability", `The Availability with id ${employeeAvailability.id} starting at ${moment(employeeAvailability.startDateTime).format("LLL")} and ending at ${moment(employeeAvailability.endDateTime).format("LLL")} was successfully deleted.`)
+        dispatch(alert.showSuccessMessage("removeAvailability", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
         dispatch(refreshShiftRoster());
         dispatch(refreshAvailabilityRoster());
       }
       else {
-        showErrorMessage("Error deleting Availability", `The Availability with id ${employeeAvailability.id} starting at ${moment(employeeAvailability.startDateTime).format("LLL")} and ending at ${moment(employeeAvailability.endDateTime).format("LLL")} could not be deleted.`);
+        dispatch(alert.showSuccessMessage("removeAvailabilityError", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
       }
     });
   };
@@ -73,7 +73,7 @@ export const updateEmployeeAvailability: ThunkCommandFactory<EmployeeAvailabilit
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
     return client.put<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/shift/update`, availabilityAdapter(employeeAvailability)).then(updatedAvailability => {
-      showSuccessMessage("Successfully updated Availability", `The Availability with id "${updatedAvailability.id}" was successfully updated.`);
+      dispatch(alert.showSuccessMessage("updateAvailability", { id: updatedAvailability.id }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
