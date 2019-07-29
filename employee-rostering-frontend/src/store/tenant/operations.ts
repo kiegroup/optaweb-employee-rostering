@@ -24,7 +24,7 @@ import { Action } from 'redux';
 import { rosterOperations } from 'store/roster';
 import { spotOperations, spotSelectors } from 'store/spot';
 import { contractOperations } from 'store/contract';
-import { employeeOperations } from 'store/employee';
+import { employeeOperations, employeeSelectors } from 'store/employee';
 import * as rosterActions from 'store/roster/actions';
 import moment from 'moment';
 
@@ -43,12 +43,20 @@ function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>, state: () => 
       const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
       const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
       const spotList = spotSelectors.getSpotList(state());
+      const employeeList = employeeSelectors.getEmployeeList(state());
       const shownSpots = (spotList.length > 0)? [spotList[0]] : [];
+      const shownEmployees = (employeeList.length > 0)? [employeeList[0]] : [];
 
       dispatch(rosterOperations.getShiftRosterFor({
         fromDate: startDate,
         toDate: endDate,
         spotList: shownSpots
+      }));
+
+      dispatch(rosterOperations.getAvailabilityRosterFor({
+        fromDate: startDate,
+        toDate: endDate,
+        employeeList: shownEmployees
       }));
     }
   });

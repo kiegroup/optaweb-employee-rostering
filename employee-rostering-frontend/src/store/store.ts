@@ -29,7 +29,7 @@ import contractReducer from './contract/reducers';
 import employeeReducer from './employee/reducers';
 import alertReducer from './alert/reducers';
 import axios from 'axios';
-import { rosterStateReducer, shiftRosterViewReducer, solverReducer } from './roster/reducers';
+import { rosterStateReducer, shiftRosterViewReducer, availabilityRosterReducer, solverReducer } from './roster/reducers';
 
 export interface StoreConfig {
   readonly restBaseURL: string;
@@ -57,6 +57,7 @@ export function configureStore(
     employeeList: employeeReducer,
     rosterState: rosterStateReducer,
     shiftRoster: shiftRosterViewReducer,
+    availabilityRoster: availabilityRosterReducer,
     solverState: solverReducer,
     alerts: alertReducer
   });
