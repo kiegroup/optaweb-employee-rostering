@@ -20,8 +20,15 @@ export interface PaginationData {
   itemsPerPage: number;
   pageNumber: number;
 }
+
 export interface ObjectNumberMap<T> {
   [index: number]: T;
+}
+
+type Basic = number|string|boolean|null|undefined;
+
+export interface BasicObject {
+  [property: string]: Basic|Basic[]|BasicObject|BasicObject[];
 }
 
 export interface ServerSideExceptionInfo {
