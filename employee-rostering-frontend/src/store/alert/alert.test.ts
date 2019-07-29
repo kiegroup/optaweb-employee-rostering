@@ -13,17 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { Component } from 'react'; 
-import { shallow } from 'enzyme';
-import toJson from 'enzyme-to-json';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import { ServerSideExceptionDialog } from './operations';
 import reducer, { alert } from './index';
 import { withElement, withoutElementWithId} from 'util/ImmutableCollectionOperations';
-import { ServerSideExceptionInfo } from 'types';
-import { AlertInfo } from './types';
+import { ServerSideExceptionInfo, BasicObject } from 'types';
+import { AlertInfo, AlertComponent } from './types';
 
 describe('Alert operations', () => {
   it('should dispatch actions on showSuccessMessage', async () => {
@@ -54,7 +50,7 @@ describe('Alert operations', () => {
 
   it('should dispatch actions on showServerError', async () => {
     const { store } = mockStore(state);
-    const serverSideException: ServerSideExceptionInfo = {
+    const serverSideException: ServerSideExceptionInfo & BasicObject = {
       i18nKey: "error1",
       exceptionMessage: "message1",
       exceptionClass: "Error1",
@@ -71,7 +67,7 @@ describe('Alert operations', () => {
     };
     
     await store.dispatch(alert.showServerError(serverSideException));
-    expect(store.getActions()).toEqual([alert.showMessage("danger", "exception", { message: "message1" }, [<ServerSideExceptionDialog {...serverSideException} key={0} />])]);
+    expect(store.getActions()).toEqual([alert.showMessage("danger", "exception", { message: "message1" }, [AlertComponent.SERVER_SIDE_EXCEPTION_DIALOG], [serverSideException])]);
   });
 
   it('should dispatch actions on showServerErrorMessage', async () => {
@@ -83,49 +79,6 @@ describe('Alert operations', () => {
     expect(store.getActions()).toEqual([alert.showMessage("danger", i18nKey, params)]);
   });
 
-  it('should render an ServerSideException Alert correctly', () => {
-    const serverSideException: ServerSideExceptionInfo = {
-      i18nKey: "error1",
-      exceptionMessage: "message1",
-      exceptionClass: "Error1",
-      messageParameters: ["hi"],
-      stackTrace: ["1.1", "1.2", "1.3"],
-      exceptionCause: {
-        i18nKey: "error2",
-        exceptionMessage: "message2",
-        exceptionClass: "Error2",
-        messageParameters: [],
-        stackTrace: ["2.1", "2.2", "2.3"],
-        exceptionCause: null
-      }
-    };
-
-    const serverSideExceptionDialog = shallow(<ServerSideExceptionDialog {...serverSideException}>Show Stack Trace</ServerSideExceptionDialog>);
-    expect(toJson(serverSideExceptionDialog)).toMatchSnapshot();
-  });
-
-  it('should render an ServerSideException Modal correctly', () => {
-    const serverSideException: ServerSideExceptionInfo = {
-      i18nKey: "error1",
-      exceptionMessage: "message1",
-      exceptionClass: "Error1",
-      messageParameters: ["hi"],
-      stackTrace: ["1.1", "1.2", "1.3"],
-      exceptionCause: {
-        i18nKey: "error2",
-        exceptionMessage: "message2",
-        exceptionClass: "Error2",
-        messageParameters: [],
-        stackTrace: ["2.1", "2.2", "2.3"],
-        exceptionCause: null
-      }
-    };
-
-    const serverSideExceptionDialog = shallow(<ServerSideExceptionDialog {...serverSideException}>Show Stack Trace</ServerSideExceptionDialog>);
-    serverSideExceptionDialog.find('Button[aria-label="Show Stack Trace"]').simulate("click");
-    expect(toJson(serverSideExceptionDialog)).toMatchSnapshot();
-  });
-
   it('should dispatch actions on showMessage', async () => {
     const { store } = mockStore(state);
     const variant = "success";
@@ -134,7 +87,7 @@ describe('Alert operations', () => {
     await store.dispatch(alert.showMessage(variant, i18nKey));
     expect(store.getActions()).toEqual([
       alert.addAlert({
-        variant, i18nKey, params: {}
+        variant, i18nKey, params: {}, components: [], componentProps: []
       })
     ]);
   });
@@ -144,7 +97,9 @@ describe('Alert operations', () => {
     const alertInfo: AlertInfo = {
       i18nKey: "key",
       variant: "info",
-      params: { name: "ha" }
+      params: { name: "ha" },
+      components: [],
+      componentProps: []
     };
     
     await store.dispatch(alert.addAlert(alertInfo));
@@ -159,7 +114,9 @@ describe('Alert operations', () => {
       id: 1,
       i18nKey: "key",
       variant: "info",
-      params: { name: "ha" }
+      params: { name: "ha" },
+      components: [],
+      componentProps: []
     };
     
     await store.dispatch(alert.removeAlert(alertInfo));
@@ -174,7 +131,9 @@ describe('Alert reducers', () => {
     createdAt: new Date(),
     i18nKey: "alert2",
     variant: "success",
-    params: {}
+    params: {},
+    components: [],
+    componentProps: []
   }
   const removedAlertId = 0;
 
@@ -229,7 +188,9 @@ const state: AppState = {
       createdAt: new Date(),
       i18nKey: "alert1",
       variant: "info",
-      params: {}
+      params: {},
+      components: [],
+      componentProps: []
     }],
     idGeneratorIndex: 1
   }

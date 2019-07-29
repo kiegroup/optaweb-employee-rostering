@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Alert operations should render an ServerSideException Alert correctly 1`] = `
+exports[`ServerSideExceptionDialog should render an ServerSideException Alert correctly 1`] = `
 <Fragment>
   error1
   <Button
@@ -75,7 +75,7 @@ exports[`Alert operations should render an ServerSideException Alert correctly 1
 </Fragment>
 `;
 
-exports[`Alert operations should render an ServerSideException Modal correctly 1`] = `
+exports[`ServerSideExceptionDialog should render an ServerSideException Modal correctly 1`] = `
 <Fragment>
   error1
   <Button

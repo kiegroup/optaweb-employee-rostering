@@ -17,7 +17,7 @@
 import { AxiosInstance, AxiosResponse, AxiosStatic } from 'axios';
 
 import { alert } from 'store/alert';
-import { ServerSideExceptionInfo } from 'types';
+import { ServerSideExceptionInfo, BasicObject } from 'types';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState } from 'store/types';
 
@@ -62,7 +62,7 @@ export default class RestServiceClient {
     }
     else if (this.dispatch !== null) {
       if (res.headers["content-type"] === "application/json") {
-        this.dispatch(alert.showServerError(res.data as unknown as ServerSideExceptionInfo))
+        this.dispatch(alert.showServerError(res.data as unknown as ServerSideExceptionInfo & BasicObject))
       }
       else {
         this.dispatch(alert.showServerErrorMessage(res.statusText));
