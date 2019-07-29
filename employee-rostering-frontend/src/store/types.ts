@@ -22,7 +22,7 @@ import { SkillList } from 'store/skill/types';
 import { SpotList } from 'store/spot/types';
 import { ContractList } from './contract/types';
 import { EmployeeList } from './employee/types';
-import { CurrentRosterState, CurrentShiftRoster, CurrentSolverState } from './roster/types';
+import { CurrentRosterState, CurrentShiftRoster, CurrentAvailabilityRoster, CurrentSolverState } from './roster/types';
 import { AlertList } from './alert/types';
 
 /**
@@ -65,6 +65,7 @@ export interface AppState {
   readonly employeeList: EmployeeList;
   readonly rosterState: CurrentRosterState;
   readonly shiftRoster: CurrentShiftRoster;
+  readonly availabilityRoster: CurrentAvailabilityRoster;
   readonly solverState: CurrentSolverState;
   readonly alerts: AlertList;
 }

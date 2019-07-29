@@ -32,6 +32,15 @@
 }
 /* End of Hack */
 
+.availability {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0.75;
+}
+
 
 /* Change the background color to match PatternFly */
 .rbc-time-view {

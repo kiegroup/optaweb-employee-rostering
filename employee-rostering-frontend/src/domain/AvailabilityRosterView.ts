@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-import DomainObjectView from './DomainObjectView';
 import ShiftView from './ShiftView';
 import RosterView from './RosterView';
 import { ObjectNumberMap } from 'types';
-import EmployeeAvailability from './EmployeeAvailability';
+import EmployeeAvailabilityView from './EmployeeAvailabilityView';
 
 export default interface AvailabilityRosterView extends RosterView {
   employeeIdToShiftViewListMap: ObjectNumberMap<ShiftView[]>;
-  employeeIdToAvailabilityViewListMap: ObjectNumberMap<EmployeeAvailability[]>;
+  employeeIdToAvailabilityViewListMap: ObjectNumberMap<EmployeeAvailabilityView[]>;
   unassignedShiftViewList: ShiftView[];
 }
