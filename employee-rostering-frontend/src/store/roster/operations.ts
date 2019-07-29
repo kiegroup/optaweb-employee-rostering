@@ -27,11 +27,11 @@ import Spot from 'domain/Spot';
 import { alert } from 'store/alert';
 import { ThunkDispatch } from 'redux-thunk';
 import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/operations';
+import { KindaEmployeeAvailabilityView, kindaAvailabilityViewAdapter } from 'store/availability/operations';
 import RestServiceClient from 'store/rest';
 import { AddAlertAction } from 'store/alert/types';
 import Employee from 'domain/Employee';
 import AvailabilityRosterView from 'domain/AvailabilityRosterView';
-import { KindaEmployeeAvailabilityView } from 'store/availability/operations';
 
 export interface RosterSliceInfo {
   fromDate: Date;
@@ -44,7 +44,7 @@ interface KindaShiftRosterView extends Omit<ShiftRosterView, "spotIdToShiftViewL
 
 interface KindaAvailabilityRosterView extends Omit<AvailabilityRosterView, "employeeIdToShiftViewListMap" | "employeeIdToAvailabilityViewListMap" | "unassignedShiftViewList" > {
   employeeIdToShiftViewListMap: ObjectNumberMap<KindaShiftView[]>;
-  employeeIdToAvailabilityViewListMap: ObjectNumberMap<KindaEmployeeAvailabilityView>,
+  employeeIdToAvailabilityViewListMap: ObjectNumberMap<KindaEmployeeAvailabilityView[]>;
   unassignedShiftViewList: KindaShiftView[];
 }
 
@@ -107,8 +107,8 @@ export const refreshShiftRoster: ThunkCommandFactory<void, SetShiftRosterIsLoadi
 
 export const refreshAvailabilityRoster: ThunkCommandFactory<void, SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = () =>
   (dispatch, state, client) => {
-    if (lastCalledShiftRosterArgs !== null && lastCalledShiftRoster !== null) {
-      dispatch(lastCalledShiftRoster(lastCalledShiftRosterArgs));
+    if (lastCalledAvailabilityRosterArgs !== null && lastCalledAvailabilityRoster !== null) {
+      dispatch(lastCalledAvailabilityRoster(lastCalledAvailabilityRosterArgs));
     }
   }
 
@@ -140,6 +140,17 @@ function convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView: KindaS
     ...newShiftRosterView,
     spotIdToShiftViewListMap: mapObjectNumberMap(newShiftRosterView.spotIdToShiftViewListMap, shiftViewList =>
       shiftViewList.map(kindaShiftViewAdapter))
+  };
+}
+
+function convertKindaAvailabilityRosterViewToAvailabilityRosterView(newAvailabilityRosterView: KindaAvailabilityRosterView): AvailabilityRosterView {
+  return {
+    ...newAvailabilityRosterView,
+    employeeIdToAvailabilityViewListMap: mapObjectNumberMap(newAvailabilityRosterView.employeeIdToAvailabilityViewListMap, availabilityViewList =>
+      availabilityViewList.map(kindaAvailabilityViewAdapter)),
+    employeeIdToShiftViewListMap: mapObjectNumberMap(newAvailabilityRosterView.employeeIdToShiftViewListMap, shiftViewList =>
+      shiftViewList.map(kindaShiftViewAdapter)),
+    unassignedShiftViewList: newAvailabilityRosterView.unassignedShiftViewList.map(kindaShiftViewAdapter),
   };
 }
 
@@ -186,5 +197,51 @@ export const getShiftRosterFor: ThunkCommandFactory<RosterSliceInfo & { spotList
       lastCalledShiftRoster = getShiftRosterFor;
       lastCalledShiftRosterArgs = params;
       dispatch(actions.setShiftRosterIsLoading(false));
+    });
+  };
+
+export const getCurrentAvailabilityRoster: ThunkCommandFactory<PaginationData, SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = pagination =>
+  (dispatch, state, client) => {
+    const tenantId = state().tenantData.currentTenantId;
+    dispatch(actions.setAvailabilityRosterIsLoading(true));
+    return client.get<KindaAvailabilityRosterView>(`/tenant/${tenantId}/roster/availabilityRosterView/current?p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`).then(newAvailabilityRosterView => {
+      const availabilityRosterView = convertKindaAvailabilityRosterViewToAvailabilityRosterView(newAvailabilityRosterView);
+      dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
+      lastCalledShiftRoster = getCurrentShiftRoster;
+      lastCalledShiftRosterArgs = pagination;
+      dispatch(actions.setAvailabilityRosterIsLoading(false));
+    });
+  };
+
+export const getAvailabilityRoster: ThunkCommandFactory<RosterSliceInfo & { pagination: PaginationData }, SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params =>
+  (dispatch, state, client) => {
+    const tenantId = state().tenantData.currentTenantId;
+    const fromDateAsString = moment(params.fromDate).format("YYYY-MM-DD");
+    const toDateAsString = moment(params.toDate).add(1, "day").format("YYYY-MM-DD");
+    dispatch(actions.setAvailabilityRosterIsLoading(true));
+    return client.get<KindaAvailabilityRosterView>(`/tenant/${tenantId}/roster/availabilityRosterView?` +
+    `p=${params.pagination.pageNumber}&n=${params.pagination.itemsPerPage}` +
+    `&startDate=${fromDateAsString}&endDate=${toDateAsString}`).then(newAvailabilityRosterView => {
+      const availabilityRosterView = convertKindaAvailabilityRosterViewToAvailabilityRosterView(newAvailabilityRosterView);
+      dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
+      lastCalledShiftRoster = getShiftRoster;
+      lastCalledShiftRosterArgs = params;
+      dispatch(actions.setAvailabilityRosterIsLoading(false));
+    });
+  };
+
+export const getAvailabilityRosterFor: ThunkCommandFactory<RosterSliceInfo & { employeeList: Employee[] }, SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params =>
+  (dispatch, state, client) => {
+    const tenantId = state().tenantData.currentTenantId;
+    const fromDateAsString = moment(params.fromDate).format("YYYY-MM-DD");
+    const toDateAsString = moment(params.toDate).add(1, "day").format("YYYY-MM-DD");
+    dispatch(actions.setAvailabilityRosterIsLoading(true));
+    return client.post<KindaAvailabilityRosterView>(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
+    `&startDate=${fromDateAsString}&endDate=${toDateAsString}`, params.employeeList).then(newAvailabilityRosterView => {
+      const availabilityRosterView = convertKindaAvailabilityRosterViewToAvailabilityRosterView(newAvailabilityRosterView);
+      dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
+      lastCalledShiftRoster = getShiftRosterFor;
+      lastCalledShiftRosterArgs = params;
+      dispatch(actions.setAvailabilityRosterIsLoading(false));
     });
   };

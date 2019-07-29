@@ -19,10 +19,14 @@ import Shift from 'domain/Shift';
 import Spot from 'domain/Spot';
 import ShiftRosterView from 'domain/ShiftRosterView';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
+import Employee from 'domain/Employee';
+import AvailabilityRosterView from 'domain/AvailabilityRosterView';
+import { spotSelectors } from 'store/spot';
+import EmployeeAvailability from 'domain/EmployeeAvailability';
 
 function isLoading(state: AppState) {
   return state.spotList.isLoading || state.employeeList.isLoading || state.skillList.isLoading ||
-    state.contractList.isLoading || state.shiftRoster.isLoading ||
+    state.contractList.isLoading || state.shiftRoster.isLoading || state.availabilityRoster.isLoading ||
     state.rosterState.isLoading;
 }
 
@@ -43,6 +47,45 @@ export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
       spot: spot,
       rotationEmployee: (sv.rotationEmployeeId !== null)? employeeSelectors.getEmployeeById(state, sv.rotationEmployeeId) : null,
       employee: (sv.employeeId !== null)? employeeSelectors.getEmployeeById(state, sv.employeeId) : null
+    }));
+  }
+  else {
+    return [];
+  }
+};
+
+export const getEmployeeListInAvailabilityRoster = (state: AppState): Employee[] => {
+  if (isLoading(state)) {
+    return [];
+  }
+  return (state.availabilityRoster.availabilityRosterView as AvailabilityRosterView).employeeList;
+};
+
+export const getShiftListForEmployee = (state: AppState, employee: Employee): Shift[] => {
+  if (isLoading(state)) {
+    throw Error("Availability Roster is loading");
+  }
+  if ((employee.id as number) in (state.availabilityRoster.availabilityRosterView as AvailabilityRosterView).employeeIdToShiftViewListMap) {
+    return ((state.availabilityRoster.availabilityRosterView as AvailabilityRosterView).employeeIdToShiftViewListMap[employee.id as number]).map(sv => ({
+      ...objectWithout(sv, "spotId", "rotationEmployeeId", "employeeId"),
+      spot: spotSelectors.getSpotById(state, sv.spotId),
+      employee: employee,
+      rotationEmployee: (sv.rotationEmployeeId !== null)? employeeSelectors.getEmployeeById(state, sv.rotationEmployeeId) : null,
+    }));
+  }
+  else {
+    return [];
+  }
+};
+
+export const getAvailabilityListForEmployee = (state: AppState, employee: Employee): EmployeeAvailability[] => {
+  if (isLoading(state)) {
+    throw Error("Availability Roster is loading");
+  }
+  if ((employee.id as number) in (state.availabilityRoster.availabilityRosterView as AvailabilityRosterView).employeeIdToAvailabilityViewListMap) {
+    return ((state.availabilityRoster.availabilityRosterView as AvailabilityRosterView).employeeIdToAvailabilityViewListMap[employee.id as number]).map(ea => ({
+      ...objectWithout(ea, "employeeId"),
+      employee: employeeSelectors.getEmployeeById(state, ea.employeeId)
     }));
   }
   else {
