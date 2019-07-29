@@ -77,6 +77,7 @@ export interface TerminateSolvingRosterEarlyAction extends Action<SolverActionTy
 
 export type RosterStateAction = SetRosterStateIsLoadingAction | SetRosterStateAction | PublishRosterAction;
 export type ShiftRosterViewAction = SetShiftRosterIsLoadingAction | SetShiftRosterViewAction;
+export type AvailabilityRosterViewAction = SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction;
 export type SolverAction = SolveRosterAction | TerminateSolvingRosterEarlyAction;
 
 export interface PublishResult {
