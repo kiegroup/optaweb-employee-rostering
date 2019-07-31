@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class SpotRestControllerTest {
+public class SpotRestControllerTest extends BaseTest {
 
     @Autowired
     private TestRestTemplate spotRestTemplate;

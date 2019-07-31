@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class SkillServiceTest {
+public class SkillServiceTest extends BaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(SkillServiceTest.class);
 
