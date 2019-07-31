@@ -59,7 +59,7 @@ public class EmployeeService extends AbstractRestService {
         Optional<Employee> employeeOptional = employeeRepository.findById(id);
 
         if (!employeeOptional.isPresent()) {
-            return false;
+            throw new EntityNotFoundException("No Employee entity found with ID (" + id + ").");
         }
 
         validateTenantIdParameter(tenantId, employeeOptional.get());

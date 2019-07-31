@@ -57,7 +57,7 @@ public class ContractService extends AbstractRestService {
         Optional<Contract> contractOptional = contractRepository.findById(id);
 
         if (!contractOptional.isPresent()) {
-            return false;
+            throw new EntityNotFoundException("No Contract entity found with ID (" + id + ").");
         }
 
         validateTenantIdParameter(tenantId, contractOptional.get());
