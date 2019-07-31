@@ -21,6 +21,9 @@
 .rbc-events-container {
     display: grid !important;
     grid-template-rows: repeat(100, 1fr) !important;
+    margin-top: -6px;
+    margin-bottom: -6px;
+    overflow: hidden;
 }
   
 .rbc-day-slot .rbc-event {
@@ -31,6 +34,32 @@
     height: 100% !important;
 }
 /* End of Hack */
+
+.rbc-header.published-day::before {
+    content: " ";
+    font-family: "pficon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-style: normal;
+    font-weight: normal;
+    font-feature-settings: normal;
+    font-variant: normal;
+    text-decoration: none;
+    text-transform: none;
+}
+
+.rbc-header.draft-day::before {
+    content: " ";
+    font-family: "pficon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-style: normal;
+    font-weight: normal;
+    font-feature-settings: normal;
+    font-variant: normal;
+    text-decoration: none;
+    text-transform: none;
+}
 
 .availability {
     position: absolute !important;
@@ -101,4 +130,37 @@
   
 .rbc-no-allday-cell .rbc-time-view .rbc-header {
     border-bottom: none !important;
+}
+
+/* Make times centered on line */
+.rbc-time-slot {
+    margin-top: -0.75em;
+}
+
+.rbc-label {
+    text-align: left;
+    background-color: var(--pf-global--BackgroundColor--100) !important;
+}
+
+.rbc-time-gutter > .rbc-timeslot-group {
+    padding-right: 10px;
+}
+
+.rbc-time-header-gutter {
+    padding-right: 10px;
+}
+
+.rbc-timeslot-group:first-child > .rbc-time-slot > .rbc-label {
+    color: transparent; 
+}
+
+/* Make multi-day shifts look nice */
+.continues-next-day > .rbc-event {
+    border-bottom: none !important;
+    box-shadow: inset 0px -40px 20px -30px rgba(0,0,0,0.5);
+}
+
+.continues-from-previous-day > .rbc-event {
+    border-top: none !important;
+    box-shadow: inset 0px 40px 20px -30px rgba(0,0,0,0.5);
 }
