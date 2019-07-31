@@ -46,7 +46,7 @@ export function kindaAvailabilityViewAdapter(kindaAvailabilityView: KindaEmploye
 export const addEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability =>
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
-    return client.post<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/shift/add`, availabilityAdapter(employeeAvailability)).then(newEmployeeAvailability => {
+    return client.post<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/add`, availabilityAdapter(employeeAvailability)).then(newEmployeeAvailability => {
       dispatch(alert.showSuccessMessage("addAvailability", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
@@ -57,7 +57,7 @@ export const removeEmployeeAvailability: ThunkCommandFactory<EmployeeAvailabilit
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
     const shiftId = employeeAvailability.id;
-    return client.delete<boolean>(`/tenant/${tenantId}/shift/${shiftId}`).then(isSuccess => {
+    return client.delete<boolean>(`/tenant/${tenantId}/employee/availability/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
         dispatch(alert.showSuccessMessage("removeAvailability", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
         dispatch(refreshShiftRoster());
@@ -72,7 +72,7 @@ export const removeEmployeeAvailability: ThunkCommandFactory<EmployeeAvailabilit
 export const updateEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability =>
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
-    return client.put<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/shift/update`, availabilityAdapter(employeeAvailability)).then(updatedAvailability => {
+    return client.put<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/update`, availabilityAdapter(employeeAvailability)).then(updatedAvailability => {
       dispatch(alert.showSuccessMessage("updateAvailability", { id: updatedAvailability.id }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());

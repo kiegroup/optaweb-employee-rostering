@@ -15,9 +15,7 @@
  */
 import React, { PropsWithChildren } from "react";
 import Shift from "domain/Shift";
-import Spot from "domain/Spot";
 import { AppState } from "store/types";
-import { shiftOperations } from "store/shift"; 
 import { rosterOperations, rosterSelectors } from "store/roster";
 import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
@@ -38,6 +36,7 @@ import EmployeeAvailability from "domain/EmployeeAvailability";
 import { employeeSelectors } from "store/employee";
 import Employee from "domain/Employee";
 import { availabilityOperations } from "store/availability";
+import { start } from "repl";
 
 interface StateProps {
   isSolving: boolean;
@@ -65,8 +64,8 @@ const mapStateToProps = (state: AppState): StateProps => ({
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getAvailabilityListForEmployee(state, curr)),
     new Map<number, EmployeeAvailability[]>()),
-  startDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
-  endDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
+  startDate: (state.availabilityRoster.availabilityRosterView)? moment(state.availabilityRoster.availabilityRosterView.startDate).toDate() : null,
+  endDate: (state.availabilityRoster.availabilityRosterView)? moment(state.availabilityRoster.availabilityRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState
 }); 
@@ -116,10 +115,26 @@ function isAvailability(shiftOrAvailability: Shift|EmployeeAvailability): shiftO
   return !isShift(shiftOrAvailability);
 }
 
+function isDay(start: Date, end: Date) {
+  return start.getHours() === 0 && start.getMinutes() === 0 &&
+    end.getHours() === 0 && end.getMinutes() === 0
+}
+
+function isAllDayAvailability(ea: EmployeeAvailability) {
+  return isDay(ea.startDateTime, ea.endDateTime);
+}
+
 export function EventWrapper(props: PropsWithChildren<{
   event: ShiftOrAvailability;
   style: React.CSSProperties;
 }>): JSX.Element {
+  if (!props.style) {
+    return (
+      <div>
+        {props.children}
+      </div>
+    );
+  }
   const gridRowStart = parseInt(props.style.top as string) + 1;
   const gridRowEnd = parseInt(props.style.height as string) + gridRowStart;
   let className = "rbc-event";
@@ -220,21 +235,33 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     }
   }
 
-  getDayStyle(date: Date): { style: React.CSSProperties } {
-    if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
-      return {
-        style: {
-          backgroundColor: "var(--pf-global--BackgroundColor--300)"
+  getDayStyle(date: Date, availabilities: EmployeeAvailability[]): { className: string; style: React.CSSProperties } {
+    let className = "";
+    const style: React.CSSProperties = {};
+    const dayAvailability = availabilities.find(ea => !moment(ea.startDateTime).isAfter(date) && moment(date).isBefore(ea.endDateTime))
+    if (dayAvailability !== undefined) {
+      switch (dayAvailability.state) {
+        case "DESIRED": {
+          className = "desired";
+          break;
+        }
+        case "UNDESIRED": {
+          className = "undesired";
+          break;
+        }
+        case "UNAVAILABLE": {
+          className = "unavailable";
+          break;
         }
       }
+    }
+    else if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
+      style.backgroundColor = "var(--pf-global--BackgroundColor--300)";
     }
     else {
-      return {
-        style: {
-          backgroundColor: "var(--pf-global--BackgroundColor--100)"
-        }
-      }
+      style.backgroundColor = "var(--pf-global--BackgroundColor--100)"
     }
+    return { className, style };
   }
 
   render() {
@@ -294,9 +321,9 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               onChange={this.onDateChange}
             />
             <TypeaheadSelectInput
-              aria-label="Select Spot"
-              emptyText="Select Spot"
-              optionToStringMap={spot => spot.name}
+              aria-label="Select Employee"
+              emptyText="Select Employee"
+              optionToStringMap={employee => employee.name}
               options={this.props.allEmployeeList}
               defaultValue={this.props.shownEmployeeList[0]}
               onChange={this.onUpdateEmployeeList}
@@ -383,21 +410,32 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               localizer={localizer}
               events={events}
               titleAccessor={soa => isShift(soa.reference)? soa.reference.spot.name : soa.reference.state}
-              allDayAccessor={soa => false}
+              allDayAccessor={soa => isAvailability(soa.reference)? isAllDayAvailability(soa.reference) : false}
               startAccessor={soa => moment(soa.start).toDate()}
               endAccessor={soa => moment(soa.end).toDate()}
               toolbar={false}
               view="week"
               views={["week"]}
               onSelectSlot={(slotInfo: { start: string|Date; end: string|Date; action: "select"|"click"|"doubleClick" }) => {
-                if (slotInfo.action === "select") {
-                  this.props.addEmployeeAvailability({
-                    tenantId: employee.tenantId,
-                    startDateTime: moment(slotInfo.start).toDate(),
-                    endDateTime: moment(slotInfo.end).toDate(),
-                    employee: employee,
-                    state: "UNAVAILABLE"
-                  });
+                if (slotInfo.action === "select" || (slotInfo.action === "click" && isDay(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate()))) {
+                  if (isDay(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate())) {
+                    this.props.addEmployeeAvailability({
+                      tenantId: employee.tenantId,
+                      startDateTime: moment(slotInfo.start).toDate(),
+                      endDateTime: moment(slotInfo.end).add(1, "day").toDate(),
+                      employee: employee,
+                      state: "UNAVAILABLE"
+                    });
+                  }
+                  else {
+                    this.props.addEmployeeAvailability({
+                      tenantId: employee.tenantId,
+                      startDateTime: moment(slotInfo.start).toDate(),
+                      endDateTime: moment(slotInfo.end).toDate(),
+                      employee: employee,
+                      state: "UNAVAILABLE"
+                    });
+                  }
                 }
               }
               }
@@ -405,7 +443,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               onNavigate={() => {}}
               timeslots={4}
               eventPropGetter={this.getEventStyle}
-              dayPropGetter={this.getDayStyle}
+              dayPropGetter={day => this.getDayStyle(day, (this.props.employeeIdToAvailabilityListMap.get(employee.id as number) as EmployeeAvailability[]).filter(isAllDayAvailability))}
               selectable
               showMultiDayTimes
               components={{
