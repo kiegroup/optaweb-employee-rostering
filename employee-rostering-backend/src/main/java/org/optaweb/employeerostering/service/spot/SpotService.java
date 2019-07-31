@@ -57,7 +57,7 @@ public class SpotService extends AbstractRestService {
         Optional<Spot> spotOptional = spotRepository.findById(id);
 
         if (!spotOptional.isPresent()) {
-            return false;
+            throw new EntityNotFoundException("No Spot entity found with ID (" + id + ").");
         }
 
         validateTenantIdParameter(tenantId, spotOptional.get());
