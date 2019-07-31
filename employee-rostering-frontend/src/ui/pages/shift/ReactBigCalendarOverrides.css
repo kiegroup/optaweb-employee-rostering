@@ -41,10 +41,52 @@
     opacity: 0.75;
 }
 
+.unavailable .rbc-time-slot {
+    border-top: 1px solid black;
+    background-color: var(--pf-global--danger-color--100);
+}
+
+.unavailable.rbc-day-bg {
+    background-color: var(--pf-global--danger-color--100);
+}
+
+.unavailable .rbc-timeslot-group {
+    border-bottom: 1px solid black;
+}
+
+.undesired .rbc-time-slot {
+    border-top: 1px solid black;
+    background-color: var(--pf-global--warning-color--100);
+}
+
+.undesired.rbc-day-bg {
+    background-color: var(--pf-global--warning-color--100);
+}
+
+.undesired .rbc-timeslot-group {
+    border-bottom: 1px solid black;
+}
+
+.desired .rbc-time-slot {
+    border-top: 1px solid black;
+    background-color: var(--pf-global--success-color--200);
+}
+
+.desired.rbc-day-bg {
+    background-color: var(--pf-global--success-color--200);
+}
+
+.desired .rbc-timeslot-group {
+    border-bottom: 1px solid black;
+}
 
 /* Change the background color to match PatternFly */
 .rbc-time-view {
     background-color: var(--pf-global--BackgroundColor--100) !important;
+}
+
+.rbc-selected-cell {
+    background-color: var(--pf-global--active-color--200) !important;
 }
 
 .rbc-event {
@@ -53,10 +95,10 @@
 }
 
 /* Hide the all day cell */
-.rbc-allday-cell {
+.rbc-no-allday-cell .rbc-allday-cell {
     display: none !important;
 }
   
-.rbc-time-view .rbc-header {
+.rbc-no-allday-cell .rbc-time-view .rbc-header {
     border-bottom: none !important;
 }
