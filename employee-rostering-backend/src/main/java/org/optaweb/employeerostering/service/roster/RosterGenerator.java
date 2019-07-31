@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -54,14 +53,15 @@ import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.admin.SystemPropertiesRetriever;
 import org.optaweb.employeerostering.service.common.generator.StringDataGenerator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 @Component
-public class RosterGenerator {
+public class RosterGenerator implements ApplicationRunner {
 
     public static final double[] EXTRA_SHIFT_THRESHOLDS = {0.5, 0.8, 0.95};
 
@@ -332,9 +332,6 @@ public class RosterGenerator {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    private RosterGeneratorUtils rosterGeneratorUtils;
-
     @SuppressWarnings("unused")
     public RosterGenerator() {
     }
@@ -348,35 +345,77 @@ public class RosterGenerator {
         random = new Random(37);
     }
 
-    @PostConstruct
+    @Override
+    @Transactional
+    public void run(ApplicationArguments args) {
+        setUpGeneratedData();
+    }
+
+    @Transactional
     public void setUpGeneratedData() {
         //TODO: Check if Tenant list is empty before generating data. Application crashes from trying to recreate
         // existing entities
         ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
-        setUpGeneratedData(zoneId);
+        SystemPropertiesRetriever.DatabaseType databaseType = SystemPropertiesRetriever.determineDatabaseType();
+
+        random = new Random(37);
+
+        switch(databaseType) {
+            case NONE:
+                return;
+            case DEFAULT:
+                tenantNameGenerator.predictMaximumSizeAndReset(12);
+                generateRoster(10, 7, hospitalGeneratorType, zoneId);
+                generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(10, 7, guardSecurityGeneratorType, zoneId);
+                generateRoster(10, 7, callCenterGeneratorType, zoneId);
+                generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+        }
     }
 
-    public void setUpGeneratedData(ZoneId zoneId) {
-        random = new Random(37);
-        tenantNameGenerator.predictMaximumSizeAndReset(12);
-        rosterGeneratorUtils.generateRoster(10, 7, hospitalGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(10, 7, guardSecurityGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(10, 7, callCenterGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId, this);
-        rosterGeneratorUtils.generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId, this);
+    @Transactional
+    public Roster generateRoster(int spotListSize,
+                                 int lengthInDays,
+                                 RosterGenerator.GeneratorType generatorType,
+                                 ZoneId zoneId) {
+        int maxShiftSizePerDay = generatorType.timeslotRangeList.size() + EXTRA_SHIFT_THRESHOLDS.length;
+        // The average employee works 5 days out of 7
+        int employeeListSize = spotListSize * maxShiftSizePerDay * 7 / 5;
+        int skillListSize = (spotListSize + 4) / 5;
+
+        Tenant tenant = createTenant(generatorType, employeeListSize);
+        Integer tenantId = tenant.getId();
+        RosterParametrization rosterParametrization = createTenantConfiguration(generatorType,
+                                                                                                tenantId, zoneId);
+        RosterState rosterState = createRosterState(generatorType, tenant, zoneId, lengthInDays);
+
+        List<Skill> skillList = createSkillList(generatorType, tenantId, skillListSize);
+        List<Spot> spotList = createSpotList(generatorType, tenantId, spotListSize, skillList);
+        List<Contract> contractList = createContractList(tenantId);
+        List<Employee> employeeList = createEmployeeList(generatorType, tenantId, employeeListSize,
+                                                                         contractList, skillList);
+        List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId,
+                                                                                        rosterState, spotList,
+                                                                                        employeeList);
+        List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterParametrization,
+                                                                rosterState, spotList, shiftTemplateList);
+        List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
+                generatorType, tenantId, rosterParametrization, rosterState, employeeList, shiftList);
+
+        return new Roster((long) tenantId, tenantId, skillList, spotList, employeeList, employeeAvailabilityList,
+                          rosterParametrization, rosterState, shiftList);
     }
 
     public Roster generateRoster(int spotListSize, int lengthInDays) {
         ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
-        return rosterGeneratorUtils.generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId,
-                                                   this);
+        return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId);
     }
 
     @Transactional

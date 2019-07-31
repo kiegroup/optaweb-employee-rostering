@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -55,7 +56,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class EmployeeServiceTest {
+public class EmployeeServiceTest extends BaseTest {
 
     private static final Logger logger = LoggerFactory.getLogger(EmployeeServiceTest.class);
 
