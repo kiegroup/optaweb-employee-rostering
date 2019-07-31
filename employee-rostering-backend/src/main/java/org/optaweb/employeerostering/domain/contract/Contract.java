@@ -80,6 +80,14 @@ public class Contract extends AbstractPersistable {
         this.maximumMinutesPerYear = maximumMinutesPerYear;
     }
 
+    public Contract(ContractDTO contractDTO) {
+        this(contractDTO.getTenantId(), contractDTO.getName(), contractDTO.getMaximumMinutesPerDay(),
+             contractDTO.getMaximumMinutesPerWeek(), contractDTO.getMaximumMinutesPerMonth(),
+             contractDTO.getMaximumMinutesPerYear());
+        this.setId(contractDTO.getId());
+        this.setVersion(contractDTO.getVersion());
+    }
+
     @AssertTrue
     @JsonIgnore
     public boolean isValid() {

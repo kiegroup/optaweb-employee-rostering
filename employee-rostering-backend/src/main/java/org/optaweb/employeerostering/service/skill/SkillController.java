@@ -60,17 +60,13 @@ public class SkillController {
 
     @PostMapping("/add")
     public ResponseEntity<Skill> createSkill(@PathVariable Integer tenantId, @RequestBody SkillDTO skillDTO) {
-        Skill skill = new Skill(skillDTO.getTenantId(), skillDTO.getName());
-        skill.setId(skillDTO.getId());
-        skill.setVersion(skillDTO.getVersion());
+        Skill skill = new Skill(skillDTO);
         return new ResponseEntity<>(skillService.createSkill(tenantId, skill), HttpStatus.OK);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Skill> updateSkill(@PathVariable Integer tenantId, @RequestBody SkillDTO skillDTO) {
-        Skill skill = new Skill(skillDTO.getTenantId(), skillDTO.getName());
-        skill.setId(skillDTO.getId());
-        skill.setVersion(skillDTO.getVersion());
+        Skill skill = new Skill(skillDTO);
         return new ResponseEntity<>(skillService.updateSkill(tenantId, skill), HttpStatus.OK);
     }
 }

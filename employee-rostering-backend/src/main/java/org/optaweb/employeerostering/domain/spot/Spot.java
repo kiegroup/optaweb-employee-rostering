@@ -60,6 +60,12 @@ public class Spot extends AbstractPersistable {
         this.requiredSkillSet = requiredSkillSet;
     }
 
+    public Spot(SpotDTO spotDTO) {
+        this(spotDTO.getTenantId(), spotDTO.getName(), spotDTO.getRequiredSkillSet());
+        this.setId(spotDTO.getId());
+        this.setVersion(spotDTO.getVersion());
+    }
+
     @Override
     public String toString() {
         return name;

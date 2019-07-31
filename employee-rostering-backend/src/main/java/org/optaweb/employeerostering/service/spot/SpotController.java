@@ -60,17 +60,13 @@ public class SpotController {
 
     @PostMapping("/add")
     public ResponseEntity<Spot> createSpot(@PathVariable Integer tenantId, @RequestBody SpotDTO spotDTO) {
-        Spot spot = new Spot(spotDTO.getTenantId(), spotDTO.getName(), spotDTO.getRequiredSkillSet());
-        spot.setId(spotDTO.getId());
-        spot.setVersion(spotDTO.getVersion());
+        Spot spot = new Spot(spotDTO);
         return new ResponseEntity<>(spotService.createSpot(tenantId, spot), HttpStatus.OK);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Spot> updateSpot(@PathVariable Integer tenantId, @RequestBody SpotDTO spotDTO) {
-        Spot spot = new Spot(spotDTO.getTenantId(), spotDTO.getName(), spotDTO.getRequiredSkillSet());
-        spot.setId(spotDTO.getId());
-        spot.setVersion(spotDTO.getVersion());
+        Spot spot = new Spot(spotDTO);
         return new ResponseEntity<>(spotService.updateSpot(tenantId, spot), HttpStatus.OK);
     }
 }
