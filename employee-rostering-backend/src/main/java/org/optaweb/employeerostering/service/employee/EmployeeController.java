@@ -61,20 +61,14 @@ public class EmployeeController {
     @PostMapping("/add")
     public ResponseEntity<Employee> createEmployee(@PathVariable Integer tenantId,
                                                    @RequestBody EmployeeDTO employeeDTO) {
-        Employee employee = new Employee(employeeDTO.getTenantId(), employeeDTO.getName(), employeeDTO.getContract(),
-                                         employeeDTO.getSkillProficiencySet());
-        employee.setId(employeeDTO.getId());
-        employee.setVersion(employeeDTO.getVersion());
+        Employee employee = new Employee(employeeDTO);
         return new ResponseEntity<>(employeeService.createEmployee(tenantId, employee), HttpStatus.OK);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Employee> updateEmployee(@PathVariable Integer tenantId,
                                                    @RequestBody EmployeeDTO employeeDTO) {
-        Employee employee = new Employee(employeeDTO.getTenantId(), employeeDTO.getName(), employeeDTO.getContract(),
-                                         employeeDTO.getSkillProficiencySet());
-        employee.setId(employeeDTO.getId());
-        employee.setVersion(employeeDTO.getVersion());
+        Employee employee = new Employee(employeeDTO);
         return new ResponseEntity<>(employeeService.updateEmployee(tenantId, employee), HttpStatus.OK);
     }
 
