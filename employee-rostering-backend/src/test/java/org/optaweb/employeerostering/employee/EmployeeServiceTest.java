@@ -266,6 +266,30 @@ public class EmployeeServiceTest {
     }
 
     @Test
+    public void createNonMatchingSkillProficiencyTest() throws Exception {
+        Integer tenantId = 1;
+        String name = "name";
+
+        Skill skillA = createSkill(2, "A");
+
+        Set<Skill> testSkillSet = new HashSet<>();
+        testSkillSet.add(skillA);
+
+        Contract contract = createContract(tenantId, name);
+
+        Employee employee = new Employee(tenantId, name, contract, testSkillSet);
+        String body = (new ObjectMapper()).writeValueAsString(employee);
+
+        assertThatExceptionOfType(NestedServletException.class)
+                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
+                                                      .post("/rest/tenant/{tenantId}/employee/add", tenantId)
+                                                      .contentType(MediaType.APPLICATION_JSON)
+                                                      .content(body)))
+                .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
+                                     "The tenantId (1) does not match the skillProficiency (A)'s tenantId (2).");
+    }
+
+    @Test
     public void updateEmployeeTest() throws Exception {
         Integer tenantId = 1;
         String name = "name";
