@@ -316,6 +316,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           }}
           >
             <Calendar
+              className="rbc-no-allday-cell"
               key={spot.id}
               date={startDate}
               length={moment.duration(moment(startDate).to(moment(endDate))).asDays()}
