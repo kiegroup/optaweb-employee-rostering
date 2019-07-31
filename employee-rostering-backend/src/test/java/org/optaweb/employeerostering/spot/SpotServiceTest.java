@@ -161,14 +161,11 @@ public class SpotServiceTest {
     }
 
     @Test
-    public void deleteNonExistentSpotTest() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                            .delete("/rest/tenant/{tenantId}/spot/{id}", 1, -1L)
-                            .accept(MediaType.APPLICATION_JSON))
-                .andDo(mvcResult -> logger.info(mvcResult.toString()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json;charset=UTF-8"))
-                .andExpect(content().string("false"));
+    public void deleteNonExistentSpotTest() {
+        assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
+                .delete("/rest/tenant/{tenantId}/spot/{id}", 1, -1L)))
+                .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
+                        "Exception: No Spot entity found with ID (-1).");
     }
 
     @Test
