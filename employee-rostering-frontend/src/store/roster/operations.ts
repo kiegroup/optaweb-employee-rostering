@@ -207,8 +207,8 @@ export const getCurrentAvailabilityRoster: ThunkCommandFactory<PaginationData, S
     return client.get<KindaAvailabilityRosterView>(`/tenant/${tenantId}/roster/availabilityRosterView/current?p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`).then(newAvailabilityRosterView => {
       const availabilityRosterView = convertKindaAvailabilityRosterViewToAvailabilityRosterView(newAvailabilityRosterView);
       dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
-      lastCalledShiftRoster = getCurrentShiftRoster;
-      lastCalledShiftRosterArgs = pagination;
+      lastCalledAvailabilityRoster = getCurrentAvailabilityRoster;
+      lastCalledAvailabilityRosterArgs = pagination;
       dispatch(actions.setAvailabilityRosterIsLoading(false));
     });
   };
@@ -224,8 +224,8 @@ export const getAvailabilityRoster: ThunkCommandFactory<RosterSliceInfo & { pagi
     `&startDate=${fromDateAsString}&endDate=${toDateAsString}`).then(newAvailabilityRosterView => {
       const availabilityRosterView = convertKindaAvailabilityRosterViewToAvailabilityRosterView(newAvailabilityRosterView);
       dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
-      lastCalledShiftRoster = getShiftRoster;
-      lastCalledShiftRosterArgs = params;
+      lastCalledAvailabilityRoster = getAvailabilityRoster;
+      lastCalledAvailabilityRosterArgs = params;
       dispatch(actions.setAvailabilityRosterIsLoading(false));
     });
   };
@@ -240,8 +240,8 @@ export const getAvailabilityRosterFor: ThunkCommandFactory<RosterSliceInfo & { e
     `&startDate=${fromDateAsString}&endDate=${toDateAsString}`, params.employeeList).then(newAvailabilityRosterView => {
       const availabilityRosterView = convertKindaAvailabilityRosterViewToAvailabilityRosterView(newAvailabilityRosterView);
       dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
-      lastCalledShiftRoster = getShiftRosterFor;
-      lastCalledShiftRosterArgs = params;
+      lastCalledAvailabilityRoster = getAvailabilityRosterFor;
+      lastCalledAvailabilityRosterArgs = params;
       dispatch(actions.setAvailabilityRosterIsLoading(false));
     });
   };
