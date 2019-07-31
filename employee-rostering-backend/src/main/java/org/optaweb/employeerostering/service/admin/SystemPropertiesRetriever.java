@@ -22,6 +22,12 @@ import java.time.ZoneId;
 public class SystemPropertiesRetriever {
 
     public static final String ZONE_ID_SYSTEM_PROPERTY = "optaweb.generator.timeZoneId";
+    public static final String DATABASE_TYPE_PROPERTY = "optaweb.generator.database.type";
+
+    public enum DatabaseType {
+        NONE,
+        DEFAULT
+    }
 
     public static ZoneId determineZoneId() {
         String zoneIdProperty = System.getProperty(ZONE_ID_SYSTEM_PROPERTY);
@@ -34,6 +40,20 @@ public class SystemPropertiesRetriever {
             }
         }
         return ZoneId.systemDefault();
+    }
+
+    public static DatabaseType determineDatabaseType() {
+        String databaseTypeProperty = System.getProperty(DATABASE_TYPE_PROPERTY);
+        if (databaseTypeProperty != null) {
+            try {
+                return DatabaseType.valueOf(databaseTypeProperty);
+            }
+            catch (IllegalArgumentException e) {
+                throw new IllegalStateException("The system property (" + DATABASE_TYPE_PROPERTY
+                                                        + ") has an invalid value (" + databaseTypeProperty + ").", e);
+            }
+        }
+        return DatabaseType.DEFAULT;
     }
 
     private SystemPropertiesRetriever() {

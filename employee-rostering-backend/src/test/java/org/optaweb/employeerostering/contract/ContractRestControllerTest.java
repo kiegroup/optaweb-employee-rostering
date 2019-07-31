@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class ContractRestControllerTest {
+public class ContractRestControllerTest extends BaseTest {
 
     @Autowired
     private TestRestTemplate contractRestTemplate;
