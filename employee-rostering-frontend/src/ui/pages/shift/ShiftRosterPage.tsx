@@ -34,6 +34,7 @@ import ShiftEvent, { getShiftColor } from "./ShiftEvent";
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './ReactBigCalendarOverrides.css';
+import { rebeccapurple } from "color-name";
 
 interface StateProps {
   isSolving: boolean;
@@ -98,10 +99,20 @@ export function EventWrapper(props: PropsWithChildren<{
 }>): JSX.Element {
   const gridRowStart = parseInt(props.style.top as string) + 1;
   const gridRowEnd = parseInt(props.style.height as string) + gridRowStart;
+  let className = "rbc-event";
+
+  if (moment(props.event.endDateTime).get("date") !== moment(props.event.startDateTime).get("date")) {
+    if (gridRowStart === 1) {
+      className = className + " continues-from-previous-day";
+    }
+    if (gridRowEnd === 100) {
+      className = className + " continues-next-day";
+    }
+  }
 
   return (
     <div
-      className="rbc-event"
+      className={className}
       style={{
         gridRowStart: gridRowStart,
         gridRowEnd: gridRowEnd,
@@ -183,9 +194,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     }
   }
 
-  getDayStyle(date: Date): { style: React.CSSProperties } {
+  getDayStyle(date: Date): { className: string; style: React.CSSProperties } {
     if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
       return {
+        className: "published-day",
         style: {
           backgroundColor: "var(--pf-global--BackgroundColor--300)"
         }
@@ -193,6 +205,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     }
     else {
       return {
+        className: "draft-day",
         style: {
           backgroundColor: "var(--pf-global--BackgroundColor--100)"
         }
