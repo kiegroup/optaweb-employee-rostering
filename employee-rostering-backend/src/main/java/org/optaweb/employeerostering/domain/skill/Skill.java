@@ -44,6 +44,12 @@ public class Skill extends AbstractPersistable {
         this.name = name;
     }
 
+    public Skill(SkillDTO skillDTO) {
+        this(skillDTO.getTenantId(), skillDTO.getName());
+        this.setId(skillDTO.getId());
+        this.setVersion(skillDTO.getVersion());
+    }
+
     @Override
     public String toString() {
         return name;

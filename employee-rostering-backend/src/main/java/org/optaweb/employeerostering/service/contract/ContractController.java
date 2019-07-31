@@ -61,24 +61,14 @@ public class ContractController {
     @PostMapping("/add")
     public ResponseEntity<Contract> createContract(@PathVariable Integer tenantId,
                                                    @RequestBody ContractDTO contractDTO) {
-        Contract contract = new Contract(contractDTO.getTenantId(), contractDTO.getName(),
-                                         contractDTO.getMaximumMinutesPerDay(), contractDTO.getMaximumMinutesPerWeek(),
-                                         contractDTO.getMaximumMinutesPerMonth(),
-                                         contractDTO.getMaximumMinutesPerYear());
-        contract.setId(contractDTO.getId());
-        contract.setVersion(contractDTO.getVersion());
+        Contract contract = new Contract(contractDTO);
         return new ResponseEntity<>(contractService.createContract(tenantId, contract), HttpStatus.OK);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Contract> updateContract(@PathVariable Integer tenantId,
                                                    @RequestBody ContractDTO contractDTO) {
-        Contract contract = new Contract(contractDTO.getTenantId(), contractDTO.getName(),
-                                         contractDTO.getMaximumMinutesPerDay(), contractDTO.getMaximumMinutesPerWeek(),
-                                         contractDTO.getMaximumMinutesPerMonth(),
-                                         contractDTO.getMaximumMinutesPerYear());
-        contract.setId(contractDTO.getId());
-        contract.setVersion(contractDTO.getVersion());
+        Contract contract = new Contract(contractDTO);
         return new ResponseEntity<>(contractService.updateContract(tenantId, contract), HttpStatus.OK);
     }
 }
