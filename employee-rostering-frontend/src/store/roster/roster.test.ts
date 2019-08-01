@@ -24,6 +24,7 @@ import MockDate from 'mockdate';
 import moment from 'moment';
 import Spot from 'domain/Spot';
 import ShiftRosterView from 'domain/ShiftRosterView';
+import AvailabilityRosterView from 'domain/AvailabilityRosterView';
 
 const mockShiftRoster: ShiftRosterView = {
   tenantId: 0,
@@ -36,7 +37,25 @@ const mockShiftRoster: ShiftRosterView = {
     name: "Spot",
     requiredSkillSet: []
   }],
-  employeeList: [],
+  employeeList: [
+    {
+      tenantId: 0,
+      id: 20,
+      version: 0,
+      name: "Employee",
+      skillProficiencySet: [],
+      contract: {
+        tenantId: 0,
+        id: 30,
+        version: 0,
+        name: "Contract",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null
+      }
+    }
+  ],
   rosterState: {
     publishNotice: 0,
     firstDraftDate: moment("2018-01-01", "YYYY-MM-DD").toDate(),
@@ -56,7 +75,7 @@ const mockShiftRoster: ShiftRosterView = {
       startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
       endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
       spotId: 10,
-      employeeId: null,
+      employeeId: 20,
       rotationEmployeeId: null,
       indictmentScore: {
         hardScore: 0,
@@ -66,6 +85,77 @@ const mockShiftRoster: ShiftRosterView = {
       pinnedByUser: false
     }]
   }
+};
+
+const mockAvailabilityRoster: AvailabilityRosterView = {
+  tenantId: 0,
+  startDate: moment("2018-01-01", "YYYY-MM-DD").toISOString(),
+  endDate: moment("2018-01-01", "YYYY-MM-DD").toISOString(),
+  spotList: [{
+    tenantId: 0,
+    id: 10,
+    version: 0,
+    name: "Spot",
+    requiredSkillSet: []
+  }],
+  employeeList: [
+    {
+      tenantId: 0,
+      id: 20,
+      version: 0,
+      name: "Employee",
+      skillProficiencySet: [],
+      contract: {
+        tenantId: 0,
+        id: 30,
+        version: 0,
+        name: "Contract",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null
+      }
+    }
+  ],
+  rosterState: {
+    publishNotice: 0,
+    firstDraftDate: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+    publishLength: 0,
+    draftLength: 0,
+    unplannedRotationOffset: 5,
+    rotationLength: 10,
+    lastHistoricDate: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+    timeZone: "",
+    tenant: {
+      name: "Tenant"
+    }
+  },
+  employeeIdToShiftViewListMap: {
+    20: [{
+      tenantId: 0,
+      startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+      endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+      spotId: 10,
+      employeeId: 20,
+      rotationEmployeeId: null,
+      indictmentScore: {
+        hardScore: 0,
+        mediumScore: 0,
+        softScore: 0
+      },
+      pinnedByUser: false
+    }]
+  },
+  employeeIdToAvailabilityViewListMap: {
+    20: [{
+      tenantId: 0,
+      startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+      endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+      employeeId: 20,
+      state: "DESIRED"
+    }]
+  },
+  unassignedShiftViewList: []
 };
 
 describe('Roster operations', () => {
@@ -475,7 +565,23 @@ describe('Roster selectors', () => {
           startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
           endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
           spot: mockShiftRoster.spotList[0],
-          employee: null,
+          employee:  {
+            tenantId: 0,
+            id: 20,
+            version: 0,
+            name: "Employee",
+            skillProficiencySet: [],
+            contract: {
+              tenantId: 0,
+              id: 30,
+              version: 0,
+              name: "Contract",
+              maximumMinutesPerDay: null,
+              maximumMinutesPerWeek: null,
+              maximumMinutesPerMonth: null,
+              maximumMinutesPerYear: null
+            }
+          },
           rotationEmployee: null,
           indictmentScore: {
             hardScore: 0,
@@ -506,11 +612,31 @@ const state: AppState = {
   },
   employeeList: {
     isLoading: false,
-    employeeMapById: new Map()
+    employeeMapById: new Map([[
+      20, {
+        tenantId: 0,
+        id: 20,
+        version: 0,
+        name: "Employee",
+        skillProficiencySet: [],
+        contract: 30
+      }
+    ]])
   },
   contractList: {
     isLoading: false,
-    contractMapById: new Map()
+    contractMapById: new Map([[
+      30, {
+        tenantId: 0,
+        id: 30,
+        version: 0,
+        name: "Contract",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null
+      }
+    ]])
   },
   spotList: {
     isLoading: false,
@@ -535,6 +661,10 @@ const state: AppState = {
   shiftRoster: {
     isLoading: false,
     shiftRosterView: mockShiftRoster
+  },
+  availabilityRoster: {
+    isLoading: false,
+    availabilityRosterView: mockAvailabilityRoster
   },
   solverState: {
     isSolving: false

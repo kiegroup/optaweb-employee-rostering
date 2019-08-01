@@ -16,299 +16,255 @@
 
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
-import * as alerts from 'ui/Alerts';
+import { alert } from 'store/alert';
 import * as rosterOperations from 'store/roster/operations';
-import { shiftOperations } from './index';
-import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './operations';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
-import { onGet, onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
-import Shift from 'domain/Shift';
+import { availabilityOperations } from './index';
+import { availabilityAdapter, kindaAvailabilityViewAdapter, KindaEmployeeAvailabilityView } from './operations';
+import { onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
+import EmployeeAvailability from 'domain/EmployeeAvailability';
 import moment from 'moment';
+import Contract from 'domain/Contract';
 
-describe('Shift operations', () => {
-  it('should dispatch actions and call client on addShift', async () => {
+const contract: Contract = {
+  tenantId: 0,
+  id: 100,
+  version: 0,
+  name: "Contract",
+  maximumMinutesPerDay: null,
+  maximumMinutesPerMonth: null,
+  maximumMinutesPerWeek: null,
+  maximumMinutesPerYear: null
+};
+
+describe('Availability operations', () => {
+
+  it('should dispatch actions and call client on addAvailability', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+    const availabilityStartTime = moment("2018-01-01T09:00").toDate();
+    const availabilityEndTime = moment("2018-01-01T12:00").toDate();
 
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
-    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
+    const mockRefreshAvailabilityRoster = jest.spyOn(rosterOperations, "refreshAvailabilityRoster");
+    const mockShowSuccessMessage = jest.spyOn(alert, "showSuccessMessage");
 
-    const addedShift: Shift = {
-        tenantId: tenantId,
-        startDateTime: shiftStartTime,
-        endDateTime: shiftEndTime,
-        spot: {
-            tenantId: 0,
-            id: 20,
-            name: "Spot",
-            requiredSkillSet: []
-        },
-        employee: null,
-        rotationEmployee: null,
-        pinnedByUser: true
+    const addedAvailability: EmployeeAvailability = {
+      tenantId: tenantId,
+      startDateTime: availabilityStartTime,
+      endDateTime: availabilityEndTime,
+      employee: {
+        tenantId: 0,
+        id: 20,
+        name: "Employee",
+        skillProficiencySet: [],
+        contract,
+      },
+      state: "DESIRED"
     };
 
-    onPost(`/tenant/${tenantId}/shift/add`, shiftAdapter(addedShift), shiftAdapter(addedShift));
+    onPost(`/tenant/${tenantId}/employee/availability/add`, availabilityAdapter(addedAvailability), availabilityAdapter(addedAvailability));
 
-    await store.dispatch(shiftOperations.addShift(addedShift));
+    await store.dispatch(availabilityOperations.addEmployeeAvailability(addedAvailability));
 
     expect(client.post).toBeCalled();
-    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/shift/add`, shiftAdapter(addedShift));
-    expect(mockRefreshShiftRoster).toBeCalled();
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/employee/availability/add`, availabilityAdapter(addedAvailability));
+    expect(mockRefreshAvailabilityRoster).toBeCalled();
 
     expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("Successfully added Shift", `A new Shift starting at ${moment(addedShift.startDateTime).format("LLL")} and ending at ${moment(addedShift.endDateTime).format("LLL")} was successfully added.`);
-  });
-
-  it('should dispatch actions and call client on a successful delete shift', async () => {
-    const { store, client } = mockStore(state);
-    const tenantId = store.getState().tenantData.currentTenantId;
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
-
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
-    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
-
-    const deletedShift: Shift = {
-        tenantId: tenantId,
-        startDateTime: shiftStartTime,
-        endDateTime: shiftEndTime,
-        id: 10,
-        version: 0,
-        spot: {
-            tenantId: 0,
-            id: 20,
-            name: "Spot",
-            requiredSkillSet: []
-        },
-        employee: null,
-        rotationEmployee: null,
-        pinnedByUser: true
-    };
-
-    onDelete(`/tenant/${tenantId}/shift/${deletedShift.id}`, true);
-
-    await store.dispatch(shiftOperations.removeShift(deletedShift));
-
-    expect(client.delete).toBeCalled();
-    expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/shift/${deletedShift.id}`);
-    expect(mockRefreshShiftRoster).toBeCalled();
-
-    expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("Successfully deleted Shift", `The Shift with id ${deletedShift.id} starting at ${moment(deletedShift.startDateTime).format("LLL")} and ending at ${moment(deletedShift.endDateTime).format("LLL")} was successfully deleted.`);
-  });
-
-  it('should call client but not dispatch actions on a failed delete shift', async () => {
-    const { store, client } = mockStore(state);
-    const tenantId = store.getState().tenantData.currentTenantId;
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
-
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
-    const mockShowErrorMessage = jest.spyOn(alerts, "showErrorMessage");
-
-    const deletedShift: Shift = {
-        tenantId: tenantId,
-        startDateTime: shiftStartTime,
-        endDateTime: shiftEndTime,
-        id: 10,
-        version: 0,
-        spot: {
-            tenantId: 0,
-            id: 20,
-            name: "Spot",
-            requiredSkillSet: []
-        },
-        employee: null,
-        rotationEmployee: null,
-        pinnedByUser: true
-    };
-
-    onDelete(`/tenant/${tenantId}/shift/${deletedShift.id}`, false);
-
-    await store.dispatch(shiftOperations.removeShift(deletedShift));
-
-    expect(client.delete).toBeCalled();
-    expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/shift/${deletedShift.id}`);
-    expect(mockRefreshShiftRoster).not.toBeCalled();
-
-    expect(mockShowErrorMessage).toBeCalled();
-    expect(mockShowErrorMessage).toBeCalledWith("Error deleting Shift", `The Shift with id ${deletedShift.id} starting at ${moment(deletedShift.startDateTime).format("LLL")} and ending at ${moment(deletedShift.endDateTime).format("LLL")} could not be deleted.`);
-  });
-
-  it('should dispatch actions and call client on updateShift', async () => {
-    const { store, client } = mockStore(state);
-    const tenantId = store.getState().tenantData.currentTenantId;
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
-
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
-    const mockShowSuccessMessage = jest.spyOn(alerts, "showSuccessMessage");
-
-    const updatedShift: Shift = {
-        tenantId: tenantId,
-        id: 11,
-        version: 0,
-        startDateTime: shiftStartTime,
-        endDateTime: shiftEndTime,
-        spot: {
-            tenantId: 0,
-            id: 20,
-            name: "Spot",
-            requiredSkillSet: []
-        },
-        employee: null,
-        rotationEmployee: null,
-        pinnedByUser: true
-    };
-
-    const updatedShiftWithUpdatedVersion: Shift = {
-      ...updatedShift,
-      version: 1
-    };
-
-    onPut(`/tenant/${tenantId}/shift/update`, shiftAdapter(updatedShift), shiftAdapter(updatedShiftWithUpdatedVersion));
-
-    await store.dispatch(shiftOperations.updateShift(updatedShift));
-
-    expect(client.put).toBeCalled();
-    expect(client.put).toBeCalledWith(`/tenant/${tenantId}/shift/update`, shiftAdapter(updatedShift));
-    expect(mockRefreshShiftRoster).toBeCalled();
-
-    expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("Successfully updated Shift", `The Shift with id "${updatedShiftWithUpdatedVersion.id}" was successfully updated.`);
-  });
-});
-
-describe('shift adapters', () => {
-  it('shiftAdapter should convert a Shift to a KindaShiftView', () => {
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
-    const shift: Shift = {
-      tenantId: 0,
-      id: 11,
-      version: 0,
-      startDateTime: shiftStartTime,
-      endDateTime: shiftEndTime,
-      spot: {
-          tenantId: 0,
-          id: 20,
-          name: "Spot",
-          requiredSkillSet: []
-      },
-      employee: {
-        tenantId: 10,
-        id: 20,
-        version: 0,
-        name: "Bill",
-        contract: {
-          tenantId: 0,
-          id: 100,
-          version: 0,
-          name: "Contract",
-          maximumMinutesPerDay: null,
-          maximumMinutesPerWeek: null,
-          maximumMinutesPerMonth: null,
-          maximumMinutesPerYear: null
-        },
-        skillProficiencySet: []
-      },
-      rotationEmployee: null,
-      pinnedByUser: true,
-      indictmentScore: { hardScore: 0, mediumScore: 0, softScore: 0},
-      desiredTimeslotForEmployeeRewardList: [],
-      shiftEmployeeConflictList: [],
-    };
-
-    expect(shiftAdapter(shift)).toEqual({
-      tenantId: 0,
-      id: 11,
-      version: 0,
-      startDateTime: moment(shiftStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-      endDateTime: moment(shiftEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-      spotId: 20,
-      employeeId: 20,
-      rotationEmployeeId: null,
-      pinnedByUser: true
+    expect(mockShowSuccessMessage).toBeCalledWith("addAvailability", {
+      employeeName: "Employee",
+      startDateTime: moment(availabilityStartTime).format("LLL"),
+      endDateTime: moment(availabilityEndTime).format("LLL") 
     });
   });
 
-  it('kindaShiftAdapter should convert a KindaShiftView to a ShiftView', () => {
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
-    const kindaShiftView: KindaShiftView = {
-      tenantId: 0,
-      id: 11,
+  it('should dispatch actions and call client on a successful delete Availability', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const availabilityStartTime = moment("2018-01-01T09:00").toDate();
+    const availabilityEndTime = moment("2018-01-01T12:00").toDate();
+
+    const mockRefreshAvailabilityRoster = jest.spyOn(rosterOperations, "refreshAvailabilityRoster");
+    const mockShowSuccessMessage = jest.spyOn(alert, "showSuccessMessage");
+
+    const deletedAvailability: EmployeeAvailability = {
+      tenantId: tenantId,
+      id: 10,
       version: 0,
-      startDateTime: moment(shiftStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-      endDateTime: moment(shiftEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-      spotId: 20,
-      employeeId: null,
-      rotationEmployeeId: null,
-      pinnedByUser: true,
-      indictmentScore: "5hard/0medium/-14soft",
-      // @ts-ignore
-      unassignedShiftPenaltyList: [{
-        score: "5hard/0medium/-14soft",
-        shift: {
-          tenantId: 0,
-          id: 11,
-          version: 0,
-          startDateTime: shiftStartTime,
-          endDateTime: shiftEndTime,
-          spot: {
-            tenantId: 0,
-            id: 20,
-            version: 0,
-            name: "Spot",
-            requiredSkillSet: []
-          },
-          employee: null,
-          rotationEmployee: null,
-          pinnedByUser: true
-        }
-      }]
+      startDateTime: availabilityStartTime,
+      endDateTime: availabilityEndTime,
+      employee: {
+        tenantId: 0,
+        id: 20,
+        name: "Employee",
+        skillProficiencySet: [],
+        contract,
+      },
+      state: "DESIRED"
     };
 
-    expect(kindaShiftViewAdapter(kindaShiftView)).toEqual({
+    onDelete(`/tenant/${tenantId}/employee/availability/${deletedAvailability.id}`, true);
+
+    await store.dispatch(availabilityOperations.removeEmployeeAvailability(deletedAvailability));
+
+    expect(client.delete).toBeCalled();
+    expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/employee/availability/${deletedAvailability.id}`);
+    expect(mockRefreshAvailabilityRoster).toBeCalled();
+
+    expect(mockShowSuccessMessage).toBeCalled();
+    expect(mockShowSuccessMessage).toBeCalledWith("removeAvailability",  {
+      employeeName: "Employee",
+      startDateTime: moment(availabilityStartTime).format("LLL"),
+      endDateTime: moment(availabilityEndTime).format("LLL") 
+    });
+  });
+
+  it('should call client but not dispatch actions on a failed delete Availability', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const availabilityStartTime = moment("2018-01-01T09:00").toDate();
+    const availabilityEndTime = moment("2018-01-01T12:00").toDate();
+
+    const mockRefreshAvailabilityRoster = jest.spyOn(rosterOperations, "refreshAvailabilityRoster");
+    const mockShowErrorMessage = jest.spyOn(alert, "showErrorMessage");
+
+    const deletedAvailability: EmployeeAvailability = {
+      tenantId: tenantId,
+      id: 10,
+      version: 0,
+      startDateTime: availabilityStartTime,
+      endDateTime: availabilityEndTime,
+      employee: {
+        tenantId: 0,
+        id: 20,
+        name: "Employee",
+        skillProficiencySet: [],
+        contract,
+      },
+      state: "DESIRED"
+    };
+
+    onDelete(`/tenant/${tenantId}/employee/availability/${deletedAvailability.id}`, false);
+
+    await store.dispatch(availabilityOperations.removeEmployeeAvailability(deletedAvailability));
+
+    expect(client.delete).toBeCalled();
+    expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/employee/availability/${deletedAvailability.id}`);
+    expect(mockRefreshAvailabilityRoster).not.toBeCalled();
+
+    expect(mockShowErrorMessage).toBeCalled();
+    expect(mockShowErrorMessage).toBeCalledWith("removeAvailabilityError", {
+      employeeName: "Employee",
+      startDateTime: moment(availabilityStartTime).format("LLL"),
+      endDateTime: moment(availabilityEndTime).format("LLL") 
+    });
+  });
+
+  it('should dispatch actions and call client on updateAvailability', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const availabilityStartTime = moment("2018-01-01T09:00").toDate();
+    const availabilityEndTime = moment("2018-01-01T12:00").toDate();
+
+    const mockRefreshAvailabilityRoster = jest.spyOn(rosterOperations, "refreshAvailabilityRoster");
+    const mockShowSuccessMessage = jest.spyOn(alert, "showSuccessMessage");
+
+    const updatedAvailability: EmployeeAvailability = {
+      tenantId: tenantId,
+      id: 10,
+      version: 0,
+      startDateTime: availabilityStartTime,
+      endDateTime: availabilityEndTime,
+      employee: {
+        tenantId: 0,
+        id: 20,
+        name: "Spot",
+        skillProficiencySet: [],
+        contract,
+      },
+      state: "DESIRED"
+    };
+
+    const updatedAvailabilityWithUpdatedVersion: EmployeeAvailability = {
+      ...updatedAvailability,
+      version: 1
+    };
+
+    onPut(`/tenant/${tenantId}/employee/availability/update`, availabilityAdapter(updatedAvailability), availabilityAdapter(updatedAvailabilityWithUpdatedVersion));
+
+    await store.dispatch(availabilityOperations.updateEmployeeAvailability(updatedAvailability));
+
+    expect(client.put).toBeCalled();
+    expect(client.put).toBeCalledWith(`/tenant/${tenantId}/employee/availability/update`, availabilityAdapter(updatedAvailability));
+    expect(mockRefreshAvailabilityRoster).toBeCalled();
+
+    expect(mockShowSuccessMessage).toBeCalled();
+    expect(mockShowSuccessMessage).toBeCalledWith("updateAvailability", {
+      id: 10
+    });
+  });
+});
+
+describe('Availability adapters', () => {
+  it('availabilityAdapter should convert a Availability to a KindaAvailabilityView', () => {
+    const availabilityStartTime = moment("2018-01-01T09:00").toDate();
+    const availabilityEndTime = moment("2018-01-01T12:00").toDate();
+    const availability: EmployeeAvailability = {
       tenantId: 0,
       id: 11,
       version: 0,
-      startDateTime: shiftStartTime,
-      endDateTime: shiftEndTime,
-      spotId: 20,
-      employeeId: null,
-      rotationEmployeeId: null,
-      pinnedByUser: true,
-      indictmentScore: { hardScore: 5, mediumScore: 0, softScore: -14 },
-      // @ts-ignore
-      unassignedShiftPenaltyList: [{
-        score: { hardScore: 5, mediumScore: 0, softScore: -14 },
-        shift: {
-          tenantId: 0,
-          id: 11,
-          version: 0,
-          startDateTime: shiftStartTime,
-          endDateTime: shiftEndTime,
-          spot: {
-            tenantId: 0,
-            id: 20,
-            version: 0,
-            name: "Spot",
-            requiredSkillSet: []
-          },
-          employee: null,
-          rotationEmployee: null,
-          pinnedByUser: true
-        }
-      }]
+      startDateTime: availabilityStartTime,
+      endDateTime: availabilityEndTime,
+      employee: {
+        tenantId: 0,
+        id: 20,
+        name: "Spot",
+        skillProficiencySet: [],
+        contract,
+      },
+      state: "DESIRED"
+    };
+
+    expect(availabilityAdapter(availability)).toEqual({
+      tenantId: 0,
+      id: 11,
+      version: 0,
+      startDateTime: moment(availabilityStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      endDateTime: moment(availabilityEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      employeeId: 20,
+      state: "DESIRED"
+    });
+  });
+
+  it('kindaAvailabilityAdapter should convert a KindaEmployeeAvailabilityView to an EmployeeAvailabilityView', () => {
+    const availabilityStartTime = moment("2018-01-01T09:00").toDate();
+    const availabilityEndTime = moment("2018-01-01T12:00").toDate();
+    const kindaAvailabilityView: KindaEmployeeAvailabilityView = {
+      tenantId: 0,
+      id: 11,
+      version: 0,
+      startDateTime: moment(availabilityStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      endDateTime: moment(availabilityEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      employeeId: 10,
+      state: "DESIRED"
+    };
+
+    expect(kindaAvailabilityViewAdapter(kindaAvailabilityView)).toEqual({
+      tenantId: 0,
+      id: 11,
+      version: 0,
+      startDateTime: availabilityStartTime,
+      endDateTime: availabilityEndTime,
+      employeeId: 10,
+      state: "DESIRED"
     });
   });
 });
 
 const state: AppState = {
+  alerts: {
+    idGeneratorIndex: 0,
+    alertList: []
+  },
   tenantData: {
     currentTenantId: 0,
     tenantList: []
@@ -349,6 +305,10 @@ const state: AppState = {
   shiftRoster: {
     isLoading: true,
     shiftRosterView: null
+  },
+  availabilityRoster: {
+    isLoading: true,
+    availabilityRosterView: null
   },
   solverState: {
     isSolving: false

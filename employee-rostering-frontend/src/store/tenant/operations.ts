@@ -30,6 +30,7 @@ import moment from 'moment';
 
 function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>, state: () => AppState): Promise<any> {
   dispatch(rosterActions.setShiftRosterIsLoading(true));
+  dispatch(rosterActions.setAvailabilityRosterIsLoading(true));
   return Promise.all([
     dispatch(skillOperations.refreshSkillList()),
     dispatch(rosterOperations.getRosterState()),
