@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.slf4j.Logger;
@@ -45,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class SkillServiceTest extends BaseTest {
+public class SkillServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(SkillServiceTest.class);
 
@@ -66,7 +65,7 @@ public class SkillServiceTest extends BaseTest {
 
     @Test
     public void getSkillTest() throws Exception {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
@@ -83,7 +82,7 @@ public class SkillServiceTest extends BaseTest {
 
     @Test
     public void getNonExistentSkillTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -94,7 +93,7 @@ public class SkillServiceTest extends BaseTest {
 
     @Test
     public void getNonMatchingSkillTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
@@ -102,15 +101,15 @@ public class SkillServiceTest extends BaseTest {
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .get("/rest/tenant/{tenantId}/skill/{id}", 2,
+                                                      .get("/rest/tenant/{tenantId}/skill/{id}", 3,
                                                            skill.getId())))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: The " +
-                                     "tenantId (2) does not match the persistable (name)'s tenantId (1).");
+                                     "tenantId (3) does not match the persistable (name)'s tenantId (2).");
     }
 
     @Test
     public void deleteSkillTest() throws Exception {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
@@ -128,14 +127,14 @@ public class SkillServiceTest extends BaseTest {
     @Test
     public void deleteNonExistentSkillTest() {
         assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/skill/{id}", 1, -1L)))
+                .delete("/rest/tenant/{tenantId}/skill/{id}", 2, -1L)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
                         "Exception: No Skill entity found with ID (-1).");
     }
 
     @Test
     public void deleteNonMatchingSkillTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
@@ -143,14 +142,14 @@ public class SkillServiceTest extends BaseTest {
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .delete("/rest/tenant/{tenantId}/skill/{id}", 2, skill.getId())))
+                                                      .delete("/rest/tenant/{tenantId}/skill/{id}", 3, skill.getId())))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
-                                     "The tenantId (2) does not match the persistable (name)'s tenantId (1).");
+                                     "The tenantId (3) does not match the persistable (name)'s tenantId (2).");
     }
 
     @Test
     public void createSkillTest() throws Exception {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
@@ -169,7 +168,7 @@ public class SkillServiceTest extends BaseTest {
 
     @Test
     public void createNonMatchingSkillTest() throws Exception {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
@@ -177,17 +176,16 @@ public class SkillServiceTest extends BaseTest {
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .post("/rest/tenant/{tenantId}/skill/add", 2)
+                                                      .post("/rest/tenant/{tenantId}/skill/add", 3)
                                                       .contentType(MediaType.APPLICATION_JSON)
                                                       .content(body)))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
-                                     "The tenantId (2) does not match the persistable (name)'s tenantId (1).");
+                                     "The tenantId (3) does not match the persistable (name)'s tenantId (2).");
     }
 
     @Test
     public void updateSkillTest() throws Exception {
-
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
@@ -210,7 +208,7 @@ public class SkillServiceTest extends BaseTest {
 
     @Test
     public void updateNonMatchingSkillTest() throws Exception {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
@@ -221,22 +219,23 @@ public class SkillServiceTest extends BaseTest {
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .put("/rest/tenant/{tenantId}/skill/update", 2)
+                                                      .put("/rest/tenant/{tenantId}/skill/update", 3)
                                                       .contentType(MediaType.APPLICATION_JSON)
                                                       .content(body)))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
-                                     "The tenantId (2) does not match the persistable (name2)'s tenantId (1).");
+                                     "The tenantId (3) does not match the persistable (name2)'s tenantId (2).");
     }
 
     @Test
     public void updateNonExistentSkillTest() throws Exception {
-        Skill skill = new Skill(1, "name");
+        Integer tenantId = 2;
+        Skill skill = new Skill(tenantId, "name");
         skill.setId(-1L);
         String body = (new ObjectMapper()).writeValueAsString(skill);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .put("/rest/tenant/{tenantId}/skill/update", 1)
+                                                      .put("/rest/tenant/{tenantId}/skill/update", tenantId)
                                                       .contentType(MediaType.APPLICATION_JSON)
                                                       .content(body)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
@@ -245,22 +244,23 @@ public class SkillServiceTest extends BaseTest {
 
     @Test
     public void updateChangeTenantIdSkillTest() throws Exception {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
+        Integer tenantId2 = 3;
         String name = "name";
 
         Skill skill = new Skill(tenantId, name);
         skillService.createSkill(tenantId, skill);
 
-        Skill skill2 = new Skill(2, name);
+        Skill skill2 = new Skill(tenantId2, name);
         skill2.setId(skill.getId());
         String body = (new ObjectMapper()).writeValueAsString(skill2);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .put("/rest/tenant/{tenantId}/skill/update", 2)
+                                                      .put("/rest/tenant/{tenantId}/skill/update", tenantId2)
                                                       .contentType(MediaType.APPLICATION_JSON)
                                                       .content(body)))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalState" +
-                                     "Exception: Skill entity with tenantId (1) cannot change tenants.");
+                                     "Exception: Skill entity with tenantId (2) cannot change tenants.");
     }
 }

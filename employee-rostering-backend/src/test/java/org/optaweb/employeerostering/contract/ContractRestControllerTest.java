@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class ContractRestControllerTest extends BaseTest {
+public class ContractRestControllerTest {
 
     @Autowired
     private TestRestTemplate contractRestTemplate;
@@ -67,8 +66,8 @@ public class ContractRestControllerTest extends BaseTest {
 
     @Test
     public void getContractListTest() {
-        Integer tenantId = 1;
-        Integer tenantId2 = 2;
+        Integer tenantId = 2;
+        Integer tenantId2 = 3;
         String name = "name";
         String name2 = "name2";
         Integer maximumMinutesPerDay = 50;
@@ -104,7 +103,7 @@ public class ContractRestControllerTest extends BaseTest {
 
     @Test
     public void getContractTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
         Integer maximumMinutesPerDay = 50;
         Integer maximumMinutesPerWeek = 250;
@@ -126,7 +125,7 @@ public class ContractRestControllerTest extends BaseTest {
 
     @Test
     public void deleteContractTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
         Integer maximumMinutesPerDay = 50;
         Integer maximumMinutesPerWeek = 250;
@@ -147,7 +146,7 @@ public class ContractRestControllerTest extends BaseTest {
 
     @Test
     public void createContractTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
         Integer maximumMinutesPerDay = 50;
         Integer maximumMinutesPerWeek = 250;
@@ -169,7 +168,7 @@ public class ContractRestControllerTest extends BaseTest {
 
     @Test
     public void updateContractTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
         Integer maximumMinutesPerDay = 50;
         Integer maximumMinutesPerWeek = 250;

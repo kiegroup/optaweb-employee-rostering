@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class SpotRestControllerTest extends BaseTest {
+public class SpotRestControllerTest {
 
     @Autowired
     private TestRestTemplate spotRestTemplate;
@@ -67,8 +66,8 @@ public class SpotRestControllerTest extends BaseTest {
 
     @Test
     public void getSpotListTest() {
-        Integer tenantId = 1;
-        Integer tenantId2 = 2;
+        Integer tenantId = 2;
+        Integer tenantId2 = 3;
         String name = "name";
         String name2 = "name2";
 
@@ -97,7 +96,7 @@ public class SpotRestControllerTest extends BaseTest {
 
     @Test
     public void getSpotTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
@@ -113,7 +112,7 @@ public class SpotRestControllerTest extends BaseTest {
 
     @Test
     public void deleteSpotTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
@@ -128,7 +127,7 @@ public class SpotRestControllerTest extends BaseTest {
 
     @Test
     public void createSpotTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
@@ -144,7 +143,7 @@ public class SpotRestControllerTest extends BaseTest {
 
     @Test
     public void updateSpotTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         Spot spot = new Spot(tenantId, name, Collections.emptySet());
