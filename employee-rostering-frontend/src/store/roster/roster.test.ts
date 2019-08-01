@@ -25,6 +25,8 @@ import moment from 'moment';
 import Spot from 'domain/Spot';
 import ShiftRosterView from 'domain/ShiftRosterView';
 import AvailabilityRosterView from 'domain/AvailabilityRosterView';
+import Employee from 'domain/Employee';
+import { availabilityRosterReducer } from './reducers';
 
 const mockShiftRoster: ShiftRosterView = {
   tenantId: 0,
@@ -286,6 +288,90 @@ describe('Roster operations', () => {
     );
   });
 
+  it('should dispatch the last shift roster REST call on refreshAvailabilityRoster', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    jest.spyOn(rosterOperations, "refreshAvailabilityRoster").mockRestore();
+
+    const testOperation = async (operation: () => void, method: 'get'|'post', restURL: string, restArg?: any) => {
+      store.clearActions();
+      resetRestClientMock(client);
+
+      switch (method) {
+        case 'get': {
+          onGet(restURL, { ...mockAvailabilityRoster, employeeIdToAvailabilityViewListMap: {}, employeeIdToShiftViewListMap: {} });
+          break;
+        }
+
+        case 'post': {
+          onPost(restURL, restArg, { ...mockAvailabilityRoster, employeeIdToAvailabilityViewListMap: {}, employeeIdToShiftViewListMap: {} });
+          break;
+        }
+      }
+
+      await operation();
+      store.clearActions();
+
+      await store.dispatch(rosterOperations.refreshAvailabilityRoster());
+
+      expect(store.getActions()).toEqual([
+        actions.setAvailabilityRosterIsLoading(true),
+        actions.setAvailabilityRosterView({ ...mockAvailabilityRoster, employeeIdToAvailabilityViewListMap: {}, employeeIdToShiftViewListMap: {} }),
+        actions.setAvailabilityRosterIsLoading(false)
+      ]);
+
+      switch (method) {
+        case 'get': {
+          expect(client.get).toBeCalledTimes(2);
+          expect(client.get).toHaveBeenNthCalledWith(1, restURL);
+          expect(client.get).toHaveBeenNthCalledWith(2, restURL);
+          break;
+        }
+
+        case 'post': {
+          expect(client.post).toBeCalledTimes(2);
+          expect(client.post).toHaveBeenNthCalledWith(1, restURL, restArg);
+          expect(client.post).toHaveBeenNthCalledWith(2, restURL, restArg);
+          break;
+        }
+      }
+    };
+
+    const paginationInfo = {
+      pageNumber: 0,
+      itemsPerPage: 10
+    };
+    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    const toDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    
+    await testOperation(async () => await store.dispatch(rosterOperations.getCurrentAvailabilityRoster(paginationInfo)),
+      'get',
+      `/tenant/${tenantId}/roster/availabilityRosterView/current?p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}`
+    );
+
+    await testOperation(async () => await store.dispatch(rosterOperations.getAvailabilityRoster({
+      fromDate: fromDate,
+      toDate: toDate,
+      pagination: paginationInfo
+    })),
+    'get',
+    `/tenant/${tenantId}/roster/availabilityRosterView?` +
+      `p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}` +
+      `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`
+    );
+
+    await testOperation(async () => await store.dispatch(rosterOperations.getAvailabilityRosterFor({
+      fromDate: fromDate,
+      toDate: toDate,
+      employeeList: []
+    })),
+    'post',
+    `/tenant/${tenantId}/roster/availabilityRosterView/for?` +
+      `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+    []
+    );
+  });
+
   it('should dispatch actions and call client on getRosterState', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
@@ -411,6 +497,86 @@ describe('Roster operations', () => {
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
     `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, []);
   });
+
+  it('should dispatch actions and call client on getCurrentAvailabilityRoster', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const pagination = {
+      pageNumber: 0,
+      itemsPerPage: 10
+    };
+    
+    onGet(`/tenant/${tenantId}/roster/availabilityRosterView/current?p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`, { ...mockAvailabilityRoster, employeeIdToShiftViewListMap: {}, employeeIdToAvailabilityViewListMap: {} });
+    await store.dispatch(rosterOperations.getCurrentAvailabilityRoster(pagination));
+
+    expect(store.getActions()).toEqual([
+      actions.setAvailabilityRosterIsLoading(true),
+      actions.setAvailabilityRosterView({ ...mockAvailabilityRoster, employeeIdToShiftViewListMap: {}, employeeIdToAvailabilityViewListMap: {} }),
+      actions.setAvailabilityRosterIsLoading(false)
+    ]);
+
+    expect(client.get).toBeCalledTimes(1);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/current?p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`);
+  });
+
+  it('should dispatch actions and call client on getAvailabilityRoster', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
+
+    const pagination = {
+      pageNumber: 0,
+      itemsPerPage: 10
+    };
+    
+    onGet(`/tenant/${tenantId}/roster/availabilityRosterView?` +
+    `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
+    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, { ...mockAvailabilityRoster, employeeIdToShiftViewListMap: {}, employeeIdToAvailabilityViewListMap: {} });
+    await store.dispatch(rosterOperations.getAvailabilityRoster({
+      fromDate: fromDate,
+      toDate: toDate,
+      pagination: pagination
+    }));
+
+    expect(store.getActions()).toEqual([
+      actions.setAvailabilityRosterIsLoading(true),
+      actions.setAvailabilityRosterView({ ...mockAvailabilityRoster, employeeIdToShiftViewListMap: {}, employeeIdToAvailabilityViewListMap: {} }),
+      actions.setAvailabilityRosterIsLoading(false)
+    ]);
+
+    expect(client.get).toBeCalledTimes(1);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView?` +
+    `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
+    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`);
+  });
+
+  it('should dispatch actions and call client on getShiftRosterFor', async () => {
+    const { store, client } = mockStore(state);
+    const tenantId = store.getState().tenantData.currentTenantId;
+    const employeeList: Employee[] = [];
+    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
+    
+    onPost(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
+    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+    employeeList, { ...mockAvailabilityRoster, employeeIdToShiftViewListMap: {}, employeeIdToAvailabilityViewListMap: {} });
+    await store.dispatch(rosterOperations.getAvailabilityRosterFor({
+      fromDate: fromDate,
+      toDate: toDate,
+      employeeList: []
+    }));
+
+    expect(store.getActions()).toEqual([
+      actions.setAvailabilityRosterIsLoading(true),
+      actions.setAvailabilityRosterView({ ...mockAvailabilityRoster, employeeIdToShiftViewListMap: {}, employeeIdToAvailabilityViewListMap: {} }),
+      actions.setAvailabilityRosterIsLoading(false)
+    ]);
+
+    expect(client.post).toBeCalledTimes(1);
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
+    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, []);
+  });
 });
 
 describe('Roster reducers', () => {
@@ -453,6 +619,23 @@ describe('Roster reducers', () => {
       }))
     ).toEqual({ ...state.shiftRoster, shiftRosterView: {
       ...mockShiftRoster,
+      tenantId: 1
+    } });
+  });
+
+  it('set is availability roster loading', () => {
+    expect(
+      availabilityRosterReducer(state.availabilityRoster, actions.setAvailabilityRosterIsLoading(true))
+    ).toEqual({ ...state.availabilityRoster, isLoading: true });
+  });
+
+  it('set availability roster', () => {
+    expect(
+      availabilityRosterReducer(state.availabilityRoster, actions.setAvailabilityRosterView({
+        ...mockAvailabilityRoster, tenantId: 1
+      }))
+    ).toEqual({ ...state.availabilityRoster, availabilityRosterView: {
+      ...mockAvailabilityRoster,
       tenantId: 1
     } });
   });
