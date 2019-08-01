@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.skill.Skill;
@@ -41,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class EmployeeRestControllerTest extends BaseTest {
+public class EmployeeRestControllerTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -89,8 +88,8 @@ public class EmployeeRestControllerTest extends BaseTest {
 
     @Test
     public void getEmployeeListTest() {
-        Integer tenantId = 1;
-        Integer tenantId2 = 2;
+        Integer tenantId = 2;
+        Integer tenantId2 = 3;
         String name = "name";
         String name2 = "name2";
 
@@ -147,7 +146,7 @@ public class EmployeeRestControllerTest extends BaseTest {
 
     @Test
     public void getAndCreateEmployeeTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         ResponseEntity<Skill> skillResponseA = addSkill(tenantId, new Skill(tenantId, "A"));
@@ -179,7 +178,7 @@ public class EmployeeRestControllerTest extends BaseTest {
 
     @Test
     public void deleteEmployeeTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         ResponseEntity<Skill> skillResponseA = addSkill(tenantId, new Skill(tenantId, "A"));
@@ -211,7 +210,7 @@ public class EmployeeRestControllerTest extends BaseTest {
 
     @Test
     public void updateEmployeeTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         ResponseEntity<Skill> skillResponseA = addSkill(tenantId, new Skill(tenantId, "A"));
