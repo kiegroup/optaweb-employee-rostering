@@ -18,7 +18,6 @@ package org.optaweb.employeerostering.roster;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,7 +27,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class RosterRestControllerTest extends BaseTest {
+public class RosterRestControllerTest {
 
     @Autowired
     private TestRestTemplate rosterRestTemplate;

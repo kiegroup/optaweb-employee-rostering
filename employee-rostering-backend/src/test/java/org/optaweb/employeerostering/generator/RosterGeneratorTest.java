@@ -1,0 +1,180 @@
+/*
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.optaweb.employeerostering.generator;
+
+import java.util.List;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
+import org.optaweb.employeerostering.domain.skill.Skill;
+import org.optaweb.employeerostering.domain.spot.Spot;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+public class RosterGeneratorTest {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    private String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
+    private String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
+    private String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
+    private String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
+    private String rotationPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
+
+    private ResponseEntity<List<Skill>> getSkills(Integer tenantId) {
+        return restTemplate.exchange(skillPathURI, HttpMethod.GET, null,
+                                     new ParameterizedTypeReference<List<Skill>>() {}, tenantId);
+    }
+
+    private ResponseEntity<List<Spot>> getSpots(Integer tenantId) {
+        return restTemplate.exchange(spotPathURI, HttpMethod.GET, null,
+                                     new ParameterizedTypeReference<List<Spot>>() {}, tenantId);
+    }
+
+    private ResponseEntity<List<Contract>> getContracts(Integer tenantId) {
+        return restTemplate.exchange(contractPathURI, HttpMethod.GET, null,
+                                     new ParameterizedTypeReference<List<Contract>>() {}, tenantId);
+    }
+
+    private ResponseEntity<List<Employee>> getEmployees(Integer tenantId) {
+        return restTemplate.exchange(employeePathURI, HttpMethod.GET, null,
+                                     new ParameterizedTypeReference<List<Employee>>() {}, tenantId);
+    }
+
+    private ResponseEntity<List<ShiftTemplateView>> getShiftTemplates(Integer tenantId) {
+        return restTemplate.exchange(rotationPathURI, HttpMethod.GET, null,
+                                     new ParameterizedTypeReference<List<ShiftTemplateView>>() {}, tenantId);
+    }
+
+    @Test
+    public void generateSkillListTest() {
+        ResponseEntity<List<Skill>> response = getSkills(2937);
+        ResponseEntity<List<Skill>> response2 = getSkills(5466);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get(0).getName()).isEqualTo("Electrical");
+        assertThat(response.getBody().get(1).getName()).isEqualTo("Mechanical");
+
+        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response2.getBody().get(0).getName()).isEqualTo("Armed");
+        assertThat(response2.getBody().get(1).getName()).isEqualTo("Martial art");
+    }
+
+    @Test
+    public void generateSpotListTest() {
+        ResponseEntity<List<Spot>> response = getSpots(2937);
+        ResponseEntity<List<Spot>> response2 = getSpots(5466);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get(0).getName()).isEqualTo("Battery");
+        assertThat(response.getBody().get(1).getName()).isEqualTo("Bumper");
+        assertThat(response.getBody().get(2).getName()).isEqualTo("Chassis");
+        assertThat(response.getBody().get(3).getName()).isEqualTo("Doors");
+        assertThat(response.getBody().get(4).getName()).isEqualTo("Engine");
+        assertThat(response.getBody().get(5).getName()).isEqualTo("Lights");
+        assertThat(response.getBody().get(6).getName()).isEqualTo("Radiator");
+        assertThat(response.getBody().get(7).getName()).isEqualTo("Sunroof");
+        assertThat(response.getBody().get(8).getName()).isEqualTo("Tires");
+        assertThat(response.getBody().get(9).getName()).isEqualTo("Windows");
+
+        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response2.getBody().get(0).getName()).isEqualTo("Airport");
+        assertThat(response2.getBody().get(1).getName()).isEqualTo("Bank");
+        assertThat(response2.getBody().get(2).getName()).isEqualTo("Factory");
+        assertThat(response2.getBody().get(3).getName()).isEqualTo("Harbor");
+        assertThat(response2.getBody().get(4).getName()).isEqualTo("Mansion");
+        assertThat(response2.getBody().get(5).getName()).isEqualTo("Museum");
+        assertThat(response2.getBody().get(6).getName()).isEqualTo("Office");
+        assertThat(response2.getBody().get(7).getName()).isEqualTo("Station");
+        assertThat(response2.getBody().get(8).getName()).isEqualTo("Store");
+        assertThat(response2.getBody().get(9).getName()).isEqualTo("Warehouse");
+
+    }
+
+    @Test
+    public void generateContractListTest() {
+        ResponseEntity<List<Contract>> response = getContracts(2937);
+        ResponseEntity<List<Contract>> response2 = getContracts(5466);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get(0).getName()).isEqualTo("Max 16 Hours Per Week Contract");
+        assertThat(response.getBody().get(0).getMaximumMinutesPerWeek()).isEqualTo(960);
+        assertThat(response.getBody().get(1).getName()).isEqualTo("Max 16 Hours Per Week, 32 Hours Per Month Contract");
+        assertThat(response.getBody().get(1).getMaximumMinutesPerMonth()).isEqualTo(1920);
+        assertThat(response.getBody().get(2).getName()).isEqualTo("Part Time Contract");
+        assertThat(response.getBody().get(2).getMaximumMinutesPerYear()).isEqualTo(null);
+
+        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response2.getBody().get(0).getName()).isEqualTo("Max 16 Hours Per Week Contract");
+        assertThat(response2.getBody().get(0).getMaximumMinutesPerWeek()).isEqualTo(960);
+        assertThat(response2.getBody().get(1).getName()).isEqualTo("Max 16 Hours Per Week, 32 Hours Per Month " +
+                                                                           "Contract");
+        assertThat(response2.getBody().get(1).getMaximumMinutesPerMonth()).isEqualTo(1920);
+        assertThat(response2.getBody().get(2).getName()).isEqualTo("Part Time Contract");
+        assertThat(response2.getBody().get(2).getMaximumMinutesPerYear()).isEqualTo(null);
+    }
+
+    @Test
+    public void generateEmployeeListTest() {
+        ResponseEntity<List<Employee>> response = getEmployees(2937);
+        ResponseEntity<List<Employee>> response2 = getEmployees(5466);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get(0).getName()).isEqualTo("Amy Cole");
+        assertThat(response.getBody().get(1).getName()).isEqualTo("Amy Fox");
+        assertThat(response.getBody().get(2).getName()).isEqualTo("Amy Green");
+
+        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response2.getBody().get(0).getName()).isEqualTo("Amy Cole");
+        assertThat(response2.getBody().get(1).getName()).isEqualTo("Amy Fox");
+        assertThat(response2.getBody().get(2).getName()).isEqualTo("Amy Green");
+    }
+
+    @Test
+    public void generateShiftTemplateTest() {
+        ResponseEntity<List<ShiftTemplateView>> response = getShiftTemplates(2937);
+        ResponseEntity<List<ShiftTemplateView>> response2 = getShiftTemplates(5466);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get(0).getRotationEmployeeId()).isEqualTo(2967);
+        assertThat(response.getBody().get(0).getSpotId()).isEqualTo(2944);
+
+        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response2.getBody().get(0).getRotationEmployeeId()).isEqualTo(5487);
+        assertThat(response2.getBody().get(0).getSpotId()).isEqualTo(5471);
+    }
+
+    // TODO: Add tests for generating Tenant entities once CRUD methods are implemented
+
+    // TODO: Add tests for generating Shift entities once CRUD methods are implemented
+
+    // TODO: Add tests for generating EmployeeAvailability entities once CRUD methods are implemented
+}

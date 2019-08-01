@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.optaweb.employeerostering.BaseTest;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class SkillRestControllerTest extends BaseTest {
+public class SkillRestControllerTest {
 
     @Autowired
     private TestRestTemplate skillRestTemplate;
@@ -113,7 +112,7 @@ public class SkillRestControllerTest extends BaseTest {
 
     @Test
     public void deleteSkillTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         SkillView skillView = new SkillView(tenantId, name);
@@ -128,7 +127,7 @@ public class SkillRestControllerTest extends BaseTest {
 
     @Test
     public void createSkillTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         SkillView skillView = new SkillView(tenantId, name);
@@ -144,7 +143,7 @@ public class SkillRestControllerTest extends BaseTest {
 
     @Test
     public void updateSkillTest() {
-        Integer tenantId = 1;
+        Integer tenantId = 2;
         String name = "name";
 
         SkillView skillView = new SkillView(tenantId, name);
