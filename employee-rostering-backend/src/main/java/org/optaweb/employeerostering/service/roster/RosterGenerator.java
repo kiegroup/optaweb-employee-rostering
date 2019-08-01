@@ -353,8 +353,9 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public void setUpGeneratedData() {
-        //TODO: Check if Tenant list is empty before generating data. Application crashes from trying to recreate
-        // existing entities
+        //TODO: Check if Tenant list is empty before generating data once Tenant CRUD is implemented. Application
+        // crashes from trying to recreate existing entities
+
         ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
         SystemPropertiesRetriever.DatabaseType databaseType = SystemPropertiesRetriever.determineDatabaseType();
 
@@ -413,6 +414,7 @@ public class RosterGenerator implements ApplicationRunner {
                           rosterParametrization, rosterState, shiftList);
     }
 
+    @Transactional
     public Roster generateRoster(int spotListSize, int lengthInDays) {
         ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
         return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId);
