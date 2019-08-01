@@ -701,6 +701,49 @@ describe('Roster selectors', () => {
     expect(rosterSelectors.getSpotListInShiftRoster(state)).toEqual(mockShiftRoster.spotList);
   });
 
+  it('should return an empty list if loading on getEmployeeListInAvailabilityRoster', () => {
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true
+      }
+    })).toEqual([]);
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+      ...state,
+      spotList: { 
+        ...state.spotList, isLoading: true
+      }
+    })).toEqual([]);
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+      ...state,
+      employeeList: { 
+        ...state.employeeList, isLoading: true
+      }
+    })).toEqual([]);
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true
+      }
+    })).toEqual([]);
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+      ...state,
+      shiftRoster: { 
+        ...state.shiftRoster, isLoading: true
+      }
+    })).toEqual([]);
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+      ...state,
+      rosterState: { 
+        ...state.rosterState, isLoading: true
+      }
+    })).toEqual([]);
+  });
+
+  it('should return the spotList in availability roster in getEmployeeListInAvailabilityRoster', () => {
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster(state)).toEqual(mockAvailabilityRoster.employeeList);
+  });
+
   it('should throw an exception if loading in getShiftListForSpot', () => {
     expect(() => rosterSelectors.getShiftListForSpot({ 
       ...state,
@@ -783,6 +826,189 @@ describe('Roster selectors', () => {
       version: 0,
       name: "Missing Spot",
       requiredSkillSet: []
+    }))
+      .toEqual([]);
+  });
+
+  it('should throw an exception if loading in getShiftListForEmployee', () => {
+    expect(() => rosterSelectors.getShiftListForEmployee({ 
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getShiftListForEmployee({ 
+      ...state,
+      spotList: { 
+        ...state.spotList, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getShiftListForEmployee({ 
+      ...state,
+      employeeList: { 
+        ...state.employeeList, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getShiftListForEmployee({ 
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getShiftListForEmployee({ 
+      ...state,
+      shiftRoster: { 
+        ...state.shiftRoster, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getShiftListForEmployee({ 
+      ...state,
+      rosterState: { 
+        ...state.rosterState, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+  });
+
+  it('should return the shift list for a given employee in getShiftListForEmployee', () => {
+    expect(rosterSelectors.getShiftListForEmployee(state, mockAvailabilityRoster.employeeList[0]))
+      .toEqual([
+        {
+          tenantId: 0,
+          startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+          endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+          spot: mockShiftRoster.spotList[0],
+          employee:  {
+            tenantId: 0,
+            id: 20,
+            version: 0,
+            name: "Employee",
+            skillProficiencySet: [],
+            contract: {
+              tenantId: 0,
+              id: 30,
+              version: 0,
+              name: "Contract",
+              maximumMinutesPerDay: null,
+              maximumMinutesPerWeek: null,
+              maximumMinutesPerMonth: null,
+              maximumMinutesPerYear: null
+            }
+          },
+          rotationEmployee: null,
+          indictmentScore: {
+            hardScore: 0,
+            mediumScore: 0,
+            softScore: 0
+          },
+          pinnedByUser: false
+        }
+      ]);
+  });
+
+  it('should return an empty list if spot not in roster getShiftListForEmployee', () => {
+    expect(rosterSelectors.getShiftListForEmployee(state, {
+      tenantId: 0,
+      id: 999,
+      version: 0,
+      name: "Missing Employee",
+      skillProficiencySet: [],
+      contract: {
+        tenantId: 0,
+        id: 9999,
+        name: "Contract",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerYear: null
+      }
+    }))
+      .toEqual([]);
+  });
+
+  it('should throw an exception if loading in getAvailabilityListForEmployee', () => {
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+      ...state,
+      skillList: { 
+        ...state.skillList, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+      ...state,
+      spotList: { 
+        ...state.spotList, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+      ...state,
+      employeeList: { 
+        ...state.employeeList, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+      ...state,
+      shiftRoster: { 
+        ...state.shiftRoster, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+      ...state,
+      rosterState: { 
+        ...state.rosterState, isLoading: true
+      }
+    }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
+  });
+
+  it('should return the shift list for a given employee in getAvailabilityListForEmployee', () => {
+    expect(rosterSelectors.getAvailabilityListForEmployee(state, mockAvailabilityRoster.employeeList[0]))
+      .toEqual([
+        {
+          tenantId: 0,
+          startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+          endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+          employee: {
+            tenantId: 0,
+            id: 20,
+            version: 0,
+            name: "Employee",
+            skillProficiencySet: [],
+            contract: {
+              tenantId: 0,
+              id: 30,
+              version: 0,
+              name: "Contract",
+              maximumMinutesPerDay: null,
+              maximumMinutesPerWeek: null,
+              maximumMinutesPerMonth: null,
+              maximumMinutesPerYear: null
+            }
+          },
+          state: "DESIRED"
+        }
+      ]);
+  });
+
+  it('should return an empty list if spot not in roster getAvailabilityListForEmployee', () => {
+    expect(rosterSelectors.getShiftListForEmployee(state, {
+      tenantId: 0,
+      id: 999,
+      version: 0,
+      name: "Missing Employee",
+      skillProficiencySet: [],
+      contract: {
+        tenantId: 0,
+        id: 9999,
+        name: "Contract",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerYear: null
+      }
     }))
       .toEqual([]);
   });
