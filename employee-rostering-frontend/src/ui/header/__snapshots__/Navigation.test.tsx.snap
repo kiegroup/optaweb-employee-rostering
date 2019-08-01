@@ -68,6 +68,17 @@ exports[`Navigation should activate a navigation link matching the current path 
         Shift
       </Link>
     </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="availability"
+      key="availability"
+    >
+      <Link
+        to="/availability"
+      >
+        Availability
+      </Link>
+    </NavItem>
   </NavList>
 </Nav>
 `;

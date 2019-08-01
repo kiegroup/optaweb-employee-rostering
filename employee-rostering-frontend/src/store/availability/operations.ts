@@ -64,7 +64,7 @@ export const removeEmployeeAvailability: ThunkCommandFactory<EmployeeAvailabilit
         dispatch(refreshAvailabilityRoster());
       }
       else {
-        dispatch(alert.showSuccessMessage("removeAvailabilityError", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
+        dispatch(alert.showErrorMessage("removeAvailabilityError", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
       }
     });
   };

@@ -34,8 +34,9 @@ describe('Tenant operations', () => {
   const mockRefreshContractList = jest.spyOn(contractOperations, "refreshContractList");
   const mockRefreshEmployeeList = jest.spyOn(employeeOperations, "refreshEmployeeList");
   const mockGetShiftRosterFor = jest.spyOn(rosterOperations, "getShiftRosterFor");
+  const mockGetAvailabilityRosterFor = jest.spyOn(rosterOperations, "getAvailabilityRosterFor");
   const mockRefreshRosterState = jest.spyOn(rosterOperations, "getRosterState");
-
+  
   beforeAll(() => {
     mockRefreshSkillList.mockImplementation(() => () => {});
     mockRefreshSpotList.mockImplementation(() => () => {});
@@ -43,6 +44,7 @@ describe('Tenant operations', () => {
     mockRefreshEmployeeList.mockImplementation(() => () => {});
     mockGetShiftRosterFor.mockImplementation(() => () => {});
     mockRefreshRosterState.mockImplementation(() => () => {});
+    mockGetAvailabilityRosterFor.mockImplementation(() => () => {});
   });
 
   afterAll(() => {
@@ -52,6 +54,7 @@ describe('Tenant operations', () => {
     mockRefreshEmployeeList.mockRestore();
     mockGetShiftRosterFor.mockRestore();
     mockRefreshRosterState.mockRestore();
+    mockGetAvailabilityRosterFor.mockRestore();
   });
 
   it('should dispatch actions and change tenant when current tenant not in refreshed the tenant list ',
@@ -78,7 +81,8 @@ describe('Tenant operations', () => {
     
       expect(store.getActions()).toEqual([
         actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
-        rosterActions.setShiftRosterIsLoading(true)
+        rosterActions.setShiftRosterIsLoading(true),
+        rosterActions.setAvailabilityRosterIsLoading(true)
       ]);
 
       expect(client.get).toHaveBeenCalledTimes(1);
@@ -118,6 +122,7 @@ describe('Tenant operations', () => {
       expect(store.getActions()).toEqual([
         actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
         rosterActions.setShiftRosterIsLoading(true),
+        rosterActions.setAvailabilityRosterIsLoading(true)
       ]);
 
       expect(client.get).toHaveBeenCalledTimes(1);
@@ -136,7 +141,8 @@ describe('Tenant operations', () => {
    
     expect(store.getActions()).toEqual([
       actions.changeTenant(0),
-      rosterActions.setShiftRosterIsLoading(true)
+      rosterActions.setShiftRosterIsLoading(true),
+      rosterActions.setAvailabilityRosterIsLoading(true)
     ]);
 
     expect(client.get).not.toBeCalled();
@@ -148,7 +154,7 @@ describe('Tenant operations', () => {
     expect(mockRefreshRosterState).toBeCalled();
   });
 
-  it('should get the Shift Roster for a spot in the spot list if roster state is not null', async () => {
+  it('should get the Shift Roster for a spot in the spot list and get the Availability Roster for an employee in the employee list if roster state is not null', async () => {
     const mockTenantList: Tenant[] = [{
       id: 1,
       version: 0,
@@ -185,7 +191,16 @@ describe('Tenant operations', () => {
       },
       employeeList: {
         isLoading: false,
-        employeeMapById: new Map()
+        employeeMapById: new Map([
+          [10, {
+            tenantId: 0,
+            id: 10,
+            version: 0,
+            name: "Amy",
+            contract: 0,
+            skillProficiencySet: []
+          }]
+        ])
       },
       contractList: {
         isLoading: false,
@@ -217,6 +232,10 @@ describe('Tenant operations', () => {
         isLoading: true,
         shiftRosterView: null
       },
+      availabilityRoster: {
+        isLoading: true,
+        availabilityRosterView: null
+      },
       solverState: {
         isSolving: false
       },
@@ -234,6 +253,7 @@ describe('Tenant operations', () => {
     expect(store.getActions()).toEqual([
       actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
       rosterActions.setShiftRosterIsLoading(true),
+      rosterActions.setAvailabilityRosterIsLoading(true)
     ]);
 
     expect(client.get).toHaveBeenCalledTimes(1);
@@ -245,6 +265,7 @@ describe('Tenant operations', () => {
     expect(mockRefreshEmployeeList).toBeCalled();
     expect(mockRefreshRosterState).toBeCalled();
     expect(mockGetShiftRosterFor).toBeCalled();
+    expect(mockGetAvailabilityRosterFor).toBeCalled();
   })
 });
 
@@ -316,6 +337,10 @@ const state: AppState = {
   shiftRoster: {
     isLoading: true,
     shiftRosterView: null
+  },
+  availabilityRoster: {
+    isLoading: true,
+    availabilityRosterView: null
   },
   solverState: {
     isSolving: false

@@ -90,6 +90,19 @@ exports[`App should render correctly 1`] = `
           exact={true}
           path="/shift"
         />
+        <Route
+          component={
+            Object {
+              "$$typeof": Symbol(react.memo),
+              "WrappedComponent": [Function],
+              "compare": null,
+              "displayName": "Connect(AvailabilityRosterPage)",
+              "type": [Function],
+            }
+          }
+          exact={true}
+          path="/availability"
+        />
       </Switch>
     </PageSection>
   </Page>
