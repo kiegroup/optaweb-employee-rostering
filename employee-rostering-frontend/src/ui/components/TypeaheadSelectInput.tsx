@@ -90,6 +90,14 @@ TypeaheadSelectState<T>
           {emptyText}
         </span>
         <Select
+          ref={(select) => {
+            // Hack to get select to display selection without needing to toggle
+            if (select !== null && selection !== null) {
+              select.setState({
+                typeaheadInputValue: selection
+              });
+            }
+          }}
           variant={SelectVariant.typeahead}
           aria-label={emptyText}
           onToggle={this.onToggle}
