@@ -340,6 +340,7 @@ describe('Shift Roster Page', () => {
 
     const style = shiftRosterPage.getDayStyle(endDate);
     expect(style).toEqual({
+      className: "draft-day",
       style: {
         backgroundColor: "var(--pf-global--BackgroundColor--100)"
       }
@@ -351,6 +352,7 @@ describe('Shift Roster Page', () => {
 
     const style = shiftRosterPage.getDayStyle(moment(startDate).subtract(1, "day").toDate());
     expect(style).toEqual({
+      className: "published-day",
       style: {
         backgroundColor: "var(--pf-global--BackgroundColor--300)"
       }

@@ -165,6 +165,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
     >
       <ForwardRef
         allDayAccessor={[Function]}
+        className="rbc-no-allday-cell"
         components={
           Object {
             "event": [Function],
@@ -456,6 +457,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
     >
       <ForwardRef
         allDayAccessor={[Function]}
+        className="rbc-no-allday-cell"
         components={
           Object {
             "event": [Function],
@@ -749,6 +751,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
     >
       <ForwardRef
         allDayAccessor={[Function]}
+        className="rbc-no-allday-cell"
         components={
           Object {
             "event": [Function],

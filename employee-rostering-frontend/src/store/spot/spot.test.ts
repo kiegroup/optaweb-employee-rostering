@@ -290,6 +290,10 @@ const state: AppState = {
     isLoading: true,
     shiftRosterView: null
   },
+  availabilityRoster: {
+    isLoading: true,
+    availabilityRosterView: null
+  },
   solverState: {
     isSolving: false
   },
