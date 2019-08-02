@@ -68,6 +68,9 @@ public class SpotServiceTest {
         return skillService.createSkill(tenantId, skill);
     }
 
+    // TODO: Add createTestTenant() and deleteTestTenant() setup methods to persist tenant and rosterState entities
+    //  before running tests once Tenant CRUD methods are implemented
+
     @Test
     public void getSpotListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders

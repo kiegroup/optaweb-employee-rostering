@@ -63,7 +63,7 @@ import static java.util.stream.Collectors.toList;
 @Component
 public class RosterGenerator implements ApplicationRunner {
 
-    public static final double[] EXTRA_SHIFT_THRESHOLDS = {0.5, 0.8, 0.95};
+    private static final double[] EXTRA_SHIFT_THRESHOLDS = {0.5, 0.8, 0.95};
 
     public static class GeneratorType {
 

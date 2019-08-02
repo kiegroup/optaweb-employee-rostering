@@ -69,19 +69,19 @@ public class RotationRestControllerTest {
         restTemplate.delete(spotPathURI + id, tenantId);
     }
 
-    // TODO: Add getShiftTemplateListTest when createRosterState() is implemented in RosterGenerator;
+    // TODO: Add getShiftTemplateListTest when Tenant CRUD is implemented;
     //  getShiftTemplates() requires persisted RosterState entity
 
-    // TODO: Add getShiftTemplateTest when createRosterState() is implemented in RosterGenerator;
+    // TODO: Add getShiftTemplateTest when Tenant CRUD is implemented;
     //  getShiftTemplate() requires persisted RosterState entity
 
-    // TODO: Add deleteShiftTemplateTest when createRosterState() is implemented in RosterGenerator;
+    // TODO: Add deleteShiftTemplateTest when Tenant CRUD is implemented;
     //  deleteShiftTemplate() requires persisted RosterState entity
 
-    // TODO: Add addShiftTemplateTest when createRosterState() is implemented in RosterGenerator;
+    // TODO: Add addShiftTemplateTest when Tenant CRUD is implemented;
     //  addShiftTemplate() requires persisted RosterState entity
 
-    // TODO: Add updateShiftTemplateTest when createRosterState() is implemented in RosterGenerator;
+    // TODO: Add updateShiftTemplateTest when Tenant CRUD is implemented;
     //  updateShiftTemplate() requires persisted RosterState entity
 
     /*@Test
