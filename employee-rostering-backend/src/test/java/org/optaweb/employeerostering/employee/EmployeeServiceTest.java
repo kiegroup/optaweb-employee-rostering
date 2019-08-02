@@ -81,6 +81,9 @@ public class EmployeeServiceTest {
         return contractService.createContract(tenantId, contractView);
     }
 
+    // TODO: Add createTestTenant() and deleteTestTenant() setup methods to persist tenant and rosterState entities
+    //  before running tests once Tenant CRUD methods are implemented
+
     @Test
     public void getEmployeeListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
