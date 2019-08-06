@@ -51,11 +51,13 @@ describe('TypeaheadSelectInput component', () => {
 
 
   it('should set selected and call onChange', () => {
+    jest.useFakeTimers();
     const defaultValue = {name: "Option 2"};
     const select = mount(<TypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
     const event: any = {};
     select.setState({ isExpanded: true });
     (select.instance() as Select).onSelect(event, "Option 1", false);
+    jest.runOnlyPendingTimers();
     expect(select.state("selected")).toEqual({ name: "Option 1"} );
     expect(select.state("isExpanded")).toEqual(false);
     expect(selectProps.onChange).toBeCalled();
@@ -65,7 +67,7 @@ describe('TypeaheadSelectInput component', () => {
   it('should set selected to undefined on clear selection and call onChange', () => {
     const defaultValue = {name: "Option 2"};
     const select = mount(<TypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
-    (select.instance() as Select).clearSelection();
+    (select.instance() as Select).clearSelection({ eventPhase: 2 });
     expect((select.instance() as Select).state.selected).toEqual(undefined);
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith(undefined);
