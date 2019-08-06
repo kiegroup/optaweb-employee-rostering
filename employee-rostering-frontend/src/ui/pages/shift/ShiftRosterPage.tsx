@@ -34,7 +34,6 @@ import ShiftEvent, { getShiftColor } from "./ShiftEvent";
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './ReactBigCalendarOverrides.css';
-import { rebeccapurple } from "color-name";
 
 interface StateProps {
   isSolving: boolean;
