@@ -2,19 +2,13 @@
 
 exports[`TypeaheadSelectInput component should render correctly 1`] = `
 <div>
-  <span
-    hidden={true}
-    id="typeahead-select-id"
-  >
-    Enter some data
-  </span>
   <Select
     aria-label="Enter some data"
     ariaLabelClear="Clear all"
     ariaLabelRemove="Remove"
     ariaLabelToggle="Options menu"
     ariaLabelTypeAhead=""
-    ariaLabelledBy="typeahead-select-id"
+    ariaLabelledBy=""
     className=""
     isExpanded={false}
     isGrouped={false}

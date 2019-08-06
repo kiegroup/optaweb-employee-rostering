@@ -61,7 +61,7 @@
     text-transform: none;
 }
 
-.availability {
+.availability-wrapper {
     position: absolute !important;
     top: 0 !important;
     left: 0 !important;
@@ -69,6 +69,26 @@
     height: 100% !important;
     opacity: 0.75;
 }
+
+.availability-event {
+    display: "flex";
+    height: 100%;
+    width: 100%;
+}
+
+.availability-wrapper:not(:hover) button {
+    display: none;
+}
+
+.availability-allday-wrapper:not(:hover) button {
+    display: none;
+}
+
+.availability-allday-wrapper {
+    position: relative; 
+    margin-bottom: -100%;
+}
+
 
 .unavailable .rbc-time-slot {
     border-top: 1px solid black;

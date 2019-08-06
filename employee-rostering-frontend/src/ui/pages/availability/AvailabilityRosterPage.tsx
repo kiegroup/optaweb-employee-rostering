@@ -21,14 +21,13 @@ import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
-import { Level, LevelItem, Button, Title } from "@patternfly/react-core";
+import { Level, LevelItem, Button, Title, Split, SplitItem } from "@patternfly/react-core";
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import EditShiftModal from '../shift/EditShiftModal';
-import Color from 'color';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
-import ShiftEvent, { getShiftColor } from "../shift/ShiftEvent";
+import ShiftEvent from "../shift/ShiftEvent";
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../shift/ReactBigCalendarOverrides.css';
@@ -36,7 +35,10 @@ import EmployeeAvailability from "domain/EmployeeAvailability";
 import { employeeSelectors } from "store/employee";
 import Employee from "domain/Employee";
 import { availabilityOperations } from "store/availability";
-import { start } from "repl";
+import { OkIcon, WarningTriangleIcon, ErrorCircleOIcon, TrashIcon } from "@patternfly/react-icons";
+import { shiftOperations } from "store/shift";
+import { useTranslation } from "react-i18next";
+import EditAvailabilityModal from "./EditAvailabilityModal";
 
 interface StateProps {
   isSolving: boolean;
@@ -80,6 +82,9 @@ export interface DispatchProps {
   publishRoster: typeof rosterOperations.publish;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
   showInfoMessage: typeof alert.showInfoMessage;
+  addShift: typeof shiftOperations.addShift;
+  updateShift: typeof shiftOperations.updateShift;
+  removeShift: typeof shiftOperations.removeShift;
 }
   
 const mapDispatchToProps: DispatchProps = {
@@ -91,11 +96,16 @@ const mapDispatchToProps: DispatchProps = {
   solveRoster: rosterOperations.solveRoster,
   publishRoster: rosterOperations.publish,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
-  showInfoMessage: alert.showInfoMessage
+  showInfoMessage: alert.showInfoMessage,
+  addShift: shiftOperations.addShift,
+  updateShift: shiftOperations.updateShift,
+  removeShift: shiftOperations.removeShift
 }
   
 export type Props = StateProps & DispatchProps;
 interface State {
+  selectedAvailability?: EmployeeAvailability;
+  isCreatingOrEditingAvailability: boolean;
   isCreatingOrEditingShift: boolean;
   selectedShift?: Shift;
 }
@@ -130,21 +140,35 @@ export function EventWrapper(props: PropsWithChildren<{
 }>): JSX.Element {
   if (!props.style) {
     return (
-      <div>
+      <div
+        className="availability-allday-wrapper"
+      >
         {props.children}
       </div>
     );
   }
+
   const gridRowStart = parseInt(props.style.top as string) + 1;
   const gridRowEnd = parseInt(props.style.height as string) + gridRowStart;
   let className = "rbc-event";
   let zIndex = 0;
+
   if (isAvailability(props.event.reference)) {
-    className = "availability";
+    className = "availability-wrapper";
   }
   else {
     zIndex = 1;
   }
+
+  if (moment(props.event.end).get("date") !== moment(props.event.start).get("date")) {
+    if (gridRowStart === 1) {
+      className = className + " continues-from-previous-day";
+    }
+    if (gridRowEnd === 100) {
+      className = className + " continues-next-day";
+    }
+  }
+  
   return (
     <div
       className={className}
@@ -161,18 +185,76 @@ export function EventWrapper(props: PropsWithChildren<{
   );
 }
 
-const AvailabilityEvent: React.FC<EmployeeAvailability> = (ea: EmployeeAvailability) => {
+interface AvailabilityEventProps {
+  availability: EmployeeAvailability;
+  updateEmployeeAvailability: (ea: EmployeeAvailability) => void;
+  removeEmployeeAvailability: (ea: EmployeeAvailability) => void;
+}
+
+const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: AvailabilityEventProps) => {
+  const { t } = useTranslation();
   return (
     <span
       data-tip
-      data-for={String(ea.id)}
-      style={{
-        display: "flex",
-        height: "100%",
-        width: "100%"
-      }}
+      data-for={String(props.availability.id)}
+      className="availability-event"
+
     >
-      {ea.state}
+      <Split>
+        <SplitItem isFilled={false}>{t("EmployeeAvailabilityState." + props.availability.state)}</SplitItem>
+        <SplitItem isFilled />
+        <SplitItem isFilled={false}>
+          <Button
+            onClick={() => props.removeEmployeeAvailability(props.availability)}
+            variant="danger"
+          >
+            <TrashIcon />
+          </Button>
+        </SplitItem>
+      </Split>
+      <Level gutter="sm">
+        <LevelItem>
+          <Button
+            onClick={() => props.updateEmployeeAvailability({
+              ...props.availability,
+              state: "DESIRED"
+            })}
+            style={{
+              backgroundColor: "green",
+              margin: "5px"
+            }}
+            variant="tertiary"
+          >
+            <OkIcon />
+          </Button>
+          <Button
+            onClick={() => props.updateEmployeeAvailability({
+              ...props.availability,
+              state: "UNDESIRED"
+            })}
+            style={{
+              backgroundColor: "yellow",
+              margin: "5px"
+            }}
+            variant="tertiary"
+          >
+            <WarningTriangleIcon />
+          </Button>
+          <Button
+            onClick={() => props.updateEmployeeAvailability({
+              ...props.availability,
+              state: "UNAVAILABLE"
+            })}
+            style={{
+              backgroundColor: "red",
+              margin: "5px"
+            }}
+            variant="tertiary"
+          >
+            <ErrorCircleOIcon />
+          </Button>
+        </LevelItem>
+      </Level>
     </span>
   );
 }
@@ -185,7 +267,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     this.getEventStyle = this.getEventStyle.bind(this);
     this.getDayStyle = this.getDayStyle.bind(this);
     this.state = {
-      isCreatingOrEditingShift: false
+      isCreatingOrEditingShift: false,
+      isCreatingOrEditingAvailability: false
     };
   }
 
@@ -255,13 +338,20 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
         }
       }
     }
-    else if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
-      style.backgroundColor = "var(--pf-global--BackgroundColor--300)";
+    if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
+      if (!className) {
+        style.backgroundColor = "var(--pf-global--BackgroundColor--300)";
+      }
+      className = className + " published-day";
     }
     else {
-      style.backgroundColor = "var(--pf-global--BackgroundColor--100)"
+      if (!className) {
+        style.backgroundColor = "var(--pf-global--BackgroundColor--100)"
+      }
+      className = className + " draft-day";
     }
-    return { className, style };
+
+    return { className: className.trim() , style };
   }
 
   render() {
@@ -361,7 +451,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               aria-label="Refresh"
               onClick={() => {
                 this.props.refreshAvailabilityRoster();
-                this.props.showInfoMessage("shiftRosterRefresh");
+                this.props.showInfoMessage("availabilityRosterRefresh");
               }
               }
             >
@@ -369,15 +459,17 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             </Button>
             <Button
               style={{margin: "5px"}}
-              aria-label="Create Shift"
+              aria-label="Create Availability"
               onClick={() => {
-                this.setState({
-                  selectedShift: undefined,
-                  isCreatingOrEditingShift: true
-                })
+                if (!this.state.isCreatingOrEditingShift) {
+                  this.setState({
+                    selectedAvailability: undefined,
+                    isCreatingOrEditingAvailability: true
+                  })
+                }
               }}
             >
-              Create Shift
+              Create Availability
             </Button>
           </LevelItem>
         </Level>
@@ -385,18 +477,43 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           height: "calc(100% - 60px)"
         }}
         >
+          <EditAvailabilityModal
+            availability={this.state.selectedAvailability}
+            isOpen={this.state.isCreatingOrEditingAvailability}
+            onSave={availability => {
+              if (this.state.selectedAvailability !== undefined) {
+                this.props.updateEmployeeAvailability(availability);
+              }
+              else {
+                this.props.addEmployeeAvailability(availability);
+              }
+              this.setState({ selectedAvailability: undefined, isCreatingOrEditingAvailability: false });
+            }}
+            onDelete={availability => {
+              this.props.removeEmployeeAvailability(availability);
+              this.setState({ isCreatingOrEditingAvailability: false });
+            }}
+            onClose={() => this.setState({ selectedAvailability: undefined, isCreatingOrEditingAvailability: false })}
+          />
           <EditShiftModal
             aria-label="Edit Shift"
             isOpen={this.state.isCreatingOrEditingShift}
             shift={this.state.selectedShift}
             onDelete={(shift) => {
-              this.setState({ isCreatingOrEditingShift: false });
+              this.props.removeShift(shift);
+              this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false });
             }
             }
             onSave={shift => {
-              this.setState({ isCreatingOrEditingShift: false });
+              if (this.state.selectedShift !== undefined) {
+                this.props.updateShift(shift);
+              }
+              else {
+                this.props.addShift(shift);
+              }
+              this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false });
             }}
-            onClose={() => this.setState({ isCreatingOrEditingShift: false })}
+            onClose={() => this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false })}
           />
           <Title size="md">{employee.name}</Title>
           <div style={{
@@ -454,10 +571,24 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                     title: props.event.reference.spot.name,
                     event: props.event.reference,
                     onEdit: () => {
+                      if (!this.state.isCreatingOrEditingAvailability) {
+                        this.setState({
+                          selectedShift: props.event.reference as Shift,
+                          isCreatingOrEditingShift: true
+                        })
+                      }
                     },
                     onDelete: () => {
+                      this.props.updateShift({
+                        ...props.event.reference as Shift,
+                        employee: null
+                      })
                     }
-                  }) : AvailabilityEvent(props.event.reference)
+                  }) : AvailabilityEvent({
+                  availability: props.event.reference,
+                  updateEmployeeAvailability: this.props.updateEmployeeAvailability,
+                  removeEmployeeAvailability: this.props.removeEmployeeAvailability
+                })
               }}
             />
           </div>
