@@ -19,7 +19,7 @@ import Shift from 'domain/Shift';
 import ShiftView, { shiftToShiftView } from 'domain/ShiftView';
 import moment from 'moment';
 import { alert } from 'store/alert';
-import { refreshShiftRoster } from 'store/roster/operations';
+import { refreshShiftRoster, refreshAvailabilityRoster } from 'store/roster/operations';
 import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
 
@@ -62,6 +62,7 @@ export const addShift: ThunkCommandFactory<Shift, any> = shift =>
     return client.post<KindaShiftView>(`/tenant/${tenantId}/shift/add`, shiftAdapter(shift)).then(newShift => {
       dispatch(alert.showSuccessMessage("addShift", { startDateTime: moment(newShift.startDateTime).format("LLL"), endDateTime: moment(newShift.endDateTime).format("LLL") }));
       dispatch(refreshShiftRoster());
+      dispatch(refreshAvailabilityRoster());
     });
   };
 
@@ -73,6 +74,7 @@ export const removeShift: ThunkCommandFactory<Shift, any> = shift =>
       if (isSuccess) {
         dispatch(alert.showSuccessMessage("removeShift", { id: shift.id, startDateTime: moment(shift.startDateTime).format("LLL"), endDateTime: moment(shift.endDateTime).format("LLL") }));
         dispatch(refreshShiftRoster());
+        dispatch(refreshAvailabilityRoster());
       }
       else {
         dispatch(alert.showErrorMessage("removeShiftError", { id: shift.id, startDateTime: moment(shift.startDateTime).format("LLL"), endDateTime: moment(shift.endDateTime).format("LLL") }));
@@ -86,5 +88,6 @@ export const updateShift: ThunkCommandFactory<Shift, any> = shift =>
     return client.put<KindaShiftView>(`/tenant/${tenantId}/shift/update`, shiftAdapter(shift)).then(updatedShift => {
       dispatch(alert.showSuccessMessage("updateShift", { id: updatedShift.id }));
       dispatch(refreshShiftRoster());
+      dispatch(refreshAvailabilityRoster());
     });
   };

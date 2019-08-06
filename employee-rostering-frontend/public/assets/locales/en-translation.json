@@ -47,7 +47,7 @@
 
     "removeShift": {
       "title": "Successfully deleted Shift",
-      "message": "`The Shift with id {{id}} starting at {{startDateTime}} and ending at {{endDateTime}} was successfully deleted.`"
+      "message": "The Shift with id {{id}} starting at {{startDateTime}} and ending at {{endDateTime}} was successfully deleted."
     },
 
     "removeShiftError": {
@@ -58,6 +58,26 @@
     "updateShift": {
       "title": "Successfully updated Shift",
       "message": "The Shift with id \"{{id}}\" was successfully updated."
+    },
+
+    "addAvailability": {
+      "title": "Successfully added Availability",
+      "message":"A new Availability starting at {{startDateTime}} and ending at {{endDateTime}} for employee {{employeeName}} was successfully added."
+    },
+
+    "removeAvailability": {
+      "title": "Successfully deleted Availability",
+      "message": "The Availability with id {{id}} starting at {{startDateTime}} and ending at {{endDateTime}} for employee {{employeeName}} was successfully deleted."
+    },
+
+    "removeAvailabilityError": {
+      "title": "Error deleting Availability",
+      "message": "The Availability with id {{id}} starting at {{startDateTime}} and ending at {{endDateTime}} for employee {{employeeName}} could not be deleted."
+    },
+
+    "updateAvailability": {
+      "title": "Successfully updated Availability",
+      "message": "The Availability with id {{id}} was successfully updated."
     },
 
     "addSkill": {
@@ -138,5 +158,11 @@
     "nullPointer": "It appears the developers made a mistake somewhere. Please contact them.",
     "rollback": "The object you tried to delete is still referenced from other entities. Update/delete all references to this object before deleting it.",
     "unknown": "An exception occurred: {0}"
+  },
+
+  "EmployeeAvailabilityState": {
+    "DESIRED": "Desired",
+    "UNDESIRED": "Undesired",
+    "UNAVAILABLE": "Unavailable"
   }
 }

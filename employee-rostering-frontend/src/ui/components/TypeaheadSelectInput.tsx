@@ -15,6 +15,7 @@
  */
 import React from "react";
 import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
+import "./TypeaheadSelectInput.css";
 
 export interface TypeaheadSelectProps<T> {
   emptyText: string;
@@ -53,42 +54,41 @@ TypeaheadSelectState<T>
     });
   }
 
-  clearSelection() {
-    this.props.onChange(undefined);
-    this.setState({
-      selected: undefined,
-      isExpanded: false
-    });
+  clearSelection(event: any) {
+    if (event.eventPhase === 2) {
+      this.props.onChange(undefined);
+      this.setState({
+        selected: undefined,
+        isExpanded: false
+      });
+    } // HACK: For some reason, when there are two or more Select, the
+    // clear button of the Select above is clicked on Keyboard enter via event bubbling.
   }
 
-  onSelect(
-    event: any,
+  onSelect(event: any,
     selection: string,
-    isPlaceholder: boolean
-  ) {
+    isPlaceholder: boolean) {
     const selectedOption = this.props.options.find(
       option => this.props.optionToStringMap(option) === selection
     ) as T;
-
-    this.props.onChange(selectedOption);
-    this.setState({
-      isExpanded: false,
-      selected: selectedOption
-    });
+    setTimeout(() => {
+      this.props.onChange(selectedOption);
+      this.setState(() => ({
+        isExpanded: false,
+        selected: selectedOption
+      }))
+    }, 0); // HACK: For some reason, when there are two or more Select, the
+    // clear button is clicked on Keyboard enter. 
   }
 
   render() {
     const { isExpanded, selected } = this.state;
-    const titleId = "typeahead-select-id";
     const emptyText = this.props.emptyText;
     const selection =
       selected !== undefined ? this.props.optionToStringMap(selected) : null;
 
     return (
       <div>
-        <span id={titleId} hidden>
-          {emptyText}
-        </span>
         <Select
           ref={(select) => {
             // Hack to get select to display selection without needing to toggle
@@ -105,7 +105,6 @@ TypeaheadSelectState<T>
           onClear={this.clearSelection}
           selections={selection as any}
           isExpanded={isExpanded}
-          ariaLabelledBy={titleId}
           placeholderText={emptyText}
           required={!this.props.optional}
         >

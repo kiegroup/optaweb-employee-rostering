@@ -74,18 +74,26 @@ function stopSolvingRoster(dispatch: ThunkDispatch<AppState, RestServiceClient, 
   });
 }
 
+const updateInterval = 1000;
+
+function refresh(dispatch: ThunkDispatch<AppState, RestServiceClient, any>) {
+  Promise.all([
+    dispatch(operations.refreshShiftRoster()),
+    dispatch(operations.refreshAvailabilityRoster())
+  ]).then(() => {
+    autoRefreshShiftRosterDuringSolvingIntervalTimeout = setTimeout(() => refresh(dispatch), updateInterval);
+  });
+}
+
 export const solveRoster: ThunkCommandFactory<void,  AddAlertAction | SolveRosterAction> = () => 
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
     return client.post(`/tenant/${tenantId}/roster/solve`, {}).then(() => {
       let solvingStartTime: number = new Date().getTime();
-      const updateInterval = 1000;
       const solvingLength = 30 * 1000;
       dispatch(actions.solveRoster());
       dispatch(alert.showInfoMessage("startSolvingRoster", { startSolvingTime: moment(solvingStartTime).format("LLL") }));
-      autoRefreshShiftRosterDuringSolvingIntervalTimeout = setInterval(() => {
-        dispatch(operations.refreshShiftRoster());
-      },updateInterval);
+      autoRefreshShiftRosterDuringSolvingIntervalTimeout = setTimeout(() => refresh(dispatch), updateInterval);
       stopSolvingRosterTimeout = setTimeout(() => stopSolvingRoster(dispatch), solvingLength);
     });
   }
