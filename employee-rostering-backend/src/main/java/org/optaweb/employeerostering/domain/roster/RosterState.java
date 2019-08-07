@@ -30,7 +30,6 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
-import org.optaweb.employeerostering.domain.common.HasTimeslot;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 
@@ -126,21 +125,6 @@ public class RosterState extends AbstractPersistable {
     @JsonIgnore
     public boolean isPublished(Shift shift) {
         return isPublished(shift.getStartDateTime());
-    }
-
-    @JsonIgnore
-    public boolean isHistoric(HasTimeslot shift) {
-        return isHistoric(HasTimeslot.EPOCH.plus(shift.getDurationBetweenReferenceAndStart()));
-    }
-
-    @JsonIgnore
-    public boolean isDraft(HasTimeslot shift) {
-        return isDraft(HasTimeslot.EPOCH.plus(shift.getDurationBetweenReferenceAndStart()));
-    }
-
-    @JsonIgnore
-    public boolean isPublished(HasTimeslot shift) {
-        return isPublished(HasTimeslot.EPOCH.plus(shift.getDurationBetweenReferenceAndStart()));
     }
 
     @JsonIgnore
