@@ -14,34 +14,31 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.domain.skill;
+package org.optaweb.employeerostering.domain.employee.view;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import java.util.Set;
 
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.skill.Skill;
 
-@Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
-public class Skill extends AbstractPersistable {
+public class EmployeeView extends AbstractPersistable {
 
-    @NotNull
-    @Size(min = 1, max = 120)
-    @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
 
-    @SuppressWarnings("unused")
-    public Skill() {
+    private Contract contract;
 
+    private Set<Skill> skillProficiencySet;
+
+    @SuppressWarnings("unused")
+    public EmployeeView() {
     }
 
-    public Skill(Integer tenantId, String name) {
+    public EmployeeView(Integer tenantId, String name, Contract contract, Set<Skill> skillProficiencySet) {
         super(tenantId);
         this.name = name;
+        this.contract = contract;
+        this.skillProficiencySet = skillProficiencySet;
     }
 
     @Override
@@ -59,5 +56,21 @@ public class Skill extends AbstractPersistable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<Skill> getSkillProficiencySet() {
+        return skillProficiencySet;
+    }
+
+    public void setSkillProficiencySet(Set<Skill> skillProficiencySet) {
+        this.skillProficiencySet = skillProficiencySet;
+    }
+
+    public Contract getContract() {
+        return contract;
+    }
+
+    public void setContract(Contract contract) {
+        this.contract = contract;
     }
 }

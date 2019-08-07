@@ -27,8 +27,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
 import org.optaweb.employeerostering.domain.skill.Skill;
+import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.optaweb.employeerostering.service.contract.ContractService;
 import org.optaweb.employeerostering.service.employee.EmployeeService;
 import org.optaweb.employeerostering.service.skill.SkillService;
@@ -69,13 +72,13 @@ public class EmployeeServiceTest {
     private ContractService contractService;
 
     private Skill createSkill(Integer tenantId, String name) {
-        Skill skill = new Skill(tenantId, name);
-        return skillService.createSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        return skillService.createSkill(tenantId, skillView);
     }
 
     private Contract createContract(Integer tenantId, String name) {
-        Contract contract = new Contract(tenantId, name);
-        return contractService.createContract(tenantId, contract);
+        ContractView contractView = new ContractView(tenantId, name);
+        return contractService.createContract(tenantId, contractView);
     }
 
     @Test
@@ -101,8 +104,8 @@ public class EmployeeServiceTest {
 
         Contract contract = createContract(tenantId, name);
 
-        Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-        employeeService.createEmployee(tenantId, employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        Employee employee = employeeService.createEmployee(tenantId, employeeView);
 
         mvc.perform(MockMvcRequestBuilders
                             .get("/rest/tenant/{tenantId}/employee/{id}", tenantId, employee.getId())
@@ -140,8 +143,8 @@ public class EmployeeServiceTest {
 
         Contract contract = createContract(tenantId, name);
 
-        Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-        employeeService.createEmployee(tenantId, employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        Employee employee = employeeService.createEmployee(tenantId, employeeView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -165,8 +168,8 @@ public class EmployeeServiceTest {
 
         Contract contract = createContract(tenantId, name);
 
-        Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-        employeeService.createEmployee(tenantId, employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        Employee employee = employeeService.createEmployee(tenantId, employeeView);
 
         mvc.perform(MockMvcRequestBuilders
                             .delete("/rest/tenant/{tenantId}/employee/{id}", tenantId, employee.getId())
@@ -199,8 +202,8 @@ public class EmployeeServiceTest {
 
         Contract contract = createContract(tenantId, name);
 
-        Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-        employeeService.createEmployee(tenantId, employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        Employee employee = employeeService.createEmployee(tenantId, employeeView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders.delete("/rest/tenant/{tenantId}/employee/{id}", 2,
@@ -223,8 +226,8 @@ public class EmployeeServiceTest {
 
         Contract contract = createContract(tenantId, name);
 
-        Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
         mvc.perform(MockMvcRequestBuilders
                             .post("/rest/tenant/{tenantId}/employee/add", tenantId)
@@ -253,8 +256,8 @@ public class EmployeeServiceTest {
 
         Contract contract = createContract(tenantId, name);
 
-        Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -277,8 +280,8 @@ public class EmployeeServiceTest {
 
         Contract contract = createContract(tenantId, name);
 
-        Employee employee = new Employee(tenantId, name, contract, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -303,12 +306,12 @@ public class EmployeeServiceTest {
 
         Contract contract = createContract(tenantId, name);
 
-        Employee employee = new Employee(tenantId, name, contract, Collections.emptySet());
-        employeeService.createEmployee(tenantId, employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        Employee employee = employeeService.createEmployee(tenantId, employeeView);
 
-        Employee employee2 = new Employee(tenantId, "name2", contract, testSkillSet);
-        employee2.setId(employee.getId());
-        String body = (new ObjectMapper()).writeValueAsString(employee2);
+        EmployeeView employeeView2 = new EmployeeView(tenantId, "name2", contract, testSkillSet);
+        employeeView2.setId(employee.getId());
+        String body = (new ObjectMapper()).writeValueAsString(employeeView2);
 
         mvc.perform(MockMvcRequestBuilders
                             .put("/rest/tenant/{tenantId}/employee/update", tenantId)
@@ -337,11 +340,11 @@ public class EmployeeServiceTest {
 
         Contract contract = createContract(tenantId, name);
 
-        Employee employee = new Employee(tenantId, name, contract, Collections.emptySet());
-        employeeService.createEmployee(tenantId, employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        Employee employee = employeeService.createEmployee(tenantId, employeeView);
 
-        Employee employee2 = new Employee(tenantId, "name2", contract, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(employee2);
+        EmployeeView employeeView2 = new EmployeeView(tenantId, "name2", contract, testSkillSet);
+        String body = (new ObjectMapper()).writeValueAsString(employeeView2);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -356,9 +359,9 @@ public class EmployeeServiceTest {
     public void updateNonExistentEmployeeTest() throws Exception {
         Contract contract = new Contract();
 
-        Employee employee = new Employee(1, "name", contract, Collections.emptySet());
-        employee.setId(-1L);
-        String body = (new ObjectMapper()).writeValueAsString(employee);
+        EmployeeView employeeView = new EmployeeView(1, "name", contract, Collections.emptySet());
+        employeeView.setId(-1L);
+        String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -375,8 +378,8 @@ public class EmployeeServiceTest {
         Integer tenantId2 = 2;
         String name = "name";
 
-        Skill skillA = createSkill(tenantId2, "A");
-        Skill skillB = createSkill(tenantId2, "B");
+        Skill skillA = createSkill(tenantId, "A");
+        Skill skillB = createSkill(tenantId, "B");
 
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
@@ -385,16 +388,16 @@ public class EmployeeServiceTest {
         Contract contract = createContract(tenantId, name);
         Contract contract2 = createContract(tenantId2, name);
 
-        Employee employee = new Employee(tenantId, name, contract, Collections.emptySet());
-        employeeService.createEmployee(tenantId, employee);
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
+        Employee employee = employeeService.createEmployee(tenantId, employeeView);
 
-        Employee employee2 = new Employee(2, name, contract2, testSkillSet);
-        employee2.setId(employee.getId());
-        String body = (new ObjectMapper()).writeValueAsString(employee2);
+        EmployeeView employeeView2 = new EmployeeView(tenantId2, name, contract2, Collections.emptySet());
+        employeeView2.setId(employee.getId());
+        String body = (new ObjectMapper()).writeValueAsString(employeeView2);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .put("/rest/tenant/{tenantId}/employee/update", 2)
+                                                      .put("/rest/tenant/{tenantId}/employee/update", tenantId2)
                                                       .contentType(MediaType.APPLICATION_JSON)
                                                       .content(body)))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalState" +

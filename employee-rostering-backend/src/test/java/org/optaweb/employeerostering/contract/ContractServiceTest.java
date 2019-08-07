@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.optaweb.employeerostering.service.contract.ContractService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,9 +73,9 @@ public class ContractServiceTest {
         Integer maximumMinutesPerMonth = 1000;
         Integer maximumMinutesPerYear = 12000;
 
-        Contract contract = new Contract(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
-                                         maximumMinutesPerMonth, maximumMinutesPerYear);
-        contractService.createContract(tenantId, contract);
+        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
+                                             maximumMinutesPerMonth, maximumMinutesPerYear);
+        Contract contract = contractService.createContract(tenantId, contractView);
 
         mvc.perform(MockMvcRequestBuilders
                             .get("/rest/tenant/{tenantId}/contract/{id}", tenantId, contract.getId())
@@ -105,8 +106,8 @@ public class ContractServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Contract contract = new Contract(tenantId, name);
-        contractService.createContract(tenantId, contract);
+        ContractView contractView = new ContractView(tenantId, name);
+        Contract contract = contractService.createContract(tenantId, contractView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -121,8 +122,8 @@ public class ContractServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Contract contract = new Contract(tenantId, name);
-        contractService.createContract(tenantId, contract);
+        ContractView contractView = new ContractView(tenantId, name);
+        Contract contract = contractService.createContract(tenantId, contractView);
 
         mvc.perform(MockMvcRequestBuilders
                             .delete("/rest/tenant/{tenantId}/contract/{id}", tenantId, contract.getId())
@@ -146,8 +147,8 @@ public class ContractServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Contract contract = new Contract(tenantId, name);
-        contractService.createContract(tenantId, contract);
+        ContractView contractView = new ContractView(tenantId, name);
+        Contract contract = contractService.createContract(tenantId, contractView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -166,9 +167,9 @@ public class ContractServiceTest {
         Integer maximumMinutesPerMonth = 1000;
         Integer maximumMinutesPerYear = 12000;
 
-        Contract contract = new Contract(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
+        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
                                          maximumMinutesPerMonth, maximumMinutesPerYear);
-        String body = (new ObjectMapper()).writeValueAsString(contract);
+        String body = (new ObjectMapper()).writeValueAsString(contractView);
 
         mvc.perform(MockMvcRequestBuilders
                             .post("/rest/tenant/{tenantId}/contract/add", tenantId)
@@ -190,8 +191,8 @@ public class ContractServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Contract contract = new Contract(tenantId, name);
-        String body = (new ObjectMapper()).writeValueAsString(contract);
+        ContractView contractView = new ContractView(tenantId, name);
+        String body = (new ObjectMapper()).writeValueAsString(contractView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -211,13 +212,13 @@ public class ContractServiceTest {
         Integer maximumMinutesPerMonth = 1000;
         Integer maximumMinutesPerYear = 12000;
 
-        Contract contract = new Contract(tenantId, name);
-        contractService.createContract(tenantId, contract);
+        ContractView contractView = new ContractView(tenantId, name);
+        Contract contract = contractService.createContract(tenantId, contractView);
 
-        Contract contract2 = new Contract(tenantId, "name2", maximumMinutesPerDay, maximumMinutesPerWeek,
+        ContractView contractView2 = new ContractView(tenantId, "name2", maximumMinutesPerDay, maximumMinutesPerWeek,
                                           maximumMinutesPerMonth, maximumMinutesPerYear);
-        contract2.setId(contract.getId());
-        String body = (new ObjectMapper()).writeValueAsString(contract2);
+        contractView2.setId(contract.getId());
+        String body = (new ObjectMapper()).writeValueAsString(contractView2);
 
         mvc.perform(MockMvcRequestBuilders
                             .put("/rest/tenant/{tenantId}/contract/update", tenantId)
@@ -239,11 +240,11 @@ public class ContractServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Contract contract = new Contract(tenantId, name);
-        contractService.createContract(tenantId, contract);
+        ContractView contractView = new ContractView(tenantId, name);
+        Contract contract = contractService.createContract(tenantId, contractView);
 
-        Contract contract2 = new Contract(tenantId, "name2");
-        String body = (new ObjectMapper()).writeValueAsString(contract2);
+        ContractView contractView2 = new ContractView(tenantId, "name2");
+        String body = (new ObjectMapper()).writeValueAsString(contractView2);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -256,9 +257,9 @@ public class ContractServiceTest {
 
     @Test
     public void updateNonExistentContractTest() throws Exception {
-        Contract contract = new Contract(1, "name");
-        contract.setId(-1L);
-        String body = (new ObjectMapper()).writeValueAsString(contract);
+        ContractView contractView = new ContractView(1, "name");
+        contractView.setId(-1L);
+        String body = (new ObjectMapper()).writeValueAsString(contractView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -274,12 +275,12 @@ public class ContractServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Contract contract = new Contract(tenantId, name);
-        contractService.createContract(tenantId, contract);
+        ContractView contractView = new ContractView(tenantId, name);
+        Contract contract = contractService.createContract(tenantId, contractView);
 
-        Contract contract2 = new Contract(2, name);
-        contract2.setId(contract.getId());
-        String body = (new ObjectMapper()).writeValueAsString(contract2);
+        ContractView contractView2 = new ContractView(2, name);
+        contractView2.setId(contract.getId());
+        String body = (new ObjectMapper()).writeValueAsString(contractView2);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders

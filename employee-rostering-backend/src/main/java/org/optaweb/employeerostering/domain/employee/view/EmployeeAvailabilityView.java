@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.domain.employee;
+package org.optaweb.employeerostering.domain.employee.view;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -23,6 +23,9 @@ import javax.validation.constraints.NotNull;
 
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.common.DateTimeUtil;
+import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 
 public class EmployeeAvailabilityView extends AbstractPersistable {
 

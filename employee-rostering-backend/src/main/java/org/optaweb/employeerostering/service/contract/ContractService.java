@@ -23,6 +23,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,18 @@ public class ContractService extends AbstractRestService {
 
     public ContractService(ContractRepository contractRepository) {
         this.contractRepository = contractRepository;
+    }
+
+    public Contract convertFromView(Integer tenantId, ContractView contractView) {
+        validateTenantIdParameter(tenantId, contractView);
+        Contract contract = new Contract(tenantId, contractView.getName(),
+                                         contractView.getMaximumMinutesPerDay(),
+                                         contractView.getMaximumMinutesPerWeek(),
+                                         contractView.getMaximumMinutesPerMonth(),
+                                         contractView.getMaximumMinutesPerYear());
+        contract.setId(contractView.getId());
+        contract.setVersion(contractView.getVersion());
+        return contract;
     }
 
     @Transactional
@@ -66,16 +79,14 @@ public class ContractService extends AbstractRestService {
     }
 
     @Transactional
-    public Contract createContract(Integer tenantId, Contract contract) {
-        validateTenantIdParameter(tenantId, contract);
-
+    public Contract createContract(Integer tenantId, ContractView contractView) {
+        Contract contract = convertFromView(tenantId, contractView);
         return contractRepository.save(contract);
     }
 
     @Transactional
-    public Contract updateContract(Integer tenantId, Contract contract) {
-        validateTenantIdParameter(tenantId, contract);
-
+    public Contract updateContract(Integer tenantId, ContractView contractView) {
+        Contract contract = convertFromView(tenantId, contractView);
         Optional<Contract> contractOptional = contractRepository.findById(contract.getId());
 
         if (!contractOptional.isPresent()) {

@@ -67,13 +67,6 @@ public class Employee extends AbstractPersistable {
         this.skillProficiencySet = skillProficiencySet;
     }
 
-    public Employee(EmployeeDTO employeeDTO) {
-        this(employeeDTO.getTenantId(), employeeDTO.getName(), employeeDTO.getContract(),
-             employeeDTO.getSkillProficiencySet());
-        this.setId(employeeDTO.getId());
-        this.setVersion(employeeDTO.getVersion());
-    }
-
     public boolean hasSkill(Skill skill) {
         return skillProficiencySet.contains(skill);
     }

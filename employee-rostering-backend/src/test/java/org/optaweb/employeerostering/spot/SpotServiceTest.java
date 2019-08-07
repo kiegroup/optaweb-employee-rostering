@@ -27,7 +27,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
+import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.optaweb.employeerostering.service.spot.SpotService;
 import org.slf4j.Logger;
@@ -64,8 +66,8 @@ public class SpotServiceTest {
     private SkillService skillService;
 
     private Skill createSkill(Integer tenantId, String name) {
-        Skill skill = new Skill(tenantId, name);
-        return skillService.createSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        return skillService.createSkill(tenantId, skillView);
     }
 
     @Test
@@ -89,8 +91,8 @@ public class SpotServiceTest {
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Spot spot = new Spot(tenantId, name, testSkillSet);
-        spotService.createSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, testSkillSet);
+        Spot spot = spotService.createSpot(tenantId, spotView);
 
         mvc.perform(MockMvcRequestBuilders
                             .get("/rest/tenant/{tenantId}/spot/{id}", tenantId, spot.getId())
@@ -125,8 +127,8 @@ public class SpotServiceTest {
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Spot spot = new Spot(tenantId, name, testSkillSet);
-        spotService.createSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, testSkillSet);
+        Spot spot = spotService.createSpot(tenantId, spotView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -148,8 +150,8 @@ public class SpotServiceTest {
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Spot spot = new Spot(tenantId, name, testSkillSet);
-        spotService.createSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, testSkillSet);
+        Spot spot = spotService.createSpot(tenantId, spotView);
 
         mvc.perform(MockMvcRequestBuilders
                             .delete("/rest/tenant/{tenantId}/spot/{id}", tenantId, spot.getId())
@@ -180,8 +182,8 @@ public class SpotServiceTest {
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Spot spot = new Spot(tenantId, name, testSkillSet);
-        spotService.createSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, testSkillSet);
+        Spot spot = spotService.createSpot(tenantId, spotView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -202,8 +204,8 @@ public class SpotServiceTest {
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Spot spot = new Spot(tenantId, name, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(spot);
+        SpotView spotView = new SpotView(tenantId, name, testSkillSet);
+        String body = (new ObjectMapper()).writeValueAsString(spotView);
 
         mvc.perform(MockMvcRequestBuilders
                             .post("/rest/tenant/{tenantId}/spot/add", tenantId)
@@ -229,8 +231,8 @@ public class SpotServiceTest {
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Spot spot = new Spot(tenantId, name, testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(spot);
+        SpotView spotView = new SpotView(tenantId, name, testSkillSet);
+        String body = (new ObjectMapper()).writeValueAsString(spotView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -253,12 +255,12 @@ public class SpotServiceTest {
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Spot spot = new Spot(tenantId, name, Collections.emptySet());
-        spotService.createSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, testSkillSet);
+        Spot spot = spotService.createSpot(tenantId, spotView);
 
-        Spot spot2 = new Spot(tenantId, "name2", testSkillSet);
-        spot2.setId(spot.getId());
-        String body = (new ObjectMapper()).writeValueAsString(spot2);
+        SpotView spotView2 = new SpotView(tenantId, "name2", testSkillSet);
+        spotView2.setId(spot.getId());
+        String body = (new ObjectMapper()).writeValueAsString(spotView2);
 
         mvc.perform(MockMvcRequestBuilders
                             .put("/rest/tenant/{tenantId}/spot/update", tenantId)
@@ -284,11 +286,11 @@ public class SpotServiceTest {
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Spot spot = new Spot(tenantId, name, Collections.emptySet());
-        spotService.createSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, testSkillSet);
+        spotService.createSpot(tenantId, spotView);
 
-        Spot spot2 = new Spot(tenantId, "name2", testSkillSet);
-        String body = (new ObjectMapper()).writeValueAsString(spot2);
+        SpotView spotView2 = new SpotView(tenantId, "name2", testSkillSet);
+        String body = (new ObjectMapper()).writeValueAsString(spotView2);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -301,9 +303,9 @@ public class SpotServiceTest {
 
     @Test
     public void updateNonExistentSpotTest() throws Exception {
-        Spot spot = new Spot(1, "name", Collections.emptySet());
-        spot.setId(-1L);
-        String body = (new ObjectMapper()).writeValueAsString(spot);
+        SpotView spotView = new SpotView(1, "name", Collections.emptySet());
+        spotView.setId(-1L);
+        String body = (new ObjectMapper()).writeValueAsString(spotView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -326,12 +328,12 @@ public class SpotServiceTest {
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Spot spot = new Spot(tenantId, name, Collections.emptySet());
-        spotService.createSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, testSkillSet);
+        Spot spot = spotService.createSpot(tenantId, spotView);
 
-        Spot spot2 = new Spot(2, name, testSkillSet);
-        spot2.setId(spot.getId());
-        String body = (new ObjectMapper()).writeValueAsString(spot2);
+        SpotView spotView2 = new SpotView(2, name, testSkillSet);
+        spotView2.setId(spot.getId());
+        String body = (new ObjectMapper()).writeValueAsString(spotView2);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
