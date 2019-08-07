@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -61,8 +62,8 @@ public class RotationRestControllerTest {
                                      ShiftTemplateView.class, tenantId);
     }
 
-    private ResponseEntity<Spot> addSpot(Integer tenantId, Spot spot) {
-        return restTemplate.postForEntity(spotPathURI + "add", spot, Spot.class, tenantId);
+    private ResponseEntity<Spot> addSpot(Integer tenantId, SpotView spotView) {
+        return restTemplate.postForEntity(spotPathURI + "add", spotView, Spot.class, tenantId);
     }
 
     private void deleteSpot(Integer tenantId, Long id) {

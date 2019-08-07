@@ -14,34 +14,27 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.domain.skill;
+package org.optaweb.employeerostering.domain.spot.view;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import java.util.Set;
 
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.skill.Skill;
 
-@Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "name"}))
-public class Skill extends AbstractPersistable {
+public class SpotView extends AbstractPersistable {
 
-    @NotNull
-    @Size(min = 1, max = 120)
-    @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
 
-    @SuppressWarnings("unused")
-    public Skill() {
+    private Set<Skill> requiredSkillSet;
 
+    @SuppressWarnings("unused")
+    public SpotView() {
     }
 
-    public Skill(Integer tenantId, String name) {
+    public SpotView(Integer tenantId, String name, Set<Skill> requiredSkillSet) {
         super(tenantId);
         this.name = name;
+        this.requiredSkillSet = requiredSkillSet;
     }
 
     @Override
@@ -59,5 +52,13 @@ public class Skill extends AbstractPersistable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Set<Skill> getRequiredSkillSet() {
+        return requiredSkillSet;
+    }
+
+    public void setRequiredSkillSet(Set<Skill> requiredSkillSet) {
+        this.requiredSkillSet = requiredSkillSet;
     }
 }

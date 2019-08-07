@@ -24,6 +24,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,15 @@ public class EmployeeService extends AbstractRestService {
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
+    }
+
+    public Employee convertFromView(Integer tenantId, EmployeeView employeeView) {
+        validateTenantIdParameter(tenantId, employeeView);
+        Employee employee = new Employee(tenantId, employeeView.getName(), employeeView.getContract(),
+                                         employeeView.getSkillProficiencySet());
+        employee.setId(employeeView.getId());
+        employee.setVersion(employeeView.getVersion());
+        return employee;
     }
 
     @Transactional
@@ -68,14 +78,16 @@ public class EmployeeService extends AbstractRestService {
     }
 
     @Transactional
-    public Employee createEmployee(Integer tenantId, Employee employee) {
+    public Employee createEmployee(Integer tenantId, EmployeeView employeeView) {
+        Employee employee = convertFromView(tenantId, employeeView);
         validateTenantIdParameter(tenantId, employee);
 
         return employeeRepository.save(employee);
     }
 
     @Transactional
-    public Employee updateEmployee(Integer tenantId, Employee employee) {
+    public Employee updateEmployee(Integer tenantId, EmployeeView employeeView) {
+        Employee employee = convertFromView(tenantId, employeeView);
         validateTenantIdParameter(tenantId, employee);
 
         Optional<Employee> employeeOptional = employeeRepository.findById(employee.getId());

@@ -30,9 +30,11 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 
 @Entity
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"tenantId", "employee_id", "startDateTime", "endDateTime"}))
+// TODO: Single Responsibility Principle - acts as both domain entity and JSON-serializable entity
 public class EmployeeAvailability extends AbstractPersistable {
 
     @NotNull

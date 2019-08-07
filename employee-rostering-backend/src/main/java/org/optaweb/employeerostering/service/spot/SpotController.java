@@ -19,7 +19,7 @@ package org.optaweb.employeerostering.service.spot;
 import java.util.List;
 
 import org.optaweb.employeerostering.domain.spot.Spot;
-import org.optaweb.employeerostering.domain.spot.SpotDTO;
+import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -59,14 +59,12 @@ public class SpotController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Spot> createSpot(@PathVariable Integer tenantId, @RequestBody SpotDTO spotDTO) {
-        Spot spot = new Spot(spotDTO);
-        return new ResponseEntity<>(spotService.createSpot(tenantId, spot), HttpStatus.OK);
+    public ResponseEntity<Spot> createSpot(@PathVariable Integer tenantId, @RequestBody SpotView spotView) {
+        return new ResponseEntity<>(spotService.createSpot(tenantId, spotView), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Spot> updateSpot(@PathVariable Integer tenantId, @RequestBody SpotDTO spotDTO) {
-        Spot spot = new Spot(spotDTO);
-        return new ResponseEntity<>(spotService.updateSpot(tenantId, spot), HttpStatus.OK);
+    public ResponseEntity<Spot> updateSpot(@PathVariable Integer tenantId, @RequestBody SpotView spotView) {
+        return new ResponseEntity<>(spotService.updateSpot(tenantId, spotView), HttpStatus.OK);
     }
 }
