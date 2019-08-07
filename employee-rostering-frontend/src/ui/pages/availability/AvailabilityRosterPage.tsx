@@ -110,27 +110,27 @@ interface State {
   selectedShift?: Shift;
 }
 
-interface ShiftOrAvailability {
+export interface ShiftOrAvailability {
   type: "Shift"|"Availability";
   start: Date;
   end: Date;
   reference: Shift|EmployeeAvailability;
 }
 
-function isShift(shiftOrAvailability: Shift|EmployeeAvailability): shiftOrAvailability is Shift {
+export function isShift(shiftOrAvailability: Shift|EmployeeAvailability): shiftOrAvailability is Shift {
   return "spot" in shiftOrAvailability;
 }
 
-function isAvailability(shiftOrAvailability: Shift|EmployeeAvailability): shiftOrAvailability is EmployeeAvailability {
+export function isAvailability(shiftOrAvailability: Shift|EmployeeAvailability): shiftOrAvailability is EmployeeAvailability {
   return !isShift(shiftOrAvailability);
 }
 
-function isDay(start: Date, end: Date) {
+export function isDay(start: Date, end: Date) {
   return start.getHours() === 0 && start.getMinutes() === 0 &&
     end.getHours() === 0 && end.getMinutes() === 0
 }
 
-function isAllDayAvailability(ea: EmployeeAvailability) {
+export function isAllDayAvailability(ea: EmployeeAvailability) {
   return isDay(ea.startDateTime, ea.endDateTime);
 }
 
@@ -307,15 +307,16 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           break;
         }
       }
-      return { style };
+    }
+
+    if (this.props.rosterState !== null && moment(soa.start).isBefore(this.props.rosterState.firstDraftDate)) {
+      style.border = "1px solid";
     }
     else {
-      return {
-        style: {
-          border: "1px dashed"
-        } 
-      };
+      style.border = "1px dashed";
     }
+
+    return { style };
   }
 
   getDayStyle(date: Date, availabilities: EmployeeAvailability[]): { className: string; style: React.CSSProperties } {
@@ -600,7 +601,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
 
 export default connect(mapStateToProps, mapDispatchToProps, null, {
   areStatesEqual: (next, prev) => {
-    if (next.shiftRoster.isLoading) {
+    if (next.availabilityRoster.isLoading) {
       return true;
     }
     else {
