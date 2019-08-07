@@ -22,6 +22,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -56,11 +57,11 @@ public class SpotRestControllerTest {
         spotRestTemplate.delete(spotPathURI + id, tenantId);
     }
 
-    private ResponseEntity<Spot> addSpot(Integer tenantId, Spot spot) {
-        return spotRestTemplate.postForEntity(spotPathURI + "add", spot, Spot.class, tenantId);
+    private ResponseEntity<Spot> addSpot(Integer tenantId, SpotView spotView) {
+        return spotRestTemplate.postForEntity(spotPathURI + "add", spotView, Spot.class, tenantId);
     }
 
-    private ResponseEntity<Spot> updateSpot(Integer tenantId, HttpEntity<Spot> request) {
+    private ResponseEntity<Spot> updateSpot(Integer tenantId, HttpEntity<SpotView> request) {
         return spotRestTemplate.exchange(spotPathURI + "update", HttpMethod.PUT, request, Spot.class, tenantId);
     }
 
@@ -71,13 +72,13 @@ public class SpotRestControllerTest {
         String name = "name";
         String name2 = "name2";
 
-        Spot spot = new Spot(tenantId, name, Collections.emptySet());
-        Spot spot2 = new Spot(tenantId, name2, Collections.emptySet());
-        Spot spot3 = new Spot(tenantId2, name, Collections.emptySet());
+        SpotView spotView = new SpotView(tenantId, name, Collections.emptySet());
+        SpotView spotView2 = new SpotView(tenantId, name2, Collections.emptySet());
+        SpotView spotView3 = new SpotView(tenantId2, name, Collections.emptySet());
 
-        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
-        ResponseEntity<Spot> postResponse2 = addSpot(tenantId, spot2);
-        ResponseEntity<Spot> postResponse3 = addSpot(tenantId2, spot3);
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spotView);
+        ResponseEntity<Spot> postResponse2 = addSpot(tenantId, spotView2);
+        ResponseEntity<Spot> postResponse3 = addSpot(tenantId2, spotView3);
 
         ResponseEntity<List<Spot>> response = getSpots(tenantId);
         ResponseEntity<List<Spot>> response2 = getSpots(tenantId2);
@@ -99,8 +100,8 @@ public class SpotRestControllerTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Spot spot = new Spot(tenantId, name, Collections.emptySet());
-        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, Collections.emptySet());
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spotView);
 
         ResponseEntity<Spot> response = getSpot(tenantId, postResponse.getBody().getId());
 
@@ -115,8 +116,8 @@ public class SpotRestControllerTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Spot spot = new Spot(tenantId, name, Collections.emptySet());
-        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, Collections.emptySet());
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spotView);
 
         deleteSpot(tenantId, postResponse.getBody().getId());
 
@@ -130,8 +131,8 @@ public class SpotRestControllerTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Spot spot = new Spot(tenantId, name, Collections.emptySet());
-        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, Collections.emptySet());
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spotView);
 
         ResponseEntity<Spot> response = getSpot(tenantId, postResponse.getBody().getId());
 
@@ -146,12 +147,12 @@ public class SpotRestControllerTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Spot spot = new Spot(tenantId, name, Collections.emptySet());
-        ResponseEntity<Spot> postResponse = addSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, Collections.emptySet());
+        ResponseEntity<Spot> postResponse = addSpot(tenantId, spotView);
 
-        Spot spot2 = new Spot(tenantId, "name2", Collections.emptySet());
-        spot2.setId(postResponse.getBody().getId());
-        HttpEntity<Spot> request = new HttpEntity<>(spot2);
+        SpotView spotView2 = new SpotView(tenantId, "name2", Collections.emptySet());
+        spotView2.setId(postResponse.getBody().getId());
+        HttpEntity<SpotView> request = new HttpEntity<>(spotView2);
 
         ResponseEntity<Spot> putResponse = updateSpot(tenantId, request);
 

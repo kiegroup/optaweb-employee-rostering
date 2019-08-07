@@ -19,7 +19,7 @@ package org.optaweb.employeerostering.service.employee;
 import java.util.List;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
-import org.optaweb.employeerostering.domain.employee.EmployeeDTO;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -60,16 +60,14 @@ public class EmployeeController {
 
     @PostMapping("/add")
     public ResponseEntity<Employee> createEmployee(@PathVariable Integer tenantId,
-                                                   @RequestBody EmployeeDTO employeeDTO) {
-        Employee employee = new Employee(employeeDTO);
-        return new ResponseEntity<>(employeeService.createEmployee(tenantId, employee), HttpStatus.OK);
+                                                   @RequestBody EmployeeView employeeView) {
+        return new ResponseEntity<>(employeeService.createEmployee(tenantId, employeeView), HttpStatus.OK);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Employee> updateEmployee(@PathVariable Integer tenantId,
-                                                   @RequestBody EmployeeDTO employeeDTO) {
-        Employee employee = new Employee(employeeDTO);
-        return new ResponseEntity<>(employeeService.updateEmployee(tenantId, employee), HttpStatus.OK);
+                                                   @RequestBody EmployeeView employeeView) {
+        return new ResponseEntity<>(employeeService.updateEmployee(tenantId, employeeView), HttpStatus.OK);
     }
 
     //TODO: Add EmployeeAvailability CRUD handlers

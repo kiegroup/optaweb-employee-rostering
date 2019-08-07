@@ -23,6 +23,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
+import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,14 @@ public class SkillService extends AbstractRestService {
 
     public SkillService(SkillRepository skillRepository) {
         this.skillRepository = skillRepository;
+    }
+
+    public Skill convertFromView(Integer tenantId, SkillView skillView) {
+        validateTenantIdParameter(tenantId, skillView);
+        Skill skill = new Skill(tenantId, skillView.getName());
+        skill.setId(skillView.getId());
+        skill.setVersion(skillView.getVersion());
+        return skill;
     }
 
     @Transactional
@@ -66,16 +75,14 @@ public class SkillService extends AbstractRestService {
     }
 
     @Transactional
-    public Skill createSkill(Integer tenantId, Skill skill) {
-        validateTenantIdParameter(tenantId, skill);
-
+    public Skill createSkill(Integer tenantId, SkillView skillView) {
+        Skill skill = convertFromView(tenantId, skillView);
         return skillRepository.save(skill);
     }
 
     @Transactional
-    public Skill updateSkill(Integer tenantId, Skill skill) {
-        validateTenantIdParameter(tenantId, skill);
-
+    public Skill updateSkill(Integer tenantId, SkillView skillView) {
+        Skill skill = convertFromView(tenantId, skillView);
         Optional<Skill> skillOptional = skillRepository.findById(skill.getId());
 
         if (!skillOptional.isPresent()) {

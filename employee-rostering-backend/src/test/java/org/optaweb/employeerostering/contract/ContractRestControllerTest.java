@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -55,11 +56,11 @@ public class ContractRestControllerTest {
         contractRestTemplate.delete(contractPathURI + id, tenantId);
     }
 
-    private ResponseEntity<Contract> addContract(Integer tenantId, Contract contract) {
-        return contractRestTemplate.postForEntity(contractPathURI + "add", contract, Contract.class, tenantId);
+    private ResponseEntity<Contract> addContract(Integer tenantId, ContractView contractView) {
+        return contractRestTemplate.postForEntity(contractPathURI + "add", contractView, Contract.class, tenantId);
     }
 
-    private ResponseEntity<Contract> updateContract(Integer tenantId, HttpEntity<Contract> request) {
+    private ResponseEntity<Contract> updateContract(Integer tenantId, HttpEntity<ContractView> request) {
         return contractRestTemplate.exchange(contractPathURI + "update", HttpMethod.PUT, request, Contract.class,
                                              tenantId);
     }
@@ -75,16 +76,16 @@ public class ContractRestControllerTest {
         Integer maximumMinutesPerMonth = 1000;
         Integer maximumMinutesPerYear = 12000;
 
-        Contract contract = new Contract(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
+        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
                                          maximumMinutesPerMonth, maximumMinutesPerYear);
-        Contract contract2 = new Contract(tenantId, name2, maximumMinutesPerDay, maximumMinutesPerWeek,
+        ContractView contractView2 = new ContractView(tenantId, name2, maximumMinutesPerDay, maximumMinutesPerWeek,
                                           maximumMinutesPerMonth, maximumMinutesPerYear);
-        Contract contract3 = new Contract(tenantId2, name, maximumMinutesPerDay, maximumMinutesPerWeek,
+        ContractView contractView3 = new ContractView(tenantId2, name, maximumMinutesPerDay, maximumMinutesPerWeek,
                                           maximumMinutesPerMonth, maximumMinutesPerYear);
 
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contract);
-        ResponseEntity<Contract> postResponse2 = addContract(tenantId, contract2);
-        ResponseEntity<Contract> postResponse3 = addContract(tenantId2, contract3);
+        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
+        ResponseEntity<Contract> postResponse2 = addContract(tenantId, contractView2);
+        ResponseEntity<Contract> postResponse3 = addContract(tenantId2, contractView3);
 
         ResponseEntity<List<Contract>> response = getContracts(tenantId);
         ResponseEntity<List<Contract>> response2 = getContracts(tenantId2);
@@ -110,10 +111,10 @@ public class ContractRestControllerTest {
         Integer maximumMinutesPerMonth = 1000;
         Integer maximumMinutesPerYear = 12000;
 
-        Contract contract = new Contract(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
+        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
                                          maximumMinutesPerMonth, maximumMinutesPerYear);
 
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contract);
+        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
 
         ResponseEntity<Contract> response = getContract(tenantId, postResponse.getBody().getId());
 
@@ -132,10 +133,10 @@ public class ContractRestControllerTest {
         Integer maximumMinutesPerMonth = 1000;
         Integer maximumMinutesPerYear = 12000;
 
-        Contract contract = new Contract(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
+        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
                                          maximumMinutesPerMonth, maximumMinutesPerYear);
 
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contract);
+        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
 
         deleteContract(tenantId, postResponse.getBody().getId());
 
@@ -153,10 +154,10 @@ public class ContractRestControllerTest {
         Integer maximumMinutesPerMonth = 1000;
         Integer maximumMinutesPerYear = 12000;
 
-        Contract contract = new Contract(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
+        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
                                          maximumMinutesPerMonth, maximumMinutesPerYear);
 
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contract);
+        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
 
         ResponseEntity<Contract> response = getContract(tenantId, postResponse.getBody().getId());
 
@@ -175,14 +176,14 @@ public class ContractRestControllerTest {
         Integer maximumMinutesPerMonth = 1000;
         Integer maximumMinutesPerYear = 12000;
 
-        Contract contract = new Contract(tenantId, name);
+        ContractView contractView = new ContractView(tenantId, name);
 
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contract);
+        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
 
-        Contract contract2 = new Contract(tenantId, "name2", maximumMinutesPerDay, maximumMinutesPerWeek,
+        ContractView contractView2= new ContractView(tenantId, "name2", maximumMinutesPerDay, maximumMinutesPerWeek,
                                           maximumMinutesPerMonth, maximumMinutesPerYear);
-        contract2.setId(postResponse.getBody().getId());
-        HttpEntity<Contract> request = new HttpEntity<>(contract2);
+        contractView2.setId(postResponse.getBody().getId());
+        HttpEntity<ContractView> request = new HttpEntity<>(contractView2);
 
         ResponseEntity<Contract> putResponse = updateContract(tenantId, request);
 

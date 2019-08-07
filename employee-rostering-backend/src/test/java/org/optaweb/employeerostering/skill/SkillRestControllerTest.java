@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.skill.Skill;
+import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -55,11 +56,11 @@ public class SkillRestControllerTest {
         skillRestTemplate.delete(skillPathURI + id, tenantId);
     }
 
-    private ResponseEntity<Skill> addSkill(Integer tenantId, Skill skill) {
-        return skillRestTemplate.postForEntity(skillPathURI + "add", skill, Skill.class, tenantId);
+    private ResponseEntity<Skill> addSkill(Integer tenantId, SkillView skillView) {
+        return skillRestTemplate.postForEntity(skillPathURI + "add", skillView, Skill.class, tenantId);
     }
 
-    private ResponseEntity<Skill> updateSkill(Integer tenantId, HttpEntity<Skill> request) {
+    private ResponseEntity<Skill> updateSkill(Integer tenantId, HttpEntity<SkillView> request) {
         return skillRestTemplate.exchange(skillPathURI + "update", HttpMethod.PUT, request, Skill.class, tenantId);
     }
 
@@ -70,13 +71,13 @@ public class SkillRestControllerTest {
         String name = "name";
         String name2 = "name2";
 
-        Skill skill = new Skill(tenantId, name);
-        Skill skill2 = new Skill(tenantId, name2);
-        Skill skill3 = new Skill(tenantId2, name);
+        SkillView skillView = new SkillView(tenantId, name);
+        SkillView skillView2 = new SkillView(tenantId, name2);
+        SkillView skillView3 = new SkillView(tenantId2, name);
 
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skill);
-        ResponseEntity<Skill> postResponse2 = addSkill(tenantId, skill2);
-        ResponseEntity<Skill> postResponse3 = addSkill(tenantId2, skill3);
+        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
+        ResponseEntity<Skill> postResponse2 = addSkill(tenantId, skillView2);
+        ResponseEntity<Skill> postResponse3 = addSkill(tenantId2, skillView3);
 
         ResponseEntity<List<Skill>> response = getSkills(tenantId);
         ResponseEntity<List<Skill>> response2 = getSkills(tenantId2);
@@ -98,8 +99,8 @@ public class SkillRestControllerTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
 
         ResponseEntity<Skill> response = getSkill(tenantId, postResponse.getBody().getId());
 
@@ -114,8 +115,8 @@ public class SkillRestControllerTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
 
         deleteSkill(tenantId, postResponse.getBody().getId());
 
@@ -129,8 +130,8 @@ public class SkillRestControllerTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
 
         ResponseEntity<Skill> response = getSkill(tenantId, postResponse.getBody().getId());
 
@@ -145,12 +146,12 @@ public class SkillRestControllerTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
 
-        Skill skill2 = new Skill(tenantId, "name2");
-        skill2.setId(postResponse.getBody().getId());
-        HttpEntity<Skill> request = new HttpEntity<>(skill2);
+        SkillView skillView2 = new SkillView(tenantId, "name2");
+        skillView2.setId(postResponse.getBody().getId());
+        HttpEntity<SkillView> request = new HttpEntity<>(skillView2);
 
         ResponseEntity<Skill> putResponse = updateSkill(tenantId, request);
 

@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
+import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.optaweb.employeerostering.service.skill.SkillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +69,8 @@ public class SkillServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        skillService.createSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        Skill skill = skillService.createSkill(tenantId, skillView);
 
         mvc.perform(MockMvcRequestBuilders
                             .get("/rest/tenant/{tenantId}/skill/{id}", tenantId, skill.getId())
@@ -96,8 +97,8 @@ public class SkillServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        skillService.createSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        Skill skill = skillService.createSkill(tenantId, skillView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -112,8 +113,8 @@ public class SkillServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        skillService.createSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        Skill skill = skillService.createSkill(tenantId, skillView);
 
         mvc.perform(MockMvcRequestBuilders
                             .delete("/rest/tenant/{tenantId}/skill/{id}", tenantId, skill.getId())
@@ -137,8 +138,8 @@ public class SkillServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        skillService.createSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        Skill skill = skillService.createSkill(tenantId, skillView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -152,8 +153,8 @@ public class SkillServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        String body = (new ObjectMapper()).writeValueAsString(skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        String body = (new ObjectMapper()).writeValueAsString(skillView);
 
         mvc.perform(MockMvcRequestBuilders
                             .post("/rest/tenant/{tenantId}/skill/add", tenantId)
@@ -171,8 +172,8 @@ public class SkillServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        String body = (new ObjectMapper()).writeValueAsString(skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        String body = (new ObjectMapper()).writeValueAsString(skillView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -189,12 +190,12 @@ public class SkillServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        skillService.createSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        Skill skill = skillService.createSkill(tenantId, skillView);
 
-        Skill skill2 = new Skill(tenantId, "name2");
-        skill2.setId(skill.getId());
-        String body = (new ObjectMapper()).writeValueAsString(skill2);
+        SkillView skillView2 = new SkillView(tenantId, "name2");
+        skillView2.setId(skill.getId());
+        String body = (new ObjectMapper()).writeValueAsString(skillView2);
 
         mvc.perform(MockMvcRequestBuilders
                             .put("/rest/tenant/{tenantId}/skill/update", tenantId)
@@ -212,11 +213,11 @@ public class SkillServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        skillService.createSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        Skill skill = skillService.createSkill(tenantId, skillView);
 
-        Skill skill2 = new Skill(tenantId, "name2");
-        String body = (new ObjectMapper()).writeValueAsString(skill2);
+        SkillView skillView2 = new SkillView(tenantId, "name2");
+        String body = (new ObjectMapper()).writeValueAsString(skillView2);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -229,9 +230,9 @@ public class SkillServiceTest {
 
     @Test
     public void updateNonExistentSkillTest() throws Exception {
-        Skill skill = new Skill(1, "name");
-        skill.setId(-1L);
-        String body = (new ObjectMapper()).writeValueAsString(skill);
+        SkillView skillView = new SkillView(1, "name");
+        skillView.setId(-1L);
+        String body = (new ObjectMapper()).writeValueAsString(skillView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
@@ -247,12 +248,12 @@ public class SkillServiceTest {
         Integer tenantId = 1;
         String name = "name";
 
-        Skill skill = new Skill(tenantId, name);
-        skillService.createSkill(tenantId, skill);
+        SkillView skillView = new SkillView(tenantId, name);
+        Skill skill = skillService.createSkill(tenantId, skillView);
 
-        Skill skill2 = new Skill(2, name);
-        skill2.setId(skill.getId());
-        String body = (new ObjectMapper()).writeValueAsString(skill2);
+        SkillView skillView2 = new SkillView(2, name);
+        skillView2.setId(skill.getId());
+        String body = (new ObjectMapper()).writeValueAsString(skillView2);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders

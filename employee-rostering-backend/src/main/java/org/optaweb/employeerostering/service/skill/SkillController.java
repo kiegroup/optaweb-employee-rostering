@@ -19,7 +19,7 @@ package org.optaweb.employeerostering.service.skill;
 import java.util.List;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
-import org.optaweb.employeerostering.domain.skill.SkillDTO;
+import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -59,14 +59,12 @@ public class SkillController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Skill> createSkill(@PathVariable Integer tenantId, @RequestBody SkillDTO skillDTO) {
-        Skill skill = new Skill(skillDTO);
-        return new ResponseEntity<>(skillService.createSkill(tenantId, skill), HttpStatus.OK);
+    public ResponseEntity<Skill> createSkill(@PathVariable Integer tenantId, @RequestBody SkillView skillView) {
+        return new ResponseEntity<>(skillService.createSkill(tenantId, skillView), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Skill> updateSkill(@PathVariable Integer tenantId, @RequestBody SkillDTO skillDTO) {
-        Skill skill = new Skill(skillDTO);
-        return new ResponseEntity<>(skillService.updateSkill(tenantId, skill), HttpStatus.OK);
+    public ResponseEntity<Skill> updateSkill(@PathVariable Integer tenantId, @RequestBody SkillView skillView) {
+        return new ResponseEntity<>(skillService.updateSkill(tenantId, skillView), HttpStatus.OK);
     }
 }
