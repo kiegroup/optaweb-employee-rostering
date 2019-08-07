@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import DomainObject from './DomainObject';
+import Employee from './Employee';
+import Spot from './Spot';
+import { Duration } from 'moment';
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
-import ContractsPage from './contract/ContractsPage';
-import EmployeesPage from './employee/EmployeesPage';
-import ShiftRosterPage from './shift/ShiftRosterPage';
-import AvailabilityRosterPage from './availability/AvailabilityRosterPage'
-import RotationPage from './rotation/RotationPage';
-
-export { ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage, RotationPage };
+export default interface ShiftTemplate extends DomainObject {
+  spot: Spot;
+  rotationEmployee: Employee | null;
+  shiftTemplateDuration: Duration;
+  durationBetweenRotationStartAndTemplateStart: Duration;
+}

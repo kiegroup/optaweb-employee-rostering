@@ -21,7 +21,7 @@ import './App.css';
 import Background from './components/Background';
 import Header from './header/Header';
 import Alerts from './Alerts';
-import { ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage } from './pages';
+import { ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage, RotationPage } from './pages';
 
 const App: React.FC = () => {
   return (
@@ -68,6 +68,11 @@ const App: React.FC = () => {
               path="/availability"
               exact
               component={AvailabilityRosterPage}
+            />
+            <Route
+              path="/rotation"
+              exact
+              component={RotationPage}
             />
           </Switch>
         </PageSection>

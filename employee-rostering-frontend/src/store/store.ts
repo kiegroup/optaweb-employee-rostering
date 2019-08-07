@@ -27,6 +27,7 @@ import skillReducer from './skill/reducers';
 import spotReducer from './spot/reducers';
 import contractReducer from './contract/reducers';
 import employeeReducer from './employee/reducers';
+import shiftTemplateReducer from './rotation/reducers';
 import alertReducer from './alert/reducers';
 import axios from 'axios';
 import { rosterStateReducer, shiftRosterViewReducer, availabilityRosterReducer,
@@ -56,6 +57,7 @@ export function configureStore(
     spotList: spotReducer,
     contractList: contractReducer,
     employeeList: employeeReducer,
+    shiftTemplateList: shiftTemplateReducer,
     rosterState: rosterStateReducer,
     shiftRoster: shiftRosterViewReducer,
     availabilityRoster: availabilityRosterReducer,

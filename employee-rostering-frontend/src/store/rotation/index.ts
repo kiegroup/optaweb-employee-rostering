@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import SkillsPage from './skill/SkillsPage';
-import SpotsPage from './spot/SpotsPage';
-import ContractsPage from './contract/ContractsPage';
-import EmployeesPage from './employee/EmployeesPage';
-import ShiftRosterPage from './shift/ShiftRosterPage';
-import AvailabilityRosterPage from './availability/AvailabilityRosterPage'
-import RotationPage from './rotation/RotationPage';
+import * as shiftTemplateOperations from './operations';
+import * as shiftTemplateSelectors from './selectors';
+import reducer from './reducers';
 
-export { ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage, EmployeesPage, RotationPage };
+export {
+  shiftTemplateOperations,
+  shiftTemplateSelectors
+};
+
+export default reducer;
