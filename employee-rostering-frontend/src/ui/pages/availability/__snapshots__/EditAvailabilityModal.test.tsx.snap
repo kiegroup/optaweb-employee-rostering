@@ -1,0 +1,556 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Edit Availability Modal should render correctly when closed 1`] = `
+<Modal
+  actions={
+    Array [
+      <Button
+        aria-label="Close Modal"
+        onClick={[MockFunction]}
+        variant="tertiary"
+      >
+        Close
+      </Button>,
+      <Button
+        aria-label="Save"
+        onClick={[Function]}
+      >
+        Save
+      </Button>,
+    ]
+  }
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isLarge={false}
+  isOpen={false}
+  isSmall={true}
+  onClose={[MockFunction]}
+  title="Create Availability"
+>
+  <Form
+    id="modal-element"
+    onSubmit={[Function]}
+  >
+    <InputGroup>
+      <Label>
+        Availability Start
+      </Label>
+      <DatePicker
+        allowSameDay={false}
+        aria-label="Availability Start"
+        dateFormat="MMMM dd, hh:mm a"
+        dateFormatCalendar="LLLL yyyy"
+        disabled={false}
+        disabledKeyboardNavigation={false}
+        dropdownMode="scroll"
+        inlineFocusSelectedMonth={false}
+        monthsShown={1}
+        nextMonthButtonLabel="Next month"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onClickOutside={[Function]}
+        onFocus={[Function]}
+        onInputClick={[Function]}
+        onInputError={[Function]}
+        onKeyDown={[Function]}
+        onMonthChange={[Function]}
+        onSelect={[Function]}
+        onYearChange={[Function]}
+        preventOpenOnFocus={false}
+        previousMonthButtonLabel="Previous Month"
+        readOnly={false}
+        renderDayContents={[Function]}
+        shouldCloseOnSelect={true}
+        showMonthYearPicker={false}
+        showTimeInput={false}
+        showTimeSelect={true}
+        strictParsing={false}
+        timeCaption="Time"
+        timeInputLabel="Time"
+        timeIntervals={30}
+        withPortal={false}
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Availability End
+      </Label>
+      <DatePicker
+        allowSameDay={false}
+        aria-label="Availability End"
+        dateFormat="MMMM dd, hh:mm a"
+        dateFormatCalendar="LLLL yyyy"
+        disabled={false}
+        disabledKeyboardNavigation={false}
+        dropdownMode="scroll"
+        inlineFocusSelectedMonth={false}
+        monthsShown={1}
+        nextMonthButtonLabel="Next month"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onClickOutside={[Function]}
+        onFocus={[Function]}
+        onInputClick={[Function]}
+        onInputError={[Function]}
+        onKeyDown={[Function]}
+        onMonthChange={[Function]}
+        onSelect={[Function]}
+        onYearChange={[Function]}
+        preventOpenOnFocus={false}
+        previousMonthButtonLabel="Previous Month"
+        readOnly={false}
+        renderDayContents={[Function]}
+        shouldCloseOnSelect={true}
+        showMonthYearPicker={false}
+        showTimeInput={false}
+        showTimeSelect={true}
+        strictParsing={false}
+        timeCaption="Time"
+        timeInputLabel="Time"
+        timeIntervals={30}
+        withPortal={false}
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Employee
+      </Label>
+      <TypeaheadSelectInput
+        aria-label="Employee"
+        emptyText="Select an Employee..."
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            Object {
+              "contract": Object {
+                "id": 5,
+                "maximumMinutesPerDay": 10,
+                "maximumMinutesPerMonth": 500,
+                "maximumMinutesPerWeek": 70,
+                "maximumMinutesPerYear": 6000,
+                "name": "Basic Contract",
+                "tenantId": 0,
+                "version": 0,
+              },
+              "id": 4,
+              "name": "Employee 1",
+              "skillProficiencySet": Array [
+                Object {
+                  "id": 6,
+                  "name": "Not Required Skill",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ],
+              "tenantId": 0,
+              "version": 0,
+            },
+          ]
+        }
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Type
+      </Label>
+      <TypeaheadSelectInput
+        aria-label="Type"
+        emptyText="Select Type..."
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            "UNAVAILABLE",
+            "DESIRED",
+            "UNDESIRED",
+          ]
+        }
+      />
+    </InputGroup>
+  </Form>
+</Modal>
+`;
+
+exports[`Edit Availability Modal should render correctly when opened 1`] = `
+<Modal
+  actions={
+    Array [
+      <Button
+        aria-label="Close Modal"
+        onClick={[MockFunction]}
+        variant="tertiary"
+      >
+        Close
+      </Button>,
+      <Button
+        aria-label="Save"
+        onClick={[Function]}
+      >
+        Save
+      </Button>,
+    ]
+  }
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isLarge={false}
+  isOpen={true}
+  isSmall={true}
+  onClose={[MockFunction]}
+  title="Create Availability"
+>
+  <Form
+    id="modal-element"
+    onSubmit={[Function]}
+  >
+    <InputGroup>
+      <Label>
+        Availability Start
+      </Label>
+      <DatePicker
+        allowSameDay={false}
+        aria-label="Availability Start"
+        dateFormat="MMMM dd, hh:mm a"
+        dateFormatCalendar="LLLL yyyy"
+        disabled={false}
+        disabledKeyboardNavigation={false}
+        dropdownMode="scroll"
+        inlineFocusSelectedMonth={false}
+        monthsShown={1}
+        nextMonthButtonLabel="Next month"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onClickOutside={[Function]}
+        onFocus={[Function]}
+        onInputClick={[Function]}
+        onInputError={[Function]}
+        onKeyDown={[Function]}
+        onMonthChange={[Function]}
+        onSelect={[Function]}
+        onYearChange={[Function]}
+        preventOpenOnFocus={false}
+        previousMonthButtonLabel="Previous Month"
+        readOnly={false}
+        renderDayContents={[Function]}
+        shouldCloseOnSelect={true}
+        showMonthYearPicker={false}
+        showTimeInput={false}
+        showTimeSelect={true}
+        strictParsing={false}
+        timeCaption="Time"
+        timeInputLabel="Time"
+        timeIntervals={30}
+        withPortal={false}
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Availability End
+      </Label>
+      <DatePicker
+        allowSameDay={false}
+        aria-label="Availability End"
+        dateFormat="MMMM dd, hh:mm a"
+        dateFormatCalendar="LLLL yyyy"
+        disabled={false}
+        disabledKeyboardNavigation={false}
+        dropdownMode="scroll"
+        inlineFocusSelectedMonth={false}
+        monthsShown={1}
+        nextMonthButtonLabel="Next month"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onClickOutside={[Function]}
+        onFocus={[Function]}
+        onInputClick={[Function]}
+        onInputError={[Function]}
+        onKeyDown={[Function]}
+        onMonthChange={[Function]}
+        onSelect={[Function]}
+        onYearChange={[Function]}
+        preventOpenOnFocus={false}
+        previousMonthButtonLabel="Previous Month"
+        readOnly={false}
+        renderDayContents={[Function]}
+        shouldCloseOnSelect={true}
+        showMonthYearPicker={false}
+        showTimeInput={false}
+        showTimeSelect={true}
+        strictParsing={false}
+        timeCaption="Time"
+        timeInputLabel="Time"
+        timeIntervals={30}
+        withPortal={false}
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Employee
+      </Label>
+      <TypeaheadSelectInput
+        aria-label="Employee"
+        emptyText="Select an Employee..."
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            Object {
+              "contract": Object {
+                "id": 5,
+                "maximumMinutesPerDay": 10,
+                "maximumMinutesPerMonth": 500,
+                "maximumMinutesPerWeek": 70,
+                "maximumMinutesPerYear": 6000,
+                "name": "Basic Contract",
+                "tenantId": 0,
+                "version": 0,
+              },
+              "id": 4,
+              "name": "Employee 1",
+              "skillProficiencySet": Array [
+                Object {
+                  "id": 6,
+                  "name": "Not Required Skill",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ],
+              "tenantId": 0,
+              "version": 0,
+            },
+          ]
+        }
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Type
+      </Label>
+      <TypeaheadSelectInput
+        aria-label="Type"
+        emptyText="Select Type..."
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            "UNAVAILABLE",
+            "DESIRED",
+            "UNDESIRED",
+          ]
+        }
+      />
+    </InputGroup>
+  </Form>
+</Modal>
+`;
+
+exports[`Edit Availability Modal should render correctly with a availability when opened 1`] = `
+<Modal
+  actions={
+    Array [
+      <Button
+        aria-label="Close Modal"
+        onClick={[MockFunction]}
+        variant="tertiary"
+      >
+        Close
+      </Button>,
+      <Button
+        aria-label="Delete"
+        onClick={[Function]}
+        variant="danger"
+      >
+        Delete
+      </Button>,
+      <Button
+        aria-label="Save"
+        onClick={[Function]}
+      >
+        Save
+      </Button>,
+    ]
+  }
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isLarge={false}
+  isOpen={true}
+  isSmall={true}
+  onClose={[MockFunction]}
+  title="Edit Availability"
+>
+  <Form
+    id="modal-element"
+    onSubmit={[Function]}
+  >
+    <InputGroup>
+      <Label>
+        Availability Start
+      </Label>
+      <DatePicker
+        allowSameDay={false}
+        aria-label="Availability Start"
+        dateFormat="MMMM dd, hh:mm a"
+        dateFormatCalendar="LLLL yyyy"
+        disabled={false}
+        disabledKeyboardNavigation={false}
+        dropdownMode="scroll"
+        inlineFocusSelectedMonth={false}
+        monthsShown={1}
+        nextMonthButtonLabel="Next month"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onClickOutside={[Function]}
+        onFocus={[Function]}
+        onInputClick={[Function]}
+        onInputError={[Function]}
+        onKeyDown={[Function]}
+        onMonthChange={[Function]}
+        onSelect={[Function]}
+        onYearChange={[Function]}
+        preventOpenOnFocus={false}
+        previousMonthButtonLabel="Previous Month"
+        readOnly={false}
+        renderDayContents={[Function]}
+        selected={2018-07-01T09:00:00.000Z}
+        shouldCloseOnSelect={true}
+        showMonthYearPicker={false}
+        showTimeInput={false}
+        showTimeSelect={true}
+        strictParsing={false}
+        timeCaption="Time"
+        timeInputLabel="Time"
+        timeIntervals={30}
+        withPortal={false}
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Availability End
+      </Label>
+      <DatePicker
+        allowSameDay={false}
+        aria-label="Availability End"
+        dateFormat="MMMM dd, hh:mm a"
+        dateFormatCalendar="LLLL yyyy"
+        disabled={false}
+        disabledKeyboardNavigation={false}
+        dropdownMode="scroll"
+        inlineFocusSelectedMonth={false}
+        monthsShown={1}
+        nextMonthButtonLabel="Next month"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onClickOutside={[Function]}
+        onFocus={[Function]}
+        onInputClick={[Function]}
+        onInputError={[Function]}
+        onKeyDown={[Function]}
+        onMonthChange={[Function]}
+        onSelect={[Function]}
+        onYearChange={[Function]}
+        preventOpenOnFocus={false}
+        previousMonthButtonLabel="Previous Month"
+        readOnly={false}
+        renderDayContents={[Function]}
+        selected={2018-07-01T17:00:00.000Z}
+        shouldCloseOnSelect={true}
+        showMonthYearPicker={false}
+        showTimeInput={false}
+        showTimeSelect={true}
+        strictParsing={false}
+        timeCaption="Time"
+        timeInputLabel="Time"
+        timeIntervals={30}
+        withPortal={false}
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Employee
+      </Label>
+      <TypeaheadSelectInput
+        aria-label="Employee"
+        defaultValue={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+        emptyText="Select an Employee..."
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            Object {
+              "contract": Object {
+                "id": 5,
+                "maximumMinutesPerDay": 10,
+                "maximumMinutesPerMonth": 500,
+                "maximumMinutesPerWeek": 70,
+                "maximumMinutesPerYear": 6000,
+                "name": "Basic Contract",
+                "tenantId": 0,
+                "version": 0,
+              },
+              "id": 4,
+              "name": "Employee 1",
+              "skillProficiencySet": Array [
+                Object {
+                  "id": 6,
+                  "name": "Not Required Skill",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ],
+              "tenantId": 0,
+              "version": 0,
+            },
+          ]
+        }
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Type
+      </Label>
+      <TypeaheadSelectInput
+        aria-label="Type"
+        defaultValue="DESIRED"
+        emptyText="Select Type..."
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            "UNAVAILABLE",
+            "DESIRED",
+            "UNDESIRED",
+          ]
+        }
+      />
+    </InputGroup>
+  </Form>
+</Modal>
+`;
