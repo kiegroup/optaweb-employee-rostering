@@ -14,89 +14,38 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.domain.contract;
+package org.optaweb.employeerostering.domain.contract.view;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 
-@Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"tenantId", "name"}),
-        @UniqueConstraint(columnNames = {"id"})})
-// TODO: Single Responsibility Principle - acts as both domain entity and JSON-serializable entity
-public class Contract extends AbstractPersistable {
+public class ContractView extends AbstractPersistable {
 
-    @NotNull
-    @Size(min = 1, max = 120)
-    @Pattern(regexp = "^(?!\\s).*(?<!\\s)$", message = "Name should not contain any leading or trailing whitespaces")
     private String name;
 
-    // Can be null
-    @Min(0)
-    @Max(60 * 24)
     private Integer maximumMinutesPerDay;
 
-    // Can be null
-    @Min(0)
-    @Max(60 * 24 * 7)
     private Integer maximumMinutesPerWeek;
 
-    // Can be null
-    // 31 days in longest month
-    @Min(0)
-    @Max(60 * 24 * 31)
     private Integer maximumMinutesPerMonth;
 
-    // Can be null
-    // 366 days in leap year
-    @Min(0)
-    @Max(60 * 24 * 366)
     private Integer maximumMinutesPerYear;
 
     @SuppressWarnings("unused")
-    public Contract() {
+    public ContractView() {
     }
 
-    public Contract(Integer tenantId, String name) {
+    public ContractView(Integer tenantId, String name) {
         this(tenantId, name, null, null, null, null);
     }
 
-    public Contract(Integer tenantId, String name, Integer maximumMinutesPerDay, Integer maximumMinutesPerWeek,
-                    Integer maximumMinutesPerMonth, Integer maximumMinutesPerYear) {
-
+    public ContractView(Integer tenantId, String name, Integer maximumMinutesPerDay, Integer maximumMinutesPerWeek,
+                        Integer maximumMinutesPerMonth, Integer maximumMinutesPerYear) {
         super(tenantId);
         this.name = name;
         this.maximumMinutesPerDay = maximumMinutesPerDay;
         this.maximumMinutesPerWeek = maximumMinutesPerWeek;
         this.maximumMinutesPerMonth = maximumMinutesPerMonth;
         this.maximumMinutesPerYear = maximumMinutesPerYear;
-    }
-
-    @AssertTrue
-    @JsonIgnore
-    public boolean isValid() {
-        if (maximumMinutesPerDay != null && maximumMinutesPerDay <= 0) {
-            return false;
-        }
-        if (maximumMinutesPerWeek != null && maximumMinutesPerWeek <= 0) {
-            return false;
-        }
-        if (maximumMinutesPerMonth != null && maximumMinutesPerMonth <= 0) {
-            return false;
-        }
-        if (maximumMinutesPerYear != null && maximumMinutesPerYear <= 0) {
-            return false;
-        }
-        return true;
     }
 
     @Override

@@ -19,7 +19,7 @@ package org.optaweb.employeerostering.service.contract;
 import java.util.List;
 
 import org.optaweb.employeerostering.domain.contract.Contract;
-import org.optaweb.employeerostering.domain.contract.ContractDTO;
+import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -60,15 +60,13 @@ public class ContractController {
 
     @PostMapping("/add")
     public ResponseEntity<Contract> createContract(@PathVariable Integer tenantId,
-                                                   @RequestBody ContractDTO contractDTO) {
-        Contract contract = new Contract(contractDTO);
-        return new ResponseEntity<>(contractService.createContract(tenantId, contract), HttpStatus.OK);
+                                                   @RequestBody ContractView contractView) {
+        return new ResponseEntity<>(contractService.createContract(tenantId, contractView), HttpStatus.OK);
     }
 
     @PutMapping("/update")
     public ResponseEntity<Contract> updateContract(@PathVariable Integer tenantId,
-                                                   @RequestBody ContractDTO contractDTO) {
-        Contract contract = new Contract(contractDTO);
-        return new ResponseEntity<>(contractService.updateContract(tenantId, contract), HttpStatus.OK);
+                                                   @RequestBody ContractView contractView) {
+        return new ResponseEntity<>(contractService.updateContract(tenantId, contractView), HttpStatus.OK);
     }
 }

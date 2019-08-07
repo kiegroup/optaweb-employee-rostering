@@ -23,6 +23,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,14 @@ public class SpotService extends AbstractRestService {
 
     public SpotService(SpotRepository spotRepository) {
         this.spotRepository = spotRepository;
+    }
+
+    public Spot convertFromView(Integer tenantId, SpotView spotView) {
+        validateTenantIdParameter(tenantId, spotView);
+        Spot spot = new Spot(tenantId, spotView.getName(), spotView.getRequiredSkillSet());
+        spot.setId(spotView.getId());
+        spot.setVersion(spotView.getVersion());
+        return spot;
     }
 
     @Transactional
@@ -66,16 +75,14 @@ public class SpotService extends AbstractRestService {
     }
 
     @Transactional
-    public Spot createSpot(Integer tenantId, Spot spot) {
-        validateTenantIdParameter(tenantId, spot);
-
+    public Spot createSpot(Integer tenantId, SpotView spotView) {
+        Spot spot = convertFromView(tenantId, spotView);
         return spotRepository.save(spot);
     }
 
     @Transactional
-    public Spot updateSpot(Integer tenantId, Spot spot) {
-        validateTenantIdParameter(tenantId, spot);
-
+    public Spot updateSpot(Integer tenantId, SpotView spotView) {
+        Spot spot = convertFromView(tenantId, spotView);
         Optional<Spot> spotOptional = spotRepository.findById(spot.getId());
 
         if (!spotOptional.isPresent()) {
