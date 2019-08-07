@@ -18,12 +18,10 @@ package org.optaweb.employeerostering.domain.rotation.view;
 
 import java.time.Duration;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
-import org.optaweb.employeerostering.domain.common.HasTimeslot;
 import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
 
-public class ShiftTemplateView extends AbstractPersistable implements HasTimeslot {
+public class ShiftTemplateView extends AbstractPersistable {
 
     private Long spotId;
     private Long rotationEmployeeId;
@@ -86,17 +84,5 @@ public class ShiftTemplateView extends AbstractPersistable implements HasTimeslo
 
     public void setShiftTemplateDuration(Duration shiftTemplateDuration) {
         this.shiftTemplateDuration = shiftTemplateDuration;
-    }
-
-    @Override
-    @JsonIgnore
-    public Duration getDurationBetweenReferenceAndStart() {
-        return getDurationBetweenRotationStartAndTemplateStart();
-    }
-
-    @Override
-    @JsonIgnore
-    public Duration getDurationOfTimeslot() {
-        return getShiftTemplateDuration();
     }
 }

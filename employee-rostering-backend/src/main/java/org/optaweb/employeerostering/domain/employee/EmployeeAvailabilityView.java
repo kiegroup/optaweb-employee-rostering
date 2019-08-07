@@ -16,19 +16,15 @@
 
 package org.optaweb.employeerostering.domain.employee;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.common.DateTimeUtil;
-import org.optaweb.employeerostering.domain.common.HasTimeslot;
 
-public class EmployeeAvailabilityView extends AbstractPersistable implements HasTimeslot {
+public class EmployeeAvailabilityView extends AbstractPersistable {
 
     @NotNull
     private Long employeeId;
@@ -100,17 +96,4 @@ public class EmployeeAvailabilityView extends AbstractPersistable implements Has
     public void setState(EmployeeAvailabilityState state) {
         this.state = state;
     }
-
-    @Override
-    @JsonIgnore
-    public Duration getDurationBetweenReferenceAndStart() {
-        return Duration.between(HasTimeslot.EPOCH, getStartDateTime());
-    }
-
-    @Override
-    @JsonIgnore
-    public Duration getDurationOfTimeslot() {
-        return Duration.between(getStartDateTime(), getEndDateTime());
-    }
-
 }

@@ -16,18 +16,15 @@
 
 package org.optaweb.employeerostering.domain.shift.view;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.common.DateTimeUtil;
-import org.optaweb.employeerostering.domain.common.HasTimeslot;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.spot.Spot;
@@ -40,7 +37,7 @@ import org.optaweb.employeerostering.domain.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.domain.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmployeePenalty;
 
-public class ShiftView extends AbstractPersistable implements HasTimeslot {
+public class ShiftView extends AbstractPersistable {
 
     private Long rotationEmployeeId;
     @NotNull
@@ -178,18 +175,6 @@ public class ShiftView extends AbstractPersistable implements HasTimeslot {
 
     public void setRotationEmployeeId(Long rotationEmployeeId) {
         this.rotationEmployeeId = rotationEmployeeId;
-    }
-
-    @Override
-    @JsonIgnore
-    public Duration getDurationBetweenReferenceAndStart() {
-        return Duration.between(HasTimeslot.EPOCH, getStartDateTime());
-    }
-
-    @Override
-    @JsonIgnore
-    public Duration getDurationOfTimeslot() {
-        return Duration.between(getStartDateTime(), getEndDateTime());
     }
 
     public List<RequiredSkillViolation> getRequiredSkillViolationList() {
