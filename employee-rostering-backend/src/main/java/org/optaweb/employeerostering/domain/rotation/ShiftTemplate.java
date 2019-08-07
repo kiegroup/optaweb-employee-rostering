@@ -91,7 +91,7 @@ public class ShiftTemplate extends AbstractPersistable {
                 .toDays()));
         this.endTime = LocalTime.ofSecondOfDay(shiftTemplateView
                                                        .getDurationBetweenRotationStartAndTemplateStart()
-                                                       .plus(shiftTemplateView.getDurationOfTimeslot())
+                                                       .plus(shiftTemplateView.getShiftTemplateDuration())
                                                        .minusDays(endDayAfterStartDay)
                                                        .getSeconds());
         this.endDayOffset = endDayAfterStartDay % rotationLength;
