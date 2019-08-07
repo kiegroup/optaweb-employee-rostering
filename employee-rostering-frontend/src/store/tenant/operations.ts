@@ -27,6 +27,7 @@ import { contractOperations } from 'store/contract';
 import { employeeOperations, employeeSelectors } from 'store/employee';
 import * as rosterActions from 'store/roster/actions';
 import moment from 'moment';
+import { shiftTemplateOperations } from 'store/rotation';
 
 function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>, state: () => AppState): Promise<any> {
   dispatch(rosterActions.setShiftRosterIsLoading(true));
@@ -36,7 +37,8 @@ function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>, state: () => 
     dispatch(rosterOperations.getRosterState()),
     dispatch(spotOperations.refreshSpotList()),
     dispatch(contractOperations.refreshContractList()),
-    dispatch(employeeOperations.refreshEmployeeList())
+    dispatch(employeeOperations.refreshEmployeeList()),
+    dispatch(shiftTemplateOperations.refreshShiftTemplateList())
   ]
   ).then(() => {
     const rosterState = state().rosterState.rosterState;

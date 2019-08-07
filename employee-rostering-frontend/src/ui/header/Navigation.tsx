@@ -23,7 +23,7 @@ export const Navigation = ({ location }: RouteComponentProps) => {
   return (
     <Nav aria-label="Nav">
       <NavList variant={NavVariants.horizontal}>
-        {['Skills', 'Spots', 'Contracts', 'Employees', 'Shift', 'Availability'].map((label) => {
+        {['Skills', 'Spots', 'Contracts', 'Employees', 'Shift', 'Availability', 'Rotation'].map((label) => {
           const itemId = label.toLowerCase();
           const path = `/${itemId}`;
           return (
