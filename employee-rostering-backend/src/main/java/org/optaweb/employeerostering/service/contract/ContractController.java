@@ -55,7 +55,7 @@ public class ContractController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Contract> getContract(@PathVariable @Min(0) Integer tenantId,
-                                                @PathVariable @Min (1) Long id) {
+                                                @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(contractService.getContract(tenantId, id), HttpStatus.OK);
     }
 
