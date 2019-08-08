@@ -124,9 +124,9 @@ public class EmployeeServiceTest {
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .get("/rest/tenant/{tenantId}/employee/{id}", tenantId, -1L)))
+                                                      .get("/rest/tenant/{tenantId}/employee/{id}", tenantId, 1L)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                                     "Exception: No Employee entity found with ID (-1).");
+                                     "Exception: No Employee entity found with ID (1).");
     }
 
     @Test
@@ -183,9 +183,9 @@ public class EmployeeServiceTest {
     @Test
     public void deleteNonExistentEmployeeTest() {
         assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/employee/{id}", 1, -1L)))
+                .delete("/rest/tenant/{tenantId}/employee/{id}", 1, 1L)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                        "Exception: No Employee entity found with ID (-1).");
+                        "Exception: No Employee entity found with ID (1).");
     }
 
     @Test
