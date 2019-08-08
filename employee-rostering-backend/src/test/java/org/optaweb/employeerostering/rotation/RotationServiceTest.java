@@ -22,6 +22,7 @@ import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.optaweb.employeerostering.service.rotation.RotationService;
 import org.optaweb.employeerostering.service.spot.SpotService;
 import org.slf4j.Logger;
@@ -48,8 +49,8 @@ public class RotationServiceTest {
     private SpotService spotService;
 
     private Spot createSpot(Integer tenantId, String name, Set<Skill> requiredSkillSet) {
-        Spot spot = new Spot(tenantId, name, requiredSkillSet);
-        return spotService.createSpot(tenantId, spot);
+        SpotView spotView = new SpotView(tenantId, name, requiredSkillSet);
+        return spotService.createSpot(tenantId, spotView);
     }
 
     // TODO: Add createTestTenant() and deleteTestTenant() setup methods to persist tenant and rosterState entities
