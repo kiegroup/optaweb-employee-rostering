@@ -26,7 +26,6 @@ export const addShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertActio
   (dispatch, state, client) => {
     const tenantId = shiftTemplate.tenantId;
     const view = shiftTemplateToShiftTemplateView(shiftTemplate);
-    console.log(shiftTemplate);
     return client.post<ShiftTemplateView>(`/tenant/${tenantId}/rotation/add`, view).then(newShiftTemplate => {
       dispatch(alert.showSuccessMessage("addShiftTemplate"));
       dispatch(actions.addShiftTemplate(shiftTemplateViewToDomainObjectView(newShiftTemplate)))
@@ -52,7 +51,7 @@ export const updateShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAc
   (dispatch, state, client) => {
     const tenantId = shiftTemplate.tenantId;
     const view = shiftTemplateToShiftTemplateView(shiftTemplate);
-    return client.post<ShiftTemplateView>(`/tenant/${tenantId}/rotation/update`, view).then(updatedShiftTemplate => {
+    return client.put<ShiftTemplateView>(`/tenant/${tenantId}/rotation/update`, view).then(updatedShiftTemplate => {
       dispatch(alert.showSuccessMessage("updateShiftTemplate", { id: updatedShiftTemplate.id }));
       dispatch(actions.updateShiftTemplate(shiftTemplateViewToDomainObjectView(updatedShiftTemplate)));
     });
