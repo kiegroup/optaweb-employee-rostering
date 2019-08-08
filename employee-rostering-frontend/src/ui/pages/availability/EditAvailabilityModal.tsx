@@ -51,6 +51,7 @@ const mapStateToProps = (state: AppState, ownProps: {
 }); 
 
 interface State {
+  resetCount: number;
   editedValue: Partial<EmployeeAvailability>;
 }
 
@@ -60,6 +61,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
 
     this.onSave = this.onSave.bind(this);
     this.state = {
+      resetCount: 0,
       editedValue: { ...this.props.availability }
     }
   }
@@ -67,7 +69,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (this.props.availability === undefined && prevProps.availability !== undefined) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ editedValue: {
+      this.setState({ resetCount: prevState.resetCount + 1, editedValue: {
         tenantId: this.props.tenantId,
       } });
     }
@@ -75,7 +77,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
       (this.props.availability.id !== prevState.editedValue.id || 
         this.props.availability.version !== prevState.editedValue.version)) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ editedValue: this.props.availability });
+      this.setState({ resetCount: prevState.resetCount + 1, editedValue: this.props.availability });
     }
   }
 
@@ -119,7 +121,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
         }
         isSmall
       >
-        <Form id="modal-element" onSubmit={(e) => e.preventDefault()}>
+        <Form id="modal-element" key={this.state.resetCount} onSubmit={(e) => e.preventDefault()}>
           <InputGroup>
             <Label>Availability Start</Label>
             <DatePicker
