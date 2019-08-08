@@ -18,11 +18,15 @@ package org.optaweb.employeerostering.service.employee;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/employee")
+@Validated
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -44,29 +49,30 @@ public class EmployeeController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Employee>> getEmployeeList(@PathVariable Integer tenantId) {
+    public ResponseEntity<List<Employee>> getEmployeeList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(employeeService.getEmployeeList(tenantId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployee(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Employee> getEmployee(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(employeeService.getEmployee(tenantId, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteEmployee(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Boolean> deleteEmployee(@PathVariable @Min(0) Integer tenantId,
+                                                  @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(employeeService.deleteEmployee(tenantId, id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Employee> createEmployee(@PathVariable Integer tenantId,
-                                                   @RequestBody EmployeeView employeeView) {
+    public ResponseEntity<Employee> createEmployee(@PathVariable @Min(0) Integer tenantId,
+                                                   @RequestBody @Valid EmployeeView employeeView) {
         return new ResponseEntity<>(employeeService.createEmployee(tenantId, employeeView), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Integer tenantId,
-                                                   @RequestBody EmployeeView employeeView) {
+    public ResponseEntity<Employee> updateEmployee(@PathVariable @Min(0) Integer tenantId,
+                                                   @RequestBody @Valid EmployeeView employeeView) {
         return new ResponseEntity<>(employeeService.updateEmployee(tenantId, employeeView), HttpStatus.OK);
     }
 
