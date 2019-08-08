@@ -18,10 +18,14 @@ package org.optaweb.employeerostering.service.rotation;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/rotation")
+@Validated
 public class RotationController {
 
     private final RotationService rotationService;
@@ -43,29 +48,31 @@ public class RotationController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ShiftTemplateView>> getShiftTemplateList(@PathVariable Integer tenantId) {
+    public ResponseEntity<List<ShiftTemplateView>> getShiftTemplateList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rotationService.getShiftTemplateList(tenantId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShiftTemplateView> getShiftTemplate(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<ShiftTemplateView> getShiftTemplate(@PathVariable @Min(0) Integer tenantId,
+                                                              @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(rotationService.getShiftTemplate(tenantId, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteShiftTemplate(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Boolean> deleteShiftTemplate(@PathVariable @Min(0) Integer tenantId,
+                                                       @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(rotationService.deleteShiftTemplate(tenantId, id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ShiftTemplateView> createShiftTemplate(@PathVariable Integer tenantId,
-                                                              @RequestBody ShiftTemplateView shiftTemplateView) {
+    public ResponseEntity<ShiftTemplateView> createShiftTemplate(@PathVariable @Min(0) Integer tenantId,
+                                                              @RequestBody @Valid ShiftTemplateView shiftTemplateView) {
         return new ResponseEntity<>(rotationService.createShiftTemplate(tenantId, shiftTemplateView), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ShiftTemplateView> updateShiftTemplate(@PathVariable Integer tenantId,
-                                                              @RequestBody ShiftTemplateView shiftTemplateView) {
+    public ResponseEntity<ShiftTemplateView> updateShiftTemplate(@PathVariable @Min(0) Integer tenantId,
+                                                              @RequestBody @Valid ShiftTemplateView shiftTemplateView) {
         return new ResponseEntity<>(rotationService.updateShiftTemplate(tenantId, shiftTemplateView), HttpStatus.OK);
     }
 }

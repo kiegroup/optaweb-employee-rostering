@@ -18,11 +18,15 @@ package org.optaweb.employeerostering.service.skill;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/skill")
+@Validated
 public class SkillController {
 
     private final SkillService skillService;
@@ -44,27 +49,29 @@ public class SkillController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Skill>> getSkillList(@PathVariable Integer tenantId) {
+    public ResponseEntity<List<Skill>> getSkillList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(skillService.getSkillList(tenantId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Skill> getSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Skill> getSkill(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(skillService.getSkill(tenantId, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteSkill(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Boolean> deleteSkill(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(skillService.deleteSkill(tenantId, id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Skill> createSkill(@PathVariable Integer tenantId, @RequestBody SkillView skillView) {
+    public ResponseEntity<Skill> createSkill(@PathVariable @Min(0) Integer tenantId,
+                                             @RequestBody @Valid SkillView skillView) {
         return new ResponseEntity<>(skillService.createSkill(tenantId, skillView), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Skill> updateSkill(@PathVariable Integer tenantId, @RequestBody SkillView skillView) {
+    public ResponseEntity<Skill> updateSkill(@PathVariable @Min(0) Integer tenantId,
+                                             @RequestBody @Valid SkillView skillView) {
         return new ResponseEntity<>(skillService.updateSkill(tenantId, skillView), HttpStatus.OK);
     }
 }
