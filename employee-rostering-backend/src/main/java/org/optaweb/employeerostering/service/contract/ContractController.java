@@ -18,11 +18,15 @@ package org.optaweb.employeerostering.service.contract;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/contract")
+@Validated
 public class ContractController {
 
     private final ContractService contractService;
@@ -44,29 +49,31 @@ public class ContractController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Contract>> getContractList(@PathVariable Integer tenantId) {
+    public ResponseEntity<List<Contract>> getContractList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(contractService.getContractList(tenantId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Contract> getContract(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Contract> getContract(@PathVariable @Min(0) Integer tenantId,
+                                                @PathVariable @Min (1) Long id) {
         return new ResponseEntity<>(contractService.getContract(tenantId, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteContract(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Boolean> deleteContract(@PathVariable @Min(0) Integer tenantId,
+                                                  @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(contractService.deleteContract(tenantId, id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Contract> createContract(@PathVariable Integer tenantId,
-                                                   @RequestBody ContractView contractView) {
+    public ResponseEntity<Contract> createContract(@PathVariable @Min(0) Integer tenantId,
+                                                   @RequestBody @Valid ContractView contractView) {
         return new ResponseEntity<>(contractService.createContract(tenantId, contractView), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Contract> updateContract(@PathVariable Integer tenantId,
-                                                   @RequestBody ContractView contractView) {
+    public ResponseEntity<Contract> updateContract(@PathVariable @Min(0) Integer tenantId,
+                                                   @RequestBody @Valid ContractView contractView) {
         return new ResponseEntity<>(contractService.updateContract(tenantId, contractView), HttpStatus.OK);
     }
 }

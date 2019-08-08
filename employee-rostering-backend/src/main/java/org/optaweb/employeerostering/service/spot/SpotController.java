@@ -18,11 +18,15 @@ package org.optaweb.employeerostering.service.spot;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,6 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/spot")
+@Validated
 public class SpotController {
 
     private final SpotService spotService;
@@ -44,27 +49,29 @@ public class SpotController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<Spot>> getSpotList(@PathVariable Integer tenantId) {
+    public ResponseEntity<List<Spot>> getSpotList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(spotService.getSpotList(tenantId), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Spot> getSpot(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Spot> getSpot(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(spotService.getSpot(tenantId, id), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteSpot(@PathVariable Integer tenantId, @PathVariable Long id) {
+    public ResponseEntity<Boolean> deleteSpot(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(spotService.deleteSpot(tenantId, id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Spot> createSpot(@PathVariable Integer tenantId, @RequestBody SpotView spotView) {
+    public ResponseEntity<Spot> createSpot(@PathVariable @Min(0) Integer tenantId,
+                                           @RequestBody @Valid SpotView spotView) {
         return new ResponseEntity<>(spotService.createSpot(tenantId, spotView), HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Spot> updateSpot(@PathVariable Integer tenantId, @RequestBody SpotView spotView) {
+    public ResponseEntity<Spot> updateSpot(@PathVariable @Min(0) Integer tenantId,
+                                           @RequestBody @Valid SpotView spotView) {
         return new ResponseEntity<>(spotService.updateSpot(tenantId, spotView), HttpStatus.OK);
     }
 }

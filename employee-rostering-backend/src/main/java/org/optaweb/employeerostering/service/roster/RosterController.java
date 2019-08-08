@@ -16,10 +16,13 @@
 
 package org.optaweb.employeerostering.service.roster;
 
+import javax.validation.constraints.Min;
+
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/roster")
+@Validated
 public class RosterController {
 
     private final RosterService rosterService;
@@ -41,7 +45,7 @@ public class RosterController {
     // ************************************************************************
 
     @GetMapping("/{id}")
-    public ResponseEntity<RosterState> getRosterState(@PathVariable Integer tenantId) {
+    public ResponseEntity<RosterState> getRosterState(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rosterService.getRosterState(tenantId), HttpStatus.OK);
     }
 }

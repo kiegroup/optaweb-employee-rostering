@@ -87,9 +87,9 @@ public class SkillServiceTest {
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .get("/rest/tenant/{tenantId}/skill/{id}", tenantId, -1L)))
+                                                      .get("/rest/tenant/{tenantId}/skill/{id}", tenantId, 1L)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                                     "Exception: No Skill entity found with ID (-1).");
+                                     "Exception: No Skill entity found with ID (1).");
     }
 
     @Test
@@ -128,9 +128,9 @@ public class SkillServiceTest {
     @Test
     public void deleteNonExistentSkillTest() {
         assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/skill/{id}", 1, -1L)))
+                .delete("/rest/tenant/{tenantId}/skill/{id}", 1, 1L)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                        "Exception: No Skill entity found with ID (-1).");
+                        "Exception: No Skill entity found with ID (1).");
     }
 
     @Test

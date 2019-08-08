@@ -110,9 +110,9 @@ public class SpotServiceTest {
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .get("/rest/tenant/{tenantId}/spot/{id}", tenantId, -1L)))
+                                                      .get("/rest/tenant/{tenantId}/spot/{id}", tenantId, 1L)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                                     "Exception: No Spot entity found with ID (-1).");
+                                     "Exception: No Spot entity found with ID (1).");
     }
 
     @Test
@@ -165,9 +165,9 @@ public class SpotServiceTest {
     @Test
     public void deleteNonExistentSpotTest() {
         assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/spot/{id}", 1, -1L)))
+                .delete("/rest/tenant/{tenantId}/spot/{id}", 1, 1L)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                        "Exception: No Spot entity found with ID (-1).");
+                        "Exception: No Spot entity found with ID (1).");
     }
 
     @Test
