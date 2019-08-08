@@ -54,6 +54,7 @@ const mapStateToProps = (state: AppState, ownProps: {
 }); 
 
 interface State {
+  resetCount: number;
   editedValue: Partial<Shift>;
 }
 
@@ -63,6 +64,7 @@ export class EditShiftModal extends React.Component<Props, State> {
 
     this.onSave = this.onSave.bind(this);
     this.state = {
+      resetCount: 0,
       editedValue: { ...this.props.shift }
     }
   }
@@ -70,7 +72,7 @@ export class EditShiftModal extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (this.props.shift === undefined && prevProps.shift !== undefined) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ editedValue: {
+      this.setState({ resetCount: prevState.resetCount + 1, editedValue: {
         tenantId: this.props.tenantId,
         employee: null,
         rotationEmployee: null,
@@ -81,7 +83,7 @@ export class EditShiftModal extends React.Component<Props, State> {
       (this.props.shift.id !== prevState.editedValue.id || 
         this.props.shift.version !== prevState.editedValue.version)) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ editedValue: this.props.shift });
+      this.setState({ resetCount: prevState.resetCount + 1, editedValue: this.props.shift });
     }
   }
 
@@ -126,7 +128,7 @@ export class EditShiftModal extends React.Component<Props, State> {
         }
         isSmall
       >
-        <Form id="modal-element" onSubmit={(e) => e.preventDefault()}>
+        <Form id="modal-element" key={this.state.resetCount} onSubmit={(e) => e.preventDefault()}>
           <InputGroup>
             <Label>Shift Start</Label>
             <DatePicker
