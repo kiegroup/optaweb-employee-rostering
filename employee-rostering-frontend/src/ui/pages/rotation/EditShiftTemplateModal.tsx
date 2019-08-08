@@ -177,11 +177,14 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TextInput
               aria-label="Start Day Offset"
               type="number"
+              defaultValue={String(this.state.editedValue.startDayOffset? this.state.editedValue.startDayOffset + 1 : 1)}
+              min={1}
+              max={this.props.rotationLength? this.props.rotationLength : undefined}
               onChange={(v) => {
                 this.setState(old => ({
                   editedValue: {
                     ...old.editedValue,
-                    startDayOffset: parseInt(v)
+                    startDayOffset: parseInt(v) - 1
                   }
                 }));
               }}
@@ -210,11 +213,14 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TextInput
               aria-label="End Day Offset"
               type="number"
+              defaultValue={String(this.state.editedValue.endDayOffset? this.state.editedValue.endDayOffset + 1 : 1)}
+              min={1}
+              max={this.props.rotationLength? this.props.rotationLength : undefined}
               onChange={(v) => {
                 this.setState(old => ({
                   editedValue: {
                     ...old.editedValue,
-                    endDayOffset: parseInt(v)
+                    endDayOffset: parseInt(v) - 1
                   }
                 }));
               }}
