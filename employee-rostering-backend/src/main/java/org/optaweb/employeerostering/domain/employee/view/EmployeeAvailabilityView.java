@@ -22,10 +22,10 @@ import java.time.ZoneId;
 import javax.validation.constraints.NotNull;
 
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
+import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
-import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 
 public class EmployeeAvailabilityView extends AbstractPersistable {
 

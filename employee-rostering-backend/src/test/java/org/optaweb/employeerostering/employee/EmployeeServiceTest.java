@@ -186,7 +186,7 @@ public class EmployeeServiceTest {
     @Test
     public void deleteNonExistentEmployeeTest() {
         assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/employee/{id}", 2, -1L)))
+                .delete("/rest/tenant/{tenantId}/employee/{id}", 2, 1L)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
                         "Exception: No Employee entity found with ID (1).");
     }
@@ -395,7 +395,7 @@ public class EmployeeServiceTest {
         EmployeeView employeeView = new EmployeeView(tenantId, name, contract, testSkillSet);
         Employee employee = employeeService.createEmployee(tenantId, employeeView);
 
-        EmployeeView employeeView2 = new EmployeeView(tenantId2, name, contract2, testSkillSet);
+        EmployeeView employeeView2 = new EmployeeView(tenantId2, name, contract2, Collections.emptySet());
         employeeView2.setId(employee.getId());
         String body = (new ObjectMapper()).writeValueAsString(employeeView2);
 
