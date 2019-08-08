@@ -19,8 +19,8 @@ import { AppState } from "store/types";
 import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Level, LevelItem, Button, Title, Pagination } from "@patternfly/react-core";
-import { Calendar, momentLocalizer } from 'react-big-calendar'
+import { Level, LevelItem, Button, Title, Text, Pagination, Popover, ButtonVariant } from "@patternfly/react-core";
+import { Calendar, momentLocalizer, EventProps } from 'react-big-calendar'
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
@@ -29,6 +29,9 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../shift/ReactBigCalendarOverrides.css';
 import ShiftTemplate from "domain/ShiftTemplate";
 import { shiftTemplateSelectors, shiftTemplateOperations } from "store/rotation";
+import { WithTranslation, withTranslation, useTranslation } from "react-i18next";
+import EditShiftTemplateModal from "./EditShiftTemplateModal";
+import { EditIcon, TrashIcon } from "@patternfly/react-icons";
 
 interface StateProps {
   isLoading: boolean;
@@ -117,8 +120,59 @@ export function EventWrapper(props: PropsWithChildren<{
   );
 }
 
-export class RotationPage extends React.Component<Props, State> {
-  constructor(props: Props) {
+const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate> & {
+  onEdit: (shift: ShiftTemplate) => void;
+  onDelete: (shift: ShiftTemplate) => void;
+}> = (props) => {
+  const { t } = useTranslation();
+  return (
+    <Popover
+      className="my-popup"
+      key={props.event.id}
+      position="right"
+      headerContent={(
+        <span> 
+          <Text> 
+            {t("shiftTemplate", {
+              spot: props.event.spot.name,
+              rotationEmployee: props.event.rotationEmployee? props.event.rotationEmployee.name : "Unassigned",
+              dayStart: props.event.durationBetweenRotationStartAndTemplateStart.asDays()
+            })}
+
+          </Text>
+          <Button
+            onClick={() => props.onEdit(props.event)}
+            variant={ButtonVariant.link}
+          >
+            <EditIcon />
+          </Button>
+          <Button
+            onClick={() => props.onDelete(props.event)}
+            variant={ButtonVariant.link}
+          >
+            <TrashIcon />
+          </Button>
+        </span>
+      )}
+      bodyContent={(<></>)}
+    >
+      <span
+        data-tip
+        data-for={String(props.event.id)}
+        style={{
+          display: "flex",
+          height: "100%",
+          width: "100%"
+        }}
+      >
+        {props.title}
+      </span>
+    </Popover>
+  )
+};
+
+export class RotationPage extends React.Component<Props & WithTranslation, State> {
+  constructor(props: Props & WithTranslation) {
     super(props);
     this.addShiftTemplate = this.addShiftTemplate.bind(this);
     this.updateShiftTemplate = this.updateShiftTemplate.bind(this);
@@ -158,7 +212,7 @@ export class RotationPage extends React.Component<Props, State> {
   }
 
   render() {
-    if (this.props.rosterState === null || this.props.isLoading || this.props.spotList.length <= 0 || this.state.shownSpot === null) {
+    if (this.props.rosterState === null || this.props.isLoading || this.props.spotList.length <= 0 || this.state.shownSpot === null || !this.props.tReady) {
       return <div />;
     }
 
@@ -219,7 +273,7 @@ export class RotationPage extends React.Component<Props, State> {
                 })
               }}
             >
-              Create Shift
+              Create Shift Template
             </Button>
           </LevelItem>
         </Level>
@@ -227,6 +281,24 @@ export class RotationPage extends React.Component<Props, State> {
           height: "calc(100% - 60px)"
         }}
         >
+          <EditShiftTemplateModal
+            shiftTemplate={this.state.selectedShiftTemplate}
+            isOpen={this.state.isCreatingOrEditingShiftTemplate}
+            onSave={shiftTemplate => {
+              if (this.state.selectedShiftTemplate !== undefined) {
+                this.props.updateShiftTemplate(shiftTemplate);
+              }
+              else {
+                this.props.addShiftTemplate(shiftTemplate);
+              }
+              this.setState({ selectedShiftTemplate: undefined, isCreatingOrEditingShiftTemplate: false });
+            }}
+            onDelete={shiftTemplate => {
+              this.props.removeShiftTemplate(shiftTemplate);
+              this.setState({ isCreatingOrEditingShiftTemplate: false });
+            }}
+            onClose={() => this.setState({ selectedShiftTemplate: undefined, isCreatingOrEditingShiftTemplate: false })}
+          />
           <Title size="md">{spot.name}</Title>
           <div style={{
             height: "calc(100% - 20px)"
@@ -258,6 +330,11 @@ export class RotationPage extends React.Component<Props, State> {
                 }
               }
               }
+              formats={{
+                dayFormat: (date) => this.props.t("rotationDay", {
+                  day: moment.duration(moment(date).diff(baseDate)).asDays() + 1
+                })
+              }}
               onView={() => {}}
               onNavigate={() => {}}
               timeslots={4}
@@ -265,6 +342,14 @@ export class RotationPage extends React.Component<Props, State> {
               showMultiDayTimes
               components={{
                 eventWrapper: (params) => EventWrapper(params as any),
+                event: (params) => ShiftTemplateEvent({
+                  ...params,
+                  onEdit: (shiftTemplate) => this.setState({
+                    selectedShiftTemplate: shiftTemplate,
+                    isCreatingOrEditingShiftTemplate: true
+                  }),
+                  onDelete: (shiftTemplate) => this.props.removeShiftTemplate(shiftTemplate)
+                })
               }}
             />
           </div>
@@ -274,4 +359,4 @@ export class RotationPage extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(RotationPage);
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(RotationPage));
