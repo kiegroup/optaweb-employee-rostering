@@ -48,4 +48,11 @@ public class RosterController {
     public ResponseEntity<RosterState> getRosterState(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rosterService.getRosterState(tenantId), HttpStatus.OK);
     }
+
+    // ************************************************************************
+    // AvailabilityRosterView
+    // ************************************************************************
+
+    // TODO: Add getAvailabilityRosterView() methods once SolverManager and IndictmentUtils are added
+
 }

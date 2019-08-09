@@ -22,7 +22,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityView;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 
 public class AvailabilityRosterView extends AbstractRosterView {
