@@ -51,6 +51,12 @@ public class RosterService extends AbstractRestService {
     }
 
     // ************************************************************************
+    // ShiftRosterView
+    // ************************************************************************
+
+    // TODO: Add getShiftRosterView() methods once SolverManager and IndictmentUtils are added
+
+    // ************************************************************************
     // AvailabilityRosterView
     // ************************************************************************
 
