@@ -50,4 +50,10 @@ public class RosterService extends AbstractRestService {
         return rosterStateOptional.get();
     }
 
+    // ************************************************************************
+    // AvailabilityRosterView
+    // ************************************************************************
+
+    // TODO: Add getAvailabilityRosterView() methods once SolverManager and IndictmentUtils are added
+
 }
