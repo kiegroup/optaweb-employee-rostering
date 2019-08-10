@@ -66,7 +66,7 @@ public class SkillService extends AbstractRestService {
         Optional<Skill> skillOptional = skillRepository.findById(id);
 
         if (!skillOptional.isPresent()) {
-            throw new EntityNotFoundException("No Skill entity found with ID (" + id + ").");
+            return false;
         }
 
         validateTenantIdParameter(tenantId, skillOptional.get());
