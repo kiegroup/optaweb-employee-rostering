@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,10 @@ public class EmployeeController {
         this.employeeService = employeeService;
         Assert.notNull(employeeService, "employeeService must not be null.");
     }
+
+    // ************************************************************************
+    // Employee
+    // ************************************************************************
 
     @GetMapping("/")
     public ResponseEntity<List<Employee>> getEmployeeList(@PathVariable @Min(0) Integer tenantId) {
@@ -76,5 +81,29 @@ public class EmployeeController {
         return new ResponseEntity<>(employeeService.updateEmployee(tenantId, employeeView), HttpStatus.OK);
     }
 
-    //TODO: Add EmployeeAvailability CRUD handlers
+    // ************************************************************************
+    // EmployeeAvailability
+    // ************************************************************************
+
+    @PostMapping("/availability/add")
+    public ResponseEntity<EmployeeAvailabilityView> addEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
+                                                                        @RequestBody @Valid EmployeeAvailabilityView
+                                                                                employeeAvailabilityView) {
+        return new ResponseEntity<>(employeeService.addEmployeeAvailability(tenantId, employeeAvailabilityView),
+                                    HttpStatus.OK);
+    }
+
+    @PutMapping("/availability/update")
+    public ResponseEntity<EmployeeAvailabilityView> updateEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
+                                                                           @RequestBody @Valid EmployeeAvailabilityView
+                                                                                   employeeAvailabilityView) {
+        return new ResponseEntity<>(employeeService.updateEmployeeAvailability(tenantId, employeeAvailabilityView),
+                                    HttpStatus.OK);
+    }
+
+    @DeleteMapping("/availability/{id}")
+    public ResponseEntity<Boolean> deleteEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
+                                                              @RequestBody @Valid Long id) {
+        return new ResponseEntity<>(employeeService.deleteEmployeeAvailability(tenantId, id), HttpStatus.OK);
+    }
 }

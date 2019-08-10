@@ -24,9 +24,13 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
+import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
+import org.optaweb.employeerostering.service.roster.RosterStateRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,11 +38,23 @@ public class EmployeeService extends AbstractRestService {
 
     private final EmployeeRepository employeeRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    private final EmployeeAvailabilityRepository employeeAvailabilityRepository;
+
+    private final RosterStateRepository rosterStateRepository;
+
+    public EmployeeService(EmployeeRepository employeeRepository,
+                           EmployeeAvailabilityRepository employeeAvailabilityRepository,
+                           RosterStateRepository rosterStateRepository) {
         this.employeeRepository = employeeRepository;
+        this.employeeAvailabilityRepository = employeeAvailabilityRepository;
+        this.rosterStateRepository = rosterStateRepository;
     }
 
-    public Employee convertFromView(Integer tenantId, EmployeeView employeeView) {
+    // ************************************************************************
+    // Employee
+    // ************************************************************************
+
+    public Employee convertFromEmployeeView(Integer tenantId, EmployeeView employeeView) {
         validateTenantIdParameter(tenantId, employeeView);
         Employee employee = new Employee(tenantId, employeeView.getName(), employeeView.getContract(),
                                          employeeView.getSkillProficiencySet());
@@ -79,7 +95,7 @@ public class EmployeeService extends AbstractRestService {
 
     @Transactional
     public Employee createEmployee(Integer tenantId, EmployeeView employeeView) {
-        Employee employee = convertFromView(tenantId, employeeView);
+        Employee employee = convertFromEmployeeView(tenantId, employeeView);
         validateTenantIdParameter(tenantId, employee);
 
         return employeeRepository.save(employee);
@@ -87,7 +103,7 @@ public class EmployeeService extends AbstractRestService {
 
     @Transactional
     public Employee updateEmployee(Integer tenantId, EmployeeView employeeView) {
-        Employee employee = convertFromView(tenantId, employeeView);
+        Employee employee = convertFromEmployeeView(tenantId, employeeView);
         validateTenantIdParameter(tenantId, employee);
 
         Optional<Employee> employeeOptional = employeeRepository.findById(employee.getId());
@@ -116,5 +132,88 @@ public class EmployeeService extends AbstractRestService {
         }
     }
 
-    //TODO: Add EmployeeAvailability CRUD methods
+    // ************************************************************************
+    // EmployeeAvailability
+    // ************************************************************************
+
+    private EmployeeAvailability convertFromEmployeeAvailabilityView(Integer tenantId,
+                                                                     EmployeeAvailabilityView
+                                                                             employeeAvailabilityView) {
+        validateTenantIdParameter(tenantId, employeeAvailabilityView);
+
+        Optional<Employee> employeeOptional
+                = employeeRepository.findById(employeeAvailabilityView.getEmployeeId());
+        if (!employeeOptional.isPresent()) {
+            throw new EntityNotFoundException("Employee entity with ID (" + employeeAvailabilityView.getEmployeeId()
+                                                      + ") not found.");
+        }
+
+        Employee employee = employeeOptional.get();
+        validateTenantIdParameter(tenantId, employee);
+
+        Optional<RosterState> rosterStateOptional = rosterStateRepository.findByTenantId(tenantId);
+        if (!rosterStateOptional.isPresent()) {
+            throw new EntityNotFoundException("RosterState entity with tenantId (" + tenantId + ") not found.");
+        }
+
+        EmployeeAvailability employeeAvailability =
+                new EmployeeAvailability(rosterStateOptional.get().getTimeZone(), employeeAvailabilityView, employee);
+        employeeAvailability.setState(employeeAvailabilityView.getState());
+        return employeeAvailability;
+    }
+
+    @Transactional
+    public EmployeeAvailabilityView addEmployeeAvailability(Integer tenantId,
+                                                            EmployeeAvailabilityView employeeAvailabilityView) {
+        EmployeeAvailability employeeAvailability = convertFromEmployeeAvailabilityView(tenantId,
+                                                                                        employeeAvailabilityView);
+        employeeAvailabilityRepository.save(employeeAvailability);
+        return new EmployeeAvailabilityView(rosterStateRepository.findByTenantId(tenantId).get().getTimeZone(),
+                                            employeeAvailability);
+    }
+
+    @Transactional
+    public EmployeeAvailabilityView updateEmployeeAvailability(Integer tenantId,
+                                                               EmployeeAvailabilityView employeeAvailabilityView) {
+        EmployeeAvailability employeeAvailability = convertFromEmployeeAvailabilityView(tenantId,
+                                                                                        employeeAvailabilityView);
+
+        Optional<EmployeeAvailability> employeeAvailabilityOptional =
+                employeeAvailabilityRepository.findById(employeeAvailability.getId());
+
+        if (!employeeAvailabilityOptional.isPresent()) {
+            throw new EntityNotFoundException("EmployeeAvailability entity with ID (" + employeeAvailability.getId()
+                                                      + ") not found.");
+        } else if (!employeeAvailabilityOptional.get().getTenantId().equals(employeeAvailability.getTenantId())) {
+            throw new IllegalStateException("EmployeeAvailability entity with tenantId ("
+                                                    + employeeAvailabilityOptional.get().getTenantId()
+                                                    + ") cannot change tenants.");
+        }
+
+        EmployeeAvailability databaseEmployeeAvailability = employeeAvailabilityOptional.get();
+        databaseEmployeeAvailability.setEmployee(employeeAvailability.getEmployee());
+        databaseEmployeeAvailability.setStartDateTime(employeeAvailability.getStartDateTime());
+        databaseEmployeeAvailability.setEndDateTime(employeeAvailability.getEndDateTime());
+        databaseEmployeeAvailability.setState(employeeAvailability.getState());
+
+        // Flush to increase version number before we duplicate it to EmployeeAvailableView
+        EmployeeAvailability updatedEmployeeAvailability =
+                employeeAvailabilityRepository.saveAndFlush(databaseEmployeeAvailability);
+
+        return new EmployeeAvailabilityView(rosterStateRepository.findByTenantId(tenantId).get().getTimeZone(),
+                                            updatedEmployeeAvailability);
+    }
+
+    @Transactional
+    public Boolean deleteEmployeeAvailability(Integer tenantId, Long id) {
+        Optional<EmployeeAvailability> employeeAvailabilityOptional = employeeAvailabilityRepository.findById(id);
+
+        if (!employeeAvailabilityOptional.isPresent()) {
+            throw new EntityNotFoundException("No EmployeeAvailability entity found with ID (" + id + ").");
+        }
+
+        validateTenantIdParameter(tenantId, employeeAvailabilityOptional.get());
+        employeeAvailabilityRepository.deleteById(id);
+        return true;
+    }
 }
