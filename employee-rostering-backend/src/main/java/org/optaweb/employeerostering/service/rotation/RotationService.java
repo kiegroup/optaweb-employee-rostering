@@ -143,7 +143,7 @@ public class RotationService extends AbstractRestService {
         Optional<ShiftTemplate> shiftTemplateOptional = shiftTemplateRepository.findById(id);
 
         if (!shiftTemplateOptional.isPresent()) {
-            throw new EntityNotFoundException("No ShiftTemplate entity found with ID (" + id + ").");
+            return false;
         }
 
         validateTenantIdParameter(tenantId, shiftTemplateOptional.get());
