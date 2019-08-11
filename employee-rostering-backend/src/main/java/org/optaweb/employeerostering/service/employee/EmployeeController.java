@@ -85,6 +85,12 @@ public class EmployeeController {
     // EmployeeAvailability
     // ************************************************************************
 
+    @GetMapping("/availability/{id}")
+    public ResponseEntity<EmployeeAvailabilityView> getEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
+                                                                            @PathVariable @Min(0) Long id) {
+        return new ResponseEntity<>(employeeService.getEmployeeAvailability(tenantId, id), HttpStatus.OK);
+    }
+
     @PostMapping("/availability/add")
     public ResponseEntity<EmployeeAvailabilityView> addEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
                                                                         @RequestBody @Valid EmployeeAvailabilityView
