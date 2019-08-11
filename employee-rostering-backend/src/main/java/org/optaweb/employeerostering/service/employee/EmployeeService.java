@@ -163,6 +163,20 @@ public class EmployeeService extends AbstractRestService {
     }
 
     @Transactional
+    public EmployeeAvailabilityView getEmployeeAvailability(Integer tenantId, Long id) {
+        Optional<EmployeeAvailability> employeeAvailabilityOptional =
+                employeeAvailabilityRepository.findById(id);
+
+        if (!employeeAvailabilityOptional.isPresent()) {
+            throw new EntityNotFoundException("No EmployeeAvailability entity found with ID (" + id + ").");
+        }
+
+        validateTenantIdParameter(tenantId, employeeAvailabilityOptional.get());
+        return new EmployeeAvailabilityView(rosterStateRepository.findByTenantId(tenantId).get().getTimeZone(),
+                employeeAvailabilityOptional.get());
+    }
+
+    @Transactional
     public EmployeeAvailabilityView addEmployeeAvailability(Integer tenantId,
                                                             EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability employeeAvailability = convertFromEmployeeAvailabilityView(tenantId,
