@@ -410,4 +410,7 @@ public class EmployeeServiceTest {
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalState" +
                                      "Exception: Employee entity with tenantId (2) cannot change tenants.");
     }
+
+    // TODO: Add EmployeeAvailability CRUD tests once Tenant entity is moved; requires persisted RosterState entity
+
 }

@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,6 +49,7 @@ public class EmployeeRestControllerTest {
     private String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
     private String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
     private String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
+    private String employeeAvailabilityPathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
 
     private ResponseEntity<List<Employee>> getEmployees(Integer tenantId) {
         return restTemplate.exchange(employeePathURI, HttpMethod.GET, null,
@@ -84,6 +86,27 @@ public class EmployeeRestControllerTest {
 
     private void deleteContract(Integer tenantId, Long id) {
         restTemplate.delete(contractPathURI + id, tenantId);
+    }
+
+    private ResponseEntity<EmployeeAvailabilityView> getEmployeeAvailability(Integer tenantId, Long id) {
+        return restTemplate.getForEntity(employeeAvailabilityPathURI + id, EmployeeAvailabilityView.class, tenantId);
+    }
+
+    private void deleteEmployeeAvailability(Integer tenantId, Long id) {
+        restTemplate.delete(employeeAvailabilityPathURI + id, tenantId);
+    }
+
+    private ResponseEntity<EmployeeAvailabilityView> addEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView
+                                                                                     employeeAvailabilityView) {
+        return restTemplate.postForEntity(employeeAvailabilityPathURI + "add", employeeAvailabilityView,
+                EmployeeAvailabilityView.class, tenantId);
+    }
+
+    private ResponseEntity<EmployeeAvailabilityView> updateEmployeeAvailability(Integer tenantId,
+                                                                                HttpEntity<EmployeeAvailabilityView>
+                                                                                        request) {
+        return restTemplate.exchange(employeePathURI + "update", HttpMethod.PUT, request,
+                                     EmployeeAvailabilityView.class, tenantId);
     }
 
     @Test
@@ -243,4 +266,7 @@ public class EmployeeRestControllerTest {
 
         deleteEmployee(tenantId, putResponse.getBody().getId());
     }
+
+    // TODO: Add EmployeeAvailability CRUD tests once Tenant entity is moved; requires persisted RosterState entity
+
 }
