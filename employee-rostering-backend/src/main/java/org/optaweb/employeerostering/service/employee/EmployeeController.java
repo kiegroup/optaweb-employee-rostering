@@ -93,8 +93,8 @@ public class EmployeeController {
 
     @PostMapping("/availability/add")
     public ResponseEntity<EmployeeAvailabilityView> addEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
-                                                                        @RequestBody @Valid EmployeeAvailabilityView
-                                                                                employeeAvailabilityView) {
+                                                                            @RequestBody @Valid EmployeeAvailabilityView
+                                                                                    employeeAvailabilityView) {
         return new ResponseEntity<>(employeeService.addEmployeeAvailability(tenantId, employeeAvailabilityView),
                                     HttpStatus.OK);
     }
@@ -109,7 +109,7 @@ public class EmployeeController {
 
     @DeleteMapping("/availability/{id}")
     public ResponseEntity<Boolean> deleteEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
-                                                              @RequestBody @Valid Long id) {
+                                                              @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(employeeService.deleteEmployeeAvailability(tenantId, id), HttpStatus.OK);
     }
 }
