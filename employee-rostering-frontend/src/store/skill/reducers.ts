@@ -15,7 +15,8 @@
  */
 
 import { ActionType, SkillList, SkillAction } from './types';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import Skill from 'domain/Skill';
 

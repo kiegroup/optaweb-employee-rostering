@@ -23,7 +23,8 @@ export const changeTenant: ActionFactory<number, ChangeTenantAction> = newTenant
   tenantId: newTenantId
 });
 
-export const refreshTenantList: ActionFactory<{currentTenantId: number; tenantList: Tenant[]}, RefreshTenantListAction> = params => ({
+export const refreshTenantList: ActionFactory<{currentTenantId: number; tenantList: Tenant[]},
+RefreshTenantListAction> = params => ({
   type: ActionType.REFRESH_TENANT_LIST,
   tenantId: params.currentTenantId,
   tenantList: params.tenantList

@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import HardMediumSoftScore, { isScoreZero, getHardMediumSoftScoreFromString, convertHardMediumSoftScoreToString } from './HardMediumSoftScore';
+import HardMediumSoftScore, { isScoreZero, getHardMediumSoftScoreFromString,
+  convertHardMediumSoftScoreToString } from './HardMediumSoftScore';
 
 describe('HardMediumSoftScore operations', () => {
   it("isScoreZero should return true if all components are zero", () => {

@@ -19,7 +19,8 @@ import * as React from 'react';
 import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
-import  { EventWrapper, AvailabilityRosterPage, Props, ShiftOrAvailability, isShift, isAvailability, isAllDayAvailability, isDay } from './AvailabilityRosterPage';
+import  { EventWrapper, AvailabilityRosterPage, Props, ShiftOrAvailability, isShift, isAvailability,
+  isAllDayAvailability, isDay } from './AvailabilityRosterPage';
 import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
 import "moment/locale/en-ca";
@@ -107,7 +108,8 @@ describe('Availability Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
-    availabilityRosterPage.find('WeekPicker[aria-label="Select Week to View"]').simulate("change", newDateStart, newDateEnd);
+    availabilityRosterPage.find('WeekPicker[aria-label="Select Week to View"]')
+      .simulate("change", newDateStart, newDateEnd);
     expect(baseProps.getAvailabilityRosterFor).toBeCalled();
     expect(baseProps.getAvailabilityRosterFor).toBeCalledWith({
       fromDate: newDateStart,
@@ -533,7 +535,8 @@ describe('Availability Roster Page', () => {
     })).toEqual(false);
   });
 
-  it('isDay should return true iff both the start date time and the end date time time components are exactly midnight', () => {
+  it('isDay should return true iff both the start date time and the end date time time ' + 
+    'components are exactly midnight', () => {
     expect(isDay(moment("2018-07-01T09:00").toDate(), moment("2018-07-02T00:00").toDate())).toEqual(false);
     expect(isDay(moment("2018-07-01T00:00").toDate(), moment("2018-07-02T09:00").toDate())).toEqual(false);
     expect(isDay(moment("2018-07-01T00:00").toDate(), moment("2018-07-02T00:00").toDate())).toEqual(true);

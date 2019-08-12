@@ -24,7 +24,8 @@ import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
 
 type KindaShiftView1 = Pick<ShiftView, Exclude<keyof ShiftView, "indictmentScore">> & { indictmentScore?: string };
-type KindaShiftView2 = Pick<KindaShiftView1, Exclude<keyof KindaShiftView1, "startDateTime">> & { startDateTime: string };
+type KindaShiftView2 = Pick<KindaShiftView1, Exclude<keyof KindaShiftView1, "startDateTime">> & 
+{ startDateTime: string };
 type KindaShiftView3 = Pick<KindaShiftView2, Exclude<keyof KindaShiftView2, "endDateTime">> & { endDateTime: string };
 export type KindaShiftView = KindaShiftView3;
 
@@ -45,7 +46,8 @@ export function kindaShiftViewAdapter(kindaShiftView: KindaShiftView): ShiftView
   // We can convert all indictments by mapping all keys that are arrays
   for(const key in kindaShiftViewClone) {
     if (Array.isArray(kindaShiftViewClone[key])) {
-      kindaShiftViewClone[key] = kindaShiftViewClone[key].map((s: any) => ({ ...s, score: getHardMediumSoftScoreFromString(s.score) }));
+      kindaShiftViewClone[key] = kindaShiftViewClone[key].map((s: any) => 
+        ({ ...s, score: getHardMediumSoftScoreFromString(s.score) }));
     }
   }
 
@@ -60,7 +62,10 @@ export const addShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     return client.post<KindaShiftView>(`/tenant/${tenantId}/shift/add`, shiftAdapter(shift)).then(newShift => {
-      dispatch(alert.showSuccessMessage("addShift", { startDateTime: moment(newShift.startDateTime).format("LLL"), endDateTime: moment(newShift.endDateTime).format("LLL") }));
+      dispatch(alert.showSuccessMessage("addShift", {
+        startDateTime: moment(newShift.startDateTime).format("LLL"),
+        endDateTime: moment(newShift.endDateTime).format("LLL")
+      }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
@@ -72,12 +77,19 @@ export const removeShift: ThunkCommandFactory<Shift, any> = shift =>
     const shiftId = shift.id;
     return client.delete<boolean>(`/tenant/${tenantId}/shift/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
-        dispatch(alert.showSuccessMessage("removeShift", { id: shift.id, startDateTime: moment(shift.startDateTime).format("LLL"), endDateTime: moment(shift.endDateTime).format("LLL") }));
+        dispatch(alert.showSuccessMessage("removeShift", {
+          id: shift.id,
+          startDateTime: moment(shift.startDateTime).format("LLL"),
+          endDateTime: moment(shift.endDateTime).format("LLL")
+        }));
         dispatch(refreshShiftRoster());
         dispatch(refreshAvailabilityRoster());
       }
       else {
-        dispatch(alert.showErrorMessage("removeShiftError", { id: shift.id, startDateTime: moment(shift.startDateTime).format("LLL"), endDateTime: moment(shift.endDateTime).format("LLL") }));
+        dispatch(alert.showErrorMessage("removeShiftError", {
+          id: shift.id, startDateTime: moment(shift.startDateTime).format("LLL"),
+          endDateTime: moment(shift.endDateTime).format("LLL")
+        }));
       }
     });
   };

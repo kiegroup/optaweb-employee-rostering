@@ -77,19 +77,22 @@ export function createIdMapFromList<T extends DomainObject>(collection: T[]): Ma
   return map;
 }
 
-export function mapWithoutElement<T extends DomainObject>(map: Map<number, DomainObjectView<T>>, removedElement: T): Map<number, DomainObjectView<T>> {
+export function mapWithoutElement<T extends DomainObject>(map: Map<number, DomainObjectView<T>>,
+  removedElement: T): Map<number, DomainObjectView<T>> {
   const copy = new Map<number, DomainObjectView<T>>(map);
   copy.delete(removedElement.id as number);
   return copy;
 }
 
-export function mapWithElement<T extends DomainObject>(map: Map<number, DomainObjectView<T>>, addedElement: T): Map<number, DomainObjectView<T>> {
+export function mapWithElement<T extends DomainObject>(map: Map<number, DomainObjectView<T>>,
+  addedElement: T): Map<number, DomainObjectView<T>> {
   const copy = new Map<number, DomainObjectView<T>>(map);
   copy.set(addedElement.id as number, mapDomainObjectToView(addedElement));
   return copy;
 }
 
-export function mapWithUpdatedElement<T extends DomainObject>(map: Map<number, DomainObjectView<T>>, updatedElement: T): Map<number, DomainObjectView<T>> {
+export function mapWithUpdatedElement<T extends DomainObject>(map: Map<number, DomainObjectView<T>>,
+  updatedElement: T): Map<number, DomainObjectView<T>> {
   return mapWithElement(map, updatedElement);
 }
 

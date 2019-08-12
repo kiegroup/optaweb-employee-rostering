@@ -19,7 +19,8 @@ import { AppState } from '../types';
 import * as actions from './actions';
 import { alert } from 'store/alert';
 import reducer, { contractSelectors, contractOperations } from './index';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement, 
+  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import Contract from 'domain/Contract';
 
@@ -40,7 +41,8 @@ describe('Contract operations', () => {
 
     onGet(`/tenant/${tenantId}/contract/`, mockContractList);
     await store.dispatch(contractOperations.refreshContractList());
-    expect(store.getActions()).toEqual([actions.setIsContractListLoading(true), actions.refreshContractList(mockContractList), actions.setIsContractListLoading(false)]);
+    expect(store.getActions()).toEqual([actions.setIsContractListLoading(true), 
+      actions.refreshContractList(mockContractList), actions.setIsContractListLoading(false)]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/`);
   });
@@ -61,7 +63,11 @@ describe('Contract operations', () => {
 
     onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, true);
     await store.dispatch(contractOperations.removeContract(contractToDelete));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("removeContract", { name: contractToDelete.name }), actions.removeContract(contractToDelete)]);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("removeContract", { 
+        name: contractToDelete.name 
+      }),
+      actions.removeContract(contractToDelete)]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
   });
@@ -82,7 +88,9 @@ describe('Contract operations', () => {
     
     onDelete(`/tenant/${tenantId}/contract/${contractToDelete.id}`, false);
     await store.dispatch(contractOperations.removeContract(contractToDelete));
-    expect(store.getActions()).toEqual([alert.showErrorMessage("removeContractError", { name: contractToDelete.name })]);
+    expect(store.getActions()).toEqual([
+      alert.showErrorMessage("removeContractError", { name: contractToDelete.name })
+    ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/${contractToDelete.id}`);
   });
@@ -100,7 +108,9 @@ describe('Contract operations', () => {
     const contractWithUpdatedId: Contract = {...contractToAdd, id: 4, version: 0};
     onPost(`/tenant/${tenantId}/contract/add`, contractToAdd, contractWithUpdatedId);
     await store.dispatch(contractOperations.addContract(contractToAdd));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("addContract", { name: contractToAdd.name }), actions.addContract(contractWithUpdatedId)]);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("addContract", { name: contractToAdd.name }),
+      actions.addContract(contractWithUpdatedId)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/add`, contractToAdd);
   });
@@ -121,7 +131,9 @@ describe('Contract operations', () => {
     const contractWithUpdatedVersion: Contract = {...contractToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/contract/update`, contractToUpdate, contractWithUpdatedVersion);
     await store.dispatch(contractOperations.updateContract(contractToUpdate));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("updateContract", { id: contractToUpdate.id }), actions.updateContract(contractWithUpdatedVersion)]);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("updateContract", { id: contractToUpdate.id }),
+      actions.updateContract(contractWithUpdatedVersion)]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/contract/update`, contractToUpdate);
   });
