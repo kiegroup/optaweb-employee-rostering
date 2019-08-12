@@ -21,7 +21,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.roster.RosterState;
@@ -33,6 +32,7 @@ import org.optaweb.employeerostering.service.employee.EmployeeService;
 import org.optaweb.employeerostering.service.roster.RosterService;
 import org.optaweb.employeerostering.service.spot.SpotService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 @Service
