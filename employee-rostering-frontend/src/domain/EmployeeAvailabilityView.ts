@@ -23,7 +23,8 @@ export const availabilityToAvailabilityView = (availability: EmployeeAvailabilit
   employeeId: availability.employee.id as number
 }); 
 
-export const availabilityViewToDomainObjectView = (view: EmployeeAvailabilityView): DomainObjectView<EmployeeAvailability> => ({
+export const availabilityViewToDomainObjectView = (view: EmployeeAvailabilityView): 
+DomainObjectView<EmployeeAvailability> => ({
   ...objectWithout(view, "employeeId"),
   employee: view.employeeId
 }); 

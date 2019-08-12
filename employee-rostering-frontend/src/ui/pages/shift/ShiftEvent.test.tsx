@@ -96,12 +96,21 @@ describe('ShiftEvent', () => {
         {
           score: { hardScore: -1, mediumScore: 0, softScore: 0},
           leftShift: baseShift,
-          rightShift: { ...baseShift, id: 100, startDateTime: moment(baseShift.startDateTime).add(1, 'hour').toDate() }
+          rightShift: {
+            ...baseShift,
+            id: 100,
+            startDateTime:
+            moment(baseShift.startDateTime).add(1, 'hour').toDate()
+          }
         },
         {
           score: { hardScore: -1, mediumScore: 0, softScore: 0},
           rightShift: baseShift,
-          leftShift: { ...baseShift, id: 101, startDateTime: moment(baseShift.startDateTime).subtract(1, 'hour').toDate() }
+          leftShift: {
+            ...baseShift,
+            id: 101,
+            startDateTime: moment(baseShift.startDateTime).subtract(1, 'hour').toDate()
+          }
         }
       ]
     };
@@ -150,7 +159,9 @@ describe('ShiftEvent', () => {
         shift: baseShift
       }]
     };
-    const undesiredTimeslotForEmployeePenalties = mount(<>{shiftEvent.getUndesiredTimeslotForEmployeePenalties(shift)}</>);
+    const undesiredTimeslotForEmployeePenalties = mount(
+      <>{shiftEvent.getUndesiredTimeslotForEmployeePenalties(shift)}</>
+    );
     expect(toJson(undesiredTimeslotForEmployeePenalties)).toMatchSnapshot();
   });
 
@@ -210,7 +221,9 @@ describe('ShiftEvent', () => {
   });
 
   it('should render correctly', () => {
-    const shiftEventObj = shallow(<ShiftEvent event={baseShift} title="Employee" onEdit={jest.fn()} onDelete={jest.fn()} />);
+    const shiftEventObj = shallow(
+      <ShiftEvent event={baseShift} title="Employee" onEdit={jest.fn()} onDelete={jest.fn()} />
+    );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });
 });

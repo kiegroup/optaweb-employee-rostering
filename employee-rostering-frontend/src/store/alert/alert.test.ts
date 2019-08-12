@@ -67,7 +67,13 @@ describe('Alert operations', () => {
     };
     
     await store.dispatch(alert.showServerError(serverSideException));
-    expect(store.getActions()).toEqual([alert.showMessage("danger", "exception", { message: "message1" }, [AlertComponent.SERVER_SIDE_EXCEPTION_DIALOG], [serverSideException])]);
+    expect(store.getActions()).toEqual([
+      alert.showMessage("danger", "exception",
+        { message: "message1" },
+        [AlertComponent.SERVER_SIDE_EXCEPTION_DIALOG],
+        [serverSideException]
+      )
+    ]);
   });
 
   it('should dispatch actions on showServerErrorMessage', async () => {

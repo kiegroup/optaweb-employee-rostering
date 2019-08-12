@@ -17,11 +17,13 @@ import { ServerSideExceptionInfo, BasicObject } from 'types';
 import * as actions from './actions';
 import { AlertInfo, AddAlertAction, RemoveAlertAction, AlertComponent } from './types';
 
-export function showInfoMessage(i18nKey: string, params?: BasicObject, components?: AlertComponent[], componentProps?: BasicObject[]): AddAlertAction {
+export function showInfoMessage(i18nKey: string, params?: BasicObject, components?: AlertComponent[],
+  componentProps?: BasicObject[]): AddAlertAction {
   return showMessage("info", i18nKey, params, components, componentProps);
 }
 
-export function showSuccessMessage(i18nKey: string, params?: BasicObject, components?: AlertComponent[], componentProps?: BasicObject[]): AddAlertAction {
+export function showSuccessMessage(i18nKey: string, params?: BasicObject, components?: AlertComponent[],
+  componentProps?: BasicObject[]): AddAlertAction {
   return showMessage("success", i18nKey, params, components, componentProps);
 }
 
@@ -41,11 +43,13 @@ export function showServerErrorMessage(message: string): AddAlertAction {
   return showErrorMessage("generic", { message: message });
 }
 
-export function showErrorMessage(i18nKey: string, params?: BasicObject, components?: AlertComponent[], componentProps?: BasicObject[]): AddAlertAction {
+export function showErrorMessage(i18nKey: string, params?: BasicObject, components?: AlertComponent[],
+  componentProps?: BasicObject[]): AddAlertAction {
   return showMessage("danger", i18nKey, params, components, componentProps);
 }
 
-export function showMessage(variant: "success" | "danger" | "warning" | "info", i18nKey: string, params?: BasicObject, components?: AlertComponent[], componentProps?: BasicObject[]): AddAlertAction {
+export function showMessage(variant: "success" | "danger" | "warning" | "info", i18nKey: string,
+  params?: BasicObject, components?: AlertComponent[], componentProps?: BasicObject[]): AddAlertAction {
   return addAlert({
     i18nKey: i18nKey,
     variant: variant,

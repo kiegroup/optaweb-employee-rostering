@@ -18,7 +18,8 @@ import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import { alert } from 'store/alert';
 import Spot from 'domain/Spot';
-import { SetSpotListLoadingAction, AddSpotAction, RemoveSpotAction, UpdateSpotAction, RefreshSpotListAction } from './types';
+import { SetSpotListLoadingAction, AddSpotAction, RemoveSpotAction, UpdateSpotAction,
+  RefreshSpotListAction } from './types';
 import { AddAlertAction } from 'store/alert/types';
 
 export const addSpot: ThunkCommandFactory<Spot,  AddAlertAction | AddSpotAction> = spot =>

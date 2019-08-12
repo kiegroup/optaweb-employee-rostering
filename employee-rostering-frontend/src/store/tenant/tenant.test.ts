@@ -154,7 +154,8 @@ describe('Tenant operations', () => {
     expect(mockRefreshRosterState).toBeCalled();
   });
 
-  it('should get the Shift Roster for a spot in the spot list and get the Availability Roster for an employee in the employee list if roster state is not null', async () => {
+  it('should get the Shift Roster for a spot in the spot list and get the Availability Roster for an ' +
+  'employee in the employee list if roster state is not null', async () => {
     const mockTenantList: Tenant[] = [{
       id: 1,
       version: 0,

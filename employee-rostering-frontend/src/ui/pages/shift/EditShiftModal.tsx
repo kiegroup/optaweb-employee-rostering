@@ -78,7 +78,8 @@ export class EditShiftModal extends React.Component<Props, State> {
       } });
     }
     else if (this.props.shift !== undefined &&
-      (this.props.shift.id !== prevState.editedValue.id || this.props.shift.version !== prevState.editedValue.version)) {
+      (this.props.shift.id !== prevState.editedValue.id || 
+        this.props.shift.version !== prevState.editedValue.version)) {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({ editedValue: this.props.shift });
     }
@@ -102,9 +103,23 @@ export class EditShiftModal extends React.Component<Props, State> {
         isOpen={this.props.isOpen}
         actions={
           [
-            <Button aria-label="Close Modal" variant={ButtonVariant.tertiary} key={0} onClick={this.props.onClose}>Close</Button>
+            <Button
+              aria-label="Close Modal"
+              variant={ButtonVariant.tertiary}
+              key={0}
+              onClick={this.props.onClose}
+            >
+              Close
+            </Button>
           ].concat(this.props.shift? [
-            <Button aria-label="Delete" variant={ButtonVariant.danger} key={1} onClick={() => this.props.onDelete(this.props.shift as Shift)}>Delete</Button>
+            <Button
+              aria-label="Delete"
+              variant={ButtonVariant.danger}
+              key={1}
+              onClick={() => this.props.onDelete(this.props.shift as Shift)}
+            >
+              Delete
+            </Button>
           ] : []).concat([
             <Button aria-label="Save" key={2} onClick={this.onSave}>Save</Button>
           ])

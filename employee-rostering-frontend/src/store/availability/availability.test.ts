@@ -61,12 +61,14 @@ describe('Availability operations', () => {
       state: "DESIRED"
     };
 
-    onPost(`/tenant/${tenantId}/employee/availability/add`, availabilityAdapter(addedAvailability), availabilityAdapter(addedAvailability));
+    onPost(`/tenant/${tenantId}/employee/availability/add`, availabilityAdapter(addedAvailability),
+      availabilityAdapter(addedAvailability));
 
     await store.dispatch(availabilityOperations.addEmployeeAvailability(addedAvailability));
 
     expect(client.post).toBeCalled();
-    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/employee/availability/add`, availabilityAdapter(addedAvailability));
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/employee/availability/add`,
+      availabilityAdapter(addedAvailability));
     expect(mockRefreshAvailabilityRoster).toBeCalled();
 
     expect(mockShowSuccessMessage).toBeCalled();
@@ -189,12 +191,14 @@ describe('Availability operations', () => {
       version: 1
     };
 
-    onPut(`/tenant/${tenantId}/employee/availability/update`, availabilityAdapter(updatedAvailability), availabilityAdapter(updatedAvailabilityWithUpdatedVersion));
+    onPut(`/tenant/${tenantId}/employee/availability/update`, availabilityAdapter(updatedAvailability),
+      availabilityAdapter(updatedAvailabilityWithUpdatedVersion));
 
     await store.dispatch(availabilityOperations.updateEmployeeAvailability(updatedAvailability));
 
     expect(client.put).toBeCalled();
-    expect(client.put).toBeCalledWith(`/tenant/${tenantId}/employee/availability/update`, availabilityAdapter(updatedAvailability));
+    expect(client.put).toBeCalledWith(`/tenant/${tenantId}/employee/availability/update`,
+      availabilityAdapter(updatedAvailability));
     expect(mockRefreshAvailabilityRoster).toBeCalled();
 
     expect(mockShowSuccessMessage).toBeCalled();

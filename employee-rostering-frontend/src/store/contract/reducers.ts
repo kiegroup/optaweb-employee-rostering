@@ -15,7 +15,8 @@
  */
 
 import { ActionType, ContractList, ContractAction } from './types';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import Contract from 'domain/Contract';
 

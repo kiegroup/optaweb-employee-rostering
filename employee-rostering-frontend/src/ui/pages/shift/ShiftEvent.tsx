@@ -138,8 +138,13 @@ export function getShiftEmployeeConflictViolations(shift: Shift): React.ReactNod
         {(v.leftShift.employee as Employee).name}
             &quot; is assigned to a conflicting shift:
         {" " + ((v.leftShift.id === shift.id)?
-          v.rightShift.spot.name + ", " + moment(v.rightShift.startDateTime).format("LT") + "-" + moment(v.rightShift.endDateTime).format("LT") :
-          v.leftShift.spot.name + ", " + moment(v.leftShift.startDateTime).format("LT") + "-" + moment(v.leftShift.endDateTime).format("LT") 
+          v.rightShift.spot.name + ", " + 
+          moment(v.rightShift.startDateTime).format("LT") + "-" + 
+          moment(v.rightShift.endDateTime).format("LT")
+          :
+          v.leftShift.spot.name + ", " + 
+          moment(v.leftShift.startDateTime).format("LT") + "-" + 
+          moment(v.leftShift.endDateTime).format("LT") 
         )}
             .
         <br />
@@ -259,7 +264,14 @@ const ShiftEvent: React.FC<EventProps<Shift> & {
     position="right"
     headerContent={(
       <span>
-        <Text>{props.event.spot.name + ", " + moment(props.event.startDateTime).format("LT") + "-" + moment(props.event.endDateTime).format("LT") + ": " + (props.event.employee? props.event.employee.name : "Unassigned")}</Text>
+        <Text>
+          {
+            props.event.spot.name + ", " + 
+            moment(props.event.startDateTime).format("LT") + "-" + 
+            moment(props.event.endDateTime).format("LT") + ": " + 
+            (props.event.employee? props.event.employee.name : "Unassigned")
+          }
+        </Text>
         <Button
           onClick={() => props.onEdit(props.event)}
           variant={ButtonVariant.link}

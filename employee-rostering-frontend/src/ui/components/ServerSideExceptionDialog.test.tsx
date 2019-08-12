@@ -37,7 +37,9 @@ describe("ServerSideExceptionDialog", () => {
       }
     };
 
-    const serverSideExceptionDialog = shallow(<ServerSideExceptionDialog {...serverSideException}>Show Stack Trace</ServerSideExceptionDialog>);
+    const serverSideExceptionDialog = shallow(
+      <ServerSideExceptionDialog {...serverSideException}>Show Stack Trace</ServerSideExceptionDialog>
+    );
     expect(toJson(serverSideExceptionDialog)).toMatchSnapshot();
   });
 
@@ -58,7 +60,9 @@ describe("ServerSideExceptionDialog", () => {
       }
     };
 
-    const serverSideExceptionDialog = shallow(<ServerSideExceptionDialog {...serverSideException}>Show Stack Trace</ServerSideExceptionDialog>);
+    const serverSideExceptionDialog = shallow(
+      <ServerSideExceptionDialog {...serverSideException}>Show Stack Trace</ServerSideExceptionDialog>
+    );
     serverSideExceptionDialog.find('Button[aria-label="Show Stack Trace"]').simulate("click");
     expect(toJson(serverSideExceptionDialog)).toMatchSnapshot();
   });

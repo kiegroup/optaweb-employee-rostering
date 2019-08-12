@@ -16,7 +16,8 @@
 
 import Contract from 'domain/Contract';
 import { ActionFactory } from '../types';
-import { ActionType, SetContractListLoadingAction, AddContractAction, UpdateContractAction, RemoveContractAction, RefreshContractListAction } from './types';
+import { ActionType, SetContractListLoadingAction, AddContractAction, UpdateContractAction,
+  RemoveContractAction, RefreshContractListAction } from './types';
 
 export const setIsContractListLoading: ActionFactory<boolean, SetContractListLoadingAction> = isLoading => ({
   type: ActionType.SET_CONTRACT_LIST_LOADING,
