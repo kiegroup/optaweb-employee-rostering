@@ -21,7 +21,6 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
@@ -32,6 +31,7 @@ import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.roster.RosterStateRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EmployeeService extends AbstractRestService {

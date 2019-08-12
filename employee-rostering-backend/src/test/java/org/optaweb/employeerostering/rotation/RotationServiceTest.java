@@ -18,8 +18,6 @@ package org.optaweb.employeerostering.rotation;
 
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
@@ -30,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest
