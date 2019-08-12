@@ -208,11 +208,11 @@ public class StringDataGenerator {
      * It does not scroll per digit (0000, 1111, 2222, 0001, 1112, 2220, 0002, 1110, 2221, ...).
      * Instead, it scrolls per half (0000, 1111, 2222, 0011, 1122, 2200, 0022, 1100, 2211, ...).
      */
-    private final static int[][] HALF_SEQUENCE_MAP = new int[][]{{}, {0}, {0, 1}, {0, 2, 1}, {0, 2, 1, 3}};
+    private static final int[][] HALF_SEQUENCE_MAP = new int[][]{{}, {0}, {0, 1}, {0, 2, 1}, {0, 2, 1, 3}};
     /**
      * Determines which parts to eliminate first if maximumSize prediction doesn't need all parts.
      */
-    private final static int[] DEFAULT_ELIMINATION_INDEX_MAP = new int[]{0, 1, 1, 1};
+    private static final int[] DEFAULT_ELIMINATION_INDEX_MAP = new int[]{0, 1, 1, 1};
 
     private final boolean capitalizeFirstLetter;
     private final String delimiter;
@@ -325,7 +325,7 @@ public class StringDataGenerator {
         int previousChosen = 0;
         for (int i = 0; i < listSize; i++) {
             int chosen = (previousChosen
-                    + (index % (int) Math.pow(partValuesLength, halfSequence[i] + 1)
+                    + (index % (int) Math.pow(partValuesLength, halfSequence[i] + 1.0)
                     / (int) Math.pow(partValuesLength, halfSequence[i])))
                     % partValuesLength;
             chosens[i] = chosen;
