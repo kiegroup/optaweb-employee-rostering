@@ -76,53 +76,33 @@ public class RosterGeneratorTest {
 
     @Test
     public void generateSkillListTest() {
-        ResponseEntity<List<Skill>> response = getSkills(2937);
-        ResponseEntity<List<Skill>> response2 = getSkills(5466);
+        ResponseEntity<List<Skill>> response = getSkills(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getName()).isEqualTo("Electrical");
-        assertThat(response.getBody().get(1).getName()).isEqualTo("Mechanical");
-
-        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response2.getBody().get(0).getName()).isEqualTo("Armed");
-        assertThat(response2.getBody().get(1).getName()).isEqualTo("Martial art");
+        assertThat(response.getBody().get(0).getName()).isEqualTo("Ambulatory care");
+        assertThat(response.getBody().get(1).getName()).isEqualTo("Critical care");
     }
 
     @Test
     public void generateSpotListTest() {
-        ResponseEntity<List<Spot>> response = getSpots(2937);
-        ResponseEntity<List<Spot>> response2 = getSpots(5466);
+        ResponseEntity<List<Spot>> response = getSpots(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getName()).isEqualTo("Battery");
-        assertThat(response.getBody().get(1).getName()).isEqualTo("Bumper");
-        assertThat(response.getBody().get(2).getName()).isEqualTo("Chassis");
-        assertThat(response.getBody().get(3).getName()).isEqualTo("Doors");
-        assertThat(response.getBody().get(4).getName()).isEqualTo("Engine");
-        assertThat(response.getBody().get(5).getName()).isEqualTo("Lights");
-        assertThat(response.getBody().get(6).getName()).isEqualTo("Radiator");
-        assertThat(response.getBody().get(7).getName()).isEqualTo("Sunroof");
-        assertThat(response.getBody().get(8).getName()).isEqualTo("Tires");
-        assertThat(response.getBody().get(9).getName()).isEqualTo("Windows");
-
-        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response2.getBody().get(0).getName()).isEqualTo("Airport");
-        assertThat(response2.getBody().get(1).getName()).isEqualTo("Bank");
-        assertThat(response2.getBody().get(2).getName()).isEqualTo("Factory");
-        assertThat(response2.getBody().get(3).getName()).isEqualTo("Harbor");
-        assertThat(response2.getBody().get(4).getName()).isEqualTo("Mansion");
-        assertThat(response2.getBody().get(5).getName()).isEqualTo("Museum");
-        assertThat(response2.getBody().get(6).getName()).isEqualTo("Office");
-        assertThat(response2.getBody().get(7).getName()).isEqualTo("Station");
-        assertThat(response2.getBody().get(8).getName()).isEqualTo("Store");
-        assertThat(response2.getBody().get(9).getName()).isEqualTo("Warehouse");
-
+        assertThat(response.getBody().get(0).getName()).isEqualTo("Anaesthetics");
+        assertThat(response.getBody().get(1).getName()).isEqualTo("Cardiology");
+        assertThat(response.getBody().get(2).getName()).isEqualTo("Critical care");
+        assertThat(response.getBody().get(3).getName()).isEqualTo("Ear nose throat");
+        assertThat(response.getBody().get(4).getName()).isEqualTo("Emergency");
+        assertThat(response.getBody().get(5).getName()).isEqualTo("Gastroenterology");
+        assertThat(response.getBody().get(6).getName()).isEqualTo("Haematology");
+        assertThat(response.getBody().get(7).getName()).isEqualTo("Maternity");
+        assertThat(response.getBody().get(8).getName()).isEqualTo("Neurology");
+        assertThat(response.getBody().get(9).getName()).isEqualTo("Oncology");
     }
 
     @Test
     public void generateContractListTest() {
-        ResponseEntity<List<Contract>> response = getContracts(2937);
-        ResponseEntity<List<Contract>> response2 = getContracts(5466);
+        ResponseEntity<List<Contract>> response = getContracts(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().get(0).getName()).isEqualTo("Max 16 Hours Per Week Contract");
@@ -131,45 +111,26 @@ public class RosterGeneratorTest {
         assertThat(response.getBody().get(1).getMaximumMinutesPerMonth()).isEqualTo(1920);
         assertThat(response.getBody().get(2).getName()).isEqualTo("Part Time Contract");
         assertThat(response.getBody().get(2).getMaximumMinutesPerYear()).isEqualTo(null);
-
-        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response2.getBody().get(0).getName()).isEqualTo("Max 16 Hours Per Week Contract");
-        assertThat(response2.getBody().get(0).getMaximumMinutesPerWeek()).isEqualTo(960);
-        assertThat(response2.getBody().get(1).getName()).isEqualTo("Max 16 Hours Per Week, 32 Hours Per Month " +
-                                                                           "Contract");
-        assertThat(response2.getBody().get(1).getMaximumMinutesPerMonth()).isEqualTo(1920);
-        assertThat(response2.getBody().get(2).getName()).isEqualTo("Part Time Contract");
-        assertThat(response2.getBody().get(2).getMaximumMinutesPerYear()).isEqualTo(null);
     }
 
     @Test
     public void generateEmployeeListTest() {
-        ResponseEntity<List<Employee>> response = getEmployees(2937);
-        ResponseEntity<List<Employee>> response2 = getEmployees(5466);
+        ResponseEntity<List<Employee>> response = getEmployees(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().get(0).getName()).isEqualTo("Amy Cole");
         assertThat(response.getBody().get(1).getName()).isEqualTo("Amy Fox");
         assertThat(response.getBody().get(2).getName()).isEqualTo("Amy Green");
-
-        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response2.getBody().get(0).getName()).isEqualTo("Amy Cole");
-        assertThat(response2.getBody().get(1).getName()).isEqualTo("Amy Fox");
-        assertThat(response2.getBody().get(2).getName()).isEqualTo("Amy Green");
     }
 
     @Test
     public void generateShiftTemplateTest() {
-        ResponseEntity<List<ShiftTemplateView>> response = getShiftTemplates(2937);
-        ResponseEntity<List<ShiftTemplateView>> response2 = getShiftTemplates(5466);
+        ResponseEntity<List<ShiftTemplateView>> response = getShiftTemplates(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getRotationEmployeeId()).isEqualTo(2967);
-        assertThat(response.getBody().get(0).getSpotId()).isEqualTo(2944);
-
-        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response2.getBody().get(0).getRotationEmployeeId()).isEqualTo(5487);
-        assertThat(response2.getBody().get(0).getSpotId()).isEqualTo(5471);
+        assertThat(response.getBody().get(0).getShiftTemplateDuration().toString()).isEqualTo("PT8H");
+        assertThat(response.getBody().get(0).getDurationBetweenRotationStartAndTemplateStart().toString()).isEqualTo(
+                "PT6H");
     }
 
     // TODO: Add tests for generating Tenant entities once CRUD methods are implemented
