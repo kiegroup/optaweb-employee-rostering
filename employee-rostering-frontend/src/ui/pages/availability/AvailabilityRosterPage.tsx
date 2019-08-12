@@ -601,7 +601,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
 
 export default connect(mapStateToProps, mapDispatchToProps, null, {
   areStatesEqual: (next, prev) => {
-    if (next.availabilityRoster.isLoading) {
+    if (rosterSelectors.isLoading(next)) {
       return true;
     }
     else {
