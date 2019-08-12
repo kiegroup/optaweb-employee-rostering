@@ -21,17 +21,20 @@ import DomainObjectView from './DomainObjectView';
 
 export function shiftTemplateToShiftTemplateView(shiftTemplate: ShiftTemplate): ShiftTemplateView {
   return {
-    ...objectWithout(shiftTemplate, "spot", "rotationEmployee", "shiftTemplateDuration", "durationBetweenRotationStartAndTemplateStart"),
+    ...objectWithout(shiftTemplate, "spot", "rotationEmployee", "shiftTemplateDuration",
+      "durationBetweenRotationStartAndTemplateStart"),
     spotId: shiftTemplate.spot.id as number,
     rotationEmployeeId: shiftTemplate.rotationEmployee? shiftTemplate.rotationEmployee.id as number : null,
     shiftTemplateDuration: shiftTemplate.shiftTemplateDuration.toISOString(),
-    durationBetweenRotationStartAndTemplateStart: shiftTemplate.durationBetweenRotationStartAndTemplateStart.toISOString()
+    durationBetweenRotationStartAndTemplateStart:
+      shiftTemplate.durationBetweenRotationStartAndTemplateStart.toISOString()
   };
 }
 
 export function shiftTemplateViewToDomainObjectView(view: ShiftTemplateView): DomainObjectView<ShiftTemplate> {
   return {
-    ...objectWithout(view, "spotId", "rotationEmployeeId", "shiftTemplateDuration", "durationBetweenRotationStartAndTemplateStart"),
+    ...objectWithout(view, "spotId", "rotationEmployeeId", "shiftTemplateDuration",
+      "durationBetweenRotationStartAndTemplateStart"),
     spot: view.spotId,
     rotationEmployee: view.rotationEmployeeId,
     shiftTemplateDuration: moment.duration(view.shiftTemplateDuration),

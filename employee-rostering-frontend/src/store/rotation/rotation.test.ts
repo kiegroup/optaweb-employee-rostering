@@ -18,13 +18,14 @@ import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
 import { alert } from 'store/alert';
-import reducer, { skillSelectors, skillOperations } from './index';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import reducer, { shiftTemplateSelectors, shiftTemplateOperations } from './index';
+import { createIdMapFromList, mapWithElement, mapWithoutElement, 
+  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
-import Skill from 'domain/Skill';
+import ShiftTemplate from 'domain/ShiftTemplate';
 
 describe('Rotation operations', () => {
-  it('should dispatch actions and call client on refresh skill list', async () => {
+  it('should dispatch actions and call client on refresh shift template list', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const mockSkillList = [{
@@ -47,104 +48,111 @@ describe('Rotation operations', () => {
     }];
 
     onGet(`/tenant/${tenantId}/skill/`, mockSkillList);
-    await store.dispatch(skillOperations.refreshSkillList());
-    expect(store.getActions()).toEqual([actions.setIsSkillListLoading(true),
-      actions.refreshSkillList(mockSkillList),
-      actions.setIsSkillListLoading(false)
+    await store.dispatch(shiftTemplateOperations.refreshShiftTemplateList());
+    expect(store.getActions()).toEqual([
+      actions.setIsShiftTemplateListLoading(true),
+      actions.refreshShiftTemplateList(mockSkillList),
+      actions.setIsShiftTemplateListLoading(false)
     ]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/`);
   });
   
-  it('should dispatch actions and call client on a successful delete skill', async () => {
+  it('should dispatch actions and call client on a successful delete shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const skillToDelete: Skill = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
+    const skillToDelete: ShiftTemplate = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
     onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, true);
-    await store.dispatch(skillOperations.removeSkill(skillToDelete));
+    await store.dispatch(shiftTemplateOperations.removeShiftTemplate(skillToDelete));
     expect(store.getActions()).toEqual([alert.showSuccessMessage("removeSkill", { name: skillToDelete.name }), actions.removeSkill(skillToDelete)]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
   });
 
-  it('should call client but not dispatch actions on a failed delete skill', async () => {
+  it('should call client but not dispatch actions on a failed delete shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const skillToDelete: Skill = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
+    const skillToDelete: ShiftTemplate = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
     onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, false);
-    await store.dispatch(skillOperations.removeSkill(skillToDelete));
+    await store.dispatch(shiftTemplateOperations.removeShiftTemplate(skillToDelete));
     expect(store.getActions()).toEqual([alert.showErrorMessage("removeSkillError", { name: skillToDelete.name })]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
   });
     
-  it('should dispatch actions and call client on add skill', async () => {
+  it('should dispatch actions and call client on add shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const skillToAdd: Skill = { tenantId: tenantId, name: "test" };
-    const skillWithUpdatedId: Skill = {...skillToAdd, id: 4, version: 0};
+    const skillToAdd: ShiftTemplate = { tenantId: tenantId, name: "test" };
+    const skillWithUpdatedId: ShiftTemplate = {...skillToAdd, id: 4, version: 0};
     onPost(`/tenant/${tenantId}/skill/add`, skillToAdd, skillWithUpdatedId);
-    await store.dispatch(skillOperations.addSkill(skillToAdd));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("addSkill", { name: skillToAdd.name }), actions.addSkill(skillWithUpdatedId)]);
+    await store.dispatch(shiftTemplateOperations.addShiftTemplate(skillToAdd));
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("addSkill", { name: skillToAdd.name }),
+      actions.addShiftTemplate(skillWithUpdatedId)
+    ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/add`, skillToAdd);
   });
 
-  it('should dispatch actions and call client on update skill', async () => {
+  it('should dispatch actions and call client on update shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const skillToUpdate: Skill = { tenantId: tenantId, name: "test" , id: 4, version: 0 };
-    const skillWithUpdatedVersion: Skill = {...skillToUpdate, id: 4, version: 1};
+    const skillToUpdate: ShiftTemplate = { tenantId: tenantId, name: "test" , id: 4, version: 0 };
+    const skillWithUpdatedVersion: ShiftTemplate = {...skillToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
-    await store.dispatch(skillOperations.updateSkill(skillToUpdate));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("updateSkill", { id: skillToUpdate.id }), actions.updateSkill(skillWithUpdatedVersion)]);
+    await store.dispatch(shiftTemplateOperations.updateShiftTemplate(skillToUpdate));
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("updateSkill", { id: skillToUpdate.id }),
+      actions.updateShiftTemplate(skillWithUpdatedVersion)
+    ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
   });
 });
 
 describe('Rotation reducers', () => {
-  const addedSkill: Skill = {tenantId: 0, id: 4321, version: 0, name: "Skill 1"};
-  const updatedSkill: Skill = {tenantId: 0, id: 1234, version: 1, name: "Updated Skill 2"};
-  const deletedSkill: Skill = {tenantId: 0, id: 2312, version: 0, name: "Skill 3"};
+  const addedShiftTemplate: ShiftTemplate = {tenantId: 0, id: 4321, version: 0, name: "Skill 1"};
+  const updatedShiftTemplate: ShiftTemplate = {tenantId: 0, id: 1234, version: 1, name: "Updated Skill 2"};
+  const deletedShiftTemplate: ShiftTemplate = {tenantId: 0, id: 2312, version: 0, name: "Skill 3"};
   it('set is loading', () => {
     expect(
-      reducer(state.skillList, actions.setIsSkillListLoading(true))
+      reducer(state.shiftTemplateList, actions.setIsShiftTemplateListLoading(true))
     ).toEqual({ ...state.skillList, isLoading: true })
   });
-  it('add skill', () => {
+  it('add shift template', () => {
     expect(
-      reducer(state.skillList, actions.addSkill(addedSkill))
+      reducer(state.shiftTemplateList, actions.addShiftTemplate(addedSkill))
     ).toEqual({ ...state.skillList, skillMapById: mapWithElement(state.skillList.skillMapById, addedSkill)})
   });
-  it('remove skill', () => {
+  it('remove shift template', () => {
     expect(
-      reducer(state.skillList, actions.removeSkill(deletedSkill)),
+      reducer(state.shiftTemplateList, actions.removeShiftTemplate(deletedSkill)),
     ).toEqual({ ...state.skillList, skillMapById: mapWithoutElement(state.skillList.skillMapById, deletedSkill)})
   });
-  it('update skill', () => {
+  it('update shift template', () => {
     expect(
-      reducer(state.skillList, actions.updateSkill(updatedSkill)),
+      reducer(state.shiftTemplateList, actions.updateShiftTemplate(updatedSkill)),
     ).toEqual({ ...state.skillList, skillMapById: mapWithUpdatedElement(state.skillList.skillMapById, updatedSkill)})
   });
-  it('refresh skill list', () => {
+  it('refresh shift template list', () => {
     expect(
-      reducer(state.skillList, actions.refreshSkillList([addedSkill])),
+      reducer(state.shiftTemplateList, actions.refreshShiftTemplateList([addedSkill])),
     ).toEqual({ ...state.skillList, skillMapById: createIdMapFromList([addedSkill]) });
   });
 });
 
 describe('Rotation selectors', () => {
-  it('should throw an error if skill list is loading', () => {
-    expect(() => skillSelectors.getSkillById({
+  it('should throw an error if shift template list is loading', () => {
+    expect(() => shiftTemplateSelectors.getShiftTemplateById({
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
     }, 1234)).toThrow();
   });
 
-  it('should get a skill by id', () => {
-    const skill = skillSelectors.getSkillById(state, 1234);
+  it('should get a shift template by id', () => {
+    const skill = shiftTemplateSelectors.getShiftTemplateById(state, 1234);
     expect(skill).toEqual({
       tenantId: 0,
       id: 1234,
@@ -153,8 +161,8 @@ describe('Rotation selectors', () => {
     });
   });
 
-  it('should return an empty list if skill list is loading', () => {
-    const skillList = skillSelectors.getSkillList({
+  it('should return an empty list if shift template list is loading', () => {
+    const skillList = shiftTemplateSelectors.getShiftTemplateList({
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
@@ -163,7 +171,7 @@ describe('Rotation selectors', () => {
   });
 
   it('should return a list of all skills', () => {
-    const skillList = skillSelectors.getSkillList(state);
+    const skillList = shiftTemplateSelectors.getShiftTemplateList(state);
     expect(skillList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
@@ -234,5 +242,9 @@ const state: AppState = {
   alerts: {
     alertList: [],
     idGeneratorIndex: 0
+  },
+  shiftTemplateList: {
+    isLoading: true,
+    shiftTemplateMapById: new Map()
   }
 };
