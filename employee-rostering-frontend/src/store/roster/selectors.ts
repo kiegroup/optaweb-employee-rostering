@@ -24,7 +24,7 @@ import AvailabilityRosterView from 'domain/AvailabilityRosterView';
 import { spotSelectors } from 'store/spot';
 import EmployeeAvailability from 'domain/EmployeeAvailability';
 
-function isLoading(state: AppState) {
+export function isLoading(state: AppState) {
   return state.spotList.isLoading || state.employeeList.isLoading || state.skillList.isLoading ||
     state.contractList.isLoading || state.shiftRoster.isLoading || state.availabilityRoster.isLoading ||
     state.rosterState.isLoading;
