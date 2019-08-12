@@ -388,7 +388,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
 export default connect(mapStateToProps, mapDispatchToProps, null, {
   areStatesEqual: (next, prev) => {
-    if (next.shiftRoster.isLoading) {
+    if (rosterSelectors.isLoading(next)) {
       return true;
     }
     else {
