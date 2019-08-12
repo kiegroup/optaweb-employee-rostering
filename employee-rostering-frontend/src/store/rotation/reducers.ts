@@ -15,7 +15,8 @@
  */
 
 import { ActionType, ShiftTemplateList, ShiftTemplateAction } from './types';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import ShiftTemplate from 'domain/ShiftTemplate';
 
@@ -36,7 +37,8 @@ const shiftTemplateReducer = (state = initialState, action: ShiftTemplateAction)
       return { ...state, shiftTemplateMapById: mapWithoutElement(state.shiftTemplateMapById, action.shiftTemplate) };
     }
     case ActionType.UPDATE_SHIFT_TEMPLATE: {
-      return { ...state, shiftTemplateMapById: mapWithUpdatedElement(state.shiftTemplateMapById, action.shiftTemplate) };
+      return { ...state, shiftTemplateMapById: mapWithUpdatedElement(state.shiftTemplateMapById,
+        action.shiftTemplate) };
     }
     case ActionType.REFRESH_SHIFT_TEMPLATE_LIST: {
       return { ...state, shiftTemplateMapById: createIdMapFromList(action.shiftTemplateList) };
