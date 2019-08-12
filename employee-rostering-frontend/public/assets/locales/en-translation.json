@@ -171,5 +171,6 @@
     "UNAVAILABLE": "Unavailable"
   },
 
-  "rotationDay": "Day {{day}}"
+  "rotationDay": "Day {{day}}",
+  "shiftTemplate": "{{spot}}, {{rotationEmployee}}, starting on Day {{dayStart}} of the rotation at {{startTime}}, ending on Day {{dayEnd}} of the rotation at {{endTime}}."
 }

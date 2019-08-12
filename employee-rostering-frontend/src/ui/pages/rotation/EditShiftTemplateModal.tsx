@@ -24,6 +24,7 @@ import Employee from 'domain/Employee';
 import { AppState } from 'store/types';
 import { spotSelectors } from 'store/spot';
 import { employeeSelectors } from 'store/employee';
+import { modulo } from 'util/MathUtils';
 
 import "react-datepicker/dist/react-datepicker.css";
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
@@ -58,7 +59,8 @@ const mapStateToProps = (state: AppState, ownProps: {
   employeeList: employeeSelectors.getEmployeeList(state)
 }); 
 
-export type ShiftTemplateData = Pick<ShiftTemplate, Exclude<keyof ShiftTemplate, "durationBetweenRotationStartAndTemplateStart" | "shiftTemplateDuration">> & {
+export type ShiftTemplateData = Pick<ShiftTemplate, Exclude<keyof ShiftTemplate,
+"durationBetweenRotationStartAndTemplateStart" | "shiftTemplateDuration">> & {
   startDayOffset: number;
   startTime: {
     hours: number;
@@ -79,23 +81,31 @@ interface State {
 function shiftTemplateDataToShiftTemplate(data: ShiftTemplateData, rotationLength: number): ShiftTemplate {
   return {
     ...objectWithout(data, "startDayOffset", "startTime", "endDayOffset", "endTime"),
-    durationBetweenRotationStartAndTemplateStart: moment.duration(data.startDayOffset, "days").add(data.startTime.hours, "hours").add(data.startTime.minutes, "minutes"),
+    durationBetweenRotationStartAndTemplateStart: 
+      moment.duration(data.startDayOffset, "days").add(data.startTime.hours, "hours")
+        .add(data.startTime.minutes, "minutes"),
     shiftTemplateDuration: (data.endDayOffset >= data.startDayOffset)?
-      moment.duration(data.endDayOffset, "days").add(data.endTime.hours, "hours").add(data.endTime.minutes, "minutes").subtract(moment.duration(data.startDayOffset, "days").add(data.startTime.hours, "hours").add(data.startTime.minutes, "minutes")) :
-      moment.duration(rotationLength, "days").subtract(moment.duration(data.startDayOffset, "days").add(data.startTime.hours, "hours").add(data.startTime.minutes, "minutes")).add(data.endDayOffset, "days").add(data.endTime.hours, "hours").add(data.endTime.minutes, "minutes")
+      moment.duration(data.endDayOffset, "days").add(data.endTime.hours, "hours")
+        .add(data.endTime.minutes, "minutes").subtract(moment.duration(data.startDayOffset, "days")
+          .add(data.startTime.hours, "hours").add(data.startTime.minutes, "minutes"))
+      :
+      moment.duration(rotationLength, "days").subtract(moment.duration(data.startDayOffset, "days")
+        .add(data.startTime.hours, "hours").add(data.startTime.minutes, "minutes"))
+        .add(data.endDayOffset, "days").add(data.endTime.hours, "hours").add(data.endTime.minutes, "minutes")
   };
 }
 
 function shiftTemplateToShiftTemplateData(shiftTemplate: ShiftTemplate, rotationLength: number): ShiftTemplateData {
-  const durationBetweenRotationStartAndEnd = moment.duration(shiftTemplate.durationBetweenRotationStartAndTemplateStart).add(shiftTemplate.shiftTemplateDuration);
+  const durationBetweenRotationStartAndEnd = moment
+    .duration(shiftTemplate.durationBetweenRotationStartAndTemplateStart).add(shiftTemplate.shiftTemplateDuration);
   return {
     ...objectWithout(shiftTemplate, "durationBetweenRotationStartAndTemplateStart", "shiftTemplateDuration"),
-    startDayOffset: shiftTemplate.durationBetweenRotationStartAndTemplateStart.days(),
+    startDayOffset: modulo(shiftTemplate.durationBetweenRotationStartAndTemplateStart.days(), rotationLength),
     startTime: {
       hours: shiftTemplate.durationBetweenRotationStartAndTemplateStart.hours(),
       minutes: shiftTemplate.durationBetweenRotationStartAndTemplateStart.minutes()
     },
-    endDayOffset: durationBetweenRotationStartAndEnd.days() % rotationLength,
+    endDayOffset: modulo(durationBetweenRotationStartAndEnd.days(), rotationLength),
     endTime: {
       hours: durationBetweenRotationStartAndEnd.hours(),
       minutes: durationBetweenRotationStartAndEnd.minutes(),
@@ -109,7 +119,9 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
 
     this.onSave = this.onSave.bind(this);
     this.state = (this.props.shiftTemplate && this.props.rotationLength)? {
-      resetCount: 0, editedValue: { ...shiftTemplateToShiftTemplateData(this.props.shiftTemplate, this.props.rotationLength) }
+      resetCount: 0, editedValue: { 
+        ...shiftTemplateToShiftTemplateData(this.props.shiftTemplate, this.props.rotationLength)
+      }
     } : { resetCount: 0, editedValue: {} };
   }
 
@@ -122,9 +134,13 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
     }
     else if (this.props.shiftTemplate !== undefined &&
       this.props.rotationLength !== null &&
-      (this.props.shiftTemplate.id !== prevState.editedValue.id || this.props.shiftTemplate.version !== prevState.editedValue.version)) {
+      (this.props.shiftTemplate.id !== prevState.editedValue.id || 
+        this.props.shiftTemplate.version !== prevState.editedValue.version)) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ resetCount: prevState.resetCount + 1, editedValue: shiftTemplateToShiftTemplateData(this.props.shiftTemplate, this.props.rotationLength) });
+      this.setState({ 
+        resetCount: prevState.resetCount + 1, 
+        editedValue: shiftTemplateToShiftTemplateData(this.props.shiftTemplate, this.props.rotationLength)
+      });
     }
   }
 
@@ -137,7 +153,11 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
     if (shiftTemplateData.spot !== undefined && shiftTemplateData.startDayOffset !== undefined &&
       shiftTemplateData.startTime !== undefined && shiftTemplateData.endDayOffset !== undefined
       && shiftTemplateData.endTime !== undefined) {
-      this.props.onSave({ tenantId: this.props.tenantId, ...shiftTemplateDataToShiftTemplate(shiftTemplateData as ShiftTemplateData, this.props.rotationLength as number) } as ShiftTemplate);
+      this.props.onSave({ 
+        tenantId: this.props.tenantId,
+        ...shiftTemplateDataToShiftTemplate(shiftTemplateData as ShiftTemplateData,
+          this.props.rotationLength as number)
+      } as ShiftTemplate);
     }
   }
 
@@ -149,9 +169,23 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
         isOpen={this.props.isOpen}
         actions={
           [
-            <Button aria-label="Close Modal" variant={ButtonVariant.tertiary} key={0} onClick={this.props.onClose}>Close</Button>
+            <Button 
+              aria-label="Close Modal"
+              variant={ButtonVariant.tertiary}
+              key={0}
+              onClick={this.props.onClose}
+            >
+              Close
+            </Button>
           ].concat(this.props.shiftTemplate? [
-            <Button aria-label="Delete" variant={ButtonVariant.danger} key={1} onClick={() => this.props.onDelete(this.props.shiftTemplate as ShiftTemplate)}>Delete</Button>
+            <Button 
+              aria-label="Delete"
+              variant={ButtonVariant.danger}
+              key={1}
+              onClick={() => this.props.onDelete(this.props.shiftTemplate as ShiftTemplate)}
+            >
+              Delete
+            </Button>
           ] : []).concat([
             <Button aria-label="Save" key={2} onClick={this.onSave}>Save</Button>
           ])
@@ -177,7 +211,8 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TextInput
               aria-label="Start Day Offset"
               type="number"
-              defaultValue={String(this.state.editedValue.startDayOffset? this.state.editedValue.startDayOffset + 1 : 1)}
+              defaultValue={String(this.state.editedValue.startDayOffset?
+                this.state.editedValue.startDayOffset + 1 : 1)}
               min={1}
               max={this.props.rotationLength? this.props.rotationLength : undefined}
               onChange={(v) => {
@@ -193,7 +228,11 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TextInput
               aria-label="Start Time"
               type="time"
-              defaultValue={this.state.editedValue.startTime? moment("2018-01-01T00:00").add(this.state.editedValue.startTime.hours, "hours").add(this.state.editedValue.startTime.minutes, "minutes").format("HH:mm") : undefined}
+              defaultValue={this.state.editedValue.startTime?
+                moment("2018-01-01T00:00").add(this.state.editedValue.startTime.hours, "hours")
+                  .add(this.state.editedValue.startTime.minutes, "minutes").format("HH:mm") 
+                : 
+                undefined}
               onChange={(v) => {
                 const parts = v.split(":");
                 this.setState(old => ({
@@ -228,7 +267,11 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <Label>End Time</Label>
             <TextInput
               aria-label="End Time"
-              defaultValue={this.state.editedValue.endTime? moment("2018-01-01T00:00").add(this.state.editedValue.endTime.hours, "hours").add(this.state.editedValue.endTime.minutes, "minutes").format("HH:mm") : undefined}
+              defaultValue={this.state.editedValue.endTime? 
+                moment("2018-01-01T00:00").add(this.state.editedValue.endTime.hours, "hours")
+                  .add(this.state.editedValue.endTime.minutes, "minutes").format("HH:mm")
+                : 
+                undefined}
               type="time"
               onChange={(v) => {
                 const parts = v.split(":");
