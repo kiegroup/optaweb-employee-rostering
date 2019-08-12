@@ -21,6 +21,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Level, LevelItem, Button, Title, Text, Pagination, Popover, ButtonVariant } from "@patternfly/react-core";
 import { Calendar, momentLocalizer, EventProps } from 'react-big-calendar'
+import { modulo } from 'util/MathUtils';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
@@ -46,7 +47,8 @@ const mapStateToProps = (state: AppState): StateProps => ({
   spotIdToShiftTemplateListMap: shiftTemplateSelectors.getShiftTemplateList(state)
     .reduce((prev, curr) => {
       const old = prev.get(curr.spot.id as number)? prev.get(curr.spot.id as number) as ShiftTemplate[] : [];
-      if (curr.shiftTemplateDuration.asMilliseconds() <= 0 || curr.durationBetweenRotationStartAndTemplateStart.asMilliseconds() <= 0) {
+      if (curr.shiftTemplateDuration.asMilliseconds() <= 0 || 
+      curr.durationBetweenRotationStartAndTemplateStart.asMilliseconds() <= 0) {
         return prev;
       }
       const templatesToAdd: ShiftTemplate[] =
@@ -55,7 +57,9 @@ const mapStateToProps = (state: AppState): StateProps => ({
           .add(curr.shiftTemplateDuration).asDays() >= state.rosterState.rosterState.rotationLength)?
         [curr, {
           ...curr,
-          durationBetweenRotationStartAndTemplateStart: moment.duration(-state.rosterState.rosterState.rotationLength, "days").add(curr.durationBetweenRotationStartAndTemplateStart)
+          durationBetweenRotationStartAndTemplateStart:
+           moment.duration(-state.rosterState.rosterState.rotationLength, "days")
+             .add(curr.durationBetweenRotationStartAndTemplateStart)
         }] : [curr];
       return prev.set(curr.spot.id as number, old.concat(templatesToAdd));
     },
@@ -96,7 +100,8 @@ export function EventWrapper(props: PropsWithChildren<{
   let className = "rbc-event";
 
   if (moment(baseDate).add(props.event.durationBetweenRotationStartAndTemplateStart).get("date") !==
-    moment(baseDate).add(props.event.durationBetweenRotationStartAndTemplateStart).add(props.event.shiftTemplateDuration).get("date")) {
+    moment(baseDate).add(props.event.durationBetweenRotationStartAndTemplateStart)
+      .add(props.event.shiftTemplateDuration).get("date")) {
     if (gridRowStart === 1) {
       className = className + " continues-from-previous-day";
     }
@@ -121,10 +126,13 @@ export function EventWrapper(props: PropsWithChildren<{
 }
 
 const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate> & {
+  rotationLength: number;
   onEdit: (shift: ShiftTemplate) => void;
   onDelete: (shift: ShiftTemplate) => void;
 }> = (props) => {
   const { t } = useTranslation();
+  const durationBetweenRotationStartAndEnd = moment
+    .duration(props.event.durationBetweenRotationStartAndTemplateStart).add(props.event.shiftTemplateDuration);
   return (
     <Popover
       className="my-popup"
@@ -136,7 +144,15 @@ const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate> & {
             {t("shiftTemplate", {
               spot: props.event.spot.name,
               rotationEmployee: props.event.rotationEmployee? props.event.rotationEmployee.name : "Unassigned",
-              dayStart: props.event.durationBetweenRotationStartAndTemplateStart.asDays()
+              dayStart: Math.floor(modulo(
+                props.event.durationBetweenRotationStartAndTemplateStart.asDays(),
+                props.rotationLength)) + 1,
+              startTime: moment("2018-01-01")
+                .add(props.event.durationBetweenRotationStartAndTemplateStart).format("LT"),
+              dayEnd: Math.floor(modulo(durationBetweenRotationStartAndEnd.asDays(),
+                props.rotationLength)) + 1,
+              endTime: moment("2018-01-01")
+                .add(durationBetweenRotationStartAndEnd).format("LT")
             })}
 
           </Text>
@@ -188,7 +204,8 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
 
   componentDidUpdate() {
     const shownSpot = this.state.shownSpot;
-    if (this.props.spotList.length > 0 && ((shownSpot !== null && this.props.spotList.find((spot) => spot.id === shownSpot.id) === undefined) ||
+    if (this.props.spotList.length > 0 && ((shownSpot !== null && 
+      this.props.spotList.find((spot) => spot.id === shownSpot.id) === undefined) ||
       (shownSpot === null))
     ) {
       // eslint-disable-next-line react/no-did-update-set-state
@@ -212,7 +229,8 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
   }
 
   render() {
-    if (this.props.rosterState === null || this.props.isLoading || this.props.spotList.length <= 0 || this.state.shownSpot === null || !this.props.tReady) {
+    if (this.props.rosterState === null || this.props.isLoading || this.props.spotList.length <= 0 || 
+      this.state.shownSpot === null || !this.props.tReady) {
       return <div />;
     }
 
@@ -314,16 +332,21 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
               titleAccessor={shift => shift.rotationEmployee? shift.rotationEmployee.name : "Unassigned"}
               allDayAccessor={shift => false}
               startAccessor={shift => moment(baseDate).add(shift.durationBetweenRotationStartAndTemplateStart).toDate()}
-              endAccessor={shift => moment(baseDate).add(shift.durationBetweenRotationStartAndTemplateStart).add(shift.shiftTemplateDuration).toDate()}
+              endAccessor={shift => moment(baseDate)
+                .add(shift.durationBetweenRotationStartAndTemplateStart)
+                .add(shift.shiftTemplateDuration).toDate()}
               toolbar={false}
               view="week"
               views={["week"]}
-              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date; action: "select"|"click"|"doubleClick" }) => {
+              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date;
+                action: "select"|"click"|"doubleClick"; }) => {
                 if (slotInfo.action === "select") {
                   this.addShiftTemplate({
                     tenantId: spot.tenantId,
-                    durationBetweenRotationStartAndTemplateStart: moment.duration(moment(slotInfo.start).diff(baseDate)),
-                    shiftTemplateDuration: moment.duration(moment(slotInfo.end).diff(baseDate)).subtract(moment(slotInfo.start).diff(baseDate)),
+                    durationBetweenRotationStartAndTemplateStart: moment.duration(moment(slotInfo.start)
+                      .diff(baseDate)),
+                    shiftTemplateDuration: moment.duration(moment(slotInfo.end).diff(baseDate))
+                      .subtract(moment(slotInfo.start).diff(baseDate)),
                     spot: spot,
                     rotationEmployee: null,
                   });
@@ -344,6 +367,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
                 eventWrapper: (params) => EventWrapper(params as any),
                 event: (params) => ShiftTemplateEvent({
                   ...params,
+                  rotationLength: (this.props.rosterState as RosterState).rotationLength,
                   onEdit: (shiftTemplate) => this.setState({
                     selectedShiftTemplate: shiftTemplate,
                     isCreatingOrEditingShiftTemplate: true

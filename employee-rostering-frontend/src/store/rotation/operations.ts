@@ -18,11 +18,14 @@ import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import ShiftTemplate from 'domain/ShiftTemplate';
 import { alert } from 'store/alert';
-import { SetShiftTemplateListLoadingAction, AddShiftTemplateAction, RemoveShiftTemplateAction, UpdateShiftTemplateAction, RefreshShiftTemplateListAction } from './types';
+import { SetShiftTemplateListLoadingAction, AddShiftTemplateAction, RemoveShiftTemplateAction,
+  UpdateShiftTemplateAction, RefreshShiftTemplateListAction } from './types';
 import { AddAlertAction } from 'store/alert/types';
-import ShiftTemplateView, {shiftTemplateToShiftTemplateView, shiftTemplateViewToDomainObjectView } from 'domain/ShiftTemplateView';
+import ShiftTemplateView, {shiftTemplateToShiftTemplateView,
+  shiftTemplateViewToDomainObjectView } from 'domain/ShiftTemplateView';
 
-export const addShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAction | AddShiftTemplateAction> = shiftTemplate =>
+export const addShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAction |
+AddShiftTemplateAction> = shiftTemplate =>
   (dispatch, state, client) => {
     const tenantId = shiftTemplate.tenantId;
     const view = shiftTemplateToShiftTemplateView(shiftTemplate);
@@ -32,14 +35,17 @@ export const addShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertActio
     });
   };
 
-export const removeShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAction | RemoveShiftTemplateAction> = shiftTemplate =>
+export const removeShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAction |
+RemoveShiftTemplateAction> = shiftTemplate =>
   (dispatch, state, client) => {
     const tenantId = shiftTemplate.tenantId;
     const shiftTemplateId = shiftTemplate.id;
     return client.delete<boolean>(`/tenant/${tenantId}/rotation/${shiftTemplateId}`).then(isSuccess => {
       if (isSuccess) {
         dispatch(alert.showSuccessMessage("removeShiftTemplate"));
-        dispatch(actions.removeShiftTemplate(shiftTemplateViewToDomainObjectView(shiftTemplateToShiftTemplateView(shiftTemplate))));
+        dispatch(actions.removeShiftTemplate(
+          shiftTemplateViewToDomainObjectView(shiftTemplateToShiftTemplateView(shiftTemplate))
+        ));
       }
       else {
         dispatch(alert.showErrorMessage("removeShiftTemplateError"));
@@ -47,7 +53,8 @@ export const removeShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAc
     });
   };
 
-export const updateShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAction | UpdateShiftTemplateAction> = shiftTemplate =>
+export const updateShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAction |
+UpdateShiftTemplateAction> = shiftTemplate =>
   (dispatch, state, client) => {
     const tenantId = shiftTemplate.tenantId;
     const view = shiftTemplateToShiftTemplateView(shiftTemplate);
@@ -57,7 +64,8 @@ export const updateShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAc
     });
   };
 
-export const refreshShiftTemplateList: ThunkCommandFactory<void, SetShiftTemplateListLoadingAction | RefreshShiftTemplateListAction> = () =>
+export const refreshShiftTemplateList: ThunkCommandFactory<void, SetShiftTemplateListLoadingAction |
+RefreshShiftTemplateListAction> = () =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
     dispatch(actions.setIsShiftTemplateListLoading(true));

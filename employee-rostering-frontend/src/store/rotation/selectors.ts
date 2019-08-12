@@ -21,7 +21,8 @@ import { objectWithout } from 'util/ImmutableCollectionOperations';
 import { employeeSelectors } from 'store/employee';
 
 function isLoading(state: AppState) {
-  return state.shiftTemplateList.isLoading || state.employeeList.isLoading || state.contractList.isLoading || state.spotList.isLoading || state.skillList.isLoading
+  return state.shiftTemplateList.isLoading || state.employeeList.isLoading || 
+    state.contractList.isLoading || state.spotList.isLoading || state.skillList.isLoading
 }
 
 export const getShiftTemplateById = (state: AppState, id: number): ShiftTemplate => {
@@ -32,7 +33,8 @@ export const getShiftTemplateById = (state: AppState, id: number): ShiftTemplate
   return {
     ...objectWithout(shiftTemplateView, "spot", "rotationEmployee"),
     spot: spotSelectors.getSpotById(state, shiftTemplateView.spot),
-    rotationEmployee: shiftTemplateView.rotationEmployee? employeeSelectors.getEmployeeById(state, shiftTemplateView.rotationEmployee) : null
+    rotationEmployee: shiftTemplateView.rotationEmployee?
+      employeeSelectors.getEmployeeById(state, shiftTemplateView.rotationEmployee) : null
   };
 };
 
