@@ -72,7 +72,8 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
       } });
     }
     else if (this.props.availability !== undefined &&
-      (this.props.availability.id !== prevState.editedValue.id || this.props.availability.version !== prevState.editedValue.version)) {
+      (this.props.availability.id !== prevState.editedValue.id || 
+        this.props.availability.version !== prevState.editedValue.version)) {
       // eslint-disable-next-line react/no-did-update-set-state
       this.setState({ editedValue: this.props.availability });
     }
@@ -95,9 +96,23 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
         isOpen={this.props.isOpen}
         actions={
           [
-            <Button aria-label="Close Modal" variant={ButtonVariant.tertiary} key={0} onClick={this.props.onClose}>Close</Button>
+            <Button 
+              aria-label="Close Modal"
+              variant={ButtonVariant.tertiary}
+              key={0}
+              onClick={this.props.onClose}
+            >
+              Close
+            </Button>
           ].concat(this.props.availability? [
-            <Button aria-label="Delete" variant={ButtonVariant.danger} key={1} onClick={() => this.props.onDelete(this.props.availability as EmployeeAvailability)}>Delete</Button>
+            <Button
+              aria-label="Delete"
+              variant={ButtonVariant.danger}
+              key={1}
+              onClick={() => this.props.onDelete(this.props.availability as EmployeeAvailability)}
+            >
+              Delete
+            </Button>
           ] : []).concat([
             <Button aria-label="Save" key={2} onClick={this.onSave}>Save</Button>
           ])

@@ -19,7 +19,8 @@ import { AppState } from '../types';
 import * as actions from './actions';
 import { alert } from 'store/alert';
 import reducer, { spotSelectors, spotOperations } from './index';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import {onGet, onPost, onDelete} from 'store/rest/RestTestUtils';
 import Spot from 'domain/Spot';
 
@@ -52,7 +53,11 @@ describe('Spot operations', () => {
 
     onGet(`/tenant/${tenantId}/spot/`, mockSpotList);
     await store.dispatch(spotOperations.refreshSpotList());
-    expect(store.getActions()).toEqual([actions.setIsSpotListLoading(true), actions.refreshSpotList(mockSpotList), actions.setIsSpotListLoading(false)]);
+    expect(store.getActions()).toEqual([
+      actions.setIsSpotListLoading(true),
+      actions.refreshSpotList(mockSpotList),
+      actions.setIsSpotListLoading(false)
+    ]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/`);
   });
@@ -70,7 +75,10 @@ describe('Spot operations', () => {
     };
     onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, true);
     await store.dispatch(spotOperations.removeSpot(spotToDelete));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("removeSpot", { name: spotToDelete.name }), actions.removeSpot(spotToDelete)]);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("removeSpot", { name: spotToDelete.name }),
+      actions.removeSpot(spotToDelete)
+    ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/${spotToDelete.id}`);
 
@@ -103,7 +111,10 @@ describe('Spot operations', () => {
     const spotWithUpdatedId: Spot = {...spotToAdd, id: 4, version: 0};
     onPost(`/tenant/${tenantId}/spot/add`, spotToAdd, spotWithUpdatedId);
     await store.dispatch(spotOperations.addSpot(spotToAdd));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("addSpot", { name: spotToAdd.name }), actions.addSpot(spotWithUpdatedId)]);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("addSpot", { name: spotToAdd.name }),
+      actions.addSpot(spotWithUpdatedId)
+    ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/add`, spotToAdd);
   });
@@ -116,7 +127,10 @@ describe('Spot operations', () => {
     const spotWithUpdatedVersion: Spot = {...spotToUpdate, version: 1};
     onPost(`/tenant/${tenantId}/spot/update`, spotToUpdate, spotWithUpdatedVersion);
     await store.dispatch(spotOperations.updateSpot(spotToUpdate));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("updateSpot", { id: spotToUpdate.id }), actions.updateSpot(spotWithUpdatedVersion)]);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("updateSpot", { id: spotToUpdate.id }),
+      actions.updateSpot(spotWithUpdatedVersion)
+    ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/update`, spotToUpdate);
   });

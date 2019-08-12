@@ -18,7 +18,8 @@ import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import Skill from 'domain/Skill';
 import { alert } from 'store/alert';
-import { SetSkillListLoadingAction, AddSkillAction, RemoveSkillAction, UpdateSkillAction, RefreshSkillListAction } from './types';
+import { SetSkillListLoadingAction, AddSkillAction, RemoveSkillAction, UpdateSkillAction,
+  RefreshSkillListAction } from './types';
 import { AddAlertAction } from 'store/alert/types';
 
 export const addSkill: ThunkCommandFactory<Skill,  AddAlertAction | AddSkillAction> = skill =>

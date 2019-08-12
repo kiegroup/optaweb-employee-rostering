@@ -97,9 +97,12 @@ describe('DataTable component', () => {
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
     expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(3);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, {}, expect.any(Function));
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[0], expect.any(Function));
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(3, twoRows.tableData[1], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(1, {}, expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(2, twoRows.tableData[0], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(3, twoRows.tableData[1], expect.any(Function));
     expect(toJson(shallow(<div>{dataTable.instance().render()}</div>))).toMatchSnapshot();
   });
 
@@ -258,8 +261,10 @@ describe('DataTable component', () => {
 
     expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(1);
     expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(1);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[1]);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[1], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).displayDataRow)
+      .toHaveBeenNthCalledWith(1, twoRows.tableData[1]);
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(1, twoRows.tableData[1], expect.any(Function));
 
     expect(toJson(dataTable)).toMatchSnapshot();
   });
@@ -299,7 +304,8 @@ describe('DataTable component', () => {
     expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(1);
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
     expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(1);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
 
     (dataTable.instance() as MockDataTable).displayDataRow.mockClear();
     (dataTable.instance() as MockDataTable).editDataRow.mockClear();
@@ -308,7 +314,8 @@ describe('DataTable component', () => {
     expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(1);
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[1]);
     expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(1);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[1], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(1, twoRows.tableData[1], expect.any(Function));
 
     expect(toJson(dataTable)).toMatchSnapshot();
   });
@@ -331,8 +338,10 @@ describe('DataTable component', () => {
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
     expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(2);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(2, twoRows.tableData[1], expect.any(Function));
 
     expect(toJson(dataTable)).toMatchSnapshot();
   });
@@ -347,8 +356,10 @@ describe('DataTable component', () => {
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[1]);
     expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[0]);
     expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(2);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[1], expect.any(Function));
-    expect((dataTable.instance() as MockDataTable).editDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[0], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(1, twoRows.tableData[1], expect.any(Function));
+    expect((dataTable.instance() as MockDataTable).editDataRow)
+      .toHaveBeenNthCalledWith(2, twoRows.tableData[0], expect.any(Function));
 
     expect(toJson(dataTable)).toMatchSnapshot();
   });

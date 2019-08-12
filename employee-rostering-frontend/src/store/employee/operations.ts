@@ -18,7 +18,8 @@ import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import { alert } from 'store/alert';
 import Employee from 'domain/Employee';
-import { SetEmployeeListLoadingAction, AddEmployeeAction, RemoveEmployeeAction, UpdateEmployeeAction, RefreshEmployeeListAction } from './types';
+import { SetEmployeeListLoadingAction, AddEmployeeAction, RemoveEmployeeAction, UpdateEmployeeAction,
+  RefreshEmployeeListAction } from './types';
 import { AddAlertAction } from 'store/alert/types';
 
 export const addEmployee: ThunkCommandFactory<Employee, AddAlertAction | AddEmployeeAction> = employee =>
@@ -54,7 +55,8 @@ export const updateEmployee: ThunkCommandFactory<Employee, AddAlertAction | Upda
     });
   };
 
-export const refreshEmployeeList: ThunkCommandFactory<void, SetEmployeeListLoadingAction | RefreshEmployeeListAction> = () =>
+export const refreshEmployeeList:
+ThunkCommandFactory<void, SetEmployeeListLoadingAction | RefreshEmployeeListAction> = () =>
   (dispatch, state, client) => {
     let tenantId = state().tenantData.currentTenantId;
     dispatch(actions.setIsEmployeeListLoading(true));

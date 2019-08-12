@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { RosterStateActionType, SolverAction, ShiftRosterViewActionType, RosterStateAction, ShiftRosterViewAction, CurrentSolverState, CurrentRosterState, CurrentShiftRoster, SolverActionType, CurrentAvailabilityRoster, AvailabilityRosterViewActionType, AvailabilityRosterViewAction } from './types';
+import { RosterStateActionType, SolverAction, ShiftRosterViewActionType, RosterStateAction,
+  ShiftRosterViewAction, CurrentSolverState, CurrentRosterState, CurrentShiftRoster, SolverActionType,
+  CurrentAvailabilityRoster, AvailabilityRosterViewActionType, AvailabilityRosterViewAction } from './types';
 import moment from 'moment';
 
 export const initialSolverState: CurrentSolverState = {
@@ -51,7 +53,8 @@ export const rosterStateReducer = (state = initialRosterState, action: RosterSta
         return { ...state, rosterState: {
           ...state.rosterState,
           firstDraftDate: action.publishResult.publishedToDate,
-          unplannedRotationOffset: (state.rosterState.unplannedRotationOffset + publishedDuration) % state.rosterState.rotationLength
+          unplannedRotationOffset: (state.rosterState.unplannedRotationOffset + publishedDuration) %
+          state.rosterState.rotationLength
         } };
       }
       else {
@@ -63,7 +66,8 @@ export const rosterStateReducer = (state = initialRosterState, action: RosterSta
   }
 };
 
-export const shiftRosterViewReducer = (state = initialShiftRosterState, action: ShiftRosterViewAction): CurrentShiftRoster => {
+export const shiftRosterViewReducer = (state = initialShiftRosterState,
+  action: ShiftRosterViewAction): CurrentShiftRoster => {
   switch (action.type) {
     case ShiftRosterViewActionType.SET_SHIFT_ROSTER_IS_LOADING: {
       return { ...state, isLoading: action.isLoading };
@@ -76,7 +80,8 @@ export const shiftRosterViewReducer = (state = initialShiftRosterState, action: 
   }
 }
 
-export const availabilityRosterReducer = (state = initialAvailabilityRosterState, action: AvailabilityRosterViewAction): CurrentAvailabilityRoster => {
+export const availabilityRosterReducer = (state = initialAvailabilityRosterState,
+  action: AvailabilityRosterViewAction): CurrentAvailabilityRoster => {
   switch (action.type) {
     case AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_IS_LOADING: {
       return { ...state, isLoading: action.isLoading };

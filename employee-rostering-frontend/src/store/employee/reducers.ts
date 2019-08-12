@@ -15,7 +15,8 @@
  */
 
 import { ActionType, EmployeeList, EmployeeAction } from './types';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
 import Employee from 'domain/Employee';
 

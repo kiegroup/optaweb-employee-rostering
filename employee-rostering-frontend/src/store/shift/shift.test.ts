@@ -57,7 +57,10 @@ describe('Shift operations', () => {
     expect(mockRefreshShiftRoster).toBeCalled()
     
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("addShift", { startDateTime: moment(addedShift.startDateTime).format("LLL"), endDateTime: moment(addedShift.endDateTime).format("LLL") })
+      alert.showSuccessMessage("addShift", {
+        startDateTime: moment(addedShift.startDateTime).format("LLL"),
+        endDateTime: moment(addedShift.endDateTime).format("LLL")
+      })
     ]);
   });
 
@@ -95,7 +98,11 @@ describe('Shift operations', () => {
     expect(mockRefreshShiftRoster).toBeCalled();
 
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("removeShift", { id: deletedShift.id, startDateTime: moment(deletedShift.startDateTime).format("LLL"), endDateTime: moment(deletedShift.endDateTime).format("LLL") })
+      alert.showSuccessMessage("removeShift", { 
+        id: deletedShift.id,
+        startDateTime: moment(deletedShift.startDateTime).format("LLL"),
+        endDateTime: moment(deletedShift.endDateTime).format("LLL")
+      })
     ]);
   });
 
@@ -133,7 +140,11 @@ describe('Shift operations', () => {
     expect(mockRefreshShiftRoster).not.toBeCalled();
 
     expect(store.getActions()).toEqual([
-      alert.showErrorMessage("removeShiftError", { id: deletedShift.id, startDateTime: moment(deletedShift.startDateTime).format("LLL"), endDateTime: moment(deletedShift.endDateTime).format("LLL") })
+      alert.showErrorMessage("removeShiftError", {
+        id: deletedShift.id,
+        startDateTime: moment(deletedShift.startDateTime).format("LLL"),
+        endDateTime: moment(deletedShift.endDateTime).format("LLL")
+      })
     ]);
   });
 

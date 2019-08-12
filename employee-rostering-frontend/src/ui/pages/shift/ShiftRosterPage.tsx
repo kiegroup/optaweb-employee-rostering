@@ -173,7 +173,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   getShiftStyle(shift: Shift): { style: React.CSSProperties } {
     const color = getShiftColor(shift);
                 
-    if (this.props.rosterState !== null && moment(shift.startDateTime).isBefore(this.props.rosterState.firstDraftDate)) {
+    if (this.props.rosterState !== null && 
+      moment(shift.startDateTime).isBefore(this.props.rosterState.firstDraftDate)) {
       // Published
       return {
         style: {
@@ -341,7 +342,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               toolbar={false}
               view="week"
               views={["week"]}
-              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date; action: "select"|"click"|"doubleClick" }) => {
+              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date;
+                action: "select"|"click"|"doubleClick"; }) => {
                 if (slotInfo.action === "select") {
                   this.addShift({
                     tenantId: spot.tenantId,

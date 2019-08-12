@@ -19,7 +19,8 @@ import { AppState } from '../types';
 import * as actions from './actions';
 import { alert } from 'store/alert';
 import reducer, { skillSelectors, skillOperations } from './index';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import { createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
 import Skill from 'domain/Skill';
 
@@ -62,7 +63,10 @@ describe('Skill operations', () => {
     const skillToDelete: Skill = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
     onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, true);
     await store.dispatch(skillOperations.removeSkill(skillToDelete));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("removeSkill", { name: skillToDelete.name }), actions.removeSkill(skillToDelete)]);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("removeSkill", { name: skillToDelete.name }),
+      actions.removeSkill(skillToDelete)
+    ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
   });
@@ -73,7 +77,9 @@ describe('Skill operations', () => {
     const skillToDelete: Skill = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
     onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, false);
     await store.dispatch(skillOperations.removeSkill(skillToDelete));
-    expect(store.getActions()).toEqual([alert.showErrorMessage("removeSkillError", { name: skillToDelete.name })]);
+    expect(store.getActions()).toEqual([
+      alert.showErrorMessage("removeSkillError", { name: skillToDelete.name })
+    ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
   });
@@ -85,7 +91,10 @@ describe('Skill operations', () => {
     const skillWithUpdatedId: Skill = {...skillToAdd, id: 4, version: 0};
     onPost(`/tenant/${tenantId}/skill/add`, skillToAdd, skillWithUpdatedId);
     await store.dispatch(skillOperations.addSkill(skillToAdd));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("addSkill", { name: skillToAdd.name }), actions.addSkill(skillWithUpdatedId)]);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("addSkill", { name: skillToAdd.name }),
+      actions.addSkill(skillWithUpdatedId)
+    ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/add`, skillToAdd);
   });
@@ -97,7 +106,10 @@ describe('Skill operations', () => {
     const skillWithUpdatedVersion: Skill = {...skillToUpdate, id: 4, version: 1};
     onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
     await store.dispatch(skillOperations.updateSkill(skillToUpdate));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("updateSkill", { id: skillToUpdate.id }), actions.updateSkill(skillWithUpdatedVersion)]);
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("updateSkill", { id: skillToUpdate.id }),
+      actions.updateSkill(skillWithUpdatedVersion)
+    ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
   });

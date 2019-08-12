@@ -18,7 +18,8 @@ import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import { alert } from 'store/alert';
 import Contract from 'domain/Contract';
-import { SetContractListLoadingAction, AddContractAction, RemoveContractAction, UpdateContractAction, RefreshContractListAction } from './types';
+import { SetContractListLoadingAction, AddContractAction, RemoveContractAction,
+  UpdateContractAction, RefreshContractListAction } from './types';
 import { AddAlertAction } from 'store/alert/types';
 
 
@@ -56,7 +57,8 @@ export const updateContract: ThunkCommandFactory<Contract, AddAlertAction | Upda
     });
   };
 
-export const refreshContractList: ThunkCommandFactory<void, RefreshContractListAction | SetContractListLoadingAction> = () =>
+export const refreshContractList:
+ThunkCommandFactory<void, RefreshContractListAction | SetContractListLoadingAction> = () =>
   (dispatch, state, client) => {
     const tenantId = state().tenantData.currentTenantId;
     dispatch(actions.setIsContractListLoading(true));

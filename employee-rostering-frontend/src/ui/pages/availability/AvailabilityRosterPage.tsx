@@ -21,7 +21,7 @@ import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
-import { Level, LevelItem, Button, Title, Split, SplitItem } from "@patternfly/react-core";
+import { Level, LevelItem, Button, Title } from "@patternfly/react-core";
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import EditShiftModal from '../shift/EditShiftModal';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
@@ -35,10 +35,9 @@ import EmployeeAvailability from "domain/EmployeeAvailability";
 import { employeeSelectors } from "store/employee";
 import Employee from "domain/Employee";
 import { availabilityOperations } from "store/availability";
-import { OkIcon, WarningTriangleIcon, ErrorCircleOIcon, TrashIcon } from "@patternfly/react-icons";
 import { shiftOperations } from "store/shift";
-import { useTranslation } from "react-i18next";
 import EditAvailabilityModal from "./EditAvailabilityModal";
+import AvailabilityEvent from "./AvailabilityEvent";
 
 interface StateProps {
   isSolving: boolean;
@@ -66,8 +65,10 @@ const mapStateToProps = (state: AppState): StateProps => ({
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getAvailabilityListForEmployee(state, curr)),
     new Map<number, EmployeeAvailability[]>()),
-  startDate: (state.availabilityRoster.availabilityRosterView)? moment(state.availabilityRoster.availabilityRosterView.startDate).toDate() : null,
-  endDate: (state.availabilityRoster.availabilityRosterView)? moment(state.availabilityRoster.availabilityRosterView.endDate).toDate() : null,
+  startDate: (state.availabilityRoster.availabilityRosterView)?
+    moment(state.availabilityRoster.availabilityRosterView.startDate).toDate() : null,
+  endDate: (state.availabilityRoster.availabilityRosterView)?
+    moment(state.availabilityRoster.availabilityRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState
 }); 
@@ -121,7 +122,8 @@ export function isShift(shiftOrAvailability: Shift|EmployeeAvailability): shiftO
   return "spot" in shiftOrAvailability;
 }
 
-export function isAvailability(shiftOrAvailability: Shift|EmployeeAvailability): shiftOrAvailability is EmployeeAvailability {
+export function isAvailability(shiftOrAvailability: Shift|EmployeeAvailability): 
+shiftOrAvailability is EmployeeAvailability {
   return !isShift(shiftOrAvailability);
 }
 
@@ -185,79 +187,7 @@ export function EventWrapper(props: PropsWithChildren<{
   );
 }
 
-interface AvailabilityEventProps {
-  availability: EmployeeAvailability;
-  updateEmployeeAvailability: (ea: EmployeeAvailability) => void;
-  removeEmployeeAvailability: (ea: EmployeeAvailability) => void;
-}
 
-const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: AvailabilityEventProps) => {
-  const { t } = useTranslation();
-  return (
-    <span
-      data-tip
-      data-for={String(props.availability.id)}
-      className="availability-event"
-
-    >
-      <Split>
-        <SplitItem isFilled={false}>{t("EmployeeAvailabilityState." + props.availability.state)}</SplitItem>
-        <SplitItem isFilled />
-        <SplitItem isFilled={false}>
-          <Button
-            onClick={() => props.removeEmployeeAvailability(props.availability)}
-            variant="danger"
-          >
-            <TrashIcon />
-          </Button>
-        </SplitItem>
-      </Split>
-      <Level gutter="sm">
-        <LevelItem>
-          <Button
-            onClick={() => props.updateEmployeeAvailability({
-              ...props.availability,
-              state: "DESIRED"
-            })}
-            style={{
-              backgroundColor: "green",
-              margin: "5px"
-            }}
-            variant="tertiary"
-          >
-            <OkIcon />
-          </Button>
-          <Button
-            onClick={() => props.updateEmployeeAvailability({
-              ...props.availability,
-              state: "UNDESIRED"
-            })}
-            style={{
-              backgroundColor: "yellow",
-              margin: "5px"
-            }}
-            variant="tertiary"
-          >
-            <WarningTriangleIcon />
-          </Button>
-          <Button
-            onClick={() => props.updateEmployeeAvailability({
-              ...props.availability,
-              state: "UNAVAILABLE"
-            })}
-            style={{
-              backgroundColor: "red",
-              margin: "5px"
-            }}
-            variant="tertiary"
-          >
-            <ErrorCircleOIcon />
-          </Button>
-        </LevelItem>
-      </Level>
-    </span>
-  );
-}
 
 export class AvailabilityRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -322,7 +252,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
   getDayStyle(date: Date, availabilities: EmployeeAvailability[]): { className: string; style: React.CSSProperties } {
     let className = "";
     const style: React.CSSProperties = {};
-    const dayAvailability = availabilities.find(ea => !moment(ea.startDateTime).isAfter(date) && moment(date).isBefore(ea.endDateTime))
+    const dayAvailability = availabilities.find(ea => 
+      !moment(ea.startDateTime).isAfter(date) && moment(date).isBefore(ea.endDateTime))
     if (dayAvailability !== undefined) {
       switch (dayAvailability.state) {
         case "DESIRED": {
@@ -534,8 +465,10 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               toolbar={false}
               view="week"
               views={["week"]}
-              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date; action: "select"|"click"|"doubleClick" }) => {
-                if (slotInfo.action === "select" || (slotInfo.action === "click" && isDay(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate()))) {
+              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date; 
+                action: "select"|"click"|"doubleClick"; }) => {
+                if (slotInfo.action === "select" || (slotInfo.action === "click" && 
+                isDay(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate()))) {
                   if (isDay(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate())) {
                     this.props.addEmployeeAvailability({
                       tenantId: employee.tenantId,
@@ -561,7 +494,9 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               onNavigate={() => {}}
               timeslots={4}
               eventPropGetter={this.getEventStyle}
-              dayPropGetter={day => this.getDayStyle(day, (this.props.employeeIdToAvailabilityListMap.get(employee.id as number) as EmployeeAvailability[]).filter(isAllDayAvailability))}
+              dayPropGetter={day => this.getDayStyle(day, 
+                (this.props.employeeIdToAvailabilityListMap.get(employee.id as number) as EmployeeAvailability[])
+                  .filter(isAllDayAvailability))}
               selectable
               showMultiDayTimes
               components={{
