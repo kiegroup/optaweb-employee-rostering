@@ -57,7 +57,8 @@ MultiTypeaheadSelectState<T>>  {
     if (selected.map(this.props.optionToStringMap).includes(selection)) {
       this.setState(
         prevState => {
-          const newState = {selected: prevState.selected.filter(option => this.props.optionToStringMap(option) !== selection)};
+          const newState = {selected: prevState.selected.filter(option => 
+            this.props.optionToStringMap(option) !== selection)};
           this.props.onChange(newState.selected);
           return newState;
         }

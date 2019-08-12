@@ -61,11 +61,13 @@ export interface SetShiftRosterViewAction extends Action<ShiftRosterViewActionTy
   readonly shiftRoster: ShiftRosterView;
 }
 
-export interface SetAvailabilityRosterIsLoadingAction extends Action<AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_IS_LOADING> {
+export interface SetAvailabilityRosterIsLoadingAction extends
+  Action<AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_IS_LOADING> {
   readonly isLoading: boolean;
 }
 
-export interface SetAvailabilityRosterViewAction extends Action<AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_VIEW> {
+export interface SetAvailabilityRosterViewAction extends
+  Action<AvailabilityRosterViewActionType.SET_AVAILABILITY_ROSTER_VIEW> {
   readonly availabilityRoster: AvailabilityRosterView;
 }
 

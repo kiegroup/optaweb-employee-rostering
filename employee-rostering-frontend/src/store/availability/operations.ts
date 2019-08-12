@@ -35,7 +35,8 @@ export function availabilityAdapter(employeeAvailability: EmployeeAvailability):
   };
 }
 
-export function kindaAvailabilityViewAdapter(kindaAvailabilityView: KindaEmployeeAvailabilityView): EmployeeAvailabilityView {
+export function kindaAvailabilityViewAdapter(kindaAvailabilityView: KindaEmployeeAvailabilityView):
+EmployeeAvailabilityView {
   return {
     ...kindaAvailabilityView,
     startDateTime: moment(kindaAvailabilityView.startDateTime).toDate(),
@@ -46,25 +47,39 @@ export function kindaAvailabilityViewAdapter(kindaAvailabilityView: KindaEmploye
 export const addEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability =>
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
-    return client.post<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/add`, availabilityAdapter(employeeAvailability)).then(newEmployeeAvailability => {
-      dispatch(alert.showSuccessMessage("addAvailability", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
+    return client.post<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/add`,
+      availabilityAdapter(employeeAvailability)).then(newEmployeeAvailability => {
+      dispatch(alert.showSuccessMessage("addAvailability", { 
+        employeeName: employeeAvailability.employee.name, 
+        startDateTime: moment(employeeAvailability.startDateTime).format("LLL"),
+        endDateTime: moment(employeeAvailability.endDateTime).format("LLL") 
+      }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
   };
 
-export const removeEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability =>
+export const removeEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, any> = 
+employeeAvailability =>
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
     const shiftId = employeeAvailability.id;
     return client.delete<boolean>(`/tenant/${tenantId}/employee/availability/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
-        dispatch(alert.showSuccessMessage("removeAvailability", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
+        dispatch(alert.showSuccessMessage("removeAvailability", { 
+          employeeName: employeeAvailability.employee.name,
+          startDateTime: moment(employeeAvailability.startDateTime).format("LLL"),
+          endDateTime: moment(employeeAvailability.endDateTime).format("LLL") 
+        }));
         dispatch(refreshShiftRoster());
         dispatch(refreshAvailabilityRoster());
       }
       else {
-        dispatch(alert.showErrorMessage("removeAvailabilityError", { employeeName: employeeAvailability.employee.name, startDateTime: moment(employeeAvailability.startDateTime).format("LLL"), endDateTime: moment(employeeAvailability.endDateTime).format("LLL") }));
+        dispatch(alert.showErrorMessage("removeAvailabilityError", { 
+          employeeName: employeeAvailability.employee.name,
+          startDateTime: moment(employeeAvailability.startDateTime).format("LLL"),
+          endDateTime: moment(employeeAvailability.endDateTime).format("LLL") 
+        }));
       }
     });
   };
@@ -72,7 +87,8 @@ export const removeEmployeeAvailability: ThunkCommandFactory<EmployeeAvailabilit
 export const updateEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability =>
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
-    return client.put<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/update`, availabilityAdapter(employeeAvailability)).then(updatedAvailability => {
+    return client.put<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/update`,
+      availabilityAdapter(employeeAvailability)).then(updatedAvailability => {
       dispatch(alert.showSuccessMessage("updateAvailability", { id: updatedAvailability.id }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
