@@ -18,8 +18,11 @@ package org.optaweb.employeerostering.contract;
 
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,162 +39,77 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class ContractRestControllerTest {
+public class ContractRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Autowired
-    private TestRestTemplate contractRestTemplate;
+    private TestRestTemplate restTemplate;
 
-    private String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
+    private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
 
     private ResponseEntity<List<Contract>> getContracts(Integer tenantId) {
-        return contractRestTemplate.exchange(contractPathURI, HttpMethod.GET, null,
-                                             new ParameterizedTypeReference<List<Contract>>() {}, tenantId);
+        return restTemplate.exchange(contractPathURI, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<Contract>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<Contract> getContract(Integer tenantId, Long id) {
-        return contractRestTemplate.getForEntity(contractPathURI + id, Contract.class, tenantId);
+        return restTemplate.getForEntity(contractPathURI + id, Contract.class, tenantId);
     }
 
     private void deleteContract(Integer tenantId, Long id) {
-        contractRestTemplate.delete(contractPathURI + id, tenantId);
+        restTemplate.delete(contractPathURI + id, tenantId);
     }
 
     private ResponseEntity<Contract> addContract(Integer tenantId, ContractView contractView) {
-        return contractRestTemplate.postForEntity(contractPathURI + "add", contractView, Contract.class, tenantId);
+        return restTemplate.postForEntity(contractPathURI + "add", contractView, Contract.class, tenantId);
     }
 
     private ResponseEntity<Contract> updateContract(Integer tenantId, HttpEntity<ContractView> request) {
-        return contractRestTemplate.exchange(contractPathURI + "update", HttpMethod.PUT, request, Contract.class,
-                                             tenantId);
+        return restTemplate.exchange(contractPathURI + "update", HttpMethod.PUT, request, Contract.class,
+                tenantId);
+    }
+
+    @Before
+    public void setup() {
+        createTestTenant();
+    }
+
+    @After
+    public void cleanup() {
+        deleteTestTenant();
     }
 
     @Test
-    public void getContractListTest() {
-        Integer tenantId = 2;
-        Integer tenantId2 = 3;
-        String name = "name";
-        String name2 = "name2";
+    public void contractCrudTest() {
         Integer maximumMinutesPerDay = 50;
         Integer maximumMinutesPerWeek = 250;
         Integer maximumMinutesPerMonth = 1000;
         Integer maximumMinutesPerYear = 12000;
 
-        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
-                                         maximumMinutesPerMonth, maximumMinutesPerYear);
-        ContractView contractView2 = new ContractView(tenantId, name2, maximumMinutesPerDay, maximumMinutesPerWeek,
-                                          maximumMinutesPerMonth, maximumMinutesPerYear);
-        ContractView contractView3 = new ContractView(tenantId2, name, maximumMinutesPerDay, maximumMinutesPerWeek,
-                                          maximumMinutesPerMonth, maximumMinutesPerYear);
-
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
-        ResponseEntity<Contract> postResponse2 = addContract(tenantId, contractView2);
-        ResponseEntity<Contract> postResponse3 = addContract(tenantId2, contractView3);
-
-        ResponseEntity<List<Contract>> response = getContracts(tenantId);
-        ResponseEntity<List<Contract>> response2 = getContracts(tenantId2);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).contains(postResponse.getBody());
-        assertThat(response.getBody()).contains(postResponse2.getBody());
-
-        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response2.getBody()).contains(postResponse3.getBody());
-
-        deleteContract(tenantId, postResponse.getBody().getId());
-        deleteContract(tenantId, postResponse2.getBody().getId());
-        deleteContract(tenantId2, postResponse3.getBody().getId());
-    }
-
-    @Test
-    public void getContractTest() {
-        Integer tenantId = 2;
-        String name = "name";
-        Integer maximumMinutesPerDay = 50;
-        Integer maximumMinutesPerWeek = 250;
-        Integer maximumMinutesPerMonth = 1000;
-        Integer maximumMinutesPerYear = 12000;
-
-        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
-                                         maximumMinutesPerMonth, maximumMinutesPerYear);
-
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
-
-        ResponseEntity<Contract> response = getContract(tenantId, postResponse.getBody().getId());
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualTo(postResponse.getBody());
-
-        deleteContract(tenantId, postResponse.getBody().getId());
-    }
-
-    @Test
-    public void deleteContractTest() {
-        Integer tenantId = 2;
-        String name = "name";
-        Integer maximumMinutesPerDay = 50;
-        Integer maximumMinutesPerWeek = 250;
-        Integer maximumMinutesPerMonth = 1000;
-        Integer maximumMinutesPerYear = 12000;
-
-        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
-                                         maximumMinutesPerMonth, maximumMinutesPerYear);
-
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
-
-        deleteContract(tenantId, postResponse.getBody().getId());
-
-        ResponseEntity<List<Contract>> response = getContracts(tenantId);
-
-        assertThat(response.getBody()).isEmpty();
-    }
-
-    @Test
-    public void createContractTest() {
-        Integer tenantId = 2;
-        String name = "name";
-        Integer maximumMinutesPerDay = 50;
-        Integer maximumMinutesPerWeek = 250;
-        Integer maximumMinutesPerMonth = 1000;
-        Integer maximumMinutesPerYear = 12000;
-
-        ContractView contractView = new ContractView(tenantId, name, maximumMinutesPerDay, maximumMinutesPerWeek,
-                                         maximumMinutesPerMonth, maximumMinutesPerYear);
-
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
-
-        ResponseEntity<Contract> response = getContract(tenantId, postResponse.getBody().getId());
-
+        ContractView contractView = new ContractView(TENANT_ID, "contract", maximumMinutesPerDay, maximumMinutesPerWeek,
+                maximumMinutesPerMonth, maximumMinutesPerYear);
+        ResponseEntity<Contract> postResponse = addContract(TENANT_ID, contractView);
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(postResponse.getBody()).isEqualTo(response.getBody());
 
-        deleteContract(tenantId, postResponse.getBody().getId());
-    }
+        ResponseEntity<Contract> response = getContract(TENANT_ID, postResponse.getBody().getId());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
-    @Test
-    public void updateContractTest() {
-        Integer tenantId = 2;
-        String name = "name";
-        Integer maximumMinutesPerDay = 50;
-        Integer maximumMinutesPerWeek = 250;
-        Integer maximumMinutesPerMonth = 1000;
-        Integer maximumMinutesPerYear = 12000;
-
-        ContractView contractView = new ContractView(tenantId, name);
-
-        ResponseEntity<Contract> postResponse = addContract(tenantId, contractView);
-
-        ContractView contractView2= new ContractView(tenantId, "name2", maximumMinutesPerDay, maximumMinutesPerWeek,
-                                          maximumMinutesPerMonth, maximumMinutesPerYear);
-        contractView2.setId(postResponse.getBody().getId());
-        HttpEntity<ContractView> request = new HttpEntity<>(contractView2);
-
-        ResponseEntity<Contract> putResponse = updateContract(tenantId, request);
-
-        ResponseEntity<Contract> response = getContract(tenantId, putResponse.getBody().getId());
-
+        ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract", maximumMinutesPerDay,
+                maximumMinutesPerWeek, maximumMinutesPerMonth, maximumMinutesPerYear);
+        updatedContractView.setId(postResponse.getBody().getId());
+        HttpEntity<ContractView> request = new HttpEntity<>(updatedContractView);
+        ResponseEntity<Contract> putResponse = updateContract(TENANT_ID, request);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(putResponse.getBody()).isEqualTo(response.getBody());
 
-        deleteContract(tenantId, putResponse.getBody().getId());
+        response = getContract(TENANT_ID, putResponse.getBody().getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(putResponse.getBody()).isEqualToComparingFieldByFieldRecursively(response.getBody());
+
+        deleteContract(TENANT_ID, putResponse.getBody().getId());
+
+        ResponseEntity<List<Contract>> getListResponse = getContracts(TENANT_ID);
+        assertThat(getListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(getListResponse.getBody()).isEmpty();
     }
 }

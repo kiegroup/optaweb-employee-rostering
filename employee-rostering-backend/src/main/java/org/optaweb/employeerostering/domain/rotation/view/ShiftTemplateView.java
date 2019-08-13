@@ -18,6 +18,8 @@ package org.optaweb.employeerostering.domain.rotation.view;
 
 import java.time.Duration;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.DurationSerializer;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
 
@@ -70,6 +72,7 @@ public class ShiftTemplateView extends AbstractPersistable {
         this.rotationEmployeeId = rotationEmployeeId;
     }
 
+    @JsonSerialize(using = DurationSerializer.class)
     public Duration getDurationBetweenRotationStartAndTemplateStart() {
         return durationBetweenRotationStartAndTemplateStart;
     }
@@ -78,6 +81,7 @@ public class ShiftTemplateView extends AbstractPersistable {
         this.durationBetweenRotationStartAndTemplateStart = durationBetweenRotationStartAndTemplateStart;
     }
 
+    @JsonSerialize(using = DurationSerializer.class)
     public Duration getShiftTemplateDuration() {
         return shiftTemplateDuration;
     }

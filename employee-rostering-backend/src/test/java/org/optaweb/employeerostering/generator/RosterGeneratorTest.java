@@ -25,6 +25,7 @@ import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -43,11 +44,14 @@ public class RosterGeneratorTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
-    private String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
-    private String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
-    private String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
-    private String rotationPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
+    private final String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
+    private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
+    private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
+    private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
+    private final String rotationPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
+    private final String tenantPathURI = "http://localhost:8080/rest/tenant/";
+    private final String employeeAvailabilityPathURI
+            = "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
 
     private ResponseEntity<List<Skill>> getSkills(Integer tenantId) {
         return restTemplate.exchange(skillPathURI, HttpMethod.GET, null,
@@ -72,6 +76,11 @@ public class RosterGeneratorTest {
     private ResponseEntity<List<ShiftTemplateView>> getShiftTemplates(Integer tenantId) {
         return restTemplate.exchange(rotationPathURI, HttpMethod.GET, null,
                                      new ParameterizedTypeReference<List<ShiftTemplateView>>() {}, tenantId);
+    }
+
+    private ResponseEntity<List<Tenant>> getTenants() {
+        return restTemplate.exchange(tenantPathURI, HttpMethod.GET, null,
+                                     new ParameterizedTypeReference<List<Tenant>>() {});
     }
 
     @Test
@@ -124,7 +133,7 @@ public class RosterGeneratorTest {
     }
 
     @Test
-    public void generateShiftTemplateTest() {
+    public void generateShiftTemplateListTest() {
         ResponseEntity<List<ShiftTemplateView>> response = getShiftTemplates(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -133,9 +142,14 @@ public class RosterGeneratorTest {
                 "PT6H");
     }
 
-    // TODO: Add tests for generating Tenant entities once CRUD methods are implemented
+    @Test
+    public void generateTenantListTest() {
+        ResponseEntity<List<Tenant>> response = getTenants();
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get(0).getName()).isEqualTo("Hospital Los Angeles (98 employees)");
+    }
 
     // TODO: Add tests for generating Shift entities once CRUD methods are implemented
 
-    // TODO: Add tests for generating EmployeeAvailability entities once CRUD methods are implemented
 }

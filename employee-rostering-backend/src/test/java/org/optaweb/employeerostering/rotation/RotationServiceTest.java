@@ -16,8 +16,17 @@
 
 package org.optaweb.employeerostering.rotation;
 
+import java.time.Duration;
+import java.util.Collections;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
+import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
@@ -27,14 +36,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.NestedServletException;
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class RotationServiceTest {
+public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceTest {
 
     private static final Logger logger = LoggerFactory.getLogger(RotationServiceTest.class);
 
@@ -52,81 +71,65 @@ public class RotationServiceTest {
         return spotService.createSpot(tenantId, spotView);
     }
 
-    // TODO: Add createTestTenant() and deleteTestTenant() setup methods to persist tenant and rosterState entities
-    //  before running tests once Tenant CRUD methods are implemented
+    @Before
+    public void setup() {
+        createTestTenant();
+    }
 
-    /*
+    @After
+    public void cleanup() {
+        deleteTestTenant();
+    }
+
     @Test
     public void getShiftTemplateListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/rotation/", 2)
-                            .accept(MediaType.APPLICATION_JSON))
+                .get("/rest/tenant/{tenantId}/rotation/", TENANT_ID)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void getShiftTemplateTest() throws Exception {
-        Integer tenantId = 2;
-        String name = "name";
+        Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
-
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
-        rotationService.createShiftTemplate(tenantId, shiftTemplateView);
+        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
+                Duration.ofDays(0), null);
+        ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .get("/rest/tenant/{tenantId}/rotation/{id}", tenantId, shiftTemplateView.getId())
-                            .accept(MediaType.APPLICATION_JSON))
+                .get("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedShiftTemplate.getId())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(tenantId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.spotId").value(spot.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.rotationEmployeeId").value(null));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.durationBetweenRotationStartAndTemplateStart").value(
+                        "PT0S"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.shiftTemplateDuration").value("PT0S"));
     }
 
     @Test
     public void getNonExistentShiftTemplateTest() {
-        Integer tenantId = 2;
-
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .get("/rest/tenant/{tenantId}/rotation/{id}", tenantId, -1L)))
+                        .get("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, 0)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                                     "Exception: No ShiftTemplateView entity found with ID (-1).");
-    }
-
-    @Test
-    public void getNonMatchingShiftTemplateTest() {
-        Integer tenantId = 2;
-        String name = "name";
-
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
-
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
-        rotationService.createShiftTemplate(tenantId, shiftTemplateView);
-
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .get("/rest/tenant/{tenantId}/rotation/{id}", 3,
-                                                           shiftTemplateView.getId())))
-                .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: The " +
-                                     "tenantId (3) does not match the persistable (name)'s tenantId (2).");
+                        "Exception: No ShiftTemplate entity found with ID (0).");
     }
 
     @Test
     public void deleteShiftTemplateTest() throws Exception {
-        Integer tenantId = 2;
-        String name = "name";
+        Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
-
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
-        rotationService.createShiftTemplate(tenantId, shiftTemplateView);
+        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
+                Duration.ofDays(0), null);
+        ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .delete("/rest/tenant/{tenantId}/rotation/{id}", tenantId, shiftTemplateView.getId())
-                            .accept(MediaType.APPLICATION_JSON))
+                .delete("/rest/tenant/{tenantId}/rotation/{id}", TENANT_ID, persistedShiftTemplate.getId())
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -134,166 +137,107 @@ public class RotationServiceTest {
     }
 
     @Test
-    public void deleteNonExistentShiftTemplateTest() {
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .delete("/rest/tenant/{tenantId}/rotation/{id}", 2, -1L)))
-                .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                                     "Exception: No ShiftTemplateView entity found with ID (-1).");
-    }
-
-    @Test
     public void deleteNonMatchingShiftTemplateTest() {
-        Integer tenantId = 2;
-        String name = "name";
+        Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
+        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
+                Duration.ofDays(0), null);
+        ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
-        rotationService.createShiftTemplate(tenantId, shiftTemplateView);
-
+        String shiftTemplateName = "[ShiftTemplate-" + persistedShiftTemplate.getId() + "]";
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .delete("/rest/tenant/{tenantId}/rotation/{id}", 3,
-                                                              shiftTemplateView.getId())))
+                        .delete("/rest/tenant/{tenantId}/rotation/{id}", 0,
+                                persistedShiftTemplate.getId())))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
-                                     "The tenantId (3) does not match the persistable (name)'s tenantId (2).");
+                        "The tenantId (0) does not match the persistable (" + shiftTemplateName +
+                        ")'s tenantId (" + TENANT_ID + ").");
     }
 
     @Test
     public void createShiftTemplateTest() throws Exception {
-        Integer tenantId = 2;
-        String name = "name";
+        Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
-
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
+        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
+                Duration.ofDays(0), null);
         String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView);
 
         mvc.perform(MockMvcRequestBuilders
-                            .post("/rest/tenant/{tenantId}/rotation/add", tenantId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body)
-                            .accept(MediaType.APPLICATION_JSON))
+                .post("/rest/tenant/{tenantId}/rotation/add", TENANT_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(tenantId))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.spotId").value(spot.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.rotationEmployeeId").value(null));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.durationBetweenRotationStartAndTemplateStart").value(
+                        "PT0S"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.shiftTemplateDuration").value("PT0S"));
     }
 
     @Test
     public void createNonMatchingShiftTemplateTest() throws Exception {
-        Integer tenantId = 2;
-        String name = "name";
+        Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
-
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
+        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(0, spot.getId(), Duration.ofDays(0),
+                Duration.ofDays(0), null);
         String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView);
 
+        String shiftTemplateName = "[ShiftTemplate-null]";
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .post("/rest/tenant/{tenantId}/rotation/add", 3)
-                                                      .contentType(MediaType.APPLICATION_JSON)
-                                                      .content(body)))
+                        .post("/rest/tenant/{tenantId}/rotation/add", TENANT_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
-                                     "The tenantId (3) does not match the persistable (name)'s tenantId (2).");
+                        "The tenantId (" + TENANT_ID + ") does not match the persistable (" +
+                        shiftTemplateName + ")'s tenantId (0).");
     }
 
     @Test
     public void updateShiftTemplateTest() throws Exception {
-        Integer tenantId = 2;
-        String name = "name";
-        String name2 ="name2";
+        Spot spotA = createSpot(TENANT_ID, "A", Collections.emptySet());
+        Spot spotB = createSpot(TENANT_ID, "B", Collections.emptySet());
 
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
-        Spot spot2 = createSpot(tenantId, name2, Collections.emptySet());
+        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(0),
+                Duration.ofDays(0), null);
+        ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
 
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
-        rotationService.createShiftTemplate(tenantId, shiftTemplateView);
-
-        ShiftTemplateView shiftTemplateView2 = new ShiftTemplateView(tenantId, spot2.getId(), null, null, null);
-        String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView2);
+        ShiftTemplateView updatedShiftTemplate = new ShiftTemplateView(TENANT_ID, spotB.getId(), Duration.ofDays(1),
+                Duration.ofDays(1), null);
+        updatedShiftTemplate.setId(persistedShiftTemplate.getId());
+        String body = (new ObjectMapper()).writeValueAsString(updatedShiftTemplate);
 
         mvc.perform(MockMvcRequestBuilders
-                            .put("/rest/tenant/{tenantId}/rotation/update", tenantId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(body)
-                            .accept(MediaType.APPLICATION_JSON))
+                .put("/rest/tenant/{tenantId}/rotation/update", TENANT_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body)
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(tenantId))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.spotId").value(spot2.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.rotationEmployeeId").value(null));
-    }
-
-    @Test
-    public void updateNonMatchingShiftTemplateTest() throws Exception {
-        Integer tenantId = 2;
-        String name = "name";
-        String name2 = "name2";
-
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
-        Spot spot2 = createSpot(tenantId, name2, Collections.emptySet());
-
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
-        rotationService.createShiftTemplate(tenantId, shiftTemplateView);
-
-        ShiftTemplateView shiftTemplateView2 = new ShiftTemplateView(tenantId, spot2.getId(), null, null, null);
-        String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView2);
-
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .put("/rest/tenant/{tenantId}/rotation/update", 3)
-                                                      .contentType(MediaType.APPLICATION_JSON)
-                                                      .content(body)))
-                .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
-                                     "The tenantId (3) does not match the persistable (name2)'s tenantId (2).");
+                .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.spotId").value(spotB.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.durationBetweenRotationStartAndTemplateStart").value(
+                        "PT24H"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.shiftTemplateDuration").value("PT24H"));
     }
 
     @Test
     public void updateNonExistentShiftTemplateTest() throws Exception {
-        Integer tenantId = 2;
-        String name = "name";
+        Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
-
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
-        shiftTemplateView.setId(-1L);
+        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
+                Duration.ofDays(0), null);
+        shiftTemplateView.setId(0L);
         String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView);
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .put("/rest/tenant/{tenantId}/rotation/update", tenantId)
-                                                      .contentType(MediaType.APPLICATION_JSON)
-                                                      .content(body)))
+                        .put("/rest/tenant/{tenantId}/rotation/update", TENANT_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                                     "Exception: ShiftTemplateView entity with ID (-1) not found.");
+                        "Exception: ShiftTemplate entity with ID (0) not found.");
     }
-
-    @Test
-    public void updateChangeTenantIdShiftTemplateTest() throws Exception {
-        Integer tenantId = 2;
-        Integer tenantId2 = 3;
-        String name = "name";
-        String name2 ="name2";
-
-        Spot spot = createSpot(tenantId, name, Collections.emptySet());
-        Spot spot2 = createSpot(tenantId, name2, Collections.emptySet());
-
-        ShiftTemplateView shiftTemplateView = new ShiftTemplateView(tenantId, spot.getId(), null, null, null);
-        rotationService.createShiftTemplate(tenantId, shiftTemplateView);
-
-        ShiftTemplateView shiftTemplateView2 = new ShiftTemplateView(tenantId, spot2.getId(), null, null, null);
-        String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView2);
-
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                                                      .put("/rest/tenant/{tenantId}/rotation/update", tenantId2)
-                                                      .contentType(MediaType.APPLICATION_JSON)
-                                                      .content(body)))
-                .withMessage("Request processing failed; nested exception is java.lang.IllegalState" +
-                                     "Exception: ShiftTemplateView entity with tenantId (2) cannot change tenants.");
-    }*/
 }

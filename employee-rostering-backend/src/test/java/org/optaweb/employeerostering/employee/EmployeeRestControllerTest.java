@@ -16,15 +16,20 @@
 
 package org.optaweb.employeerostering.employee;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,19 +46,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class EmployeeRestControllerTest {
+public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
 
-    private String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
-    private String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
-    private String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
-    private String employeeAvailabilityPathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
+    private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
+    private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
+    private final String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
+    private final String employeeAvailabilityPathURI =
+            "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
 
     private ResponseEntity<List<Employee>> getEmployees(Integer tenantId) {
         return restTemplate.exchange(employeePathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<Employee>>() {}, tenantId);
+                                     new ParameterizedTypeReference<List<Employee>>() {
+                                     }, tenantId);
     }
 
     private ResponseEntity<Employee> getEmployee(Integer tenantId, Long id) {
@@ -76,16 +83,8 @@ public class EmployeeRestControllerTest {
         return restTemplate.postForEntity(skillPathURI + "add", skill, Skill.class, tenantId);
     }
 
-    private void deleteSkill(Integer tenantId, Long id) {
-        restTemplate.delete(skillPathURI + id, tenantId);
-    }
-
     private ResponseEntity<Contract> addContract(Integer tenantId, Contract contract) {
         return restTemplate.postForEntity(contractPathURI + "add", contract, Contract.class, tenantId);
-    }
-
-    private void deleteContract(Integer tenantId, Long id) {
-        restTemplate.delete(contractPathURI + id, tenantId);
     }
 
     private ResponseEntity<EmployeeAvailabilityView> getEmployeeAvailability(Integer tenantId, Long id) {
@@ -97,176 +96,113 @@ public class EmployeeRestControllerTest {
     }
 
     private ResponseEntity<EmployeeAvailabilityView> addEmployeeAvailability(Integer tenantId, EmployeeAvailabilityView
-                                                                                     employeeAvailabilityView) {
+            employeeAvailabilityView) {
         return restTemplate.postForEntity(employeeAvailabilityPathURI + "add", employeeAvailabilityView,
-                EmployeeAvailabilityView.class, tenantId);
+                                          EmployeeAvailabilityView.class, tenantId);
     }
 
     private ResponseEntity<EmployeeAvailabilityView> updateEmployeeAvailability(Integer tenantId,
                                                                                 HttpEntity<EmployeeAvailabilityView>
                                                                                         request) {
-        return restTemplate.exchange(employeePathURI + "update", HttpMethod.PUT, request,
+        return restTemplate.exchange(employeeAvailabilityPathURI + "update", HttpMethod.PUT, request,
                                      EmployeeAvailabilityView.class, tenantId);
     }
 
-    @Test
-    public void getEmployeeListTest() {
-        Integer tenantId = 2;
-        Integer tenantId2 = 3;
-        String name = "name";
-        String name2 = "name2";
+    @Before
+    public void setup() {
+        createTestTenant();
+    }
 
-        ResponseEntity<Skill> skillResponseA = addSkill(tenantId, new Skill(tenantId, "A"));
-        ResponseEntity<Skill> skillResponseB = addSkill(tenantId, new Skill(tenantId, "B"));
-        ResponseEntity<Skill> skillResponseC = addSkill(tenantId2, new Skill(tenantId2, "C"));
+    @After
+    public void cleanup() {
+        deleteTestTenant();
+    }
+
+    // ************************************************************************
+    // Employee
+    // ************************************************************************
+
+    @Test
+    public void employeeCrudTest() {
+        ResponseEntity<Skill> skillResponseA = addSkill(TENANT_ID, new Skill(TENANT_ID, "A"));
+        ResponseEntity<Skill> skillResponseB = addSkill(TENANT_ID, new Skill(TENANT_ID, "B"));
 
         Skill skillA = skillResponseA.getBody();
         Skill skillB = skillResponseB.getBody();
-        Skill skillC = skillResponseC.getBody();
 
         Set<Skill> testSkillSet = new HashSet<>();
         testSkillSet.add(skillA);
         testSkillSet.add(skillB);
 
-        Set<Skill> testSkillSet2 = new HashSet<>();
-        testSkillSet2.add(skillC);
+        ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "A"));
+        Contract contractA = contractResponseEntity.getBody();
 
-        ResponseEntity<Contract> contractResponseA = addContract(tenantId, new Contract(tenantId, "A"));
-        ResponseEntity<Contract> contractResponseB = addContract(tenantId2, new Contract(tenantId2, "B"));
+        Employee employee = new Employee(TENANT_ID, "employee", contractA, testSkillSet);
+        ResponseEntity<Employee> postResponse = addEmployee(TENANT_ID, employee);
+        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        Contract contractA = contractResponseA.getBody();
-        Contract contractB = contractResponseB.getBody();
-
-        Employee employee = new Employee(tenantId, name, contractA, testSkillSet);
-        Employee employee2 = new Employee(tenantId, name2, contractA, testSkillSet);
-        Employee employee3 = new Employee(tenantId2, name, contractB, testSkillSet2);
-
-        ResponseEntity<Employee> postResponse = addEmployee(tenantId, employee);
-        ResponseEntity<Employee> postResponse2 = addEmployee(tenantId, employee2);
-        ResponseEntity<Employee> postResponse3 = addEmployee(tenantId2, employee3);
-
-        ResponseEntity<List<Employee>> response = getEmployees(tenantId);
-        ResponseEntity<List<Employee>> response2 = getEmployees(tenantId2);
-
+        ResponseEntity<Employee> response = getEmployee(TENANT_ID, postResponse.getBody().getId());
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).contains(postResponse.getBody());
-        assertThat(response.getBody()).contains(postResponse2.getBody());
+        assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
-        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response2.getBody()).contains(postResponse3.getBody());
-
-        deleteEmployee(tenantId, postResponse.getBody().getId());
-        deleteEmployee(tenantId, postResponse2.getBody().getId());
-        deleteEmployee(tenantId2, postResponse3.getBody().getId());
-
-        deleteSkill(tenantId, skillA.getId());
-        deleteSkill(tenantId, skillB.getId());
-        deleteSkill(tenantId2, skillC.getId());
-
-        deleteContract(tenantId, contractA.getId());
-        deleteContract(tenantId2, contractB.getId());
-    }
-
-    @Test
-    public void getAndCreateEmployeeTest() {
-        Integer tenantId = 2;
-        String name = "name";
-
-        ResponseEntity<Skill> skillResponseA = addSkill(tenantId, new Skill(tenantId, "A"));
-        ResponseEntity<Skill> skillResponseB = addSkill(tenantId, new Skill(tenantId, "B"));
-
-        Skill skillA = skillResponseA.getBody();
-        Skill skillB = skillResponseB.getBody();
-
-        Set<Skill> testSkillSet = new HashSet<>();
-        testSkillSet.add(skillA);
-        testSkillSet.add(skillB);
-
-        ResponseEntity<Contract> contractResponseEntity = addContract(tenantId, new Contract(tenantId, "A"));
-        Contract contractA = contractResponseEntity.getBody();
-
-        Employee employee = new Employee(tenantId, name, contractA, testSkillSet);
-        ResponseEntity<Employee> postResponse = addEmployee(tenantId, employee);
-
-        ResponseEntity<Employee> response = getEmployee(tenantId, postResponse.getBody().getId());
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualTo(postResponse.getBody());
-
-        deleteEmployee(tenantId, postResponse.getBody().getId());
-        deleteSkill(tenantId, skillA.getId());
-        deleteSkill(tenantId, skillB.getId());
-        deleteContract(tenantId, contractA.getId());
-    }
-
-    @Test
-    public void deleteEmployeeTest() {
-        Integer tenantId = 2;
-        String name = "name";
-
-        ResponseEntity<Skill> skillResponseA = addSkill(tenantId, new Skill(tenantId, "A"));
-        ResponseEntity<Skill> skillResponseB = addSkill(tenantId, new Skill(tenantId, "B"));
-
-        Skill skillA = skillResponseA.getBody();
-        Skill skillB = skillResponseB.getBody();
-
-        Set<Skill> testSkillSet = new HashSet<>();
-        testSkillSet.add(skillA);
-        testSkillSet.add(skillB);
-
-        ResponseEntity<Contract> contractResponseEntity = addContract(tenantId, new Contract(tenantId, "A"));
-        Contract contractA = contractResponseEntity.getBody();
-
-        Employee employee = new Employee(tenantId, name, contractA, testSkillSet);
-        ResponseEntity<Employee> postResponse = addEmployee(tenantId, employee);
-
-        deleteEmployee(tenantId, postResponse.getBody().getId());
-
-        ResponseEntity<List<Employee>> response = getEmployees(tenantId);
-
-        assertThat(response.getBody()).isEmpty();
-
-        deleteSkill(tenantId, skillA.getId());
-        deleteSkill(tenantId, skillB.getId());
-        deleteContract(tenantId, contractA.getId());
-    }
-
-    @Test
-    public void updateEmployeeTest() {
-        Integer tenantId = 2;
-        String name = "name";
-
-        ResponseEntity<Skill> skillResponseA = addSkill(tenantId, new Skill(tenantId, "A"));
-        ResponseEntity<Skill> skillResponseB = addSkill(tenantId, new Skill(tenantId, "B"));
-
-        Skill skillA = skillResponseA.getBody();
-        Skill skillB = skillResponseB.getBody();
-
-        Set<Skill> testSkillSet = new HashSet<>();
-        testSkillSet.add(skillA);
-        testSkillSet.add(skillB);
-
-        ResponseEntity<Contract> contractResponseEntity = addContract(tenantId, new Contract(tenantId, "A"));
-        Contract contractA = contractResponseEntity.getBody();
-
-        Employee employee = new Employee(tenantId, name, contractA, Collections.emptySet());
-
-        ResponseEntity<Employee> postResponse = addEmployee(tenantId, employee);
-
-        Employee employee2 = new Employee(tenantId, "name2", contractA, testSkillSet);
-        employee2.setId(postResponse.getBody().getId());
-        HttpEntity<Employee> request = new HttpEntity<>(employee2);
-
-        ResponseEntity<Employee> putResponse = updateEmployee(tenantId, request);
-
-        ResponseEntity<Employee> response = getEmployee(tenantId, putResponse.getBody().getId());
-
+        Employee updatedEmployee = new Employee(TENANT_ID, "updatedEmployee", contractA, testSkillSet);
+        updatedEmployee.setId(postResponse.getBody().getId());
+        HttpEntity<Employee> request = new HttpEntity<>(updatedEmployee);
+        ResponseEntity<Employee> putResponse = updateEmployee(TENANT_ID, request);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(putResponse.getBody()).isEqualTo(response.getBody());
 
-        deleteEmployee(tenantId, putResponse.getBody().getId());
+        response = getEmployee(TENANT_ID, putResponse.getBody().getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(putResponse.getBody()).isEqualToComparingFieldByFieldRecursively(response.getBody());
+
+        deleteEmployee(TENANT_ID, putResponse.getBody().getId());
+
+        ResponseEntity<List<Employee>> getListResponse = getEmployees(TENANT_ID);
+        assertThat(getListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(getListResponse.getBody()).isEmpty();
     }
 
-    // TODO: Add EmployeeAvailability CRUD tests once Tenant entity is moved; requires persisted RosterState entity
+    // ************************************************************************
+    // EmployeeAvailability
+    // ************************************************************************
 
+    @Test
+    public void employeeAvailabilityCrudTest() {
+        ResponseEntity<Contract> contractResponseEntity = addContract(TENANT_ID, new Contract(TENANT_ID, "contract"));
+        Contract contract = contractResponseEntity.getBody();
+
+        ResponseEntity<Employee> employeeResponseEntity = addEmployee(TENANT_ID, new Employee(TENANT_ID, "employee",
+                                                                                              contract,
+                                                                                              Collections.emptySet()));
+        Employee employee = employeeResponseEntity.getBody();
+
+        LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
+        LocalDateTime endDateTime = LocalDateTime.of(2000, 1, 1, 0, 0);
+        ResponseEntity<EmployeeAvailabilityView> postResponse =
+                addEmployeeAvailability(TENANT_ID, new EmployeeAvailabilityView(TENANT_ID, employee,
+                                                                                startDateTime,
+                                                                                endDateTime,
+                                                                                EmployeeAvailabilityState.UNAVAILABLE));
+        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        ResponseEntity<EmployeeAvailabilityView> getResponse = getEmployeeAvailability(TENANT_ID,
+                                                                                       postResponse.getBody().getId());
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(getResponse.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
+
+        EmployeeAvailabilityView newEmployeeAvailabilityView =
+                new EmployeeAvailabilityView(TENANT_ID, employee,
+                                             startDateTime, endDateTime,
+                                             EmployeeAvailabilityState.DESIRED);
+        newEmployeeAvailabilityView.setId(postResponse.getBody().getId());
+        HttpEntity<EmployeeAvailabilityView> request = new HttpEntity<>(newEmployeeAvailabilityView);
+        ResponseEntity<EmployeeAvailabilityView> putResponse = updateEmployeeAvailability(TENANT_ID, request);
+        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        getResponse = getEmployeeAvailability(TENANT_ID, putResponse.getBody().getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(getResponse.getBody()).isEqualToComparingFieldByFieldRecursively(putResponse.getBody());
+
+        deleteEmployeeAvailability(TENANT_ID, putResponse.getBody().getId());
+    }
 }

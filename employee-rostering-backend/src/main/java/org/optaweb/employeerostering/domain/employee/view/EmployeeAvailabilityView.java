@@ -21,6 +21,8 @@ import java.time.ZoneId;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -76,6 +78,7 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.employeeId = employeeId;
     }
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getStartDateTime() {
         return startDateTime;
     }
@@ -84,6 +87,7 @@ public class EmployeeAvailabilityView extends AbstractPersistable {
         this.startDateTime = startDateTime;
     }
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getEndDateTime() {
         return endDateTime;
     }
