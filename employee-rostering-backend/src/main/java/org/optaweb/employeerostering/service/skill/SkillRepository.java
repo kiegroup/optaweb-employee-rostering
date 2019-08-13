@@ -30,4 +30,7 @@ public interface SkillRepository extends JpaRepository<Skill, Long> {
             "where s.tenantId = :tenantId " +
             "order by LOWER(s.name)")
     List<Skill> findAllByTenantId(Integer tenantId);
+
+    @Query("delete from Skill s where s.tenantId = :tenantId")
+    void deleteForTenant(Integer tenantId);
 }

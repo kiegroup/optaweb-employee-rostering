@@ -18,8 +18,12 @@ package org.optaweb.employeerostering.service.employee;
 
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EmployeeAvailabilityRepository extends JpaRepository<EmployeeAvailability, Long> {
+
+    @Query("delete from EmployeeAvailability ea where ea.tenantId = :tenantId")
+    void deleteForTenant(Integer tenantId);
 }

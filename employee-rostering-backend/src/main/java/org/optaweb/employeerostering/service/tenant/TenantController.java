@@ -17,18 +17,19 @@
 package org.optaweb.employeerostering.service.tenant;
 
 import java.time.ZoneId;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
 import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.domain.tenant.view.RosterParametrizationView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,15 +40,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/tenant")
 @Validated
-public class TenantMockController {
+public class TenantController {
 
     private final TenantService tenantService;
 
-    public TenantMockController(TenantService tenantService) {
+    public TenantController(TenantService tenantService) {
         this.tenantService = tenantService;
     }
-
-    final Tenant TENANT = createTenant();
 
     // ************************************************************************
     // Tenant
@@ -55,19 +54,22 @@ public class TenantMockController {
 
     @GetMapping("/")
     public ResponseEntity<List<Tenant>> getTenantList() {
-        return new ResponseEntity<>(Arrays.asList(TENANT), HttpStatus.OK);
+        return new ResponseEntity<>(tenantService.getTenantList(), HttpStatus.OK);
     }
 
     @GetMapping("/{id : \\d+}")
-    public ResponseEntity<Tenant> getTenant(@PathVariable Integer id) {
-        return new ResponseEntity<>(TENANT, HttpStatus.OK);
+    public ResponseEntity<Tenant> getTenant(@PathVariable @Min(0) Integer id) {
+        return new ResponseEntity<>(tenantService.getTenant(id), HttpStatus.OK);
     }
 
-    private Tenant createTenant() {
-        Tenant tenant = new Tenant("mockTenant");
-        tenant.setId(1);
-        tenant.setVersion(0L);
-        return tenant;
+    @PostMapping("/add")
+    public ResponseEntity<Tenant> createTenant(@RequestBody @Valid RosterStateView initialRosterStateView) {
+        return new ResponseEntity<>(tenantService.createTenant(initialRosterStateView), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/remove/{id}")
+    public ResponseEntity<Boolean> deleteTenant(@PathVariable @Min(0) Integer id) {
+        return new ResponseEntity<>(tenantService.deleteTenant(id), HttpStatus.OK);
     }
 
     // ************************************************************************
