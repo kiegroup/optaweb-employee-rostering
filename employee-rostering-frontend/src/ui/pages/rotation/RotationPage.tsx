@@ -47,10 +47,6 @@ const mapStateToProps = (state: AppState): StateProps => ({
   spotIdToShiftTemplateListMap: shiftTemplateSelectors.getShiftTemplateList(state)
     .reduce((prev, curr) => {
       const old = prev.get(curr.spot.id as number)? prev.get(curr.spot.id as number) as ShiftTemplate[] : [];
-      if (curr.shiftTemplateDuration.asMilliseconds() <= 0 || 
-      curr.durationBetweenRotationStartAndTemplateStart.asMilliseconds() <= 0) {
-        return prev;
-      }
       const templatesToAdd: ShiftTemplate[] =
       (state.rosterState.rosterState !== null &&
         moment.duration(curr.durationBetweenRotationStartAndTemplateStart)
@@ -238,6 +234,36 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
     const endDate = moment(startDate).add(1, "week").toDate();
     const localizer = momentLocalizer(moment);
     const spot = this.state.shownSpot;
+    const events: { shiftTemplate: ShiftTemplate; start: Date; end: Date }[] = [];
+
+    (this.props.spotIdToShiftTemplateListMap.get(this.state.shownSpot.id as number) as ShiftTemplate[])
+      .forEach(st => {
+        const startHours = st.shiftTemplateDuration.hours();
+        const startMinutes = st.shiftTemplateDuration.minutes();
+        const durationBetweenRotationStartAndTemplateStart = 
+          moment.duration(st.durationBetweenRotationStartAndTemplateStart);
+
+        if (startHours === 0 && startMinutes === 0) { 
+          durationBetweenRotationStartAndTemplateStart.add(1, "ms");
+        }
+
+
+        const durationBetweenRotationStartAndEnd = moment
+          .duration(st.durationBetweenRotationStartAndTemplateStart).add(st.shiftTemplateDuration);
+        const endHours = durationBetweenRotationStartAndEnd.hours();
+        const endMinutes = durationBetweenRotationStartAndEnd.minutes();
+        const shiftTemplateDuration = moment.duration(st.shiftTemplateDuration);
+        if (endHours === 0 && endMinutes=== 0) {
+          shiftTemplateDuration.subtract(1, "ms");
+        }
+        events.push({
+          shiftTemplate: st,
+          start:  moment(baseDate).add(durationBetweenRotationStartAndTemplateStart).toDate(),
+          end: moment(baseDate)
+            .add(durationBetweenRotationStartAndTemplateStart)
+            .add(shiftTemplateDuration).toDate()
+        });
+      });
     return (
       <>
         <Level
@@ -328,13 +354,10 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
               date={startDate}
               length={moment.duration(moment(startDate).to(moment(endDate))).asDays()}
               localizer={localizer}
-              events={(this.props.spotIdToShiftTemplateListMap.get(spot.id as number) as ShiftTemplate[])}
-              titleAccessor={shift => shift.rotationEmployee? shift.rotationEmployee.name : "Unassigned"}
+              events={events}
+              titleAccessor={e => e.shiftTemplate.rotationEmployee?
+                e.shiftTemplate.rotationEmployee.name : "Unassigned"}
               allDayAccessor={shift => false}
-              startAccessor={shift => moment(baseDate).add(shift.durationBetweenRotationStartAndTemplateStart).toDate()}
-              endAccessor={shift => moment(baseDate)
-                .add(shift.durationBetweenRotationStartAndTemplateStart)
-                .add(shift.shiftTemplateDuration).toDate()}
               toolbar={false}
               view="week"
               views={["week"]}
@@ -367,6 +390,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
                 eventWrapper: (params) => EventWrapper(params as any),
                 event: (params) => ShiftTemplateEvent({
                   ...params,
+                  event: params.event.shiftTemplate,
                   rotationLength: (this.props.rosterState as RosterState).rotationLength,
                   onEdit: (shiftTemplate) => this.setState({
                     selectedShiftTemplate: shiftTemplate,
