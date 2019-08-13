@@ -60,6 +60,26 @@
       "message": "The Shift with id \"{{id}}\" was successfully updated."
     },
 
+    "addShiftTemplate": {
+      "title": "Successfully added Shift Template",
+      "message":"A new Shift Template was successfully added with id \"{{id}}\"."
+    },
+
+    "removeShiftTemplate": {
+      "title": "Successfully deleted Shift Template",
+      "message": "The Shift Template with id \"{{id}}\" was successfully deleted."
+    },
+
+    "removeShiftTemplateError": {
+      "title": "Error deleting Shift Template",
+      "message": "The Shift Template with id \"{{id}}\" could not be deleted."
+    },
+
+    "updateShiftTemplate": {
+      "title": "Successfully updated Shift Template",
+      "message": "The Shift Template with id \"{{id}}\" was successfully updated."
+    },
+
     "addAvailability": {
       "title": "Successfully added Availability",
       "message":"A new Availability starting at {{startDateTime}} and ending at {{endDateTime}} for employee {{employeeName}} was successfully added."
