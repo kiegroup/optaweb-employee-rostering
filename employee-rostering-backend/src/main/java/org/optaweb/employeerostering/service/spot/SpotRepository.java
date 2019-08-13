@@ -30,4 +30,7 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
             "where s.tenantId = :tenantId " +
             "order by LOWER(s.name)")
     List<Spot> findAllByTenantId(Integer tenantId);
+
+    @Query("delete from Spot s where s.tenantId = :tenantId")
+    void deleteForTenant(Integer tenantId);
 }

@@ -29,4 +29,7 @@ public interface RosterParametrizationRepository extends JpaRepository<RosterPar
     @Query("select distinct rp from RosterParametrization rp " +
             "where rp.tenantId = :tenantId")
     Optional<RosterParametrization> findByTenantId(Integer tenantId);
+
+    @Query("delete from RosterParametrization rp where rp.tenantId = :tenantId")
+    void deleteForTenant(Integer tenantId);
 }
