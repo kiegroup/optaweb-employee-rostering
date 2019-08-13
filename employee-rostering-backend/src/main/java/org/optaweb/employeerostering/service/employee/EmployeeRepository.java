@@ -30,4 +30,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "where e.tenantId = :tenantId " +
             "order by LOWER(e.name)")
     List<Employee> findAllByTenantId(Integer tenantId);
+
+    @Query("delete from Employee e where e.tenantId = :tenantId")
+    void deleteForTenant(Integer tenantId);
 }

@@ -29,4 +29,7 @@ public interface RosterStateRepository extends JpaRepository<RosterState, Long> 
     @Query("select distinct rs from RosterState rs " +
             "where rs.tenantId = :tenantId")
     Optional<RosterState> findByTenantId(Integer tenantId);
+
+    @Query("delete from RosterState rs where rs.tenantId = :tenantId")
+    void deleteForTenant(Integer tenantId);
 }

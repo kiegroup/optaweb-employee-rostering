@@ -32,4 +32,7 @@ public interface ShiftTemplateRepository extends JpaRepository<ShiftTemplate, Lo
             "where sa.tenantId = :tenantId " +
             "order by sa.startDayOffset, sa.startTime, s.name, re.name")
     List<ShiftTemplate> findAllByTenantId(Integer tenantId);
+
+    @Query("delete from ShiftTemplate st where st.tenantId = :tenantId")
+    void deleteForTenant(Integer tenantId);
 }

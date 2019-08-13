@@ -23,20 +23,129 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.optaweb.employeerostering.domain.roster.RosterState;
+import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
 import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.domain.tenant.view.RosterParametrizationView;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
+import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
+import org.optaweb.employeerostering.service.employee.EmployeeRepository;
+import org.optaweb.employeerostering.service.roster.RosterStateRepository;
+import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
+import org.optaweb.employeerostering.service.skill.SkillRepository;
+import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TenantService extends AbstractRestService {
 
+    private final TenantRepository tenantRepository;
+
     private final RosterParametrizationRepository rosterParametrizationRepository;
 
-    public TenantService(RosterParametrizationRepository rosterParametrizationRepository) {
+    private final RosterStateRepository rosterStateRepository;
+
+    private final EmployeeAvailabilityRepository employeeAvailabilityRepository;
+
+    private final ShiftTemplateRepository shiftTemplateRepository;
+
+    private final EmployeeRepository employeeRepository;
+
+    private final SpotRepository spotRepository;
+
+    private final SkillRepository skillRepository;
+
+    public TenantService(TenantRepository tenantRepository,
+                         RosterParametrizationRepository rosterParametrizationRepository,
+                         RosterStateRepository rosterStateRepository,
+                         EmployeeAvailabilityRepository employeeAvailabilityRepository,
+                         ShiftTemplateRepository shiftTemplateRepository,
+                         EmployeeRepository employeeRepository,
+                         SpotRepository spotRepository,
+                         SkillRepository skillRepository) {
+        this.tenantRepository = tenantRepository;
         this.rosterParametrizationRepository = rosterParametrizationRepository;
+        this.rosterStateRepository = rosterStateRepository;
+        this.employeeAvailabilityRepository = employeeAvailabilityRepository;
+        this.shiftTemplateRepository = shiftTemplateRepository;
+        this.employeeRepository = employeeRepository;
+        this.spotRepository = spotRepository;
+        this.skillRepository = skillRepository;
     }
+
+    // ************************************************************************
+    // Tenant
+    // ************************************************************************
+
+    public RosterState convertFromRosterStateView(RosterStateView rosterStateView) {
+        RosterState rosterState = new RosterState(rosterStateView.getTenantId(),
+                                                  rosterStateView.getPublishNotice(),
+                                                  rosterStateView.getFirstDraftDate(),
+                                                  rosterStateView.getPublishLength(),
+                                                  rosterStateView.getDraftLength(),
+                                                  rosterStateView.getUnplannedRotationOffset(),
+                                                  rosterStateView.getRotationLength(),
+                                                  rosterStateView.getLastHistoricDate(),
+                                                  rosterStateView.getTimeZone());
+        rosterState.setTenant(rosterStateView.getTenant());
+        return rosterState;
+    }
+
+    @Transactional
+    public List<Tenant> getTenantList() {
+        return tenantRepository.findAll();
+    }
+
+    @Transactional
+    public Tenant getTenant(Integer id) {
+        Optional<Tenant> tenantOptional = tenantRepository.findById(id);
+
+        if (!tenantOptional.isPresent()) {
+            throw new EntityNotFoundException("No Tenant entity found with ID (" + id + ").");
+        }
+
+        return tenantOptional.get();
+    }
+
+    @Transactional
+    public Tenant createTenant(RosterStateView initialRosterStateView) {
+        RosterState initialRosterState = convertFromRosterStateView(initialRosterStateView);
+
+        Tenant databaseTenant = tenantRepository.save(initialRosterState.getTenant());
+        initialRosterState.setTenant(databaseTenant);
+        initialRosterState.setTenantId(databaseTenant.getId());
+
+        RosterParametrization rosterParametrization = new RosterParametrization();
+        rosterParametrization.setTenantId(databaseTenant.getId());
+
+        rosterStateRepository.save(initialRosterState);
+        rosterParametrizationRepository.save(rosterParametrization);
+        return databaseTenant;
+    }
+
+    @Transactional
+    public Boolean deleteTenant(Integer id) {
+        // Dependency order: Shift, EmployeeAvailability, ShiftTemplate,
+        // Employee, Spot, Skill,
+        // RosterParametrization, RosterState
+
+        // TODO: Execute Shift.deleteForTenant once Shift CRUD is implemented
+        employeeAvailabilityRepository.deleteForTenant(id);
+        shiftTemplateRepository.deleteForTenant(id);
+        employeeRepository.deleteForTenant(id);
+        spotRepository.deleteForTenant(id);
+        skillRepository.deleteForTenant(id);
+        rosterParametrizationRepository.deleteForTenant(id);
+        rosterStateRepository.deleteForTenant(id);
+        tenantRepository.deleteById(id);
+        return true;
+    }
+
+    // ************************************************************************
+    // RosterParametrization
+    // ************************************************************************
 
     public RosterParametrization convertFromRosterParametrizationView(RosterParametrizationView
                                                                               rosterParametrizationView) {
