@@ -177,8 +177,8 @@ public class EmployeeService extends AbstractRestService {
     }
 
     @Transactional
-    public EmployeeAvailabilityView addEmployeeAvailability(Integer tenantId,
-                                                            EmployeeAvailabilityView employeeAvailabilityView) {
+    public EmployeeAvailabilityView createEmployeeAvailability(Integer tenantId,
+                                                               EmployeeAvailabilityView employeeAvailabilityView) {
         EmployeeAvailability employeeAvailability = convertFromEmployeeAvailabilityView(tenantId,
                                                                                         employeeAvailabilityView);
         employeeAvailabilityRepository.save(employeeAvailability);

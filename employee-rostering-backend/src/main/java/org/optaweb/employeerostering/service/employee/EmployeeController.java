@@ -92,10 +92,10 @@ public class EmployeeController {
     }
 
     @PostMapping("/availability/add")
-    public ResponseEntity<EmployeeAvailabilityView> addEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
+    public ResponseEntity<EmployeeAvailabilityView> createEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
                                                                             @RequestBody @Valid EmployeeAvailabilityView
                                                                                     employeeAvailabilityView) {
-        return new ResponseEntity<>(employeeService.addEmployeeAvailability(tenantId, employeeAvailabilityView),
+        return new ResponseEntity<>(employeeService.createEmployeeAvailability(tenantId, employeeAvailabilityView),
                                     HttpStatus.OK);
     }
 

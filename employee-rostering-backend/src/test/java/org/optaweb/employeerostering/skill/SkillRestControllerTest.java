@@ -18,8 +18,11 @@ package org.optaweb.employeerostering.skill;
 
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,130 +39,69 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class SkillRestControllerTest {
+public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServiceTest {
 
     @Autowired
-    private TestRestTemplate skillRestTemplate;
+    private TestRestTemplate restTemplate;
 
-    private String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
+    private final String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
 
     private ResponseEntity<List<Skill>> getSkills(Integer tenantId) {
-        return skillRestTemplate.exchange(skillPathURI, HttpMethod.GET, null,
-                                          new ParameterizedTypeReference<List<Skill>>() {}, tenantId);
+        return restTemplate.exchange(skillPathURI, HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<Skill>>() {
+                }, tenantId);
     }
 
     private ResponseEntity<Skill> getSkill(Integer tenantId, Long id) {
-        return skillRestTemplate.getForEntity(skillPathURI + id, Skill.class, tenantId);
+        return restTemplate.getForEntity(skillPathURI + id, Skill.class, tenantId);
     }
 
     private void deleteSkill(Integer tenantId, Long id) {
-        skillRestTemplate.delete(skillPathURI + id, tenantId);
+        restTemplate.delete(skillPathURI + id, tenantId);
     }
 
     private ResponseEntity<Skill> addSkill(Integer tenantId, SkillView skillView) {
-        return skillRestTemplate.postForEntity(skillPathURI + "add", skillView, Skill.class, tenantId);
+        return restTemplate.postForEntity(skillPathURI + "add", skillView, Skill.class, tenantId);
     }
 
     private ResponseEntity<Skill> updateSkill(Integer tenantId, HttpEntity<SkillView> request) {
-        return skillRestTemplate.exchange(skillPathURI + "update", HttpMethod.PUT, request, Skill.class, tenantId);
+        return restTemplate.exchange(skillPathURI + "update", HttpMethod.PUT, request, Skill.class, tenantId);
+    }
+
+    @Before
+    public void setup() {
+        createTestTenant();
+    }
+
+    @After
+    public void cleanup() {
+        deleteTestTenant();
     }
 
     @Test
-    public void getSkillListTest() {
-        Integer tenantId = 1;
-        Integer tenantId2 = 2;
-        String name = "name";
-        String name2 = "name2";
-
-        SkillView skillView = new SkillView(tenantId, name);
-        SkillView skillView2 = new SkillView(tenantId, name2);
-        SkillView skillView3 = new SkillView(tenantId2, name);
-
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
-        ResponseEntity<Skill> postResponse2 = addSkill(tenantId, skillView2);
-        ResponseEntity<Skill> postResponse3 = addSkill(tenantId2, skillView3);
-
-        ResponseEntity<List<Skill>> response = getSkills(tenantId);
-        ResponseEntity<List<Skill>> response2 = getSkills(tenantId2);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).contains(postResponse.getBody());
-        assertThat(response.getBody()).contains(postResponse2.getBody());
-
-        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response2.getBody()).contains(postResponse3.getBody());
-
-        deleteSkill(tenantId, postResponse.getBody().getId());
-        deleteSkill(tenantId, postResponse2.getBody().getId());
-        deleteSkill(tenantId2, postResponse3.getBody().getId());
-    }
-
-    @Test
-    public void getSkillTest() {
-        Integer tenantId = 1;
-        String name = "name";
-
-        SkillView skillView = new SkillView(tenantId, name);
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
-
-        ResponseEntity<Skill> response = getSkill(tenantId, postResponse.getBody().getId());
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isEqualTo(postResponse.getBody());
-
-        deleteSkill(tenantId, postResponse.getBody().getId());
-    }
-
-    @Test
-    public void deleteSkillTest() {
-        Integer tenantId = 2;
-        String name = "name";
-
-        SkillView skillView = new SkillView(tenantId, name);
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
-
-        deleteSkill(tenantId, postResponse.getBody().getId());
-
-        ResponseEntity<List<Skill>> response = getSkills(tenantId);
-
-        assertThat(response.getBody()).isEmpty();
-    }
-
-    @Test
-    public void createSkillTest() {
-        Integer tenantId = 2;
-        String name = "name";
-
-        SkillView skillView = new SkillView(tenantId, name);
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
-
-        ResponseEntity<Skill> response = getSkill(tenantId, postResponse.getBody().getId());
-
+    public void skillCrudTest() {
+        SkillView skillView = new SkillView(TENANT_ID, "skill");
+        ResponseEntity<Skill> postResponse = addSkill(TENANT_ID, skillView);
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(postResponse.getBody()).isEqualTo(response.getBody());
 
-        deleteSkill(tenantId, postResponse.getBody().getId());
-    }
+        ResponseEntity<Skill> response = getSkill(TENANT_ID, postResponse.getBody().getId());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
-    @Test
-    public void updateSkillTest() {
-        Integer tenantId = 2;
-        String name = "name";
-
-        SkillView skillView = new SkillView(tenantId, name);
-        ResponseEntity<Skill> postResponse = addSkill(tenantId, skillView);
-
-        SkillView skillView2 = new SkillView(tenantId, "name2");
-        skillView2.setId(postResponse.getBody().getId());
-        HttpEntity<SkillView> request = new HttpEntity<>(skillView2);
-
-        ResponseEntity<Skill> putResponse = updateSkill(tenantId, request);
-
-        ResponseEntity<Skill> response = getSkill(tenantId, putResponse.getBody().getId());
-
+        SkillView updatedSkill = new SkillView(TENANT_ID, "updatedSkill");
+        updatedSkill.setId(postResponse.getBody().getId());
+        HttpEntity<SkillView> request = new HttpEntity<>(updatedSkill);
+        ResponseEntity<Skill> putResponse = updateSkill(TENANT_ID, request);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(putResponse.getBody()).isEqualTo(response.getBody());
 
-        deleteSkill(tenantId, putResponse.getBody().getId());
+        response = getSkill(TENANT_ID, putResponse.getBody().getId());
+        assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(putResponse.getBody()).isEqualToComparingFieldByFieldRecursively(response.getBody());
+
+        deleteSkill(TENANT_ID, postResponse.getBody().getId());
+
+        ResponseEntity<List<Skill>> getListResponse = getSkills(TENANT_ID);
+        assertThat(getListResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(getListResponse.getBody()).isEmpty();
     }
 }
