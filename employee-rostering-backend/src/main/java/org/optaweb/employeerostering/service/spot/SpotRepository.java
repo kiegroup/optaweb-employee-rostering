@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -31,6 +32,7 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
             "order by LOWER(s.name)")
     List<Spot> findAllByTenantId(Integer tenantId);
 
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from Spot s where s.tenantId = :tenantId")
     void deleteForTenant(Integer tenantId);
 }
