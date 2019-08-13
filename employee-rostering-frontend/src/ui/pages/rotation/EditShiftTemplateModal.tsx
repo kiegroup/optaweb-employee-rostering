@@ -100,12 +100,13 @@ function shiftTemplateToShiftTemplateData(shiftTemplate: ShiftTemplate, rotation
     .duration(shiftTemplate.durationBetweenRotationStartAndTemplateStart).add(shiftTemplate.shiftTemplateDuration);
   return {
     ...objectWithout(shiftTemplate, "durationBetweenRotationStartAndTemplateStart", "shiftTemplateDuration"),
-    startDayOffset: modulo(shiftTemplate.durationBetweenRotationStartAndTemplateStart.days(), rotationLength),
+    startDayOffset: modulo(Math.floor(shiftTemplate.durationBetweenRotationStartAndTemplateStart.asDays()),
+      rotationLength),
     startTime: {
       hours: shiftTemplate.durationBetweenRotationStartAndTemplateStart.hours(),
       minutes: shiftTemplate.durationBetweenRotationStartAndTemplateStart.minutes()
     },
-    endDayOffset: modulo(durationBetweenRotationStartAndEnd.days(), rotationLength),
+    endDayOffset: modulo(Math.floor(durationBetweenRotationStartAndEnd.asDays()), rotationLength),
     endTime: {
       hours: durationBetweenRotationStartAndEnd.hours(),
       minutes: durationBetweenRotationStartAndEnd.minutes(),
@@ -211,8 +212,8 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TextInput
               aria-label="Start Day Offset"
               type="number"
-              defaultValue={String(this.state.editedValue.startDayOffset?
-                this.state.editedValue.startDayOffset + 1 : 1)}
+              defaultValue={(this.state.editedValue.startDayOffset !== undefined)? String(
+                this.state.editedValue.startDayOffset + 1) : undefined}
               min={1}
               max={this.props.rotationLength? this.props.rotationLength : undefined}
               onChange={(v) => {
@@ -252,7 +253,8 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TextInput
               aria-label="End Day Offset"
               type="number"
-              defaultValue={String(this.state.editedValue.endDayOffset? this.state.editedValue.endDayOffset + 1 : 1)}
+              defaultValue={(this.state.editedValue.endDayOffset !== undefined)? String(
+                this.state.editedValue.endDayOffset + 1) : undefined}
               min={1}
               max={this.props.rotationLength? this.props.rotationLength : undefined}
               onChange={(v) => {
