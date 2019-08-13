@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -31,6 +32,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             "order by LOWER(e.name)")
     List<Employee> findAllByTenantId(Integer tenantId);
 
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from Employee e where e.tenantId = :tenantId")
     void deleteForTenant(Integer tenantId);
 }

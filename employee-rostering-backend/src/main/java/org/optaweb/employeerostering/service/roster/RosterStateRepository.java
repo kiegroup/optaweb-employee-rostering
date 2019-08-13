@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -30,6 +31,7 @@ public interface RosterStateRepository extends JpaRepository<RosterState, Long> 
             "where rs.tenantId = :tenantId")
     Optional<RosterState> findByTenantId(Integer tenantId);
 
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from RosterState rs where rs.tenantId = :tenantId")
     void deleteForTenant(Integer tenantId);
 }

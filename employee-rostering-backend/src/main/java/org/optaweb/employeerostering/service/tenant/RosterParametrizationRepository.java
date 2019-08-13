@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -30,6 +31,7 @@ public interface RosterParametrizationRepository extends JpaRepository<RosterPar
             "where rp.tenantId = :tenantId")
     Optional<RosterParametrization> findByTenantId(Integer tenantId);
 
+    @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from RosterParametrization rp where rp.tenantId = :tenantId")
     void deleteForTenant(Integer tenantId);
 }
