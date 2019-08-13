@@ -53,12 +53,12 @@ public class TenantMockController {
     // Tenant
     // ************************************************************************
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<Tenant>> getTenantList() {
         return new ResponseEntity<>(Arrays.asList(TENANT), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id : \\d+}")
     public ResponseEntity<Tenant> getTenant(@PathVariable Integer id) {
         return new ResponseEntity<>(TENANT, HttpStatus.OK);
     }
