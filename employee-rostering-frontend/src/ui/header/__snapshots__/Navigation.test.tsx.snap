@@ -79,6 +79,17 @@ exports[`Navigation should activate a navigation link matching the current path 
         Availability
       </Link>
     </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="rotation"
+      key="rotation"
+    >
+      <Link
+        to="/rotation"
+      >
+        Rotation
+      </Link>
+    </NavItem>
   </NavList>
 </Nav>
 `;

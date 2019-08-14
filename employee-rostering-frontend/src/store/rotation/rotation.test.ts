@@ -20,125 +20,233 @@ import * as actions from './actions';
 import { alert } from 'store/alert';
 import reducer, { shiftTemplateSelectors, shiftTemplateOperations } from './index';
 import { createIdMapFromList, mapWithElement, mapWithoutElement, 
-  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
-import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
+  mapWithUpdatedElement, 
+  mapDomainObjectToView} from 'util/ImmutableCollectionOperations';
+import { onGet, onPost, onDelete, onPut } from 'store/rest/RestTestUtils';
 import ShiftTemplate from 'domain/ShiftTemplate';
+import ShiftTemplateView, { shiftTemplateViewToDomainObjectView, 
+  shiftTemplateToShiftTemplateView } from 'domain/ShiftTemplateView';
+import moment from 'moment';
 
 describe('Rotation operations', () => {
   it('should dispatch actions and call client on refresh shift template list', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const mockSkillList = [{
+    const mockShiftTemplateList: ShiftTemplateView[] = [{
       tenantId: tenantId,
       id: 0,
       version: 0,
-      name: "Skill 1"
-    },
-    {
-      tenantId: tenantId,
-      id: 1,
-      version: 0,
-      name: "Skill 2"
-    },
-    {
-      tenantId: tenantId,
-      id: 2,
-      version: 0,
-      name: "Skill 3"
+      spotId: 1,
+      rotationEmployeeId: 2,
+      durationBetweenRotationStartAndTemplateStart: "PT3D",
+      shiftTemplateDuration: "PT8H"
     }];
 
-    onGet(`/tenant/${tenantId}/skill/`, mockSkillList);
+    onGet(`/tenant/${tenantId}/rotation/`, mockShiftTemplateList);
     await store.dispatch(shiftTemplateOperations.refreshShiftTemplateList());
     expect(store.getActions()).toEqual([
       actions.setIsShiftTemplateListLoading(true),
-      actions.refreshShiftTemplateList(mockSkillList),
+      actions.refreshShiftTemplateList(mockShiftTemplateList.map(shiftTemplateViewToDomainObjectView)),
       actions.setIsShiftTemplateListLoading(false)
     ]);
     expect(client.get).toHaveBeenCalledTimes(1);
-    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/`);
+    expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/`);
   });
   
   it('should dispatch actions and call client on a successful delete shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const skillToDelete: ShiftTemplate = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
-    onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, true);
-    await store.dispatch(shiftTemplateOperations.removeShiftTemplate(skillToDelete));
-    expect(store.getActions()).toEqual([alert.showSuccessMessage("removeSkill", { name: skillToDelete.name }), actions.removeSkill(skillToDelete)]);
+    const shiftTemplateToDelete: ShiftTemplate = {
+      tenantId: tenantId,
+      id: 0,
+      version: 0,
+      spot: {
+        tenantId: tenantId,
+        id: 1,
+        name: "Spot",
+        requiredSkillSet: []
+      },
+      rotationEmployee: null,
+      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+      shiftTemplateDuration: moment.duration("PT8H")
+    };
+    onDelete(`/tenant/${tenantId}/rotation/${shiftTemplateToDelete.id}`, true);
+    await store.dispatch(shiftTemplateOperations.removeShiftTemplate(shiftTemplateToDelete));
+    expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("removeShiftTemplate", { id: shiftTemplateToDelete.id }),
+      actions.removeShiftTemplate(mapDomainObjectToView(shiftTemplateToDelete))
+    ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
-    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
+    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/${shiftTemplateToDelete.id}`);
   });
 
   it('should call client but not dispatch actions on a failed delete shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const skillToDelete: ShiftTemplate = { tenantId: tenantId, name: "test", id: 12345, version: 0 };
-    onDelete(`/tenant/${tenantId}/skill/${skillToDelete.id}`, false);
-    await store.dispatch(shiftTemplateOperations.removeShiftTemplate(skillToDelete));
-    expect(store.getActions()).toEqual([alert.showErrorMessage("removeSkillError", { name: skillToDelete.name })]);
+    const shiftTemplateToDelete: ShiftTemplate = {
+      tenantId: tenantId,
+      id: 0,
+      version: 0,
+      spot: {
+        tenantId: tenantId,
+        id: 1,
+        name: "Spot",
+        requiredSkillSet: []
+      },
+      rotationEmployee: null,
+      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+      shiftTemplateDuration: moment.duration("PT8H")
+    };
+    onDelete(`/tenant/${tenantId}/rotation/${shiftTemplateToDelete.id}`, false);
+    await store.dispatch(shiftTemplateOperations.removeShiftTemplate(shiftTemplateToDelete));
+    expect(store.getActions()).toEqual([
+      alert.showErrorMessage("removeShiftTemplateError", { id: shiftTemplateToDelete.id })
+    ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
-    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/${skillToDelete.id}`);
+    expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/${shiftTemplateToDelete.id}`);
   });
     
   it('should dispatch actions and call client on add shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const skillToAdd: ShiftTemplate = { tenantId: tenantId, name: "test" };
-    const skillWithUpdatedId: ShiftTemplate = {...skillToAdd, id: 4, version: 0};
-    onPost(`/tenant/${tenantId}/skill/add`, skillToAdd, skillWithUpdatedId);
-    await store.dispatch(shiftTemplateOperations.addShiftTemplate(skillToAdd));
+    const shiftTemplateToAdd: ShiftTemplate = {
+      tenantId: tenantId,
+      spot: {
+        tenantId: tenantId,
+        id: 1,
+        name: "Spot",
+        requiredSkillSet: []
+      },
+      rotationEmployee: null,
+      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+      shiftTemplateDuration: moment.duration("PT8H")
+    };
+    const shiftTemplateWithUpdatedId: ShiftTemplate = {
+      ...shiftTemplateToAdd,
+      id: 4,
+      version: 0
+    };
+    onPost(`/tenant/${tenantId}/rotation/add`, 
+      shiftTemplateToShiftTemplateView(shiftTemplateToAdd),
+      shiftTemplateToShiftTemplateView(shiftTemplateWithUpdatedId));
+    await store.dispatch(shiftTemplateOperations.addShiftTemplate(shiftTemplateToAdd));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("addSkill", { name: skillToAdd.name }),
-      actions.addShiftTemplate(skillWithUpdatedId)
+      alert.showSuccessMessage("addShiftTemplate", { id: shiftTemplateWithUpdatedId.id }),
+      actions.addShiftTemplate(mapDomainObjectToView(shiftTemplateWithUpdatedId))
     ]);
     expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/add`, skillToAdd);
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/add`, 
+      shiftTemplateToShiftTemplateView(shiftTemplateToAdd));
   });
 
   it('should dispatch actions and call client on update shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const skillToUpdate: ShiftTemplate = { tenantId: tenantId, name: "test" , id: 4, version: 0 };
-    const skillWithUpdatedVersion: ShiftTemplate = {...skillToUpdate, id: 4, version: 1};
-    onPost(`/tenant/${tenantId}/skill/update`, skillToUpdate, skillWithUpdatedVersion);
-    await store.dispatch(shiftTemplateOperations.updateShiftTemplate(skillToUpdate));
+    const shiftTemplateToUpdate: ShiftTemplate = {
+      tenantId: tenantId,
+      id: 4,
+      version: 0,
+      spot: {
+        tenantId: tenantId,
+        id: 1,
+        name: "Spot",
+        requiredSkillSet: []
+      },
+      rotationEmployee: null,
+      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+      shiftTemplateDuration: moment.duration("PT8H")
+    };
+    const shiftTemplateWithUpdatedVersion: ShiftTemplate = {
+      ...shiftTemplateToUpdate,
+      version: 1
+    };
+    onPut(`/tenant/${tenantId}/rotation/update`, shiftTemplateToShiftTemplateView(shiftTemplateToUpdate),
+      shiftTemplateToShiftTemplateView(shiftTemplateWithUpdatedVersion));
+    await store.dispatch(shiftTemplateOperations.updateShiftTemplate(shiftTemplateToUpdate));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("updateSkill", { id: skillToUpdate.id }),
-      actions.updateShiftTemplate(skillWithUpdatedVersion)
+      alert.showSuccessMessage("updateShiftTemplate", { id: shiftTemplateToUpdate.id }),
+      actions.updateShiftTemplate(mapDomainObjectToView(shiftTemplateWithUpdatedVersion))
     ]);
-    expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/skill/update`, skillToUpdate);
+    expect(client.put).toHaveBeenCalledTimes(1);
+    expect(client.put).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/update`,
+      shiftTemplateToShiftTemplateView(shiftTemplateToUpdate));
   });
 });
 
 describe('Rotation reducers', () => {
-  const addedShiftTemplate: ShiftTemplate = {tenantId: 0, id: 4321, version: 0, name: "Skill 1"};
-  const updatedShiftTemplate: ShiftTemplate = {tenantId: 0, id: 1234, version: 1, name: "Updated Skill 2"};
-  const deletedShiftTemplate: ShiftTemplate = {tenantId: 0, id: 2312, version: 0, name: "Skill 3"};
+  const addedShiftTemplate: ShiftTemplate = {
+    tenantId: 0,
+    id: 10,
+    version: 0,
+    spot: {
+      tenantId: 0,
+      id: 1,
+      name: "Spot",
+      requiredSkillSet: []
+    },
+    rotationEmployee: null,
+    durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+    shiftTemplateDuration: moment.duration("PT8H")
+  };
+  const updatedShiftTemplate: ShiftTemplate = {
+    tenantId: 0,
+    id: 2,
+    version: 1,
+    spot: {
+      tenantId: 0,
+      id: 3,
+      name: "New Spot",
+      requiredSkillSet: []
+    },
+    rotationEmployee: null,
+    durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+    shiftTemplateDuration: moment.duration("PT8H")
+  };
+  const deletedShiftTemplate: ShiftTemplate = {
+    tenantId: 0,
+    id: 2,
+    version: 1,
+    spot: {
+      tenantId: 0,
+      id: 1,
+      name: "Spot",
+      requiredSkillSet: []
+    },
+    rotationEmployee: null,
+    durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+    shiftTemplateDuration: moment.duration("PT8H")
+  };
+
   it('set is loading', () => {
     expect(
       reducer(state.shiftTemplateList, actions.setIsShiftTemplateListLoading(true))
-    ).toEqual({ ...state.skillList, isLoading: true })
+    ).toEqual({ ...state.shiftTemplateList, isLoading: true })
   });
   it('add shift template', () => {
     expect(
-      reducer(state.shiftTemplateList, actions.addShiftTemplate(addedSkill))
-    ).toEqual({ ...state.skillList, skillMapById: mapWithElement(state.skillList.skillMapById, addedSkill)})
+      reducer(state.shiftTemplateList, actions.addShiftTemplate(mapDomainObjectToView(addedShiftTemplate)))
+    ).toEqual({ ...state.shiftTemplateList, shiftTemplateMapById:
+        mapWithElement(state.shiftTemplateList.shiftTemplateMapById, mapDomainObjectToView(addedShiftTemplate))})
   });
   it('remove shift template', () => {
     expect(
-      reducer(state.shiftTemplateList, actions.removeShiftTemplate(deletedSkill)),
-    ).toEqual({ ...state.skillList, skillMapById: mapWithoutElement(state.skillList.skillMapById, deletedSkill)})
+      reducer(state.shiftTemplateList, actions.removeShiftTemplate(mapDomainObjectToView(updatedShiftTemplate))),
+    ).toEqual({ ...state.shiftTemplateList, shiftTemplateMapById: 
+        mapWithoutElement(state.shiftTemplateList.shiftTemplateMapById, mapDomainObjectToView(updatedShiftTemplate))})
   });
   it('update shift template', () => {
     expect(
-      reducer(state.shiftTemplateList, actions.updateShiftTemplate(updatedSkill)),
-    ).toEqual({ ...state.skillList, skillMapById: mapWithUpdatedElement(state.skillList.skillMapById, updatedSkill)})
+      reducer(state.shiftTemplateList, actions.updateShiftTemplate(mapDomainObjectToView(deletedShiftTemplate))),
+    ).toEqual({ ...state.shiftTemplateList, shiftTemplateMapById:
+        mapWithUpdatedElement(state.shiftTemplateList.shiftTemplateMapById,
+          mapDomainObjectToView(deletedShiftTemplate))})
   });
   it('refresh shift template list', () => {
     expect(
-      reducer(state.shiftTemplateList, actions.refreshShiftTemplateList([addedSkill])),
-    ).toEqual({ ...state.skillList, skillMapById: createIdMapFromList([addedSkill]) });
+      reducer(state.shiftTemplateList, actions.refreshShiftTemplateList([addedShiftTemplate]
+        .map(mapDomainObjectToView))),
+    ).toEqual({ ...state.shiftTemplateList, shiftTemplateMapById: 
+        createIdMapFromList([addedShiftTemplate].map(mapDomainObjectToView)) });
   });
 });
 
@@ -146,28 +254,76 @@ describe('Rotation selectors', () => {
   it('should throw an error if shift template list is loading', () => {
     expect(() => shiftTemplateSelectors.getShiftTemplateById({
       ...state,
+      shiftTemplateList: { 
+        ...state.shiftTemplateList, isLoading: true }
+    }, 2)).toThrow();
+    expect(() => shiftTemplateSelectors.getShiftTemplateById({
+      ...state,
+      spotList: { 
+        ...state.spotList, isLoading: true }
+    }, 2)).toThrow();
+    expect(() => shiftTemplateSelectors.getShiftTemplateById({
+      ...state,
+      employeeList: { 
+        ...state.employeeList, isLoading: true }
+    }, 2)).toThrow();
+    expect(() => shiftTemplateSelectors.getShiftTemplateById({
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true }
+    }, 2)).toThrow();
+    expect(() => shiftTemplateSelectors.getShiftTemplateById({
+      ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-    }, 1234)).toThrow();
+    }, 2)).toThrow();
   });
 
   it('should get a shift template by id', () => {
-    const skill = shiftTemplateSelectors.getShiftTemplateById(state, 1234);
-    expect(skill).toEqual({
+    const shiftTemplate = shiftTemplateSelectors.getShiftTemplateById(state, 2);
+    expect(shiftTemplate).toEqual({
       tenantId: 0,
-      id: 1234,
+      id: 2,
       version: 0,
-      name: "Skill 2"
+      spot: {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: "Spot",
+        requiredSkillSet: []
+      },
+      rotationEmployee: null,
+      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+      shiftTemplateDuration: moment.duration("PT8H")
     });
   });
 
   it('should return an empty list if shift template list is loading', () => {
-    const skillList = shiftTemplateSelectors.getShiftTemplateList({
+    expect(shiftTemplateSelectors.getShiftTemplateList({
+      ...state,
+      shiftTemplateList: { 
+        ...state.shiftTemplateList, isLoading: true }
+    })).toEqual([]);
+    expect(shiftTemplateSelectors.getShiftTemplateList({
+      ...state,
+      spotList: { 
+        ...state.spotList, isLoading: true }
+    })).toEqual([]);
+    expect(shiftTemplateSelectors.getShiftTemplateList({
+      ...state,
+      employeeList: { 
+        ...state.employeeList, isLoading: true }
+    })).toEqual([]);
+    expect(shiftTemplateSelectors.getShiftTemplateList({
+      ...state,
+      contractList: { 
+        ...state.contractList, isLoading: true }
+    })).toEqual([]);
+    expect(shiftTemplateSelectors.getShiftTemplateList({
       ...state,
       skillList: { 
         ...state.skillList, isLoading: true }
-    });
-    expect(skillList).toEqual([]);
+    })).toEqual([]);
   });
 
   it('should return a list of all skills', () => {
@@ -175,15 +331,49 @@ describe('Rotation selectors', () => {
     expect(skillList).toEqual(expect.arrayContaining([
       {
         tenantId: 0,
-        id: 1234,
+        id: 2,
         version: 0,
-        name: "Skill 2"     
+        spot: {
+          tenantId: 0,
+          id: 1,
+          version: 0,
+          name: "Spot",
+          requiredSkillSet: []
+        },
+        rotationEmployee: null,
+        durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+        shiftTemplateDuration: moment.duration("PT8H")
       },
       {
         tenantId: 0,
-        id: 2312,
-        version: 1,
-        name: "Skill 3"
+        id: 4,
+        version: 0,
+        spot: {
+          tenantId: 0,
+          id: 1,
+          version: 0,
+          name: "Spot",
+          requiredSkillSet: []
+        },
+        rotationEmployee: {
+          tenantId: 0,
+          id: 3,
+          version: 0,
+          name: "Employee",
+          contract: {
+            tenantId: 0,
+            id: 10,
+            version: 0,
+            name: "Contract",
+            maximumMinutesPerDay: null,
+            maximumMinutesPerWeek: null,
+            maximumMinutesPerMonth: null,
+            maximumMinutesPerYear: null
+          },
+          skillProficiencySet: []
+        },
+        durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+        shiftTemplateDuration: moment.duration("PT8H")
       }
     ]));
     expect(skillList.length).toEqual(2);
@@ -197,30 +387,68 @@ const state: AppState = {
   },
   employeeList: {
     isLoading: false,
-    employeeMapById: new Map()
+    employeeMapById: new Map([
+      [3, {
+        tenantId: 0,
+        id: 3,
+        version: 0,
+        name: "Employee",
+        contract: 10,
+        skillProficiencySet: []
+      }]
+    ])
   },
   contractList: {
     isLoading: false,
-    contractMapById: new Map()
+    contractMapById: new Map([
+      [10, {
+        tenantId: 0,
+        id: 10,
+        version: 0,
+        name: "Contract",
+        maximumMinutesPerDay: null,
+        maximumMinutesPerWeek: null,
+        maximumMinutesPerMonth: null,
+        maximumMinutesPerYear: null
+      }]
+    ])
   },
   spotList: {
     isLoading: false,
-    spotMapById: new Map()
+    spotMapById: new Map([
+      [1, {
+        tenantId: 0,
+        id: 1,
+        version: 0,
+        name: "Spot",
+        requiredSkillSet: []
+      }]
+    ])
   },
   skillList: {
     isLoading: false,
-    skillMapById: new Map([
-      [1234, {
+    skillMapById: new Map()
+  },
+  shiftTemplateList: {
+    isLoading: false,
+    shiftTemplateMapById: new Map([
+      [2, {
         tenantId: 0,
-        id: 1234,
+        id: 2,
         version: 0,
-        name: "Skill 2"
+        spot: 1,
+        rotationEmployee: null,
+        durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+        shiftTemplateDuration: moment.duration("PT8H")
       }],
-      [2312, {
+      [4, {
         tenantId: 0,
-        id: 2312,
-        version: 1,
-        name: "Skill 3"
+        id: 4,
+        version: 0,
+        spot: 1,
+        rotationEmployee: 3,
+        durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
+        shiftTemplateDuration: moment.duration("PT8H")
       }]
     ])
   },
@@ -242,9 +470,5 @@ const state: AppState = {
   alerts: {
     alertList: [],
     idGeneratorIndex: 0
-  },
-  shiftTemplateList: {
-    isLoading: true,
-    shiftTemplateMapById: new Map()
   }
 };
