@@ -30,6 +30,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
 >
   <Form
     id="modal-element"
+    key="0"
     onSubmit={[Function]}
   >
     <InputGroup>
@@ -203,6 +204,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
 >
   <Form
     id="modal-element"
+    key="0"
     onSubmit={[Function]}
   >
     <InputGroup>
@@ -383,6 +385,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
 >
   <Form
     id="modal-element"
+    key="0"
     onSubmit={[Function]}
   >
     <InputGroup>
