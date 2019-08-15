@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-export function modulo(n: number, base: number) {
-  const positiveBase = Math.abs(base);
-  return ((n % positiveBase) + positiveBase) % positiveBase;
-}
+import * as mathUtils from './MathUtils';
+
+describe('Math Utils', () => {
+  it('Modulo should return the smallest non-negative integer that is congruent to n mod base', () => {
+    expect(mathUtils.modulo(-10,100)).toEqual(90);
+    expect(mathUtils.modulo(10, -100)).toEqual(10);
+    expect(mathUtils.modulo(10,100)).toEqual(10);
+    expect(mathUtils.modulo(110,100)).toEqual(10);
+    expect(mathUtils.modulo(100,10)).toEqual(0);
+  });
+});
