@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.service.employee;
 
+import java.util.List;
+
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -24,6 +26,12 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EmployeeAvailabilityRepository extends JpaRepository<EmployeeAvailability, Long> {
+
+    @Query("select distinct ea from EmployeeAvailability ea" +
+            " left join fetch ea.employee e" +
+            " where ea.tenantId = :tenantId" +
+            " order by e.name, ea.startDateTime")
+    List<EmployeeAvailability> findAllByTenantId(Integer tenantId);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from EmployeeAvailability ea where ea.tenantId = :tenantId")
