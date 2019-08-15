@@ -522,6 +522,11 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                     }
                   }) : AvailabilityEvent({
                   availability: props.event.reference,
+                  onEdit: (ea) => this.setState({
+                    selectedAvailability: ea,
+                    isCreatingOrEditingAvailability: true
+                  }),
+                  onDelete: (ea) => this.props.removeEmployeeAvailability(ea),
                   updateEmployeeAvailability: this.props.updateEmployeeAvailability,
                   removeEmployeeAvailability: this.props.removeEmployeeAvailability
                 })
