@@ -140,6 +140,11 @@
       "message": "The Shift Roster was refreshed."
     },
 
+    "availabilityRosterRefresh": {
+      "title": "Info",
+      "message": "The Availability Roster was refreshed."
+    },
+
     "generic": {
       "title": "Exception",
       "message": "{{message}}"

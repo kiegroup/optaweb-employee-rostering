@@ -56,12 +56,7 @@ describe('Shift operations', () => {
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/shift/add`, shiftAdapter(addedShift));
     expect(mockRefreshShiftRoster).toBeCalled()
     
-    expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("addShift", {
-        startDateTime: moment(addedShift.startDateTime).format("LLL"),
-        endDateTime: moment(addedShift.endDateTime).format("LLL")
-      })
-    ]);
+    expect(store.getActions()).toEqual([]);
   });
 
   it('should dispatch actions and call client on a successful delete shift', async () => {
@@ -97,13 +92,7 @@ describe('Shift operations', () => {
     expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/shift/${deletedShift.id}`);
     expect(mockRefreshShiftRoster).toBeCalled();
 
-    expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("removeShift", { 
-        id: deletedShift.id,
-        startDateTime: moment(deletedShift.startDateTime).format("LLL"),
-        endDateTime: moment(deletedShift.endDateTime).format("LLL")
-      })
-    ]);
+    expect(store.getActions()).toEqual([]);
   });
 
   it('should call client but not dispatch actions on a failed delete shift', async () => {
@@ -185,10 +174,6 @@ describe('Shift operations', () => {
     expect(client.put).toBeCalled();
     expect(client.put).toBeCalledWith(`/tenant/${tenantId}/shift/update`, shiftAdapter(updatedShift));
     expect(mockRefreshShiftRoster).toBeCalled();
-
-    expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("updateShift", { id: updatedShift.id })
-    ]);
   });
 });
 

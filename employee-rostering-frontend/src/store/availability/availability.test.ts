@@ -45,7 +45,6 @@ describe('Availability operations', () => {
     const availabilityEndTime = moment("2018-01-01T12:00").toDate();
 
     const mockRefreshAvailabilityRoster = jest.spyOn(rosterOperations, "refreshAvailabilityRoster");
-    const mockShowSuccessMessage = jest.spyOn(alert, "showSuccessMessage");
 
     const addedAvailability: EmployeeAvailability = {
       tenantId: tenantId,
@@ -70,13 +69,6 @@ describe('Availability operations', () => {
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/employee/availability/add`,
       availabilityAdapter(addedAvailability));
     expect(mockRefreshAvailabilityRoster).toBeCalled();
-
-    expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("addAvailability", {
-      employeeName: "Employee",
-      startDateTime: moment(availabilityStartTime).format("LLL"),
-      endDateTime: moment(availabilityEndTime).format("LLL") 
-    });
   });
 
   it('should dispatch actions and call client on a successful delete Availability', async () => {
@@ -86,7 +78,6 @@ describe('Availability operations', () => {
     const availabilityEndTime = moment("2018-01-01T12:00").toDate();
 
     const mockRefreshAvailabilityRoster = jest.spyOn(rosterOperations, "refreshAvailabilityRoster");
-    const mockShowSuccessMessage = jest.spyOn(alert, "showSuccessMessage");
 
     const deletedAvailability: EmployeeAvailability = {
       tenantId: tenantId,
@@ -111,13 +102,6 @@ describe('Availability operations', () => {
     expect(client.delete).toBeCalled();
     expect(client.delete).toBeCalledWith(`/tenant/${tenantId}/employee/availability/${deletedAvailability.id}`);
     expect(mockRefreshAvailabilityRoster).toBeCalled();
-
-    expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("removeAvailability",  {
-      employeeName: "Employee",
-      startDateTime: moment(availabilityStartTime).format("LLL"),
-      endDateTime: moment(availabilityEndTime).format("LLL") 
-    });
   });
 
   it('should call client but not dispatch actions on a failed delete Availability', async () => {
@@ -168,7 +152,6 @@ describe('Availability operations', () => {
     const availabilityEndTime = moment("2018-01-01T12:00").toDate();
 
     const mockRefreshAvailabilityRoster = jest.spyOn(rosterOperations, "refreshAvailabilityRoster");
-    const mockShowSuccessMessage = jest.spyOn(alert, "showSuccessMessage");
 
     const updatedAvailability: EmployeeAvailability = {
       tenantId: tenantId,
@@ -200,11 +183,6 @@ describe('Availability operations', () => {
     expect(client.put).toBeCalledWith(`/tenant/${tenantId}/employee/availability/update`,
       availabilityAdapter(updatedAvailability));
     expect(mockRefreshAvailabilityRoster).toBeCalled();
-
-    expect(mockShowSuccessMessage).toBeCalled();
-    expect(mockShowSuccessMessage).toBeCalledWith("updateAvailability", {
-      id: 10
-    });
   });
 });
 

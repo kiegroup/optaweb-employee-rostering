@@ -49,11 +49,6 @@ export const addEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, 
     const tenantId = employeeAvailability.tenantId;
     return client.post<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/add`,
       availabilityAdapter(employeeAvailability)).then(newEmployeeAvailability => {
-      dispatch(alert.showSuccessMessage("addAvailability", { 
-        employeeName: employeeAvailability.employee.name, 
-        startDateTime: moment(employeeAvailability.startDateTime).format("LLL"),
-        endDateTime: moment(employeeAvailability.endDateTime).format("LLL") 
-      }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
@@ -66,11 +61,6 @@ employeeAvailability =>
     const shiftId = employeeAvailability.id;
     return client.delete<boolean>(`/tenant/${tenantId}/employee/availability/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
-        dispatch(alert.showSuccessMessage("removeAvailability", { 
-          employeeName: employeeAvailability.employee.name,
-          startDateTime: moment(employeeAvailability.startDateTime).format("LLL"),
-          endDateTime: moment(employeeAvailability.endDateTime).format("LLL") 
-        }));
         dispatch(refreshShiftRoster());
         dispatch(refreshAvailabilityRoster());
       }
@@ -89,7 +79,6 @@ export const updateEmployeeAvailability: ThunkCommandFactory<EmployeeAvailabilit
     const tenantId = employeeAvailability.tenantId;
     return client.put<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/update`,
       availabilityAdapter(employeeAvailability)).then(updatedAvailability => {
-      dispatch(alert.showSuccessMessage("updateAvailability", { id: updatedAvailability.id }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
