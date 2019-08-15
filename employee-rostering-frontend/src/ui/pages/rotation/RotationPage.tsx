@@ -13,26 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { PropsWithChildren } from "react";
+import React, { ReactElement } from "react";
 import Spot from "domain/Spot";
 import { AppState } from "store/types";
 import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { Level, LevelItem, Button, Title, Text, Pagination, Popover, ButtonVariant } from "@patternfly/react-core";
-import { Calendar, momentLocalizer, EventProps } from 'react-big-calendar'
+import { EventProps } from 'react-big-calendar'
 import { modulo } from 'util/MathUtils';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
 
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import '../shift/ReactBigCalendarOverrides.css';
 import ShiftTemplate from "domain/ShiftTemplate";
 import { shiftTemplateSelectors, shiftTemplateOperations } from "store/rotation";
 import { WithTranslation, withTranslation, useTranslation } from "react-i18next";
 import EditShiftTemplateModal from "./EditShiftTemplateModal";
 import { EditIcon, TrashIcon } from "@patternfly/react-icons";
+import Schedule from "ui/components/calendar/Schedule";
 
 interface StateProps {
   isLoading: boolean;
@@ -86,40 +85,6 @@ interface State {
 }
 
 const baseDate = moment("2018-01-01T00:00").startOf('week').toDate();
-
-export function EventWrapper(props: PropsWithChildren<{
-  event: ShiftTemplate;
-  style: React.CSSProperties;
-}>): JSX.Element {
-  const gridRowStart = parseInt(props.style.top as string) + 1;
-  const gridRowEnd = parseInt(props.style.height as string) + gridRowStart;
-  let className = "rbc-event";
-
-  if (moment(baseDate).add(props.event.durationBetweenRotationStartAndTemplateStart).get("date") !==
-    moment(baseDate).add(props.event.durationBetweenRotationStartAndTemplateStart)
-      .add(props.event.shiftTemplateDuration).get("date")) {
-    if (gridRowStart === 1) {
-      className = className + " continues-from-previous-day";
-    }
-    if (gridRowEnd === 100) {
-      className = className + " continues-next-day";
-    }
-  }
-
-  return (
-    <div
-      className={className}
-      style={{
-        gridRowStart: gridRowStart,
-        gridRowEnd: gridRowEnd,
-        backgroundColor: "transparent",
-        border: "none"
-      }}
-    >
-      {props.children}
-    </div>
-  );
-}
 
 const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate> & {
   rotationLength: number;
@@ -232,7 +197,6 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
 
     const startDate = moment(baseDate).add(this.state.weekNumber, "weeks").toDate();
     const endDate = moment(startDate).add(1, "week").toDate();
-    const localizer = momentLocalizer(moment);
     const spot = this.state.shownSpot;
     const events: { shiftTemplate: ShiftTemplate; start: Date; end: Date }[] = [];
 
@@ -264,6 +228,15 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             .add(shiftTemplateDuration).toDate()
         });
       });
+    /*
+      formats={{
+        dayFormat: (date) =>
+          this.props.t("rotationDay",
+            {
+              day: moment.duration(moment(date).diff(baseDate)).asDays() + 1
+            })
+      }}
+    */
     return (
       <>
         <Level
@@ -321,87 +294,64 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             </Button>
           </LevelItem>
         </Level>
-        <div style={{
-          height: "calc(100% - 60px)"
-        }}
-        >
-          <EditShiftTemplateModal
-            shiftTemplate={this.state.selectedShiftTemplate}
-            isOpen={this.state.isCreatingOrEditingShiftTemplate}
-            onSave={shiftTemplate => {
-              if (this.state.selectedShiftTemplate !== undefined) {
-                this.props.updateShiftTemplate(shiftTemplate);
-              }
-              else {
-                this.props.addShiftTemplate(shiftTemplate);
-              }
-              this.setState({ selectedShiftTemplate: undefined, isCreatingOrEditingShiftTemplate: false });
-            }}
-            onDelete={shiftTemplate => {
-              this.props.removeShiftTemplate(shiftTemplate);
-              this.setState({ isCreatingOrEditingShiftTemplate: false });
-            }}
-            onClose={() => this.setState({ selectedShiftTemplate: undefined, isCreatingOrEditingShiftTemplate: false })}
-          />
-          <Title size="md">{spot.name}</Title>
-          <div style={{
-            height: "calc(100% - 20px)"
+        <EditShiftTemplateModal 
+          shiftTemplate={this.state.selectedShiftTemplate}
+          isOpen={this.state.isCreatingOrEditingShiftTemplate}
+          onSave={shiftTemplate => {
+            if (this.state.selectedShiftTemplate !== undefined) {
+              this.props.updateShiftTemplate(shiftTemplate);
+            }
+            else {
+              this.props.addShiftTemplate(shiftTemplate);
+            }
+            this.setState({ selectedShiftTemplate: undefined, isCreatingOrEditingShiftTemplate: false });
           }}
-          >
-            <Calendar
-              className="rbc-no-allday-cell"
-              key={spot.id}
-              date={startDate}
-              length={moment.duration(moment(startDate).to(moment(endDate))).asDays()}
-              localizer={localizer}
-              events={events}
-              titleAccessor={e => e.shiftTemplate.rotationEmployee?
-                e.shiftTemplate.rotationEmployee.name : "Unassigned"}
-              allDayAccessor={shift => false}
-              toolbar={false}
-              view="week"
-              views={["week"]}
-              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date;
-                action: "select"|"click"|"doubleClick"; }) => {
-                if (slotInfo.action === "select") {
-                  this.addShiftTemplate({
-                    tenantId: spot.tenantId,
-                    durationBetweenRotationStartAndTemplateStart: moment.duration(moment(slotInfo.start)
-                      .diff(baseDate)),
-                    shiftTemplateDuration: moment.duration(moment(slotInfo.end).diff(baseDate))
-                      .subtract(moment(slotInfo.start).diff(baseDate)),
-                    spot: spot,
-                    rotationEmployee: null,
-                  });
-                }
-              }
-              }
-              formats={{
-                dayFormat: (date) => this.props.t("rotationDay", {
-                  day: moment.duration(moment(date).diff(baseDate)).asDays() + 1
-                })
-              }}
-              onView={() => {}}
-              onNavigate={() => {}}
-              timeslots={4}
-              selectable
-              showMultiDayTimes
-              components={{
-                eventWrapper: (params) => EventWrapper(params as any),
-                event: (params) => ShiftTemplateEvent({
-                  ...params,
-                  event: params.event.shiftTemplate,
-                  rotationLength: (this.props.rosterState as RosterState).rotationLength,
-                  onEdit: (shiftTemplate) => this.setState({
-                    selectedShiftTemplate: shiftTemplate,
-                    isCreatingOrEditingShiftTemplate: true
-                  }),
-                  onDelete: (shiftTemplate) => this.props.removeShiftTemplate(shiftTemplate)
-                })
-              }}
-            />
-          </div>
-        </div>
+          onDelete={shiftTemplate => {
+            this.props.removeShiftTemplate(shiftTemplate);
+            this.setState({ isCreatingOrEditingShiftTemplate: false });
+          }}
+          onClose={() => this.setState({ selectedShiftTemplate: undefined, isCreatingOrEditingShiftTemplate: false })}
+        />
+        <Schedule<{ shiftTemplate: ShiftTemplate; start: Date; end: Date }>
+          key={spot.id}
+          startDate={startDate}
+          endDate={endDate}
+          dateFormat={(date) =>
+            this.props.t("rotationDay",
+              {
+                day: moment.duration(moment(date).diff(baseDate)).asDays() + 1
+              })
+          }
+          events={events}
+          titleAccessor={e => e.shiftTemplate.rotationEmployee?
+            e.shiftTemplate.rotationEmployee.name : "Unassigned"}
+          startAccessor={e => e.start}
+          endAccessor={e => e.end}
+          addEvent={
+            (start,end) => {this.addShiftTemplate({
+              tenantId: spot.tenantId,
+              durationBetweenRotationStartAndTemplateStart: moment.duration(moment(start)
+                .diff(baseDate)),
+              shiftTemplateDuration: moment.duration(moment(end).diff(baseDate))
+                .subtract(moment(start).diff(baseDate)),
+              spot: spot,
+              rotationEmployee: null,
+            });}
+          }
+          eventStyle={() => ({})}
+          dayStyle={() => ({})}
+          wrapperStyle={() => ({})}
+          eventComponent={(params) => ShiftTemplateEvent({
+            ...params,
+            event: params.event.shiftTemplate,
+            rotationLength: (this.props.rosterState as RosterState).rotationLength,
+            onEdit: (shiftTemplate) => this.setState({
+              selectedShiftTemplate: shiftTemplate,
+              isCreatingOrEditingShiftTemplate: true
+            }),
+            onDelete: (shiftTemplate) => this.props.removeShiftTemplate(shiftTemplate)
+          }) as ReactElement}
+        />
       </>
     );
   }

@@ -24,7 +24,7 @@ import { EditIcon, TrashIcon } from "@patternfly/react-icons";
 import Color from 'color';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './ReactBigCalendarOverrides.css';
+import 'ui/components/calendar/ReactBigCalendarOverrides.css';
 
 export function getIndictments(shift: Shift): React.ReactNode {
   const indictmentList = (

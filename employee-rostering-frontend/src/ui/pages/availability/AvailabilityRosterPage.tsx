@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { PropsWithChildren } from "react";
+import React from "react";
 import Shift from "domain/Shift";
 import { AppState } from "store/types";
 import { rosterOperations, rosterSelectors } from "store/roster";
@@ -21,16 +21,13 @@ import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
-import { Level, LevelItem, Button, Title } from "@patternfly/react-core";
-import { Calendar, momentLocalizer } from 'react-big-calendar'
+import { Level, LevelItem, Button } from "@patternfly/react-core";
 import EditShiftModal from '../shift/EditShiftModal';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
 import ShiftEvent from "../shift/ShiftEvent";
 
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import '../shift/ReactBigCalendarOverrides.css';
 import EmployeeAvailability from "domain/EmployeeAvailability";
 import { employeeSelectors } from "store/employee";
 import Employee from "domain/Employee";
@@ -38,6 +35,7 @@ import { availabilityOperations } from "store/availability";
 import { shiftOperations } from "store/shift";
 import EditAvailabilityModal from "./EditAvailabilityModal";
 import AvailabilityEvent from "./AvailabilityEvent";
+import Schedule from "ui/components/calendar/Schedule";
 
 interface StateProps {
   isSolving: boolean;
@@ -135,59 +133,6 @@ export function isDay(start: Date, end: Date) {
 export function isAllDayAvailability(ea: EmployeeAvailability) {
   return isDay(ea.startDateTime, ea.endDateTime);
 }
-
-export function EventWrapper(props: PropsWithChildren<{
-  event: ShiftOrAvailability;
-  style: React.CSSProperties;
-}>): JSX.Element {
-  if (!props.style) {
-    return (
-      <div
-        className="availability-allday-wrapper"
-      >
-        {props.children}
-      </div>
-    );
-  }
-
-  const gridRowStart = parseInt(props.style.top as string) + 1;
-  const gridRowEnd = parseInt(props.style.height as string) + gridRowStart;
-  let className = "rbc-event";
-  let zIndex = 0;
-
-  if (isAvailability(props.event.reference)) {
-    className = "availability-wrapper";
-  }
-  else {
-    zIndex = 1;
-  }
-
-  if (moment(props.event.end).get("date") !== moment(props.event.start).get("date")) {
-    if (gridRowStart === 1) {
-      className = className + " continues-from-previous-day";
-    }
-    if (gridRowEnd === 100) {
-      className = className + " continues-next-day";
-    }
-  }
-  
-  return (
-    <div
-      className={className}
-      style={{
-        gridRowStart,
-        gridRowEnd,
-        backgroundColor: "transparent",
-        border: "none",
-        zIndex
-      }}
-    >
-      {props.children}
-    </div>
-  );
-}
-
-
 
 export class AvailabilityRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -293,24 +238,15 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
 
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
-    const localizer = momentLocalizer(moment);
     const employee = this.props.shownEmployeeList[0];
     const events: ShiftOrAvailability[] = [];
 
     if (this.props.employeeIdToAvailabilityListMap.get(employee.id as number) !== undefined) {
       (this.props.employeeIdToAvailabilityListMap.get(employee.id as number) as EmployeeAvailability[]).forEach(ea => {
-        let start = ea.startDateTime;
-        let end = ea.endDateTime;
-        if (start.getHours() === 0 && start.getMinutes() === 0) {
-          start = moment(ea.startDateTime).add(1, "ms").toDate();
-        }
-        if (end.getHours() === 0 && end.getMinutes() === 0) {
-          end = moment(ea.endDateTime).subtract(1, "ms").toDate();
-        }
         events.push({
           type: "Availability",
-          start,
-          end,
+          start: ea.startDateTime,
+          end: ea.endDateTime,
           reference: ea
         })
       });
@@ -337,11 +273,6 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           }}
         >
           <LevelItem style={{display: "flex"}}>
-            <WeekPicker
-              aria-label="Select Week to View"
-              value={this.props.startDate as Date}
-              onChange={this.onDateChange}
-            />
             <TypeaheadSelectInput
               aria-label="Select Employee"
               emptyText="Select Employee"
@@ -349,6 +280,11 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               options={this.props.allEmployeeList}
               defaultValue={this.props.shownEmployeeList[0]}
               onChange={this.onUpdateEmployeeList}
+            />
+            <WeekPicker
+              aria-label="Select Week to View"
+              value={this.props.startDate as Date}
+              onChange={this.onDateChange}
             />
           </LevelItem>
           <LevelItem style={{display: "flex"}}>
@@ -405,135 +341,107 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             </Button>
           </LevelItem>
         </Level>
-        <div style={{
-          height: "calc(100% - 60px)"
-        }}
-        >
-          <EditAvailabilityModal
-            availability={this.state.selectedAvailability}
-            isOpen={this.state.isCreatingOrEditingAvailability}
-            onSave={availability => {
-              if (this.state.selectedAvailability !== undefined) {
-                this.props.updateEmployeeAvailability(availability);
-              }
-              else {
-                this.props.addEmployeeAvailability(availability);
-              }
-              this.setState({ selectedAvailability: undefined, isCreatingOrEditingAvailability: false });
-            }}
-            onDelete={availability => {
-              this.props.removeEmployeeAvailability(availability);
-              this.setState({ isCreatingOrEditingAvailability: false });
-            }}
-            onClose={() => this.setState({ selectedAvailability: undefined, isCreatingOrEditingAvailability: false })}
-          />
-          <EditShiftModal
-            aria-label="Edit Shift"
-            isOpen={this.state.isCreatingOrEditingShift}
-            shift={this.state.selectedShift}
-            onDelete={(shift) => {
-              this.props.removeShift(shift);
-              this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false });
+        <EditAvailabilityModal
+          availability={this.state.selectedAvailability}
+          isOpen={this.state.isCreatingOrEditingAvailability}
+          onSave={availability => {
+            if (this.state.selectedAvailability !== undefined) {
+              this.props.updateEmployeeAvailability(availability);
             }
+            else {
+              this.props.addEmployeeAvailability(availability);
             }
-            onSave={shift => {
-              if (this.state.selectedShift !== undefined) {
-                this.props.updateShift(shift);
-              }
-              else {
-                this.props.addShift(shift);
-              }
-              this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false });
-            }}
-            onClose={() => this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false })}
-          />
-          <Title size="md">{employee.name}</Title>
-          <div style={{
-            height: "calc(100% - 20px)"
+            this.setState({ selectedAvailability: undefined, isCreatingOrEditingAvailability: false });
           }}
-          >
-            <Calendar
-              key={employee.id}
-              date={startDate}
-              length={moment.duration(moment(startDate).to(moment(endDate))).asDays()}
-              localizer={localizer}
-              events={events}
-              titleAccessor={soa => isShift(soa.reference)? soa.reference.spot.name : soa.reference.state}
-              allDayAccessor={soa => isAvailability(soa.reference)? isAllDayAvailability(soa.reference) : false}
-              startAccessor={soa => moment(soa.start).toDate()}
-              endAccessor={soa => moment(soa.end).toDate()}
-              toolbar={false}
-              view="week"
-              views={["week"]}
-              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date; 
-                action: "select"|"click"|"doubleClick"; }) => {
-                if (slotInfo.action === "select" || (slotInfo.action === "click" && 
-                isDay(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate()))) {
-                  if (isDay(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate())) {
-                    this.props.addEmployeeAvailability({
-                      tenantId: employee.tenantId,
-                      startDateTime: moment(slotInfo.start).toDate(),
-                      endDateTime: moment(slotInfo.end).add(1, "day").toDate(),
-                      employee: employee,
-                      state: "UNAVAILABLE"
-                    });
-                  }
-                  else {
-                    this.props.addEmployeeAvailability({
-                      tenantId: employee.tenantId,
-                      startDateTime: moment(slotInfo.start).toDate(),
-                      endDateTime: moment(slotInfo.end).toDate(),
-                      employee: employee,
-                      state: "UNAVAILABLE"
-                    });
-                  }
+          onDelete={availability => {
+            this.props.removeEmployeeAvailability(availability);
+            this.setState({ isCreatingOrEditingAvailability: false });
+          }}
+          onClose={() => this.setState({ selectedAvailability: undefined, isCreatingOrEditingAvailability: false })}
+        />
+        <EditShiftModal
+          aria-label="Edit Shift"
+          isOpen={this.state.isCreatingOrEditingShift}
+          shift={this.state.selectedShift}
+          onDelete={(shift) => {
+            this.props.removeShift(shift);
+            this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false });
+          }
+          }
+          onSave={shift => {
+            if (this.state.selectedShift !== undefined) {
+              this.props.updateShift(shift);
+            }
+            else {
+              this.props.addShift(shift);
+            }
+            this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false });
+          }}
+          onClose={() => this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false })}
+        />
+        <Schedule<ShiftOrAvailability>
+          showAllDayCell
+          key={employee.id}
+          startDate={startDate}
+          endDate={endDate}
+          events={events}
+          titleAccessor={soa => isShift(soa.reference)? soa.reference.spot.name : soa.reference.state}
+          startAccessor={soa => soa.start}
+          endAccessor={soa => soa.end}
+          addEvent={
+            (start,end) => {this.props.addEmployeeAvailability({
+              tenantId: employee.tenantId,
+              startDateTime: start,
+              endDateTime: end,
+              employee: employee,
+              state: "UNAVAILABLE"
+            });}
+          }
+          eventStyle={this.getEventStyle}
+          dayStyle={(date) => this.getDayStyle(date,
+            (this.props.employeeIdToAvailabilityListMap
+              .get(employee.id as number) as EmployeeAvailability[])
+              .filter(isAllDayAvailability))}
+          wrapperStyle={(event) => ({
+            className: (isAvailability(event.reference))? 
+              (isAllDayAvailability(event.reference)? 
+                "availability-allday-wrapper" : "availability-wrapper") 
+              : undefined,
+            style: {
+              zIndex: (isShift(event.reference))? 1 : 0
+            }
+          })}
+          eventComponent={(props) => (isShift(props.event.reference)? ShiftEvent(
+            {
+              ...props.event.reference,
+              title: props.event.reference.spot.name,
+              event: props.event.reference,
+              onEdit: () => {
+                if (!this.state.isCreatingOrEditingAvailability) {
+                  this.setState({
+                    selectedShift: props.event.reference as Shift,
+                    isCreatingOrEditingShift: true
+                  })
                 }
-              }
-              }
-              onView={() => {}}
-              onNavigate={() => {}}
-              timeslots={4}
-              eventPropGetter={this.getEventStyle}
-              dayPropGetter={day => this.getDayStyle(day, 
-                (this.props.employeeIdToAvailabilityListMap.get(employee.id as number) as EmployeeAvailability[])
-                  .filter(isAllDayAvailability))}
-              selectable
-              showMultiDayTimes
-              components={{
-                eventWrapper: (params) => EventWrapper(params as any),
-                event: (props) => isShift(props.event.reference)? ShiftEvent(
-                  {
-                    ...props.event.reference,
-                    title: props.event.reference.spot.name,
-                    event: props.event.reference,
-                    onEdit: () => {
-                      if (!this.state.isCreatingOrEditingAvailability) {
-                        this.setState({
-                          selectedShift: props.event.reference as Shift,
-                          isCreatingOrEditingShift: true
-                        })
-                      }
-                    },
-                    onDelete: () => {
-                      this.props.updateShift({
-                        ...props.event.reference as Shift,
-                        employee: null
-                      })
-                    }
-                  }) : AvailabilityEvent({
-                  availability: props.event.reference,
-                  onEdit: (ea) => this.setState({
-                    selectedAvailability: ea,
-                    isCreatingOrEditingAvailability: true
-                  }),
-                  onDelete: (ea) => this.props.removeEmployeeAvailability(ea),
-                  updateEmployeeAvailability: this.props.updateEmployeeAvailability,
-                  removeEmployeeAvailability: this.props.removeEmployeeAvailability
+              },
+              onDelete: () => {
+                this.props.updateShift({
+                  ...props.event.reference as Shift,
+                  employee: null
                 })
-              }}
-            />
-          </div>
-        </div>
+              }
+            }) : AvailabilityEvent({
+            availability: props.event.reference,
+            onEdit: ea => this.setState({
+              isCreatingOrEditingAvailability: true,
+              selectedAvailability: ea
+            }),
+            onDelete: ea => this.props.removeEmployeeAvailability(ea),
+            updateEmployeeAvailability: this.props.updateEmployeeAvailability,
+            removeEmployeeAvailability: this.props.removeEmployeeAvailability
+          })) as React.ReactElement
+          }
+        />  
       </>
     );
   }

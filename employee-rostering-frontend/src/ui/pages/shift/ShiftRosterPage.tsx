@@ -24,16 +24,14 @@ import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
 import { Level, LevelItem, Button, Title } from "@patternfly/react-core";
-import { Calendar, momentLocalizer } from 'react-big-calendar'
 import EditShiftModal from './EditShiftModal';
 import Color from 'color';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
 import ShiftEvent, { getShiftColor } from "./ShiftEvent";
+import Schedule from 'ui/components/calendar/Schedule';
 
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './ReactBigCalendarOverrides.css';
 
 interface StateProps {
   isSolving: boolean;
@@ -220,7 +218,6 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
-    const localizer = momentLocalizer(moment);
     const spot = this.props.shownSpotList[0];
     return (
       <>
@@ -233,11 +230,6 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           }}
         >
           <LevelItem style={{display: "flex"}}>
-            <WeekPicker
-              aria-label="Select Week to View"
-              value={this.props.startDate as Date}
-              onChange={this.onDateChange}
-            />
             <TypeaheadSelectInput
               aria-label="Select Spot"
               emptyText="Select Spot"
@@ -245,6 +237,11 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               options={this.props.allSpotList}
               defaultValue={this.props.shownSpotList[0]}
               onChange={this.onUpdateSpotList}
+            />
+            <WeekPicker
+              aria-label="Select Week to View"
+              value={this.props.startDate as Date}
+              onChange={this.onDateChange}
             />
           </LevelItem>
           <LevelItem style={{display: "flex"}}>
@@ -299,90 +296,57 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             </Button>
           </LevelItem>
         </Level>
-        <div style={{
-          height: "calc(100% - 60px)"
-        }}
-        >
-          <EditShiftModal
-            aria-label="Edit Shift"
-            isOpen={this.state.isCreatingOrEditingShift}
-            shift={this.state.selectedShift}
-            onDelete={(shift) => {
-              this.deleteShift(shift);
-              this.setState({ isCreatingOrEditingShift: false });
+        <EditShiftModal 
+          aria-label="Edit Shift"
+          isOpen={this.state.isCreatingOrEditingShift}
+          shift={this.state.selectedShift}
+          onDelete={(shift) => {
+            this.deleteShift(shift);
+            this.setState({ isCreatingOrEditingShift: false });
+          }
+          }
+          onSave={shift => {
+            if (this.state.selectedShift !== undefined) {
+              this.updateShift(shift);
             }
+            else {
+              this.addShift(shift);
             }
-            onSave={shift => {
-              if (this.state.selectedShift !== undefined) {
-                this.updateShift(shift);
-              }
-              else {
-                this.addShift(shift);
-              }
-              this.setState({ isCreatingOrEditingShift: false });
-            }}
-            onClose={() => this.setState({ isCreatingOrEditingShift: false })}
-          />
-          <Title size="md">{spot.name}</Title>
-          <div style={{
-            height: "calc(100% - 20px)"
+            this.setState({ isCreatingOrEditingShift: false });
           }}
-          >
-            <Calendar
-              className="rbc-no-allday-cell"
-              key={spot.id}
-              date={startDate}
-              length={moment.duration(moment(startDate).to(moment(endDate))).asDays()}
-              localizer={localizer}
-              events={(this.props.spotIdToShiftListMap.get(spot.id as number) as Shift[]) as any[]}
-              titleAccessor={shift => shift.employee? shift.employee.name : "Unassigned"}
-              allDayAccessor={shift => false}
-              startAccessor={shift => moment(shift.startDateTime).toDate()}
-              endAccessor={shift => moment(shift.endDateTime).toDate()}
-              toolbar={false}
-              view="week"
-              views={["week"]}
-              onSelectSlot={(slotInfo: { start: string|Date; end: string|Date;
-                action: "select"|"click"|"doubleClick"; }) => {
-                if (slotInfo.action === "select") {
-                  this.addShift({
-                    tenantId: spot.tenantId,
-                    startDateTime: moment(slotInfo.start).toDate(),
-                    endDateTime: moment(slotInfo.end).toDate(),
-                    spot: spot,
-                    employee: null,
-                    rotationEmployee: null,
-                    pinnedByUser: false
-                  });
-                }
-              }
-              }
-              onView={() => {}}
-              onNavigate={() => {}}
-              timeslots={4}
-              eventPropGetter={this.getShiftStyle}
-              dayPropGetter={this.getDayStyle}
-              selectable
-              showMultiDayTimes
-              components={{
-                eventWrapper: (params) => EventWrapper(params as any),
-                event: (props) => ShiftEvent(
-                  {
-                    ...props,
-                    onEdit: () => {
-                      this.setState({
-                        selectedShift: props.event,
-                        isCreatingOrEditingShift: true
-                      })
-                    },
-                    onDelete: () => {
-                      this.deleteShift(props.event)
-                    }
-                  })
-              }}
-            />
-          </div>
-        </div>
+          onClose={() => this.setState({ isCreatingOrEditingShift: false })}
+        />
+        <Schedule<Shift>
+          key={spot.id}
+          startDate={startDate}
+          endDate={endDate}
+          events={this.props.spotIdToShiftListMap.get(spot.id as number) as Shift[]}
+          titleAccessor={shift => shift.employee? shift.employee.name : "Unassigned"}
+          startAccessor={shift => moment(shift.startDateTime).toDate()}
+          endAccessor={shift => moment(shift.endDateTime).toDate()}
+          addEvent={
+            (start,end) => {this.addShift({
+              tenantId: spot.tenantId,
+              startDateTime: start,
+              endDateTime: end,
+              spot: spot,
+              employee: null,
+              rotationEmployee: null,
+              pinnedByUser: false
+            });}
+          }
+          eventStyle={this.getShiftStyle}
+          dayStyle={this.getDayStyle}
+          wrapperStyle={() => ({})}
+          eventComponent={(props) => ShiftEvent({
+            ...props,
+            onEdit: (shift) => this.setState({
+              isCreatingOrEditingShift: true,
+              selectedShift: shift
+            }),
+            onDelete: (shift) => this.deleteShift(shift)
+          }) as React.ReactElement}
+        />
       </>
     );
   }
