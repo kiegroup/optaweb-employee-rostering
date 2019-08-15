@@ -16,11 +16,14 @@
 import * as React from 'react';
 import EmployeeAvailability from "domain/EmployeeAvailability";
 import { useTranslation } from "react-i18next";
-import { Split, SplitItem, Button, Level, LevelItem } from "@patternfly/react-core";
-import { TrashIcon, OkIcon, WarningTriangleIcon, ErrorCircleOIcon } from '@patternfly/react-icons';
+import { Split, SplitItem, Button, Level, LevelItem, Popover, Text, ButtonVariant } from "@patternfly/react-core";
+import { EditIcon, TrashIcon, OkIcon, WarningTriangleIcon, ErrorCircleOIcon } from '@patternfly/react-icons';
+import moment from "moment";
 
 export interface AvailabilityEventProps {
   availability: EmployeeAvailability;
+  onEdit: (ea: EmployeeAvailability) => void;
+  onDelete: (ea: EmployeeAvailability) => void;
   updateEmployeeAvailability: (ea: EmployeeAvailability) => void;
   removeEmployeeAvailability: (ea: EmployeeAvailability) => void;
 }
@@ -28,68 +31,103 @@ export interface AvailabilityEventProps {
 const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: AvailabilityEventProps) => {
   const { t } = useTranslation();
   return (
-    <span
-      data-tip
-      data-for={String(props.availability.id)}
-      className="availability-event"
-  
-    >
-      <Split>
-        <SplitItem isFilled={false}>{t("EmployeeAvailabilityState." + props.availability.state)}</SplitItem>
-        <SplitItem isFilled />
-        <SplitItem isFilled={false}>
+    <Popover
+      className="my-popup"
+      key={props.availability.id}
+      position="right"
+      bodyContent={(<></>)}
+      headerContent={(
+        <span>
+          <Text>
+            {
+              props.availability.employee.name + ", " + 
+            moment(props.availability.startDateTime).format("LT") + "-" + 
+            moment(props.availability.endDateTime).format("LT")
+            }
+          </Text>
           <Button
-            onClick={() => props.removeEmployeeAvailability(props.availability)}
-            variant="danger"
+            onClick={() => props.onEdit(props.availability)}
+            variant={ButtonVariant.link}
+          >
+            <EditIcon />
+          </Button>
+          <Button
+            onClick={() => props.onDelete(props.availability)}
+            variant={ButtonVariant.link}
           >
             <TrashIcon />
           </Button>
-        </SplitItem>
-      </Split>
-      <Level gutter="sm">
-        <LevelItem>
-          <Button
-            onClick={() => props.updateEmployeeAvailability({
-              ...props.availability,
-              state: "DESIRED"
-            })}
-            style={{
-              backgroundColor: "green",
-              margin: "5px"
-            }}
-            variant="tertiary"
-          >
-            <OkIcon />
-          </Button>
-          <Button
-            onClick={() => props.updateEmployeeAvailability({
-              ...props.availability,
-              state: "UNDESIRED"
-            })}
-            style={{
-              backgroundColor: "yellow",
-              margin: "5px"
-            }}
-            variant="tertiary"
-          >
-            <WarningTriangleIcon />
-          </Button>
-          <Button
-            onClick={() => props.updateEmployeeAvailability({
-              ...props.availability,
-              state: "UNAVAILABLE"
-            })}
-            style={{
-              backgroundColor: "red",
-              margin: "5px"
-            }}
-            variant="tertiary"
-          >
-            <ErrorCircleOIcon />
-          </Button>
-        </LevelItem>
-      </Level>
-    </span>
+        </span>
+      )}
+    >
+      <span
+        data-tip
+        data-for={String(props.availability.id)}
+        className="availability-event"
+      >
+        <Split>
+          <SplitItem isFilled={false}>{t("EmployeeAvailabilityState." + props.availability.state)}</SplitItem>
+          <SplitItem isFilled />
+          <SplitItem isFilled={false}>
+            <Button
+              onClick={() => props.removeEmployeeAvailability(props.availability)}
+              variant="danger"
+            >
+              <TrashIcon />
+            </Button>
+          </SplitItem>
+        </Split>
+        <Level gutter="sm">
+          <LevelItem>
+            <Button
+              title={t("EmployeeAvailabilityState.DESIRED")}
+              onClick={() => props.updateEmployeeAvailability({
+                ...props.availability,
+                state: "DESIRED"
+              })}
+              style={{
+                backgroundColor: "green",
+                margin: "1px",
+                width: "min-content"
+              }}
+              variant="tertiary"
+            >
+              <OkIcon />
+            </Button>
+            <Button
+              title={t("EmployeeAvailabilityState.UNDESIRED")}
+              onClick={() => props.updateEmployeeAvailability({
+                ...props.availability,
+                state: "UNDESIRED"
+              })}
+              style={{
+                backgroundColor: "yellow",
+                margin: "1px",
+                width: "min-content"
+              }}
+              variant="tertiary"
+            >
+              <WarningTriangleIcon />
+            </Button>
+            <Button
+              title={t("EmployeeAvailabilityState.UNAVAILABLE")}
+              onClick={() => props.updateEmployeeAvailability({
+                ...props.availability,
+                state: "UNAVAILABLE"
+              })}
+              style={{
+                backgroundColor: "red",
+                margin: "1px",
+                width: "min-content"
+              }}
+              variant="tertiary"
+            >
+              <ErrorCircleOIcon />
+            </Button>
+          </LevelItem>
+        </Level>
+      </span>
+    </Popover>
   );
 }
 

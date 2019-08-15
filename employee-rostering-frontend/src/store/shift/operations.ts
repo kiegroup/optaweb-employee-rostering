@@ -62,10 +62,6 @@ export const addShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     return client.post<KindaShiftView>(`/tenant/${tenantId}/shift/add`, shiftAdapter(shift)).then(newShift => {
-      dispatch(alert.showSuccessMessage("addShift", {
-        startDateTime: moment(newShift.startDateTime).format("LLL"),
-        endDateTime: moment(newShift.endDateTime).format("LLL")
-      }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
@@ -77,11 +73,6 @@ export const removeShift: ThunkCommandFactory<Shift, any> = shift =>
     const shiftId = shift.id;
     return client.delete<boolean>(`/tenant/${tenantId}/shift/${shiftId}`).then(isSuccess => {
       if (isSuccess) {
-        dispatch(alert.showSuccessMessage("removeShift", {
-          id: shift.id,
-          startDateTime: moment(shift.startDateTime).format("LLL"),
-          endDateTime: moment(shift.endDateTime).format("LLL")
-        }));
         dispatch(refreshShiftRoster());
         dispatch(refreshAvailabilityRoster());
       }
@@ -98,7 +89,6 @@ export const updateShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
     return client.put<KindaShiftView>(`/tenant/${tenantId}/shift/update`, shiftAdapter(shift)).then(updatedShift => {
-      dispatch(alert.showSuccessMessage("updateShift", { id: updatedShift.id }));
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
