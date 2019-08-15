@@ -365,6 +365,13 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public void setUpGeneratedData() {
+        // Check if Tenant entities already exist before generating data
+        List<Tenant> tenantList = entityManager.createQuery("select t from Tenant t").getResultList();
+
+        if (!tenantList.isEmpty()) {
+            return;
+        }
+
         ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
         SystemPropertiesRetriever.InitialData initialData = SystemPropertiesRetriever.determineInitialData();
 
