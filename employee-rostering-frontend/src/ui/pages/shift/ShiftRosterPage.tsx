@@ -23,7 +23,7 @@ import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
-import { Level, LevelItem, Button, Title } from "@patternfly/react-core";
+import { Level, LevelItem, Button } from "@patternfly/react-core";
 import EditShiftModal from './EditShiftModal';
 import Color from 'color';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
