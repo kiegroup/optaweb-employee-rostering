@@ -16,7 +16,7 @@
 import * as React from 'react';
 import EmployeeAvailability from "domain/EmployeeAvailability";
 import { useTranslation } from "react-i18next";
-import { Split, SplitItem, Button, Level, LevelItem, Popover, Text, ButtonVariant } from "@patternfly/react-core";
+import { Split, SplitItem, Button, Level, LevelItem, Text, ButtonVariant } from "@patternfly/react-core";
 import { EditIcon, TrashIcon, OkIcon, WarningTriangleIcon, ErrorCircleOIcon } from '@patternfly/react-icons';
 import moment from "moment";
 

@@ -272,12 +272,8 @@ describe('Shift Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
-    // Note: Calendar is called "ForwardRef" in SNAPSHOT
-    shiftRosterPage.find('ForwardRef').simulate("selectSlot", {
-      start: newDateStart,
-      end: newDateEnd,
-      action: "select"
-    });
+    ((shiftRosterPage.find('Schedule').props()) as { addEvent: Function}).addEvent(newDateStart,
+      newDateEnd);
 
     expect(baseProps.addShift).toBeCalled();
     expect(baseProps.addShift).toBeCalledWith({
@@ -289,22 +285,6 @@ describe('Shift Roster Page', () => {
       rotationEmployee: null,
       pinnedByUser: false
     });
-  });
-
-  it('should not call addShift when a timeslot is clicked', () => {
-    const shiftRosterPage = shallow(<ShiftRosterPage
-      {...baseProps}
-    />);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
-    // Note: Calendar is called "ForwardRef" in SNAPSHOT
-    shiftRosterPage.find('ForwardRef').simulate("selectSlot", {
-      start: newDateStart,
-      end: newDateEnd,
-      action: "click"
-    });
-
-    expect(baseProps.addShift).not.toBeCalled();
   });
 
   it('should saturate the color and have a solid border if the shift is published', () => {
