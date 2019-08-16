@@ -38,11 +38,6 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
         }
       }
     >
-      <WeekPicker
-        aria-label="Select Week to View"
-        onChange={[Function]}
-        value={2018-07-01T00:00:00.000Z}
-      />
       <TypeaheadSelectInput
         aria-label="Select Spot"
         defaultValue={
@@ -82,6 +77,11 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
             },
           ]
         }
+      />
+      <WeekPicker
+        aria-label="Select Week to View"
+        onChange={[Function]}
+        value={2018-07-01T00:00:00.000Z}
       />
     </LevelItem>
     <LevelItem
@@ -137,176 +137,115 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
       </Button>
     </LevelItem>
   </Level>
-  <div
-    style={
-      Object {
-        "height": "calc(100% - 60px)",
-      }
-    }
-  >
-    <Connect(EditShiftModal)
-      aria-label="Edit Shift"
-      isOpen={true}
-      onClose={[Function]}
-      onDelete={[Function]}
-      onSave={[Function]}
-    />
-    <Title
-      size="md"
-    >
-      Spot
-    </Title>
-    <div
-      style={
+  <Connect(EditShiftModal)
+    aria-label="Edit Shift"
+    isOpen={true}
+    onClose={[Function]}
+    onDelete={[Function]}
+    onSave={[Function]}
+  />
+  <Schedule
+    addEvent={[Function]}
+    dayStyle={[Function]}
+    endAccessor={[Function]}
+    endDate={2018-07-07T23:59:59.999Z}
+    eventComponent={[Function]}
+    eventStyle={[Function]}
+    events={
+      Array [
         Object {
-          "height": "calc(100% - 20px)",
-        }
-      }
-    >
-      <ForwardRef
-        allDayAccessor={[Function]}
-        className="rbc-no-allday-cell"
-        components={
-          Object {
-            "event": [Function],
-            "eventWrapper": [Function],
-          }
-        }
-        date={2018-07-01T00:00:00.000Z}
-        dayPropGetter={[Function]}
-        endAccessor={[Function]}
-        eventPropGetter={[Function]}
-        events={
-          Array [
-            Object {
-              "contractMinutesViolationPenaltyList": Array [],
-              "desiredTimeslotForEmployeeRewardList": Array [],
-              "employee": Object {
-                "contract": Object {
-                  "id": 5,
-                  "maximumMinutesPerDay": 10,
-                  "maximumMinutesPerMonth": 500,
-                  "maximumMinutesPerWeek": 70,
-                  "maximumMinutesPerYear": 6000,
-                  "name": "Basic Contract",
-                  "tenantId": 0,
-                  "version": 0,
-                },
-                "id": 4,
-                "name": "Employee 1",
-                "skillProficiencySet": Array [
-                  Object {
-                    "id": 6,
-                    "name": "Not Required Skill",
-                    "tenantId": 0,
-                    "version": 0,
-                  },
-                ],
-                "tenantId": 0,
-                "version": 0,
-              },
-              "endDateTime": 2018-07-01T17:00:00.000Z,
-              "id": 1,
-              "indictmentScore": Object {
-                "hardScore": 0,
-                "mediumScore": 0,
-                "softScore": 0,
-              },
-              "pinnedByUser": false,
-              "requiredSkillViolationList": Array [],
-              "rotationEmployee": Object {
-                "contract": Object {
-                  "id": 5,
-                  "maximumMinutesPerDay": 10,
-                  "maximumMinutesPerMonth": 500,
-                  "maximumMinutesPerWeek": 70,
-                  "maximumMinutesPerYear": 6000,
-                  "name": "Basic Contract",
-                  "tenantId": 0,
-                  "version": 0,
-                },
-                "id": 7,
-                "name": "Rotation Employee",
-                "skillProficiencySet": Array [
-                  Object {
-                    "id": 6,
-                    "name": "Not Required Skill",
-                    "tenantId": 0,
-                    "version": 0,
-                  },
-                ],
-                "tenantId": 0,
-                "version": 0,
-              },
-              "rotationViolationPenaltyList": Array [],
-              "shiftEmployeeConflictList": Array [],
-              "spot": Object {
-                "id": 2,
-                "name": "Spot",
-                "requiredSkillSet": Array [
-                  Object {
-                    "id": 3,
-                    "name": "Skill",
-                    "tenantId": 0,
-                    "version": 0,
-                  },
-                ],
-                "tenantId": 0,
-                "version": 0,
-              },
-              "startDateTime": 2018-07-01T09:00:00.000Z,
+          "contractMinutesViolationPenaltyList": Array [],
+          "desiredTimeslotForEmployeeRewardList": Array [],
+          "employee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
               "tenantId": 0,
-              "unassignedShiftPenaltyList": Array [],
-              "unavailableEmployeeViolationList": Array [],
-              "undesiredTimeslotForEmployeePenaltyList": Array [],
               "version": 0,
             },
-          ]
-        }
-        key="2"
-        length={0}
-        localizer={
-          DateLocalizer {
-            "format": [Function],
-            "formats": Object {
-              "agendaDateFormat": "ddd MMM DD",
-              "agendaHeaderFormat": [Function],
-              "agendaTimeFormat": "LT",
-              "agendaTimeRangeFormat": [Function],
-              "dateFormat": "DD",
-              "dayFormat": "DD ddd",
-              "dayHeaderFormat": "dddd MMM DD",
-              "dayRangeHeaderFormat": [Function],
-              "eventTimeRangeEndFormat": [Function],
-              "eventTimeRangeFormat": [Function],
-              "eventTimeRangeStartFormat": [Function],
-              "monthHeaderFormat": "MMMM YYYY",
-              "selectRangeFormat": [Function],
-              "timeGutterFormat": "LT",
-              "weekdayFormat": "ddd",
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "endDateTime": 2018-07-01T17:00:00.000Z,
+          "id": 1,
+          "indictmentScore": Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          },
+          "pinnedByUser": false,
+          "requiredSkillViolationList": Array [],
+          "rotationEmployee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
             },
-            "propType": [Function],
-            "startOfWeek": [Function],
-          }
-        }
-        onNavigate={[Function]}
-        onSelectSlot={[Function]}
-        onView={[Function]}
-        selectable={true}
-        showMultiDayTimes={true}
-        startAccessor={[Function]}
-        timeslots={4}
-        titleAccessor={[Function]}
-        toolbar={false}
-        view="week"
-        views={
-          Array [
-            "week",
-          ]
-        }
-      />
-    </div>
-  </div>
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "rotationViolationPenaltyList": Array [],
+          "shiftEmployeeConflictList": Array [],
+          "spot": Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "startDateTime": 2018-07-01T09:00:00.000Z,
+          "tenantId": 0,
+          "unassignedShiftPenaltyList": Array [],
+          "unavailableEmployeeViolationList": Array [],
+          "undesiredTimeslotForEmployeePenaltyList": Array [],
+          "version": 0,
+        },
+      ]
+    }
+    key="2"
+    popoverBody={[Function]}
+    popoverHeader={[Function]}
+    startAccessor={[Function]}
+    startDate={2018-07-01T00:00:00.000Z}
+    titleAccessor={[Function]}
+    wrapperStyle={[Function]}
+  />
 </Fragment>
 `;
 
@@ -330,11 +269,6 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
         }
       }
     >
-      <WeekPicker
-        aria-label="Select Week to View"
-        onChange={[Function]}
-        value={2018-07-01T00:00:00.000Z}
-      />
       <TypeaheadSelectInput
         aria-label="Select Spot"
         defaultValue={
@@ -374,6 +308,11 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
             },
           ]
         }
+      />
+      <WeekPicker
+        aria-label="Select Week to View"
+        onChange={[Function]}
+        value={2018-07-01T00:00:00.000Z}
       />
     </LevelItem>
     <LevelItem
@@ -429,176 +368,115 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
       </Button>
     </LevelItem>
   </Level>
-  <div
-    style={
-      Object {
-        "height": "calc(100% - 60px)",
-      }
-    }
-  >
-    <Connect(EditShiftModal)
-      aria-label="Edit Shift"
-      isOpen={false}
-      onClose={[Function]}
-      onDelete={[Function]}
-      onSave={[Function]}
-    />
-    <Title
-      size="md"
-    >
-      Spot
-    </Title>
-    <div
-      style={
+  <Connect(EditShiftModal)
+    aria-label="Edit Shift"
+    isOpen={false}
+    onClose={[Function]}
+    onDelete={[Function]}
+    onSave={[Function]}
+  />
+  <Schedule
+    addEvent={[Function]}
+    dayStyle={[Function]}
+    endAccessor={[Function]}
+    endDate={2018-07-07T23:59:59.999Z}
+    eventComponent={[Function]}
+    eventStyle={[Function]}
+    events={
+      Array [
         Object {
-          "height": "calc(100% - 20px)",
-        }
-      }
-    >
-      <ForwardRef
-        allDayAccessor={[Function]}
-        className="rbc-no-allday-cell"
-        components={
-          Object {
-            "event": [Function],
-            "eventWrapper": [Function],
-          }
-        }
-        date={2018-07-01T00:00:00.000Z}
-        dayPropGetter={[Function]}
-        endAccessor={[Function]}
-        eventPropGetter={[Function]}
-        events={
-          Array [
-            Object {
-              "contractMinutesViolationPenaltyList": Array [],
-              "desiredTimeslotForEmployeeRewardList": Array [],
-              "employee": Object {
-                "contract": Object {
-                  "id": 5,
-                  "maximumMinutesPerDay": 10,
-                  "maximumMinutesPerMonth": 500,
-                  "maximumMinutesPerWeek": 70,
-                  "maximumMinutesPerYear": 6000,
-                  "name": "Basic Contract",
-                  "tenantId": 0,
-                  "version": 0,
-                },
-                "id": 4,
-                "name": "Employee 1",
-                "skillProficiencySet": Array [
-                  Object {
-                    "id": 6,
-                    "name": "Not Required Skill",
-                    "tenantId": 0,
-                    "version": 0,
-                  },
-                ],
-                "tenantId": 0,
-                "version": 0,
-              },
-              "endDateTime": 2018-07-01T17:00:00.000Z,
-              "id": 1,
-              "indictmentScore": Object {
-                "hardScore": 0,
-                "mediumScore": 0,
-                "softScore": 0,
-              },
-              "pinnedByUser": false,
-              "requiredSkillViolationList": Array [],
-              "rotationEmployee": Object {
-                "contract": Object {
-                  "id": 5,
-                  "maximumMinutesPerDay": 10,
-                  "maximumMinutesPerMonth": 500,
-                  "maximumMinutesPerWeek": 70,
-                  "maximumMinutesPerYear": 6000,
-                  "name": "Basic Contract",
-                  "tenantId": 0,
-                  "version": 0,
-                },
-                "id": 7,
-                "name": "Rotation Employee",
-                "skillProficiencySet": Array [
-                  Object {
-                    "id": 6,
-                    "name": "Not Required Skill",
-                    "tenantId": 0,
-                    "version": 0,
-                  },
-                ],
-                "tenantId": 0,
-                "version": 0,
-              },
-              "rotationViolationPenaltyList": Array [],
-              "shiftEmployeeConflictList": Array [],
-              "spot": Object {
-                "id": 2,
-                "name": "Spot",
-                "requiredSkillSet": Array [
-                  Object {
-                    "id": 3,
-                    "name": "Skill",
-                    "tenantId": 0,
-                    "version": 0,
-                  },
-                ],
-                "tenantId": 0,
-                "version": 0,
-              },
-              "startDateTime": 2018-07-01T09:00:00.000Z,
+          "contractMinutesViolationPenaltyList": Array [],
+          "desiredTimeslotForEmployeeRewardList": Array [],
+          "employee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
               "tenantId": 0,
-              "unassignedShiftPenaltyList": Array [],
-              "unavailableEmployeeViolationList": Array [],
-              "undesiredTimeslotForEmployeePenaltyList": Array [],
               "version": 0,
             },
-          ]
-        }
-        key="2"
-        length={0}
-        localizer={
-          DateLocalizer {
-            "format": [Function],
-            "formats": Object {
-              "agendaDateFormat": "ddd MMM DD",
-              "agendaHeaderFormat": [Function],
-              "agendaTimeFormat": "LT",
-              "agendaTimeRangeFormat": [Function],
-              "dateFormat": "DD",
-              "dayFormat": "DD ddd",
-              "dayHeaderFormat": "dddd MMM DD",
-              "dayRangeHeaderFormat": [Function],
-              "eventTimeRangeEndFormat": [Function],
-              "eventTimeRangeFormat": [Function],
-              "eventTimeRangeStartFormat": [Function],
-              "monthHeaderFormat": "MMMM YYYY",
-              "selectRangeFormat": [Function],
-              "timeGutterFormat": "LT",
-              "weekdayFormat": "ddd",
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "endDateTime": 2018-07-01T17:00:00.000Z,
+          "id": 1,
+          "indictmentScore": Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          },
+          "pinnedByUser": false,
+          "requiredSkillViolationList": Array [],
+          "rotationEmployee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
             },
-            "propType": [Function],
-            "startOfWeek": [Function],
-          }
-        }
-        onNavigate={[Function]}
-        onSelectSlot={[Function]}
-        onView={[Function]}
-        selectable={true}
-        showMultiDayTimes={true}
-        startAccessor={[Function]}
-        timeslots={4}
-        titleAccessor={[Function]}
-        toolbar={false}
-        view="week"
-        views={
-          Array [
-            "week",
-          ]
-        }
-      />
-    </div>
-  </div>
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "rotationViolationPenaltyList": Array [],
+          "shiftEmployeeConflictList": Array [],
+          "spot": Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "startDateTime": 2018-07-01T09:00:00.000Z,
+          "tenantId": 0,
+          "unassignedShiftPenaltyList": Array [],
+          "unavailableEmployeeViolationList": Array [],
+          "undesiredTimeslotForEmployeePenaltyList": Array [],
+          "version": 0,
+        },
+      ]
+    }
+    key="2"
+    popoverBody={[Function]}
+    popoverHeader={[Function]}
+    startAccessor={[Function]}
+    startDate={2018-07-01T00:00:00.000Z}
+    titleAccessor={[Function]}
+    wrapperStyle={[Function]}
+  />
 </Fragment>
 `;
 
@@ -624,11 +502,6 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
         }
       }
     >
-      <WeekPicker
-        aria-label="Select Week to View"
-        onChange={[Function]}
-        value={2018-07-01T00:00:00.000Z}
-      />
       <TypeaheadSelectInput
         aria-label="Select Spot"
         defaultValue={
@@ -668,6 +541,11 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
             },
           ]
         }
+      />
+      <WeekPicker
+        aria-label="Select Week to View"
+        onChange={[Function]}
+        value={2018-07-01T00:00:00.000Z}
       />
     </LevelItem>
     <LevelItem
@@ -723,175 +601,114 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
       </Button>
     </LevelItem>
   </Level>
-  <div
-    style={
-      Object {
-        "height": "calc(100% - 60px)",
-      }
-    }
-  >
-    <Connect(EditShiftModal)
-      aria-label="Edit Shift"
-      isOpen={false}
-      onClose={[Function]}
-      onDelete={[Function]}
-      onSave={[Function]}
-    />
-    <Title
-      size="md"
-    >
-      Spot
-    </Title>
-    <div
-      style={
+  <Connect(EditShiftModal)
+    aria-label="Edit Shift"
+    isOpen={false}
+    onClose={[Function]}
+    onDelete={[Function]}
+    onSave={[Function]}
+  />
+  <Schedule
+    addEvent={[Function]}
+    dayStyle={[Function]}
+    endAccessor={[Function]}
+    endDate={2018-07-07T23:59:59.999Z}
+    eventComponent={[Function]}
+    eventStyle={[Function]}
+    events={
+      Array [
         Object {
-          "height": "calc(100% - 20px)",
-        }
-      }
-    >
-      <ForwardRef
-        allDayAccessor={[Function]}
-        className="rbc-no-allday-cell"
-        components={
-          Object {
-            "event": [Function],
-            "eventWrapper": [Function],
-          }
-        }
-        date={2018-07-01T00:00:00.000Z}
-        dayPropGetter={[Function]}
-        endAccessor={[Function]}
-        eventPropGetter={[Function]}
-        events={
-          Array [
-            Object {
-              "contractMinutesViolationPenaltyList": Array [],
-              "desiredTimeslotForEmployeeRewardList": Array [],
-              "employee": Object {
-                "contract": Object {
-                  "id": 5,
-                  "maximumMinutesPerDay": 10,
-                  "maximumMinutesPerMonth": 500,
-                  "maximumMinutesPerWeek": 70,
-                  "maximumMinutesPerYear": 6000,
-                  "name": "Basic Contract",
-                  "tenantId": 0,
-                  "version": 0,
-                },
-                "id": 4,
-                "name": "Employee 1",
-                "skillProficiencySet": Array [
-                  Object {
-                    "id": 6,
-                    "name": "Not Required Skill",
-                    "tenantId": 0,
-                    "version": 0,
-                  },
-                ],
-                "tenantId": 0,
-                "version": 0,
-              },
-              "endDateTime": 2018-07-01T17:00:00.000Z,
-              "id": 1,
-              "indictmentScore": Object {
-                "hardScore": 0,
-                "mediumScore": 0,
-                "softScore": 0,
-              },
-              "pinnedByUser": false,
-              "requiredSkillViolationList": Array [],
-              "rotationEmployee": Object {
-                "contract": Object {
-                  "id": 5,
-                  "maximumMinutesPerDay": 10,
-                  "maximumMinutesPerMonth": 500,
-                  "maximumMinutesPerWeek": 70,
-                  "maximumMinutesPerYear": 6000,
-                  "name": "Basic Contract",
-                  "tenantId": 0,
-                  "version": 0,
-                },
-                "id": 7,
-                "name": "Rotation Employee",
-                "skillProficiencySet": Array [
-                  Object {
-                    "id": 6,
-                    "name": "Not Required Skill",
-                    "tenantId": 0,
-                    "version": 0,
-                  },
-                ],
-                "tenantId": 0,
-                "version": 0,
-              },
-              "rotationViolationPenaltyList": Array [],
-              "shiftEmployeeConflictList": Array [],
-              "spot": Object {
-                "id": 2,
-                "name": "Spot",
-                "requiredSkillSet": Array [
-                  Object {
-                    "id": 3,
-                    "name": "Skill",
-                    "tenantId": 0,
-                    "version": 0,
-                  },
-                ],
-                "tenantId": 0,
-                "version": 0,
-              },
-              "startDateTime": 2018-07-01T09:00:00.000Z,
+          "contractMinutesViolationPenaltyList": Array [],
+          "desiredTimeslotForEmployeeRewardList": Array [],
+          "employee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
               "tenantId": 0,
-              "unassignedShiftPenaltyList": Array [],
-              "unavailableEmployeeViolationList": Array [],
-              "undesiredTimeslotForEmployeePenaltyList": Array [],
               "version": 0,
             },
-          ]
-        }
-        key="2"
-        length={0}
-        localizer={
-          DateLocalizer {
-            "format": [Function],
-            "formats": Object {
-              "agendaDateFormat": "ddd MMM DD",
-              "agendaHeaderFormat": [Function],
-              "agendaTimeFormat": "LT",
-              "agendaTimeRangeFormat": [Function],
-              "dateFormat": "DD",
-              "dayFormat": "DD ddd",
-              "dayHeaderFormat": "dddd MMM DD",
-              "dayRangeHeaderFormat": [Function],
-              "eventTimeRangeEndFormat": [Function],
-              "eventTimeRangeFormat": [Function],
-              "eventTimeRangeStartFormat": [Function],
-              "monthHeaderFormat": "MMMM YYYY",
-              "selectRangeFormat": [Function],
-              "timeGutterFormat": "LT",
-              "weekdayFormat": "ddd",
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "endDateTime": 2018-07-01T17:00:00.000Z,
+          "id": 1,
+          "indictmentScore": Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          },
+          "pinnedByUser": false,
+          "requiredSkillViolationList": Array [],
+          "rotationEmployee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
             },
-            "propType": [Function],
-            "startOfWeek": [Function],
-          }
-        }
-        onNavigate={[Function]}
-        onSelectSlot={[Function]}
-        onView={[Function]}
-        selectable={true}
-        showMultiDayTimes={true}
-        startAccessor={[Function]}
-        timeslots={4}
-        titleAccessor={[Function]}
-        toolbar={false}
-        view="week"
-        views={
-          Array [
-            "week",
-          ]
-        }
-      />
-    </div>
-  </div>
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "rotationViolationPenaltyList": Array [],
+          "shiftEmployeeConflictList": Array [],
+          "spot": Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "startDateTime": 2018-07-01T09:00:00.000Z,
+          "tenantId": 0,
+          "unassignedShiftPenaltyList": Array [],
+          "unavailableEmployeeViolationList": Array [],
+          "undesiredTimeslotForEmployeePenaltyList": Array [],
+          "version": 0,
+        },
+      ]
+    }
+    key="2"
+    popoverBody={[Function]}
+    popoverHeader={[Function]}
+    startAccessor={[Function]}
+    startDate={2018-07-01T00:00:00.000Z}
+    titleAccessor={[Function]}
+    wrapperStyle={[Function]}
+  />
 </Fragment>
 `;

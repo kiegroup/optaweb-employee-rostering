@@ -272,89 +272,17 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
 `;
 
 exports[`ShiftEvent should render correctly 1`] = `
-<Popover
-  appendTo={[Function]}
-  aria-label=""
-  bodyContent={
-    <span
-      style={
-        Object {
-          "display": "block",
-          "maxHeight": "20vh",
-          "overflowY": "auto",
-          "pointerEvents": "all",
-        }
-      }
-    >
-      Shift Indictment Score:
-       0
-      <br />
-      <React.Fragment>
-        <Text>
-          Indictments:
-        </Text>
-        <List />
-      </React.Fragment>
-    </span>
-  }
-  className="my-popup"
-  closeBtnAriaLabel="Close"
-  enableFlip={true}
-  footerContent={null}
-  headerContent={
-    <span>
-      <Text>
-        Spot, 9:00 AM-5:00 PM: Employee 1
-      </Text>
-      <Button
-        onClick={[Function]}
-        variant="link"
-      >
-        <EditIcon
-          color="currentColor"
-          noVerticalAlign={false}
-          size="sm"
-          title={null}
-        />
-      </Button>
-      <Button
-        onClick={[Function]}
-        variant="link"
-      >
-        <TrashIcon
-          color="currentColor"
-          noVerticalAlign={false}
-          size="sm"
-          title={null}
-        />
-      </Button>
-    </span>
-  }
-  hideOnOutsideClick={true}
-  isVisible={null}
-  key="1"
-  maxWidth="calc(1.5rem + 18.75rem)"
-  onHidden={[Function]}
-  onHide={[Function]}
-  onMount={[Function]}
-  onShow={[Function]}
-  onShown={[Function]}
-  position="right"
-  shouldClose={[Function]}
-  zIndex={9999}
->
-  <span
-    data-for="1"
-    data-tip={true}
-    style={
-      Object {
-        "display": "flex",
-        "height": "100%",
-        "width": "100%",
-      }
+<span
+  data-for="1"
+  data-tip={true}
+  style={
+    Object {
+      "display": "flex",
+      "height": "100%",
+      "width": "100%",
     }
-  >
-    Employee
-  </span>
-</Popover>
+  }
+>
+  Employee
+</span>
 `;
