@@ -30,7 +30,6 @@ AddShiftTemplateAction> = shiftTemplate =>
     const tenantId = shiftTemplate.tenantId;
     const view = shiftTemplateToShiftTemplateView(shiftTemplate);
     return client.post<ShiftTemplateView>(`/tenant/${tenantId}/rotation/add`, view).then(newShiftTemplate => {
-      dispatch(alert.showSuccessMessage("addShiftTemplate", { id: newShiftTemplate.id }));
       dispatch(actions.addShiftTemplate(shiftTemplateViewToDomainObjectView(newShiftTemplate)))
     });
   };
@@ -42,7 +41,6 @@ RemoveShiftTemplateAction> = shiftTemplate =>
     const shiftTemplateId = shiftTemplate.id;
     return client.delete<boolean>(`/tenant/${tenantId}/rotation/${shiftTemplateId}`).then(isSuccess => {
       if (isSuccess) {
-        dispatch(alert.showSuccessMessage("removeShiftTemplate", { id: shiftTemplateId }));
         dispatch(actions.removeShiftTemplate(
           shiftTemplateViewToDomainObjectView(shiftTemplateToShiftTemplateView(shiftTemplate))
         ));
@@ -59,7 +57,6 @@ UpdateShiftTemplateAction> = shiftTemplate =>
     const tenantId = shiftTemplate.tenantId;
     const view = shiftTemplateToShiftTemplateView(shiftTemplate);
     return client.put<ShiftTemplateView>(`/tenant/${tenantId}/rotation/update`, view).then(updatedShiftTemplate => {
-      dispatch(alert.showSuccessMessage("updateShiftTemplate", { id: updatedShiftTemplate.id }));
       dispatch(actions.updateShiftTemplate(shiftTemplateViewToDomainObjectView(updatedShiftTemplate)));
     });
   };

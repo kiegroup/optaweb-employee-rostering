@@ -32,9 +32,11 @@ export interface Props<T extends object> {
   titleAccessor: (event: T) => string;
   addEvent: (start: Date, end: Date) => void;
   eventStyle: (event: T) => { style?: React.CSSProperties; className?: string };
-  wrapperStyle: (event: T) => { style?: React.CSSProperties; className?: string };
+  wrapperStyle: (event: T) => { style?: React.CSSProperties; className?: string; props?: {} };
   dayStyle: (date: Date) => { style?: React.CSSProperties; className?: string };
-  eventComponent: (props: React.PropsWithChildren<EventProps<T>>) => React.ReactElement;
+  popoverHeader: (event: T) => React.ReactNode;
+  popoverBody: (event: T) => React.ReactNode;
+  eventComponent: (props: React.PropsWithChildren<EventProps<T>>) => React.ReactNode;
 }
 
 export function isDay(start: Date, end: Date) {
@@ -95,10 +97,13 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
                 ...wrapperProps.style,
                 ...((style.style)? style.style : {}) 
               },
-              className: style.className? style.className : ""
+              className: style.className? style.className : "",
+              additionalProps: style.props? style.props : {},
+              popoverHeader: props.popoverHeader(wrapperProps.event),
+              popoverBody: props.popoverBody(wrapperProps.event)
             })
           },
-          event: (eventProps) => props.eventComponent(eventProps)
+          event: (eventProps) => props.eventComponent(eventProps) as React.ReactElement
         }}
       />
     </div>
