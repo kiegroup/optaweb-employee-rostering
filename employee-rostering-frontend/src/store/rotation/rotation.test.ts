@@ -73,7 +73,6 @@ describe('Rotation operations', () => {
     onDelete(`/tenant/${tenantId}/rotation/${shiftTemplateToDelete.id}`, true);
     await store.dispatch(shiftTemplateOperations.removeShiftTemplate(shiftTemplateToDelete));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("removeShiftTemplate", { id: shiftTemplateToDelete.id }),
       actions.removeShiftTemplate(mapDomainObjectToView(shiftTemplateToDelete))
     ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
@@ -131,7 +130,6 @@ describe('Rotation operations', () => {
       shiftTemplateToShiftTemplateView(shiftTemplateWithUpdatedId));
     await store.dispatch(shiftTemplateOperations.addShiftTemplate(shiftTemplateToAdd));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("addShiftTemplate", { id: shiftTemplateWithUpdatedId.id }),
       actions.addShiftTemplate(mapDomainObjectToView(shiftTemplateWithUpdatedId))
     ]);
     expect(client.post).toHaveBeenCalledTimes(1);
@@ -164,7 +162,6 @@ describe('Rotation operations', () => {
       shiftTemplateToShiftTemplateView(shiftTemplateWithUpdatedVersion));
     await store.dispatch(shiftTemplateOperations.updateShiftTemplate(shiftTemplateToUpdate));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("updateShiftTemplate", { id: shiftTemplateToUpdate.id }),
       actions.updateShiftTemplate(mapDomainObjectToView(shiftTemplateWithUpdatedVersion))
     ]);
     expect(client.put).toHaveBeenCalledTimes(1);

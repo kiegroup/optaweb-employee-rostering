@@ -27,108 +27,108 @@ export interface AvailabilityEventProps {
   updateEmployeeAvailability: (ea: EmployeeAvailability) => void;
   removeEmployeeAvailability: (ea: EmployeeAvailability) => void;
 }
-  
+
+const AvailabilityPopoverHeader: React.FC<AvailabilityEventProps> = props => 
+  (
+    <span>
+      <Text>
+        {
+          props.availability.employee.name + ", " + 
+      moment(props.availability.startDateTime).format("LT") + "-" + 
+      moment(props.availability.endDateTime).format("LT")
+        }
+      </Text>
+      <Button
+        onClick={() => props.onEdit(props.availability)}
+        variant={ButtonVariant.link}
+      >
+        <EditIcon />
+      </Button>
+      <Button
+        onClick={() => props.onDelete(props.availability)}
+        variant={ButtonVariant.link}
+      >
+        <TrashIcon />
+      </Button>
+    </span>
+  );
+
+const AvailabilityPopoverBody: React.FC = () => <></>;
+
+
 const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: AvailabilityEventProps) => {
   const { t } = useTranslation();
   return (
-    <Popover
-      className="my-popup"
-      key={props.availability.id}
-      position="right"
-      bodyContent={(<></>)}
-      headerContent={(
-        <span>
-          <Text>
-            {
-              props.availability.employee.name + ", " + 
-            moment(props.availability.startDateTime).format("LT") + "-" + 
-            moment(props.availability.endDateTime).format("LT")
-            }
-          </Text>
+    <span
+      data-tip
+      data-for={String(props.availability.id)}
+      className="availability-event"
+    >
+      <Split>
+        <SplitItem isFilled={false}>{t("EmployeeAvailabilityState." + props.availability.state)}</SplitItem>
+        <SplitItem isFilled />
+        <SplitItem isFilled={false}>
           <Button
-            onClick={() => props.onEdit(props.availability)}
-            variant={ButtonVariant.link}
-          >
-            <EditIcon />
-          </Button>
-          <Button
-            onClick={() => props.onDelete(props.availability)}
-            variant={ButtonVariant.link}
+            onClick={() => props.removeEmployeeAvailability(props.availability)}
+            variant="danger"
           >
             <TrashIcon />
           </Button>
-        </span>
-      )}
-    >
-      <span
-        data-tip
-        data-for={String(props.availability.id)}
-        className="availability-event"
-      >
-        <Split>
-          <SplitItem isFilled={false}>{t("EmployeeAvailabilityState." + props.availability.state)}</SplitItem>
-          <SplitItem isFilled />
-          <SplitItem isFilled={false}>
-            <Button
-              onClick={() => props.removeEmployeeAvailability(props.availability)}
-              variant="danger"
-            >
-              <TrashIcon />
-            </Button>
-          </SplitItem>
-        </Split>
-        <Level gutter="sm">
-          <LevelItem>
-            <Button
-              title={t("EmployeeAvailabilityState.DESIRED")}
-              onClick={() => props.updateEmployeeAvailability({
-                ...props.availability,
-                state: "DESIRED"
-              })}
-              style={{
-                backgroundColor: "green",
-                margin: "1px",
-                width: "min-content"
-              }}
-              variant="tertiary"
-            >
-              <OkIcon />
-            </Button>
-            <Button
-              title={t("EmployeeAvailabilityState.UNDESIRED")}
-              onClick={() => props.updateEmployeeAvailability({
-                ...props.availability,
-                state: "UNDESIRED"
-              })}
-              style={{
-                backgroundColor: "yellow",
-                margin: "1px",
-                width: "min-content"
-              }}
-              variant="tertiary"
-            >
-              <WarningTriangleIcon />
-            </Button>
-            <Button
-              title={t("EmployeeAvailabilityState.UNAVAILABLE")}
-              onClick={() => props.updateEmployeeAvailability({
-                ...props.availability,
-                state: "UNAVAILABLE"
-              })}
-              style={{
-                backgroundColor: "red",
-                margin: "1px",
-                width: "min-content"
-              }}
-              variant="tertiary"
-            >
-              <ErrorCircleOIcon />
-            </Button>
-          </LevelItem>
-        </Level>
-      </span>
-    </Popover>
+        </SplitItem>
+      </Split>
+      <Level gutter="sm">
+        <LevelItem>
+          <Button
+            title={t("EmployeeAvailabilityState.DESIRED")}
+            onClick={() => props.updateEmployeeAvailability({
+              ...props.availability,
+              state: "DESIRED"
+            })}
+            style={{
+              backgroundColor: "green",
+              margin: "1px",
+              width: "min-content"
+            }}
+            variant="tertiary"
+          >
+            <OkIcon />
+          </Button>
+          <Button
+            title={t("EmployeeAvailabilityState.UNDESIRED")}
+            onClick={() => props.updateEmployeeAvailability({
+              ...props.availability,
+              state: "UNDESIRED"
+            })}
+            style={{
+              backgroundColor: "yellow",
+              margin: "1px",
+              width: "min-content"
+            }}
+            variant="tertiary"
+          >
+            <WarningTriangleIcon />
+          </Button>
+          <Button
+            title={t("EmployeeAvailabilityState.UNAVAILABLE")}
+            onClick={() => props.updateEmployeeAvailability({
+              ...props.availability,
+              state: "UNAVAILABLE"
+            })}
+            style={{
+              backgroundColor: "red",
+              margin: "1px",
+              width: "min-content"
+            }}
+            variant="tertiary"
+          >
+            <ErrorCircleOIcon />
+          </Button>
+        </LevelItem>
+      </Level>
+    </span>
   );
 }
+
+export { AvailabilityPopoverBody, AvailabilityPopoverHeader };
 
 export default AvailabilityEvent;

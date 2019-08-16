@@ -29,7 +29,7 @@ import Color from 'color';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
-import ShiftEvent, { getShiftColor } from "./ShiftEvent";
+import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from "./ShiftEvent";
 import Schedule from 'ui/components/calendar/Schedule';
 
 
@@ -338,14 +338,16 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           eventStyle={this.getShiftStyle}
           dayStyle={this.getDayStyle}
           wrapperStyle={() => ({})}
-          eventComponent={(props) => ShiftEvent({
-            ...props,
+          popoverHeader={shift => ShiftPopupHeader({
+            shift: shift,
             onEdit: (shift) => this.setState({
               isCreatingOrEditingShift: true,
               selectedShift: shift
             }),
             onDelete: (shift) => this.deleteShift(shift)
-          }) as React.ReactElement}
+          })}
+          popoverBody={shift => ShiftPopupBody(shift)}
+          eventComponent={(props) => ShiftEvent(props)}
         />
       </>
     );

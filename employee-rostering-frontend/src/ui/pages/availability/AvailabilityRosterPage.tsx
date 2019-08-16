@@ -26,7 +26,7 @@ import EditShiftModal from '../shift/EditShiftModal';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
-import ShiftEvent from "../shift/ShiftEvent";
+import ShiftEvent, { ShiftPopupHeader, ShiftPopupBody } from "../shift/ShiftEvent";
 
 import EmployeeAvailability from "domain/EmployeeAvailability";
 import { employeeSelectors } from "store/employee";
@@ -34,7 +34,7 @@ import Employee from "domain/Employee";
 import { availabilityOperations } from "store/availability";
 import { shiftOperations } from "store/shift";
 import EditAvailabilityModal from "./EditAvailabilityModal";
-import AvailabilityEvent from "./AvailabilityEvent";
+import AvailabilityEvent, { AvailabilityPopoverHeader, AvailabilityPopoverBody } from "./AvailabilityEvent";
 import Schedule from "ui/components/calendar/Schedule";
 
 interface StateProps {
@@ -409,27 +409,48 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               : undefined,
             style: {
               zIndex: (isShift(event.reference))? 1 : 0
+            },
+            props: {
+              "data-tip": true,
+              "data-for": String(event.reference.id)
             }
           })}
-          eventComponent={(props) => (isShift(props.event.reference)? ShiftEvent(
-            {
-              ...props.event.reference,
-              title: props.event.reference.spot.name,
-              event: props.event.reference,
+          popoverHeader={
+            soa => (isShift(soa.reference))? ShiftPopupHeader({
+              shift: soa.reference,
               onEdit: () => {
                 if (!this.state.isCreatingOrEditingAvailability) {
                   this.setState({
-                    selectedShift: props.event.reference as Shift,
+                    selectedShift: soa.reference as Shift,
                     isCreatingOrEditingShift: true
                   })
                 }
               },
               onDelete: () => {
                 this.props.updateShift({
-                  ...props.event.reference as Shift,
+                  ...soa.reference as Shift,
                   employee: null
                 })
               }
+            }) : AvailabilityPopoverHeader({
+              availability: soa.reference,
+              onEdit: ea => this.setState({
+                isCreatingOrEditingAvailability: true,
+                selectedAvailability: ea
+              }),
+              onDelete: ea => this.props.removeEmployeeAvailability(ea),
+              updateEmployeeAvailability: this.props.updateEmployeeAvailability,
+              removeEmployeeAvailability: this.props.removeEmployeeAvailability
+            })
+          }
+          popoverBody={
+            soa => (isShift(soa.reference))? ShiftPopupBody(soa.reference) : AvailabilityPopoverBody
+          }
+          eventComponent={(props) => isShift(props.event.reference)? ShiftEvent(
+            {
+              ...props.event.reference,
+              title: props.event.reference.spot.name,
+              event: props.event.reference,
             }) : AvailabilityEvent({
             availability: props.event.reference,
             onEdit: ea => this.setState({
@@ -439,7 +460,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             onDelete: ea => this.props.removeEmployeeAvailability(ea),
             updateEmployeeAvailability: this.props.updateEmployeeAvailability,
             removeEmployeeAvailability: this.props.removeEmployeeAvailability
-          })) as React.ReactElement
+          })
           }
         />  
       </>
