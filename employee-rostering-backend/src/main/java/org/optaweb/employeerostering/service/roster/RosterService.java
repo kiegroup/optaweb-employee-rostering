@@ -93,7 +93,7 @@ public class RosterService extends AbstractRestService {
     // TODO: Add getAvailabilityRosterView() methods once SolverManager and IndictmentUtils are added
 
     // ************************************************************************
-    // Other
+    // Roster
     // ************************************************************************
 
     @Transactional
@@ -138,4 +138,14 @@ public class RosterService extends AbstractRestService {
                     null : employeeIdMap.get(shift.getEmployee().getId()));
         }
     }
+
+    // ************************************************************************
+    // Solver methods
+    // ************************************************************************
+
+    // ************************************************************************
+    // Publishing/Provisioning methods
+    // ************************************************************************
+
+    // TODO: Implement PublishAndProvision()
 }

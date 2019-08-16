@@ -61,4 +61,13 @@ public class RosterController {
 
     // TODO: Add getAvailabilityRosterView() methods once SolverManager and IndictmentUtils are added
 
+    // ************************************************************************
+    // Solver methods
+    // ************************************************************************
+
+    // ************************************************************************
+    // Publishing/Provisioning methods
+    // ************************************************************************
+
+    // TODO: Implement publishAndProvision()
 }
