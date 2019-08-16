@@ -18,12 +18,16 @@ import * as React from "react";
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './ReactBigCalendarOverrides.css';
+import { Popover } from "@patternfly/react-core";
 
 export default function EventWrapper(props: React.PropsWithChildren<{
   continuesEarlier: boolean;
   continuesLater: boolean;
   className: string;
+  popoverHeader: React.ReactNode;
+  popoverBody: React.ReactNode;
   style?: React.CSSProperties;
+  additionalProps: {};
 }>): JSX.Element {
   let className = (props.className)? props.className : "rbc-event";
   const style: React.CSSProperties = {
@@ -45,11 +49,19 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   }
   
   return (
-    <div
-      className={className}
-      style={style}
+    <Popover
+      className="my-popup"
+      position="right"
+      headerContent={props.popoverHeader}
+      bodyContent={props.popoverBody}
     >
-      {props.children}
-    </div>
+      <div
+        className={className}
+        style={style}
+        {...props.additionalProps}
+      >
+        {props.children}
+      </div>
+    </Popover>
   );
 }

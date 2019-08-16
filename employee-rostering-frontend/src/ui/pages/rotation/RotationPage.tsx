@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { ReactElement } from "react";
+import React from "react";
 import Spot from "domain/Spot";
 import { AppState } from "store/types";
 import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Level, LevelItem, Button, Title, Text, Pagination, Popover, ButtonVariant } from "@patternfly/react-core";
+import { Level, LevelItem, Button, Text, Pagination, ButtonVariant } from "@patternfly/react-core";
 import { EventProps } from 'react-big-calendar'
 import { modulo } from 'util/MathUtils';
 import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
@@ -86,65 +86,66 @@ interface State {
 
 const baseDate = moment("2018-01-01T00:00").startOf('week').toDate();
 
-const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate> & {
+const ShiftTemplatePopoverHeader: React.FC<{
+  shiftTemplate: ShiftTemplate;
   rotationLength: number;
   onEdit: (shift: ShiftTemplate) => void;
   onDelete: (shift: ShiftTemplate) => void;
-}> = (props) => {
+}> = props =>{
   const { t } = useTranslation();
   const durationBetweenRotationStartAndEnd = moment
-    .duration(props.event.durationBetweenRotationStartAndTemplateStart).add(props.event.shiftTemplateDuration);
+    .duration(props.shiftTemplate.durationBetweenRotationStartAndTemplateStart)
+    .add(props.shiftTemplate.shiftTemplateDuration);
   return (
-    <Popover
-      className="my-popup"
-      key={props.event.id}
-      position="right"
-      headerContent={(
-        <span> 
-          <Text> 
-            {t("shiftTemplate", {
-              spot: props.event.spot.name,
-              rotationEmployee: props.event.rotationEmployee? props.event.rotationEmployee.name : "Unassigned",
-              dayStart: Math.floor(modulo(
-                props.event.durationBetweenRotationStartAndTemplateStart.asDays(),
-                props.rotationLength)) + 1,
-              startTime: moment("2018-01-01")
-                .add(props.event.durationBetweenRotationStartAndTemplateStart).format("LT"),
-              dayEnd: Math.floor(modulo(durationBetweenRotationStartAndEnd.asDays(),
-                props.rotationLength)) + 1,
-              endTime: moment("2018-01-01")
-                .add(durationBetweenRotationStartAndEnd).format("LT")
-            })}
+    <span> 
+      <Text> 
+        {t("shiftTemplate", {
+          spot: props.shiftTemplate.spot.name,
+          rotationEmployee: props.shiftTemplate.rotationEmployee? props.shiftTemplate.rotationEmployee.name
+            : "Unassigned",
+          dayStart: Math.floor(modulo(
+            props.shiftTemplate.durationBetweenRotationStartAndTemplateStart.asDays(),
+            props.rotationLength)) + 1,
+          startTime: moment("2018-01-01")
+            .add(props.shiftTemplate.durationBetweenRotationStartAndTemplateStart).format("LT"),
+          dayEnd: Math.floor(modulo(durationBetweenRotationStartAndEnd.asDays(),
+            props.rotationLength)) + 1,
+          endTime: moment("2018-01-01")
+            .add(durationBetweenRotationStartAndEnd).format("LT")
+        })}
 
-          </Text>
-          <Button
-            onClick={() => props.onEdit(props.event)}
-            variant={ButtonVariant.link}
-          >
-            <EditIcon />
-          </Button>
-          <Button
-            onClick={() => props.onDelete(props.event)}
-            variant={ButtonVariant.link}
-          >
-            <TrashIcon />
-          </Button>
-        </span>
-      )}
-      bodyContent={(<></>)}
-    >
-      <span
-        data-tip
-        data-for={String(props.event.id)}
-        style={{
-          display: "flex",
-          height: "100%",
-          width: "100%"
-        }}
+      </Text>
+      <Button
+        onClick={() => props.onEdit(props.shiftTemplate)}
+        variant={ButtonVariant.link}
       >
-        {props.title}
-      </span>
-    </Popover>
+        <EditIcon />
+      </Button>
+      <Button
+        onClick={() => props.onDelete(props.shiftTemplate)}
+        variant={ButtonVariant.link}
+      >
+        <TrashIcon />
+      </Button>
+    </span>
+  )}
+
+const ShiftTemplatePopoverBody: React.FC = () => <></>;
+
+const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate>> = (props) => {
+
+  return (
+    <span
+      data-tip
+      data-for={String(props.event.id)}
+      style={{
+        display: "flex",
+        height: "100%",
+        width: "100%"
+      }}
+    >
+      {props.title}
+    </span>
   )
 };
 
@@ -341,16 +342,21 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
           eventStyle={() => ({})}
           dayStyle={() => ({})}
           wrapperStyle={() => ({})}
-          eventComponent={(params) => ShiftTemplateEvent({
-            ...params,
-            event: params.event.shiftTemplate,
+          popoverHeader={st => ShiftTemplatePopoverHeader({
+            shiftTemplate: st.shiftTemplate,
             rotationLength: (this.props.rosterState as RosterState).rotationLength,
             onEdit: (shiftTemplate) => this.setState({
               selectedShiftTemplate: shiftTemplate,
               isCreatingOrEditingShiftTemplate: true
             }),
             onDelete: (shiftTemplate) => this.props.removeShiftTemplate(shiftTemplate)
-          }) as ReactElement}
+          })
+          }
+          popoverBody={() => ShiftTemplatePopoverBody}
+          eventComponent={(params) => ShiftTemplateEvent({
+            ...params,
+            event: params.event.shiftTemplate,
+          })}
         />
       </>
     );

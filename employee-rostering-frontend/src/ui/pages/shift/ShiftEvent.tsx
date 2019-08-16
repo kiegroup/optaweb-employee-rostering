@@ -16,7 +16,7 @@
 import React from "react";
 import { EventProps } from "react-big-calendar";
 import Shift from "domain/Shift";
-import { Text, Popover, Button, ButtonVariant, List } from "@patternfly/react-core";
+import { Text, Button, ButtonVariant, List } from "@patternfly/react-core";
 import moment from "moment";
 import Employee from "domain/Employee";
 import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
@@ -254,69 +254,66 @@ export function getShiftColor(shift: Shift): string {
   }
 }
 
-const ShiftEvent: React.FC<EventProps<Shift> & {
+const ShiftPopupHeader: React.FC<{
+  shift: Shift;
   onEdit: (shift: Shift) => void;
   onDelete: (shift: Shift) => void;
 }> = (props) => (
-  <Popover
-    className="my-popup"
-    key={props.event.id}
-    position="right"
-    headerContent={(
-      <span>
-        <Text>
-          {
-            props.event.spot.name + ", " + 
-            moment(props.event.startDateTime).format("LT") + "-" + 
-            moment(props.event.endDateTime).format("LT") + ": " + 
-            (props.event.employee? props.event.employee.name : "Unassigned")
-          }
-        </Text>
-        <Button
-          onClick={() => props.onEdit(props.event)}
-          variant={ButtonVariant.link}
-        >
-          <EditIcon />
-        </Button>
-        <Button
-          onClick={() => props.onDelete(props.event)}
-          variant={ButtonVariant.link}
-        >
-          <TrashIcon />
-        </Button>
-      </span>
-    )}
-    bodyContent={
-      (
-        <span
-          style={{
-            display: "block",
-            maxHeight: "20vh",
-            overflowY: "auto",
-            pointerEvents: "all"
-          }}
-        >
-          Shift Indictment Score:
-          {" " + (props.event.indictmentScore? convertHardMediumSoftScoreToString(props.event.indictmentScore)
-            : "N/A")}
-          <br />
-          {getIndictments(props.event)}
-        </span>
-      )
-    }
-  >
-    <span
-      data-tip
-      data-for={String(props.event.id)}
-      style={{
-        display: "flex",
-        height: "100%",
-        width: "100%"
-      }}
+  <span>
+    <Text>
+      {
+        props.shift.spot.name + ", " + 
+        moment(props.shift.startDateTime).format("LT") + "-" + 
+        moment(props.shift.endDateTime).format("LT") + ": " + 
+        (props.shift.employee? props.shift.employee.name : "Unassigned")
+      }
+    </Text>
+    <Button
+      onClick={() => props.onEdit(props.shift)}
+      variant={ButtonVariant.link}
     >
-      {props.title}
-    </span>
-  </Popover>
+      <EditIcon />
+    </Button>
+    <Button
+      onClick={() => props.onDelete(props.shift)}
+      variant={ButtonVariant.link}
+    >
+      <TrashIcon />
+    </Button>
+  </span>
 );
+
+const ShiftPopupBody: React.FC<Shift> = shift => (
+  <span
+    style={{
+      display: "block",
+      maxHeight: "20vh",
+      overflowY: "auto",
+      pointerEvents: "all"
+    }}
+  >
+    Shift Indictment Score:
+    {" " + (shift.indictmentScore? convertHardMediumSoftScoreToString(shift.indictmentScore)
+      : "N/A")}
+    <br />
+    {getIndictments(shift)}
+  </span>
+);
+
+const ShiftEvent: React.FC<EventProps<Shift>> = (props) => (
+  <span
+    data-tip
+    data-for={String(props.event.id)}
+    style={{
+      display: "flex",
+      height: "100%",
+      width: "100%"
+    }}
+  >
+    {props.title}
+  </span>
+);
+
+export { ShiftPopupBody, ShiftPopupHeader };
 
 export default ShiftEvent;
