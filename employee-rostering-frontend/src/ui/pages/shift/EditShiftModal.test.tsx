@@ -105,6 +105,7 @@ describe('Edit Shift Modal', () => {
     });
 
     editShiftModal.state = {
+      resetCount: 0,
       editedValue: {
 
       }
@@ -113,6 +114,7 @@ describe('Edit Shift Modal', () => {
     expect(onSave).not.toBeCalled();
 
     editShiftModal.state = {
+      resetCount: 1,
       editedValue: {
         employee: null,
         spot: spot
@@ -122,6 +124,7 @@ describe('Edit Shift Modal', () => {
     expect(onSave).not.toBeCalled();
 
     editShiftModal.state = {
+      resetCount: 2,
       editedValue: baseShift
     };
     editShiftModal.onSave();

@@ -19,7 +19,7 @@ import * as React from 'react';
 import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
-import  { EventWrapper, AvailabilityRosterPage, Props, ShiftOrAvailability, isShift, isAvailability,
+import  { AvailabilityRosterPage, Props, ShiftOrAvailability, isShift, isAvailability,
   isAllDayAvailability, isDay } from './AvailabilityRosterPage';
 import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
@@ -241,40 +241,14 @@ describe('Availability Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
-    // Note: Calendar is called "ForwardRef" in SNAPSHOT
-    availabilityRosterPage.find('ForwardRef').simulate("selectSlot", {
-      start: newDateStart,
-      end: newDateEnd,
-      action: "select"
-    });
+    ((availabilityRosterPage.find('Schedule').props()) as { addEvent: Function}).addEvent(newDateStart,
+      newDateEnd);
 
     expect(baseProps.addEmployeeAvailability).toBeCalled();
     expect(baseProps.addEmployeeAvailability).toBeCalledWith({
       tenantId: employee.tenantId,
       startDateTime: newDateStart,
       endDateTime: newDateEnd,
-      employee: employee,
-      state: "UNAVAILABLE"
-    });
-  });
-
-  it('should call addAvailability when a timeslot is clicked', () => {
-    const availabilityRosterPage = shallow(<AvailabilityRosterPage
-      {...baseProps}
-    />);
-    const newDateStart = moment("2018-07-01T00:00").toDate();
-    const newDateEnd = moment("2018-07-02T00:00").toDate();
-    // Note: Calendar is called "ForwardRef" in SNAPSHOT
-    availabilityRosterPage.find('ForwardRef').simulate("selectSlot", {
-      start: newDateStart,
-      end: newDateEnd,
-      action: "click"
-    });
-
-    expect(baseProps.addEmployeeAvailability).toBeCalledWith({
-      tenantId: employee.tenantId,
-      startDateTime: newDateStart,
-      endDateTime: moment(newDateEnd).add(1, 'd').toDate(),
       employee: employee,
       state: "UNAVAILABLE"
     });
@@ -455,52 +429,6 @@ describe('Availability Roster Page', () => {
       style: {
       }
     });
-  });
-
-  it('should render Shift EventWrapper correctly', () => {
-    const eventWrapper = shallow(
-      <EventWrapper
-        event={{
-          start: shift.startDateTime,
-          end: shift.endDateTime,
-          type: "Shift",
-          reference: shift
-        }}
-        style={
-          {
-            top: "50%",
-            height: "30%"
-          }
-        }
-      >
-        <span>Shift</span>
-      </EventWrapper>
-    );
-
-    expect(toJson(eventWrapper)).toMatchSnapshot();
-  });
-
-  it('should render Availability EventWrapper correctly', () => {
-    const eventWrapper = shallow(
-      <EventWrapper
-        event={{
-          start: availability.startDateTime,
-          end: availability.endDateTime,
-          type: "Availability",
-          reference: availability
-        }}
-        style={
-          {
-            top: "50%",
-            height: "30%"
-          }
-        }
-      >
-        <span>Availability</span>
-      </EventWrapper>
-    );
-
-    expect(toJson(eventWrapper)).toMatchSnapshot();
   });
 
   // isDay

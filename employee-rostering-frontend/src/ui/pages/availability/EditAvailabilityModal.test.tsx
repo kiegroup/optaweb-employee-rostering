@@ -102,12 +102,13 @@ describe('Edit Availability Modal', () => {
       onDelete: jest.fn()
     });
 
-    editAvailabilityModal.state = { editedValue: {} };
+    editAvailabilityModal.state = { resetCount: 0, editedValue: {} };
     
     editAvailabilityModal.onSave();
     expect(onSave).not.toBeCalled();
 
     editAvailabilityModal.state = {
+      resetCount: 1,
       editedValue: {
         employee: employee,
         state: "DESIRED"
@@ -118,6 +119,7 @@ describe('Edit Availability Modal', () => {
     expect(onSave).not.toBeCalled();
 
     editAvailabilityModal.state = {
+      resetCount: 2,
       editedValue: baseEmployeeAvailability
     };
 
