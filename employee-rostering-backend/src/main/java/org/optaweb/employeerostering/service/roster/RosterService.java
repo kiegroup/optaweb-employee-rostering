@@ -38,6 +38,7 @@ import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.optaweb.employeerostering.service.tenant.RosterParametrizationRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,7 +101,7 @@ public class RosterService extends AbstractRestService {
     public Roster buildRoster(Integer tenantId) {
         ZoneId zoneId = getRosterState(tenantId).getTimeZone();
         List<Skill> skillList = skillRepository.findAllByTenantId(tenantId);
-        List<Spot> spotList = spotRepository.findAllByTenantId(tenantId);
+        List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
         List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId);
         List<EmployeeAvailability> employeeAvailabilityList = employeeAvailabilityRepository.findAllByTenantId(tenantId)
                 .stream()
