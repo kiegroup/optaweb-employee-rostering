@@ -1,0 +1,179 @@
+/*
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.optaweb.employeerostering.service.shift;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityNotFoundException;
+
+import org.optaplanner.core.api.score.constraint.Indictment;
+import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.shift.Shift;
+import org.optaweb.employeerostering.domain.shift.view.ShiftView;
+import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.service.common.AbstractRestService;
+import org.optaweb.employeerostering.service.common.IndictmentUtils;
+import org.optaweb.employeerostering.service.employee.EmployeeRepository;
+import org.optaweb.employeerostering.service.roster.RosterService;
+import org.optaweb.employeerostering.service.spot.SpotRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class ShiftService extends AbstractRestService {
+
+    private ShiftRepository shiftRepository;
+
+    private SpotRepository spotRepository;
+
+    private EmployeeRepository employeeRepository;
+
+    private RosterService rosterService;
+
+    private IndictmentUtils indictmentUtils;
+
+    public ShiftService(ShiftRepository shiftRepository, SpotRepository spotRepository,
+                        EmployeeRepository employeeRepository, RosterService rosterService,
+                        IndictmentUtils indictmentUtils) {
+        this.shiftRepository = shiftRepository;
+        this.spotRepository = spotRepository;
+        this.employeeRepository = employeeRepository;
+        this.rosterService = rosterService;
+        this.indictmentUtils = indictmentUtils;
+    }
+
+    public List<ShiftView> getShiftList(Integer tenantId) {
+        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(
+                rosterService.buildRoster(tenantId));
+        return getAllShifts(tenantId).stream()
+                .map(s -> indictmentUtils.getShiftViewWithIndictment(
+                        rosterService.getRosterState(tenantId).getTimeZone(), s, indictmentMap.get(s)))
+                .collect(Collectors.toList());
+    }
+
+    private List<Shift> getAllShifts(Integer tenantId) {
+        return shiftRepository.findAllByTenantId(tenantId);
+    }
+
+    @Transactional
+    public ShiftView getShift(Integer tenantId, Long id) {
+        Optional<Shift> shiftOptional = shiftRepository.findById(id);
+        if (!shiftOptional.isPresent()) {
+            throw new EntityNotFoundException("No Shift entity found with ID (" + id + ").");
+        }
+
+        Shift shift = shiftOptional.get();
+        validateTenantIdParameter(tenantId, shift);
+        Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
+                rosterService.buildRoster(tenantId)).get(shift);
+        return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
+                shift, indictment);
+    }
+
+    private Shift convertFromView(Integer tenantId, ShiftView shiftView) {
+        validateTenantIdParameter(tenantId, shiftView);
+
+        Optional<Spot> spotOptional = spotRepository.findById(shiftView.getSpotId());
+        if (!spotOptional.isPresent()) {
+            throw new EntityNotFoundException("No Spot entity found with ID (" + shiftView.getSpotId() + ").");
+        }
+
+        Spot spot = spotOptional.get();
+        validateTenantIdParameter(tenantId, spot);
+
+        Long rotationEmployeeId = shiftView.getRotationEmployeeId();
+        Employee rotationEmployee = null;
+        if (rotationEmployeeId != null) {
+            Optional<Employee> rotationEmployeeOptional = employeeRepository.findById(rotationEmployeeId);
+            if (!rotationEmployeeOptional.isPresent()) {
+                throw new EntityNotFoundException("ShiftView (" + shiftView + ") has an non-existing employeeId (" +
+                        rotationEmployeeId + ").");
+            }
+            rotationEmployee = rotationEmployeeOptional.get();
+            validateTenantIdParameter(tenantId, rotationEmployee);
+        }
+
+        Shift shift = new Shift(rosterService.getRosterState(tenantId).getTimeZone(), shiftView, spot,
+                rotationEmployee);
+        shift.setPinnedByUser(shiftView.isPinnedByUser());
+        Long employeeId = shiftView.getEmployeeId();
+        if (employeeId != null) {
+            Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+            if (!employeeOptional.isPresent()) {
+                throw new EntityNotFoundException("ShiftView (" + shiftView + ") has an non-existing employeeId (" +
+                        employeeId + ").");
+            }
+            Employee employee = employeeOptional.get();
+            validateTenantIdParameter(tenantId, employee);
+            shift.setEmployee(employee);
+        }
+
+        return shift;
+    }
+
+    @Transactional
+    public ShiftView createShift(Integer tenantId, ShiftView shiftView) {
+        Shift shift = convertFromView(tenantId, shiftView);
+        Shift persistedShift = shiftRepository.save(shift);
+
+        Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
+                rosterService.buildRoster(tenantId)).get(persistedShift);
+        return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
+                persistedShift, indictment);
+    }
+
+    @Transactional
+    public ShiftView updateShift(Integer tenantId, ShiftView shiftView) {
+        Shift shift = convertFromView(tenantId, shiftView);
+        Optional<Shift> shiftOptional = shiftRepository.findById(shift.getId());
+
+        if (!shiftOptional.isPresent()) {
+            throw new EntityNotFoundException("Shift entity with ID (" + shift.getId() + ") not found.");
+        } else if (!shiftOptional.get().getTenantId().equals(shift.getTenantId())) {
+            throw new IllegalStateException("Shift entity with tenantId (" + shiftOptional.get().getTenantId()
+                    + ") cannot change tenants.");
+        }
+        Shift databaseShift = shiftOptional.get();
+        databaseShift.setRotationEmployee(shift.getRotationEmployee());
+        databaseShift.setSpot(shift.getSpot());
+        databaseShift.setStartDateTime(shift.getStartDateTime());
+        databaseShift.setEndDateTime(shift.getEndDateTime());
+        databaseShift.setPinnedByUser(shift.isPinnedByUser());
+        databaseShift.setEmployee(shift.getEmployee());
+        // Flush to increase version number before we duplicate it to ShiftView
+        Shift updatedShift = shiftRepository.saveAndFlush(databaseShift);
+
+        Indictment indictment = indictmentUtils.getIndictmentMapForRoster(
+                rosterService.buildRoster(tenantId)).get(updatedShift);
+        return indictmentUtils.getShiftViewWithIndictment(rosterService.getRosterState(tenantId).getTimeZone(),
+                updatedShift, indictment);
+    }
+
+    @Transactional
+    public Boolean deleteShift(Integer tenantId, Long id) {
+        Optional<Shift> shiftOptional = shiftRepository.findById(id);
+        if (!shiftOptional.isPresent()) {
+            return false;
+        }
+        validateTenantIdParameter(tenantId, shiftOptional.get());
+        shiftRepository.deleteById(id);
+        return true;
+    }
+}
