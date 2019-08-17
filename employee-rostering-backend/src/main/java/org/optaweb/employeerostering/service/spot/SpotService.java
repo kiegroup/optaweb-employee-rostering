@@ -24,6 +24,7 @@ import javax.persistence.EntityNotFoundException;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,7 +47,7 @@ public class SpotService extends AbstractRestService {
 
     @Transactional
     public List<Spot> getSpotList(Integer tenantId) {
-        return spotRepository.findAllByTenantId(tenantId);
+        return spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
     }
 
     @Transactional
