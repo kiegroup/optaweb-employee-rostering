@@ -23,6 +23,7 @@ import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
+import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
@@ -50,8 +51,7 @@ public class RosterGeneratorTest {
     private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
     private final String rotationPathURI = "http://localhost:8080/rest/tenant/{tenantId}/rotation/";
     private final String tenantPathURI = "http://localhost:8080/rest/tenant/";
-    private final String employeeAvailabilityPathURI
-            = "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
+    private final String shiftPathURI = "http://localhost:8080/rest/tenant/{tenantId}/shift/";
 
     private ResponseEntity<List<Skill>> getSkills(Integer tenantId) {
         return restTemplate.exchange(skillPathURI, HttpMethod.GET, null,
@@ -76,6 +76,11 @@ public class RosterGeneratorTest {
     private ResponseEntity<List<ShiftTemplateView>> getShiftTemplates(Integer tenantId) {
         return restTemplate.exchange(rotationPathURI, HttpMethod.GET, null,
                                      new ParameterizedTypeReference<List<ShiftTemplateView>>() {}, tenantId);
+    }
+
+    private ResponseEntity<List<ShiftView>> getShifts(Integer tenantId) {
+        return restTemplate.exchange(shiftPathURI, HttpMethod.GET, null,
+                                     new ParameterizedTypeReference<List<ShiftView>>() {}, tenantId);
     }
 
     private ResponseEntity<List<Tenant>> getTenants() {
@@ -143,13 +148,19 @@ public class RosterGeneratorTest {
     }
 
     @Test
+    public void generateShiftListTest() {
+        ResponseEntity<List<ShiftView>> response = getShifts(1);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().get(0).getStartDateTime().toString()).isEqualTo("2019-08-12T06:00");
+        assertThat(response.getBody().get(0).getEndDateTime().toString()).isEqualTo("2019-08-12T14:00");
+    }
+
+    @Test
     public void generateTenantListTest() {
         ResponseEntity<List<Tenant>> response = getTenants();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().get(0).getName()).isEqualTo("Hospital Los Angeles (98 employees)");
     }
-
-    // TODO: Add tests for generating Shift entities once CRUD methods are implemented
-
 }
