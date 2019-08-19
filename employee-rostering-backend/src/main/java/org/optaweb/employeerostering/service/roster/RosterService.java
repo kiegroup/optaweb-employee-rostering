@@ -149,7 +149,8 @@ public class RosterService extends AbstractRestService {
                                                List<Spot> spotList) {
         ShiftRosterView shiftRosterView = new ShiftRosterView(tenantId, startDate, endDate);
         shiftRosterView.setSpotList(spotList);
-        List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId);
+        List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, PageRequest.of(0,
+                                                                                                    Integer.MAX_VALUE));
         shiftRosterView.setEmployeeList(employeeList);
 
         Set<Spot> spotSet = new HashSet<>(spotList);
@@ -196,7 +197,8 @@ public class RosterService extends AbstractRestService {
         ZoneId zoneId = getRosterState(tenantId).getTimeZone();
         List<Skill> skillList = skillRepository.findAllByTenantId(tenantId);
         List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
-        List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId);
+        List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, PageRequest.of(0,
+                                                                                                    Integer.MAX_VALUE));
         List<EmployeeAvailability> employeeAvailabilityList = employeeAvailabilityRepository.findAllByTenantId(tenantId)
                 .stream()
                 .map(ea -> ea.inTimeZone(zoneId))
@@ -216,7 +218,8 @@ public class RosterService extends AbstractRestService {
     public void updateShiftsOfRoster(Roster newRoster) {
         Integer tenantId = newRoster.getTenantId();
         // TODO HACK avoids optimistic locking exception while solve(), but it circumvents optimistic locking completely
-        Map<Long, Employee> employeeIdMap = employeeRepository.findAllByTenantId(tenantId)
+        Map<Long, Employee> employeeIdMap = employeeRepository.findAllByTenantId(tenantId,
+                                                                                 PageRequest.of(0, Integer.MAX_VALUE))
                 .stream()
                 .collect(Collectors.toMap(Employee::getId, Function.identity()));
 

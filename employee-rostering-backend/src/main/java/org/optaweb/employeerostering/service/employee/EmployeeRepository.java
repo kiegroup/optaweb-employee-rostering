@@ -19,6 +19,7 @@ package org.optaweb.employeerostering.service.employee;
 import java.util.List;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -30,7 +31,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("select e from Employee e " +
             "where e.tenantId = :tenantId " +
             "order by LOWER(e.name)")
-    List<Employee> findAllByTenantId(Integer tenantId);
+    List<Employee> findAllByTenantId(Integer tenantId, Pageable pageable);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from Employee e where e.tenantId = :tenantId")
