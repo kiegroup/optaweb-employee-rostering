@@ -30,6 +30,7 @@ import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.roster.RosterStateRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,7 +66,7 @@ public class EmployeeService extends AbstractRestService {
 
     @Transactional
     public List<Employee> getEmployeeList(Integer tenantId) {
-        return employeeRepository.findAllByTenantId(tenantId);
+        return employeeRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
     }
 
     @Transactional
