@@ -16,9 +16,12 @@
 
 package org.optaweb.employeerostering.service.shift;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.optaweb.employeerostering.domain.shift.Shift;
+import org.optaweb.employeerostering.domain.spot.Spot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -39,4 +42,16 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     @Query("delete from Shift s" +
             " where s.tenantId = :tenantId")
     void deleteForTenant(Integer tenantId);
+
+    @Query("select distinct sa from Shift sa" +
+            " left join fetch sa.spot s" +
+            " left join fetch sa.rotationEmployee re" +
+            " left join fetch sa.employee e" +
+            " where sa.tenantId = :tenantId" +
+            " and sa.spot IN :spotSet" +
+            " and sa.endDateTime >= :startDateTime" +
+            " and sa.startDateTime < :endDateTime" +
+            " order by sa.startDateTime, s.name, e.name")
+    List<Shift> filterWithSpots(Integer tenantId, Set<Spot> spotSet, OffsetDateTime startDateTime,
+                                OffsetDateTime endDateTime);
 }
