@@ -16,48 +16,63 @@
 
 package org.optaweb.employeerostering.service.roster;
 
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
+import org.optaweb.employeerostering.domain.roster.Pagination;
 import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.domain.roster.RosterState;
+import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.domain.shift.Shift;
+import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
+import org.optaweb.employeerostering.service.common.IndictmentUtils;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
+import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.optaweb.employeerostering.service.tenant.RosterParametrizationRepository;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RosterService extends AbstractRestService {
 
-    private final RosterStateRepository rosterStateRepository;
-    private final SkillRepository skillRepository;
-    private final SpotRepository spotRepository;
-    private final EmployeeRepository employeeRepository;
-    private final EmployeeAvailabilityRepository employeeAvailabilityRepository;
-    private final ShiftRepository shiftRepository;
-    private final RosterParametrizationRepository rosterParametrizationRepository;
+    private RosterStateRepository rosterStateRepository;
+    private SkillRepository skillRepository;
+    private SpotRepository spotRepository;
+    private EmployeeRepository employeeRepository;
+    private EmployeeAvailabilityRepository employeeAvailabilityRepository;
+    private ShiftRepository shiftRepository;
+    private RosterParametrizationRepository rosterParametrizationRepository;
+    private WannabeSolverManager solverManager;
+    private IndictmentUtils indictmentUtils;
 
     public RosterService(RosterStateRepository rosterStateRepository, SkillRepository skillRepository,
                          SpotRepository spotRepository, EmployeeRepository employeeRepository,
                          EmployeeAvailabilityRepository employeeAvailabilityRepository,
                          ShiftRepository shiftRepository,
-                         RosterParametrizationRepository rosterParametrizationRepository) {
+                         RosterParametrizationRepository rosterParametrizationRepository,
+                         WannabeSolverManager solverManager, IndictmentUtils indictmentUtils) {
         this.rosterStateRepository = rosterStateRepository;
         this.skillRepository = skillRepository;
         this.spotRepository = spotRepository;
@@ -65,6 +80,8 @@ public class RosterService extends AbstractRestService {
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
         this.shiftRepository = shiftRepository;
         this.rosterParametrizationRepository = rosterParametrizationRepository;
+        this.solverManager = solverManager;
+        this.indictmentUtils = indictmentUtils;
     }
 
     // ************************************************************************
@@ -85,7 +102,84 @@ public class RosterService extends AbstractRestService {
     // ShiftRosterView
     // ************************************************************************
 
-    // TODO: Add getShiftRosterView() methods once SolverManager and IndictmentUtils are added
+    @Transactional
+    public ShiftRosterView getCurrentShiftRosterView(Integer tenantId, Integer pageNumber,
+                                                     Integer numberOfItemsPerPage) {
+        RosterState rosterState = getRosterState(tenantId);
+        LocalDate startDate = rosterState.getFirstPublishedDate();
+        LocalDate endDate = rosterState.getFirstUnplannedDate();
+        return getShiftRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
+    }
+
+    @Transactional
+    public ShiftRosterView getShiftRosterView(final Integer tenantId, Integer pageNumber, Integer numberOfItemsPerPage,
+                                              final String startDateString,
+                                              final String endDateString) {
+
+        return getShiftRosterView(tenantId, LocalDate.parse(startDateString), LocalDate.parse(endDateString),
+                                  Pagination.of(pageNumber, numberOfItemsPerPage));
+    }
+
+    @Transactional
+    private ShiftRosterView getShiftRosterView(final Integer tenantId,
+                                               final LocalDate startDate,
+                                               final LocalDate endDate,
+                                               final Pagination pagination) {
+
+        Pageable spotPage = PageRequest.of(pagination.getPageNumber(), pagination.getNumberOfItemsPerPage());
+        final List<Spot> spots = spotRepository.findAllByTenantId(tenantId, spotPage);
+
+        return getShiftRosterView(tenantId, startDate, endDate, spots);
+    }
+
+    @Transactional
+    public ShiftRosterView getShiftRosterViewFor(Integer tenantId, String startDateString, String endDateString,
+                                                 List<Spot> spots) {
+        LocalDate startDate = LocalDate.parse(startDateString);
+        LocalDate endDate = LocalDate.parse(endDateString);
+        if (null == spots) {
+            throw new IllegalArgumentException("spots is null!");
+        }
+
+        return getShiftRosterView(tenantId, startDate, endDate, spots);
+    }
+
+    @Transactional
+    private ShiftRosterView getShiftRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate,
+                                               List<Spot> spotList) {
+        ShiftRosterView shiftRosterView = new ShiftRosterView(tenantId, startDate, endDate);
+        shiftRosterView.setSpotList(spotList);
+        List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId);
+        shiftRosterView.setEmployeeList(employeeList);
+
+        Set<Spot> spotSet = new HashSet<>(spotList);
+        ZoneId timeZone = getRosterState(tenantId).getTimeZone();
+
+        List<Shift> shiftList = shiftRepository.filterWithSpots(tenantId, spotSet,
+                                                                startDate.atStartOfDay(timeZone).toOffsetDateTime(),
+                                                                endDate.atStartOfDay(timeZone).toOffsetDateTime());
+
+        Map<Long, List<ShiftView>> spotIdToShiftViewListMap = new LinkedHashMap<>(spotList.size());
+        // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched, so the
+        //  score might be inaccurate
+        Roster roster = solverManager.getRoster(tenantId);
+        if (roster == null) {
+            roster = buildRoster(tenantId);
+        }
+        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
+
+        for (Shift shift : shiftList) {
+            Indictment indictment = indictmentMap.get(shift);
+            spotIdToShiftViewListMap.computeIfAbsent(shift.getSpot().getId(), k -> new ArrayList<>())
+                    .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+        }
+        shiftRosterView.setSpotIdToShiftViewListMap(spotIdToShiftViewListMap);
+
+        shiftRosterView.setScore(roster == null ? null : roster.getScore());
+        shiftRosterView.setRosterState(getRosterState(tenantId));
+
+        return shiftRosterView;
+    }
 
     // ************************************************************************
     // AvailabilityRosterView
@@ -114,8 +208,8 @@ public class RosterService extends AbstractRestService {
 
         // TODO fill in the score too - do we inject a ScoreDirectorFactory?
         return new Roster((long) tenantId, tenantId, skillList, spotList, employeeList, employeeAvailabilityList,
-                rosterParametrizationRepository.findByTenantId(tenantId).get(), getRosterState(tenantId),
-                shiftList);
+                          rosterParametrizationRepository.findByTenantId(tenantId).get(), getRosterState(tenantId),
+                          shiftList);
     }
 
     @Transactional
@@ -136,7 +230,7 @@ public class RosterService extends AbstractRestService {
                 continue;
             }
             attachedShift.setEmployee((shift.getEmployee() == null) ?
-                    null : employeeIdMap.get(shift.getEmployee().getId()));
+                                              null : employeeIdMap.get(shift.getEmployee().getId()));
         }
     }
 
