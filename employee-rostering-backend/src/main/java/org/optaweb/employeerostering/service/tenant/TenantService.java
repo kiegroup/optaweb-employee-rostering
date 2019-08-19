@@ -32,6 +32,7 @@ import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityReposi
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.roster.RosterStateRepository;
 import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
+import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,8 @@ public class TenantService extends AbstractRestService {
 
     private final RosterStateRepository rosterStateRepository;
 
+    private final ShiftRepository shiftRepository;
+
     private final EmployeeAvailabilityRepository employeeAvailabilityRepository;
 
     private final ShiftTemplateRepository shiftTemplateRepository;
@@ -59,6 +62,7 @@ public class TenantService extends AbstractRestService {
     public TenantService(TenantRepository tenantRepository,
                          RosterParametrizationRepository rosterParametrizationRepository,
                          RosterStateRepository rosterStateRepository,
+                         ShiftRepository shiftRepository,
                          EmployeeAvailabilityRepository employeeAvailabilityRepository,
                          ShiftTemplateRepository shiftTemplateRepository,
                          EmployeeRepository employeeRepository,
@@ -67,6 +71,7 @@ public class TenantService extends AbstractRestService {
         this.tenantRepository = tenantRepository;
         this.rosterParametrizationRepository = rosterParametrizationRepository;
         this.rosterStateRepository = rosterStateRepository;
+        this.shiftRepository = shiftRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
         this.shiftTemplateRepository = shiftTemplateRepository;
         this.employeeRepository = employeeRepository;
@@ -126,7 +131,7 @@ public class TenantService extends AbstractRestService {
         // Employee, Spot, Skill,
         // RosterParametrization, RosterState
 
-        // TODO: Execute Shift.deleteForTenant once Shift CRUD is implemented
+        shiftRepository.deleteForTenant(id);
         employeeAvailabilityRepository.deleteForTenant(id);
         shiftTemplateRepository.deleteForTenant(id);
         employeeRepository.deleteForTenant(id);
