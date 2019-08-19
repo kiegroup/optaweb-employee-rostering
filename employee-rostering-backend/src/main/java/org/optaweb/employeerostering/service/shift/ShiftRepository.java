@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -54,4 +55,16 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             " order by sa.startDateTime, s.name, e.name")
     List<Shift> filterWithSpots(Integer tenantId, Set<Spot> spotSet, OffsetDateTime startDateTime,
                                 OffsetDateTime endDateTime);
+
+    @Query("select distinct sa from Shift sa" +
+            " left join fetch sa.spot s" +
+            " left join fetch sa.rotationEmployee re" +
+            " left join fetch sa.employee e" +
+            " where sa.tenantId = :tenantId" +
+            " and sa.employee IN :employeeSet" +
+            " and sa.endDateTime >= :startDateTime" +
+            " and sa.startDateTime < :endDateTime" +
+            " order by sa.startDateTime, s.name, e.name")
+    List<Shift> filterWithEmployees(Integer tenantId, Set<Employee> employeeSet, OffsetDateTime startDateTime,
+                                    OffsetDateTime endDateTime);
 }
