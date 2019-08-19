@@ -22,6 +22,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.common.DateTimeUtils;
@@ -137,6 +139,7 @@ public class ShiftView extends AbstractPersistable {
         this.spotId = spotId;
     }
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getStartDateTime() {
         return startDateTime;
     }
@@ -145,6 +148,7 @@ public class ShiftView extends AbstractPersistable {
         this.startDateTime = startDateTime;
     }
 
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     public LocalDateTime getEndDateTime() {
         return endDateTime;
     }
