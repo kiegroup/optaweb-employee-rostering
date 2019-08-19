@@ -21,7 +21,9 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.roster.RosterState;
+import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.springframework.http.HttpStatus;
@@ -99,7 +101,35 @@ public class RosterController {
     // AvailabilityRosterView
     // ************************************************************************
 
-    // TODO: Add getAvailabilityRosterView() methods once SolverManager and IndictmentUtils are added
+    @GetMapping("/availabilityRosterView/current")
+    public ResponseEntity<AvailabilityRosterView> getCurrentAvailabilityRosterView(
+            @PathVariable @Min(0) Integer tenantId, @RequestParam(name = "p", required = false) Integer pageNumber,
+            @RequestParam(name = "n", required = false) Integer numberOfItemsPerPage) {
+        return new ResponseEntity<>(rosterService.getCurrentAvailabilityRosterView(tenantId, pageNumber,
+                                                                                   numberOfItemsPerPage),
+                                    HttpStatus.OK);
+    }
+
+    @GetMapping("/availabilityRosterView")
+    public ResponseEntity<AvailabilityRosterView> getAvailabilityRosterView(
+            @PathVariable @Min(0) Integer tenantId, @RequestParam(name = "p", required = false) Integer pageNumber,
+            @RequestParam(name = "n", required = false) Integer numberOfItemsPerPage,
+            @RequestParam(name = "startDate") String startDateString,
+            @RequestParam(name = "endDate") String endDateString) {
+        return new ResponseEntity<>(rosterService.getAvailabilityRosterView(tenantId, pageNumber, numberOfItemsPerPage,
+                                                                            startDateString, endDateString),
+                                    HttpStatus.OK);
+    }
+
+    @PostMapping("/availabilityRosterView/for")
+    // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
+    public ResponseEntity<AvailabilityRosterView> getAvailabilityRosterViewFor(
+            @PathVariable @Min(0) Integer tenantId, @RequestParam(name = "startDate") String startDateString,
+            @RequestParam(name = "endDate") String endDateString, @RequestBody @Valid List<Employee> employees) {
+        return new ResponseEntity<>(rosterService.getAvailabilityRosterViewFor(tenantId, startDateString,
+                                                                               endDateString, employees),
+                                    HttpStatus.OK);
+    }
 
     // ************************************************************************
     // Solver methods

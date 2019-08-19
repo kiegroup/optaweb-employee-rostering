@@ -32,9 +32,11 @@ import javax.persistence.EntityNotFoundException;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.roster.Pagination;
 import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.domain.roster.RosterState;
+import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
@@ -186,7 +188,110 @@ public class RosterService extends AbstractRestService {
     // AvailabilityRosterView
     // ************************************************************************
 
-    // TODO: Add getAvailabilityRosterView() methods once SolverManager and IndictmentUtils are added
+    @Transactional
+    public AvailabilityRosterView getCurrentAvailabilityRosterView(Integer tenantId,
+                                                                   Integer pageNumber,
+                                                                   Integer numberOfItemsPerPage) {
+        RosterState rosterState = getRosterState(tenantId);
+        LocalDate startDate = rosterState.getLastHistoricDate();
+        LocalDate endDate = rosterState.getFirstUnplannedDate();
+        return getAvailabilityRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
+    }
+
+    @Transactional
+    public AvailabilityRosterView getAvailabilityRosterView(Integer tenantId,
+                                                            Integer pageNumber,
+                                                            Integer numberOfItemsPerPage,
+                                                            String startDateString,
+                                                            String endDateString) {
+        LocalDate startDate = LocalDate.parse(startDateString);
+        LocalDate endDate = LocalDate.parse(endDateString);
+        return getAvailabilityRosterView(tenantId, startDate, endDate, Pagination.of(pageNumber, numberOfItemsPerPage));
+    }
+
+    @Transactional
+    public AvailabilityRosterView getAvailabilityRosterViewFor(Integer tenantId,
+                                                               String startDateString,
+                                                               String endDateString,
+                                                               List<Employee> employeeList) {
+        LocalDate startDate = LocalDate.parse(startDateString);
+        LocalDate endDate = LocalDate.parse(endDateString);
+        if (employeeList == null) {
+            throw new IllegalArgumentException("The employeeList (" + employeeList + ") must not be null.");
+        }
+        return getAvailabilityRosterView(tenantId, startDate, endDate, employeeList);
+    }
+
+    @Transactional
+    private AvailabilityRosterView getAvailabilityRosterView(final Integer tenantId,
+                                                             final LocalDate startDate,
+                                                             final LocalDate endDate,
+                                                             final Pagination pagination) {
+
+        Pageable employeePage = PageRequest.of(pagination.getPageNumber(), pagination.getNumberOfItemsPerPage());
+        final List<Employee> employeeList = employeeRepository.findAllByTenantId(tenantId, employeePage);
+
+        return getAvailabilityRosterView(tenantId, startDate, endDate, employeeList);
+    }
+
+    @Transactional
+    private AvailabilityRosterView getAvailabilityRosterView(Integer tenantId,
+                                                               LocalDate startDate,
+                                                               LocalDate endDate,
+                                                               List<Employee> employeeList) {
+        AvailabilityRosterView availabilityRosterView = new AvailabilityRosterView(tenantId, startDate, endDate);
+        List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
+        availabilityRosterView.setSpotList(spotList);
+
+        availabilityRosterView.setEmployeeList(employeeList);
+
+        Map<Long, List<ShiftView>> employeeIdToShiftViewListMap = new LinkedHashMap<>(employeeList.size());
+        List<ShiftView> unassignedShiftViewList = new ArrayList<>();
+        Set<Employee> employeeSet = new HashSet<>(employeeList);
+        ZoneId timeZone = getRosterState(tenantId).getTimeZone();
+
+        List<Shift> shiftList = shiftRepository.filterWithEmployees(tenantId, employeeSet,
+                                                                    startDate.atStartOfDay(timeZone).toOffsetDateTime(),
+                                                                    endDate.atStartOfDay(timeZone).toOffsetDateTime());
+
+        Roster roster = solverManager.getRoster(tenantId);
+        if (roster == null) {
+            roster = buildRoster(tenantId);
+        }
+        Map<Object, Indictment> indictmentMap = indictmentUtils.getIndictmentMapForRoster(roster);
+
+        for (Shift shift : shiftList) {
+            Indictment indictment = indictmentMap.get(shift);
+            if (shift.getEmployee() != null) {
+                employeeIdToShiftViewListMap.computeIfAbsent(shift.getEmployee().getId(),
+                                                             k -> new ArrayList<>())
+                        .add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+            } else {
+                unassignedShiftViewList.add(indictmentUtils.getShiftViewWithIndictment(timeZone, shift, indictment));
+            }
+        }
+        availabilityRosterView.setEmployeeIdToShiftViewListMap(employeeIdToShiftViewListMap);
+        availabilityRosterView.setUnassignedShiftViewList(unassignedShiftViewList);
+        Map<Long, List<EmployeeAvailabilityView>> employeeIdToAvailabilityViewListMap = new LinkedHashMap<>(
+                employeeList.size());
+        List<EmployeeAvailability> employeeAvailabilityList =
+                employeeAvailabilityRepository.filterWithEmployee(tenantId, employeeSet,
+                                                                  startDate.atStartOfDay(timeZone).toOffsetDateTime(),
+                                                                  endDate.atStartOfDay(timeZone).toOffsetDateTime());
+
+        for (EmployeeAvailability employeeAvailability : employeeAvailabilityList) {
+            employeeIdToAvailabilityViewListMap.computeIfAbsent(employeeAvailability.getEmployee().getId(),
+                                                                k -> new ArrayList<>())
+                    .add(new EmployeeAvailabilityView(timeZone, employeeAvailability));
+        }
+        availabilityRosterView.setEmployeeIdToAvailabilityViewListMap(employeeIdToAvailabilityViewListMap);
+
+        // TODO FIXME race condition solverManager's bestSolution might differ from the one we just fetched so the
+        //  score might be inaccurate.
+        availabilityRosterView.setScore(roster.getScore());
+        availabilityRosterView.setRosterState(getRosterState(tenantId));
+        return availabilityRosterView;
+    }
 
     // ************************************************************************
     // Roster
