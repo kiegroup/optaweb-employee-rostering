@@ -16,8 +16,11 @@
 
 package org.optaweb.employeerostering.service.employee;
 
+import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Set;
 
+import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -36,4 +39,14 @@ public interface EmployeeAvailabilityRepository extends JpaRepository<EmployeeAv
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from EmployeeAvailability ea where ea.tenantId = :tenantId")
     void deleteForTenant(Integer tenantId);
+
+    @Query("select distinct ea from EmployeeAvailability ea" +
+            " left join fetch ea.employee e" +
+            " where ea.tenantId = :tenantId" +
+            " and ea.employee IN :employeeSet" +
+            " and ea.endDateTime >= :startDateTime" +
+            " and ea.startDateTime < :endDateTime" +
+            " order by e.name, ea.startDateTime")
+    List<EmployeeAvailability> filterWithEmployee(Integer tenantId, Set<Employee> employeeSet,
+                                                  OffsetDateTime startDateTime, OffsetDateTime endDateTime);
 }
