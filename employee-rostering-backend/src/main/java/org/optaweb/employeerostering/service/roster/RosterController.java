@@ -135,6 +135,16 @@ public class RosterController {
     // Solver methods
     // ************************************************************************
 
+    @PostMapping("/solve")
+    public void solveRoster(@PathVariable @Min(0) Integer tenantId) {
+        rosterService.solveRoster(tenantId);
+    }
+
+    @PostMapping("/terminate")
+    public void terminateRosterEarly(@PathVariable @Min(0) Integer tenantId) {
+        rosterService.terminateRosterEarly(tenantId);
+    }
+
     // ************************************************************************
     // Publishing/Provisioning methods
     // ************************************************************************
