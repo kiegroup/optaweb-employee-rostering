@@ -346,6 +346,14 @@ public class RosterService extends AbstractRestService {
     // Solver methods
     // ************************************************************************
 
+    public void solveRoster(Integer tenantId) {
+        solverManager.solve(tenantId);
+    }
+
+    public void terminateRosterEarly(Integer tenantId) {
+        solverManager.terminate(tenantId);
+    }
+
     // ************************************************************************
     // Publishing/Provisioning methods
     // ************************************************************************
