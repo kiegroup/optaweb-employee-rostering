@@ -81,8 +81,8 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                                                                Integer numberOfItemsPerPage, String startDateString,
                                                                String endDateString) {
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "shiftRosterView")
-                .queryParam("pageNumber", pageNumber)
-                .queryParam("numberOfItemsPerPage", numberOfItemsPerPage)
+                .queryParam("p", pageNumber)
+                .queryParam("n", numberOfItemsPerPage)
                 .queryParam("startDate", startDateString)
                 .queryParam("endDate", endDateString)
                 .build()
@@ -96,8 +96,8 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                                                                              String startDateString,
                                                                              String endDateString) {
         UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "availabilityRosterView")
-                .queryParam("pageNumber", pageNumber)
-                .queryParam("numberOfItemsPerPage", numberOfItemsPerPage)
+                .queryParam("p", pageNumber)
+                .queryParam("n", numberOfItemsPerPage)
                 .queryParam("startDate", startDateString)
                 .queryParam("endDate", endDateString)
                 .build()
