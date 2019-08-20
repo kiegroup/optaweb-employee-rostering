@@ -16,20 +16,41 @@
 
 package org.optaweb.employeerostering.roster;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
+import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.contract.view.ContractView;
+import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
+import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.roster.RosterState;
+import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
+import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
+import org.optaweb.employeerostering.domain.shift.view.ShiftView;
+import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.domain.spot.view.SpotView;
+import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -39,14 +60,97 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     private TestRestTemplate restTemplate;
 
     private final String rosterPathURI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
+    private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
+    private final String contractPathURI = "http://localhost:8080/rest/tenant/{tenantId}/contract/";
+    private final String employeePathURI = "http://localhost:8080/rest/tenant/{tenantId}/employee/";
+    private final String shiftPathURI = "http://localhost:8080/rest/tenant/{tenantId}/shift/";
+    private final String employeeAvailabilityPathURI =
+            "http://localhost:8080/rest/tenant/{tenantId}/employee/availability/";
+
+    private List<Spot> spotList;
+    private List<Employee> employeeList;
+    private List<ShiftView> shiftViewList;
+    private List<EmployeeAvailabilityView> employeeAvailabilityViewList;
 
     private ResponseEntity<RosterState> getRosterState(Integer id) {
         return restTemplate.getForEntity(rosterPathURI + id, RosterState.class, TENANT_ID);
     }
 
-    @Before
-    public void setup() {
+    private ResponseEntity<ShiftRosterView> getShiftRosterView(Integer pageNumber,
+                                                               Integer numberOfItemsPerPage, String startDateString,
+                                                               String endDateString) {
+        UriComponents uriComponents = UriComponentsBuilder.fromUriString(rosterPathURI + "shiftRosterView")
+                .queryParam("pageNumber", pageNumber)
+                .queryParam("numberOfItemsPerPage", numberOfItemsPerPage)
+                .queryParam("startDate", startDateString)
+                .queryParam("endDate", endDateString)
+                .build()
+                .expand(Collections.singletonMap("tenantId", TENANT_ID));
+
+        return restTemplate.getForEntity(uriComponents.toUriString(), ShiftRosterView.class);
+    }
+
+    private Spot addSpot(String name) {
+        SpotView spotView = new SpotView(TENANT_ID, name, Collections.emptySet());
+        return restTemplate.postForEntity(spotPathURI + "add", spotView, Spot.class, TENANT_ID).getBody();
+    }
+
+    private Contract addContract(String name) {
+        ContractView contractView = new ContractView(TENANT_ID, name);
+        return restTemplate.postForEntity(contractPathURI + "add", contractView, Contract.class, TENANT_ID).getBody();
+    }
+
+    private Employee addEmployee(String name, Contract contract) {
+        Employee employee = new Employee(TENANT_ID, name, contract, Collections.emptySet());
+        return restTemplate.postForEntity(employeePathURI + "add", employee, Employee.class, TENANT_ID).getBody();
+    }
+
+    private ShiftView addShift(Spot spot, Employee employee, LocalDateTime startDateTime,
+                               Duration duration) {
+        ShiftView shiftView = new ShiftView(TENANT_ID, spot, startDateTime, startDateTime.plus(duration));
+        if (employee != null) {
+            shiftView.setEmployeeId(employee.getId());
+        }
+        return restTemplate.postForEntity(shiftPathURI + "add", shiftView, ShiftView.class, TENANT_ID).getBody();
+    }
+
+    private EmployeeAvailabilityView addEmployeeAvailability(Employee employee,
+                                                             EmployeeAvailabilityState
+                                                                     employeeAvailabilityState,
+                                                             LocalDateTime startDateTime,
+                                                             Duration duration) {
+        EmployeeAvailabilityView employeeAvailabilityView = new EmployeeAvailabilityView(TENANT_ID, employee,
+                                                                                         startDateTime,
+                                                                                         startDateTime.plus(duration),
+                                                                                         employeeAvailabilityState);
+        return restTemplate.postForEntity(employeeAvailabilityPathURI + "add", employeeAvailabilityView,
+                                          EmployeeAvailabilityView.class, TENANT_ID).getBody();
+    }
+
+    private void createTestRoster() {
         createTestTenant();
+
+        Contract contract = addContract("contract");
+        Employee employeeA = addEmployee("Employee A", contract);
+        Employee employeeB = addEmployee("Employee B", contract);
+
+        Spot spotA = addSpot("Spot A");
+        Spot spotB = addSpot("Spot B");
+
+        EmployeeAvailabilityView employeeAvailabilityA = addEmployeeAvailability(employeeA,
+                                                                                 EmployeeAvailabilityState.UNAVAILABLE,
+                                                                                 LocalDateTime.of(2000, 1, 1, 0, 0),
+                                                                                 Duration.ofDays(1));
+
+        ShiftView shiftA = addShift(spotA, null, LocalDateTime.of(2000, 1, 1, 9, 0), Duration.ofHours(8));
+        ShiftView shiftB = addShift(spotB, employeeB, LocalDateTime.of(2000, 1, 1, 9, 0), Duration.ofHours(8));
+        ShiftView shiftC = addShift(spotA, employeeA, LocalDateTime.of(2000, 1, 2, 9, 0), Duration.ofHours(8));
+        ShiftView shiftD = addShift(spotB, employeeB, LocalDateTime.of(2000, 1, 2, 9, 0), Duration.ofHours(8));
+
+        spotList = Arrays.asList(spotA, spotB);
+        employeeList = Arrays.asList(employeeA, employeeB);
+        shiftViewList = Arrays.asList(shiftA, shiftB, shiftC, shiftD);
+        employeeAvailabilityViewList = Arrays.asList(employeeAvailabilityA);
     }
 
     @After
@@ -56,13 +160,20 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
 
     @Test
     public void getRosterStateTest() {
-        ResponseEntity<RosterState> rosterStateResponseEntity = getRosterState(TENANT_ID);
+        RosterStateView rosterStateView = new RosterStateView(null, 7, LocalDate.of(2000, 1, 1), 7, 7, 0, 7,
+                                                              LocalDate.of(1999, 12, 24),
+                                                              ZoneOffset.UTC);
+        rosterStateView.setTenant(new Tenant("test"));
+        Tenant tenant = createTestTenant(rosterStateView);
+        rosterStateView.setTenant(tenant);
+        rosterStateView.setTenantId(tenant.getId());
 
+        ResponseEntity<RosterState> rosterStateResponseEntity = getRosterState(TENANT_ID);
         assertThat(rosterStateResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(rosterStateResponseEntity.getBody().getPublishNotice()).isEqualTo(7);
         assertThat(rosterStateResponseEntity.getBody().getFirstDraftDate().toString()).isEqualTo("2000-01-01");
         assertThat(rosterStateResponseEntity.getBody().getPublishLength()).isEqualTo(7);
-        assertThat(rosterStateResponseEntity.getBody().getDraftLength()).isEqualTo(24);
+        assertThat(rosterStateResponseEntity.getBody().getDraftLength()).isEqualTo(7);
         assertThat(rosterStateResponseEntity.getBody().getUnplannedRotationOffset()).isEqualTo(0);
         assertThat(rosterStateResponseEntity.getBody().getRotationLength()).isEqualTo(7);
         assertThat(rosterStateResponseEntity.getBody().getLastHistoricDate().toString()).isEqualTo("1999-12-24");
@@ -72,7 +183,40 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(rosterStateResponseEntity.getBody().getTenant().getId()).isEqualTo(TENANT_ID);
     }
 
-    // TODO: Add AvailabilityRosterView tests when Tenant CRUD methods are implemented
+    @Test
+    public void testGetShiftRosterView() {
+        createTestRoster();
 
-    // TODO: Add ShiftRosterView tests when Tenant when Tenant CRUD methods are implemented
+        LocalDate startDate = LocalDate.of(2000, 1, 1);
+        LocalDate endDate = LocalDate.of(2000, 1, 2);
+        ResponseEntity<ShiftRosterView> shiftRosterViewResponse = getShiftRosterView(0, 1,
+                                                                                     startDate.toString(),
+                                                                                     endDate.toString());
+        ShiftRosterView shiftRosterView = shiftRosterViewResponse.getBody();
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(shiftRosterView).isNotNull();
+        assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
+        assertThat(shiftRosterView.getSpotList()).containsExactlyElementsOf(spotList);
+        assertThat(shiftRosterView.getStartDate()).isEqualTo(startDate);
+        assertThat(shiftRosterView.getEndDate()).isEqualTo(endDate);
+        assertThat(shiftRosterView.getSpotIdToShiftViewListMap()).contains(entry(spotList.get(0).getId(),
+                                                                                     Arrays.asList(
+                                                                                             shiftViewList.get(0))));
+        assertThat(shiftRosterView.getTenantId()).isEqualTo(TENANT_ID);
+
+        shiftRosterViewResponse = getShiftRosterView(1, 1, startDate.toString(), endDate.toString());
+        shiftRosterView = shiftRosterViewResponse.getBody();
+        assertThat(shiftRosterViewResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(shiftRosterView).isNotNull();
+        assertThat(shiftRosterView.getEmployeeList()).containsExactlyElementsOf(employeeList);
+        assertThat(shiftRosterView.getSpotList()).containsExactlyElementsOf(spotList);
+        assertThat(shiftRosterView.getStartDate()).isEqualTo(startDate);
+        assertThat(shiftRosterView.getEndDate()).isEqualTo(endDate);
+        assertThat(shiftRosterView.getSpotIdToShiftViewListMap()).contains(entry(spotList.get(1).getId(),
+                                                                                     Arrays.asList(
+                                                                                             shiftViewList.get(1))));
+        assertThat(shiftRosterView.getTenantId()).isEqualTo(TENANT_ID);
+    }
+
+    // TODO: Add AvailabilityRosterView tests when Tenant CRUD methods are implemented
 }
