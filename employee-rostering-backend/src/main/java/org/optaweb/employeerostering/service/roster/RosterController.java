@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import org.optaweb.employeerostering.domain.employee.Employee;
+import org.optaweb.employeerostering.domain.roster.PublishResult;
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
@@ -132,7 +133,7 @@ public class RosterController {
     }
 
     // ************************************************************************
-    // Solver methods
+    // Solver
     // ************************************************************************
 
     @PostMapping("/solve")
@@ -146,8 +147,11 @@ public class RosterController {
     }
 
     // ************************************************************************
-    // Publishing/Provisioning methods
+    // Publish
     // ************************************************************************
 
-    // TODO: Implement publishAndProvision()
+    @PostMapping("/publishAndProvision")
+    public ResponseEntity<PublishResult> publishAndProvision(@PathVariable @Min(0) Integer tenantId) {
+        return new ResponseEntity<>(rosterService.publishAndProvision(tenantId), HttpStatus.OK);
+    }
 }
