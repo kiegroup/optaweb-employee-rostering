@@ -76,7 +76,7 @@ public class RosterController {
                                                               @RequestParam(name = "p", required = false)
                                                                       Integer pageNumber,
                                                               @RequestParam(name = "n", required = false)
-                                                                          Integer numberOfItemsPerPage,
+                                                                      Integer numberOfItemsPerPage,
                                                               @RequestParam(name = "startDate") String startDateString,
                                                               @RequestParam(name = "endDate") String endDateString) {
         return new ResponseEntity<>(rosterService.getShiftRosterView(tenantId, pageNumber, numberOfItemsPerPage,
