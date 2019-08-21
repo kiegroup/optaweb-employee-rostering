@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Schedule wrapper component should defer to prop 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label=""
+  bodyContent="Body"
+  className="my-popup"
+  closeBtnAriaLabel="Close"
+  enableFlip={true}
+  footerContent={null}
+  headerContent="Title"
+  hideOnOutsideClick={true}
+  isVisible={null}
+  maxWidth="calc(1.5rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="right"
+  shouldClose={[Function]}
+  zIndex={9999}
+>
+  <div
+    className="class continues-next-day"
+    prop={true}
+    style={
+      Object {
+        "backgroundColor": "transparent",
+        "border": "none",
+        "color": "red",
+        "gridRowEnd": 101,
+        "gridRowStart": 34,
+        "height": "67%",
+        "top": "33%",
+        "xOffset": 0,
+      }
+    }
+  />
+</Popover>
+`;
