@@ -46,7 +46,7 @@ export function isDay(start: Date, end: Date) {
 
 const localizer = momentLocalizer(moment);
 export default function Schedule<T extends object>(props: Props<T>): React.ReactElement<Props<T>> {
-  const length = Math.ceil(moment.duration(moment(props.startDate).to(moment(props.endDate))).asDays());
+  const length = Math.ceil(moment(props.endDate).diff(moment(props.startDate), "days")) + 1;
   return (
     <div style={{
       height: "calc(100% - 20px)"
