@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.service.solver;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
 
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
@@ -80,7 +81,7 @@ public class WannabeSolverManager implements ApplicationRunner {
         }
     }
 
-    public void solve(Integer tenantId) {
+    public CountDownLatch solve(Integer tenantId) {
         logger.info("Scheduling solver for tenantId ({})...", tenantId);
         // No 2 solve() calls of the same dataset in parallel
         tenantIdToSolverStateMap.compute(tenantId, (k, solverStatus) -> {
@@ -90,6 +91,8 @@ public class WannabeSolverManager implements ApplicationRunner {
             }
             return SolverStatus.SCHEDULED;
         });
+
+        final CountDownLatch solvingEndedLatch = new CountDownLatch(1);
         taskExecutor.execute(() -> {
             try {
                 Solver<Roster> solver = solverFactory.buildSolver();
@@ -107,6 +110,7 @@ public class WannabeSolverManager implements ApplicationRunner {
                     tenantIdToSolverStateMap.put(tenantId, SolverStatus.SOLVING);
                     // TODO No need to store the returned roster because the SolverEventListener already does it?
                     solver.solve(roster);
+                    solvingEndedLatch.countDown();
                 } finally {
                     tenantIdToSolverMap.remove(tenantId);
                     tenantIdToSolverStateMap.put(tenantId, SolverStatus.TERMINATED);
@@ -116,6 +120,7 @@ public class WannabeSolverManager implements ApplicationRunner {
                 logger.error("Error solving for tenantId (" + tenantId + ").", e);
             }
         });
+        return solvingEndedLatch;
     }
 
     public Roster getRoster(final Integer tenantId) {
