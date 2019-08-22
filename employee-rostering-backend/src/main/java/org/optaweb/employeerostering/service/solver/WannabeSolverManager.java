@@ -65,7 +65,7 @@ public class WannabeSolverManager implements ApplicationRunner {
     }
 
     public void setUpSolverFactory() {
-        solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG);
+        solverFactory = SolverFactory.createFromXmlResource(SOLVER_CONFIG, WannabeSolverManager.class.getClassLoader());
         scoreDirectorFactory = solverFactory.buildSolver().getScoreDirectorFactory();
     }
 
@@ -102,7 +102,7 @@ public class WannabeSolverManager implements ApplicationRunner {
                         rosterService.updateShiftsOfRoster(newBestRoster);
                     }
                 });
-                Roster roster = rosterService.buildRoster(tenantId);
+                Roster roster = rosterService.buildRoster(tenantId); // TODO rename to rosterService.loadRoster
                 try {
                     tenantIdToSolverStateMap.put(tenantId, SolverStatus.SOLVING);
                     // TODO No need to store the returned roster because the SolverEventListener already does it?
