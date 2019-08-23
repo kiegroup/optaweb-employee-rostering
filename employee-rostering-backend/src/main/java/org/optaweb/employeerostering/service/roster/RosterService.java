@@ -29,7 +29,9 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.constraint.Indictment;
+import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
@@ -236,9 +238,9 @@ public class RosterService extends AbstractRestService {
 
     @Transactional
     private AvailabilityRosterView getAvailabilityRosterView(Integer tenantId,
-                                                               LocalDate startDate,
-                                                               LocalDate endDate,
-                                                               List<Employee> employeeList) {
+                                                             LocalDate startDate,
+                                                             LocalDate endDate,
+                                                             List<Employee> employeeList) {
         AvailabilityRosterView availabilityRosterView = new AvailabilityRosterView(tenantId, startDate, endDate);
         List<Spot> spotList = spotRepository.findAllByTenantId(tenantId, PageRequest.of(0, Integer.MAX_VALUE));
         availabilityRosterView.setSpotList(spotList);
@@ -314,9 +316,14 @@ public class RosterService extends AbstractRestService {
                 .collect(Collectors.toList());
 
         // TODO fill in the score too - do we inject a ScoreDirectorFactory?
-        return new Roster((long) tenantId, tenantId, skillList, spotList, employeeList, employeeAvailabilityList,
-                          rosterParametrizationRepository.findByTenantId(tenantId).get(), getRosterState(tenantId),
-                          shiftList);
+        Roster roster = new Roster((long) tenantId, tenantId, skillList, spotList, employeeList,
+                                   employeeAvailabilityList,
+                                   rosterParametrizationRepository.findByTenantId(tenantId).get(),
+                                   getRosterState(tenantId), shiftList);
+        ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
+        scoreDirector.setWorkingSolution(roster);
+        roster.setScore((HardMediumSoftLongScore) scoreDirector.calculateScore());
+        return roster;
     }
 
     @Transactional
