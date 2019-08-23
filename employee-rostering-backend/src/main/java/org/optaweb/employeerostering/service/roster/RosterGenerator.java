@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.optaweb.employeerostering.domain.contract.Contract;
@@ -56,6 +55,7 @@ import org.optaweb.employeerostering.service.common.generator.StringDataGenerato
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
@@ -348,23 +348,32 @@ public class RosterGenerator implements ApplicationRunner {
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        checkForExistingData();
+    }
+
+    @Transactional
+    public void checkForExistingData() {
+        // Check if Tenant entities already exist before generating data
+        List<Tenant> tenantList = entityManager.createQuery("select t from Tenant t").getResultList();
+
+        if (!tenantList.isEmpty()) {
+            return;
+        }
+
         setUpGeneratedData();
     }
 
     @Transactional
     public void setUpGeneratedData() {
-        //TODO: Check if Tenant list is empty before generating data once Tenant CRUD is implemented. Application
-        // crashes from trying to recreate existing entities
-
         ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
-        SystemPropertiesRetriever.DatabaseType databaseType = SystemPropertiesRetriever.determineDatabaseType();
+        SystemPropertiesRetriever.InitialData initialData = SystemPropertiesRetriever.determineInitialData();
 
         random = new Random(37);
 
-        switch(databaseType) {
-            case NONE:
+        switch (initialData) {
+            case EMPTY:
                 return;
-            case DEFAULT:
+            case DEMO_DATA:
                 tenantNameGenerator.predictMaximumSizeAndReset(12);
                 generateRoster(10, 7, hospitalGeneratorType, zoneId);
                 generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
@@ -394,19 +403,19 @@ public class RosterGenerator implements ApplicationRunner {
         Tenant tenant = createTenant(generatorType, employeeListSize);
         Integer tenantId = tenant.getId();
         RosterParametrization rosterParametrization = createTenantConfiguration(generatorType,
-                                                                                                tenantId, zoneId);
+                                                                                tenantId, zoneId);
         RosterState rosterState = createRosterState(generatorType, tenant, zoneId, lengthInDays);
 
         List<Skill> skillList = createSkillList(generatorType, tenantId, skillListSize);
         List<Spot> spotList = createSpotList(generatorType, tenantId, spotListSize, skillList);
         List<Contract> contractList = createContractList(tenantId);
         List<Employee> employeeList = createEmployeeList(generatorType, tenantId, employeeListSize,
-                                                                         contractList, skillList);
+                                                         contractList, skillList);
         List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId,
-                                                                                        rosterState, spotList,
-                                                                                        employeeList);
+                                                                        rosterState, spotList,
+                                                                        employeeList);
         List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterParametrization,
-                                                                rosterState, spotList, shiftTemplateList);
+                                                rosterState, spotList, shiftTemplateList);
         List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
                 generatorType, tenantId, rosterParametrization, rosterState, employeeList, shiftList);
 
@@ -431,7 +440,7 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public RosterParametrization createTenantConfiguration(GeneratorType generatorType, Integer tenantId,
-                                                            ZoneId zoneId) {
+                                                           ZoneId zoneId) {
         RosterParametrization rosterParametrization = new RosterParametrization();
         rosterParametrization.setTenantId(tenantId);
         entityManager.persist(rosterParametrization);
@@ -508,7 +517,7 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public List<Employee> createEmployeeList(GeneratorType generatorType, Integer tenantId, int size,
-                                              List<Contract> contractList, List<Skill> generalSkillList) {
+                                             List<Contract> contractList, List<Skill> generalSkillList) {
         List<Employee> employeeList = new ArrayList<>(size);
         employeeNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
@@ -526,10 +535,10 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public List<ShiftTemplate> createShiftTemplateList(GeneratorType generatorType,
-                                                        Integer tenantId,
-                                                        RosterState rosterState,
-                                                        List<Spot> spotList,
-                                                        List<Employee> employeeList) {
+                                                       Integer tenantId,
+                                                       RosterState rosterState,
+                                                       List<Spot> spotList,
+                                                       List<Employee> employeeList) {
         int rotationLength = rosterState.getRotationLength();
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength *
                                                                         generatorType.timeslotRangeList.size());
@@ -577,11 +586,11 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public List<Shift> createShiftList(GeneratorType generatorType,
-                                        Integer tenantId,
-                                        RosterParametrization rosterParametrization,
-                                        RosterState rosterState,
-                                        List<Spot> spotList,
-                                        List<ShiftTemplate> shiftTemplateList) {
+                                       Integer tenantId,
+                                       RosterParametrization rosterParametrization,
+                                       RosterState rosterState,
+                                       List<Spot> spotList,
+                                       List<ShiftTemplate> shiftTemplateList) {
         ZoneId zoneId = rosterState.getTimeZone();
         int rotationLength = rosterState.getRotationLength();
         LocalDate date = rosterState.getLastHistoricDate().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -625,11 +634,11 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public List<EmployeeAvailability> createEmployeeAvailabilityList(GeneratorType generatorType,
-                                                                      Integer tenantId,
-                                                                      RosterParametrization rosterParametrization,
-                                                                      RosterState rosterState,
-                                                                      List<Employee> employeeList,
-                                                                      List<Shift> shiftList) {
+                                                                     Integer tenantId,
+                                                                     RosterParametrization rosterParametrization,
+                                                                     RosterState rosterState,
+                                                                     List<Employee> employeeList,
+                                                                     List<Shift> shiftList) {
         ZoneId zoneId = rosterState.getTimeZone();
         // Generate a feasible published schedule: no EmployeeAvailability instancer during the published period
         // nor on the first draft day (because they might overlap with shift on the last published day)
