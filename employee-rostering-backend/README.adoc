@@ -1,1 +1,57 @@
-// TODO Add instructions for running the application and backend
+= OptaWeb Employee Rostering Backend
+
+image:https://sonarcloud.io/api/project_badges/measure?project=employee-rostering&metric=alert_status[
+"Quality Gate Status", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=reliability_rating[
+"Reliability Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=security_rating[
+"Security Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=sqale_rating[
+"Maintainability Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=ncloc[
+"Lines of Code", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=coverage[
+"Coverage", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+
+image:https://david-dm.org/kiegroup/optaweb-employee-rostering/status.svg?path=optaweb-employee-rostering[
+"dependencies Status", link="https://david-dm.org/kiegroup/optaweb-employee-rostering?path=optaweb-employee-rostering"]
+image:https://david-dm.org/kiegroup/optaweb-employee-rostering/dev-status.svg?path=optaweb-employee-rostering[
+"devDependencies Status", link="https://david-dm.org/kiegroup/optaweb-employee-rostering?path=optaweb-employee-rostering&type=dev"]
+
+== Build and Run with Maven
+
+In the project backend directory, run the following command to build from source:
+
+----
+mvn clean install
+----
+
+To ignore tests during the build, run:
+
+----
+mvn clean install -DskipTests
+----
+
+To quickly compile and run the backend application with the Spring Boot Maven plugin, use the following command:
+
+----
+mvn spring-boot:run
+----
+
+Once the application starts, test the REST API at http://localhost:8080/swagger-ui.html. Select a specific HTTP method and click on the `Try it out` button.
+
+To test the database, open http://localhost:8080/h2-console to access the H2 in-memory database console.
+In the `JDBC URL` field, enter `jdbc:h2:mem:testdb` and keep the other default values.
+Once connected, the console will display the persisted data generated on startup, and a textbox for running SQL queries on the database.
+
+Note that the in-memory database is volatile and data will be lost when the application is restarted.
+
+== Resources
+
+Learn more about https://optaplanner.org/[Optaplanner].
+
+Learn more about https://docs.spring.io/spring-boot/docs/current/reference/html/[Spring Boot].
+
+Learn more about https://swagger.io/[Swagger].
+
+Learn more about https://www.baeldung.com/spring-boot-h2-database[H2] with Spring Boot.
