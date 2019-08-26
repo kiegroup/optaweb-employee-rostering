@@ -1,0 +1,87 @@
+/*
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.optaweb.employeerostering.service.admin;
+
+import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
+import org.optaweb.employeerostering.service.employee.EmployeeRepository;
+import org.optaweb.employeerostering.service.roster.RosterGenerator;
+import org.optaweb.employeerostering.service.roster.RosterStateRepository;
+import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
+import org.optaweb.employeerostering.service.shift.ShiftRepository;
+import org.optaweb.employeerostering.service.skill.SkillRepository;
+import org.optaweb.employeerostering.service.spot.SpotRepository;
+import org.optaweb.employeerostering.service.tenant.RosterParametrizationRepository;
+import org.optaweb.employeerostering.service.tenant.TenantRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class AdminService {
+
+    private ShiftRepository shiftRepository;
+    private EmployeeAvailabilityRepository employeeAvailabilityRepository;
+    private ShiftTemplateRepository shiftTemplateRepository;
+    private EmployeeRepository employeeRepository;
+    private SpotRepository spotRepository;
+    private SkillRepository skillRepository;
+    private RosterParametrizationRepository rosterParametrizationRepository;
+    private RosterStateRepository rosterStateRepository;
+    private TenantRepository tenantRepository;
+
+    private RosterGenerator rosterGenerator;
+
+    public AdminService(ShiftRepository shiftRepository,
+                        EmployeeAvailabilityRepository employeeAvailabilityRepository,
+                        ShiftTemplateRepository shiftTemplateRepository,
+                        EmployeeRepository employeeRepository, SpotRepository spotRepository,
+                        SkillRepository skillRepository,
+                        RosterParametrizationRepository rosterParametrizationRepository,
+                        RosterStateRepository rosterStateRepository, TenantRepository tenantRepository,
+                        RosterGenerator rosterGenerator) {
+        this.shiftRepository = shiftRepository;
+        this.employeeAvailabilityRepository = employeeAvailabilityRepository;
+        this.shiftTemplateRepository = shiftTemplateRepository;
+        this.employeeRepository = employeeRepository;
+        this.spotRepository = spotRepository;
+        this.skillRepository = skillRepository;
+        this.rosterParametrizationRepository = rosterParametrizationRepository;
+        this.rosterStateRepository = rosterStateRepository;
+        this.tenantRepository = tenantRepository;
+        this.rosterGenerator = rosterGenerator;
+    }
+
+    @Transactional
+    public void resetApplication() {
+        // IMPORTANT: Delete entries that has Many-to-One relations first, otherwise we break referential integrity
+        // TODO: Why aren't Contract entities deleted?
+        deleteAllEntities();
+        rosterGenerator.setUpGeneratedData();
+    }
+
+    @Transactional
+    private void deleteAllEntities() {
+        shiftRepository.deleteAllInBatch();
+        employeeAvailabilityRepository.deleteAllInBatch();
+        shiftTemplateRepository.deleteAllInBatch();
+        employeeRepository.deleteAllInBatch();
+        spotRepository.deleteAllInBatch();
+        skillRepository.deleteAllInBatch();
+        rosterParametrizationRepository.deleteAllInBatch();
+        rosterStateRepository.deleteAllInBatch();
+        tenantRepository.deleteAllInBatch();
+    }
+}
