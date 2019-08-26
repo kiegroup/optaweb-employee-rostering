@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.roster.PublishResult;
 import org.optaweb.employeerostering.domain.roster.RosterState;
@@ -55,6 +56,7 @@ public class RosterController {
     // RosterState
     // ************************************************************************
 
+    @ApiOperation("Get the current roster state")
     @GetMapping("/{id}")
     public ResponseEntity<RosterState> getRosterState(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rosterService.getRosterState(tenantId), HttpStatus.OK);
@@ -64,6 +66,7 @@ public class RosterController {
     // ShiftRosterView
     // ************************************************************************
 
+    @ApiOperation("Get the current shift roster view")
     @GetMapping("/shiftRosterView/current")
     public ResponseEntity<ShiftRosterView> getCurrentShiftRosterView(@PathVariable @Min(0) Integer tenantId,
                                                                      @RequestParam(name = "p", required = false)
@@ -74,6 +77,7 @@ public class RosterController {
                                                                             numberOfItemsPerPage), HttpStatus.OK);
     }
 
+    @ApiOperation("Get a shift roster view between two dates")
     @GetMapping("/shiftRosterView")
     public ResponseEntity<ShiftRosterView> getShiftRosterView(@PathVariable @Min(0) Integer tenantId,
                                                               @RequestParam(name = "p", required = false)
@@ -88,6 +92,7 @@ public class RosterController {
 
     // TODO: find out if there a way to pass lists in GET requests
     // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
+    @ApiOperation("Get a shift roster view between two dates for a subset of the spots")
     @PostMapping("/shiftRosterView/for")
     public ResponseEntity<ShiftRosterView> getShiftRosterViewFor(@PathVariable @Min(0) Integer tenantId,
                                                                  @RequestParam(name = "startDate")
@@ -102,6 +107,7 @@ public class RosterController {
     // AvailabilityRosterView
     // ************************************************************************
 
+    @ApiOperation("Get the current availability roster view")
     @GetMapping("/availabilityRosterView/current")
     public ResponseEntity<AvailabilityRosterView> getCurrentAvailabilityRosterView(
             @PathVariable @Min(0) Integer tenantId, @RequestParam(name = "p", required = false) Integer pageNumber,
@@ -111,6 +117,7 @@ public class RosterController {
                                     HttpStatus.OK);
     }
 
+    @ApiOperation("Get an availability roster view between two dates")
     @GetMapping("/availabilityRosterView")
     public ResponseEntity<AvailabilityRosterView> getAvailabilityRosterView(
             @PathVariable @Min(0) Integer tenantId, @RequestParam(name = "p", required = false) Integer pageNumber,
@@ -122,6 +129,7 @@ public class RosterController {
                                     HttpStatus.OK);
     }
 
+    @ApiOperation("Get an availability roster view between two dates for a subset of the employees")
     @PostMapping("/availabilityRosterView/for")
     // TODO naming "for" is too abstract: we might add a sibling rest method that filters on another type than spots too
     public ResponseEntity<AvailabilityRosterView> getAvailabilityRosterViewFor(
@@ -136,11 +144,13 @@ public class RosterController {
     // Solver
     // ************************************************************************
 
+    @ApiOperation("Start solving the roster. This will assign each shift to an employee")
     @PostMapping("/solve")
     public void solveRoster(@PathVariable @Min(0) Integer tenantId) {
         rosterService.solveRoster(tenantId);
     }
 
+    @ApiOperation("Stop solving the roster, if it hasn't terminated automatically already")
     @PostMapping("/terminate")
     public void terminateRosterEarly(@PathVariable @Min(0) Integer tenantId) {
         rosterService.terminateRosterEarly(tenantId);
@@ -150,6 +160,7 @@ public class RosterController {
     // Publish
     // ************************************************************************
 
+    @ApiOperation("Publish the next set of draft shifts and create a new draft shift from the rotation template")
     @PostMapping("/publishAndProvision")
     public ResponseEntity<PublishResult> publishAndProvision(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rosterService.publishAndProvision(tenantId), HttpStatus.OK);
