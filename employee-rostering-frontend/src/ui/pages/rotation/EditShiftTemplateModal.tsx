@@ -33,7 +33,7 @@ import { objectWithout } from 'util/ImmutableCollectionOperations';
 import moment from 'moment';
 import RosterState from 'domain/RosterState';
 
-interface Props {
+export interface Props {
   tenantId: number;
   shiftTemplate?: ShiftTemplate;
   isOpen: boolean;
@@ -78,7 +78,8 @@ interface State {
   editedValue: Partial<ShiftTemplateData>;
 }
 
-function shiftTemplateDataToShiftTemplate(data: ShiftTemplateData, rotationLength: number): ShiftTemplate {
+export function shiftTemplateDataToShiftTemplate(data: ShiftTemplateData, 
+  rotationLength: number): ShiftTemplate {
   return {
     ...objectWithout(data, "startDayOffset", "startTime", "endDayOffset", "endTime"),
     durationBetweenRotationStartAndTemplateStart: 
@@ -95,7 +96,8 @@ function shiftTemplateDataToShiftTemplate(data: ShiftTemplateData, rotationLengt
   };
 }
 
-function shiftTemplateToShiftTemplateData(shiftTemplate: ShiftTemplate, rotationLength: number): ShiftTemplateData {
+export function shiftTemplateToShiftTemplateData(shiftTemplate: ShiftTemplate, 
+  rotationLength: number): ShiftTemplateData {
   const durationBetweenRotationStartAndEnd = moment
     .duration(shiftTemplate.durationBetweenRotationStartAndTemplateStart).add(shiftTemplate.shiftTemplateDuration);
   return {
@@ -220,7 +222,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
                 this.setState(old => ({
                   editedValue: {
                     ...old.editedValue,
-                    startDayOffset: parseInt(v) - 1
+                    startDayOffset: v? parseInt(v) - 1 : undefined
                   }
                 }));
               }}
@@ -261,7 +263,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
                 this.setState(old => ({
                   editedValue: {
                     ...old.editedValue,
-                    endDayOffset: parseInt(v) - 1
+                    endDayOffset: v? parseInt(v) - 1 : undefined
                   }
                 }));
               }}

@@ -21,7 +21,6 @@ import Employee from 'domain/Employee';
 import { RotationPage, Props, baseDate } from './RotationPage';
 import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
-import "moment/locale/en-ca";
 import ShiftTemplate from 'domain/ShiftTemplate';
 import { useTranslation, WithTranslation } from 'react-i18next';
 
@@ -73,16 +72,19 @@ describe('Rotation Page', () => {
       name: "New Spot"
     };
 
-    // rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate("change", newSpot);
-    // expect(rotationPage.state("shownSpot")).toEqual(newSpot);
+    const setStateSpy = jest.spyOn(rotationPage.instance(), "setState");
+    rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate("change", newSpot);
+    // Bug in enzyme; wrapper.state is not updated after setState sometimes
+    expect(setStateSpy).toBeCalledWith({ shownSpot: newSpot });
   });
 
-  it('should not call getShiftRosterFor on spot change if invalid', () => {
+  it('should not update shownSpot on spot change if invalid', () => {
     const rotationPage = shallow(<RotationPage
       {...baseProps}
     />);
+    const setStateSpy = jest.spyOn(rotationPage.instance(), "setState");
     rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate("change");
-    expect(rotationPage.state("shownSpot")).toEqual(spot);
+    expect(setStateSpy).not.toBeCalled();
   });
 
   it('should call addShift on addShift', () => {
