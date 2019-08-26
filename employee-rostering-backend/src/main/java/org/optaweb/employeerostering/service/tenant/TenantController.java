@@ -22,6 +22,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
 import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
@@ -52,21 +53,25 @@ public class TenantController {
     // Tenant
     // ************************************************************************
 
+    @ApiOperation("Get a list of all tenants")
     @GetMapping("/")
     public ResponseEntity<List<Tenant>> getTenantList() {
         return new ResponseEntity<>(tenantService.getTenantList(), HttpStatus.OK);
     }
 
+    @ApiOperation("Get a tenant by id")
     @GetMapping("/{id}")
     public ResponseEntity<Tenant> getTenant(@PathVariable @Min(0) Integer id) {
         return new ResponseEntity<>(tenantService.getTenant(id), HttpStatus.OK);
     }
 
+    @ApiOperation("Add a new tenant")
     @PostMapping("/add")
     public ResponseEntity<Tenant> createTenant(@RequestBody @Valid RosterStateView initialRosterStateView) {
         return new ResponseEntity<>(tenantService.createTenant(initialRosterStateView), HttpStatus.OK);
     }
 
+    @ApiOperation("Delete a tenant")
     @DeleteMapping("/remove/{id}")
     public ResponseEntity<Boolean> deleteTenant(@PathVariable @Min(0) Integer id) {
         return new ResponseEntity<>(tenantService.deleteTenant(id), HttpStatus.OK);
@@ -76,11 +81,13 @@ public class TenantController {
     // RosterParametrization
     // ************************************************************************
 
+    @ApiOperation("Get a tenant roster parametrization")
     @GetMapping("/{tenantId}/parametrization")
     public ResponseEntity<RosterParametrization> getRosterParametrization(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(tenantService.getRosterParametrization(tenantId), HttpStatus.OK);
     }
 
+    @ApiOperation("Update a tenant roster parametrization")
     @PostMapping("/parametrization/update")
     public ResponseEntity<RosterParametrization> updateRosterParametrization(
             @RequestBody @Valid RosterParametrizationView rosterParametrizationView) {
@@ -89,6 +96,7 @@ public class TenantController {
     }
 
     // TODO: Where should this be?
+    @ApiOperation("Get supported timezones")
     @GetMapping("/supported/timezones")
     public ResponseEntity<List<ZoneId>> getSupportedTimezones() {
         return new ResponseEntity<>(tenantService.getSupportedTimezones(), HttpStatus.OK);

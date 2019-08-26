@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
@@ -53,28 +54,33 @@ public class EmployeeController {
     // Employee
     // ************************************************************************
 
+    @ApiOperation("Get a list of all employees")
     @GetMapping("/")
     public ResponseEntity<List<Employee>> getEmployeeList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(employeeService.getEmployeeList(tenantId), HttpStatus.OK);
     }
 
+    @ApiOperation("Get an employee by id")
     @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployee(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(employeeService.getEmployee(tenantId, id), HttpStatus.OK);
     }
 
+    @ApiOperation("Delete an employee")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteEmployee(@PathVariable @Min(0) Integer tenantId,
                                                   @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(employeeService.deleteEmployee(tenantId, id), HttpStatus.OK);
     }
 
+    @ApiOperation("Add a new employee")
     @PostMapping("/add")
     public ResponseEntity<Employee> createEmployee(@PathVariable @Min(0) Integer tenantId,
                                                    @RequestBody @Valid EmployeeView employeeView) {
         return new ResponseEntity<>(employeeService.createEmployee(tenantId, employeeView), HttpStatus.OK);
     }
 
+    @ApiOperation("Update an employee")
     @PostMapping("/update")
     public ResponseEntity<Employee> updateEmployee(@PathVariable @Min(0) Integer tenantId,
                                                    @RequestBody @Valid EmployeeView employeeView) {
@@ -85,28 +91,34 @@ public class EmployeeController {
     // EmployeeAvailability
     // ************************************************************************
 
+    @ApiOperation("Get an employee availability by id")
     @GetMapping("/availability/{id}")
     public ResponseEntity<EmployeeAvailabilityView> getEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
                                                                             @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(employeeService.getEmployeeAvailability(tenantId, id), HttpStatus.OK);
     }
 
+    @ApiOperation("Add a new employee availability")
     @PostMapping("/availability/add")
     public ResponseEntity<EmployeeAvailabilityView> createEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
-                                                                            @RequestBody @Valid EmployeeAvailabilityView
-                                                                                    employeeAvailabilityView) {
+                                                                               @RequestBody @Valid
+                                                                                       EmployeeAvailabilityView
+                                                                                       employeeAvailabilityView) {
         return new ResponseEntity<>(employeeService.createEmployeeAvailability(tenantId, employeeAvailabilityView),
                                     HttpStatus.OK);
     }
 
+    @ApiOperation("Update an employee availability")
     @PutMapping("/availability/update")
     public ResponseEntity<EmployeeAvailabilityView> updateEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
-                                                                           @RequestBody @Valid EmployeeAvailabilityView
-                                                                                   employeeAvailabilityView) {
+                                                                               @RequestBody @Valid
+                                                                                       EmployeeAvailabilityView
+                                                                                       employeeAvailabilityView) {
         return new ResponseEntity<>(employeeService.updateEmployeeAvailability(tenantId, employeeAvailabilityView),
                                     HttpStatus.OK);
     }
 
+    @ApiOperation("Delete an employee availability")
     @DeleteMapping("/availability/{id}")
     public ResponseEntity<Boolean> deleteEmployeeAvailability(@PathVariable @Min(0) Integer tenantId,
                                                               @PathVariable @Min(0) Long id) {
