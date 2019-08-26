@@ -84,7 +84,7 @@ interface State {
   weekNumber: number;
 }
 
-const baseDate = moment("2018-01-01T00:00").startOf('week').toDate();
+export const baseDate = moment("2018-01-01T00:00").startOf('week').toDate();
 
 const ShiftTemplatePopoverHeader: React.FC<{
   shiftTemplate: ShiftTemplate;
@@ -229,15 +229,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             .add(shiftTemplateDuration).toDate()
         });
       });
-    /*
-      formats={{
-        dayFormat: (date) =>
-          this.props.t("rotationDay",
-            {
-              day: moment.duration(moment(date).diff(baseDate)).asDays() + 1
-            })
-      }}
-    */
+
     return (
       <>
         <Level
@@ -255,7 +247,11 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
               optionToStringMap={spot => spot.name}
               options={this.props.spotList}
               defaultValue={this.state.shownSpot}
-              onChange={(newSpot) => newSpot? this.setState({ shownSpot: newSpot }) : null}
+              onChange={(newSpot) => {
+                if (newSpot !== undefined) {
+                  this.setState({ shownSpot: newSpot });
+                }
+              }}
             />
             <Pagination
               itemCount={Math.ceil(this.props.rosterState.rotationLength)}
@@ -295,7 +291,8 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             </Button>
           </LevelItem>
         </Level>
-        <EditShiftTemplateModal 
+        <EditShiftTemplateModal
+          aria-label="Edit Shift Template"
           shiftTemplate={this.state.selectedShiftTemplate}
           isOpen={this.state.isCreatingOrEditingShiftTemplate}
           onSave={shiftTemplate => {
@@ -311,7 +308,12 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             this.props.removeShiftTemplate(shiftTemplate);
             this.setState({ isCreatingOrEditingShiftTemplate: false });
           }}
-          onClose={() => this.setState({ selectedShiftTemplate: undefined, isCreatingOrEditingShiftTemplate: false })}
+          onClose={() => {
+            this.setState({ 
+              selectedShiftTemplate: undefined, 
+              isCreatingOrEditingShiftTemplate: false
+            });
+          }}
         />
         <Schedule<{ shiftTemplate: ShiftTemplate; start: Date; end: Date }>
           key={spot.id}
