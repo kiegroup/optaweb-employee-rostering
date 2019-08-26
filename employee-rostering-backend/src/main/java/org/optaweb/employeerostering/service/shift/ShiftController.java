@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 
 import org.springframework.http.HttpStatus;
@@ -48,38 +49,32 @@ public class ShiftController {
         Assert.notNull(shiftService, "shiftService must not be null.");
     }
 
+    @ApiOperation("Get a list of all shifts")
     @GetMapping("/")
     public ResponseEntity<List<ShiftView>> getShiftList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(shiftService.getShiftList(tenantId), HttpStatus.OK);
     }
 
+    @ApiOperation("Get a shift by id")
     @GetMapping("/{id}")
     public ResponseEntity<ShiftView> getShift(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(shiftService.getShift(tenantId, id), HttpStatus.OK);
     }
 
-    /**
-     * @param id never null
-     * @return return true if the shift was removed, false otherwise
-     */
+    @ApiOperation("Delete a shift")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteShift(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(shiftService.deleteShift(tenantId, id), HttpStatus.OK);
     }
 
-    /**
-     * @param shiftView never null
-     * @return never null, the id
-     */
+    @ApiOperation("Add a new shift")
     @PostMapping("/add")
     public ResponseEntity<ShiftView> createShift(@PathVariable @Min(0) Integer tenantId,
                                                  @RequestBody @Valid ShiftView shiftView) {
         return new ResponseEntity<>(shiftService.createShift(tenantId, shiftView), HttpStatus.OK);
     }
 
-    /**
-     * @param shiftView never null
-     */
+    @ApiOperation("Update a shift")
     @PutMapping("/update")
     public ResponseEntity<ShiftView> updateShift(@PathVariable @Min(0) Integer tenantId,
                                                  @RequestBody @Valid ShiftView shiftView) {

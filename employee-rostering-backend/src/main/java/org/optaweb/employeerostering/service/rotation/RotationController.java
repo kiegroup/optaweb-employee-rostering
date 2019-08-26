@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,32 +48,39 @@ public class RotationController {
         Assert.notNull(rotationService, "rotationService must not be null.");
     }
 
+    @ApiOperation("Get a list of all shift templates")
     @GetMapping("/")
     public ResponseEntity<List<ShiftTemplateView>> getShiftTemplateList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(rotationService.getShiftTemplateList(tenantId), HttpStatus.OK);
     }
 
+    @ApiOperation("Get a shift template by id")
     @GetMapping("/{id}")
     public ResponseEntity<ShiftTemplateView> getShiftTemplate(@PathVariable @Min(0) Integer tenantId,
                                                               @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(rotationService.getShiftTemplate(tenantId, id), HttpStatus.OK);
     }
 
+    @ApiOperation("Delete a shift template")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteShiftTemplate(@PathVariable @Min(0) Integer tenantId,
                                                        @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(rotationService.deleteShiftTemplate(tenantId, id), HttpStatus.OK);
     }
 
+    @ApiOperation("Add a new shift template")
     @PostMapping("/add")
     public ResponseEntity<ShiftTemplateView> createShiftTemplate(@PathVariable @Min(0) Integer tenantId,
-                                                              @RequestBody @Valid ShiftTemplateView shiftTemplateView) {
+                                                                 @RequestBody @Valid
+                                                                         ShiftTemplateView shiftTemplateView) {
         return new ResponseEntity<>(rotationService.createShiftTemplate(tenantId, shiftTemplateView), HttpStatus.OK);
     }
 
+    @ApiOperation("Update a shift template")
     @PutMapping("/update")
     public ResponseEntity<ShiftTemplateView> updateShiftTemplate(@PathVariable @Min(0) Integer tenantId,
-                                                              @RequestBody @Valid ShiftTemplateView shiftTemplateView) {
+                                                                 @RequestBody @Valid
+                                                                         ShiftTemplateView shiftTemplateView) {
         return new ResponseEntity<>(rotationService.updateShiftTemplate(tenantId, shiftTemplateView), HttpStatus.OK);
     }
 }

@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.spot.view.SpotView;
 import org.springframework.http.HttpStatus;
@@ -47,27 +48,32 @@ public class SpotController {
         Assert.notNull(spotService, "spotService must not be null.");
     }
 
+    @ApiOperation("Get a list of all spots")
     @GetMapping("/")
     public ResponseEntity<List<Spot>> getSpotList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(spotService.getSpotList(tenantId), HttpStatus.OK);
     }
 
+    @ApiOperation("Get a spot by id")
     @GetMapping("/{id}")
     public ResponseEntity<Spot> getSpot(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(spotService.getSpot(tenantId, id), HttpStatus.OK);
     }
 
+    @ApiOperation("Delete a spot")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteSpot(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(spotService.deleteSpot(tenantId, id), HttpStatus.OK);
     }
 
+    @ApiOperation("Add a new spot")
     @PostMapping("/add")
     public ResponseEntity<Spot> createSpot(@PathVariable @Min(0) Integer tenantId,
                                            @RequestBody @Valid SpotView spotView) {
         return new ResponseEntity<>(spotService.createSpot(tenantId, spotView), HttpStatus.OK);
     }
 
+    @ApiOperation("Update a spot")
     @PostMapping("/update")
     public ResponseEntity<Spot> updateSpot(@PathVariable @Min(0) Integer tenantId,
                                            @RequestBody @Valid SpotView spotView) {

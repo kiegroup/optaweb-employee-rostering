@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.service.admin;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -36,6 +37,7 @@ public class AdminController {
         Assert.notNull(adminService, "adminService must not be null.");
     }
 
+    @ApiOperation("Reset the application")
     @PostMapping("/reset")
     public ResponseEntity<Void> resetApplication() {
         adminService.resetApplication();

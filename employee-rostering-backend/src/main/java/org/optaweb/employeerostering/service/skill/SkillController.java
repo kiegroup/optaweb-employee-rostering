@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
 import org.springframework.http.HttpStatus;
@@ -47,27 +48,32 @@ public class SkillController {
         Assert.notNull(skillService, "skillService must not be null.");
     }
 
+    @ApiOperation("Get a list of all skills")
     @GetMapping("/")
     public ResponseEntity<List<Skill>> getSkillList(@PathVariable @Min(0) Integer tenantId) {
         return new ResponseEntity<>(skillService.getSkillList(tenantId), HttpStatus.OK);
     }
 
+    @ApiOperation("Get a skill by id")
     @GetMapping("/{id}")
     public ResponseEntity<Skill> getSkill(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(skillService.getSkill(tenantId, id), HttpStatus.OK);
     }
 
+    @ApiOperation("Delete a skill")
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteSkill(@PathVariable @Min(0) Integer tenantId, @PathVariable @Min(0) Long id) {
         return new ResponseEntity<>(skillService.deleteSkill(tenantId, id), HttpStatus.OK);
     }
 
+    @ApiOperation("Add a new skill")
     @PostMapping("/add")
     public ResponseEntity<Skill> createSkill(@PathVariable @Min(0) Integer tenantId,
                                              @RequestBody @Valid SkillView skillView) {
         return new ResponseEntity<>(skillService.createSkill(tenantId, skillView), HttpStatus.OK);
     }
 
+    @ApiOperation("Update a skill")
     @PostMapping("/update")
     public ResponseEntity<Skill> updateSkill(@PathVariable @Min(0) Integer tenantId,
                                              @RequestBody @Valid SkillView skillView) {
