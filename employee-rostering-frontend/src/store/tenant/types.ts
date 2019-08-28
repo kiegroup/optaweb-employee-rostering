@@ -21,7 +21,8 @@ export enum ActionType {
   CHANGE_TENANT = 'CHANGE_TENANT',
   ADD_TENANT = 'ADD_TENANT',
   REMOVE_TENANT = 'REMOVE_TENANT',
-  REFRESH_TENANT_LIST = 'REFRESH_TENANT_LIST'
+  REFRESH_TENANT_LIST = 'REFRESH_TENANT_LIST',
+  REFRESH_SUPPORTED_TIMEZONES = 'REFRESH_SUPPORTED_TIMEZONES'
 }
 
 export interface ChangeTenantAction extends Action<ActionType.CHANGE_TENANT> {
@@ -30,7 +31,6 @@ export interface ChangeTenantAction extends Action<ActionType.CHANGE_TENANT> {
 
 export interface AddTenantAction extends Action<ActionType.ADD_TENANT> {
   readonly tenant: Tenant;
-  // TODO: Add roster parameterization when work on Admin page started
 }
 
 export interface RemoveTenantAction extends Action<ActionType.REMOVE_TENANT> {
@@ -42,9 +42,17 @@ export interface RefreshTenantListAction extends Action<ActionType.REFRESH_TENAN
   readonly tenantList: Tenant[];
 }
 
-export type TenantAction = ChangeTenantAction | RefreshTenantListAction;
+export interface RefreshSupportedTimezoneListAction extends Action<ActionType.REFRESH_SUPPORTED_TIMEZONES> {
+  readonly timezoneList: string[];
+}
+
+// TODO: Add roster parameterization (somewhere)
+
+export type TenantAction = ChangeTenantAction | RefreshTenantListAction | AddTenantAction |
+RemoveTenantAction | RefreshSupportedTimezoneListAction;
 
 export interface TenantData {
   readonly currentTenantId: number;
   readonly tenantList: Tenant[];
+  readonly timezoneList: string[];
 }

@@ -17,8 +17,9 @@
 import Tenant from 'domain/Tenant';
 import { ThunkCommandFactory, AppState } from '../types';
 import * as actions from './actions';
-import { ChangeTenantAction, RefreshTenantListAction } from './types';
-import {skillOperations} from 'store/skill';
+import { ChangeTenantAction, RefreshTenantListAction, RefreshSupportedTimezoneListAction,
+  AddTenantAction } from './types';
+import { skillOperations } from 'store/skill';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import { rosterOperations } from 'store/roster';
@@ -28,8 +29,9 @@ import { employeeOperations, employeeSelectors } from 'store/employee';
 import * as rosterActions from 'store/roster/actions';
 import moment from 'moment';
 import { shiftTemplateOperations } from 'store/rotation';
+import RosterState from 'domain/RosterState';
 
-function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>, state: () => AppState): Promise<any> {
+function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>, state: () => AppState): Promise<any> {
   dispatch(rosterActions.setShiftRosterIsLoading(true));
   dispatch(rosterActions.setAvailabilityRosterIsLoading(true));
   return Promise.all([
@@ -38,55 +40,75 @@ function refreshData(dispatch: ThunkDispatch<any,any,Action<any>>, state: () => 
     dispatch(spotOperations.refreshSpotList()),
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList()),
-    dispatch(shiftTemplateOperations.refreshShiftTemplateList())
-  ]
-  ).then(() => {
-    const rosterState = state().rosterState.rosterState;
+    dispatch(shiftTemplateOperations.refreshShiftTemplateList()),
+  ]).then(() => {
+    const { rosterState } = state().rosterState;
     if (rosterState !== null) {
       const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
       const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
       const spotList = spotSelectors.getSpotList(state());
       const employeeList = employeeSelectors.getEmployeeList(state());
-      const shownSpots = (spotList.length > 0)? [spotList[0]] : [];
-      const shownEmployees = (employeeList.length > 0)? [employeeList[0]] : [];
+      const shownSpots = (spotList.length > 0) ? [spotList[0]] : [];
+      const shownEmployees = (employeeList.length > 0) ? [employeeList[0]] : [];
 
       dispatch(rosterOperations.getShiftRosterFor({
         fromDate: startDate,
         toDate: endDate,
-        spotList: shownSpots
+        spotList: shownSpots,
       }));
 
       dispatch(rosterOperations.getAvailabilityRosterFor({
         fromDate: startDate,
         toDate: endDate,
-        employeeList: shownEmployees
+        employeeList: shownEmployees,
       }));
     }
   });
 }
 
-export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId =>
-  (dispatch, state, client) => {
-    dispatch(actions.changeTenant(tenantId));
-    return refreshData(dispatch, state);
-  };
+export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId => (dispatch, state, client) => {
+  dispatch(actions.changeTenant(tenantId));
+  return refreshData(dispatch, state);
+};
 
-export const refreshTenantList: ThunkCommandFactory<void, RefreshTenantListAction> = () =>
-  (dispatch, state, client) => {
-    return client.get<Tenant[]>(`/tenant/`).then(tenantList => {
-      const currentTenantId = state().tenantData.currentTenantId;
-      if (tenantList.filter(tenant => tenant.id === currentTenantId).length !== 0) {
-        dispatch(actions.refreshTenantList({tenantList: tenantList, currentTenantId: currentTenantId}));
-      }
-      else if (tenantList.length > 0) {
-        dispatch(actions.refreshTenantList({tenantList: tenantList, currentTenantId: tenantList[0].id as number}));
-      }
-      else {
+export const refreshTenantList:
+ThunkCommandFactory<void, RefreshTenantListAction> = () => (dispatch, state, client) => (
+  client.get<Tenant[]>('/tenant/').then((tenantList) => {
+    const { currentTenantId } = state().tenantData;
+    if (tenantList.filter(tenant => tenant.id === currentTenantId).length !== 0) {
+      dispatch(actions.refreshTenantList({ tenantList, currentTenantId }));
+    } else if (tenantList.length > 0) {
+      dispatch(actions.refreshTenantList({ tenantList, currentTenantId: tenantList[0].id as number }));
+    } else {
       // TODO: this case occurs iff there are no tenants; need a special screen for that
-        dispatch(actions.refreshTenantList({tenantList: tenantList, currentTenantId: 0}))
-      }
-      refreshData(dispatch, state);
+      dispatch(actions.refreshTenantList({ tenantList, currentTenantId: 0 }));
+    }
+    refreshData(dispatch, state);
+  }));
+
+// TODO: Add addTenant and removeTenant when work on Admin page started
+export const addTenant: ThunkCommandFactory<RosterState, AddTenantAction> = rs =>
+  (dispatch, state, client) => {
+    return client.post<Tenant>('/tenant/add', rs).then(tenant => {
+      dispatch(actions.addTenant(tenant));
     });
   };
 
-// TODO: Add addTenant and removeTenant when work on Admin page started
+export const removeTenant: ThunkCommandFactory<Tenant, AddTenantAction> = tenant =>
+  (dispatch, state, client) => {
+    return client.delete<boolean>(`/tenant/${tenant.id}`, ).then(isSuccess => {
+      if (isSuccess) {
+        dispatch(actions.removeTenant(tenant));
+      }
+      else {
+        // TODO: Display error
+      }
+    });
+  };
+
+export const refreshSupportedTimezones: ThunkCommandFactory<void, RefreshSupportedTimezoneListAction> = () =>
+  (dispatch, state, client) => {
+    return client.get<string[]>("/tenant/supported/timezones").then(supportedTimezones => {
+      dispatch(actions.refreshSupportedTimezones(supportedTimezones));
+    });
+  };

@@ -30,6 +30,9 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { tenantOperations } from 'store/tenant';
 import { AppState } from 'store/types';
+import {
+  withRouter, RouteComponentProps
+} from 'react-router-dom'
 
 interface StateProps {
   currentTenantId: number;
@@ -55,7 +58,7 @@ const mapDispatchToProps: DispatchProps = {
   changeTenant: tenantOperations.changeTenant
 };
 
-export type Props = StateProps & DispatchProps;
+export type Props = RouteComponentProps & StateProps & DispatchProps;
 
 export class ToolbarComponent extends React.Component<Props, ToolbarState> {
   constructor(props: Props) {
@@ -95,6 +98,7 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
             id="horizontal-example-uid-02"
             aria-label="Settings actions"
             variant={ButtonVariant.plain}
+            onClick={() => this.props.history.push("/admin")}
           >
             <CogIcon />
           </Button>
@@ -141,4 +145,4 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ToolbarComponent);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ToolbarComponent));
