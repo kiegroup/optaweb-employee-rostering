@@ -16,11 +16,19 @@
 
 package org.optaweb.employeerostering;
 
+import com.fasterxml.jackson.databind.Module;
+import org.optaplanner.persistence.jackson.api.OptaPlannerJacksonModule;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class OptaWebEmployeeRosteringApplication {
+
+    @Bean
+    public Module OptaplannerModule() {
+        return OptaPlannerJacksonModule.createModule();
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(OptaWebEmployeeRosteringApplication.class, args);
