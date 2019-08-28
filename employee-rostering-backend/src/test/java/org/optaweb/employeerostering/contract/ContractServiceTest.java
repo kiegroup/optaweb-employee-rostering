@@ -216,7 +216,7 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         String body = (new ObjectMapper()).writeValueAsString(updatedContractView);
 
         mvc.perform(MockMvcRequestBuilders
-                .put("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
+                .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
                 .accept(MediaType.APPLICATION_JSON))
@@ -240,7 +240,7 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .put("/rest/tenant/{tenantId}/contract/update", 0)
+                        .post("/rest/tenant/{tenantId}/contract/update", 0)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body)))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
@@ -256,7 +256,7 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .put("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
+                        .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
@@ -274,7 +274,7 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .put("/rest/tenant/{tenantId}/contract/update", 0)
+                        .post("/rest/tenant/{tenantId}/contract/update", 0)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body)))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalState" +

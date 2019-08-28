@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,8 +64,8 @@ public class SpotRestControllerTest extends AbstractEntityRequireTenantRestServi
         return restTemplate.postForEntity(spotPathURI + "add", spotView, Spot.class, tenantId);
     }
 
-    private ResponseEntity<Spot> updateSpot(Integer tenantId, HttpEntity<SpotView> request) {
-        return restTemplate.exchange(spotPathURI + "update", HttpMethod.PUT, request, Spot.class, tenantId);
+    private ResponseEntity<Spot> updateSpot(Integer tenantId, SpotView spotView) {
+        return restTemplate.postForEntity(spotPathURI + "update", spotView, Spot.class, tenantId);
     }
 
     @Before
@@ -91,8 +90,7 @@ public class SpotRestControllerTest extends AbstractEntityRequireTenantRestServi
 
         SpotView updatedSpot = new SpotView(TENANT_ID, "updatedSpot", Collections.emptySet());
         updatedSpot.setId(postResponse.getBody().getId());
-        HttpEntity<SpotView> request = new HttpEntity<>(updatedSpot);
-        ResponseEntity<Spot> putResponse = updateSpot(TENANT_ID, request);
+        ResponseEntity<Spot> putResponse = updateSpot(TENANT_ID, updatedSpot);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         response = getSpot(TENANT_ID, putResponse.getBody().getId());

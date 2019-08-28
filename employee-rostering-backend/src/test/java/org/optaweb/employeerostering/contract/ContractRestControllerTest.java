@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,9 +63,8 @@ public class ContractRestControllerTest extends AbstractEntityRequireTenantRestS
         return restTemplate.postForEntity(contractPathURI + "add", contractView, Contract.class, tenantId);
     }
 
-    private ResponseEntity<Contract> updateContract(Integer tenantId, HttpEntity<ContractView> request) {
-        return restTemplate.exchange(contractPathURI + "update", HttpMethod.PUT, request, Contract.class,
-                tenantId);
+    private ResponseEntity<Contract> updateContract(Integer tenantId, ContractView contractView) {
+        return restTemplate.postForEntity(contractPathURI + "update", contractView, Contract.class, tenantId);
     }
 
     @Before
@@ -98,8 +96,7 @@ public class ContractRestControllerTest extends AbstractEntityRequireTenantRestS
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract", maximumMinutesPerDay,
                 maximumMinutesPerWeek, maximumMinutesPerMonth, maximumMinutesPerYear);
         updatedContractView.setId(postResponse.getBody().getId());
-        HttpEntity<ContractView> request = new HttpEntity<>(updatedContractView);
-        ResponseEntity<Contract> putResponse = updateContract(TENANT_ID, request);
+        ResponseEntity<Contract> putResponse = updateContract(TENANT_ID, updatedContractView);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         response = getContract(TENANT_ID, putResponse.getBody().getId());
