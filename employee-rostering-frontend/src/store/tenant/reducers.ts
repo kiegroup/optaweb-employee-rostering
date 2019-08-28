@@ -15,10 +15,12 @@
  */
 
 import { ActionType, TenantData, TenantAction } from './types';
+import { withElement, withoutElement } from 'util/ImmutableCollectionOperations';
 
 const initialState: TenantData = {
   currentTenantId: 0,
-  tenantList: []
+  tenantList: [],
+  timezoneList: []
 };
 
 const tenantReducer = (state = initialState, action: TenantAction): TenantData => {
@@ -28,6 +30,15 @@ const tenantReducer = (state = initialState, action: TenantAction): TenantData =
     }
     case ActionType.REFRESH_TENANT_LIST: {
       return { ...state, currentTenantId: action.tenantId, tenantList: action.tenantList};
+    }
+    case ActionType.ADD_TENANT: {
+      return { ...state, tenantList: withElement(state.tenantList, action.tenant) }
+    }
+    case ActionType.REMOVE_TENANT: {
+      return { ...state, tenantList: withoutElement(state.tenantList, action.tenant)}
+    }
+    case ActionType.REFRESH_SUPPORTED_TIMEZONES: {
+      return { ...state, timezoneList: action.timezoneList }
     }
     default:
       return state;

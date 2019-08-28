@@ -139,7 +139,15 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
       <EditableComponent
         isEditing={isEditing}
         viewer={(
-          <span>
+          <span
+            key={0}
+            style={{ 
+              display: "grid",
+              gridTemplateColumns: "1fr auto auto",
+              gridColumnGap: "5px"
+            }}
+          >
+            <span />
             <Button
               aria-label="Edit"
               variant={ButtonVariant.link}
@@ -159,7 +167,15 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
           </span>
         )}
         editor={(
-          <span>
+          <span
+            key={0}
+            style={{ 
+              display: "grid",
+              gridTemplateColumns: "1fr auto auto",
+              gridColumnGap: "5px"
+            }}
+          >
+            <span />
             <Button
               aria-label="Save"
               variant={ButtonVariant.link}

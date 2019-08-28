@@ -16,11 +16,28 @@
 
 import Tenant from 'domain/Tenant';
 import { ActionFactory } from '../types';
-import { ActionType, ChangeTenantAction, RefreshTenantListAction } from './types';
+import { ActionType, ChangeTenantAction, RefreshTenantListAction, AddTenantAction,
+  RefreshSupportedTimezoneListAction } from './types';
 
 export const changeTenant: ActionFactory<number, ChangeTenantAction> = newTenantId => ({
   type: ActionType.CHANGE_TENANT,
   tenantId: newTenantId
+});
+
+export const addTenant: ActionFactory<Tenant, AddTenantAction> = newTenant => ({
+  type: ActionType.ADD_TENANT,
+  tenant: newTenant
+});
+
+export const removeTenant: ActionFactory<Tenant, AddTenantAction> = removedTenant => ({
+  type: ActionType.ADD_TENANT,
+  tenant: removedTenant
+});
+
+export const refreshSupportedTimezones: ActionFactory<string[], RefreshSupportedTimezoneListAction> = 
+supportedTimezones => ({
+  type: ActionType.REFRESH_SUPPORTED_TIMEZONES,
+  timezoneList: supportedTimezones
 });
 
 export const refreshTenantList: ActionFactory<{currentTenantId: number; tenantList: Tenant[]},
