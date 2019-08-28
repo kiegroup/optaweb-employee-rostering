@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,8 +63,8 @@ public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServ
         return restTemplate.postForEntity(skillPathURI + "add", skillView, Skill.class, tenantId);
     }
 
-    private ResponseEntity<Skill> updateSkill(Integer tenantId, HttpEntity<SkillView> request) {
-        return restTemplate.exchange(skillPathURI + "update", HttpMethod.PUT, request, Skill.class, tenantId);
+    private ResponseEntity<Skill> updateSkill(Integer tenantId, SkillView skillView) {
+        return restTemplate.postForEntity(skillPathURI + "update", skillView, Skill.class, tenantId);
     }
 
     @Before
@@ -90,8 +89,7 @@ public class SkillRestControllerTest extends AbstractEntityRequireTenantRestServ
 
         SkillView updatedSkill = new SkillView(TENANT_ID, "updatedSkill");
         updatedSkill.setId(postResponse.getBody().getId());
-        HttpEntity<SkillView> request = new HttpEntity<>(updatedSkill);
-        ResponseEntity<Skill> putResponse = updateSkill(TENANT_ID, request);
+        ResponseEntity<Skill> putResponse = updateSkill(TENANT_ID, updatedSkill);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         response = getSkill(TENANT_ID, putResponse.getBody().getId());
