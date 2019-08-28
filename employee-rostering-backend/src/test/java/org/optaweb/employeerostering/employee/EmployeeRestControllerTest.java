@@ -75,8 +75,8 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
         return restTemplate.postForEntity(employeePathURI + "add", employee, Employee.class, tenantId);
     }
 
-    private ResponseEntity<Employee> updateEmployee(Integer tenantId, HttpEntity<Employee> request) {
-        return restTemplate.exchange(employeePathURI + "update", HttpMethod.PUT, request, Employee.class, tenantId);
+    private ResponseEntity<Employee> updateEmployee(Integer tenantId, Employee employee) {
+        return restTemplate.postForEntity(employeePathURI + "update", employee, Employee.class, tenantId);
     }
 
     private ResponseEntity<Skill> addSkill(Integer tenantId, Skill skill) {
@@ -147,8 +147,7 @@ public class EmployeeRestControllerTest extends AbstractEntityRequireTenantRestS
 
         Employee updatedEmployee = new Employee(TENANT_ID, "updatedEmployee", contractA, testSkillSet);
         updatedEmployee.setId(postResponse.getBody().getId());
-        HttpEntity<Employee> request = new HttpEntity<>(updatedEmployee);
-        ResponseEntity<Employee> putResponse = updateEmployee(TENANT_ID, request);
+        ResponseEntity<Employee> putResponse = updateEmployee(TENANT_ID, updatedEmployee);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         response = getEmployee(TENANT_ID, putResponse.getBody().getId());

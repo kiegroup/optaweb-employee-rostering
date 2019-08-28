@@ -320,7 +320,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         String body = (new ObjectMapper()).writeValueAsString(updatedEmployee);
 
         mvc.perform(MockMvcRequestBuilders
-                .put("/rest/tenant/{tenantId}/employee/update", TENANT_ID)
+                .post("/rest/tenant/{tenantId}/employee/update", TENANT_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(body)
                 .accept(MediaType.APPLICATION_JSON))
@@ -351,7 +351,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .put("/rest/tenant/{tenantId}/employee/update", 0)
+                        .post("/rest/tenant/{tenantId}/employee/update", 0)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body)))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
@@ -369,7 +369,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .put("/rest/tenant/{tenantId}/employee/update", TENANT_ID)
+                        .post("/rest/tenant/{tenantId}/employee/update", TENANT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body)))
                 .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
@@ -397,7 +397,7 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         assertThatExceptionOfType(NestedServletException.class)
                 .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .put("/rest/tenant/{tenantId}/employee/update", 0)
+                        .post("/rest/tenant/{tenantId}/employee/update", 0)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body)))
                 .withMessage("Request processing failed; nested exception is java.lang.IllegalState" +
