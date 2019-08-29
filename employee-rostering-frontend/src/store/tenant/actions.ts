@@ -17,7 +17,8 @@
 import Tenant from 'domain/Tenant';
 import { ActionFactory } from '../types';
 import { ActionType, ChangeTenantAction, RefreshTenantListAction, AddTenantAction,
-  RefreshSupportedTimezoneListAction } from './types';
+  RefreshSupportedTimezoneListAction, 
+  RemoveTenantAction} from './types';
 
 export const changeTenant: ActionFactory<number, ChangeTenantAction> = newTenantId => ({
   type: ActionType.CHANGE_TENANT,
@@ -29,8 +30,8 @@ export const addTenant: ActionFactory<Tenant, AddTenantAction> = newTenant => ({
   tenant: newTenant
 });
 
-export const removeTenant: ActionFactory<Tenant, AddTenantAction> = removedTenant => ({
-  type: ActionType.ADD_TENANT,
+export const removeTenant: ActionFactory<Tenant, RemoveTenantAction> = removedTenant => ({
+  type: ActionType.REMOVE_TENANT,
   tenant: removedTenant
 });
 

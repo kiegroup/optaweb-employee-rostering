@@ -19,12 +19,12 @@ import { AppState } from 'store/types';
 import { Text, Level, LevelItem, Pagination, Button } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { Predicate } from "types";
-import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import Tenant from 'domain/Tenant';
+import { tenantOperations } from 'store/tenant';
 import FilterComponent from 'ui/components/FilterComponent';
 import { Table, IRow, TableHeader, TableBody } from '@patternfly/react-table';
-import { EditIcon, TrashIcon } from '@patternfly/react-icons';
+import { TrashIcon } from '@patternfly/react-icons';
 import NewTenantFormModal from './NewTenantFormModal';
 
 interface StateProps {
@@ -36,9 +36,11 @@ const mapStateToProps = (state: AppState): StateProps => ({
 }); 
 
 export interface DispatchProps {
+  removeTenant: typeof tenantOperations.removeTenant;
 }
 
 const mapDispatchToProps: DispatchProps = {
+  removeTenant: tenantOperations.removeTenant
 };
 
 export type Props = StateProps & DispatchProps;
@@ -105,7 +107,9 @@ export const AdminPage: React.FC<Props> = (props) => {
                       }}
                     >
                       <span />
-                      <Button variant="danger"><TrashIcon /></Button>
+                      <Button variant="danger" onClick={() => props.removeTenant(tenant)}>
+                        <TrashIcon />
+                      </Button>
                     </span>
                   </td>
                 )
