@@ -172,8 +172,12 @@ public class EmployeeService extends AbstractRestService {
         }
 
         validateTenantIdParameter(tenantId, employeeAvailabilityOptional.get());
-        return new EmployeeAvailabilityView(rosterStateRepository.findByTenantId(tenantId).get().getTimeZone(),
-                employeeAvailabilityOptional.get());
+
+        RosterState rosterState =
+                rosterStateRepository.findByTenantId(tenantId)
+                        .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
+                                                                               tenantId + ")."));
+        return new EmployeeAvailabilityView(rosterState.getTimeZone(), employeeAvailabilityOptional.get());
     }
 
     @Transactional
@@ -182,8 +186,12 @@ public class EmployeeService extends AbstractRestService {
         EmployeeAvailability employeeAvailability = convertFromEmployeeAvailabilityView(tenantId,
                                                                                         employeeAvailabilityView);
         employeeAvailabilityRepository.save(employeeAvailability);
-        return new EmployeeAvailabilityView(rosterStateRepository.findByTenantId(tenantId).get().getTimeZone(),
-                                            employeeAvailability);
+
+        RosterState rosterState =
+                rosterStateRepository.findByTenantId(tenantId)
+                        .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
+                                                                               tenantId + ")."));
+        return new EmployeeAvailabilityView(rosterState.getTimeZone(), employeeAvailability);
     }
 
     @Transactional
@@ -214,8 +222,11 @@ public class EmployeeService extends AbstractRestService {
         EmployeeAvailability updatedEmployeeAvailability =
                 employeeAvailabilityRepository.saveAndFlush(databaseEmployeeAvailability);
 
-        return new EmployeeAvailabilityView(rosterStateRepository.findByTenantId(tenantId).get().getTimeZone(),
-                                            updatedEmployeeAvailability);
+        RosterState rosterState =
+                rosterStateRepository.findByTenantId(tenantId)
+                        .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
+                                                                               tenantId + ")."));
+        return new EmployeeAvailabilityView(rosterState.getTimeZone(), updatedEmployeeAvailability);
     }
 
     @Transactional
