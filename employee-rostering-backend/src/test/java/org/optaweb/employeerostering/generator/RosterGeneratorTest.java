@@ -152,8 +152,6 @@ public class RosterGeneratorTest {
         ResponseEntity<List<ShiftView>> response = getShifts(1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getStartDateTime().toString()).isEqualTo("2019-08-19T06:00");
-        assertThat(response.getBody().get(0).getEndDateTime().toString()).isEqualTo("2019-08-19T14:00");
     }
 
     @Test
