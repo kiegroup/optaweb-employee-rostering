@@ -96,7 +96,7 @@ export const addTenant: ThunkCommandFactory<RosterState, AddTenantAction> = rs =
 
 export const removeTenant: ThunkCommandFactory<Tenant, AddTenantAction> = tenant =>
   (dispatch, state, client) => {
-    return client.delete<boolean>(`/tenant/${tenant.id}`, ).then(isSuccess => {
+    return client.post<boolean>(`/tenant/remove/${tenant.id}`, {}).then(isSuccess => {
       if (isSuccess) {
         dispatch(actions.removeTenant(tenant));
       }

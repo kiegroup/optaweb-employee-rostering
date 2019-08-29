@@ -20,6 +20,7 @@ import RosterState from 'domain/RosterState';
 import { tenantOperations } from 'store/tenant';
 import { connect } from 'react-redux';
 import { AppState } from 'store/types';
+import moment from 'moment';
 
 interface StateProps {
   timezoneList: string[];
@@ -47,13 +48,30 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
+export function isFormCompleted(rs: Partial<RosterState>): rs is RosterState {
+  return rs.draftLength !== undefined && rs.firstDraftDate !== undefined &&
+    rs.lastHistoricDate !== undefined && rs.publishLength !== undefined &&
+    rs.publishNotice !== undefined && rs.rotationLength !== undefined &&
+    rs.tenant !== undefined && rs.timeZone !== undefined &&
+    rs.unplannedRotationOffset !== undefined;
+}
+
 export const NewTenantFormModal: React.FC<Props> = (props) => {
   const { refreshSupportedTimezones } = props;
   React.useEffect(() => {
     refreshSupportedTimezones() 
   }, [refreshSupportedTimezones]);
 
-  const [ timezone, setTimezone ] = React.useState<string | undefined>(undefined);
+  const [ formData, setFormData ] = React.useState<Partial<RosterState>>({
+    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    publishLength: 7,
+    unplannedRotationOffset: 0
+  });
+
+  const setProperty = (properties: Partial<RosterState>) => {
+    setFormData({ ...formData, ...properties });
+  }
+
   return (
     <Modal
       title="Create Tenant"
@@ -71,45 +89,88 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           </Button>
         ),
         (
-          <Button aria-label="Save" key={2}>Save</Button>
+          <Button
+            aria-label="Save"
+            key={2}
+            onClick={() => {
+              if (isFormCompleted(formData)) {
+                props.addTenant(formData);
+                props.onClose();
+              }
+            }}
+          >
+            Save
+          </Button>
         )
         ]
       }
       isSmall
     >
-      <Form>
+      <Form onSubmit={(e) => e.preventDefault()}>
         <InputGroup>
           <Label>Name</Label>
-          <TextInput aria-label="Name" />
+          <TextInput
+            aria-label="Name"
+            onChange={name => setProperty({
+              tenant: {
+                name: name
+              }
+            })}
+          />
         </InputGroup>
         <InputGroup>
           <Label>Schedule Start Date</Label>
-          <TextInput type="date" aria-label="Schedule Start Date" />
+          <TextInput
+            type="date"
+            aria-label="Schedule Start Date"
+            onChange={date => setProperty({ 
+              lastHistoricDate: moment(date).subtract(1, "day").toDate(),
+              firstDraftDate: moment(date).toDate()
+            })}
+          />
         </InputGroup>
         <InputGroup>
           <Label>Draft Length (days)</Label>
-          <TextInput type="number" aria-label="Draft Length" />
+          <TextInput
+            type="number"
+            aria-label="Draft Length"
+            onChange={length => setProperty({ draftLength: parseInt(length) })}
+          />
         </InputGroup>
         <InputGroup>
           <Label>Publish Notice (days)</Label>
-          <TextInput type="number" aria-label="Publish Notice" />
+          <TextInput
+            type="number"
+            aria-label="Publish Notice"
+            onChange={notice => setProperty({ publishNotice: parseInt(notice) })}
+          />
         </InputGroup>
         <InputGroup>
           <Label>Publish Length (days)</Label>
-          <TextInput defaultValue="7" type="number" aria-label="Publish Length" isDisabled />
+          <TextInput 
+            defaultValue="7"
+            type="number"
+            onChange={length => setProperty({ publishLength: parseInt(length) })}
+            aria-label="Publish Length"
+            isDisabled
+          />
         </InputGroup>
         <InputGroup>
           <Label>Rotation Length (days)</Label>
-          <TextInput type="number" aria-label="Rotation Length" />
+          <TextInput
+            type="number"
+            aria-label="Rotation Length"
+            onChange={length => setProperty({ rotationLength: parseInt(length) })}
+          />
         </InputGroup>
         <InputGroup>
           <Label>Timezone</Label>
           <TypeaheadSelectInput
             emptyText="Select a timezone"
-            defaultValue={timezone}
+            defaultValue={formData.timeZone}
             options={props.timezoneList}
             optionToStringMap={s => s}
-            onChange={s => setTimezone(s)}
+            onChange={tz => setProperty({ timeZone: tz })}
           />
         </InputGroup>
       </Form>
