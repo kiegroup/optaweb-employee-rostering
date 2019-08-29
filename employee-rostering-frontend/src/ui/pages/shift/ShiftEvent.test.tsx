@@ -220,9 +220,23 @@ describe('ShiftEvent', () => {
     }).toMatchSnapshot();
   });
 
-  it('should render correctly', () => {
+  it('should render ShiftPopupHeader correctly', () => {
     const shiftEventObj = shallow(
-      <ShiftEvent event={baseShift} title="Employee" onEdit={jest.fn()} onDelete={jest.fn()} />
+      <shiftEvent.ShiftPopupHeader shift={baseShift} onEdit={jest.fn()} onDelete={jest.fn()} />
+    );
+    expect(toJson(shiftEventObj)).toMatchSnapshot();
+  });
+
+  it('should render ShiftPopupBody correctly', () => {
+    const shiftEventObj = shallow(
+      <shiftEvent.ShiftPopupBody {...baseShift} />
+    );
+    expect(toJson(shiftEventObj)).toMatchSnapshot();
+  });
+
+  it('should render ShiftEvent correctly', () => {
+    const shiftEventObj = shallow(
+      <ShiftEvent event={baseShift} title="Employee" />
     );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });

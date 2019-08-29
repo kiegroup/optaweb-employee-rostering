@@ -35,6 +35,12 @@
 }
 /* End of Hack */
 
+/* Hack to hide vertical scrollbar on Firefox */
+.rbc-time-content {
+    padding-bottom: 6px;
+}
+/* End Hack */
+
 .rbc-header.published-day::before {
     content: " ";
     font-family: "pficon";
@@ -88,7 +94,6 @@
     position: relative; 
     margin-bottom: -100%;
 }
-
 
 .unavailable .rbc-time-slot {
     border-top: 1px solid black;

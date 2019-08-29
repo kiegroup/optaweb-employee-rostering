@@ -53,6 +53,16 @@
             </configuration>
           </execution>
           <execution>
+            <id>npm typecheck</id>
+            <phase>test</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run typecheck</arguments>
+            </configuration>
+          </execution>
+          <execution>
             <id>npm test</id>
             <phase>test</phase>
             <goals>
