@@ -177,6 +177,10 @@ const state: AppState = {
     isLoading: false,
     skillMapById: new Map()
   },
+  shiftTemplateList: {
+    isLoading: false,
+    shiftTemplateMapById: new Map()
+  },
   rosterState: {
     isLoading: true,
     rosterState: null

@@ -271,7 +271,7 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
 </li>
 `;
 
-exports[`ShiftEvent should render correctly 1`] = `
+exports[`ShiftEvent should render ShiftEvent correctly 1`] = `
 <span
   data-for="1"
   data-tip={true}
@@ -284,5 +284,56 @@ exports[`ShiftEvent should render correctly 1`] = `
   }
 >
   Employee
+</span>
+`;
+
+exports[`ShiftEvent should render ShiftPopupBody correctly 1`] = `
+<span
+  style={
+    Object {
+      "display": "block",
+      "maxHeight": "20vh",
+      "overflowY": "auto",
+      "pointerEvents": "all",
+    }
+  }
+>
+  Shift Indictment Score:
+   0
+  <br />
+  <Text>
+    Indictments:
+  </Text>
+  <List />
+</span>
+`;
+
+exports[`ShiftEvent should render ShiftPopupHeader correctly 1`] = `
+<span>
+  <Text>
+    Spot, 9:00 AM-5:00 PM: Employee 1
+  </Text>
+  <Button
+    onClick={[Function]}
+    variant="link"
+  >
+    <EditIcon
+      color="currentColor"
+      noVerticalAlign={false}
+      size="sm"
+      title={null}
+    />
+  </Button>
+  <Button
+    onClick={[Function]}
+    variant="link"
+  >
+    <TrashIcon
+      color="currentColor"
+      noVerticalAlign={false}
+      size="sm"
+      title={null}
+    />
+  </Button>
 </span>
 `;

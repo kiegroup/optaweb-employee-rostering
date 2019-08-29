@@ -296,6 +296,10 @@ const state: AppState = {
       }]
     ])
   },
+  shiftTemplateList: {
+    isLoading: false,
+    shiftTemplateMapById: new Map()
+  },
   rosterState: {
     isLoading: true,
     rosterState: null

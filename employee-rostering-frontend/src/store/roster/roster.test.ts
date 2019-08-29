@@ -1122,6 +1122,10 @@ const state: AppState = {
     isLoading: false,
     skillMapById: new Map()
   },
+  shiftTemplateList: {
+    isLoading: false,
+    shiftTemplateMapById: new Map()
+  },
   rosterState: {
     isLoading: false,
     rosterState: mockShiftRoster.rosterState 
