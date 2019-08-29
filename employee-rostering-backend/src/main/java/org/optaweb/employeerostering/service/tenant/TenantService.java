@@ -147,19 +147,6 @@ public class TenantService extends AbstractRestService {
     // RosterParametrization
     // ************************************************************************
 
-    public RosterParametrization convertFromRosterParametrizationView(RosterParametrizationView
-                                                                              rosterParametrizationView) {
-        RosterParametrization rosterParametrization =
-                new RosterParametrization(rosterParametrizationView.getTenantId(),
-                                          rosterParametrizationView.getUndesiredTimeSlotWeight(),
-                                          rosterParametrizationView.getDesiredTimeSlotWeight(),
-                                          rosterParametrizationView.getRotationEmployeeMatchWeight(),
-                                          rosterParametrizationView.getWeekStartDay());
-        rosterParametrization.setId(rosterParametrizationView.getId());
-        rosterParametrization.setVersion(rosterParametrizationView.getVersion());
-        return rosterParametrization;
-    }
-
     @Transactional
     public RosterParametrization getRosterParametrization(Integer tenantId) {
         Optional<RosterParametrization> rosterParametrizationOptional =
