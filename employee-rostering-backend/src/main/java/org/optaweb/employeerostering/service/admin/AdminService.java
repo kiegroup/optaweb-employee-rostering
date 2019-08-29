@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.service.admin;
 
+import org.optaweb.employeerostering.service.contract.ContractRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
@@ -36,6 +37,7 @@ public class AdminService {
     private EmployeeAvailabilityRepository employeeAvailabilityRepository;
     private ShiftTemplateRepository shiftTemplateRepository;
     private EmployeeRepository employeeRepository;
+    private ContractRepository contractRepository;
     private SpotRepository spotRepository;
     private SkillRepository skillRepository;
     private RosterParametrizationRepository rosterParametrizationRepository;
@@ -47,15 +49,19 @@ public class AdminService {
     public AdminService(ShiftRepository shiftRepository,
                         EmployeeAvailabilityRepository employeeAvailabilityRepository,
                         ShiftTemplateRepository shiftTemplateRepository,
-                        EmployeeRepository employeeRepository, SpotRepository spotRepository,
+                        EmployeeRepository employeeRepository,
+                        ContractRepository contractRepository,
+                        SpotRepository spotRepository,
                         SkillRepository skillRepository,
                         RosterParametrizationRepository rosterParametrizationRepository,
-                        RosterStateRepository rosterStateRepository, TenantRepository tenantRepository,
+                        RosterStateRepository rosterStateRepository,
+                        TenantRepository tenantRepository,
                         RosterGenerator rosterGenerator) {
         this.shiftRepository = shiftRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
         this.shiftTemplateRepository = shiftTemplateRepository;
         this.employeeRepository = employeeRepository;
+        this.contractRepository = contractRepository;
         this.spotRepository = spotRepository;
         this.skillRepository = skillRepository;
         this.rosterParametrizationRepository = rosterParametrizationRepository;
@@ -67,7 +73,6 @@ public class AdminService {
     @Transactional
     public void resetApplication() {
         // IMPORTANT: Delete entries that has Many-to-One relations first, otherwise we break referential integrity
-        // TODO: Why aren't Contract entities deleted?
         deleteAllEntities();
         rosterGenerator.setUpGeneratedData();
     }
@@ -78,6 +83,7 @@ public class AdminService {
         employeeAvailabilityRepository.deleteAllInBatch();
         shiftTemplateRepository.deleteAllInBatch();
         employeeRepository.deleteAllInBatch();
+        contractRepository.deleteAllInBatch();
         spotRepository.deleteAllInBatch();
         skillRepository.deleteAllInBatch();
         rosterParametrizationRepository.deleteAllInBatch();
