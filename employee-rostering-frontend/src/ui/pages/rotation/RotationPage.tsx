@@ -45,7 +45,7 @@ const mapStateToProps = (state: AppState): StateProps => ({
   spotList: spotSelectors.getSpotList(state),
   spotIdToShiftTemplateListMap: shiftTemplateSelectors.getShiftTemplateList(state)
     .reduce((prev, curr) => {
-      const old = prev.get(curr.spot.id as number)? prev.get(curr.spot.id as number) as ShiftTemplate[] : [];
+      const old = prev.get(curr.spot.id as number) as ShiftTemplate[];
       const templatesToAdd: ShiftTemplate[] =
       (state.rosterState.rosterState !== null &&
         moment.duration(curr.durationBetweenRotationStartAndTemplateStart)
@@ -58,7 +58,8 @@ const mapStateToProps = (state: AppState): StateProps => ({
         }] : [curr];
       return prev.set(curr.spot.id as number, old.concat(templatesToAdd));
     },
-    new Map<number, ShiftTemplate[]>()),
+    spotSelectors.getSpotList(state).reduce((prev, curr) => prev.set(curr.id as number, []),
+      new Map<number, ShiftTemplate[]>())),
   rosterState: state.rosterState.rosterState
 }); 
   
