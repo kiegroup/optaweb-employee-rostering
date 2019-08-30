@@ -47,9 +47,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.NestedServletException;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -104,8 +102,8 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
     @Test
     public void getShiftListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/shift/", TENANT_ID)
-                .accept(MediaType.APPLICATION_JSON))
+                            .get("/rest/tenant/{tenantId}/shift/", TENANT_ID)
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());
     }
@@ -122,8 +120,8 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         ShiftView persistedShift = shiftService.createShift(TENANT_ID, shiftView);
 
         mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
-                .accept(MediaType.APPLICATION_JSON))
+                            .get("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.rotationEmployeeId").value(
@@ -136,12 +134,17 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
     }
 
     @Test
-    public void getNonExistentShiftTest() {
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .get("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)))
-                .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                        "Exception: No Shift entity found with ID (0).");
+    public void getNonExistentShiftTest() throws Exception {
+        String exceptionMessage = "No Shift entity found with ID (0).";
+        String exceptionClass = "javax.persistence.EntityNotFoundException";
+
+        mvc.perform(MockMvcRequestBuilders
+                            .get("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)
+                            .accept(MediaType.APPLICATION_JSON))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 
     @Test
@@ -156,8 +159,8 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         ShiftView persistedShift = shiftService.createShift(TENANT_ID, shiftView);
 
         mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
-                .accept(MediaType.APPLICATION_JSON))
+                            .delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, persistedShift.getId())
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -167,8 +170,8 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
     @Test
     public void deleteNonExistentShiftTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
+                            .delete("/rest/tenant/{tenantId}/shift/{id}", TENANT_ID, 0)
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -187,10 +190,10 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         String body = (new ObjectMapper()).writeValueAsString(shiftView);
 
         mvc.perform(MockMvcRequestBuilders
-                .post("/rest/tenant/{tenantId}/shift/add", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
+                            .post("/rest/tenant/{tenantId}/shift/add", TENANT_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body)
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.rotationEmployeeId").value(
@@ -220,10 +223,10 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         String body = (new ObjectMapper()).writeValueAsString(updatedShift);
 
         mvc.perform(MockMvcRequestBuilders
-                .put("/rest/tenant/{tenantId}/shift/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
+                            .put("/rest/tenant/{tenantId}/shift/update", TENANT_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body)
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.startDateTime").value(
@@ -234,6 +237,9 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
 
     @Test
     public void updateNonExistentShiftTest() throws Exception {
+        String exceptionMessage = "Shift entity with ID (0) not found.";
+        String exceptionClass = "javax.persistence.EntityNotFoundException";
+
         Spot spot = createSpot(TENANT_ID, "spot");
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59, 59, 0);
         LocalDateTime endDateTime = startDateTime.plusHours(10);
@@ -241,12 +247,13 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
         updatedShift.setId(0L);
         String body = (new ObjectMapper()).writeValueAsString(updatedShift);
 
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .put("/rest/tenant/{tenantId}/shift/update", TENANT_ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body)))
-                .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                        "Exception: Shift entity with ID (0) not found.");
+        mvc.perform(MockMvcRequestBuilders
+                            .put("/rest/tenant/{tenantId}/shift/update", TENANT_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 }
