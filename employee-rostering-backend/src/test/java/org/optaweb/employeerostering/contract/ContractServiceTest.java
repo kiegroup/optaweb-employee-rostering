@@ -37,9 +37,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.NestedServletException;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,8 +68,8 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     @Test
     public void getContractListTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/contract/", TENANT_ID)
-                .accept(MediaType.APPLICATION_JSON))
+                            .get("/rest/tenant/{tenantId}/contract/", TENANT_ID)
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk());
     }
@@ -84,12 +82,12 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Integer maximumMinutesPerYear = 12000;
 
         ContractView contractView = new ContractView(TENANT_ID, "contract", maximumMinutesPerDay, maximumMinutesPerWeek,
-                maximumMinutesPerMonth, maximumMinutesPerYear);
+                                                     maximumMinutesPerMonth, maximumMinutesPerYear);
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         mvc.perform(MockMvcRequestBuilders
-                .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
-                .accept(MediaType.APPLICATION_JSON))
+                            .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
@@ -101,25 +99,35 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     }
 
     @Test
-    public void getNonExistentContractTest() {
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)))
-                .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                        "Exception: No Contract entity found with ID (0).");
+    public void getNonExistentContractTest() throws Exception {
+        String exceptionMessage = "No Contract entity found with ID (0).";
+        String exceptionClass = "javax.persistence.EntityNotFoundException";
+
+        mvc.perform(MockMvcRequestBuilders
+                            .get("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
+                            .accept(MediaType.APPLICATION_JSON))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 
     @Test
-    public void getNonMatchingContractTest() {
+    public void getNonMatchingContractTest() throws Exception {
+        String exceptionMessage = "The tenantId (0) does not match the persistable (contract)'s tenantId (" +
+                TENANT_ID + ").";
+        String exceptionClass = "java.lang.IllegalStateException";
+
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .get("/rest/tenant/{tenantId}/contract/{id}", 0,
-                                contract.getId())))
-                .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: The " +
-                        "tenantId (0) does not match the persistable (contract)'s tenantId (" + TENANT_ID + ").");
+        mvc.perform(MockMvcRequestBuilders
+                            .get("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
+                            .accept(MediaType.APPLICATION_JSON))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 
     @Test
@@ -128,8 +136,8 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         mvc.perform(MockMvcRequestBuilders
-                .delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
-                .accept(MediaType.APPLICATION_JSON))
+                            .delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, contract.getId())
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -139,7 +147,7 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     @Test
     public void deleteNonExistentContractTest() throws Exception {
         mvc.perform(MockMvcRequestBuilders.delete("/rest/tenant/{tenantId}/contract/{id}", TENANT_ID, 0)
-                .accept(MediaType.APPLICATION_JSON))
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json;charset=UTF-8"))
@@ -147,16 +155,20 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
     }
 
     @Test
-    public void deleteNonMatchingContractTest() {
+    public void deleteNonMatchingContractTest() throws Exception {
+        String exceptionMessage = "The tenantId (0) does not match the persistable (contract)'s tenantId (" +
+                TENANT_ID + ").";
+        String exceptionClass = "java.lang.IllegalStateException";
+
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         Contract contract = contractService.createContract(TENANT_ID, contractView);
-
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .delete("/rest/tenant/{tenantId}/contract/{id}",
-                                0, contract.getId())))
-                .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
-                        "The tenantId (0) does not match the persistable (contract)'s tenantId (" + TENANT_ID + ").");
+        mvc.perform(MockMvcRequestBuilders
+                            .delete("/rest/tenant/{tenantId}/contract/{id}", 0, contract.getId())
+                            .accept(MediaType.APPLICATION_JSON))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 
     @Test
@@ -167,14 +179,14 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Integer maximumMinutesPerYear = 12000;
 
         ContractView contractView = new ContractView(TENANT_ID, "contract", maximumMinutesPerDay, maximumMinutesPerWeek,
-                maximumMinutesPerMonth, maximumMinutesPerYear);
+                                                     maximumMinutesPerMonth, maximumMinutesPerYear);
         String body = (new ObjectMapper()).writeValueAsString(contractView);
 
         mvc.perform(MockMvcRequestBuilders
-                .post("/rest/tenant/{tenantId}/contract/add", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
+                            .post("/rest/tenant/{tenantId}/contract/add", TENANT_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body)
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
@@ -187,16 +199,20 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
 
     @Test
     public void createNonMatchingContractTest() throws Exception {
+        String exceptionMessage = "The tenantId (0) does not match the persistable (contract)'s tenantId ("
+                + TENANT_ID + ").";
+        String exceptionClass = "java.lang.IllegalStateException";
+
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         String body = (new ObjectMapper()).writeValueAsString(contractView);
-
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .post("/rest/tenant/{tenantId}/contract/add", 0)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body)))
-                .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
-                        "The tenantId (0) does not match the persistable (contract)'s tenantId (" + TENANT_ID + ").");
+        mvc.perform(MockMvcRequestBuilders
+                            .post("/rest/tenant/{tenantId}/contract/add", 0)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 
     @Test
@@ -210,16 +226,16 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract", maximumMinutesPerDay,
-                maximumMinutesPerWeek,
-                maximumMinutesPerMonth, maximumMinutesPerYear);
+                                                            maximumMinutesPerWeek,
+                                                            maximumMinutesPerMonth, maximumMinutesPerYear);
         updatedContractView.setId(contract.getId());
         String body = (new ObjectMapper()).writeValueAsString(updatedContractView);
 
         mvc.perform(MockMvcRequestBuilders
-                .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(body)
-                .accept(MediaType.APPLICATION_JSON))
+                            .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body)
+                            .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.tenantId").value(TENANT_ID))
@@ -232,52 +248,61 @@ public class ContractServiceTest extends AbstractEntityRequireTenantRestServiceT
 
     @Test
     public void updateNonMatchingContractTest() throws Exception {
+        String exceptionMessage = "The tenantId (0) does not match the persistable (updatedContract)'s tenantId (" +
+                TENANT_ID + ").";
+        String exceptionClass = "java.lang.IllegalStateException";
+
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         ContractView updatedContractView = new ContractView(TENANT_ID, "updatedContract");
         String body = (new ObjectMapper()).writeValueAsString(updatedContractView);
-
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .post("/rest/tenant/{tenantId}/contract/update", 0)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body)))
-                .withMessage("Request processing failed; nested exception is java.lang.IllegalStateException: " +
-                        "The tenantId (0) does not match the persistable (updatedContract)'s tenantId (" +
-                        TENANT_ID + ").");
+        mvc.perform(MockMvcRequestBuilders
+                            .post("/rest/tenant/{tenantId}/contract/update", 0)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 
     @Test
     public void updateNonExistentContractTest() throws Exception {
+        String exceptionMessage = "Contract entity with ID (0) not found.";
+        String exceptionClass = "javax.persistence.EntityNotFoundException";
+
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         contractView.setId(0L);
         String body = (new ObjectMapper()).writeValueAsString(contractView);
-
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body)))
-                .withMessage("Request processing failed; nested exception is javax.persistence.EntityNotFound" +
-                        "Exception: Contract entity with ID (0) not found.");
+        mvc.perform(MockMvcRequestBuilders
+                            .post("/rest/tenant/{tenantId}/contract/update", TENANT_ID)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isNotFound())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 
     @Test
     public void updateChangeTenantIdContractTest() throws Exception {
+        String exceptionMessage = "Contract entity with tenantId (" + TENANT_ID + ") cannot change tenants.";
+        String exceptionClass = "java.lang.IllegalStateException";
+
         ContractView contractView = new ContractView(TENANT_ID, "contract");
         Contract contract = contractService.createContract(TENANT_ID, contractView);
 
         ContractView updatedContract = new ContractView(0, "updatedContract");
         updatedContract.setId(contract.getId());
         String body = (new ObjectMapper()).writeValueAsString(updatedContract);
-
-        assertThatExceptionOfType(NestedServletException.class)
-                .isThrownBy(() -> mvc.perform(MockMvcRequestBuilders
-                        .post("/rest/tenant/{tenantId}/contract/update", 0)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body)))
-                .withMessage("Request processing failed; nested exception is java.lang.IllegalState" +
-                        "Exception: Contract entity with tenantId (" + TENANT_ID + ") cannot change tenants.");
+        mvc.perform(MockMvcRequestBuilders
+                            .post("/rest/tenant/{tenantId}/contract/update", 0)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(body))
+                .andDo(mvcResult -> logger.info(mvcResult.toString()))
+                .andExpect(status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionMessage").value(exceptionMessage))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exceptionClass").value(exceptionClass));
     }
 }

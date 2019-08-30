@@ -118,7 +118,7 @@ public class HierarchyTree<K, V> {
             if (hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey, classKey) !=
                     HierarchyRelationship.IS_BELOW) {
                 throw new IllegalArgumentException("The child you tried to add (" + newChild.classKey +
-                                                           ") is not a desendant of root (" + classKey + ").");
+                                                           ") is not a descendant of root (" + classKey + ").");
             }
             Collection<HierarchyNode> subclassesOfNewChild = hierarchySubclasses.stream()
                     .filter(c -> hierarchyRelation.getHierarchyRelationshipBetween(newChild.classKey, c.classKey) ==
@@ -145,7 +145,7 @@ public class HierarchyTree<K, V> {
             HierarchyRelationship classRelationship = hierarchyRelation.getHierarchyRelationshipBetween(key, classKey);
             if (!(classRelationship == HierarchyRelationship.IS_BELOW || classRelationship ==
                     HierarchyRelationship.IS_THE_SAME_AS)) {
-                throw new IllegalArgumentException("The item (" + key + ") is not a desendant of root (" +
+                throw new IllegalArgumentException("The item (" + key + ") is not a descendant of root (" +
                                                            classKey + ").");
             }
             List<HierarchyNode> superclassesOfItem = hierarchySubclasses.stream()
