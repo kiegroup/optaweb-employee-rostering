@@ -24,7 +24,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
+import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
 import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.domain.tenant.view.RosterParametrizationView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,8 +46,16 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
 
     private final String tenantPathURI = "http://localhost:8080/rest/tenant/";
 
-    private ResponseEntity<RosterParametrization> getRosterParametrization(Integer tenantId) {
-        return restTemplate.getForEntity(tenantPathURI + tenantId, RosterParametrization.class);
+    private ResponseEntity<Tenant> addTenant(RosterStateView initialRosterStateView) {
+        return restTemplate.postForEntity(tenantPathURI + "add", initialRosterStateView, Tenant.class);
+    }
+
+    private void deleteTenant(Integer id) {
+        restTemplate.delete(tenantPathURI + id);
+    }
+
+    private ResponseEntity<RosterParametrization> getRosterParametrization(Integer id) {
+        return restTemplate.getForEntity(tenantPathURI + id, RosterParametrization.class);
     }
 
     private ResponseEntity<RosterParametrization> updateRosterParametrization(RosterParametrizationView
@@ -69,7 +79,11 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     }
 
     @Test
-    public void updateRosterParametrizationTest() {
+    public void rosterParametrizationCrudTest() {
+        ResponseEntity<RosterParametrization> getResponse = getRosterParametrization(TENANT_ID);
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(getResponse.getBody()).isNotNull();
+
         ResponseEntity<RosterParametrization> updateResponse =
                 updateRosterParametrization(new RosterParametrizationView(TENANT_ID, 0, 0, 0, DayOfWeek.TUESDAY));
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
