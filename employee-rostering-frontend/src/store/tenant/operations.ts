@@ -18,7 +18,7 @@ import Tenant from 'domain/Tenant';
 import { ThunkCommandFactory, AppState } from '../types';
 import * as actions from './actions';
 import { ChangeTenantAction, RefreshTenantListAction, RefreshSupportedTimezoneListAction,
-  AddTenantAction } from './types';
+  AddTenantAction, RemoveTenantAction} from './types';
 import { skillOperations } from 'store/skill';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
@@ -94,7 +94,7 @@ export const addTenant: ThunkCommandFactory<RosterState, AddTenantAction> = rs =
     });
   };
 
-export const removeTenant: ThunkCommandFactory<Tenant, AddTenantAction> = tenant =>
+export const removeTenant: ThunkCommandFactory<Tenant, RemoveTenantAction> = tenant =>
   (dispatch, state, client) => {
     return client.post<boolean>(`/tenant/remove/${tenant.id}`, {}).then(isSuccess => {
       if (isSuccess) {
