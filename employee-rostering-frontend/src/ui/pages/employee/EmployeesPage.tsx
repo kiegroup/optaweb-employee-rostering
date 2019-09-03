@@ -16,20 +16,22 @@
 
 import * as React from 'react';
 import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
-import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
 import { employeeSelectors, employeeOperations } from 'store/employee';
 import { contractSelectors } from 'store/contract';
 import { skillSelectors } from 'store/skill';
 import Employee from 'domain/Employee';
 import { AppState } from 'store/types';
-import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
+import {
+  TextInput, Text, Chip, ChipGroup,
+} from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
 import Contract from 'domain/Contract';
-import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import { StatefulTypeaheadSelectInput } from 'ui/components/TypeaheadSelectInput';
 import { Predicate, Sorter, ReadonlyPartial } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
+import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadSelectInput';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
@@ -88,7 +90,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
     };
   }
   
-  editDataRow(data: ReadonlyPartial<Employee>, setProperty: PropertySetter<Employee>): JSX.Element[] {
+  editDataRow(data: ReadonlyPartial<Employee>, setProperty: PropertySetter<Employee>): React.ReactNode[] {
     return [
       <TextInput
         key={0}
@@ -97,20 +99,20 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         aria-label="Name"
         onChange={(value) => setProperty("name", value)}
       />,
-      <TypeaheadSelectInput
+      <StatefulTypeaheadSelectInput
         key={1}
-        emptyText="Select contract"
+        emptyText="Select a contract..."
+        optionToStringMap={c => c.name}
+        value={data.contract}
         options={this.props.contractList}
-        optionToStringMap={contract => contract.name}
-        defaultValue={data.contract}
         onChange={contract => setProperty("contract", contract)}
       />,
-      <MultiTypeaheadSelectInput
+      <StatefulMultiTypeaheadSelectInput
         key={2}
         emptyText="Select skill proficiencies"
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
-        defaultValue={data.skillProficiencySet? data.skillProficiencySet : []}
+        value={data.skillProficiencySet? data.skillProficiencySet : []}
         onChange={selected => setProperty("skillProficiencySet", selected)}
       />
     ];

@@ -16,7 +16,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Button, InputGroup, Label, Form, Modal, ButtonVariant, TextInput } from '@patternfly/react-core';
+import {
+  Button, InputGroup, Label, Form, Modal, ButtonVariant, TextInput,
+} from '@patternfly/react-core';
 
 import ShiftTemplate from 'domain/ShiftTemplate';
 import Spot from 'domain/Spot';
@@ -26,7 +28,7 @@ import { spotSelectors } from 'store/spot';
 import { employeeSelectors } from 'store/employee';
 import { modulo } from 'util/MathUtils';
 
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
@@ -55,12 +57,12 @@ const mapStateToProps = (state: AppState, ownProps: {
   ...ownProps,
   tenantId: state.tenantData.currentTenantId,
   spotList: spotSelectors.getSpotList(state),
-  rotationLength: state.rosterState.isLoading? null : (state.rosterState.rosterState as RosterState).rotationLength,
-  employeeList: employeeSelectors.getEmployeeList(state)
-}); 
+  rotationLength: state.rosterState.isLoading ? null : (state.rosterState.rosterState as RosterState).rotationLength,
+  employeeList: employeeSelectors.getEmployeeList(state),
+});
 
 export type ShiftTemplateData = Pick<ShiftTemplate, Exclude<keyof ShiftTemplate,
-"durationBetweenRotationStartAndTemplateStart" | "shiftTemplateDuration">> & {
+'durationBetweenRotationStartAndTemplateStart' | 'shiftTemplateDuration'>> & {
   startDayOffset: number;
   startTime: {
     hours: number;
@@ -201,7 +203,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TypeaheadSelectInput
               aria-label="Spot"
               emptyText="Select a Spot..."
-              defaultValue={this.props.shiftTemplate? this.props.shiftTemplate.spot : undefined}
+              value={this.props.shiftTemplate? this.props.shiftTemplate.spot : undefined}
               options={this.props.spotList}
               optionToStringMap={spot => spot.name}
               onChange={spot => this.setState(prevState => ({
@@ -296,11 +298,11 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TypeaheadSelectInput
               aria-label="Employee"
               emptyText="Unassigned"
-              defaultValue={this.props.shiftTemplate? this.props.shiftTemplate.rotationEmployee : undefined}
-              options={[undefined, ...this.props.employeeList]}
+              value={this.props.shiftTemplate? this.props.shiftTemplate.rotationEmployee : undefined}
+              options={this.props.employeeList}
               optionToStringMap={employee => employee? employee.name : "Unassigned"}
               onChange={employee => this.setState(prevState => ({
-                editedValue: { ...prevState.editedValue, rotationEmployee: employee? employee : null }
+                editedValue: { ...prevState.editedValue, rotationEmployee: employee || null },
               }))}
               optional
             />

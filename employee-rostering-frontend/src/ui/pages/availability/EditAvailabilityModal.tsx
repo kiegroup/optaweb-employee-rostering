@@ -16,7 +16,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Button, InputGroup, Label, Form, Modal, ButtonVariant } from '@patternfly/react-core';
+import {
+  Button, InputGroup, Label, Form, Modal, ButtonVariant,
+} from '@patternfly/react-core';
 import DatePicker from 'react-datepicker';
 
 import EmployeeAvailability from 'domain/EmployeeAvailability';
@@ -24,7 +26,7 @@ import Employee from 'domain/Employee';
 import { AppState } from 'store/types';
 import { employeeSelectors } from 'store/employee';
 
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { withTranslation, WithTranslation } from 'react-i18next';
 
@@ -151,7 +153,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
             <TypeaheadSelectInput
               aria-label="Employee"
               emptyText="Select an Employee..."
-              defaultValue={this.props.availability? this.props.availability.employee : undefined}
+              value={this.props.availability? this.props.availability.employee : undefined}
               options={this.props.employeeList}
               optionToStringMap={employee => employee? employee.name : "Unassigned"}
               onChange={employee => this.setState(prevState => ({
@@ -164,7 +166,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
             <TypeaheadSelectInput
               aria-label="Type"
               emptyText="Select Type..."
-              defaultValue={this.props.availability? this.props.availability.state : undefined}
+              value={this.props.availability? this.props.availability.state : undefined}
               options={["UNAVAILABLE","DESIRED", "UNDESIRED"] as ("UNAVAILABLE"|"DESIRED"|"UNDESIRED")[]}
               optionToStringMap={state => this.props.t("EmployeeAvailabilityState." + state)}
               onChange={state => this.setState(prevState => ({

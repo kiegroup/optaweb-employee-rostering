@@ -18,8 +18,8 @@ import React from 'react';
 
 export interface EditableComponentProps {
   isEditing: boolean;
-  viewer: JSX.Element;
-  editor: JSX.Element;
+  viewer: React.ReactNode;
+  editor: React.ReactNode;
 }
 
 export class EditableComponent extends React.Component<EditableComponentProps> {

@@ -16,7 +16,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Button, Switch, InputGroup, Label, Form, Modal, ButtonVariant } from '@patternfly/react-core';
+import {
+  Button, Switch, InputGroup, Label, Form, Modal, ButtonVariant,
+} from '@patternfly/react-core';
 import DatePicker from 'react-datepicker';
 
 import Shift from 'domain/Shift';
@@ -26,7 +28,7 @@ import { AppState } from 'store/types';
 import { employeeSelectors } from 'store/employee';
 import { spotSelectors } from 'store/spot';
 
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 
 interface Props {
@@ -158,7 +160,7 @@ export class EditShiftModal extends React.Component<Props, State> {
             <TypeaheadSelectInput
               aria-label="Spot"
               emptyText="Select a Spot"
-              defaultValue={this.props.shift? this.props.shift.spot : undefined}
+              value={this.props.shift? this.props.shift.spot : undefined}
               options={this.props.spotList}
               optionToStringMap={spot => spot.name}
               onChange={spot => this.setState(prevState => ({
@@ -171,13 +173,12 @@ export class EditShiftModal extends React.Component<Props, State> {
             <TypeaheadSelectInput
               aria-label="Employee"
               emptyText="Unassigned"
-              defaultValue={this.props.shift? this.props.shift.employee : undefined}
-              options={[undefined, ...this.props.employeeList]}
+              value={this.props.shift? this.props.shift.employee : undefined}
+              options={this.props.employeeList}
               optionToStringMap={employee => employee? employee.name : "Unassigned"}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, employee: (employee !== undefined)? employee : null }
               }))}
-              optional
             />
           </InputGroup>
           <InputGroup>
@@ -185,13 +186,12 @@ export class EditShiftModal extends React.Component<Props, State> {
             <TypeaheadSelectInput
               aria-label="Rotation Employee"
               emptyText="None"
-              defaultValue={this.props.shift? this.props.shift.rotationEmployee : undefined}
-              options={[undefined, ...this.props.employeeList]}
+              value={this.props.shift? this.props.shift.rotationEmployee : undefined}
+              options={this.props.employeeList}
               optionToStringMap={employee => employee? employee.name : "None"}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, rotationEmployee: (employee !== undefined)? employee : null }
               }))}
-              optional
             />
           </InputGroup>
           <InputGroup>
@@ -200,7 +200,7 @@ export class EditShiftModal extends React.Component<Props, State> {
               aria-label="Is Pinned"
               isChecked={this.state.editedValue.pinnedByUser}
               onChange={isPinned => this.setState(prevState => ({
-                editedValue: { ...prevState.editedValue, pinnedByUser: isPinned }
+                editedValue: { ...prevState.editedValue, pinnedByUser: isPinned },
               }))}
             />
           </InputGroup>

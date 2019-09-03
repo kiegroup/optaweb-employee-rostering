@@ -16,15 +16,17 @@
 
 import * as React from 'react';
 import {DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
-import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput'
+import {StatefulMultiTypeaheadSelectInput} from 'ui/components/MultiTypeaheadSelectInput'
 import { spotSelectors, spotOperations } from 'store/spot';
 import { skillSelectors } from 'store/skill';
 import Spot from 'domain/Spot';
 import { AppState } from 'store/types';
-import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
+import {
+  TextInput, Text, Chip, ChipGroup,
+} from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
-import { Predicate, ReadonlyPartial, Sorter } from "types";
+import { Predicate, ReadonlyPartial, Sorter } from 'types';
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 
@@ -91,12 +93,12 @@ export class SpotsPage extends DataTable<Spot, Props> {
         aria-label="Name"
         onChange={(value) => setProperty("name",value)}
       />,
-      <MultiTypeaheadSelectInput
+      <StatefulMultiTypeaheadSelectInput
         key={1}
         emptyText="Select required skills"
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
-        defaultValue={data.requiredSkillSet? data.requiredSkillSet : []}
+        value={data.requiredSkillSet? data.requiredSkillSet : []}
         onChange={selected => setProperty("requiredSkillSet",selected)}
       />
     ];

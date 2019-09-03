@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from "react";
-import Shift from "domain/Shift";
-import { AppState } from "store/types";
-import { rosterOperations, rosterSelectors } from "store/roster";
-import { spotSelectors } from "store/spot";
+import React from 'react';
+import Shift from 'domain/Shift';
+import { AppState } from 'store/types';
+import { rosterOperations, rosterSelectors } from 'store/roster';
+import { spotSelectors } from 'store/spot';
 import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
-import { Level, LevelItem, Button } from "@patternfly/react-core";
+import { Level, LevelItem, Button } from '@patternfly/react-core';
 import EditShiftModal from '../shift/EditShiftModal';
-import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
-import { alert } from "store/alert";
-import RosterState from "domain/RosterState";
-import ShiftEvent, { ShiftPopupHeader, ShiftPopupBody } from "../shift/ShiftEvent";
+import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import { alert } from 'store/alert';
+import RosterState from 'domain/RosterState';
+import ShiftEvent, { ShiftPopupHeader, ShiftPopupBody } from '../shift/ShiftEvent';
 
 import EmployeeAvailability from "domain/EmployeeAvailability";
 import { employeeSelectors } from "store/employee";
@@ -49,20 +49,30 @@ interface StateProps {
   totalNumOfSpots: number;
   rosterState: RosterState | null;
 }
-  
+
+// Snapshot of the last value to show when loading
+let lastEmployeeIdToShiftListMap: Map<number, Shift[]> = new Map<number, Shift[]>();
+let lastEmployeeIdToAvailabilityListMap: Map<number, EmployeeAvailability[]> = 
+  new Map<number, EmployeeAvailability[]>();
+let lastShownEmployeeList: Employee[] = [];
+
 const mapStateToProps = (state: AppState): StateProps => ({
   isSolving: state.solverState.isSolving,
-  isLoading: state.availabilityRoster.isLoading,
+  isLoading: rosterSelectors.isLoading(state),
   allEmployeeList: employeeSelectors.getEmployeeList(state),
-  shownEmployeeList: rosterSelectors.getEmployeeListInAvailabilityRoster(state),
-  employeeIdToShiftListMap: rosterSelectors.getEmployeeListInAvailabilityRoster(state)
+  shownEmployeeList: lastShownEmployeeList = rosterSelectors.isLoading(state)? 
+    lastShownEmployeeList : rosterSelectors.getEmployeeListInAvailabilityRoster(state),
+  employeeIdToShiftListMap: lastEmployeeIdToShiftListMap = rosterSelectors
+    .getEmployeeListInAvailabilityRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForEmployee(state, curr)),
-    new Map<number, Shift[]>()),
-  employeeIdToAvailabilityListMap: rosterSelectors.getEmployeeListInAvailabilityRoster(state)
+    rosterSelectors.isLoading(state)? lastEmployeeIdToShiftListMap : new Map<number, Shift[]>()),
+  employeeIdToAvailabilityListMap: lastEmployeeIdToAvailabilityListMap = rosterSelectors
+    .getEmployeeListInAvailabilityRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getAvailabilityListForEmployee(state, curr)),
-    new Map<number, EmployeeAvailability[]>()),
+    rosterSelectors.isLoading(state)? lastEmployeeIdToAvailabilityListMap : 
+      new Map<number, EmployeeAvailability[]>()),
   startDate: (state.availabilityRoster.availabilityRosterView)?
     moment(state.availabilityRoster.availabilityRosterView.startDate).toDate() : null,
   endDate: (state.availabilityRoster.availabilityRosterView)?
@@ -165,7 +175,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     }
   }
 
-  getEventStyle: StyleSupplier<ShiftOrAvailability> = (soa) => {
+  getEventStyle(soa: ShiftOrAvailability): { style: React.CSSProperties } {
     const style: React.CSSProperties = {};
     if (isAvailability(soa.reference)) {
       switch (soa.reference.state) {
@@ -233,7 +243,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     }
 
   render() {
-    if (this.props.isLoading || this.props.shownEmployeeList.length <= 0) {
+    if (this.props.shownEmployeeList.length <= 0) {
       return <div />;
     }
 
@@ -279,7 +289,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               emptyText="Select Employee"
               optionToStringMap={employee => employee.name}
               options={this.props.allEmployeeList}
-              defaultValue={this.props.shownEmployeeList[0]}
+              value={this.props.shownEmployeeList[0]}
               onChange={this.onUpdateEmployeeList}
             />
             <WeekPicker
@@ -399,7 +409,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             });}
           }
           eventStyle={this.getEventStyle}
-          dayStyle={this.getDayStyle(
+          dayStyle={(date) => this.getDayStyle(date,
             (this.props.employeeIdToAvailabilityListMap
               .get(employee.id as number) as EmployeeAvailability[])
               .filter(isAllDayAvailability))}
@@ -465,13 +475,4 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {
-  areStatesEqual: (next, prev) => {
-    if (rosterSelectors.isLoading(next)) {
-      return true;
-    }
-    else {
-      return next === prev;
-    }
-  }
-})(AvailabilityRosterPage);
+export default connect(mapStateToProps, mapDispatchToProps)(AvailabilityRosterPage);
