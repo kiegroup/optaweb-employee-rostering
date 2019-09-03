@@ -27,7 +27,6 @@ describe('EventWrapper', () => {
         popoverHeader="Title"
         popoverBody="Body"
         style={{top: "50%", height: "25%", color: "white"}}
-        additionalProps={{}}
       />
     );
     expect(eventWrapper).toMatchSnapshot(); 
@@ -42,7 +41,6 @@ describe('EventWrapper', () => {
         popoverHeader="Title"
         popoverBody="Body"
         style={{top: "0%", height: "25%", color: "white"}}
-        additionalProps={{}}
       />
     );
     expect(eventWrapper).toMatchSnapshot(); 
@@ -57,7 +55,6 @@ describe('EventWrapper', () => {
         popoverHeader="Title"
         popoverBody="Body"
         style={{top: "75%", height: "25%", color: "white"}}
-        additionalProps={{}}
       />
     );
     expect(eventWrapper).toMatchSnapshot(); 
@@ -72,10 +69,9 @@ describe('EventWrapper', () => {
         popoverHeader="Title"
         popoverBody="Body"
         style={{ top: "0%", height: "100%", color: "white"}}
-        additionalProps={{}}
       />
     );
-    expect(eventWrapper).toMatchSnapshot(); 
+    expect(eventWrapper).toMatchSnapshot();
   });
 
   it('should render correctly when the event has no height or top', () => {
@@ -87,7 +83,6 @@ describe('EventWrapper', () => {
         popoverHeader="Title"
         popoverBody="Body"
         style={{ color: "white"}}
-        additionalProps={{}}
       />
     );
     expect(eventWrapper).toMatchSnapshot(); 
@@ -101,7 +96,6 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
-        additionalProps={{}}
       />
     );
     expect(eventWrapper).toMatchSnapshot(); 
@@ -116,7 +110,6 @@ describe('EventWrapper', () => {
         popoverHeader="Title"
         popoverBody="Body"
         style={{top: "50%", height: "25%", color: "white"}}
-        additionalProps={{}}
       />
     );
     expect(eventWrapper).toMatchSnapshot(); 

@@ -51,5 +51,5 @@ RemoveShiftTemplateAction | UpdateShiftTemplateAction | RefreshShiftTemplateList
 
 export interface ShiftTemplateList {
   readonly isLoading: boolean;
-  readonly shiftTemplateMapById: Map<number, DomainObjectView<DomainObjectView<ShiftTemplate>>>;
+  readonly shiftTemplateMapById: Map<number, DomainObjectView<ShiftTemplate>>;
 }

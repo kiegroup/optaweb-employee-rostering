@@ -5,7 +5,7 @@ exports[`EventWrapper should render correctly when the event continues both befo
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
-  className="my-popup"
+  className=""
   closeBtnAriaLabel="Close"
   enableFlip={true}
   footerContent={null}
@@ -44,7 +44,7 @@ exports[`EventWrapper should render correctly when the event continues from eari
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
-  className="my-popup"
+  className=""
   closeBtnAriaLabel="Close"
   enableFlip={true}
   footerContent={null}
@@ -83,7 +83,7 @@ exports[`EventWrapper should render correctly when the event continues later 1`]
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
-  className="my-popup"
+  className=""
   closeBtnAriaLabel="Close"
   enableFlip={true}
   footerContent={null}
@@ -122,7 +122,7 @@ exports[`EventWrapper should render correctly when the event does not have a cla
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
-  className="my-popup"
+  className=""
   closeBtnAriaLabel="Close"
   enableFlip={true}
   footerContent={null}
@@ -161,7 +161,7 @@ exports[`EventWrapper should render correctly when the event does not span multi
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
-  className="my-popup"
+  className=""
   closeBtnAriaLabel="Close"
   enableFlip={true}
   footerContent={null}
@@ -200,7 +200,7 @@ exports[`EventWrapper should render correctly when the event has no height or to
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
-  className="my-popup"
+  className=""
   closeBtnAriaLabel="Close"
   enableFlip={true}
   footerContent={null}
@@ -235,7 +235,7 @@ exports[`EventWrapper should render correctly without a style 1`] = `
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
-  className="my-popup"
+  className=""
   closeBtnAriaLabel="Close"
   enableFlip={true}
   footerContent={null}

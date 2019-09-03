@@ -27,7 +27,6 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   popoverHeader: React.ReactNode;
   popoverBody: React.ReactNode;
   style?: React.CSSProperties;
-  additionalProps: {};
 }>): JSX.Element {
   let className = (props.className)? props.className : "rbc-event";
   const style: React.CSSProperties = {
@@ -50,7 +49,6 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   
   return (
     <Popover
-      className="my-popup"
       position="right"
       headerContent={props.popoverHeader}
       bodyContent={props.popoverBody}
@@ -58,7 +56,6 @@ export default function EventWrapper(props: React.PropsWithChildren<{
       <div
         className={className}
         style={style}
-        {...props.additionalProps}
       >
         {props.children}
       </div>

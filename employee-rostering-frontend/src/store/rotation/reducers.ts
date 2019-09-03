@@ -22,7 +22,7 @@ import ShiftTemplate from 'domain/ShiftTemplate';
 
 export const initialState: ShiftTemplateList = {
   isLoading: true,
-  shiftTemplateMapById: new Map<number, DomainObjectView<DomainObjectView<ShiftTemplate>>>()
+  shiftTemplateMapById: new Map<number, DomainObjectView<ShiftTemplate>>()
 };
 
 const shiftTemplateReducer = (state = initialState, action: ShiftTemplateAction): ShiftTemplateList => {
