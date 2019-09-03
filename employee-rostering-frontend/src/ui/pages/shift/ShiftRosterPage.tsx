@@ -44,16 +44,23 @@ interface StateProps {
   totalNumOfSpots: number;
   rosterState: RosterState | null;
 }
-  
+
+// Snapshot of the last value to show when loading
+let lastSpotIdToShiftListMap: Map<number, Shift[]> = new Map<number, Shift[]>();
+let lastShownSpotList: Spot[] = [];
+
 const mapStateToProps = (state: AppState): StateProps => ({
   isSolving: state.solverState.isSolving,
-  isLoading: state.shiftRoster.isLoading,
+  isLoading: rosterSelectors.isLoading(state),
   allSpotList: spotSelectors.getSpotList(state),
-  shownSpotList: rosterSelectors.getSpotListInShiftRoster(state),
-  spotIdToShiftListMap: rosterSelectors.getSpotListInShiftRoster(state)
+  // The use of "x = isLoading? x : getUpdatedData()" is a way to use old value if data is still loading
+  shownSpotList: lastShownSpotList = rosterSelectors.isLoading(state)? lastShownSpotList : 
+    rosterSelectors.getSpotListInShiftRoster(state),
+  spotIdToShiftListMap: lastSpotIdToShiftListMap = rosterSelectors.getSpotListInShiftRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForSpot(state, curr)),
-    new Map<number, Shift[]>()),
+    // reducing an empty array returns the starting value
+    rosterSelectors.isLoading(state)? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
   startDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
   endDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
@@ -70,6 +77,7 @@ export interface DispatchProps {
   publishRoster: typeof rosterOperations.publish;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
   showInfoMessage: typeof alert.showInfoMessage;
+  getInitialShiftRoster: typeof rosterOperations.getInitialShiftRoster;
 }
   
 const mapDispatchToProps: DispatchProps = {
@@ -180,7 +188,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 
   render() {
-    if (this.props.isLoading || this.props.shownSpotList.length <= 0) {
+    if (this.props.shownSpotList.length <= 0) {
+      if (!this.props.isLoading && this.props.allSpotList.length > 0) {
+        this.props.getInitialShiftRoster();
+      }
       return <div />;
     }
 
@@ -203,7 +214,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               emptyText="Select Spot"
               optionToStringMap={spot => spot.name}
               options={this.props.allSpotList}
-              defaultValue={this.props.shownSpotList[0]}
+              value={this.props.shownSpotList[0]}
               onChange={this.onUpdateSpotList}
             />
             <WeekPicker
@@ -322,13 +333,4 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps, null, {
-  areStatesEqual: (next, prev) => {
-    if (rosterSelectors.isLoading(next)) {
-      return true;
-    }
-    else {
-      return next === prev;
-    }
-  }
-})(ShiftRosterPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ShiftRosterPage);

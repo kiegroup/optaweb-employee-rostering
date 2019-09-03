@@ -245,7 +245,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
               emptyText="Select Spot"
               optionToStringMap={spot => spot.name}
               options={this.props.spotList}
-              defaultValue={this.state.shownSpot}
+              value={this.state.shownSpot}
               onChange={(newSpot) => {
                 if (newSpot !== undefined) {
                   this.setState({ shownSpot: newSpot });

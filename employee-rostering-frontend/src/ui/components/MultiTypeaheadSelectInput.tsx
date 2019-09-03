@@ -19,18 +19,30 @@ import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 export interface MultiTypeaheadSelectProps<T> {
   emptyText: string;
   options: T[];
-  defaultValue: T[];
+  value: T[];
   optionToStringMap: (option: T) => string;
   onChange: (selected: T[]) => void;
 }
 
-export interface MultiTypeaheadSelectState<T> {
+export interface MultiTypeaheadSelectState {
   isExpanded: boolean;
-  selected: T[];
 }
 
+const StatefulMultiTypeaheadSelectInput: React.FC<MultiTypeaheadSelectProps<any>> = props => {
+  const [value, setValue] = React.useState(props.value);
+  return (
+    <MultiTypeaheadSelectInput
+      {...props}
+      value={value}
+      onChange={v => {props.onChange(v); setValue(v);}}
+    />
+  );
+}
+
+export { StatefulMultiTypeaheadSelectInput };
+
 export default class MultiTypeaheadSelectInput<T> extends React.Component<MultiTypeaheadSelectProps<T>,
-MultiTypeaheadSelectState<T>>  {
+MultiTypeaheadSelectState>  {
 
   constructor(props: MultiTypeaheadSelectProps<T>) {
     super(props);
@@ -41,7 +53,6 @@ MultiTypeaheadSelectState<T>>  {
 
     this.state = {
       isExpanded: false,
-      selected: [...props.defaultValue]
     };
   }
 
@@ -52,38 +63,25 @@ MultiTypeaheadSelectState<T>>  {
   }
 
   onSelect(event: any, selection: string, isPlaceholder: boolean) {
-    const { selected } = this.state;
+    const selected = this.props.value;
     const selectedOption = this.props.options.find((option) => this.props.optionToStringMap(option) === selection) as T;
     if (selected.map(this.props.optionToStringMap).includes(selection)) {
-      this.setState(
-        prevState => {
-          const newState = {selected: prevState.selected.filter(option => 
-            this.props.optionToStringMap(option) !== selection)};
-          this.props.onChange(newState.selected);
-          return newState;
-        }
-      );
+      this.props.onChange(this.props.value.filter(option => this.props.optionToStringMap(option) !== selection));
     } else {
-      this.setState(
-        prevState => {
-          const newState = { selected: [...prevState.selected, selectedOption] };
-          this.props.onChange(newState.selected);
-          return newState;
-        }
-      );
+      this.props.onChange([...this.props.value, selectedOption]);
     }
   }
 
   clearSelection() {
     this.setState({
-      selected: [],
       isExpanded: false,
     });
     this.props.onChange([]);
   }
 
   render() {
-    const { isExpanded, selected } = this.state;
+    const { isExpanded } = this.state;
+    const selected = this.props.value;
     const titleId = 'multi-typeahead-select-id';
     const emptyText = this.props.emptyText;
     const selections = selected.map(this.props.optionToStringMap);

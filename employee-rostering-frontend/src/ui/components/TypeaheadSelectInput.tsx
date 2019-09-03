@@ -20,20 +20,32 @@ import "./TypeaheadSelectInput.css";
 export interface TypeaheadSelectProps<T> {
   emptyText: string;
   options: T[];
-  defaultValue: T | undefined;
+  value: T | undefined;
   optionToStringMap: (option: T) => string;
   onChange: (selected: T | undefined) => void;
   optional?: boolean; 
 }
 
-export interface TypeaheadSelectState<T> {
+export interface TypeaheadSelectState {
   isExpanded: boolean;
-  selected: T | undefined;
 }
+
+const StatefulTypeaheadSelectInput: React.FC<TypeaheadSelectProps<any>> = props => {
+  const [value, setValue] = React.useState(props.value);
+  return (
+    <TypeaheadSelectInput
+      {...props}
+      value={value}
+      onChange={v => {props.onChange(v); setValue(v);}}
+    />
+  );
+}
+
+export { StatefulTypeaheadSelectInput };
 
 export default class TypeaheadSelectInput<T> extends React.Component<
 TypeaheadSelectProps<T>,
-TypeaheadSelectState<T>
+TypeaheadSelectState
 > { 
   constructor(props: TypeaheadSelectProps<T>) {
     super(props);
@@ -44,7 +56,6 @@ TypeaheadSelectState<T>
 
     this.state = {
       isExpanded: false,
-      selected: props.defaultValue
     };
   }
 
@@ -58,7 +69,6 @@ TypeaheadSelectState<T>
     if (event.eventPhase === 2) {
       this.props.onChange(undefined);
       this.setState({
-        selected: undefined,
         isExpanded: false
       });
     } // HACK: For some reason, when there are two or more Select, the
@@ -74,15 +84,16 @@ TypeaheadSelectState<T>
     setTimeout(() => {
       this.props.onChange(selectedOption);
       this.setState(() => ({
-        isExpanded: false,
-        selected: selectedOption
+        isExpanded: false
       }))
     }, 0); // HACK: For some reason, when there are two or more Select, the
     // clear button is clicked on Keyboard enter. 
   }
 
   render() {
-    const { isExpanded, selected } = this.state;
+    const { isExpanded } = this.state;
+    const selected = this.props.value;
+
     const emptyText = this.props.emptyText;
     const selection =
       selected !== undefined ? this.props.optionToStringMap(selected) : null;

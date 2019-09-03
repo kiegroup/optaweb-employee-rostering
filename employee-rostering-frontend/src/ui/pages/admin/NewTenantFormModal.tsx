@@ -167,7 +167,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           <Label>Timezone</Label>
           <TypeaheadSelectInput
             emptyText="Select a timezone"
-            defaultValue={formData.timeZone}
+            value={formData.timeZone}
             options={props.timezoneList}
             optionToStringMap={s => s}
             onChange={tz => setProperty({ timeZone: tz })}

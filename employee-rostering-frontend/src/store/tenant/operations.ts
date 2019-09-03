@@ -23,9 +23,9 @@ import { skillOperations } from 'store/skill';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import { rosterOperations } from 'store/roster';
-import { spotOperations, spotSelectors } from 'store/spot';
+import { spotOperations } from 'store/spot';
 import { contractOperations } from 'store/contract';
-import { employeeOperations, employeeSelectors } from 'store/employee';
+import { employeeOperations } from 'store/employee';
 import * as rosterActions from 'store/roster/actions';
 import moment from 'moment';
 import { shiftTemplateOperations } from 'store/rotation';
@@ -40,29 +40,11 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>, state: () =
     dispatch(spotOperations.refreshSpotList()),
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList()),
-    dispatch(shiftTemplateOperations.refreshShiftTemplateList()),
-  ]).then(() => {
-    const { rosterState } = state().rosterState;
-    if (rosterState !== null) {
-      const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
-      const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
-      const spotList = spotSelectors.getSpotList(state());
-      const employeeList = employeeSelectors.getEmployeeList(state());
-      const shownSpots = (spotList.length > 0) ? [spotList[0]] : [];
-      const shownEmployees = (employeeList.length > 0) ? [employeeList[0]] : [];
-
-      dispatch(rosterOperations.getShiftRosterFor({
-        fromDate: startDate,
-        toDate: endDate,
-        spotList: shownSpots,
-      }));
-
-      dispatch(rosterOperations.getAvailabilityRosterFor({
-        fromDate: startDate,
-        toDate: endDate,
-        employeeList: shownEmployees,
-      }));
-    }
+    dispatch(shiftTemplateOperations.refreshShiftTemplateList())
+  ]
+  ).then(() => {
+    dispatch(rosterOperations.getInitialShiftRoster());
+    dispatch(rosterOperations.getInitialAvailabilityRoster());
   });
 }
 
