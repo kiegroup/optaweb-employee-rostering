@@ -33,6 +33,7 @@ import org.optaweb.employeerostering.domain.contract.view.ContractView;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
+import org.optaweb.employeerostering.domain.roster.PublishResult;
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
@@ -104,6 +105,10 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
                 .expand(Collections.singletonMap("tenantId", TENANT_ID));
 
         return restTemplate.getForEntity(uriComponents.toUriString(), AvailabilityRosterView.class);
+    }
+
+    private ResponseEntity<PublishResult> publishAndProvision() {
+        return restTemplate.postForEntity(rosterPathURI + "publishAndProvision", null, PublishResult.class, TENANT_ID);
     }
 
     private Spot addSpot(String name) {
@@ -266,5 +271,15 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(availabilityRosterView.getEmployeeIdToShiftViewListMap()).containsOnly(
                 entry(employeeList.get(1).getId(), Arrays.asList(shiftViewList.get(1))));
         assertThat(availabilityRosterView.getTenantId()).isEqualTo(TENANT_ID);
+    }
+
+    @Test
+    public void testPublishAndProvision() {
+        createTestRoster();
+
+        ResponseEntity<PublishResult> publishResultResponseEntity = publishAndProvision();
+        assertThat(publishResultResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(publishResultResponseEntity.getBody().getPublishedFromDate()).isEqualTo("2000-01-01");
+        assertThat(publishResultResponseEntity.getBody().getPublishedToDate()).isEqualTo("2000-01-08");
     }
 }
