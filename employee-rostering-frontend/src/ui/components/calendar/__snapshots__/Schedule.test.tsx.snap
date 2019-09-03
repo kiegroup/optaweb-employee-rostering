@@ -5,7 +5,7 @@ exports[`Schedule wrapper component should defer to prop 1`] = `
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
-  className="my-popup"
+  className=""
   closeBtnAriaLabel="Close"
   enableFlip={true}
   footerContent={null}
@@ -24,7 +24,6 @@ exports[`Schedule wrapper component should defer to prop 1`] = `
 >
   <div
     className="class continues-next-day"
-    prop={true}
     style={
       Object {
         "backgroundColor": "transparent",

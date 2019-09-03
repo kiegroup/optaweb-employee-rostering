@@ -98,7 +98,6 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
                 ...((style.style)? style.style : {}) 
               },
               className: style.className? style.className : "",
-              additionalProps: style.props? style.props : {},
               popoverHeader: props.popoverHeader(wrapperProps.event),
               popoverBody: props.popoverBody(wrapperProps.event)
             })
