@@ -16,6 +16,8 @@
 
 package org.optaweb.employeerostering.service.admin;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +37,8 @@ public class AdminController {
     }
 
     @PostMapping("/reset")
-    public void resetApplication() {
+    public ResponseEntity<Void> resetApplication() {
         adminService.resetApplication();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
