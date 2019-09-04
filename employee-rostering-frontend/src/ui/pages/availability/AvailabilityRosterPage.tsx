@@ -21,21 +21,27 @@ import { spotSelectors } from 'store/spot';
 import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
-import { Level, LevelItem, Button } from '@patternfly/react-core';
+import {
+  Level, LevelItem, Button, EmptyState, EmptyStateVariant, Title, EmptyStateIcon, EmptyStateBody,
+} from '@patternfly/react-core';
 import EditShiftModal from '../shift/EditShiftModal';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { alert } from 'store/alert';
 import RosterState from 'domain/RosterState';
 import ShiftEvent, { ShiftPopupHeader, ShiftPopupBody } from '../shift/ShiftEvent';
 
-import EmployeeAvailability from "domain/EmployeeAvailability";
-import { employeeSelectors } from "store/employee";
-import Employee from "domain/Employee";
-import { availabilityOperations } from "store/availability";
-import { shiftOperations } from "store/shift";
-import EditAvailabilityModal from "./EditAvailabilityModal";
-import AvailabilityEvent, { AvailabilityPopoverHeader, AvailabilityPopoverBody } from "./AvailabilityEvent";
+import EmployeeAvailability from 'domain/EmployeeAvailability';
+import { employeeSelectors } from 'store/employee';
+import Employee from 'domain/Employee';
+import { availabilityOperations } from 'store/availability';
+import { shiftOperations } from 'store/shift';
+import EditAvailabilityModal from './EditAvailabilityModal';
+import AvailabilityEvent, { AvailabilityPopoverHeader, AvailabilityPopoverBody } from './AvailabilityEvent';
 import Schedule, { StyleSupplier } from "ui/components/calendar/Schedule";
+import { CubesIcon } from '@patternfly/react-icons';
+import {
+  withRouter, RouteComponentProps,
+} from 'react-router-dom'
 
 interface StateProps {
   isSolving: boolean;
@@ -52,41 +58,42 @@ interface StateProps {
 
 // Snapshot of the last value to show when loading
 let lastEmployeeIdToShiftListMap: Map<number, Shift[]> = new Map<number, Shift[]>();
-let lastEmployeeIdToAvailabilityListMap: Map<number, EmployeeAvailability[]> = 
-  new Map<number, EmployeeAvailability[]>();
+let lastEmployeeIdToAvailabilityListMap:
+Map<number, EmployeeAvailability[]> = new Map<number, EmployeeAvailability[]>();
 let lastShownEmployeeList: Employee[] = [];
 
 const mapStateToProps = (state: AppState): StateProps => ({
   isSolving: state.solverState.isSolving,
   isLoading: rosterSelectors.isLoading(state),
   allEmployeeList: employeeSelectors.getEmployeeList(state),
-  shownEmployeeList: lastShownEmployeeList = rosterSelectors.isLoading(state)? 
-    lastShownEmployeeList : rosterSelectors.getEmployeeListInAvailabilityRoster(state),
+  shownEmployeeList: lastShownEmployeeList = rosterSelectors.isLoading(state)
+    ? lastShownEmployeeList : rosterSelectors.getEmployeeListInAvailabilityRoster(state),
   employeeIdToShiftListMap: lastEmployeeIdToShiftListMap = rosterSelectors
     .getEmployeeListInAvailabilityRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForEmployee(state, curr)),
-    rosterSelectors.isLoading(state)? lastEmployeeIdToShiftListMap : new Map<number, Shift[]>()),
+    rosterSelectors.isLoading(state) ? lastEmployeeIdToShiftListMap : new Map<number, Shift[]>()),
   employeeIdToAvailabilityListMap: lastEmployeeIdToAvailabilityListMap = rosterSelectors
     .getEmployeeListInAvailabilityRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getAvailabilityListForEmployee(state, curr)),
-    rosterSelectors.isLoading(state)? lastEmployeeIdToAvailabilityListMap : 
-      new Map<number, EmployeeAvailability[]>()),
-  startDate: (state.availabilityRoster.availabilityRosterView)?
-    moment(state.availabilityRoster.availabilityRosterView.startDate).toDate() : null,
-  endDate: (state.availabilityRoster.availabilityRosterView)?
-    moment(state.availabilityRoster.availabilityRosterView.endDate).toDate() : null,
+    rosterSelectors.isLoading(state) ? lastEmployeeIdToAvailabilityListMap
+      : new Map<number, EmployeeAvailability[]>()),
+  startDate: (state.availabilityRoster.availabilityRosterView)
+    ? moment(state.availabilityRoster.availabilityRosterView.startDate).toDate() : null,
+  endDate: (state.availabilityRoster.availabilityRosterView)
+    ? moment(state.availabilityRoster.availabilityRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
-  rosterState: state.rosterState.rosterState
-}); 
-  
+  rosterState: state.rosterState.rosterState,
+});
+
 export interface DispatchProps {
   addEmployeeAvailability: typeof availabilityOperations.addEmployeeAvailability;
   removeEmployeeAvailability: typeof availabilityOperations.removeEmployeeAvailability;
   updateEmployeeAvailability: typeof availabilityOperations.updateEmployeeAvailability;
   getAvailabilityRosterFor: typeof rosterOperations.getAvailabilityRosterFor;
   refreshAvailabilityRoster: typeof rosterOperations.refreshAvailabilityRoster;
+  getInitialAvailabilityRoster: typeof rosterOperations.getInitialAvailabilityRoster;
   solveRoster: typeof rosterOperations.solveRoster;
   publishRoster: typeof rosterOperations.publish;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
@@ -95,23 +102,24 @@ export interface DispatchProps {
   updateShift: typeof shiftOperations.updateShift;
   removeShift: typeof shiftOperations.removeShift;
 }
-  
+
 const mapDispatchToProps: DispatchProps = {
   addEmployeeAvailability: availabilityOperations.addEmployeeAvailability,
   removeEmployeeAvailability: availabilityOperations.removeEmployeeAvailability,
   updateEmployeeAvailability: availabilityOperations.updateEmployeeAvailability,
   getAvailabilityRosterFor: rosterOperations.getAvailabilityRosterFor,
   refreshAvailabilityRoster: rosterOperations.refreshAvailabilityRoster,
+  getInitialAvailabilityRoster: rosterOperations.getInitialAvailabilityRoster,
   solveRoster: rosterOperations.solveRoster,
   publishRoster: rosterOperations.publish,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
   showInfoMessage: alert.showInfoMessage,
   addShift: shiftOperations.addShift,
   updateShift: shiftOperations.updateShift,
-  removeShift: shiftOperations.removeShift
+  removeShift: shiftOperations.removeShift,
 }
-  
-export type Props = StateProps & DispatchProps;
+
+export type Props = RouteComponentProps & StateProps & DispatchProps;
 interface State {
   selectedAvailability?: EmployeeAvailability;
   isCreatingOrEditingAvailability: boolean;
@@ -120,24 +128,24 @@ interface State {
 }
 
 export interface ShiftOrAvailability {
-  type: "Shift"|"Availability";
+  type: 'Shift'|'Availability';
   start: Date;
   end: Date;
   reference: Shift|EmployeeAvailability;
 }
 
 export function isShift(shiftOrAvailability: Shift|EmployeeAvailability): shiftOrAvailability is Shift {
-  return "spot" in shiftOrAvailability;
+  return 'spot' in shiftOrAvailability;
 }
 
-export function isAvailability(shiftOrAvailability: Shift|EmployeeAvailability): 
+export function isAvailability(shiftOrAvailability: Shift|EmployeeAvailability):
 shiftOrAvailability is EmployeeAvailability {
   return !isShift(shiftOrAvailability);
 }
 
 export function isDay(start: Date, end: Date) {
-  return start.getHours() === 0 && start.getMinutes() === 0 &&
-    end.getHours() === 0 && end.getMinutes() === 0
+  return start.getHours() === 0 && start.getMinutes() === 0
+    && end.getHours() === 0 && end.getMinutes() === 0
 }
 
 export function isAllDayAvailability(ea: EmployeeAvailability) {
@@ -153,7 +161,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     this.getDayStyle = this.getDayStyle.bind(this);
     this.state = {
       isCreatingOrEditingShift: false,
-      isCreatingOrEditingAvailability: false
+      isCreatingOrEditingAvailability: false,
     };
   }
 
@@ -161,7 +169,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     this.props.getAvailabilityRosterFor({
       fromDate: startDate,
       toDate: endDate,
-      employeeList: this.props.shownEmployeeList
+      employeeList: this.props.shownEmployeeList,
     });
   }
 
@@ -170,7 +178,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       this.props.getAvailabilityRosterFor({
         fromDate: this.props.startDate as Date,
         toDate: this.props.endDate as Date,
-        employeeList: [employee]
+        employeeList: [employee],
       });
     }
   }
@@ -179,26 +187,25 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     const style: React.CSSProperties = {};
     if (isAvailability(soa.reference)) {
       switch (soa.reference.state) {
-        case "DESIRED": {
-          style.backgroundColor = "green";
+        case 'DESIRED': {
+          style.backgroundColor = 'green';
           break;
         }
-        case "UNDESIRED": {
-          style.backgroundColor = "yellow";
+        case 'UNDESIRED': {
+          style.backgroundColor = 'yellow';
           break;
         }
-        case "UNAVAILABLE": {
-          style.backgroundColor = "red";
+        case 'UNAVAILABLE': {
+          style.backgroundColor = 'red';
           break;
         }
       }
     }
 
     if (this.props.rosterState !== null && moment(soa.start).isBefore(this.props.rosterState.firstDraftDate)) {
-      style.border = "1px solid";
-    }
-    else {
-      style.border = "1px dashed";
+      style.border = '1px solid';
+    } else {
+      style.border = '1px dashed';
     }
 
     return { style };
@@ -244,32 +251,53 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
 
   render() {
     if (this.props.shownEmployeeList.length <= 0) {
-      return <div />;
+      if (!this.props.isLoading && this.props.allEmployeeList.length > 0) {
+        this.props.getInitialAvailabilityRoster();
+      }
+      return (
+        <EmptyState variant={EmptyStateVariant.full}>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h5" size="lg">
+            There are no Employees
+          </Title>
+          <EmptyStateBody>
+            The current tenant have no Employees. You need at least one Employee to see the Availability Roster.
+            You can add an Employee in the &quot;Employees&quot; page.
+          </EmptyStateBody>
+          <Button
+            variant="primary"
+            onClick={() => this.props.history.push('/employees')}
+          >
+            Go to the Employees page
+          </Button>
+        </EmptyState>
+      );
     }
 
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
-    const employee = this.props.shownEmployeeList[0];
+    const shownEmployee = this.props.shownEmployeeList[0];
     const events: ShiftOrAvailability[] = [];
 
-    if (this.props.employeeIdToAvailabilityListMap.get(employee.id as number) !== undefined) {
-      (this.props.employeeIdToAvailabilityListMap.get(employee.id as number) as EmployeeAvailability[]).forEach(ea => {
-        events.push({
-          type: "Availability",
-          start: ea.startDateTime,
-          end: ea.endDateTime,
-          reference: ea
-        })
-      });
+    if (this.props.employeeIdToAvailabilityListMap.get(shownEmployee.id as number) !== undefined) {
+      (this.props.employeeIdToAvailabilityListMap.get(shownEmployee.id as number) as EmployeeAvailability[])
+        .forEach((ea) => {
+          events.push({
+            type: 'Availability',
+            start: ea.startDateTime,
+            end: ea.endDateTime,
+            reference: ea,
+          })
+        });
     }
 
-    if (this.props.employeeIdToShiftListMap.get(employee.id as number) !== undefined) {
-      (this.props.employeeIdToShiftListMap.get(employee.id as number) as Shift[]).forEach(shift => {
+    if (this.props.employeeIdToShiftListMap.get(shownEmployee.id as number) !== undefined) {
+      (this.props.employeeIdToShiftListMap.get(shownEmployee.id as number) as Shift[]).forEach((shift) => {
         events.push({
-          type: "Shift",
+          type: 'Shift',
           start: shift.startDateTime,
           end: shift.endDateTime,
-          reference: shift
+          reference: shift,
         })
       });
     }
@@ -278,12 +306,12 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
         <Level
           gutter="sm"
           style={{
-            height: "60px",
-            padding: "5px 5px 5px 5px",
-            backgroundColor: "var(--pf-global--BackgroundColor--100)"
+            height: '60px',
+            padding: '5px 5px 5px 5px',
+            backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >
-          <LevelItem style={{display: "flex"}}>
+          <LevelItem style={{ display: 'flex' }}>
             <TypeaheadSelectInput
               aria-label="Select Employee"
               emptyText="Select Employee"
@@ -298,18 +326,18 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               onChange={this.onDateChange}
             />
           </LevelItem>
-          <LevelItem style={{display: "flex"}}>
+          <LevelItem style={{ display: 'flex' }}>
             <Button
-              style={{margin: "5px"}}
+              style={{ margin: '5px' }}
               aria-label="Publish"
               onClick={this.props.publishRoster}
             >
               Publish
             </Button>
-            {(!this.props.isSolving &&
-              (
+            {(!this.props.isSolving
+              && (
                 <Button
-                  style={{margin: "5px"}}
+                  style={{ margin: '5px' }}
                   aria-label="Solve"
                   onClick={this.props.solveRoster}
                 >
@@ -317,7 +345,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                 </Button>
               )) || (
               <Button
-                style={{margin: "5px"}}
+                style={{ margin: '5px' }}
                 aria-label="Terminate Early"
                 onClick={this.props.terminateSolvingRosterEarly}
               >
@@ -326,24 +354,24 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             )
             }
             <Button
-              style={{margin: "5px"}}
+              style={{ margin: '5px' }}
               aria-label="Refresh"
               onClick={() => {
                 this.props.refreshAvailabilityRoster();
-                this.props.showInfoMessage("availabilityRosterRefresh");
+                this.props.showInfoMessage('availabilityRosterRefresh');
               }
               }
             >
               Refresh
             </Button>
             <Button
-              style={{margin: "5px"}}
+              style={{ margin: '5px' }}
               aria-label="Create Availability"
               onClick={() => {
                 if (!this.state.isCreatingOrEditingShift) {
                   this.setState({
                     selectedAvailability: undefined,
-                    isCreatingOrEditingAvailability: true
+                    isCreatingOrEditingAvailability: true,
                   })
                 }
               }}
@@ -355,16 +383,15 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
         <EditAvailabilityModal
           availability={this.state.selectedAvailability}
           isOpen={this.state.isCreatingOrEditingAvailability}
-          onSave={availability => {
+          onSave={(availability) => {
             if (this.state.selectedAvailability !== undefined) {
               this.props.updateEmployeeAvailability(availability);
-            }
-            else {
+            } else {
               this.props.addEmployeeAvailability(availability);
             }
             this.setState({ selectedAvailability: undefined, isCreatingOrEditingAvailability: false });
           }}
-          onDelete={availability => {
+          onDelete={(availability) => {
             this.props.removeEmployeeAvailability(availability);
             this.setState({ isCreatingOrEditingAvailability: false });
           }}
@@ -379,11 +406,10 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false });
           }
           }
-          onSave={shift => {
+          onSave={(shift) => {
             if (this.state.selectedShift !== undefined) {
               this.props.updateShift(shift);
-            }
-            else {
+            } else {
               this.props.addShift(shift);
             }
             this.setState({ selectedShift: undefined, isCreatingOrEditingShift: false });
@@ -392,87 +418,90 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
         />
         <Schedule<ShiftOrAvailability>
           showAllDayCell
-          key={employee.id}
+          key={shownEmployee.id}
           startDate={startDate}
           endDate={endDate}
           events={events}
-          titleAccessor={soa => isShift(soa.reference)? soa.reference.spot.name : soa.reference.state}
+          titleAccessor={soa => (isShift(soa.reference) ? soa.reference.spot.name : soa.reference.state)}
           startAccessor={soa => soa.start}
           endAccessor={soa => soa.end}
           addEvent={
-            (start,end) => {this.props.addEmployeeAvailability({
-              tenantId: employee.tenantId,
-              startDateTime: start,
-              endDateTime: end,
-              employee: employee,
-              state: "UNAVAILABLE"
-            });}
+            (start, end) => {
+              this.props.addEmployeeAvailability({
+                tenantId: shownEmployee.tenantId,
+                startDateTime: start,
+                endDateTime: end,
+                employee: shownEmployee,
+                state: 'UNAVAILABLE',
+              });
+            }
           }
           eventStyle={this.getEventStyle}
-          dayStyle={(date) => this.getDayStyle(date,
+          dayStyle={date => this.getDayStyle(date,
             (this.props.employeeIdToAvailabilityListMap
-              .get(employee.id as number) as EmployeeAvailability[])
+              .get(shownEmployee.id as number) as EmployeeAvailability[])
               .filter(isAllDayAvailability))}
-          wrapperStyle={(event) => ({
-            className: (isAvailability(event.reference))? 
-              (isAllDayAvailability(event.reference)? 
-                "availability-allday-wrapper" : "availability-wrapper") 
+          wrapperStyle={event => ({
+            className: (isAvailability(event.reference))
+              ? (isAllDayAvailability(event.reference)
+                ? 'availability-allday-wrapper' : 'availability-wrapper')
               : undefined,
             style: {
               zIndex: (isShift(event.reference))? 1 : 0
             }
           })}
           popoverHeader={
-            soa => (isShift(soa.reference))? ShiftPopupHeader({
+            soa => ((isShift(soa.reference)) ? ShiftPopupHeader({
               shift: soa.reference,
               onEdit: () => {
                 if (!this.state.isCreatingOrEditingAvailability) {
                   this.setState({
                     selectedShift: soa.reference as Shift,
-                    isCreatingOrEditingShift: true
+                    isCreatingOrEditingShift: true,
                   })
                 }
               },
               onDelete: () => {
                 this.props.updateShift({
                   ...soa.reference as Shift,
-                  employee: null
+                  employee: null,
                 })
-              }
+              },
             }) : AvailabilityPopoverHeader({
               availability: soa.reference,
               onEdit: ea => this.setState({
                 isCreatingOrEditingAvailability: true,
-                selectedAvailability: ea
+                selectedAvailability: ea,
               }),
               onDelete: ea => this.props.removeEmployeeAvailability(ea),
               updateEmployeeAvailability: this.props.updateEmployeeAvailability,
-              removeEmployeeAvailability: this.props.removeEmployeeAvailability
-            })
+              removeEmployeeAvailability: this.props.removeEmployeeAvailability,
+            }))
           }
           popoverBody={
-            soa => (isShift(soa.reference))? ShiftPopupBody(soa.reference) : AvailabilityPopoverBody
+            soa => ((isShift(soa.reference)) ? ShiftPopupBody(soa.reference) : AvailabilityPopoverBody)
           }
-          eventComponent={(props) => isShift(props.event.reference)? ShiftEvent(
+          eventComponent={props => (isShift(props.event.reference) ? ShiftEvent(
             {
               ...props.event.reference,
               title: props.event.reference.spot.name,
               event: props.event.reference,
-            }) : AvailabilityEvent({
+            },
+          ) : AvailabilityEvent({
             availability: props.event.reference,
             onEdit: ea => this.setState({
               isCreatingOrEditingAvailability: true,
-              selectedAvailability: ea
+              selectedAvailability: ea,
             }),
             onDelete: ea => this.props.removeEmployeeAvailability(ea),
             updateEmployeeAvailability: this.props.updateEmployeeAvailability,
-            removeEmployeeAvailability: this.props.removeEmployeeAvailability
-          })
+            removeEmployeeAvailability: this.props.removeEmployeeAvailability,
+          }))
           }
-        />  
+        />
       </>
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AvailabilityRosterPage);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AvailabilityRosterPage));

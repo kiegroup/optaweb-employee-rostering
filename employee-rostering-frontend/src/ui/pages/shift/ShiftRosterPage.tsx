@@ -23,14 +23,20 @@ import { spotSelectors } from "store/spot";
 import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
-import { Level, LevelItem, Button } from "@patternfly/react-core";
+import {
+  Level, LevelItem, Button, EmptyState, EmptyStateVariant, Title, EmptyStateBody, EmptyStateIcon,
+} from '@patternfly/react-core';
 import EditShiftModal from './EditShiftModal';
 import Color from 'color';
-import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
-import { alert } from "store/alert";
-import RosterState from "domain/RosterState";
-import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from "./ShiftEvent";
-import Schedule, { StyleSupplier } from 'ui/components/calendar/Schedule';
+import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
+import { alert } from 'store/alert';
+import RosterState from 'domain/RosterState';
+import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './ShiftEvent';
+import Schedule from 'ui/components/calendar/Schedule';
+import {
+  withRouter, RouteComponentProps,
+} from 'react-router-dom'
+import { CubesIcon } from '@patternfly/react-icons';
 
 
 interface StateProps {
@@ -54,19 +60,19 @@ const mapStateToProps = (state: AppState): StateProps => ({
   isLoading: rosterSelectors.isLoading(state),
   allSpotList: spotSelectors.getSpotList(state),
   // The use of "x = isLoading? x : getUpdatedData()" is a way to use old value if data is still loading
-  shownSpotList: lastShownSpotList = rosterSelectors.isLoading(state)? lastShownSpotList : 
-    rosterSelectors.getSpotListInShiftRoster(state),
+  shownSpotList: lastShownSpotList = rosterSelectors.isLoading(state) ? lastShownSpotList
+    : rosterSelectors.getSpotListInShiftRoster(state),
   spotIdToShiftListMap: lastSpotIdToShiftListMap = rosterSelectors.getSpotListInShiftRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForSpot(state, curr)),
     // reducing an empty array returns the starting value
-    rosterSelectors.isLoading(state)? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
-  startDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
-  endDate: (state.shiftRoster.shiftRosterView)? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
+    rosterSelectors.isLoading(state) ? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
+  startDate: (state.shiftRoster.shiftRosterView) ? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
+  endDate: (state.shiftRoster.shiftRosterView) ? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
-  rosterState: state.rosterState.rosterState
-}); 
-  
+  rosterState: state.rosterState.rosterState,
+});
+
 export interface DispatchProps {
   addShift: typeof shiftOperations.addShift;
   removeShift: typeof shiftOperations.removeShift;
@@ -79,7 +85,7 @@ export interface DispatchProps {
   showInfoMessage: typeof alert.showInfoMessage;
   getInitialShiftRoster: typeof rosterOperations.getInitialShiftRoster;
 }
-  
+
 const mapDispatchToProps: DispatchProps = {
   addShift: shiftOperations.addShift,
   removeShift: shiftOperations.removeShift,
@@ -89,10 +95,11 @@ const mapDispatchToProps: DispatchProps = {
   solveRoster: rosterOperations.solveRoster,
   publishRoster: rosterOperations.publish,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
-  showInfoMessage: alert.showInfoMessage
+  showInfoMessage: alert.showInfoMessage,
+  getInitialShiftRoster: rosterOperations.getInitialShiftRoster,
 }
-  
-export type Props = StateProps & DispatchProps;
+
+export type Props = RouteComponentProps & StateProps & DispatchProps;
 interface State {
   isCreatingOrEditingShift: boolean;
   selectedShift?: Shift;
@@ -109,7 +116,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     this.getShiftStyle = this.getShiftStyle.bind(this);
     this.getDayStyle = this.getDayStyle.bind(this);
     this.state = {
-      isCreatingOrEditingShift: false
+      isCreatingOrEditingShift: false,
     };
   }
 
@@ -117,7 +124,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     this.props.getShiftRosterFor({
       fromDate: startDate,
       toDate: endDate,
-      spotList: this.props.shownSpotList
+      spotList: this.props.shownSpotList,
     });
   }
 
@@ -126,7 +133,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       this.props.getShiftRosterFor({
         fromDate: this.props.startDate as Date,
         toDate: this.props.endDate as Date,
-        spotList: [spot]
+        spotList: [spot],
       });
     }
   }
@@ -146,44 +153,42 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
   getShiftStyle: StyleSupplier<Shift> = (shift) => {
     const color = getShiftColor(shift);
-                
-    if (this.props.rosterState !== null && 
-      moment(shift.startDateTime).isBefore(this.props.rosterState.firstDraftDate)) {
+
+    if (this.props.rosterState !== null
+      && moment(shift.startDateTime).isBefore(this.props.rosterState.firstDraftDate)) {
       // Published
       return {
         style: {
-          border: "1px solid",
-          backgroundColor: Color(color).saturate(-0.5).hex()
-        }
+          border: '1px solid',
+          backgroundColor: Color(color).saturate(-0.5).hex(),
+        },
       };
     }
-    else {
-      // Draft
-      return {
-        style: {
-          backgroundColor: color,
-          border: "1px dashed"
-        } 
-      };
-    }
+
+    // Draft
+    return {
+      style: {
+        backgroundColor: color,
+        border: '1px dashed',
+      },
+    };
   }
 
   getDayStyle: StyleSupplier<Date> = (date) => {
     if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
       return {
-        className: "published-day",
+        className: 'published-day',
         style: {
-          backgroundColor: "var(--pf-global--BackgroundColor--300)"
-        }
+          backgroundColor: 'var(--pf-global--BackgroundColor--300)',
+        },
       }
     }
-    else {
-      return {
-        className: "draft-day",
-        style: {
-          backgroundColor: "var(--pf-global--BackgroundColor--100)"
-        }
-      }
+
+    return {
+      className: 'draft-day',
+      style: {
+        backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+      },
     }
   }
 
@@ -192,23 +197,40 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       if (!this.props.isLoading && this.props.allSpotList.length > 0) {
         this.props.getInitialShiftRoster();
       }
-      return <div />;
+      return (
+        <EmptyState variant={EmptyStateVariant.full}>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h5" size="lg">
+            There are no Spots
+          </Title>
+          <EmptyStateBody>
+            The current tenant have no Spots. You need at least one Spot to see the Shift Roster.
+            You can add a Spot in the &quot;Spots&quot; page.
+          </EmptyStateBody>
+          <Button
+            variant="primary"
+            onClick={() => this.props.history.push('/spots')}
+          >
+            Go to the Spots page
+          </Button>
+        </EmptyState>
+      );
     }
 
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
-    const spot = this.props.shownSpotList[0];
+    const shownSpot = this.props.shownSpotList[0];
     return (
       <>
         <Level
           gutter="sm"
           style={{
-            height: "60px",
-            padding: "5px 5px 5px 5px",
-            backgroundColor: "var(--pf-global--BackgroundColor--100)"
+            height: '60px',
+            padding: '5px 5px 5px 5px',
+            backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >
-          <LevelItem style={{display: "flex"}}>
+          <LevelItem style={{ display: 'flex' }}>
             <TypeaheadSelectInput
               aria-label="Select Spot"
               emptyText="Select Spot"
@@ -223,18 +245,18 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               onChange={this.onDateChange}
             />
           </LevelItem>
-          <LevelItem style={{display: "flex"}}>
+          <LevelItem style={{ display: 'flex' }}>
             <Button
-              style={{margin: "5px"}}
+              style={{ margin: '5px' }}
               aria-label="Publish"
               onClick={this.props.publishRoster}
             >
               Publish
             </Button>
-            {(!this.props.isSolving &&
-              (
+            {(!this.props.isSolving
+              && (
                 <Button
-                  style={{margin: "5px"}}
+                  style={{ margin: '5px' }}
                   aria-label="Solve"
                   onClick={this.props.solveRoster}
                 >
@@ -242,7 +264,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 </Button>
               )) || (
               <Button
-                style={{margin: "5px"}}
+                style={{ margin: '5px' }}
                 aria-label="Terminate Early"
                 onClick={this.props.terminateSolvingRosterEarly}
               >
@@ -251,23 +273,23 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             )
             }
             <Button
-              style={{margin: "5px"}}
+              style={{ margin: '5px' }}
               aria-label="Refresh"
               onClick={() => {
                 this.props.refreshShiftRoster();
-                this.props.showInfoMessage("shiftRosterRefresh");
+                this.props.showInfoMessage('shiftRosterRefresh');
               }
               }
             >
               Refresh
             </Button>
             <Button
-              style={{margin: "5px"}}
+              style={{ margin: '5px' }}
               aria-label="Create Shift"
               onClick={() => {
                 this.setState({
                   selectedShift: undefined,
-                  isCreatingOrEditingShift: true
+                  isCreatingOrEditingShift: true,
                 })
               }}
             >
@@ -275,7 +297,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             </Button>
           </LevelItem>
         </Level>
-        <EditShiftModal 
+        <EditShiftModal
           aria-label="Edit Shift"
           isOpen={this.state.isCreatingOrEditingShift}
           shift={this.state.selectedShift}
@@ -284,11 +306,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             this.setState({ isCreatingOrEditingShift: false });
           }
           }
-          onSave={shift => {
+          onSave={(shift) => {
             if (this.state.selectedShift !== undefined) {
               this.updateShift(shift);
-            }
-            else {
+            } else {
               this.addShift(shift);
             }
             this.setState({ isCreatingOrEditingShift: false });
@@ -296,41 +317,43 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           onClose={() => this.setState({ isCreatingOrEditingShift: false })}
         />
         <Schedule<Shift>
-          key={spot.id}
+          key={shownSpot.id}
           startDate={startDate}
           endDate={endDate}
-          events={this.props.spotIdToShiftListMap.get(spot.id as number) as Shift[]}
-          titleAccessor={shift => shift.employee? shift.employee.name : "Unassigned"}
+          events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) as Shift[]}
+          titleAccessor={shift => (shift.employee ? shift.employee.name : 'Unassigned')}
           startAccessor={shift => moment(shift.startDateTime).toDate()}
           endAccessor={shift => moment(shift.endDateTime).toDate()}
           addEvent={
-            (start,end) => {this.addShift({
-              tenantId: spot.tenantId,
-              startDateTime: start,
-              endDateTime: end,
-              spot: spot,
-              employee: null,
-              rotationEmployee: null,
-              pinnedByUser: false
-            });}
+            (start, end) => {
+              this.addShift({
+                tenantId: shownSpot.tenantId,
+                startDateTime: start,
+                endDateTime: end,
+                spot: shownSpot,
+                employee: null,
+                rotationEmployee: null,
+                pinnedByUser: false,
+              });
+            }
           }
           eventStyle={this.getShiftStyle}
           dayStyle={this.getDayStyle}
           wrapperStyle={() => ({})}
           popoverHeader={shift => ShiftPopupHeader({
-            shift: shift,
-            onEdit: (shift) => this.setState({
+            shift,
+            onEdit: editedShift => this.setState({
               isCreatingOrEditingShift: true,
-              selectedShift: shift
+              selectedShift: editedShift,
             }),
-            onDelete: (shift) => this.deleteShift(shift)
+            onDelete: deletedShift => this.deleteShift(deletedShift),
           })}
           popoverBody={shift => ShiftPopupBody(shift)}
-          eventComponent={(props) => ShiftEvent(props)}
+          eventComponent={props => ShiftEvent(props)}
         />
       </>
     );
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ShiftRosterPage);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ShiftRosterPage));

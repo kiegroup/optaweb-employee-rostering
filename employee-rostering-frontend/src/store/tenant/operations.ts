@@ -17,32 +17,42 @@
 import Tenant from 'domain/Tenant';
 import { ThunkCommandFactory, AppState } from '../types';
 import * as actions from './actions';
-import { ChangeTenantAction, RefreshTenantListAction, RefreshSupportedTimezoneListAction,
-  AddTenantAction, RemoveTenantAction} from './types';
-import { skillOperations } from 'store/skill';
+import {
+  ChangeTenantAction, RefreshTenantListAction, RefreshSupportedTimezoneListAction,
+  AddTenantAction, RemoveTenantAction,
+} from './types';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import { rosterOperations } from 'store/roster';
+import { skillOperations } from 'store/skill';
 import { spotOperations } from 'store/spot';
 import { contractOperations } from 'store/contract';
 import { employeeOperations } from 'store/employee';
-import * as rosterActions from 'store/roster/actions';
-import moment from 'moment';
 import { shiftTemplateOperations } from 'store/rotation';
+import * as rosterActions from 'store/roster/actions';
+import * as skillActions from 'store/skill/actions';
+import * as spotActions from 'store/spot/actions';
+import * as contractActions from 'store/contract/actions';
+import * as employeeActions from 'store/employee/actions';
+import * as shiftTemplateActions from 'store/rotation/actions';
 import RosterState from 'domain/RosterState';
 
 function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>, state: () => AppState): Promise<any> {
   dispatch(rosterActions.setShiftRosterIsLoading(true));
   dispatch(rosterActions.setAvailabilityRosterIsLoading(true));
+  dispatch(skillActions.setIsSkillListLoading(true));
+  dispatch(spotActions.setIsSpotListLoading(true));
+  dispatch(contractActions.setIsContractListLoading(true));
+  dispatch(employeeActions.setIsEmployeeListLoading(true));
+  dispatch(shiftTemplateActions.setIsShiftTemplateListLoading(true));
   return Promise.all([
     dispatch(skillOperations.refreshSkillList()),
     dispatch(rosterOperations.getRosterState()),
     dispatch(spotOperations.refreshSpotList()),
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList()),
-    dispatch(shiftTemplateOperations.refreshShiftTemplateList())
-  ]
-  ).then(() => {
+    dispatch(shiftTemplateOperations.refreshShiftTemplateList()),
+  ]).then(() => {
     dispatch(rosterOperations.getInitialShiftRoster());
     dispatch(rosterOperations.getInitialAvailabilityRoster());
   });
@@ -69,28 +79,27 @@ ThunkCommandFactory<void, RefreshTenantListAction> = () => (dispatch, state, cli
   }));
 
 // TODO: Add addTenant and removeTenant when work on Admin page started
-export const addTenant: ThunkCommandFactory<RosterState, AddTenantAction> = rs =>
-  (dispatch, state, client) => {
-    return client.post<Tenant>('/tenant/add', rs).then(tenant => {
-      dispatch(actions.addTenant(tenant));
-    });
-  };
+export const addTenant:
+ThunkCommandFactory<RosterState, AddTenantAction> = rs => (dispatch, state, client) => (
+  client.post<Tenant>('/tenant/add', rs).then((tenant) => {
+    dispatch(actions.addTenant(tenant));
+  })
+);
 
-export const removeTenant: ThunkCommandFactory<Tenant, RemoveTenantAction> = tenant =>
-  (dispatch, state, client) => {
-    return client.post<boolean>(`/tenant/remove/${tenant.id}`, {}).then(isSuccess => {
-      if (isSuccess) {
-        dispatch(actions.removeTenant(tenant));
-      }
-      else {
-        // TODO: Display error
-      }
-    });
-  };
+export const removeTenant:
+ThunkCommandFactory<Tenant, RemoveTenantAction> = tenant => (dispatch, state, client) => (
+  client.post<boolean>(`/tenant/remove/${tenant.id}`, {}).then((isSuccess) => {
+    if (isSuccess) {
+      dispatch(actions.removeTenant(tenant));
+    } else {
+      // TODO: Display error
+    }
+  })
+);
 
-export const refreshSupportedTimezones: ThunkCommandFactory<void, RefreshSupportedTimezoneListAction> = () =>
-  (dispatch, state, client) => {
-    return client.get<string[]>("/tenant/supported/timezones").then(supportedTimezones => {
-      dispatch(actions.refreshSupportedTimezones(supportedTimezones));
-    });
-  };
+export const refreshSupportedTimezones:
+ThunkCommandFactory<void, RefreshSupportedTimezoneListAction> = () => (dispatch, state, client) => (
+  client.get<string[]>('/tenant/supported/timezones').then((supportedTimezones) => {
+    dispatch(actions.refreshSupportedTimezones(supportedTimezones));
+  })
+);

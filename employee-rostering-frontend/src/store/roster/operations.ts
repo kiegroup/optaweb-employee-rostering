@@ -21,7 +21,9 @@ import {
   SetRosterStateIsLoadingAction, SetRosterStateAction,
   SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction,
   TerminateSolvingRosterEarlyAction, PublishRosterAction, PublishResult,
-  SetAvailabilityRosterIsLoadingAction, SetAvailabilityRosterViewAction, ShiftRosterViewAction, AvailabilityRosterViewAction } from './types';
+  SetAvailabilityRosterIsLoadingAction, SetAvailabilityRosterViewAction, ShiftRosterViewAction,
+  AvailabilityRosterViewAction,
+} from './types';
 import RosterState from 'domain/RosterState';
 import ShiftRosterView from 'domain/ShiftRosterView';
 import { PaginationData, ObjectNumberMap, mapObjectNumberMap } from 'types';
@@ -116,51 +118,59 @@ ThunkCommandFactory<void, TerminateSolvingRosterEarlyAction> = () => (dispatch, 
   return client.post(`/tenant/${tenantId}/roster/terminate`, {}).then(() => stopSolvingRoster(dispatch));
 };
 
-export const getInitialShiftRoster:  ThunkCommandFactory<void, ShiftRosterViewAction> = () => 
-  (dispatch, state, client) => {
-    const rosterState = state().rosterState.rosterState;
-    if (rosterState !== null) {
-      const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
-      const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
-      const spotList = spotSelectors.getSpotList(state());
-      const shownSpots = (spotList.length > 0)? [spotList[0]] : [];
+export const getInitialShiftRoster:
+ThunkCommandFactory<void, ShiftRosterViewAction> = () => (dispatch, state, client) => {
+  const { rosterState } = state().rosterState;
+  if (rosterState !== null) {
+    const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
+    const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
+    const spotList = spotSelectors.getSpotList(state());
+    const shownSpots = (spotList.length > 0) ? [spotList[0]] : [];
 
-      if (shownSpots.length > 0) {
-        dispatch(getShiftRosterFor({
-          fromDate: startDate,
-          toDate: endDate,
-          spotList: shownSpots
-        }));
-      }
+    if (shownSpots.length > 0) {
+      dispatch(getShiftRosterFor({
+        fromDate: startDate,
+        toDate: endDate,
+        spotList: shownSpots,
+      }));
+    } else {
+      dispatch(actions.setShiftRosterIsLoading(false));
     }
-  } 
+  } else {
+    dispatch(actions.setShiftRosterIsLoading(false));
+  }
+}
 
-export const getInitialAvailabilityRoster:  ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => 
-  (dispatch, state, client) => {
-    const rosterState = state().rosterState.rosterState;
-    if (rosterState !== null) {
-      const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
-      const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
-      const employeeList = employeeSelectors.getEmployeeList(state());
-      const shownEmployees = (employeeList.length > 0)? [employeeList[0]] : [];
+export const getInitialAvailabilityRoster:
+ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => (dispatch, state, client) => {
+  const { rosterState } = state().rosterState;
+  if (rosterState !== null) {
+    const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
+    const endDate = moment(rosterState.firstDraftDate).endOf('week').toDate();
+    const employeeList = employeeSelectors.getEmployeeList(state());
+    const shownEmployees = (employeeList.length > 0) ? [employeeList[0]] : [];
 
-      if (shownEmployees.length > 0) {
-        dispatch(getAvailabilityRosterFor({
-          fromDate: startDate,
-          toDate: endDate,
-          employeeList: shownEmployees
-        }));
-      }
+    if (shownEmployees.length > 0) {
+      dispatch(getAvailabilityRosterFor({
+        fromDate: startDate,
+        toDate: endDate,
+        employeeList: shownEmployees,
+      }));
+    } else {
+      dispatch(actions.setAvailabilityRosterIsLoading(false));
     }
-  } 
+  } else {
+    dispatch(actions.setAvailabilityRosterIsLoading(false));
+  }
+}
 
 export const refreshShiftRoster:
-ThunkCommandFactory<void, SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = () =>
-  (dispatch, state, client) => {
-    if (lastCalledShiftRosterArgs !== null && lastCalledShiftRoster !== null) {
-      dispatch(lastCalledShiftRoster(lastCalledShiftRosterArgs));
-    }
+ThunkCommandFactory<void, SetShiftRosterIsLoadingAction |
+SetShiftRosterViewAction> = () => (dispatch, state, client) => {
+  if (lastCalledShiftRosterArgs !== null && lastCalledShiftRoster !== null) {
+    dispatch(lastCalledShiftRoster(lastCalledShiftRosterArgs));
   }
+}
 
 export const refreshAvailabilityRoster:
 ThunkCommandFactory<void, SetAvailabilityRosterIsLoadingAction |
@@ -168,6 +178,7 @@ SetAvailabilityRosterViewAction> = () => (dispatch, state, client) => {
   if (lastCalledAvailabilityRosterArgs !== null && lastCalledAvailabilityRoster !== null) {
     dispatch(lastCalledAvailabilityRoster(lastCalledAvailabilityRosterArgs));
   }
+}
 
 export const getRosterState:
 ThunkCommandFactory<void, SetRosterStateIsLoadingAction | SetRosterStateAction> = () => (dispatch, state, client) => {
@@ -213,7 +224,9 @@ function convertKindaAvailabilityRosterViewToAvailabilityRosterView(
       availabilityViewList => availabilityViewList.map(kindaAvailabilityViewAdapter),
     ),
     employeeIdToShiftViewListMap: mapObjectNumberMap(
-      newAvailabilityRosterView.employeeIdToShiftViewListMap, shiftViewList => shiftViewList.map(kindaShiftViewAdapter),
+      newAvailabilityRosterView.employeeIdToShiftViewListMap, shiftViewList => (
+        shiftViewList.map(kindaShiftViewAdapter)
+      ),
     ),
     unassignedShiftViewList: newAvailabilityRosterView.unassignedShiftViewList.map(kindaShiftViewAdapter),
   };
@@ -318,4 +331,4 @@ SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params
     lastCalledAvailabilityRosterArgs = params;
     dispatch(actions.setAvailabilityRosterIsLoading(false));
   });
-};
+}
