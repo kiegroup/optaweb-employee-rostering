@@ -22,7 +22,7 @@ import { skillSelectors } from 'store/skill';
 import Employee from 'domain/Employee';
 import { AppState } from 'store/types';
 import {
-  TextInput, Text, Chip, ChipGroup,
+  TextInput, Text, Chip, ChipGroup, EmptyState, EmptyStateIcon, Title, EmptyStateVariant, EmptyStateBody, Button,
 } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import Skill from 'domain/Skill';
@@ -32,6 +32,10 @@ import { Predicate, Sorter, ReadonlyPartial } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadSelectInput';
+import { CubesIcon } from '@patternfly/react-icons';
+import {
+  withRouter, RouteComponentProps,
+} from 'react-router-dom'
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
@@ -60,7 +64,7 @@ const mapDispatchToProps: DispatchProps = {
   removeEmployee: employeeOperations.removeEmployee
 };
 
-export type Props = StateProps & DispatchProps;
+export type Props = RouteComponentProps & StateProps & DispatchProps;
 
 export class EmployeesPage extends DataTable<Employee, Props> {
   constructor(props: Props) {
@@ -149,6 +153,30 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   removeData(data: Employee): void {
     this.props.removeEmployee(data);
   }
+
+  render(): JSX.Element {
+    if (this.props.contractList.length === 0) {
+      return (
+        <EmptyState variant={EmptyStateVariant.full}>
+          <EmptyStateIcon icon={CubesIcon} />
+          <Title headingLevel="h5" size="lg">
+            There are no Contracts
+          </Title>
+          <EmptyStateBody>
+            The current tenant have no Contracts. You need at least one Contract to add Employees.
+            You can add a Contract in the &quot;Contracts&quot; page.
+          </EmptyStateBody>
+          <Button
+            variant="primary"
+            onClick={() => this.props.history.push('/contracts')}
+          >
+            Go to the Contracts page
+          </Button>
+        </EmptyState>
+      );
+    }
+    return super.render();
+  }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EmployeesPage);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(EmployeesPage));
