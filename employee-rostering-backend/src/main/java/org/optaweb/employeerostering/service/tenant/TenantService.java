@@ -18,7 +18,6 @@ package org.optaweb.employeerostering.service.tenant;
 
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -100,13 +99,9 @@ public class TenantService extends AbstractRestService {
 
     @Transactional
     public Tenant getTenant(Integer id) {
-        Optional<Tenant> tenantOptional = tenantRepository.findById(id);
-
-        if (!tenantOptional.isPresent()) {
-            throw new EntityNotFoundException("No Tenant entity found with ID (" + id + ").");
-        }
-
-        return tenantOptional.get();
+        return tenantRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No Tenant entity found with ID (" + id + ")."));
     }
 
     @Transactional
@@ -149,39 +144,32 @@ public class TenantService extends AbstractRestService {
 
     @Transactional
     public RosterParametrization getRosterParametrization(Integer tenantId) {
-        Optional<RosterParametrization> rosterParametrizationOptional =
-                rosterParametrizationRepository.findByTenantId(tenantId);
-
-        if (!rosterParametrizationOptional.isPresent()) {
-            throw new EntityNotFoundException("No RosterParametrization entity found with tenantId ("
-                                                      + tenantId + ").");
-        }
-
-        return rosterParametrizationOptional.get();
+        return rosterParametrizationRepository
+                .findByTenantId(tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("No RosterParametrization entity found with tenantId ("
+                                                                       + tenantId + ")."));
     }
 
     @Transactional
     public RosterParametrization updateRosterParametrization(RosterParametrizationView rosterParametrizationView) {
-        Optional<RosterParametrization> rosterParametrizationOptional =
-                rosterParametrizationRepository.findByTenantId(rosterParametrizationView.getTenantId());
-
-        if (!rosterParametrizationOptional.isPresent()) {
-            throw new EntityNotFoundException("RosterParametrization entity with tenantId ("
-                                                      + rosterParametrizationView.getTenantId() + ") not found.");
-        } else if (!rosterParametrizationOptional.get().getTenantId().equals(rosterParametrizationView.getTenantId())) {
-            throw new IllegalStateException("RosterParametrization entity with tenantId ("
-                                                    + rosterParametrizationOptional.get().getTenantId()
-                                                    + ") cannot change tenants.");
+        RosterParametrization oldRosterParametrization = rosterParametrizationRepository
+                .findByTenantId(rosterParametrizationView.getTenantId())
+                .orElseThrow(() -> new EntityNotFoundException("RosterParametrization entity with tenantId (" +
+                                                                       rosterParametrizationView.getTenantId() +
+                                                                       ") not found."));
+        if (!oldRosterParametrization.getTenantId().equals(rosterParametrizationView.getTenantId())) {
+            throw new IllegalStateException("RosterParametrization entity with tenantId (" +
+                                                    oldRosterParametrization.getTenantId() +
+                                                    ") cannot change tenants.");
         }
 
-        RosterParametrization databaseRosterParametrization = rosterParametrizationOptional.get();
-        databaseRosterParametrization.setDesiredTimeSlotWeight(rosterParametrizationView.getDesiredTimeSlotWeight());
-        databaseRosterParametrization.setRotationEmployeeMatchWeight(
+        oldRosterParametrization.setDesiredTimeSlotWeight(rosterParametrizationView.getDesiredTimeSlotWeight());
+        oldRosterParametrization.setRotationEmployeeMatchWeight(
                 rosterParametrizationView.getRotationEmployeeMatchWeight());
-        databaseRosterParametrization.setUndesiredTimeSlotWeight(
+        oldRosterParametrization.setUndesiredTimeSlotWeight(
                 rosterParametrizationView.getUndesiredTimeSlotWeight());
-        databaseRosterParametrization.setWeekStartDay(rosterParametrizationView.getWeekStartDay());
-        return rosterParametrizationRepository.save(databaseRosterParametrization);
+        oldRosterParametrization.setWeekStartDay(rosterParametrizationView.getWeekStartDay());
+        return rosterParametrizationRepository.save(oldRosterParametrization);
     }
 
     public List<ZoneId> getSupportedTimezones() {

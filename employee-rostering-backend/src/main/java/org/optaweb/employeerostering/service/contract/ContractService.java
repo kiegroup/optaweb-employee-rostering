@@ -55,14 +55,12 @@ public class ContractService extends AbstractRestService {
 
     @Transactional
     public Contract getContract(Integer tenantId, Long id) {
-        Optional<Contract> contractOptional = contractRepository.findById(id);
+        Contract contract = contractRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No Contract entity found with ID (" + id + ")."));
 
-        if (!contractOptional.isPresent()) {
-            throw new EntityNotFoundException("No Contract entity found with ID (" + id + ").");
-        }
-
-        validateTenantIdParameter(tenantId, contractOptional.get());
-        return contractOptional.get();
+        validateTenantIdParameter(tenantId, contract);
+        return contract;
     }
 
     @Transactional
@@ -86,22 +84,23 @@ public class ContractService extends AbstractRestService {
 
     @Transactional
     public Contract updateContract(Integer tenantId, ContractView contractView) {
-        Contract contract = convertFromView(tenantId, contractView);
-        Optional<Contract> contractOptional = contractRepository.findById(contract.getId());
+        Contract newContract = convertFromView(tenantId, contractView);
 
-        if (!contractOptional.isPresent()) {
-            throw new EntityNotFoundException("Contract entity with ID (" + contract.getId() + ") not found.");
-        } else if (!contractOptional.get().getTenantId().equals(contract.getTenantId())) {
-            throw new IllegalStateException("Contract entity with tenantId (" + contractOptional.get().getTenantId()
+        Contract oldContract = contractRepository
+                .findById(newContract.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Contract entity with ID (" + newContract.getId() +
+                                                                       ") not found."));
+
+        if (!oldContract.getTenantId().equals(newContract.getTenantId())) {
+            throw new IllegalStateException("Contract entity with tenantId (" + oldContract.getTenantId()
                                                     + ") cannot change tenants.");
         }
 
-        Contract databaseContract = contractOptional.get();
-        databaseContract.setName(contract.getName());
-        databaseContract.setMaximumMinutesPerDay(contract.getMaximumMinutesPerDay());
-        databaseContract.setMaximumMinutesPerWeek(contract.getMaximumMinutesPerWeek());
-        databaseContract.setMaximumMinutesPerMonth(contract.getMaximumMinutesPerMonth());
-        databaseContract.setMaximumMinutesPerYear(contract.getMaximumMinutesPerYear());
-        return contractRepository.save(databaseContract);
+        oldContract.setName(newContract.getName());
+        oldContract.setMaximumMinutesPerDay(newContract.getMaximumMinutesPerDay());
+        oldContract.setMaximumMinutesPerWeek(newContract.getMaximumMinutesPerWeek());
+        oldContract.setMaximumMinutesPerMonth(newContract.getMaximumMinutesPerMonth());
+        oldContract.setMaximumMinutesPerYear(newContract.getMaximumMinutesPerYear());
+        return contractRepository.save(oldContract);
     }
 }

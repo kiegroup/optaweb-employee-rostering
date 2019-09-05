@@ -69,14 +69,12 @@ public class RotationService extends AbstractRestService {
     @Transactional
     public ShiftTemplateView getShiftTemplate(Integer tenantId, Long id) {
         RosterState rosterState = rosterService.getRosterState(tenantId);
-        Optional<ShiftTemplate> shiftTemplateOptional = shiftTemplateRepository.findById(id);
+        ShiftTemplate shiftTemplate = shiftTemplateRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No ShiftTemplate entity found with ID (" + id + ")."));
 
-        if (!shiftTemplateOptional.isPresent()) {
-            throw new EntityNotFoundException("No ShiftTemplate entity found with ID (" + id + ").");
-        }
-
-        validateTenantIdParameter(tenantId, shiftTemplateOptional.get());
-        return new ShiftTemplateView(rosterState.getRotationLength(), shiftTemplateOptional.get());
+        validateTenantIdParameter(tenantId, shiftTemplate);
+        return new ShiftTemplateView(rosterState.getRotationLength(), shiftTemplate);
     }
 
     @Transactional
@@ -110,32 +108,31 @@ public class RotationService extends AbstractRestService {
             employee = null;
         }
 
-        ShiftTemplate shiftTemplate = new ShiftTemplate(rosterState.getRotationLength(), shiftTemplateView, spot,
-                                                        employee);
-        validateTenantIdParameter(tenantId, shiftTemplate);
+        ShiftTemplate newShiftTemplate = new ShiftTemplate(rosterState.getRotationLength(), shiftTemplateView, spot,
+                                                           employee);
+        validateTenantIdParameter(tenantId, newShiftTemplate);
 
-        Optional<ShiftTemplate> shiftTemplateOptional = shiftTemplateRepository.findById(shiftTemplate.getId());
+        ShiftTemplate oldShiftTemplate = shiftTemplateRepository
+                .findById(newShiftTemplate.getId())
+                .orElseThrow(() -> new EntityNotFoundException("ShiftTemplate entity with ID (" +
+                                                                       newShiftTemplate.getId() + ") not found."));
 
-        if (!shiftTemplateOptional.isPresent()) {
-            throw new EntityNotFoundException("ShiftTemplate entity with ID (" + shiftTemplate.getId()
-                                                      + ") not found.");
-        } else if (!shiftTemplateOptional.get().getTenantId().equals(shiftTemplate.getTenantId())) {
-            throw new IllegalStateException("ShiftTemplate entity with tenantId ("
-                                                    + shiftTemplateOptional.get().getTenantId()
-                                                    + ") cannot change tenants.");
+        if (!oldShiftTemplate.getTenantId().equals(newShiftTemplate.getTenantId())) {
+            throw new IllegalStateException("ShiftTemplate entity with tenantId (" + oldShiftTemplate.getTenantId() +
+                                                    ") cannot change tenants.");
         }
 
-        ShiftTemplate databaseShiftTemplate = shiftTemplateOptional.get();
-        databaseShiftTemplate.setRotationEmployee(employee);
-        databaseShiftTemplate.setSpot(spot);
-        databaseShiftTemplate.setStartDayOffset(shiftTemplate.getStartDayOffset());
-        databaseShiftTemplate.setEndDayOffset(shiftTemplate.getEndDayOffset());
-        databaseShiftTemplate.setStartTime(shiftTemplate.getStartTime());
-        databaseShiftTemplate.setEndTime(shiftTemplate.getEndTime());
-        // Flush to increase version number before we duplicate it to ShiftTemplateView
-        shiftTemplateRepository.saveAndFlush(databaseShiftTemplate);
+        oldShiftTemplate.setRotationEmployee(employee);
+        oldShiftTemplate.setSpot(spot);
+        oldShiftTemplate.setStartDayOffset(newShiftTemplate.getStartDayOffset());
+        oldShiftTemplate.setEndDayOffset(newShiftTemplate.getEndDayOffset());
+        oldShiftTemplate.setStartTime(newShiftTemplate.getStartTime());
+        oldShiftTemplate.setEndTime(newShiftTemplate.getEndTime());
 
-        return new ShiftTemplateView(rosterState.getRotationLength(), shiftTemplate);
+        // Flush to increase version number before we duplicate it to ShiftTemplateView
+        ShiftTemplate updatedShiftTemplate = shiftTemplateRepository.saveAndFlush(oldShiftTemplate);
+
+        return new ShiftTemplateView(rosterState.getRotationLength(), updatedShiftTemplate);
     }
 
     @Transactional
