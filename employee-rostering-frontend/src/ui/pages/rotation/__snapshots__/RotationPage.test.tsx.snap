@@ -3,7 +3,6 @@
 exports[`Rotation Page should render correctly when creating a new shift template via button 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {
@@ -61,17 +60,7 @@ exports[`Rotation Page should render correctly when creating a new shift templat
         }
       />
       <Pagination
-        className=""
-        dropDirection="down"
         itemCount={7}
-        itemsEnd={null}
-        itemsStart={null}
-        onFirstClick={[Function]}
-        onLastClick={[Function]}
-        onNextClick={[Function]}
-        onPageInput={[Function]}
-        onPerPageSelect={[Function]}
-        onPreviousClick={[Function]}
         onSetPage={[Function]}
         page={1}
         perPage={7}
@@ -91,9 +80,6 @@ exports[`Rotation Page should render correctly when creating a new shift templat
             "toPreviousPage": "Go to the previous week",
           }
         }
-        toggleTemplate={[Function]}
-        variant="top"
-        widgetId="pagination-options-menu"
       />
     </LevelItem>
     <LevelItem
@@ -198,7 +184,6 @@ exports[`Rotation Page should render correctly when creating a new shift templat
 exports[`Rotation Page should render correctly when loaded 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {
@@ -256,17 +241,7 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
         }
       />
       <Pagination
-        className=""
-        dropDirection="down"
         itemCount={7}
-        itemsEnd={null}
-        itemsStart={null}
-        onFirstClick={[Function]}
-        onLastClick={[Function]}
-        onNextClick={[Function]}
-        onPageInput={[Function]}
-        onPerPageSelect={[Function]}
-        onPreviousClick={[Function]}
         onSetPage={[Function]}
         page={1}
         perPage={7}
@@ -286,9 +261,6 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
             "toPreviousPage": "Go to the previous week",
           }
         }
-        toggleTemplate={[Function]}
-        variant="top"
-        widgetId="pagination-options-menu"
       />
     </LevelItem>
     <LevelItem

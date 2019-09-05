@@ -213,12 +213,12 @@ describe('Edit Availability Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editAvailabilityModal.find('DatePicker[aria-label="Availability Start"]')
+    editAvailabilityModal.find('[aria-label="Availability Start"]')
       .simulate("change", new Date("2019-01-01T09:00"));
     expect(editAvailabilityModal.state("editedValue")).toEqual({
       startDateTime: new Date("2019-01-01T09:00")
     });
-    editAvailabilityModal.find('DatePicker[aria-label="Availability Start"]').simulate("change", null);
+    editAvailabilityModal.find('[aria-label="Availability Start"]').simulate("change", null);
     expect(editAvailabilityModal.state("editedValue")).toEqual({
       startDateTime: undefined
     });
@@ -232,12 +232,12 @@ describe('Edit Availability Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editAvailabilityModal.find('DatePicker[aria-label="Availability End"]')
+    editAvailabilityModal.find('[aria-label="Availability End"]')
       .simulate("change", new Date("2019-01-01T09:00"));
     expect(editAvailabilityModal.state("editedValue")).toEqual({
       endDateTime: new Date("2019-01-01T09:00")
     });
-    editAvailabilityModal.find('DatePicker[aria-label="Availability End"]').simulate("change", null);
+    editAvailabilityModal.find('[aria-label="Availability End"]').simulate("change", null);
     expect(editAvailabilityModal.state("editedValue")).toEqual({
       endDateTime: undefined
     });

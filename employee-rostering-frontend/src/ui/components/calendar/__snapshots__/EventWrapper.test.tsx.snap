@@ -5,14 +5,27 @@ exports[`EventWrapper should render correctly when the event continues both befo
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
+  boundary="window"
   className=""
   closeBtnAriaLabel="Close"
+  distance={25}
   enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
   footerContent={null}
   headerContent="Title"
   hideOnOutsideClick={true}
   isVisible={null}
-  maxWidth="calc(1.5rem + 18.75rem)"
+  maxWidth="calc(2rem + 18.75rem)"
   onHidden={[Function]}
   onHide={[Function]}
   onMount={[Function]}
@@ -44,14 +57,27 @@ exports[`EventWrapper should render correctly when the event continues from eari
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
+  boundary="window"
   className=""
   closeBtnAriaLabel="Close"
+  distance={25}
   enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
   footerContent={null}
   headerContent="Title"
   hideOnOutsideClick={true}
   isVisible={null}
-  maxWidth="calc(1.5rem + 18.75rem)"
+  maxWidth="calc(2rem + 18.75rem)"
   onHidden={[Function]}
   onHide={[Function]}
   onMount={[Function]}
@@ -83,14 +109,27 @@ exports[`EventWrapper should render correctly when the event continues later 1`]
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
+  boundary="window"
   className=""
   closeBtnAriaLabel="Close"
+  distance={25}
   enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
   footerContent={null}
   headerContent="Title"
   hideOnOutsideClick={true}
   isVisible={null}
-  maxWidth="calc(1.5rem + 18.75rem)"
+  maxWidth="calc(2rem + 18.75rem)"
   onHidden={[Function]}
   onHide={[Function]}
   onMount={[Function]}
@@ -122,14 +161,27 @@ exports[`EventWrapper should render correctly when the event does not have a cla
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
+  boundary="window"
   className=""
   closeBtnAriaLabel="Close"
+  distance={25}
   enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
   footerContent={null}
   headerContent="Title"
   hideOnOutsideClick={true}
   isVisible={null}
-  maxWidth="calc(1.5rem + 18.75rem)"
+  maxWidth="calc(2rem + 18.75rem)"
   onHidden={[Function]}
   onHide={[Function]}
   onMount={[Function]}
@@ -161,14 +213,27 @@ exports[`EventWrapper should render correctly when the event does not span multi
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
+  boundary="window"
   className=""
   closeBtnAriaLabel="Close"
+  distance={25}
   enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
   footerContent={null}
   headerContent="Title"
   hideOnOutsideClick={true}
   isVisible={null}
-  maxWidth="calc(1.5rem + 18.75rem)"
+  maxWidth="calc(2rem + 18.75rem)"
   onHidden={[Function]}
   onHide={[Function]}
   onMount={[Function]}
@@ -200,14 +265,27 @@ exports[`EventWrapper should render correctly when the event has no height or to
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
+  boundary="window"
   className=""
   closeBtnAriaLabel="Close"
+  distance={25}
   enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
   footerContent={null}
   headerContent="Title"
   hideOnOutsideClick={true}
   isVisible={null}
-  maxWidth="calc(1.5rem + 18.75rem)"
+  maxWidth="calc(2rem + 18.75rem)"
   onHidden={[Function]}
   onHide={[Function]}
   onMount={[Function]}
@@ -235,14 +313,27 @@ exports[`EventWrapper should render correctly without a style 1`] = `
   appendTo={[Function]}
   aria-label=""
   bodyContent="Body"
+  boundary="window"
   className=""
   closeBtnAriaLabel="Close"
+  distance={25}
   enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
   footerContent={null}
   headerContent="Title"
   hideOnOutsideClick={true}
   isVisible={null}
-  maxWidth="calc(1.5rem + 18.75rem)"
+  maxWidth="calc(2rem + 18.75rem)"
   onHidden={[Function]}
   onHide={[Function]}
   onMount={[Function]}

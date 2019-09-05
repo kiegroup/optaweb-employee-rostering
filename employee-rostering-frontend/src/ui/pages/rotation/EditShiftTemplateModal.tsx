@@ -297,7 +297,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
               aria-label="Employee"
               emptyText="Unassigned"
               defaultValue={this.props.shiftTemplate? this.props.shiftTemplate.rotationEmployee : undefined}
-              options={this.props.employeeList}
+              options={[undefined, ...this.props.employeeList]}
               optionToStringMap={employee => employee? employee.name : "Unassigned"}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, rotationEmployee: employee? employee : null }
