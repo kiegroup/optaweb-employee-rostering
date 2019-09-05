@@ -26,6 +26,7 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
   isOpen={false}
   isSmall={true}
   onClose={[MockFunction]}
+  showClose={true}
   title="Create Shift Template"
 >
   <Form
@@ -134,6 +135,7 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
         optional={true}
         options={
           Array [
+            undefined,
             Object {
               "contract": Object {
                 "id": 5,
@@ -192,6 +194,7 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
   isOpen={true}
   isSmall={true}
   onClose={[MockFunction]}
+  showClose={true}
   title="Create Shift Template"
 >
   <Form
@@ -300,6 +303,7 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
         optional={true}
         options={
           Array [
+            undefined,
             Object {
               "contract": Object {
                 "id": 5,
@@ -365,6 +369,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
   isOpen={true}
   isSmall={true}
   onClose={[MockFunction]}
+  showClose={true}
   title="Edit Shift Template"
 >
   <Form
@@ -519,6 +524,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
         optional={true}
         options={
           Array [
+            undefined,
             Object {
               "contract": Object {
                 "id": 5,

@@ -21,7 +21,6 @@ exports[`Shift Roster Page should render EventWrapper correctly 1`] = `
 exports[`Shift Roster Page should render correctly when creating a new shift via button 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {
@@ -252,7 +251,6 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
 exports[`Shift Roster Page should render correctly when loaded 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {
@@ -485,7 +483,6 @@ exports[`Shift Roster Page should render correctly when loading 1`] = `<div />`;
 exports[`Shift Roster Page should render correctly when solving 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {

@@ -13,13 +13,9 @@ exports[`OptionalInput component should render correctly 1`] = `
     onChange={[Function]}
     type="text"
   />
-  <Switch
+  <Component
     aria-label="Enabled"
-    className=""
-    id=""
     isChecked={true}
-    isDisabled={false}
-    label=""
     onChange={[Function]}
   />
 </span>

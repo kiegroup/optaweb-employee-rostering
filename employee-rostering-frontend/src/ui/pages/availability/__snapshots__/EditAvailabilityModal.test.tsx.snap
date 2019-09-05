@@ -26,6 +26,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
   isOpen={false}
   isSmall={true}
   onClose={[MockFunction]}
+  showClose={true}
   title="Create Availability"
 >
   <Form
@@ -37,7 +38,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
       <Label>
         Availability Start
       </Label>
-      <DatePicker
+      <t
         allowSameDay={false}
         aria-label="Availability Start"
         dateFormat="MMMM dd, hh:mm a"
@@ -47,7 +48,8 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         dropdownMode="scroll"
         inlineFocusSelectedMonth={false}
         monthsShown={1}
-        nextMonthButtonLabel="Next month"
+        nextMonthButtonLabel="Next Month"
+        nextYearButtonLabel="Next Year"
         onBlur={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
@@ -60,10 +62,12 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         onYearChange={[Function]}
         preventOpenOnFocus={false}
         previousMonthButtonLabel="Previous Month"
+        previousYearButtonLabel="Previous Year"
         readOnly={false}
         renderDayContents={[Function]}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
         strictParsing={false}
@@ -77,7 +81,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
       <Label>
         Availability End
       </Label>
-      <DatePicker
+      <t
         allowSameDay={false}
         aria-label="Availability End"
         dateFormat="MMMM dd, hh:mm a"
@@ -87,7 +91,8 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         dropdownMode="scroll"
         inlineFocusSelectedMonth={false}
         monthsShown={1}
-        nextMonthButtonLabel="Next month"
+        nextMonthButtonLabel="Next Month"
+        nextYearButtonLabel="Next Year"
         onBlur={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
@@ -100,10 +105,12 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         onYearChange={[Function]}
         preventOpenOnFocus={false}
         previousMonthButtonLabel="Previous Month"
+        previousYearButtonLabel="Previous Year"
         readOnly={false}
         renderDayContents={[Function]}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
         strictParsing={false}
@@ -200,6 +207,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
   isOpen={true}
   isSmall={true}
   onClose={[MockFunction]}
+  showClose={true}
   title="Create Availability"
 >
   <Form
@@ -211,7 +219,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
       <Label>
         Availability Start
       </Label>
-      <DatePicker
+      <t
         allowSameDay={false}
         aria-label="Availability Start"
         dateFormat="MMMM dd, hh:mm a"
@@ -221,7 +229,8 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         dropdownMode="scroll"
         inlineFocusSelectedMonth={false}
         monthsShown={1}
-        nextMonthButtonLabel="Next month"
+        nextMonthButtonLabel="Next Month"
+        nextYearButtonLabel="Next Year"
         onBlur={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
@@ -234,10 +243,12 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         onYearChange={[Function]}
         preventOpenOnFocus={false}
         previousMonthButtonLabel="Previous Month"
+        previousYearButtonLabel="Previous Year"
         readOnly={false}
         renderDayContents={[Function]}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
         strictParsing={false}
@@ -251,7 +262,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
       <Label>
         Availability End
       </Label>
-      <DatePicker
+      <t
         allowSameDay={false}
         aria-label="Availability End"
         dateFormat="MMMM dd, hh:mm a"
@@ -261,7 +272,8 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         dropdownMode="scroll"
         inlineFocusSelectedMonth={false}
         monthsShown={1}
-        nextMonthButtonLabel="Next month"
+        nextMonthButtonLabel="Next Month"
+        nextYearButtonLabel="Next Year"
         onBlur={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
@@ -274,10 +286,12 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         onYearChange={[Function]}
         preventOpenOnFocus={false}
         previousMonthButtonLabel="Previous Month"
+        previousYearButtonLabel="Previous Year"
         readOnly={false}
         renderDayContents={[Function]}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
         strictParsing={false}
@@ -381,6 +395,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
   isOpen={true}
   isSmall={true}
   onClose={[MockFunction]}
+  showClose={true}
   title="Edit Availability"
 >
   <Form
@@ -392,7 +407,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
       <Label>
         Availability Start
       </Label>
-      <DatePicker
+      <t
         allowSameDay={false}
         aria-label="Availability Start"
         dateFormat="MMMM dd, hh:mm a"
@@ -402,7 +417,8 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         dropdownMode="scroll"
         inlineFocusSelectedMonth={false}
         monthsShown={1}
-        nextMonthButtonLabel="Next month"
+        nextMonthButtonLabel="Next Month"
+        nextYearButtonLabel="Next Year"
         onBlur={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
@@ -415,11 +431,13 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         onYearChange={[Function]}
         preventOpenOnFocus={false}
         previousMonthButtonLabel="Previous Month"
+        previousYearButtonLabel="Previous Year"
         readOnly={false}
         renderDayContents={[Function]}
         selected={2018-07-01T09:00:00.000Z}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
         strictParsing={false}
@@ -433,7 +451,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
       <Label>
         Availability End
       </Label>
-      <DatePicker
+      <t
         allowSameDay={false}
         aria-label="Availability End"
         dateFormat="MMMM dd, hh:mm a"
@@ -443,7 +461,8 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         dropdownMode="scroll"
         inlineFocusSelectedMonth={false}
         monthsShown={1}
-        nextMonthButtonLabel="Next month"
+        nextMonthButtonLabel="Next Month"
+        nextYearButtonLabel="Next Year"
         onBlur={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
@@ -456,11 +475,13 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         onYearChange={[Function]}
         preventOpenOnFocus={false}
         previousMonthButtonLabel="Previous Month"
+        previousYearButtonLabel="Previous Year"
         readOnly={false}
         renderDayContents={[Function]}
         selected={2018-07-01T17:00:00.000Z}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
         strictParsing={false}

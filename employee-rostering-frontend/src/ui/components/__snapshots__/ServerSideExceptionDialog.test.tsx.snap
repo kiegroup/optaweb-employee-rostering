@@ -26,6 +26,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
     isOpen={false}
     isSmall={false}
     onClose={[Function]}
+    showClose={true}
     title="Server Side Error"
   >
     <Title
@@ -101,6 +102,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Modal co
     isOpen={true}
     isSmall={false}
     onClose={[Function]}
+    showClose={true}
     title="Server Side Error"
   >
     <Title
