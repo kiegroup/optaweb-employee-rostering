@@ -160,7 +160,7 @@ export class EditShiftModal extends React.Component<Props, State> {
             <TypeaheadSelectInput
               aria-label="Spot"
               emptyText="Select a Spot"
-              value={this.props.shift? this.props.shift.spot : undefined}
+              value={this.state.editedValue.spot}
               options={this.props.spotList}
               optionToStringMap={spot => spot.name}
               onChange={spot => this.setState(prevState => ({
@@ -173,8 +173,9 @@ export class EditShiftModal extends React.Component<Props, State> {
             <TypeaheadSelectInput
               aria-label="Employee"
               emptyText="Unassigned"
-              value={this.props.shift? this.props.shift.employee : undefined}
-              options={this.props.employeeList}
+              value={(this.state.editedValue.employee !== null)? 
+                this.state.editedValue.employee :  undefined}
+              options={[undefined,...this.props.employeeList]}
               optionToStringMap={employee => employee? employee.name : "Unassigned"}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, employee: (employee !== undefined)? employee : null }
@@ -186,8 +187,9 @@ export class EditShiftModal extends React.Component<Props, State> {
             <TypeaheadSelectInput
               aria-label="Rotation Employee"
               emptyText="None"
-              value={this.props.shift? this.props.shift.rotationEmployee : undefined}
-              options={this.props.employeeList}
+              value={(this.state.editedValue.rotationEmployee !== null)? 
+                this.state.editedValue.rotationEmployee :  undefined}
+              options={[undefined,...this.props.employeeList]}
               optionToStringMap={employee => employee? employee.name : "None"}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, rotationEmployee: (employee !== undefined)? employee : null }

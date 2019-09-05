@@ -203,7 +203,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TypeaheadSelectInput
               aria-label="Spot"
               emptyText="Select a Spot..."
-              value={this.props.shiftTemplate? this.props.shiftTemplate.spot : undefined}
+              value={this.state.editedValue.spot}
               options={this.props.spotList}
               optionToStringMap={spot => spot.name}
               onChange={spot => this.setState(prevState => ({
@@ -298,8 +298,8 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <TypeaheadSelectInput
               aria-label="Employee"
               emptyText="Unassigned"
-              value={this.props.shiftTemplate? this.props.shiftTemplate.rotationEmployee : undefined}
-              options={this.props.employeeList}
+              value={this.state.editedValue.rotationEmployee? this.state.editedValue.rotationEmployee : undefined}
+              options={[undefined,...this.props.employeeList]}
               optionToStringMap={employee => employee? employee.name : "Unassigned"}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, rotationEmployee: employee || null },

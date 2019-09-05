@@ -153,7 +153,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
             <TypeaheadSelectInput
               aria-label="Employee"
               emptyText="Select an Employee..."
-              value={this.props.availability? this.props.availability.employee : undefined}
+              value={this.state.editedValue.employee}
               options={this.props.employeeList}
               optionToStringMap={employee => employee? employee.name : "Unassigned"}
               onChange={employee => this.setState(prevState => ({
@@ -166,7 +166,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
             <TypeaheadSelectInput
               aria-label="Type"
               emptyText="Select Type..."
-              value={this.props.availability? this.props.availability.state : undefined}
+              value={this.state.editedValue.state}
               options={["UNAVAILABLE","DESIRED", "UNDESIRED"] as ("UNAVAILABLE"|"DESIRED"|"UNDESIRED")[]}
               optionToStringMap={state => this.props.t("EmployeeAvailabilityState." + state)}
               onChange={state => this.setState(prevState => ({
