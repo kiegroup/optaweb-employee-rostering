@@ -51,14 +51,12 @@ public class SpotService extends AbstractRestService {
 
     @Transactional
     public Spot getSpot(Integer tenantId, Long id) {
-        Optional<Spot> spotOptional = spotRepository.findById(id);
+        Spot spot = spotRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No Spot entity found with ID (" + id + ")."));
 
-        if (!spotOptional.isPresent()) {
-            throw new EntityNotFoundException("No Spot entity found with ID (" + id + ").");
-        }
-
-        validateTenantIdParameter(tenantId, spotOptional.get());
-        return spotOptional.get();
+        validateTenantIdParameter(tenantId, spot);
+        return spot;
     }
 
     @Transactional
@@ -82,19 +80,19 @@ public class SpotService extends AbstractRestService {
 
     @Transactional
     public Spot updateSpot(Integer tenantId, SpotView spotView) {
-        Spot spot = convertFromView(tenantId, spotView);
-        Optional<Spot> spotOptional = spotRepository.findById(spot.getId());
+        Spot newSpot = convertFromView(tenantId, spotView);
+        Spot oldSpot = spotRepository
+                .findById(newSpot.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Spot entity with ID (" + newSpot.getId() +
+                                                                       ") not found."));
 
-        if (!spotOptional.isPresent()) {
-            throw new EntityNotFoundException("Spot entity with ID (" + spot.getId() + ") not found.");
-        } else if (!spotOptional.get().getTenantId().equals(spot.getTenantId())) {
-            throw new IllegalStateException("Spot entity with tenantId (" + spotOptional.get().getTenantId()
+        if (!oldSpot.getTenantId().equals(newSpot.getTenantId())) {
+            throw new IllegalStateException("Spot entity with tenantId (" + oldSpot.getTenantId()
                                                     + ") cannot change tenants.");
         }
 
-        Spot databaseSpot = spotOptional.get();
-        databaseSpot.setName(spot.getName());
-        databaseSpot.setRequiredSkillSet(spot.getRequiredSkillSet());
-        return spotRepository.save(databaseSpot);
+        oldSpot.setName(newSpot.getName());
+        oldSpot.setRequiredSkillSet(newSpot.getRequiredSkillSet());
+        return spotRepository.save(oldSpot);
     }
 }

@@ -51,14 +51,12 @@ public class SkillService extends AbstractRestService {
 
     @Transactional
     public Skill getSkill(Integer tenantId, Long id) {
-        Optional<Skill> skillOptional = skillRepository.findById(id);
+        Skill skill = skillRepository
+                .findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("No Skill entity found with ID (" + id + ")."));
 
-        if (!skillOptional.isPresent()) {
-            throw new EntityNotFoundException("No Skill entity found with ID (" + id + ").");
-        }
-
-        validateTenantIdParameter(tenantId, skillOptional.get());
-        return skillOptional.get();
+        validateTenantIdParameter(tenantId, skill);
+        return skill;
     }
 
     @Transactional
@@ -82,18 +80,18 @@ public class SkillService extends AbstractRestService {
 
     @Transactional
     public Skill updateSkill(Integer tenantId, SkillView skillView) {
-        Skill skill = convertFromView(tenantId, skillView);
-        Optional<Skill> skillOptional = skillRepository.findById(skill.getId());
+        Skill newSkill = convertFromView(tenantId, skillView);
+        Skill oldSkill = skillRepository
+                .findById(newSkill.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Skill entity with ID (" + newSkill.getId() + ") not " +
+                                                                       "found."));
 
-        if (!skillOptional.isPresent()) {
-            throw new EntityNotFoundException("Skill entity with ID (" + skill.getId() + ") not found.");
-        } else if (!skillOptional.get().getTenantId().equals(skill.getTenantId())) {
-            throw new IllegalStateException("Skill entity with tenantId (" + skillOptional.get().getTenantId()
-                    + ") cannot change tenants.");
+        if (!oldSkill.getTenantId().equals(newSkill.getTenantId())) {
+            throw new IllegalStateException("Skill entity with tenantId (" + oldSkill.getTenantId() +
+                                                    ") cannot change tenants.");
         }
 
-        Skill databaseSkill = skillOptional.get();
-        databaseSkill.setName(skill.getName());
-        return skillRepository.save(databaseSkill);
+        oldSkill.setName(newSkill.getName());
+        return skillRepository.save(oldSkill);
     }
 }
