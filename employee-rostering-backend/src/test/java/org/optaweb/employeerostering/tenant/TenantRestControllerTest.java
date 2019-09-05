@@ -17,6 +17,8 @@
 package org.optaweb.employeerostering.tenant;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import org.junit.After;
@@ -51,7 +53,7 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     }
 
     private void deleteTenant(Integer id) {
-        restTemplate.delete(tenantPathURI + id);
+        restTemplate.delete(tenantPathURI + "remove/" + id);
     }
 
     private ResponseEntity<RosterParametrization> getRosterParametrization(Integer id) {
@@ -76,6 +78,18 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     @After
     public void cleanup() {
         deleteTestTenant();
+    }
+
+    @Test
+    public void tenantCrudTest() {
+        RosterStateView rosterStateView = new RosterStateView(0, 0, LocalDate.of(2000, 01, 01), 0, 0, 0, 2,
+                                                              LocalDate.of(2000, 01, 02), ZoneId.of("America/Toronto"));
+        rosterStateView.setTenant(new Tenant("tenant"));
+        ResponseEntity<Tenant> postResponse = addTenant(rosterStateView);
+        assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(postResponse.getBody().getName()).isEqualTo("tenant");
+
+        deleteTenant(postResponse.getBody().getId());
     }
 
     @Test
