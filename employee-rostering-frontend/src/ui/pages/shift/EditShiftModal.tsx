@@ -172,11 +172,12 @@ export class EditShiftModal extends React.Component<Props, State> {
               aria-label="Employee"
               emptyText="Unassigned"
               defaultValue={this.props.shift? this.props.shift.employee : undefined}
-              options={this.props.employeeList}
+              options={[undefined, ...this.props.employeeList]}
               optionToStringMap={employee => employee? employee.name : "Unassigned"}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, employee: (employee !== undefined)? employee : null }
               }))}
+              optional
             />
           </InputGroup>
           <InputGroup>
@@ -185,11 +186,12 @@ export class EditShiftModal extends React.Component<Props, State> {
               aria-label="Rotation Employee"
               emptyText="None"
               defaultValue={this.props.shift? this.props.shift.rotationEmployee : undefined}
-              options={this.props.employeeList}
+              options={[undefined, ...this.props.employeeList]}
               optionToStringMap={employee => employee? employee.name : "None"}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, rotationEmployee: (employee !== undefined)? employee : null }
               }))}
+              optional
             />
           </InputGroup>
           <InputGroup>

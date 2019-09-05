@@ -3,7 +3,6 @@
 exports[`Contracts page should render correctly with a few contracts 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {
@@ -32,57 +31,11 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
         Add
       </Button>
       <Pagination
-        className=""
-        dropDirection="down"
         itemCount={2}
-        itemsEnd={null}
-        itemsStart={null}
-        onFirstClick={[Function]}
-        onLastClick={[Function]}
-        onNextClick={[Function]}
-        onPageInput={[Function]}
         onPerPageSelect={[Function]}
-        onPreviousClick={[Function]}
         onSetPage={[Function]}
         page={1}
         perPage={10}
-        perPageOptions={
-          Array [
-            Object {
-              "title": "10",
-              "value": 10,
-            },
-            Object {
-              "title": "20",
-              "value": 20,
-            },
-            Object {
-              "title": "50",
-              "value": 50,
-            },
-            Object {
-              "title": "100",
-              "value": 100,
-            },
-          ]
-        }
-        titles={
-          Object {
-            "currPage": "Current page",
-            "items": "items",
-            "itemsPerPage": "Items per page",
-            "optionsToggle": "Select",
-            "pages": "pages",
-            "paginationTitle": "Pagination",
-            "perPageSuffix": "per page",
-            "toFirstPage": "Go to first page",
-            "toLastPage": "Go to last page",
-            "toNextPage": "Go to next page",
-            "toPreviousPage": "Go to previous page",
-          }
-        }
-        toggleTemplate={[Function]}
-        variant="top"
         widgetId="pagination-options-menu-top"
       />
     </LevelItem>
@@ -150,8 +103,6 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
     dropdownPosition="right"
     expandId="expandable-toggle"
     gridBreakPoint="grid-md"
-    onCollapse={null}
-    onExpand={null}
     onSort={[Function]}
     role="grid"
     rowLabeledBy="simple-node"
@@ -484,14 +435,8 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
     sortBy={Object {}}
     variant={null}
   >
-    <TableHeader
-      className=""
-    />
-    <TableBody
-      className=""
-      onRowClick={[Function]}
-      rowKey="id"
-    />
+    <TableHeader />
+    <TableBody />
   </Table>
 </Fragment>
 `;
@@ -499,7 +444,6 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
 exports[`Contracts page should render correctly with no contracts 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {
@@ -528,57 +472,11 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
         Add
       </Button>
       <Pagination
-        className=""
-        dropDirection="down"
         itemCount={0}
-        itemsEnd={null}
-        itemsStart={null}
-        onFirstClick={[Function]}
-        onLastClick={[Function]}
-        onNextClick={[Function]}
-        onPageInput={[Function]}
         onPerPageSelect={[Function]}
-        onPreviousClick={[Function]}
         onSetPage={[Function]}
         page={1}
         perPage={10}
-        perPageOptions={
-          Array [
-            Object {
-              "title": "10",
-              "value": 10,
-            },
-            Object {
-              "title": "20",
-              "value": 20,
-            },
-            Object {
-              "title": "50",
-              "value": 50,
-            },
-            Object {
-              "title": "100",
-              "value": 100,
-            },
-          ]
-        }
-        titles={
-          Object {
-            "currPage": "Current page",
-            "items": "items",
-            "itemsPerPage": "Items per page",
-            "optionsToggle": "Select",
-            "pages": "pages",
-            "paginationTitle": "Pagination",
-            "perPageSuffix": "per page",
-            "toFirstPage": "Go to first page",
-            "toLastPage": "Go to last page",
-            "toNextPage": "Go to next page",
-            "toPreviousPage": "Go to previous page",
-          }
-        }
-        toggleTemplate={[Function]}
-        variant="top"
         widgetId="pagination-options-menu-top"
       />
     </LevelItem>
@@ -646,8 +544,6 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
     dropdownPosition="right"
     expandId="expandable-toggle"
     gridBreakPoint="grid-md"
-    onCollapse={null}
-    onExpand={null}
     onSort={[Function]}
     role="grid"
     rowLabeledBy="simple-node"
@@ -655,14 +551,8 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
     sortBy={Object {}}
     variant={null}
   >
-    <TableHeader
-      className=""
-    />
-    <TableBody
-      className=""
-      onRowClick={[Function]}
-      rowKey="id"
-    />
+    <TableHeader />
+    <TableBody />
   </Table>
 </Fragment>
 `;

@@ -1,63 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Toolbar Component should render correctly when tenant select is open 1`] = `
-<Toolbar
-  className={null}
->
-  <ToolbarGroup
-    className={null}
-  >
-    <ToolbarItem
-      className={null}
-    >
+<Toolbar>
+  <ToolbarGroup>
+    <ToolbarItem>
       <Dropdown
-        className=""
-        direction="down"
         dropdownItems={
           Array [
             <DropdownItem
-              className=""
-              component="a"
               data-tenantid={1}
-              href=""
-              isDisabled={false}
-              isHovered={false}
-              tooltip={null}
-              tooltipProps={Object {}}
             >
               Tenant 1
             </DropdownItem>,
             <DropdownItem
-              className=""
-              component="a"
               data-tenantid={2}
-              href=""
-              isDisabled={false}
-              isHovered={false}
-              tooltip={null}
-              tooltipProps={Object {}}
             >
               Tenant 2
             </DropdownItem>,
           ]
         }
-        isGrouped={false}
         isOpen={true}
         isPlain={true}
         onSelect={[Function]}
         position="right"
         toggle={
           <DropdownToggle
-            className=""
-            iconComponent={[Function]}
-            id=""
-            isActive={false}
-            isFocused={false}
-            isHovered={false}
-            isOpen={false}
-            isPlain={false}
             onToggle={[Function]}
-            parentRef={null}
           >
             Tenant 2
           </DropdownToggle>
@@ -65,12 +33,8 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
       />
     </ToolbarItem>
   </ToolbarGroup>
-  <ToolbarGroup
-    className={null}
-  >
-    <ToolbarItem
-      className={null}
-    >
+  <ToolbarGroup>
+    <ToolbarItem>
       <Button
         aria-label="Notifications actions"
         id="horizontal-example-uid-01"
@@ -84,9 +48,7 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
         />
       </Button>
     </ToolbarItem>
-    <ToolbarItem
-      className={null}
-    >
+    <ToolbarItem>
       <Button
         aria-label="Settings actions"
         id="horizontal-example-uid-02"
@@ -105,63 +67,31 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
 `;
 
 exports[`Toolbar Component should render correctly with a few tenants 1`] = `
-<Toolbar
-  className={null}
->
-  <ToolbarGroup
-    className={null}
-  >
-    <ToolbarItem
-      className={null}
-    >
+<Toolbar>
+  <ToolbarGroup>
+    <ToolbarItem>
       <Dropdown
-        className=""
-        direction="down"
         dropdownItems={
           Array [
             <DropdownItem
-              className=""
-              component="a"
               data-tenantid={1}
-              href=""
-              isDisabled={false}
-              isHovered={false}
-              tooltip={null}
-              tooltipProps={Object {}}
             >
               Tenant 1
             </DropdownItem>,
             <DropdownItem
-              className=""
-              component="a"
               data-tenantid={2}
-              href=""
-              isDisabled={false}
-              isHovered={false}
-              tooltip={null}
-              tooltipProps={Object {}}
             >
               Tenant 2
             </DropdownItem>,
           ]
         }
-        isGrouped={false}
         isOpen={false}
         isPlain={true}
         onSelect={[Function]}
         position="right"
         toggle={
           <DropdownToggle
-            className=""
-            iconComponent={[Function]}
-            id=""
-            isActive={false}
-            isFocused={false}
-            isHovered={false}
-            isOpen={false}
-            isPlain={false}
             onToggle={[Function]}
-            parentRef={null}
           >
             Tenant 2
           </DropdownToggle>
@@ -169,12 +99,8 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
       />
     </ToolbarItem>
   </ToolbarGroup>
-  <ToolbarGroup
-    className={null}
-  >
-    <ToolbarItem
-      className={null}
-    >
+  <ToolbarGroup>
+    <ToolbarItem>
       <Button
         aria-label="Notifications actions"
         id="horizontal-example-uid-01"
@@ -188,9 +114,7 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
         />
       </Button>
     </ToolbarItem>
-    <ToolbarItem
-      className={null}
-    >
+    <ToolbarItem>
       <Button
         aria-label="Settings actions"
         id="horizontal-example-uid-02"
@@ -209,18 +133,10 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
 `;
 
 exports[`Toolbar Component should render correctly with no tenants 1`] = `
-<Toolbar
-  className={null}
->
-  <ToolbarGroup
-    className={null}
-  />
-  <ToolbarGroup
-    className={null}
-  >
-    <ToolbarItem
-      className={null}
-    >
+<Toolbar>
+  <ToolbarGroup />
+  <ToolbarGroup>
+    <ToolbarItem>
       <Button
         aria-label="Notifications actions"
         id="horizontal-example-uid-01"
@@ -234,9 +150,7 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
         />
       </Button>
     </ToolbarItem>
-    <ToolbarItem
-      className={null}
-    >
+    <ToolbarItem>
       <Button
         aria-label="Settings actions"
         id="horizontal-example-uid-02"

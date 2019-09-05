@@ -217,11 +217,11 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find('DatePicker[aria-label="Shift Start"]').simulate("change", new Date("2019-01-01T09:00"));
+    editShiftModal.find('[aria-label="Shift Start"]').simulate("change", new Date("2019-01-01T09:00"));
     expect(editShiftModal.state("editedValue")).toEqual({
       startDateTime: new Date("2019-01-01T09:00")
     });
-    editShiftModal.find('DatePicker[aria-label="Shift Start"]').simulate("change", null);
+    editShiftModal.find('[aria-label="Shift Start"]').simulate("change", null);
     expect(editShiftModal.state("editedValue")).toEqual({
       startDateTime: undefined
     });
@@ -235,11 +235,11 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find('DatePicker[aria-label="Shift End"]').simulate("change", new Date("2019-01-01T09:00"));
+    editShiftModal.find('[aria-label="Shift End"]').simulate("change", new Date("2019-01-01T09:00"));
     expect(editShiftModal.state("editedValue")).toEqual({
       endDateTime: new Date("2019-01-01T09:00")
     });
-    editShiftModal.find('DatePicker[aria-label="Shift End"]').simulate("change", null);
+    editShiftModal.find('[aria-label="Shift End"]').simulate("change", null);
     expect(editShiftModal.state("editedValue")).toEqual({
       endDateTime: undefined
     });
@@ -305,7 +305,7 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find('Switch[aria-label="Is Pinned"]').simulate("change", true);
+    editShiftModal.find('[aria-label="Is Pinned"]').simulate("change", true);
     expect(editShiftModal.state("editedValue")).toEqual({
       pinnedByUser: true
     });

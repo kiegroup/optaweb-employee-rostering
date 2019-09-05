@@ -5,8 +5,10 @@ exports[`App should render correctly 1`] = `
   <Page
     breadcrumb={null}
     className=""
+    defaultManagedSidebarIsOpen={true}
     header={<Header />}
     isManagedSidebar={false}
+    mainContainerId={null}
     onPageResize={[Function]}
     sidebar={null}
     skipToContent={null}

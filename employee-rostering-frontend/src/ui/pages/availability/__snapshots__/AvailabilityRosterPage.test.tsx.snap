@@ -3,7 +3,6 @@
 exports[`Availability Roster Page should render correctly when creating a new availability via button 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {
@@ -303,7 +302,6 @@ exports[`Availability Roster Page should render correctly when creating a new av
 exports[`Availability Roster Page should render correctly when loaded 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {
@@ -605,7 +603,6 @@ exports[`Availability Roster Page should render correctly when loading 1`] = `<d
 exports[`Availability Roster Page should render correctly when solving 1`] = `
 <Fragment>
   <Level
-    className=""
     gutter="sm"
     style={
       Object {

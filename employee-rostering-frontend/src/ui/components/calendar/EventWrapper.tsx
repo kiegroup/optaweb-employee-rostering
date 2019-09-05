@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-import * as React from "react";
+import * as React from 'react';
 
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './ReactBigCalendarOverrides.css';
-import { Popover } from "@patternfly/react-core";
+import { Popover } from '@patternfly/react-core';
 
+// Workaround for https://github.com/intljusticemission/react-big-calendar/issues/1397,
+// and helps with styling the event component and allows the popup to show even if you click
+// the time (neccessary for small events)
 export default function EventWrapper(props: React.PropsWithChildren<{
   continuesEarlier: boolean;
   continuesLater: boolean;
@@ -28,25 +31,25 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   popoverBody: React.ReactNode;
   style?: React.CSSProperties;
 }>): JSX.Element {
-  let className = (props.className)? props.className : "rbc-event";
+  let className = (props.className) ? props.className : 'rbc-event';
   const style: React.CSSProperties = {
-    backgroundColor: "transparent",
-    border: "none",
-    ...props.style
+    backgroundColor: 'transparent',
+    border: 'none',
+    ...props.style,
   };
 
   if (props.style !== undefined && props.style.top !== undefined && props.style.height !== undefined) {
     style.gridRowStart = parseInt(props.style.top as string) + 1;
     style.gridRowEnd = parseInt(props.style.height as string) + style.gridRowStart;
-  
+
     if (props.continuesEarlier) {
-      className = className + " continues-from-previous-day";
+      className += " continues-from-previous-day";
     }
     if (props.continuesLater) {
-      className = className + " continues-next-day";
+      className += " continues-next-day";
     }
   }
-  
+
   return (
     <Popover
       position="right"
