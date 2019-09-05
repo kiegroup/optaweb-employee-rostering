@@ -16,8 +16,6 @@
 
 package org.optaweb.employeerostering.service.roster;
 
-import java.util.Optional;
-
 import javax.persistence.EntityNotFoundException;
 
 import org.optaweb.employeerostering.domain.roster.RosterState;
@@ -40,14 +38,12 @@ public class RosterService extends AbstractRestService {
 
     @Transactional
     public RosterState getRosterState(Integer tenantId) {
-        Optional<RosterState> rosterStateOptional = rosterStateRepository.findByTenantId(tenantId);
-
-        if (!rosterStateOptional.isPresent()) {
-            throw new EntityNotFoundException("No RosterState entity found with tenantId (" + tenantId + ").");
-        }
-
-        validateTenantIdParameter(tenantId, rosterStateOptional.get());
-        return rosterStateOptional.get();
+        RosterState rosterState = rosterStateRepository
+                .findByTenantId(tenantId)
+                .orElseThrow(() -> new EntityNotFoundException("No RosterState entity found with tenantId (" +
+                                                                       tenantId + ")."));
+        validateTenantIdParameter(tenantId, rosterState);
+        return rosterState;
     }
 
     // ************************************************************************
