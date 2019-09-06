@@ -48,6 +48,10 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
 
     private final String tenantPathURI = "http://localhost:8080/rest/tenant/";
 
+    private ResponseEntity<Tenant> getTenant(Integer id) {
+        return restTemplate.getForEntity(tenantPathURI + id, Tenant.class);
+    }
+
     private ResponseEntity<Tenant> addTenant(RosterStateView initialRosterStateView) {
         return restTemplate.postForEntity(tenantPathURI + "add", initialRosterStateView, Tenant.class);
     }
@@ -56,8 +60,8 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
         restTemplate.delete(tenantPathURI + "remove/" + id);
     }
 
-    private ResponseEntity<RosterParametrization> getRosterParametrization(Integer id) {
-        return restTemplate.getForEntity(tenantPathURI + id, RosterParametrization.class);
+    private ResponseEntity<RosterParametrization> getRosterParametrization(Integer tenantId) {
+        return restTemplate.getForEntity(tenantPathURI + tenantId + "/parametrization", RosterParametrization.class);
     }
 
     private ResponseEntity<RosterParametrization> updateRosterParametrization(RosterParametrizationView
@@ -87,7 +91,10 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
         rosterStateView.setTenant(new Tenant("tenant"));
         ResponseEntity<Tenant> postResponse = addTenant(rosterStateView);
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(postResponse.getBody().getName()).isEqualTo("tenant");
+
+        ResponseEntity<Tenant> getResponse = getTenant(postResponse.getBody().getId());
+        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(getResponse.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
         deleteTenant(postResponse.getBody().getId());
     }
