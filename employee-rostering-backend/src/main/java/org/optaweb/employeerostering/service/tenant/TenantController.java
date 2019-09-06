@@ -57,7 +57,7 @@ public class TenantController {
         return new ResponseEntity<>(tenantService.getTenantList(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id : \\d+}")
+    @GetMapping("/{id}")
     public ResponseEntity<Tenant> getTenant(@PathVariable @Min(0) Integer id) {
         return new ResponseEntity<>(tenantService.getTenant(id), HttpStatus.OK);
     }
@@ -76,9 +76,9 @@ public class TenantController {
     // RosterParametrization
     // ************************************************************************
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RosterParametrization> getRosterParametrization(@PathVariable @Min(0) Integer id) {
-        return new ResponseEntity<>(tenantService.getRosterParametrization(id), HttpStatus.OK);
+    @GetMapping("/{tenantId}/parametrization")
+    public ResponseEntity<RosterParametrization> getRosterParametrization(@PathVariable @Min(0) Integer tenantId) {
+        return new ResponseEntity<>(tenantService.getRosterParametrization(tenantId), HttpStatus.OK);
     }
 
     @PostMapping("/parametrization/update")
