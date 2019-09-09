@@ -365,7 +365,7 @@ describe('Availability Roster Page', () => {
   it('day should be white if it is draft and no availabilities falls on the day', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
-    const style = availabilityRosterPage.getDayStyle(endDate, [availability]);
+    const style = availabilityRosterPage.getDayStyle([availability])(endDate);
     expect(style).toEqual({
       className: "draft-day",
       style: {
@@ -377,7 +377,7 @@ describe('Availability Roster Page', () => {
   it('day should be gray if it is published and no availabilities falls on the day', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
-    const style = availabilityRosterPage.getDayStyle(moment(startDate).subtract(1, "day").toDate(), [availability]);
+    const style = availabilityRosterPage.getDayStyle([availability])(moment(startDate).subtract(1, "day").toDate());
     expect(style).toEqual({
       className: "published-day",
       style: {
@@ -393,7 +393,7 @@ describe('Availability Roster Page', () => {
       state: "DESIRED"  
     }
     const date = availability.startDateTime;
-    const style = availabilityRosterPage.getDayStyle(date, [availabilityClone]);
+    const style = availabilityRosterPage.getDayStyle([availabilityClone])(date);
     expect(style).toEqual({
       className: "desired draft-day",
       style: {
@@ -408,7 +408,7 @@ describe('Availability Roster Page', () => {
       state: "UNDESIRED"  
     }
     const date = availability.startDateTime;
-    const style = availabilityRosterPage.getDayStyle(date, [availabilityClone]);
+    const style = availabilityRosterPage.getDayStyle([availabilityClone])(date);
     expect(style).toEqual({
       className: "undesired draft-day",
       style: {
@@ -423,7 +423,7 @@ describe('Availability Roster Page', () => {
       state: "UNAVAILABLE"  
     }
     const date = availability.startDateTime;
-    const style = availabilityRosterPage.getDayStyle(date, [availabilityClone]);
+    const style = availabilityRosterPage.getDayStyle([availabilityClone])(date);
     expect(style).toEqual({
       className: "unavailable draft-day",
       style: {
