@@ -137,8 +137,6 @@ const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate>> = (props) => {
 
   return (
     <span
-      data-tip
-      data-for={String(props.event.id)}
       style={{
         display: "flex",
         height: "100%",

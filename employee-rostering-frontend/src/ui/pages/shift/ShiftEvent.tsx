@@ -302,8 +302,6 @@ const ShiftPopupBody: React.FC<Shift> = shift => (
 
 const ShiftEvent: React.FC<EventProps<Shift>> = (props) => (
   <span
-    data-tip
-    data-for={String(props.event.id)}
     style={{
       display: "flex",
       height: "100%",

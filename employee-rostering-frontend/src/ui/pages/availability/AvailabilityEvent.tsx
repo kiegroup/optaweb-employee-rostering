@@ -59,11 +59,7 @@ const AvailabilityPopoverBody: React.FC = () => <></>;
 const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: AvailabilityEventProps) => {
   const { t } = useTranslation();
   return (
-    <span
-      data-tip
-      data-for={String(props.availability.id)}
-      className="availability-event"
-    >
+    <span className="availability-event">
       <Split>
         <SplitItem isFilled={false}>{t("EmployeeAvailabilityState." + props.availability.state)}</SplitItem>
         <SplitItem isFilled />

@@ -409,10 +409,6 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               : undefined,
             style: {
               zIndex: (isShift(event.reference))? 1 : 0
-            },
-            props: {
-              "data-tip": true,
-              "data-for": String(event.reference.id)
             }
           })}
           popoverHeader={
