@@ -22,7 +22,7 @@ import { SetShiftTemplateListLoadingAction, AddShiftTemplateAction, RemoveShiftT
   UpdateShiftTemplateAction, RefreshShiftTemplateListAction } from './types';
 import { AddAlertAction } from 'store/alert/types';
 import ShiftTemplateView, {shiftTemplateToShiftTemplateView,
-  shiftTemplateViewToDomainObjectView } from 'domain/ShiftTemplateView';
+  shiftTemplateViewToDomainObjectView } from 'store/rotation/ShiftTemplateView';
 
 export const addShiftTemplate: ThunkCommandFactory<ShiftTemplate,  AddAlertAction |
 AddShiftTemplateAction> = shiftTemplate =>

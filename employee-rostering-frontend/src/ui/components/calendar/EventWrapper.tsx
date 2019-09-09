@@ -22,7 +22,7 @@ import { Popover } from '@patternfly/react-core';
 
 // Workaround for https://github.com/intljusticemission/react-big-calendar/issues/1397,
 // and helps with styling the event component and allows the popup to show even if you click
-// the time (neccessary for small events)
+// the time (necessary for small events)
 export default function EventWrapper(props: React.PropsWithChildren<{
   continuesEarlier: boolean;
   continuesLater: boolean;
