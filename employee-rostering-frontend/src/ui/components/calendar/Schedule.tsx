@@ -21,6 +21,13 @@ import EventWrapper from './EventWrapper';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './ReactBigCalendarOverrides.css';
 
+export interface StyleContainer {
+  style?: React.CSSProperties;
+  className?: string;
+}
+
+export type StyleSupplier<T> = (params: T) => StyleContainer;
+
 export interface Props<T extends object> {
   startDate: Date;
   endDate: Date;
@@ -31,9 +38,9 @@ export interface Props<T extends object> {
   endAccessor: (event: T) => Date;
   titleAccessor: (event: T) => string;
   addEvent: (start: Date, end: Date) => void;
-  eventStyle: (event: T) => { style?: React.CSSProperties; className?: string };
-  wrapperStyle: (event: T) => { style?: React.CSSProperties; className?: string; props?: {} };
-  dayStyle: (date: Date) => { style?: React.CSSProperties; className?: string };
+  eventStyle: StyleSupplier<T>;
+  wrapperStyle: StyleSupplier<T>;
+  dayStyle: StyleSupplier<Date>;
   popoverHeader: (event: T) => React.ReactNode;
   popoverBody: (event: T) => React.ReactNode;
   eventComponent: (props: React.PropsWithChildren<EventProps<T>>) => React.ReactNode;

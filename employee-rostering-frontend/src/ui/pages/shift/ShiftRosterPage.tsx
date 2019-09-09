@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React, { PropsWithChildren } from "react";
+import React from "react";
 import Shift from "domain/Shift";
 import Spot from "domain/Spot";
 import { AppState } from "store/types";
@@ -30,7 +30,7 @@ import TypeaheadSelectInput from "ui/components/TypeaheadSelectInput";
 import { alert } from "store/alert";
 import RosterState from "domain/RosterState";
 import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from "./ShiftEvent";
-import Schedule from 'ui/components/calendar/Schedule';
+import Schedule, { StyleSupplier } from 'ui/components/calendar/Schedule';
 
 
 interface StateProps {
@@ -90,38 +90,6 @@ interface State {
   selectedShift?: Shift;
 }
 
-export function EventWrapper(props: PropsWithChildren<{
-  event: Shift;
-  style: React.CSSProperties;
-}>): JSX.Element {
-  const gridRowStart = parseInt(props.style.top as string) + 1;
-  const gridRowEnd = parseInt(props.style.height as string) + gridRowStart;
-  let className = "rbc-event";
-
-  if (moment(props.event.endDateTime).get("date") !== moment(props.event.startDateTime).get("date")) {
-    if (gridRowStart === 1) {
-      className = className + " continues-from-previous-day";
-    }
-    if (gridRowEnd === 100) {
-      className = className + " continues-next-day";
-    }
-  }
-
-  return (
-    <div
-      className={className}
-      style={{
-        gridRowStart: gridRowStart,
-        gridRowEnd: gridRowEnd,
-        backgroundColor: "transparent",
-        border: "none"
-      }}
-    >
-      {props.children}
-    </div>
-  );
-}
-
 export class ShiftRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -168,7 +136,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     this.props.removeShift(deletedShift);
   }
 
-  getShiftStyle(shift: Shift): { style: React.CSSProperties } {
+  getShiftStyle: StyleSupplier<Shift> = (shift) => {
     const color = getShiftColor(shift);
                 
     if (this.props.rosterState !== null && 
@@ -192,7 +160,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     }
   }
 
-  getDayStyle(date: Date): { className: string; style: React.CSSProperties } {
+  getDayStyle: StyleSupplier<Date> = (date) => {
     if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
       return {
         className: "published-day",

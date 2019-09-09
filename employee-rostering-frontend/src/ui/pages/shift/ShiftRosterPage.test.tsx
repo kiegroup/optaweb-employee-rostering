@@ -19,7 +19,7 @@ import * as React from 'react';
 import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
-import { EventWrapper, ShiftRosterPage, Props } from './ShiftRosterPage';
+import { ShiftRosterPage, Props } from './ShiftRosterPage';
 import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
 import "moment/locale/en-ca";
@@ -337,24 +337,6 @@ describe('Shift Roster Page', () => {
         backgroundColor: "var(--pf-global--BackgroundColor--300)"
       }
     });
-  });
-
-  it('should render EventWrapper correctly', () => {
-    const eventWrapper = shallow(
-      <EventWrapper
-        event={shift}
-        style={
-          {
-            top: "50%",
-            height: "30%"
-          }
-        }
-      >
-        <span>Shift</span>
-      </EventWrapper>
-    );
-
-    expect(toJson(eventWrapper)).toMatchSnapshot();
   });
 });
 

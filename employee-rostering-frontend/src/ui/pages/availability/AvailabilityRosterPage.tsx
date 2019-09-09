@@ -35,7 +35,7 @@ import { availabilityOperations } from "store/availability";
 import { shiftOperations } from "store/shift";
 import EditAvailabilityModal from "./EditAvailabilityModal";
 import AvailabilityEvent, { AvailabilityPopoverHeader, AvailabilityPopoverBody } from "./AvailabilityEvent";
-import Schedule from "ui/components/calendar/Schedule";
+import Schedule, { StyleSupplier } from "ui/components/calendar/Schedule";
 
 interface StateProps {
   isSolving: boolean;
@@ -165,7 +165,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     }
   }
 
-  getEventStyle(soa: ShiftOrAvailability): { style: React.CSSProperties } {
+  getEventStyle: StyleSupplier<ShiftOrAvailability> = (soa) => {
     const style: React.CSSProperties = {};
     if (isAvailability(soa.reference)) {
       switch (soa.reference.state) {
@@ -194,42 +194,43 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     return { style };
   }
 
-  getDayStyle(date: Date, availabilities: EmployeeAvailability[]): { className: string; style: React.CSSProperties } {
-    let className = "";
-    const style: React.CSSProperties = {};
-    const dayAvailability = availabilities.find(ea => 
-      !moment(ea.startDateTime).isAfter(date) && moment(date).isBefore(ea.endDateTime))
-    if (dayAvailability !== undefined) {
-      switch (dayAvailability.state) {
-        case "DESIRED": {
-          className = "desired";
-          break;
-        }
-        case "UNDESIRED": {
-          className = "undesired";
-          break;
-        }
-        case "UNAVAILABLE": {
-          className = "unavailable";
-          break;
+  getDayStyle: (availabilities: EmployeeAvailability[]) => StyleSupplier<Date> = (availabilities) =>
+    (date) => {
+      let className = "";
+      const style: React.CSSProperties = {};
+      const dayAvailability = availabilities.find(ea => 
+        !moment(ea.startDateTime).isAfter(date) && moment(date).isBefore(ea.endDateTime))
+      if (dayAvailability !== undefined) {
+        switch (dayAvailability.state) {
+          case "DESIRED": {
+            className = "desired";
+            break;
+          }
+          case "UNDESIRED": {
+            className = "undesired";
+            break;
+          }
+          case "UNAVAILABLE": {
+            className = "unavailable";
+            break;
+          }
         }
       }
-    }
-    if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
-      if (!className) {
-        style.backgroundColor = "var(--pf-global--BackgroundColor--300)";
+      if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {
+        if (!className) {
+          style.backgroundColor = "var(--pf-global--BackgroundColor--300)";
+        }
+        className = className + " published-day";
       }
-      className = className + " published-day";
-    }
-    else {
-      if (!className) {
-        style.backgroundColor = "var(--pf-global--BackgroundColor--100)"
+      else {
+        if (!className) {
+          style.backgroundColor = "var(--pf-global--BackgroundColor--100)"
+        }
+        className = className + " draft-day";
       }
-      className = className + " draft-day";
-    }
 
-    return { className: className.trim() , style };
-  }
+      return { className: className.trim() , style };
+    }
 
   render() {
     if (this.props.isLoading || this.props.shownEmployeeList.length <= 0) {
@@ -398,7 +399,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             });}
           }
           eventStyle={this.getEventStyle}
-          dayStyle={(date) => this.getDayStyle(date,
+          dayStyle={this.getDayStyle(
             (this.props.employeeIdToAvailabilityListMap
               .get(employee.id as number) as EmployeeAvailability[])
               .filter(isAllDayAvailability))}
