@@ -32,7 +32,7 @@ import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { alert } from 'store/alert';
 import RosterState from 'domain/RosterState';
 import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './ShiftEvent';
-import Schedule from 'ui/components/calendar/Schedule';
+import Schedule, { StyleSupplier } from 'ui/components/calendar/Schedule';
 import {
   withRouter, RouteComponentProps,
 } from 'react-router-dom'
