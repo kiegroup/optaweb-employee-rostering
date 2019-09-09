@@ -311,5 +311,4 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
   }
 }
 
-// eslint-disable-next-line no-undef
 export default connect(mapStateToProps)(withTranslation()(EditShiftTemplateModal));
