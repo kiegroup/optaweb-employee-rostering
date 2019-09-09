@@ -1,23 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Shift Roster Page should render EventWrapper correctly 1`] = `
-<div
-  className="rbc-event"
-  style={
-    Object {
-      "backgroundColor": "transparent",
-      "border": "none",
-      "gridRowEnd": 81,
-      "gridRowStart": 51,
-    }
-  }
->
-  <span>
-    Shift
-  </span>
-</div>
-`;
-
 exports[`Shift Roster Page should render correctly when creating a new shift via button 1`] = `
 <Fragment>
   <Level
