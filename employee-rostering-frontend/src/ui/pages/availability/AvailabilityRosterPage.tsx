@@ -437,7 +437,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             }
           }
           eventStyle={this.getEventStyle}
-          dayStyle={date => this.getDayStyle(date,
+          dayStyle={this.getDayStyle(
             (this.props.employeeIdToAvailabilityListMap
               .get(shownEmployee.id as number) as EmployeeAvailability[])
               .filter(isAllDayAvailability))}
