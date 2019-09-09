@@ -273,8 +273,6 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
 
 exports[`ShiftEvent should render ShiftEvent correctly 1`] = `
 <span
-  data-for="1"
-  data-tip={true}
   style={
     Object {
       "display": "flex",
