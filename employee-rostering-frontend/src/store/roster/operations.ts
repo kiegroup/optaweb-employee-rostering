@@ -28,7 +28,7 @@ import moment from 'moment';
 import Spot from 'domain/Spot';
 import { alert } from 'store/alert';
 import { ThunkDispatch } from 'redux-thunk';
-import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/operations';
+import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/KindaShiftView';
 import { KindaEmployeeAvailabilityView, kindaAvailabilityViewAdapter } from 'store/availability/operations';
 import RestServiceClient from 'store/rest';
 import { AddAlertAction } from 'store/alert/types';

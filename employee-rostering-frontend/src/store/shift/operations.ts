@@ -16,47 +16,10 @@
 
 import { ThunkCommandFactory } from '../types';
 import Shift from 'domain/Shift';
-import ShiftView, { shiftToShiftView } from 'domain/ShiftView';
+import { KindaShiftView, shiftAdapter } from './KindaShiftView';
 import moment from 'moment';
 import { alert } from 'store/alert';
 import { refreshShiftRoster, refreshAvailabilityRoster } from 'store/roster/operations';
-import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
-import { objectWithout } from 'util/ImmutableCollectionOperations';
-
-type KindaShiftView1 = Pick<ShiftView, Exclude<keyof ShiftView, "indictmentScore">> & { indictmentScore?: string };
-type KindaShiftView2 = Pick<KindaShiftView1, Exclude<keyof KindaShiftView1, "startDateTime">> & 
-{ startDateTime: string };
-type KindaShiftView3 = Pick<KindaShiftView2, Exclude<keyof KindaShiftView2, "endDateTime">> & { endDateTime: string };
-export type KindaShiftView = KindaShiftView3;
-
-export function shiftAdapter(shift: Shift): KindaShiftView {
-  return {
-    ...objectWithout(shiftToShiftView(shift), "indictmentScore", "startDateTime", "endDateTime",
-      ...Object.keys(shift).filter(k => Array.isArray((shift as {[P: string]: any})[k])) as (keyof ShiftView)[]) as any,
-    startDateTime: moment(shift.startDateTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-    endDateTime: moment(shift.endDateTime).local().format("YYYY-MM-DDTHH:mm:ss")
-  };
-}
-
-export function kindaShiftViewAdapter(kindaShiftView: KindaShiftView): ShiftView {
-  const kindaShiftViewClone: any = { ...kindaShiftView };
-  kindaShiftViewClone.indictmentScore = getHardMediumSoftScoreFromString(kindaShiftView.indictmentScore as string);
-  
-  // Since property P is related to indictments iff it is an array,
-  // We can convert all indictments by mapping all keys that are arrays
-  for(const key in kindaShiftViewClone) {
-    if (Array.isArray(kindaShiftViewClone[key])) {
-      kindaShiftViewClone[key] = kindaShiftViewClone[key].map((s: any) => 
-        ({ ...s, score: getHardMediumSoftScoreFromString(s.score) }));
-    }
-  }
-
-  return {
-    ...kindaShiftViewClone,
-    startDateTime: moment(kindaShiftView.startDateTime).toDate(),
-    endDateTime: moment(kindaShiftView.endDateTime).toDate(),
-  };
-}
 
 export const addShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {

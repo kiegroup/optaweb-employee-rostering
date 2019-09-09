@@ -19,7 +19,7 @@ import { AppState } from '../types';
 import { alert } from 'store/alert';
 import * as rosterOperations from 'store/roster/operations';
 import { shiftOperations } from './index';
-import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './operations';
+import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './KindaShiftView';
 import { onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
 import Shift from 'domain/Shift';
 import moment from 'moment';

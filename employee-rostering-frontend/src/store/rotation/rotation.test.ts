@@ -25,7 +25,7 @@ import { createIdMapFromList, mapWithElement, mapWithoutElement,
 import { onGet, onPost, onDelete, onPut } from 'store/rest/RestTestUtils';
 import ShiftTemplate from 'domain/ShiftTemplate';
 import ShiftTemplateView, { shiftTemplateViewToDomainObjectView, 
-  shiftTemplateToShiftTemplateView } from 'domain/ShiftTemplateView';
+  shiftTemplateToShiftTemplateView } from 'store/rotation/ShiftTemplateView';
 import moment from 'moment';
 
 describe('Rotation operations', () => {

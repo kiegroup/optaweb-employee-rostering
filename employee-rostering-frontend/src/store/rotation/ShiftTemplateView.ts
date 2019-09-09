@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ShiftTemplate from './ShiftTemplate';
-import DomainObject from './DomainObject';
+import ShiftTemplate from 'domain/ShiftTemplate';
+import DomainObject from 'domain/DomainObject';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
 import moment from 'moment';
-import DomainObjectView from './DomainObjectView';
+import DomainObjectView from 'domain/DomainObjectView';
 
 export function shiftTemplateToShiftTemplateView(shiftTemplate: ShiftTemplate): ShiftTemplateView {
   return {
