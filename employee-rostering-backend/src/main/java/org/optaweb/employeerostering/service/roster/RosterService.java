@@ -324,7 +324,11 @@ public class RosterService extends AbstractRestService {
         // TODO fill in the score too - do we inject a ScoreDirectorFactory?
         Roster roster = new Roster((long) tenantId, tenantId, skillList, spotList, employeeList,
                                    employeeAvailabilityList,
-                                   rosterParametrizationRepository.findByTenantId(tenantId).get(),
+                                   rosterParametrizationRepository
+                                           .findByTenantId(tenantId)
+                                           .orElseThrow(() -> new EntityNotFoundException(
+                                                   "No RosterParametrization entity found with tenantId(" + tenantId +
+                                                           ").")),
                                    getRosterState(tenantId), shiftList);
         ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
         scoreDirector.setWorkingSolution(roster);
