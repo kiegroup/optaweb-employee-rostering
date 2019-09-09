@@ -134,7 +134,6 @@ public class RosterService extends AbstractRestService {
                                   Pagination.of(pageNumber, numberOfItemsPerPage));
     }
 
-    @Transactional
     private ShiftRosterView getShiftRosterView(final Integer tenantId,
                                                final LocalDate startDate,
                                                final LocalDate endDate,
@@ -158,7 +157,6 @@ public class RosterService extends AbstractRestService {
         return getShiftRosterView(tenantId, startDate, endDate, spots);
     }
 
-    @Transactional
     private ShiftRosterView getShiftRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate,
                                                List<Spot> spotList) {
         ShiftRosterView shiftRosterView = new ShiftRosterView(tenantId, startDate, endDate);
@@ -234,7 +232,6 @@ public class RosterService extends AbstractRestService {
         return getAvailabilityRosterView(tenantId, startDate, endDate, employeeList);
     }
 
-    @Transactional
     private AvailabilityRosterView getAvailabilityRosterView(final Integer tenantId,
                                                              final LocalDate startDate,
                                                              final LocalDate endDate,
@@ -246,7 +243,6 @@ public class RosterService extends AbstractRestService {
         return getAvailabilityRosterView(tenantId, startDate, endDate, employeeList);
     }
 
-    @Transactional
     private AvailabilityRosterView getAvailabilityRosterView(Integer tenantId,
                                                              LocalDate startDate,
                                                              LocalDate endDate,
