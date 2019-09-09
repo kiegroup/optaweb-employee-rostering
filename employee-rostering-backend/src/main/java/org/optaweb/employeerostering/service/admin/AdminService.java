@@ -77,7 +77,6 @@ public class AdminService {
         rosterGenerator.setUpGeneratedData();
     }
 
-    @Transactional
     private void deleteAllEntities() {
         shiftRepository.deleteAllInBatch();
         employeeAvailabilityRepository.deleteAllInBatch();
