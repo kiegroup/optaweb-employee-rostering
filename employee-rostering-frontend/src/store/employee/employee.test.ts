@@ -318,7 +318,8 @@ describe('Employee selectors', () => {
 const state: AppState = {
   tenantData: {
     currentTenantId: 0,
-    tenantList: []
+    tenantList: [],
+    timezoneList: ["America/Toronto"]
   },
   employeeList: {
     isLoading: false,

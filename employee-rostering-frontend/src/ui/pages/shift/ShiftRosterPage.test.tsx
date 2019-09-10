@@ -442,5 +442,9 @@ const baseProps: Props = {
   solveRoster: jest.fn(),
   publishRoster:jest.fn(),
   terminateSolvingRosterEarly: jest.fn(),
-  showInfoMessage: jest.fn()
+  showInfoMessage: jest.fn(),
+  // @ts-ignore
+  history: {
+    push: jest.fn()
+  }
 }
