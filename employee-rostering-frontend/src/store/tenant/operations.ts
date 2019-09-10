@@ -35,7 +35,9 @@ import * as spotActions from 'store/spot/actions';
 import * as contractActions from 'store/contract/actions';
 import * as employeeActions from 'store/employee/actions';
 import * as shiftTemplateActions from 'store/rotation/actions';
+import { alert } from 'store/alert';
 import RosterState from 'domain/RosterState';
+import { AddAlertAction } from 'store/alert/types';
 
 function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>, state: () => AppState): Promise<any> {
   dispatch(rosterActions.setShiftRosterIsLoading(true));
@@ -79,7 +81,6 @@ ThunkCommandFactory<void, RefreshTenantListAction> = () => (dispatch, state, cli
     refreshData(dispatch, state);
   }));
 
-// TODO: Add addTenant and removeTenant when work on Admin page started
 export const addTenant:
 ThunkCommandFactory<RosterState, AddTenantAction> = rs => (dispatch, state, client) => (
   client.post<Tenant>('/tenant/add', rs).then((tenant) => {
@@ -88,12 +89,12 @@ ThunkCommandFactory<RosterState, AddTenantAction> = rs => (dispatch, state, clie
 );
 
 export const removeTenant:
-ThunkCommandFactory<Tenant, RemoveTenantAction> = tenant => (dispatch, state, client) => (
+ThunkCommandFactory<Tenant, RemoveTenantAction | AddAlertAction> = tenant => (dispatch, state, client) => (
   client.post<boolean>(`/tenant/remove/${tenant.id}`, {}).then((isSuccess) => {
     if (isSuccess) {
       dispatch(actions.removeTenant(tenant));
     } else {
-      // TODO: Display error
+      dispatch(alert.showErrorMessage("removeTenantError", { name: tenant.name }))
     }
   })
 );
