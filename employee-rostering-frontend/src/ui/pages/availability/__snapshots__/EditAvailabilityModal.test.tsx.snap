@@ -497,32 +497,6 @@ exports[`Edit Availability Modal should render correctly with a availability whe
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        defaultValue={
-          Object {
-            "contract": Object {
-              "id": 5,
-              "maximumMinutesPerDay": 10,
-              "maximumMinutesPerMonth": 500,
-              "maximumMinutesPerWeek": 70,
-              "maximumMinutesPerYear": 6000,
-              "name": "Basic Contract",
-              "tenantId": 0,
-              "version": 0,
-            },
-            "id": 4,
-            "name": "Employee 1",
-            "skillProficiencySet": Array [
-              Object {
-                "id": 6,
-                "name": "Not Required Skill",
-                "tenantId": 0,
-                "version": 0,
-              },
-            ],
-            "tenantId": 0,
-            "version": 0,
-          }
-        }
         emptyText="Select an Employee..."
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -554,6 +528,32 @@ exports[`Edit Availability Modal should render correctly with a availability whe
             },
           ]
         }
+        value={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
       />
     </InputGroup>
     <InputGroup>
@@ -562,7 +562,6 @@ exports[`Edit Availability Modal should render correctly with a availability whe
       </Label>
       <TypeaheadSelectInput
         aria-label="Type"
-        defaultValue="DESIRED"
         emptyText="Select Type..."
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -573,6 +572,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
             "UNDESIRED",
           ]
         }
+        value="DESIRED"
       />
     </InputGroup>
   </Form>

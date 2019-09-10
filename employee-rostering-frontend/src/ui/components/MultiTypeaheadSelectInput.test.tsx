@@ -43,28 +43,19 @@ describe('MultiTypeaheadSelectInput component', () => {
     expect((select.instance() as Select).state.isExpanded).toEqual(false);
   });
 
-  it('should set selected to a clone of defaultValue', () => {
-    const defaultValue = [{name: "Option 2"}];
-    const select = new MultiTypeaheadSelectInput<MockData>({...selectProps, defaultValue: defaultValue});
-    expect(select.state.selected).toEqual(defaultValue);
-    expect(select.state.selected).not.toBe(defaultValue);
-  });
-
   it('should remove selected from list when selected again and call onChange', () => {
     const defaultValue = [{name: "Option 2"}];
-    const select = mount(<MultiTypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
+    const select = mount(<MultiTypeaheadSelectInput {...selectProps} value={defaultValue} />);
     const event: any = {};
     (select.instance() as Select).onSelect(event, "Option 2", false);
-    expect((select.instance() as Select).state.selected).toEqual([]);
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith([]);
   });
 
   it('should set selected to an empty list on clear selection and call onChange', () => {
     const defaultValue = [{name: "Option 2"}];
-    const select = mount(<MultiTypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
+    const select = mount(<MultiTypeaheadSelectInput {...selectProps} value={defaultValue} />);
     (select.instance() as Select).clearSelection();
-    expect((select.instance() as Select).state.selected).toEqual([]);
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith([]);
   });
@@ -72,10 +63,9 @@ describe('MultiTypeaheadSelectInput component', () => {
 
   it('should add option to selection when it is selected and not already in the list and call onChange', () => {
     const defaultValue = [{name: "Option 2"}];
-    const select = mount(<MultiTypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
+    const select = mount(<MultiTypeaheadSelectInput {...selectProps} value={defaultValue} />);
     const event: any = {};
     (select.instance() as Select).onSelect(event, "Option 1", false);
-    expect((select.instance() as Select).state.selected).toEqual([...defaultValue, {name: "Option 1"}]);
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith([...defaultValue, {name: "Option 1"}]);
   });
@@ -89,7 +79,7 @@ describe('MultiTypeaheadSelectInput component', () => {
 const selectProps: MultiTypeaheadSelectProps<MockData> = {
   emptyText: "Enter some data",
   options: [{name: "Option 1"}, {name: "Option 2"}, {name: "Option 3"}],
-  defaultValue: [],
+  value: [],
   optionToStringMap: jest.fn(option => option.name),
   onChange: jest.fn()
 };

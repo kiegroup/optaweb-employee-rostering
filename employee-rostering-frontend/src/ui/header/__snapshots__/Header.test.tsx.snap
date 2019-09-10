@@ -8,7 +8,7 @@ exports[`Header component should render correctly 1`] = `
       src="/assets/images/optaPlannerLogo200px.png"
     />
   }
-  toolbar={<Memo(Connect(ToolbarComponent)) />}
+  toolbar={<Memo(Connect(withRouter(ToolbarComponent))) />}
   topNav={<withRouter(Navigation) />}
 />
 `;

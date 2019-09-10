@@ -201,7 +201,16 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Save"
                       onClick={[Function]}
@@ -230,7 +239,16 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Edit"
                       onClick={[Function]}
@@ -370,7 +388,16 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Save"
                       onClick={[Function]}
@@ -399,7 +426,16 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Edit"
                       onClick={[Function]}

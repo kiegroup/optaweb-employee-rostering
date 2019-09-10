@@ -43,22 +43,14 @@ describe('TypeaheadSelectInput component', () => {
     expect((select.instance() as Select).state.isExpanded).toEqual(false);
   });
 
-  it('should set selected to defaultValue', () => {
-    const defaultValue = {name: "Option 2"};
-    const select = new TypeaheadSelectInput<MockData>({...selectProps, defaultValue: defaultValue});
-    expect(select.state.selected).toEqual(defaultValue);
-  });
-
-
   it('should set selected and call onChange', () => {
     jest.useFakeTimers();
     const defaultValue = {name: "Option 2"};
-    const select = mount(<TypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
+    const select = mount(<TypeaheadSelectInput {...selectProps} value={defaultValue} />);
     const event: any = {};
     select.setState({ isExpanded: true });
     (select.instance() as Select).onSelect(event, "Option 1", false);
     jest.runOnlyPendingTimers();
-    expect(select.state("selected")).toEqual({ name: "Option 1"} );
     expect(select.state("isExpanded")).toEqual(false);
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith({ name: "Option 1" });
@@ -66,9 +58,8 @@ describe('TypeaheadSelectInput component', () => {
 
   it('should set selected to undefined on clear selection and call onChange', () => {
     const defaultValue = {name: "Option 2"};
-    const select = mount(<TypeaheadSelectInput {...selectProps} defaultValue={defaultValue} />);
+    const select = mount(<TypeaheadSelectInput {...selectProps} value={defaultValue} />);
     (select.instance() as Select).clearSelection({ eventPhase: 2 });
-    expect((select.instance() as Select).state.selected).toEqual(undefined);
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith(undefined);
   });
@@ -82,7 +73,7 @@ describe('TypeaheadSelectInput component', () => {
 const selectProps: TypeaheadSelectProps<MockData> = {
   emptyText: "Enter some data",
   options: [{name: "Option 1"}, {name: "Option 2"}, {name: "Option 3"}],
-  defaultValue: undefined,
+  value: undefined,
   optionToStringMap: jest.fn(option => option.name),
   onChange: jest.fn()
 };

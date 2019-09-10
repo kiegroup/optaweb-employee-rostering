@@ -105,20 +105,8 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <TypeaheadSelectInput
-                    defaultValue={
-                      Object {
-                        "id": 0,
-                        "maximumMinutesPerDay": null,
-                        "maximumMinutesPerMonth": null,
-                        "maximumMinutesPerWeek": null,
-                        "maximumMinutesPerYear": null,
-                        "name": "Contract 1",
-                        "tenantId": 0,
-                        "version": 0,
-                      }
-                    }
-                    emptyText="Select contract"
+                  <StatefulTypeaheadSelectInput
+                    emptyText="Select a contract..."
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -145,6 +133,18 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         },
                       ]
                     }
+                    value={
+                      Object {
+                        "id": 0,
+                        "maximumMinutesPerDay": null,
+                        "maximumMinutesPerMonth": null,
+                        "maximumMinutesPerWeek": null,
+                        "maximumMinutesPerYear": null,
+                        "name": "Contract 1",
+                        "tenantId": 0,
+                        "version": 0,
+                      }
+                    }
                   />
                 }
                 isEditing={false}
@@ -158,8 +158,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <MultiTypeaheadSelectInput
-                    defaultValue={Array []}
+                  <StatefulMultiTypeaheadSelectInput
                     emptyText="Select skill proficiencies"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
@@ -175,6 +174,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         },
                       ]
                     }
+                    value={Array []}
                   />
                 }
                 isEditing={false}
@@ -191,7 +191,16 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Save"
                       onClick={[Function]}
@@ -220,7 +229,16 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Edit"
                       onClick={[Function]}
@@ -280,20 +298,8 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <TypeaheadSelectInput
-                    defaultValue={
-                      Object {
-                        "id": 1,
-                        "maximumMinutesPerDay": null,
-                        "maximumMinutesPerMonth": null,
-                        "maximumMinutesPerWeek": null,
-                        "maximumMinutesPerYear": null,
-                        "name": "Contract 2",
-                        "tenantId": 0,
-                        "version": 0,
-                      }
-                    }
-                    emptyText="Select contract"
+                  <StatefulTypeaheadSelectInput
+                    emptyText="Select a contract..."
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -320,6 +326,18 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         },
                       ]
                     }
+                    value={
+                      Object {
+                        "id": 1,
+                        "maximumMinutesPerDay": null,
+                        "maximumMinutesPerMonth": null,
+                        "maximumMinutesPerWeek": null,
+                        "maximumMinutesPerYear": null,
+                        "name": "Contract 2",
+                        "tenantId": 0,
+                        "version": 0,
+                      }
+                    }
                   />
                 }
                 isEditing={false}
@@ -333,8 +351,11 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <MultiTypeaheadSelectInput
-                    defaultValue={
+                  <StatefulMultiTypeaheadSelectInput
+                    emptyText="Select skill proficiencies"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
                       Array [
                         Object {
                           "name": "Skill 1",
@@ -346,10 +367,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         },
                       ]
                     }
-                    emptyText="Select skill proficiencies"
-                    onChange={[Function]}
-                    optionToStringMap={[Function]}
-                    options={
+                    value={
                       Array [
                         Object {
                           "name": "Skill 1",
@@ -400,7 +418,16 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Save"
                       onClick={[Function]}
@@ -429,7 +456,16 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Edit"
                       onClick={[Function]}
@@ -472,87 +508,28 @@ exports[`Employees page should render correctly with a few employees 1`] = `
 `;
 
 exports[`Employees page should render correctly with no employees 1`] = `
-<Fragment>
-  <Level
-    gutter="sm"
-    style={
-      Object {
-        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
-        "padding": "5px 5px 5px 5px",
-      }
-    }
+<EmptyState
+  variant="full"
+>
+  <EmptyStateIcon
+    icon={[Function]}
+  />
+  <Title
+    headingLevel="h5"
+    size="lg"
   >
-    <LevelItem>
-      <FilterComponent
-        filter={[Function]}
-        onChange={[Function]}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <Button
-        isDisabled={false}
-        onClick={[Function]}
-      >
-        Add
-      </Button>
-      <Pagination
-        itemCount={0}
-        onPerPageSelect={[Function]}
-        onSetPage={[Function]}
-        page={1}
-        perPage={10}
-        widgetId="pagination-options-menu-top"
-      />
-    </LevelItem>
-  </Level>
-  <Table
-    borders={true}
-    caption="Spots"
-    cells={
-      Array [
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "Name",
-          "transforms": Array [
-            [Function],
-          ],
-        },
-        Object {
-          "cellTransforms": Array [
-            [Function],
-          ],
-          "props": Object {},
-          "title": "",
-          "transforms": undefined,
-        },
-      ]
-    }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
-    rows={Array []}
-    sortBy={Object {}}
-    variant={null}
+    There are no Contracts
+  </Title>
+  <EmptyStateBody>
+    The current tenant have no Contracts. You need at least one Contract to add Employees. You can add a Contract in the "Contracts" page.
+  </EmptyStateBody>
+  <Button
+    onClick={[Function]}
+    variant="primary"
   >
-    <TableHeader />
-    <TableBody />
-  </Table>
-</Fragment>
+    Go to the Contracts page
+  </Button>
+</EmptyState>
 `;
 
 exports[`Employees page should render the editor correctly 1`] = `
@@ -577,20 +554,8 @@ exports[`Employees page should render the editor correctly 1`] = `
   <td
     key="1"
   >
-    <TypeaheadSelectInput
-      defaultValue={
-        Object {
-          "id": 1,
-          "maximumMinutesPerDay": null,
-          "maximumMinutesPerMonth": null,
-          "maximumMinutesPerWeek": null,
-          "maximumMinutesPerYear": null,
-          "name": "Contract 2",
-          "tenantId": 0,
-          "version": 0,
-        }
-      }
-      emptyText="Select contract"
+    <StatefulTypeaheadSelectInput
+      emptyText="Select a contract..."
       key="1"
       onChange={[Function]}
       optionToStringMap={[Function]}
@@ -618,13 +583,29 @@ exports[`Employees page should render the editor correctly 1`] = `
           },
         ]
       }
+      value={
+        Object {
+          "id": 1,
+          "maximumMinutesPerDay": null,
+          "maximumMinutesPerMonth": null,
+          "maximumMinutesPerWeek": null,
+          "maximumMinutesPerYear": null,
+          "name": "Contract 2",
+          "tenantId": 0,
+          "version": 0,
+        }
+      }
     />
   </td>
   <td
     key="2"
   >
-    <MultiTypeaheadSelectInput
-      defaultValue={
+    <StatefulMultiTypeaheadSelectInput
+      emptyText="Select skill proficiencies"
+      key="2"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
         Array [
           Object {
             "name": "Skill 1",
@@ -636,11 +617,7 @@ exports[`Employees page should render the editor correctly 1`] = `
           },
         ]
       }
-      emptyText="Select skill proficiencies"
-      key="2"
-      onChange={[Function]}
-      optionToStringMap={[Function]}
-      options={
+      value={
         Array [
           Object {
             "name": "Skill 1",

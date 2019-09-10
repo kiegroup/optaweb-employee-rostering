@@ -105,8 +105,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <MultiTypeaheadSelectInput
-                    defaultValue={Array []}
+                  <StatefulMultiTypeaheadSelectInput
                     emptyText="Select required skills"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
@@ -122,6 +121,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                         },
                       ]
                     }
+                    value={Array []}
                   />
                 }
                 isEditing={false}
@@ -138,7 +138,16 @@ exports[`Spots page should render correctly with a few spots 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Save"
                       onClick={[Function]}
@@ -167,7 +176,16 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Edit"
                       onClick={[Function]}
@@ -227,8 +245,11 @@ exports[`Spots page should render correctly with a few spots 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <MultiTypeaheadSelectInput
-                    defaultValue={
+                  <StatefulMultiTypeaheadSelectInput
+                    emptyText="Select required skills"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
                       Array [
                         Object {
                           "name": "Skill 1",
@@ -240,10 +261,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                         },
                       ]
                     }
-                    emptyText="Select required skills"
-                    onChange={[Function]}
-                    optionToStringMap={[Function]}
-                    options={
+                    value={
                       Array [
                         Object {
                           "name": "Skill 1",
@@ -294,7 +312,16 @@ exports[`Spots page should render correctly with a few spots 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Save"
                       onClick={[Function]}
@@ -323,7 +350,16 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <span>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
                     <Button
                       aria-label="Edit"
                       onClick={[Function]}
@@ -471,8 +507,12 @@ exports[`Spots page should render the editor correctly 1`] = `
   <td
     key="1"
   >
-    <MultiTypeaheadSelectInput
-      defaultValue={
+    <StatefulMultiTypeaheadSelectInput
+      emptyText="Select required skills"
+      key="1"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
         Array [
           Object {
             "name": "Skill 1",
@@ -484,11 +524,7 @@ exports[`Spots page should render the editor correctly 1`] = `
           },
         ]
       }
-      emptyText="Select required skills"
-      key="1"
-      onChange={[Function]}
-      optionToStringMap={[Function]}
-      options={
+      value={
         Array [
           Object {
             "name": "Skill 1",
