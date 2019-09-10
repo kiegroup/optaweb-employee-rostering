@@ -53,7 +53,11 @@ const noTenants: Props = {
   tenantList: [],
   currentTenantId: 0,
   refreshTenantList: jest.fn(),
-  changeTenant: jest.fn()
+  changeTenant: jest.fn(),
+  // @ts-ignore
+  history: {
+    push: jest.fn()
+  }
 };
 
 const twoTenants: Props = {
@@ -71,5 +75,9 @@ const twoTenants: Props = {
   ],
   currentTenantId: 2,
   refreshTenantList: jest.fn(),
-  changeTenant: jest.fn()
+  changeTenant: jest.fn(),
+  // @ts-ignore
+  history: {
+    push: jest.fn()
+  }
 };

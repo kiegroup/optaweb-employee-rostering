@@ -590,5 +590,9 @@ const baseProps: Props = {
   showInfoMessage: jest.fn(),
   addShift: jest.fn(),
   updateShift: jest.fn(),
-  removeShift: jest.fn()
+  removeShift: jest.fn(),
+  // @ts-ignore
+  history: {
+    push: jest.fn()
+  }
 }

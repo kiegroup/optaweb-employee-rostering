@@ -269,5 +269,9 @@ const baseProps: Props & WithTranslation = {
   addShiftTemplate: jest.fn(),
   removeShiftTemplate: jest.fn(),
   updateShiftTemplate: jest.fn(),
-  showInfoMessage: jest.fn()
+  showInfoMessage: jest.fn(),
+  // @ts-ignore
+  history: {
+    push: jest.fn()
+  }
 }
