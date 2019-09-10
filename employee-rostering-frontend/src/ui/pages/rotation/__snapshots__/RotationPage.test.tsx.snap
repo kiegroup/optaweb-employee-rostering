@@ -21,22 +21,6 @@ exports[`Rotation Page should render correctly when creating a new shift templat
     >
       <TypeaheadSelectInput
         aria-label="Select Spot"
-        defaultValue={
-          Object {
-            "id": 2,
-            "name": "Spot",
-            "requiredSkillSet": Array [
-              Object {
-                "id": 3,
-                "name": "Skill",
-                "tenantId": 0,
-                "version": 0,
-              },
-            ],
-            "tenantId": 0,
-            "version": 0,
-          }
-        }
         emptyText="Select Spot"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -57,6 +41,22 @@ exports[`Rotation Page should render correctly when creating a new shift templat
               "version": 0,
             },
           ]
+        }
+        value={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
         }
       />
       <Pagination
@@ -202,22 +202,6 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
     >
       <TypeaheadSelectInput
         aria-label="Select Spot"
-        defaultValue={
-          Object {
-            "id": 2,
-            "name": "Spot",
-            "requiredSkillSet": Array [
-              Object {
-                "id": 3,
-                "name": "Skill",
-                "tenantId": 0,
-                "version": 0,
-              },
-            ],
-            "tenantId": 0,
-            "version": 0,
-          }
-        }
         emptyText="Select Spot"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -238,6 +222,22 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
               "version": 0,
             },
           ]
+        }
+        value={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
         }
       />
       <Pagination
@@ -362,4 +362,27 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
 </Fragment>
 `;
 
-exports[`Rotation Page should render correctly when loading 1`] = `<div />`;
+exports[`Rotation Page should render correctly when loading 1`] = `
+<EmptyState
+  variant="full"
+>
+  <EmptyStateIcon
+    icon={[Function]}
+  />
+  <Title
+    headingLevel="h5"
+    size="lg"
+  >
+    There are no Spots
+  </Title>
+  <EmptyStateBody>
+    The current tenant have no Spots. You need at least one Spot to see the Rotation. You can add a Spot in the "Spots" page.
+  </EmptyStateBody>
+  <Button
+    onClick={[Function]}
+    variant="primary"
+  >
+    Go to the Spots page
+  </Button>
+</EmptyState>
+`;

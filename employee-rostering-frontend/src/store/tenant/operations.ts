@@ -40,6 +40,7 @@ import RosterState from 'domain/RosterState';
 function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>, state: () => AppState): Promise<any> {
   dispatch(rosterActions.setShiftRosterIsLoading(true));
   dispatch(rosterActions.setAvailabilityRosterIsLoading(true));
+  dispatch(rosterActions.setRosterStateIsLoading(true));
   dispatch(skillActions.setIsSkillListLoading(true));
   dispatch(spotActions.setIsSpotListLoading(true));
   dispatch(contractActions.setIsContractListLoading(true));

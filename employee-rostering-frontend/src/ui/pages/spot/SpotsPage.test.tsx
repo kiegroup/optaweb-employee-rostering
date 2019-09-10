@@ -20,6 +20,7 @@ import { SpotsPage, Props } from './SpotsPage';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { Sorter } from 'types';
 import Spot from 'domain/Spot';
+import { act } from 'react-dom/test-utils';
 
 describe('Spots page', () => {
   it('should render correctly with no spots', () => {
@@ -57,7 +58,9 @@ describe('Spots page', () => {
 
     setProperty.mockClear();
     const requiredSkillSetCol = mount(editor[1]);
-    requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList[0]]);
+    act(() => {
+      requiredSkillSetCol.find(MultiTypeaheadSelectInput).props().onChange([twoSpots.skillList[0]]);
+    });
     expect(setProperty).toBeCalled();
     expect(setProperty).toBeCalledWith("requiredSkillSet", [twoSpots.skillList[0]]);
   });

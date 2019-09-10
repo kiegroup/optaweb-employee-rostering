@@ -383,22 +383,6 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
       </Label>
       <TypeaheadSelectInput
         aria-label="Spot"
-        defaultValue={
-          Object {
-            "id": 2,
-            "name": "Spot",
-            "requiredSkillSet": Array [
-              Object {
-                "id": 3,
-                "name": "Skill",
-                "tenantId": 0,
-                "version": 0,
-              },
-            ],
-            "tenantId": 0,
-            "version": 0,
-          }
-        }
         emptyText="Select a Spot..."
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -419,6 +403,22 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
               "version": 0,
             },
           ]
+        }
+        value={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
         }
       />
     </InputGroup>
@@ -492,32 +492,6 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        defaultValue={
-          Object {
-            "contract": Object {
-              "id": 5,
-              "maximumMinutesPerDay": 10,
-              "maximumMinutesPerMonth": 500,
-              "maximumMinutesPerWeek": 70,
-              "maximumMinutesPerYear": 6000,
-              "name": "Basic Contract",
-              "tenantId": 0,
-              "version": 0,
-            },
-            "id": 4,
-            "name": "Employee 1",
-            "skillProficiencySet": Array [
-              Object {
-                "id": 6,
-                "name": "Not Required Skill",
-                "tenantId": 0,
-                "version": 0,
-              },
-            ],
-            "tenantId": 0,
-            "version": 0,
-          }
-        }
         emptyText="Unassigned"
         onChange={[Function]}
         optionToStringMap={[Function]}
@@ -550,6 +524,32 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
               "version": 0,
             },
           ]
+        }
+        value={
+          Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
         }
       />
     </InputGroup>

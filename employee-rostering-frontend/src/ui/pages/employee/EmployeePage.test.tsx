@@ -21,6 +21,7 @@ import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { Sorter } from 'types';
 import Employee from 'domain/Employee';
+import { act } from 'react-dom/test-utils';
 
 describe('Employees page', () => {
   it('should render correctly with no employees', () => {
@@ -51,20 +52,24 @@ describe('Employees page', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
     const setProperty = jest.fn();
     const editor = employeesPage.editDataRow(employeesPage.getInitialStateForNewRow(), setProperty);
-    const nameCol = shallow(editor[0]);
+    const nameCol = shallow(editor[0] as React.ReactElement);
     nameCol.simulate("change", { currentTarget: { value: "Test" } });
     expect(setProperty).toBeCalled();
     expect(setProperty).toBeCalledWith("name", "Test");
 
     setProperty.mockClear();
-    const contractCol = mount(editor[1]);
-    contractCol.find(TypeaheadSelectInput).props().onChange(twoEmployees.contractList[0]);
+    const contractCol = mount(editor[1] as React.ReactElement);
+    act(() => {
+      contractCol.find(TypeaheadSelectInput).props().onChange(twoEmployees.contractList[0]);
+    });
     expect(setProperty).toBeCalled();
     expect(setProperty).toBeCalledWith("contract", twoEmployees.contractList[0]);
 
     setProperty.mockClear();
-    const skillProficiencySetCol = mount(editor[2]);
-    skillProficiencySetCol.find(MultiTypeaheadSelectInput).props().onChange([twoEmployees.skillList[0]]);
+    const skillProficiencySetCol = mount(editor[2] as React.ReactElement);
+    act(() => {
+      skillProficiencySetCol.find(MultiTypeaheadSelectInput).props().onChange([twoEmployees.skillList[0]]);
+    });
     expect(setProperty).toBeCalled();
     expect(setProperty).toBeCalledWith("skillProficiencySet", [twoEmployees.skillList[0]]);
   });
@@ -201,7 +206,11 @@ const noEmployees: Props = {
   contractList: [],
   addEmployee: jest.fn(),
   updateEmployee: jest.fn(),
-  removeEmployee: jest.fn()
+  removeEmployee: jest.fn(),
+  // @ts-ignore
+  history: {
+    push: jest.fn()
+  }
 };
 
 const twoEmployees: Props = {
@@ -267,5 +276,9 @@ const twoEmployees: Props = {
   ],
   addEmployee: jest.fn(),
   updateEmployee: jest.fn(),
-  removeEmployee: jest.fn()
+  removeEmployee: jest.fn(),
+  // @ts-ignore
+  history: {
+    push: jest.fn()
+  }
 };

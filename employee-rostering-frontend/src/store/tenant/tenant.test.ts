@@ -17,7 +17,12 @@
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
+import * as skillActions from '../skill/actions';
+import * as spotActions from '../spot/actions';
+import * as contractActions from '../contract/actions';
+import * as employeeActions from '../employee/actions';
 import * as rosterActions from '../roster/actions';
+import * as shiftTemplateActions from 'store/rotation/actions';
 import * as skillOperations from '../skill/operations';
 import * as spotOperations from '../spot/operations';
 import * as contractOperations from '../contract/operations';
@@ -35,20 +40,31 @@ describe('Tenant operations', () => {
   const mockRefreshContractList = jest.spyOn(contractOperations, "refreshContractList");
   const mockRefreshEmployeeList = jest.spyOn(employeeOperations, "refreshEmployeeList");
   const mockRefreshShiftTemplateList = jest.spyOn(shiftTemplateOperations, "refreshShiftTemplateList");
-  const mockGetShiftRosterFor = jest.spyOn(rosterOperations, "getShiftRosterFor");
-  const mockGetAvailabilityRosterFor = jest.spyOn(rosterOperations, "getAvailabilityRosterFor");
+  const mockGetInitialShiftRoster = jest.spyOn(rosterOperations, "getInitialShiftRoster");
+  const mockGetInitialAvailabilityRoster = jest.spyOn(rosterOperations, "getInitialAvailabilityRoster");
   const mockRefreshRosterState = jest.spyOn(rosterOperations, "getRosterState");
+
+  const loadingActions = [
+    skillActions.setIsSkillListLoading(true),
+    spotActions.setIsSpotListLoading(true),
+    contractActions.setIsContractListLoading(true),
+    employeeActions.setIsEmployeeListLoading(true),
+    rosterActions.setAvailabilityRosterIsLoading(true),
+    rosterActions.setRosterStateIsLoading(true),
+    rosterActions.setShiftRosterIsLoading(true),
+    shiftTemplateActions.setIsShiftTemplateListLoading(true)
+  ];
   
   beforeAll(() => {
     mockRefreshSkillList.mockImplementation(() => () => {});
     mockRefreshSpotList.mockImplementation(() => () => {});
     mockRefreshContractList.mockImplementation(() => () => {});
     mockRefreshEmployeeList.mockImplementation(() => () => {});
-    mockRefreshEmployeeList.mockImplementation(() => () => {});
-    mockGetShiftRosterFor.mockImplementation(() => () => {});
-    mockRefreshRosterState.mockImplementation(() => () => {});
-    mockGetAvailabilityRosterFor.mockImplementation(() => () => {});
     mockRefreshShiftTemplateList.mockImplementation(() => () => {});
+    mockRefreshRosterState.mockImplementation(() => () => {});
+    mockRefreshShiftTemplateList.mockImplementation(() => () => {});
+    mockGetInitialShiftRoster.mockImplementation(() => () => {});
+    mockGetInitialAvailabilityRoster.mockImplementation(() => () => {});
   });
 
   afterAll(() => {
@@ -56,10 +72,11 @@ describe('Tenant operations', () => {
     mockRefreshSpotList.mockRestore();
     mockRefreshContractList.mockRestore();
     mockRefreshEmployeeList.mockRestore();
-    mockGetShiftRosterFor.mockRestore();
-    mockRefreshRosterState.mockRestore();
-    mockGetAvailabilityRosterFor.mockRestore();
     mockRefreshShiftTemplateList.mockRestore();
+    mockRefreshRosterState.mockRestore();
+    mockRefreshShiftTemplateList.mockRestore();
+    mockGetInitialShiftRoster.mockRestore();
+    mockGetInitialAvailabilityRoster.mockRestore();
   });
 
   it('should dispatch actions and change tenant when current tenant not in refreshed the tenant list ',
@@ -84,15 +101,16 @@ describe('Tenant operations', () => {
     
       await store.dispatch(tenantOperations.refreshTenantList());
     
-      expect(store.getActions()).toEqual([
+      expect(store.getActions()).toEqual(expect.arrayContaining([
         actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
-        rosterActions.setShiftRosterIsLoading(true),
-        rosterActions.setAvailabilityRosterIsLoading(true)
-      ]);
+        ...loadingActions
+      ]));
 
       expect(client.get).toHaveBeenCalledTimes(1);
       expect(client.get).toHaveBeenCalledWith(`/tenant/`);
 
+      expect(mockGetInitialShiftRoster).toBeCalled();
+      expect(mockGetInitialAvailabilityRoster).toBeCalled();
       expect(mockRefreshSkillList).toBeCalled();
       expect(mockRefreshSpotList).toBeCalled();
       expect(mockRefreshContractList).toBeCalled();
@@ -125,11 +143,10 @@ describe('Tenant operations', () => {
 
       await store.dispatch(tenantOperations.refreshTenantList());
 
-      expect(store.getActions()).toEqual([
+      expect(store.getActions()).toEqual(expect.arrayContaining([
         actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
-        rosterActions.setShiftRosterIsLoading(true),
-        rosterActions.setAvailabilityRosterIsLoading(true)
-      ]);
+        ...loadingActions
+      ]));
 
       expect(client.get).toHaveBeenCalledTimes(1);
       expect(client.get).toHaveBeenCalledWith(`/tenant/`);
@@ -145,15 +162,16 @@ describe('Tenant operations', () => {
   it('should change the tenant and refresh all lists on change tenant', async () => {
     const { store, client } = mockStore(state);
     await store.dispatch(tenantOperations.changeTenant(0));
-   
-    expect(store.getActions()).toEqual([
+
+    expect(store.getActions()).toEqual(expect.arrayContaining([
       actions.changeTenant(0),
-      rosterActions.setShiftRosterIsLoading(true),
-      rosterActions.setAvailabilityRosterIsLoading(true)
-    ]);
+      ...loadingActions
+    ]));
 
     expect(client.get).not.toBeCalled();
 
+    expect(mockGetInitialShiftRoster).toBeCalled();
+    expect(mockGetInitialAvailabilityRoster).toBeCalled();
     expect(mockRefreshSkillList).toBeCalled();
     expect(mockRefreshSpotList).toBeCalled();
     expect(mockRefreshContractList).toBeCalled();
@@ -196,7 +214,8 @@ describe('Tenant operations', () => {
             version: 0,
             name: "Tenant 1"
           }
-        ]
+        ],
+        timezoneList: ["America/Toronto"]
       },
       employeeList: {
         isLoading: false,
@@ -263,11 +282,10 @@ describe('Tenant operations', () => {
 
     await store.dispatch(tenantOperations.refreshTenantList());
 
-    expect(store.getActions()).toEqual([
+    expect(store.getActions()).toEqual(expect.arrayContaining([
       actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
-      rosterActions.setShiftRosterIsLoading(true),
-      rosterActions.setAvailabilityRosterIsLoading(true)
-    ]);
+      ...loadingActions
+    ]));
 
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/`);
@@ -277,8 +295,8 @@ describe('Tenant operations', () => {
     expect(mockRefreshContractList).toBeCalled();
     expect(mockRefreshEmployeeList).toBeCalled();
     expect(mockRefreshRosterState).toBeCalled();
-    expect(mockGetShiftRosterFor).toBeCalled();
-    expect(mockGetAvailabilityRosterFor).toBeCalled();
+    expect(mockGetInitialShiftRoster).toBeCalled();
+    expect(mockGetInitialAvailabilityRoster).toBeCalled();
     expect(mockRefreshShiftTemplateList).toBeCalled();
   })
 });
@@ -303,7 +321,7 @@ describe('Tenant reducers', () => {
   it('refresh tenant list', () => {
     expect(
       reducer(state.tenantData, actions.refreshTenantList({currentTenantId: 1, tenantList: newTenantList})),
-    ).toEqual({currentTenantId: 1, tenantList: newTenantList})
+    ).toEqual({...state.tenantData, currentTenantId: 1, tenantList: newTenantList})
   });
   it('change tenant', () => {
     expect(
@@ -326,7 +344,8 @@ const state: AppState = {
         version: 0,
         name: "Tenant 1"
       }
-    ]
+    ],
+    timezoneList: ["America/Toronto"]
   },
   employeeList: {
     isLoading: false,
