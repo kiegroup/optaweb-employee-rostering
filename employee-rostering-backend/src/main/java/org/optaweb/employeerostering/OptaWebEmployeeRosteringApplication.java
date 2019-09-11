@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Bean;
 public class OptaWebEmployeeRosteringApplication {
 
     @Bean
-    public Module OptaplannerModule() {
+    public Module getOptaPlannerModule() {
         return OptaPlannerJacksonModule.createModule();
     }
 
