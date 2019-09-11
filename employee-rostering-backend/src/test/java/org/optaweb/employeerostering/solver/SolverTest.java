@@ -55,9 +55,13 @@ import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -73,6 +77,19 @@ public class SolverTest {
     private static final LocalDate START_DATE = LocalDate.of(2019, 5, 13);
     private static final RosterParametrization ROSTER_PARAMETRIZATION = new RosterParametrization();
 
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    private final String rosterPathURI = "http://localhost:8080/rest/tenant/{tenantId}/roster/";
+
+    private ResponseEntity<Void> solveForTenant(Integer tenantId) {
+        return restTemplate.postForEntity(rosterPathURI + "solve", null, Void.class, tenantId);
+    }
+
+    private ResponseEntity<Void> terminateSolver(Integer tenantId) {
+        return restTemplate.postForEntity(rosterPathURI + "terminate", null, Void.class, tenantId);
+    }
+
     private SolverFactory<Roster> getSolverFactory() {
         SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(WannabeSolverManager.SOLVER_CONFIG);
         solverFactory.getSolverConfig().setTerminationConfig(new TerminationConfig()
@@ -82,6 +99,15 @@ public class SolverTest {
 
     private HardMediumSoftLongScoreVerifier<Roster> getScoreVerifier() {
         return new HardMediumSoftLongScoreVerifier<Roster>(getSolverFactory());
+    }
+
+    @Test
+    public void testTerminateNonExistentSolver() {
+        try {
+            ResponseEntity<Void> terminateResponse = terminateSolver(0);
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage()).isEqualTo("The roster with tenantId (0) is not being solved currently.");
+        }
     }
 
     // A solver "integration" test that verify that our constraints can create a feasible
