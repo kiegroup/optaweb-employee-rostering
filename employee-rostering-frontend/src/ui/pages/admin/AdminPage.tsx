@@ -69,13 +69,15 @@ export const AdminPage: React.FC<Props> = (props) => {
       >
         <LevelItem>
           <FilterComponent
+            aria-label="Filter by Name"
             filter={stringFilter((t: Tenant) => t.name)}
             onChange={f => setFilter(() => f)}
           />
         </LevelItem>
         <LevelItem style={{ display: "flex" }}>
-          <Button onClick={() => setIsCreatingTenant(true)}>Add</Button>
+          <Button aria-label="Add Tenant" onClick={() => setIsCreatingTenant(true)}>Add</Button>
           <Pagination
+            aria-label="Change Page"
             itemCount={filteredRows.length}
             perPage={perPage}
             page={page}
@@ -86,6 +88,7 @@ export const AdminPage: React.FC<Props> = (props) => {
         </LevelItem>
       </Level>
       <NewTenantFormModal
+        aria-label="Add Tenant Modal"
         isOpen={isCreatingTenant}
         onClose={() => setIsCreatingTenant(false)}
       />
