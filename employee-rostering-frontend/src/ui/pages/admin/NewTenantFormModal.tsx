@@ -46,7 +46,7 @@ interface OwnProps {
   onClose: () => void;
 }
 
-type Props = StateProps & DispatchProps & OwnProps;
+export type Props = StateProps & DispatchProps & OwnProps;
 
 export function isFormCompleted(rs: Partial<RosterState>): rs is RosterState {
   return rs.draftLength !== undefined && rs.firstDraftDate !== undefined &&
@@ -166,6 +166,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
         <InputGroup>
           <Label>Timezone</Label>
           <TypeaheadSelectInput
+            aria-label="Timezone"
             emptyText="Select a timezone"
             value={formData.timeZone}
             options={props.timezoneList}
