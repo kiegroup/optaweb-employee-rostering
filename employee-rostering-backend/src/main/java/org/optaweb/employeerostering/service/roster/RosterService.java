@@ -147,14 +147,14 @@ public class RosterService extends AbstractRestService {
 
     @Transactional
     public ShiftRosterView getShiftRosterViewFor(Integer tenantId, String startDateString, String endDateString,
-                                                 List<Spot> spots) {
+                                                 List<Spot> spotList) {
         LocalDate startDate = LocalDate.parse(startDateString);
         LocalDate endDate = LocalDate.parse(endDateString);
-        if (null == spots) {
-            throw new IllegalArgumentException("spots is null!");
+        if (spotList == null) {
+            throw new IllegalArgumentException("The spotList (" + spotList + ") must not be null.");
         }
 
-        return getShiftRosterView(tenantId, startDate, endDate, spots);
+        return getShiftRosterView(tenantId, startDate, endDate, spotList);
     }
 
     private ShiftRosterView getShiftRosterView(Integer tenantId, LocalDate startDate, LocalDate endDate,
@@ -321,7 +321,6 @@ public class RosterService extends AbstractRestService {
                 .map(s -> s.inTimeZone(zoneId))
                 .collect(Collectors.toList());
 
-        // TODO fill in the score too - do we inject a ScoreDirectorFactory?
         Roster roster = new Roster((long) tenantId, tenantId, skillList, spotList, employeeList,
                                    employeeAvailabilityList,
                                    rosterParametrizationRepository
