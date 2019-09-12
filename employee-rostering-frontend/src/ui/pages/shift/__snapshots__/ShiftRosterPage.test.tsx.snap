@@ -477,6 +477,7 @@ exports[`Shift Roster Page should render correctly when loading 1`] = `
     The current tenant have no Spots. You need at least one Spot to see the Shift Roster. You can add a Spot in the "Spots" page.
   </EmptyStateBody>
   <Button
+    aria-label="Spots Page"
     onClick={[Function]}
     variant="primary"
   >

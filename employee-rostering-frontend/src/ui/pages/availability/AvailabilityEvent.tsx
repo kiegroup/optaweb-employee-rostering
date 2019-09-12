@@ -39,12 +39,14 @@ const AvailabilityPopoverHeader: React.FC<AvailabilityEventProps> = props =>
         }
       </Text>
       <Button
+        aria-label="Edit"
         onClick={() => props.onEdit(props.availability)}
         variant={ButtonVariant.link}
       >
         <EditIcon />
       </Button>
       <Button
+        aria-label="Delete"
         onClick={() => props.onDelete(props.availability)}
         variant={ButtonVariant.link}
       >
@@ -65,6 +67,7 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
         <SplitItem isFilled />
         <SplitItem isFilled={false}>
           <Button
+            aria-label="Delete"
             onClick={() => props.removeEmployeeAvailability(props.availability)}
             variant="danger"
           >
@@ -75,6 +78,7 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
       <Level gutter="sm">
         <LevelItem>
           <Button
+            aria-label="Desired"
             title={t("EmployeeAvailabilityState.DESIRED")}
             onClick={() => props.updateEmployeeAvailability({
               ...props.availability,
@@ -90,6 +94,7 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
             <OkIcon />
           </Button>
           <Button
+            aria-label="Undesired"
             title={t("EmployeeAvailabilityState.UNDESIRED")}
             onClick={() => props.updateEmployeeAvailability({
               ...props.availability,
@@ -105,6 +110,7 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
             <WarningTriangleIcon />
           </Button>
           <Button
+            aria-label="Unavailable"
             title={t("EmployeeAvailabilityState.UNAVAILABLE")}
             onClick={() => props.updateEmployeeAvailability({
               ...props.availability,

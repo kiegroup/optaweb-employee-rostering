@@ -134,6 +134,18 @@ describe('Shift Roster Page', () => {
     expect(baseProps.removeShift).toBeCalledWith(shift);
   });
 
+  it('should go to the Spots page if the user click on the link', () => {
+    const shiftRosterPage = shallow(<ShiftRosterPage
+      {...baseProps}
+      allSpotList={[]}
+      shownSpotList={[]}
+      spotIdToShiftListMap={new Map()}
+    />);
+    shiftRosterPage.find('Button[aria-label="Spots Page"]').simulate("click");
+    expect(baseProps.history.push).toBeCalled();
+    expect(baseProps.history.push).toBeCalledWith("/spots");
+  });
+
   it('should change the week when the user change the week', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}

@@ -615,6 +615,7 @@ exports[`Availability Roster Page should render correctly when loading 1`] = `
     The current tenant have no Employees. You need at least one Employee to see the Availability Roster. You can add an Employee in the "Employees" page.
   </EmptyStateBody>
   <Button
+    aria-label="Employees Page"
     onClick={[Function]}
     variant="primary"
   >
@@ -920,4 +921,30 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
     wrapperStyle={[Function]}
   />
 </Fragment>
+`;
+
+exports[`Availability Roster Page should render correctly when there are no employees 1`] = `
+<EmptyState
+  variant="full"
+>
+  <EmptyStateIcon
+    icon={[Function]}
+  />
+  <Title
+    headingLevel="h5"
+    size="lg"
+  >
+    There are no Employees
+  </Title>
+  <EmptyStateBody>
+    The current tenant have no Employees. You need at least one Employee to see the Availability Roster. You can add an Employee in the "Employees" page.
+  </EmptyStateBody>
+  <Button
+    aria-label="Employees Page"
+    onClick={[Function]}
+    variant="primary"
+  >
+    Go to the Employees page
+  </Button>
+</EmptyState>
 `;

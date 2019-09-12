@@ -265,6 +265,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             You can add an Employee in the &quot;Employees&quot; page.
           </EmptyStateBody>
           <Button
+            aria-label="Employees Page"
             variant="primary"
             onClick={() => this.props.history.push('/employees')}
           >
