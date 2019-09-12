@@ -210,6 +210,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             You can add a Spot in the &quot;Spots&quot; page.
           </EmptyStateBody>
           <Button
+            aria-label="Spots Page"
             variant="primary"
             onClick={() => this.props.history.push('/spots')}
           >

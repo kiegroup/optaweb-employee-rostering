@@ -42,7 +42,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
   </Level>
   <Table
     borders={true}
-    caption="Spots"
+    caption="Employees"
     cells={
       Array [
         Object {
@@ -54,6 +54,24 @@ exports[`Employees page should render correctly with a few employees 1`] = `
           "transforms": Array [
             [Function],
           ],
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Contract",
+          "transforms": Array [
+            [Function],
+          ],
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Skill Set",
+          "transforms": undefined,
         },
         Object {
           "cellTransforms": Array [
@@ -524,6 +542,7 @@ exports[`Employees page should render correctly with no employees 1`] = `
     The current tenant have no Contracts. You need at least one Contract to add Employees. You can add a Contract in the "Contracts" page.
   </EmptyStateBody>
   <Button
+    aria-label="Contracts Page"
     onClick={[Function]}
     variant="primary"
   >

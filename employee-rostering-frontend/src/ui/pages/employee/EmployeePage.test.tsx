@@ -141,6 +141,15 @@ describe('Employees page', () => {
     expect(employeesPage.getSorters()[2]).toBeNull();
   });
 
+  it('should go to the Contract page if the user click on the link', () => {
+    const employeesPage = shallow(<EmployeesPage
+      {...noEmployees}
+    />);
+    employeesPage.find('Button[aria-label="Contracts Page"]').simulate("click");
+    expect(noEmployees.history.push).toBeCalled();
+    expect(noEmployees.history.push).toBeCalledWith("/contracts");
+  });
+
   it('should treat incompleted data as incomplete', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
     const noName = {
@@ -199,8 +208,8 @@ describe('Employees page', () => {
 
 const noEmployees: Props = {
   tenantId: 0,
-  title: "Spots",
-  columnTitles: ["Name"],
+  title: "Employees",
+  columnTitles: ["Name", "Contract", "Skill Set"],
   tableData: [],
   skillList: [],
   contractList: [],
@@ -215,8 +224,8 @@ const noEmployees: Props = {
 
 const twoEmployees: Props = {
   tenantId: 0,
-  title: "Spots",
-  columnTitles: ["Name"],
+  title: "Employees",
+  columnTitles: ["Name", "Contract", "Skill Set"],
   tableData: [{
     id: 0,
     version: 0,

@@ -99,6 +99,17 @@ describe('Rotation Page', () => {
     expect(baseProps.addShiftTemplate).toBeCalledWith(newShiftTemplate);
   });
 
+  it('should go to the Spots page if the user click on the link', () => {
+    const rotationPage = shallow(<RotationPage
+      {...baseProps}
+      spotList={[]}
+      spotIdToShiftTemplateListMap={new Map()}
+    />);
+    rotationPage.find('Button[aria-label="Spots Page"]').simulate("click");
+    expect(baseProps.history.push).toBeCalled();
+    expect(baseProps.history.push).toBeCalledWith("/spots");
+  });
+
   it('should call updateShift on updateShift', () => {
     const rotationPage = new RotationPage(baseProps);
     const updatedShiftTemplate: ShiftTemplate = {

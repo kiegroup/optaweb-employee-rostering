@@ -167,6 +167,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
             You can add a Contract in the &quot;Contracts&quot; page.
           </EmptyStateBody>
           <Button
+            aria-label="Contracts Page"
             variant="primary"
             onClick={() => this.props.history.push('/contracts')}
           >

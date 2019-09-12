@@ -50,6 +50,17 @@ describe('Availability Roster Page', () => {
     expect(toJson(availabilityRosterPage)).toMatchSnapshot();
   });
 
+  it('should render correctly when there are no employees', () => {
+    const availabilityRosterPage = shallow(<AvailabilityRosterPage
+      {...baseProps}
+      allEmployeeList={[]}
+      shownEmployeeList={[]}
+      employeeIdToAvailabilityListMap={new Map()}
+      employeeIdToShiftListMap={new Map()}
+    />);
+    expect(toJson(availabilityRosterPage)).toMatchSnapshot();
+  });
+
   it('should render correctly when solving', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
@@ -134,6 +145,19 @@ describe('Availability Roster Page', () => {
       toDate: baseProps.endDate,
       employeeList: [newEmployee]
     });
+  });
+
+  it('should go to the Employees page if the user click on the link', () => {
+    const availabilityRosterPage = shallow(<AvailabilityRosterPage
+      {...baseProps}
+      allEmployeeList={[]}
+      shownEmployeeList={[]}
+      employeeIdToAvailabilityListMap={new Map()}
+      employeeIdToShiftListMap={new Map()}
+    />);
+    availabilityRosterPage.find('Button[aria-label="Employees Page"]').simulate("click");
+    expect(baseProps.history.push).toBeCalled();
+    expect(baseProps.history.push).toBeCalledWith("/employees");
   });
 
   it('should call publishRoster when the publish button is clicked', () => {
