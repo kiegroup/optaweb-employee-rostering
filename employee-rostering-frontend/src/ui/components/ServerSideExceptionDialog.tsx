@@ -34,6 +34,7 @@ function createStackTrace(exceptionInfo: ServerSideExceptionInfo|null): JSX.Elem
         {
           exceptionInfo.exceptionCause? (
             <>
+              {/* Not i18n translated as this is intended for the developer */}
               <Text>Caused By</Text>
               {createStackTrace(exceptionInfo.exceptionCause)}
             </>
@@ -60,7 +61,7 @@ export const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerS
         {props.children}
       </Button>
       <Modal
-        title="Server Side Error"
+        title={t("serverSideError")}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         actions={(
@@ -68,7 +69,7 @@ export const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerS
             aria-label="Close"
             onClick={() => setIsOpen(false)}
           >
-              Close
+            {t("close")}
           </Button>
         )}
       >

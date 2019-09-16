@@ -21,6 +21,7 @@ import { tenantOperations } from 'store/tenant';
 import { connect } from 'react-redux';
 import { AppState } from 'store/types';
 import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 
 interface StateProps {
   timezoneList: string[];
@@ -57,6 +58,7 @@ export function isFormCompleted(rs: Partial<RosterState>): rs is RosterState {
 }
 
 export const NewTenantFormModal: React.FC<Props> = (props) => {
+  const { t } = useTranslation();
   const { refreshSupportedTimezones } = props;
   React.useEffect(() => {
     refreshSupportedTimezones() 
@@ -74,7 +76,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
 
   return (
     <Modal
-      title="Create Tenant"
+      title={t("createTenant")}
       onClose={props.onClose}
       isOpen={props.isOpen}
       actions={
@@ -85,7 +87,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
             key={0}
             onClick={props.onClose}
           >
-            Close
+            {t("close")}
           </Button>
         ),
         (
@@ -100,7 +102,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
               }
             }}
           >
-            Save
+            {t("save")}
           </Button>
         )
         ]
@@ -109,7 +111,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
     >
       <Form onSubmit={(e) => e.preventDefault()}>
         <InputGroup>
-          <Label>Name</Label>
+          <Label>{t("name")}</Label>
           <TextInput
             aria-label="Name"
             onChange={name => setProperty({
@@ -120,7 +122,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           />
         </InputGroup>
         <InputGroup>
-          <Label>Schedule Start Date</Label>
+          <Label>{t("scheduleStartDate")}</Label>
           <TextInput
             type="date"
             aria-label="Schedule Start Date"
@@ -131,7 +133,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           />
         </InputGroup>
         <InputGroup>
-          <Label>Draft Length (days)</Label>
+          <Label>{t("draftLength")}</Label>
           <TextInput
             type="number"
             aria-label="Draft Length"
@@ -139,7 +141,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           />
         </InputGroup>
         <InputGroup>
-          <Label>Publish Notice (days)</Label>
+          <Label>{t("publishNotice")}</Label>
           <TextInput
             type="number"
             aria-label="Publish Notice"
@@ -147,7 +149,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           />
         </InputGroup>
         <InputGroup>
-          <Label>Publish Length (days)</Label>
+          <Label>{t("publishLength")}</Label>
           <TextInput 
             defaultValue="7"
             type="number"
@@ -157,7 +159,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           />
         </InputGroup>
         <InputGroup>
-          <Label>Rotation Length (days)</Label>
+          <Label>{t("rotationLength")}</Label>
           <TextInput
             type="number"
             aria-label="Rotation Length"
@@ -166,10 +168,10 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           />
         </InputGroup>
         <InputGroup>
-          <Label>Timezone</Label>
+          <Label>{t("timezone")}</Label>
           <TypeaheadSelectInput
             aria-label="Timezone"
-            emptyText="Select a timezone"
+            emptyText={t("selectATimezone")}
             value={formData.timeZone}
             options={props.timezoneList}
             optionToStringMap={s => s}

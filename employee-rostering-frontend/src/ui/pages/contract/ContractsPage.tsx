@@ -25,15 +25,16 @@ import OptionalInput from 'ui/components/OptionalInput';
 import { Predicate, Sorter, ReadonlyPartial } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
 interface StateProps extends DataTableProps<Contract> {
   tenantId: number;
 }
 
-const mapStateToProps = (state: AppState): StateProps => ({
-  title: "Contracts",
-  columnTitles: ["Name", "Max Minutes Per Day", "Max Minutes Per Week",
-    "Max Minutes Per Month", "Max Minutes Per Year"],
+const mapStateToProps = (state: AppState, { t }: WithTranslation): StateProps => ({
+  title: t("contracts"),
+  columnTitles: [t("name"), t("maxMinutesPerDay"), t("maxMinutesPerWeek"),
+    t("maxMinutesPerMonth"), t("maxMinutesPerYear")],
   tableData: contractSelectors.getContractList(state),
   tenantId: state.tenantData.currentTenantId
 }); 
@@ -50,7 +51,7 @@ const mapDispatchToProps: DispatchProps = {
   removeContract: contractOperations.removeContract
 };
 
-export type Props = StateProps & DispatchProps;
+export type Props = StateProps & DispatchProps & WithTranslation;
 
 export class ContractsPage extends DataTable<Contract, Props> {
   constructor(props: Props) {
@@ -80,6 +81,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
   }
   
   editDataRow(data: ReadonlyPartial<Contract>, setProperty: PropertySetter<Contract>): JSX.Element[] {
+    const { t } = this.props;
     return [
       <TextInput
         key={0}
@@ -90,7 +92,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       />,
       <OptionalInput
         key={1}
-        label="Max minutes per day"
+        label={t("maxMinutesPerDay")}
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerDay? data.maximumMinutesPerDay : null}
         onChange={value => setProperty("maximumMinutesPerDay", value)}
@@ -99,7 +101,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       />,
       <OptionalInput
         key={2}
-        label="Max minutes per week"
+        label={t("maxMinutesPerWeek")}
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerWeek? data.maximumMinutesPerWeek : null}
         onChange={value => setProperty("maximumMinutesPerWeek", value)}
@@ -108,7 +110,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       />,
       <OptionalInput
         key={3}
-        label="Max minutes per month"
+        label={t("maxMinutesPerMonth")}
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerMonth? data.maximumMinutesPerMonth : null}
         onChange={value => setProperty("maximumMinutesPerMonth", value)}
@@ -117,7 +119,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       />,
       <OptionalInput
         key={4}
-        label="Max minutes per year"
+        label={t("maxMinutesPerYear")}
         valueToString={value => value.toString()}
         defaultValue={data.maximumMinutesPerYear? data.maximumMinutesPerYear : null}
         onChange={value => setProperty("maximumMinutesPerYear", value)}
@@ -160,4 +162,4 @@ export class ContractsPage extends DataTable<Contract, Props> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContractsPage);
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(ContractsPage));

@@ -41,7 +41,8 @@ import Schedule, { StyleSupplier } from "ui/components/calendar/Schedule";
 import { CubesIcon } from '@patternfly/react-icons';
 import {
   withRouter, RouteComponentProps,
-} from 'react-router-dom'
+} from 'react-router-dom';
+import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 
 interface StateProps {
   isSolving: boolean;
@@ -119,7 +120,7 @@ const mapDispatchToProps: DispatchProps = {
   removeShift: shiftOperations.removeShift,
 }
 
-export type Props = RouteComponentProps & StateProps & DispatchProps;
+export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
 interface State {
   selectedAvailability?: EmployeeAvailability;
   isCreatingOrEditingAvailability: boolean;
@@ -250,6 +251,10 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     }
 
   render() {
+    const { t, tReady } = this.props;
+    if (!tReady) {
+      return (<></>);
+    }
     if (this.props.shownEmployeeList.length <= 0) {
       if (!this.props.isLoading && this.props.allEmployeeList.length > 0) {
         this.props.getInitialAvailabilityRoster();
@@ -257,20 +262,19 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h5" size="lg">
-            There are no Employees
-          </Title>
-          <EmptyStateBody>
-            The current tenant have no Employees. You need at least one Employee to see the Availability Roster.
-            You can add an Employee in the &quot;Employees&quot; page.
-          </EmptyStateBody>
-          <Button
-            aria-label="Employees Page"
-            variant="primary"
-            onClick={() => this.props.history.push('/employees')}
-          >
-            Go to the Employees page
-          </Button>
+          <Trans
+            i18nKey="noEmployees"
+            components={[
+              <Title key={0} headingLevel="h5" size="lg" />,
+              <EmptyStateBody key={1} />,
+              <Button
+                key={2}
+                aria-label="Employees Page"
+                variant="primary"
+                onClick={() => this.props.history.push('/employees')}
+              />
+            ]}
+          />
         </EmptyState>
       );
     }
@@ -315,7 +319,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           <LevelItem style={{ display: 'flex' }}>
             <TypeaheadSelectInput
               aria-label="Select Employee"
-              emptyText="Select Employee"
+              emptyText={t("selectEmployee")}
               optionToStringMap={employee => employee.name}
               options={this.props.allEmployeeList}
               value={this.props.shownEmployeeList[0]}
@@ -333,7 +337,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               aria-label="Publish"
               onClick={this.props.publishRoster}
             >
-              Publish
+              {t("publish")}
             </Button>
             {(!this.props.isSolving
               && (
@@ -342,7 +346,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                   aria-label="Solve"
                   onClick={this.props.solveRoster}
                 >
-                  Schedule
+                  {t("schedule")}
                 </Button>
               )) || (
               <Button
@@ -350,7 +354,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                 aria-label="Terminate Early"
                 onClick={this.props.terminateSolvingRosterEarly}
               >
-                Terminate Early
+                {t("terminateEarly")}
               </Button>
             )
             }
@@ -363,7 +367,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               }
               }
             >
-              Refresh
+              {t("refresh")}
             </Button>
             <Button
               style={{ margin: '5px' }}
@@ -377,7 +381,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                 }
               }}
             >
-              Create Availability
+              {t("createAvailability")}
             </Button>
           </LevelItem>
         </Level>
@@ -505,4 +509,4 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AvailabilityRosterPage));
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(withRouter(AvailabilityRosterPage)));

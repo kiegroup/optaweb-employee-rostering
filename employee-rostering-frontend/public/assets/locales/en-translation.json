@@ -191,6 +191,8 @@
     }
   },
 
+  "serverSideError": "Server Side Error",
+
   "ServerSideException": {
     "entityNotFound": "The object you requested was not found: {{0}}",
     "generic": "It appears the developers made a mistake somewhere. Please contact them.",
@@ -200,6 +202,16 @@
     "unknown": "An exception occurred: {{0}}"
   },
 
+  "nav": {
+    "skills": "Skills",
+    "spots": "Spots",
+    "contracts": "Contracts",
+    "employees": "Employees",
+    "shift": "Shift",
+    "availability": "Availability",
+    "rotation": "Rotation"
+  },
+
   "EmployeeAvailabilityState": {
     "DESIRED": "Desired",
     "UNDESIRED": "Undesired",
@@ -207,5 +219,43 @@
   },
 
   "rotationDay": "Day {{day}}",
-  "shiftTemplate": "{{spot}}, {{rotationEmployee}}, starting on Day {{dayStart}} of the rotation at {{startTime}}, ending on Day {{dayEnd}} of the rotation at {{endTime}}."
+  "shiftTemplate": "{{spot}}, {{rotationEmployee}}, starting on Day {{dayStart}} of the rotation at {{startTime}}, ending on Day {{dayEnd}} of the rotation at {{endTime}}.",
+
+  "add": "Add",
+  "close": "Close",
+  "refresh": "Refresh",
+  "save": "Save",
+  "delete": "Delete",
+  "name": "Name",
+
+  "tenants": "Tenants",
+  "contracts": "Contracts",
+  "employee": "Employee",
+
+  "createTenant": "Create Tenant",
+  "scheduleStartDate": "Schedule Start Date",
+  "draftLength": "Draft Length (days)",
+  "publishNotice": "Publish Notice (days)",
+  "publishLength": "Publish Length (days)",
+  "rotationLength": "Rotation Length (days)",
+  "timezone": "Timezone",
+  "selectATimezone": "Select a timezone...",
+
+  "noEmployees": "<0>There are no Employees</0><1>The current tenant have no Employees. You need at least one Employee to see the Availability Roster. You can add an Employee in the \"Employees\" page.</1><2>Go to the Employees page</2>",
+  "selectEmployee": "Select an Employee...",
+  "createAvailability": "Create Availability",
+  "editAvailability": "Edit Availability",
+  "availabilityStart": "Availability Start",
+  "availabilityEnd": "Availability End",
+  "unassigned": "Unassigned",
+  "type": "Type",
+
+  "maxMinutesPerDay": "Max Minutes Per Day",
+  "maxMinutesPerWeek": "Max Minutes Per Week",
+  "maxMinutesPerMonth": "Max Minutes Per Month",
+  "maxMinutesPerYear": "Max MinutesPerYear",
+
+  "publish": "Publish",
+  "schedule": "Schedule",
+  "terminateEarly": "Terminate Early"
 }
