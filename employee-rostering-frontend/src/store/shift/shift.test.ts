@@ -23,6 +23,7 @@ import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './KindaShif
 import { onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
 import Shift from 'domain/Shift';
 import moment from 'moment';
+import { serializeLocalDateTime } from 'store/rest/DataSerialization';
 
 describe('Shift operations', () => {
   it('should dispatch actions and call client on addShift', async () => {
@@ -221,8 +222,8 @@ describe('shift adapters', () => {
       tenantId: 0,
       id: 11,
       version: 0,
-      startDateTime: moment(shiftStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-      endDateTime: moment(shiftEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      startDateTime: serializeLocalDateTime(shiftStartTime),
+      endDateTime: serializeLocalDateTime(shiftEndTime),
       spotId: 20,
       employeeId: 20,
       rotationEmployeeId: null,
@@ -237,8 +238,8 @@ describe('shift adapters', () => {
       tenantId: 0,
       id: 11,
       version: 0,
-      startDateTime: moment(shiftStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-      endDateTime: moment(shiftEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      startDateTime: serializeLocalDateTime(shiftStartTime),
+      endDateTime: serializeLocalDateTime(shiftEndTime),
       spotId: 20,
       employeeId: null,
       rotationEmployeeId: null,

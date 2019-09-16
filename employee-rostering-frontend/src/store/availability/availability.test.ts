@@ -24,6 +24,7 @@ import { onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
 import EmployeeAvailability from 'domain/EmployeeAvailability';
 import moment from 'moment';
 import Contract from 'domain/Contract';
+import { serializeLocalDateTime } from 'store/rest/DataSerialization';
 
 const contract: Contract = {
   tenantId: 0,
@@ -210,8 +211,8 @@ describe('Availability adapters', () => {
       tenantId: 0,
       id: 11,
       version: 0,
-      startDateTime: moment(availabilityStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-      endDateTime: moment(availabilityEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      startDateTime: serializeLocalDateTime(availabilityStartTime),
+      endDateTime: serializeLocalDateTime(availabilityEndTime),
       employeeId: 20,
       state: "DESIRED"
     });
@@ -224,8 +225,8 @@ describe('Availability adapters', () => {
       tenantId: 0,
       id: 11,
       version: 0,
-      startDateTime: moment(availabilityStartTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-      endDateTime: moment(availabilityEndTime).local().format("YYYY-MM-DDTHH:mm:ss"),
+      startDateTime: serializeLocalDateTime(availabilityStartTime),
+      endDateTime: serializeLocalDateTime(availabilityEndTime),
       employeeId: 10,
       state: "DESIRED"
     };

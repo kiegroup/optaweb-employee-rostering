@@ -328,6 +328,7 @@ describe('Tenant operations', () => {
     await store.dispatch(tenantOperations.addTenant(initialRosterState));
 
     expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("addTenant", { name: "New Tenant" }),
       actions.addTenant({ ...initialRosterState.tenant, id: 2, version: 0 })
     ]);
 
@@ -349,6 +350,7 @@ describe('Tenant operations', () => {
     await store.dispatch(tenantOperations.removeTenant(tenantToDelete));
 
     expect(store.getActions()).toEqual([
+      alert.showSuccessMessage("removeTenant", { name: "Deleted Tenant" }),
       actions.removeTenant(tenantToDelete)
     ]);
 

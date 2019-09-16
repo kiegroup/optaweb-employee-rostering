@@ -52,7 +52,7 @@ export function isFormCompleted(rs: Partial<RosterState>): rs is RosterState {
   return rs.draftLength !== undefined && rs.firstDraftDate !== undefined &&
     rs.lastHistoricDate !== undefined && rs.publishLength !== undefined &&
     rs.publishNotice !== undefined && rs.rotationLength !== undefined &&
-    rs.tenant !== undefined && rs.timeZone !== undefined &&
+    rs.rotationLength >=2 &&  rs.tenant !== undefined && rs.timeZone !== undefined &&
     rs.unplannedRotationOffset !== undefined;
 }
 
@@ -90,6 +90,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
         ),
         (
           <Button
+            isDisabled={!isFormCompleted(formData)}
             aria-label="Save"
             key={2}
             onClick={() => {
@@ -161,6 +162,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
             type="number"
             aria-label="Rotation Length"
             onChange={length => setProperty({ rotationLength: parseInt(length) })}
+            min={2}
           />
         </InputGroup>
         <InputGroup>

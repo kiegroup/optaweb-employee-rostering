@@ -15,8 +15,8 @@
  */
 
 import * as React from 'react';
-import {DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
-import {StatefulMultiTypeaheadSelectInput} from 'ui/components/MultiTypeaheadSelectInput'
+import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
+import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadSelectInput'
 import { spotSelectors, spotOperations } from 'store/spot';
 import { skillSelectors } from 'store/skill';
 import Spot from 'domain/Spot';

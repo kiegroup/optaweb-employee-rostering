@@ -65,14 +65,11 @@ TypeaheadSelectState
     });
   }
 
-  clearSelection(event: any) {
-    if (event.eventPhase === 2) {
-      this.props.onChange(undefined);
-      this.setState({
-        isExpanded: false
-      });
-    } // HACK: For some reason, when there are two or more Select, the
-    // clear button of the Select above is clicked on Keyboard enter via event bubbling.
+  clearSelection() {
+    this.props.onChange(undefined);
+    this.setState({
+      isExpanded: false
+    });
   }
 
   onSelect(event: any,

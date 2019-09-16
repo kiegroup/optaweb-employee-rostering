@@ -21,6 +21,7 @@ import moment from 'moment';
 import { alert } from 'store/alert';
 import { refreshShiftRoster, refreshAvailabilityRoster } from 'store/roster/operations';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
+import { serializeLocalDateTime } from 'store/rest/DataSerialization';
 
 export interface KindaEmployeeAvailabilityView extends Omit<EmployeeAvailabilityView, "startDateTime" | "endDateTime"> {
   startDateTime: string;
@@ -30,8 +31,8 @@ export interface KindaEmployeeAvailabilityView extends Omit<EmployeeAvailability
 export function availabilityAdapter(employeeAvailability: EmployeeAvailability): KindaEmployeeAvailabilityView {
   return {
     ...objectWithout(availabilityToAvailabilityView(employeeAvailability), "startDateTime", "endDateTime"),
-    startDateTime: moment(employeeAvailability.startDateTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-    endDateTime: moment(employeeAvailability.endDateTime).local().format("YYYY-MM-DDTHH:mm:ss")
+    startDateTime: serializeLocalDateTime(employeeAvailability.startDateTime),
+    endDateTime: serializeLocalDateTime(employeeAvailability.endDateTime)
   };
 }
 

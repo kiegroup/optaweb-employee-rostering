@@ -183,7 +183,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     }
   }
 
-  getEventStyle(soa: ShiftOrAvailability): { style: React.CSSProperties } {
+  getEventStyle: StyleSupplier<ShiftOrAvailability> = (soa) => {
     const style: React.CSSProperties = {};
     if (isAvailability(soa.reference)) {
       switch (soa.reference.state) {
