@@ -82,8 +82,9 @@ ThunkCommandFactory<void, RefreshTenantListAction> = () => (dispatch, state, cli
   }));
 
 export const addTenant:
-ThunkCommandFactory<RosterState, AddTenantAction> = rs => (dispatch, state, client) => (
+ThunkCommandFactory<RosterState, AddTenantAction | AddAlertAction> = rs => (dispatch, state, client) => (
   client.post<Tenant>('/tenant/add', rs).then((tenant) => {
+    dispatch(alert.showSuccessMessage("addTenant", { name: tenant.name }))
     dispatch(actions.addTenant(tenant));
   })
 );
@@ -92,6 +93,7 @@ export const removeTenant:
 ThunkCommandFactory<Tenant, RemoveTenantAction | AddAlertAction> = tenant => (dispatch, state, client) => (
   client.post<boolean>(`/tenant/remove/${tenant.id}`, {}).then((isSuccess) => {
     if (isSuccess) {
+      dispatch(alert.showSuccessMessage("removeTenant", { name: tenant.name }))
       dispatch(actions.removeTenant(tenant));
     } else {
       dispatch(alert.showErrorMessage("removeTenantError", { name: tenant.name }))

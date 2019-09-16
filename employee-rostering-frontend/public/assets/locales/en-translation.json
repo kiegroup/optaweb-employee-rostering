@@ -140,6 +140,21 @@
       "message": "The Spot with id \"{{id}}\" was successfully updated."
     },
 
+    "addTenant": {
+	  "title": "Successfully added Tenant",
+      "message": "The Tenant \"{{name}}\" was succesfully added."
+    },
+
+    "removeTenant": {
+	  "title": "Successfully removed Tenant",
+      "message": "The Tenant \"{{name}}\" was succesfully deleted."
+    },
+
+    "removeTenantError": {
+	  "title": "Error removing Tenant",
+      "message": "The Tenant \"{{name}}\" could not be deleted."
+    },
+
     "startSolvingRoster": {
       "title": "Started Solving Roster",
       "message": "Started Solving Roster at {{startSolvingTime}}"

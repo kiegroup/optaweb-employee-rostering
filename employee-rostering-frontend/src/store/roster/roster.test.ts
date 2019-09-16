@@ -31,6 +31,7 @@ import Employee from 'domain/Employee';
 import { availabilityRosterReducer } from './reducers';
 import DomainObjectView from 'domain/DomainObjectView';
 import RosterState from 'domain/RosterState';
+import { serializeLocalDate } from 'store/rest/DataSerialization';
 
 const mockShiftRoster: ShiftRosterView = {
   tenantId: 0,
@@ -220,7 +221,8 @@ describe('Roster operations', () => {
     const tenantId = store.getState().tenantData.currentTenantId;
     jest.spyOn(rosterOperations, "refreshShiftRoster").mockRestore();
 
-    const testOperation = async (operation: () => void, method: 'get'|'post', restURL: string, restArg?: any) => {
+    const testOperation = async (operation: () => Promise<void>, method: 'get'|'post', 
+      restURL: string, restArg?: any) => {
       store.clearActions();
       resetRestClientMock(client);
 
@@ -285,7 +287,7 @@ describe('Roster operations', () => {
     'get',
     `/tenant/${tenantId}/roster/shiftRosterView?` +
       `p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}` +
-      `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`
+      `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`
     );
 
     await testOperation(async () => await store.dispatch(rosterOperations.getShiftRosterFor({
@@ -295,8 +297,8 @@ describe('Roster operations', () => {
     })),
     'post',
     `/tenant/${tenantId}/roster/shiftRosterView/for?` +
-      `&startDate=${moment(fromDate).format("YYYY-MM-DD")}` + 
-      `&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+      `&startDate=${serializeLocalDate(fromDate)}` + 
+      `&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`,
     []
     );
   });
@@ -382,7 +384,7 @@ describe('Roster operations', () => {
     'get',
     `/tenant/${tenantId}/roster/availabilityRosterView?` +
       `p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}` +
-      `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`
+      `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`
     );
 
     await testOperation(async () => await store.dispatch(rosterOperations.getAvailabilityRosterFor({
@@ -392,8 +394,8 @@ describe('Roster operations', () => {
     })),
     'post',
     `/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-      `&startDate=${moment(fromDate).format("YYYY-MM-DD")}` + 
-      `&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+      `&startDate=${serializeLocalDate(fromDate)}` + 
+      `&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
     []
     );
   });
@@ -456,7 +458,7 @@ describe('Roster operations', () => {
       .endOf('week').toDate();
     
     onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
     spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
     await store.dispatch(rosterOperations.getInitialShiftRoster());
 
@@ -468,8 +470,8 @@ describe('Roster operations', () => {
 
     expect(client.post).toBeCalledTimes(1);
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&` + 
-    `endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, spotList);
+    `&startDate=${serializeLocalDate(fromDate)}&` + 
+    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, spotList);
   });
 
   it('should not dispatch actions and call client on getInitialShiftRoster if no spots', async () => {
@@ -542,8 +544,8 @@ describe('Roster operations', () => {
     
     onGet(`/tenant/${tenantId}/roster/shiftRosterView?` +
     `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&` + 
-    `endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, {
+    `&startDate=${serializeLocalDate(fromDate)}&` + 
+    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, {
       ...mockShiftRoster,
       spotIdToShiftViewListMap: {}
     });
@@ -562,7 +564,9 @@ describe('Roster operations', () => {
     expect(client.get).toBeCalledTimes(1);
     expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView?` +
     `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`);
+    `&startDate=${serializeLocalDate(fromDate)}`+
+    `&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`);
+
   });
 
   it('should dispatch actions and call client on getShiftRosterFor', async () => {
@@ -573,7 +577,7 @@ describe('Roster operations', () => {
     const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
     
     onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
     spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
     await store.dispatch(rosterOperations.getShiftRosterFor({
       fromDate: fromDate,
@@ -589,8 +593,8 @@ describe('Roster operations', () => {
 
     expect(client.post).toBeCalledTimes(1);
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&` + 
-    `endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, []);
+    `&startDate=${serializeLocalDate(fromDate)}&` + 
+    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, []);
   });
 
   it('should dispatch actions and call client on getInitialAvailabilityRoster', async () => {
@@ -603,7 +607,7 @@ describe('Roster operations', () => {
       .endOf('week').toDate();
     
     onPost(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
     employeeList, {
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
@@ -623,8 +627,8 @@ describe('Roster operations', () => {
 
     expect(client.post).toBeCalledTimes(1);
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&` + 
-    `endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, employeeList);
+    `&startDate=${serializeLocalDate(fromDate)}&` + 
+    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, employeeList);
   });
 
   it('should not dispatch actions and call client on getInitialAvailabilityRoster if no employees', async () => {
@@ -706,8 +710,8 @@ describe('Roster operations', () => {
     
     onGet(`/tenant/${tenantId}/roster/availabilityRosterView?` +
     `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}` + 
-    `&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, { 
+    `&startDate=${serializeLocalDate(fromDate)}` + 
+    `&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, { 
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
       employeeIdToAvailabilityViewListMap: {}
@@ -731,7 +735,7 @@ describe('Roster operations', () => {
     expect(client.get).toBeCalledTimes(1);
     expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView?` +
     `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`);
+    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`);
   });
 
   it('should dispatch actions and call client on getAvailabilityRosterFor', async () => {
@@ -742,7 +746,7 @@ describe('Roster operations', () => {
     const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
     
     onPost(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`,
+    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
     employeeList, {
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
@@ -766,8 +770,8 @@ describe('Roster operations', () => {
 
     expect(client.post).toBeCalledTimes(1);
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-    `&startDate=${moment(fromDate).format("YYYY-MM-DD")}&` + 
-    `endDate=${moment(toDate).add(1, "day").format("YYYY-MM-DD")}`, []);
+    `&startDate=${serializeLocalDate(fromDate)}&` + 
+    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, []);
   });
 });
 

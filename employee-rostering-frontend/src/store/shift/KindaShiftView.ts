@@ -19,6 +19,7 @@ import ShiftView, { shiftToShiftView } from 'domain/ShiftView';
 import moment from 'moment';
 import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
+import { serializeLocalDateTime  } from 'store/rest/DataSerialization';
 
 type KindaShiftView1 = Pick<ShiftView, Exclude<keyof ShiftView, "indictmentScore">> & { indictmentScore?: string };
 type KindaShiftView2 = Pick<KindaShiftView1, Exclude<keyof KindaShiftView1, "startDateTime">> & 
@@ -30,8 +31,8 @@ export function shiftAdapter(shift: Shift): KindaShiftView {
   return {
     ...objectWithout(shiftToShiftView(shift), "indictmentScore", "startDateTime", "endDateTime",
       ...Object.keys(shift).filter(k => Array.isArray((shift as {[P: string]: any})[k])) as (keyof ShiftView)[]) as any,
-    startDateTime: moment(shift.startDateTime).local().format("YYYY-MM-DDTHH:mm:ss"),
-    endDateTime: moment(shift.endDateTime).local().format("YYYY-MM-DDTHH:mm:ss")
+    startDateTime: serializeLocalDateTime(shift.startDateTime),
+    endDateTime: serializeLocalDateTime(shift.endDateTime)
   };
 }
 
