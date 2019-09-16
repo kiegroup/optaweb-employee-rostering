@@ -93,9 +93,13 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
 
   render() {
     const dateFormat = "MMMM dd, hh:mm a";
+    const { t, tReady } = this.props;
+    if (!tReady) {
+      return (<></>);
+    }
     return (
       <Modal
-        title={this.props.availability? "Edit Availability" : "Create Availability"}
+        title={this.props.availability? t("editAvailability") : t("createAvailability")}
         onClose={this.props.onClose}
         isOpen={this.props.isOpen}
         actions={
@@ -106,7 +110,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
               key={0}
               onClick={this.props.onClose}
             >
-              Close
+              {t("close")}
             </Button>
           ].concat(this.props.availability? [
             <Button
@@ -115,17 +119,17 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
               key={1}
               onClick={() => this.props.onDelete(this.props.availability as EmployeeAvailability)}
             >
-              Delete
+              {t("delete")}
             </Button>
           ] : []).concat([
-            <Button aria-label="Save" key={2} onClick={this.onSave}>Save</Button>
+            <Button aria-label="Save" key={2} onClick={this.onSave}>{t("save")}</Button>
           ])
         }
         isSmall
       >
         <Form id="modal-element" key={this.state.resetCount} onSubmit={(e) => e.preventDefault()}>
           <InputGroup>
-            <Label>Availability Start</Label>
+            <Label>{t("availabilityStart")}</Label>
             <DatePicker
               aria-label="Availability Start"
               selected={this.state.editedValue.startDateTime}
@@ -137,7 +141,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
             />
           </InputGroup>
           <InputGroup>
-            <Label>Availability End</Label>
+            <Label>{t("availabilityEnd")}</Label>
             <DatePicker
               aria-label="Availability End"
               selected={this.state.editedValue.endDateTime}
@@ -151,18 +155,18 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
           <InputGroup>
             <Label>Employee</Label>
             <TypeaheadSelectInput
-              aria-label="Employee"
-              emptyText="Select an Employee..."
+              aria-label={t("employee")}
+              emptyText={t("selectEmployee")}
               value={this.state.editedValue.employee}
               options={this.props.employeeList}
-              optionToStringMap={employee => employee? employee.name : "Unassigned"}
+              optionToStringMap={employee => employee.name}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, employee: employee }
               }))}
             />
           </InputGroup>
           <InputGroup>
-            <Label>Type</Label>
+            <Label>{t("type")}</Label>
             <TypeaheadSelectInput
               aria-label="Type"
               emptyText="Select Type..."

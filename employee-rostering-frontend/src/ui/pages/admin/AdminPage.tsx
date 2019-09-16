@@ -26,6 +26,7 @@ import FilterComponent from 'ui/components/FilterComponent';
 import { Table, IRow, TableHeader, TableBody } from '@patternfly/react-table';
 import { TrashIcon } from '@patternfly/react-icons';
 import NewTenantFormModal from './NewTenantFormModal';
+import { useTranslation } from 'react-i18next';
 
 interface StateProps {
   tenantList: Tenant[];
@@ -50,6 +51,7 @@ export interface State {
 
 export const AdminPage: React.FC<Props> = (props) => {
   const { tenantList } = props;
+  const { t } = useTranslation();
   const [ page, setPage ] = React.useState(1);
   const [ perPage, setPerPage ] = React.useState(10);
   const [ filter, setFilter ] = React.useState<Predicate<Tenant>>(() => () => true);
@@ -75,7 +77,7 @@ export const AdminPage: React.FC<Props> = (props) => {
           />
         </LevelItem>
         <LevelItem style={{ display: "flex" }}>
-          <Button aria-label="Add Tenant" onClick={() => setIsCreatingTenant(true)}>Add</Button>
+          <Button aria-label="Add Tenant" onClick={() => setIsCreatingTenant(true)}>{t("add")}</Button>
           <Pagination
             aria-label="Change Page"
             itemCount={filteredRows.length}
@@ -93,8 +95,8 @@ export const AdminPage: React.FC<Props> = (props) => {
         onClose={() => setIsCreatingTenant(false)}
       />
       <Table
-        caption="Tenants"
-        cells={["Name", ""]}
+        caption={t("tenants")}
+        cells={[t("name"), ""]}
         rows={
           rowsInPage.map<IRow>(tenant => (
             {

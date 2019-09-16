@@ -16,15 +16,17 @@
 
 import { Nav, NavItem, NavList, NavVariants } from '@patternfly/react-core';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { Link, withRouter } from 'react-router-dom';
 
 export const Navigation = ({ location }: RouteComponentProps) => {
+  const { t } = useTranslation();
   return (
     <Nav aria-label="Nav">
       <NavList variant={NavVariants.horizontal}>
-        {['Skills', 'Spots', 'Contracts', 'Employees', 'Shift', 'Availability', 'Rotation'].map((label) => {
-          const itemId = label.toLowerCase();
+        {['skills', 'spots', 'contracts', 'employees', 'shift', 'availability', 'rotation'].map(link => {
+          const itemId = link;
           const path = `/${itemId}`;
           return (
             <NavItem
@@ -32,7 +34,7 @@ export const Navigation = ({ location }: RouteComponentProps) => {
               itemId={itemId}
               isActive={location.pathname === path}
             >
-              <Link to={path}>{label}</Link>
+              <Link to={path}>{t(`nav.${link}`)}</Link>
             </NavItem>
           );
         })}
