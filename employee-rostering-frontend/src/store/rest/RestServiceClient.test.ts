@@ -16,6 +16,7 @@
 import { alert } from "store/alert";
 import RestServiceClient from "./RestServiceClient";
 import { AxiosStatic } from "axios";
+import { ServerSideExceptionInfo, BasicObject } from 'types';
 
 const mockGet = jest.fn();
 const mockPost = jest.fn();
@@ -159,14 +160,39 @@ describe("Rest Service Client", () => {
     expect(restServiceClient.handleResponse(response)).resolves.toEqual(data);
   });
 
-  it("Should reject the promise on failure", async () => {
+  it("Should reject the promise on failure and show an alert alert with text if not JSON", async () => {
     const dispatch = jest.fn();
 
     const baseURL = "/rest";
     const restServiceClient = new RestServiceClient(baseURL, axios);
-    const data = {
-      a: "Test",
-      b: 2
+    const data = "Error";
+    restServiceClient.setDispatch(dispatch);
+    const errorStatus = "I am a teapot";
+    const response = {
+      status: 404,
+      data: data,
+      statusText: errorStatus,
+      headers: {
+        "content-type": "text/plain"
+      },
+      config: {}
+    };
+    await expect(restServiceClient.handleResponse(response)).rejects.toEqual(404);
+    expect(dispatch).toBeCalledWith(alert.showServerErrorMessage("I am a teapot"));
+  });
+
+  it("Should reject the promise on failure and show an alert of exception if JSON", async () => {
+    const dispatch = jest.fn();
+
+    const baseURL = "/rest";
+    const restServiceClient = new RestServiceClient(baseURL, axios);
+    const data: ServerSideExceptionInfo & BasicObject = {
+      i18nKey: "key",
+      stackTrace: [],
+      exceptionMessage: "Hi", 
+      messageParameters: [],
+      exceptionClass: "Clazz",
+      exceptionCause: null
     };
     restServiceClient.setDispatch(dispatch);
     const errorStatus = "I am a teapot";
@@ -174,11 +200,13 @@ describe("Rest Service Client", () => {
       status: 404,
       data: data,
       statusText: errorStatus,
-      headers: {},
+      headers: {
+        "content-type": "application/json;charset=utf-8"
+      },
       config: {}
     };
     await expect(restServiceClient.handleResponse(response)).rejects.toEqual(404);
-    expect(dispatch).toBeCalledWith(alert.showServerErrorMessage("I am a teapot"));
+    expect(dispatch).toBeCalledWith(alert.showServerError(data));
   });
 
   it("Should throw an Error if dispatch is not set", async () => {
