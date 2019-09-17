@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2018 Red Hat, Inc. and/or its affiliates.
+  ~ Copyright 2019 Red Hat, Inc. and/or its affiliates.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -20,15 +20,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.1.6.RELEASE</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <groupId>org.optaweb.employeerostering</groupId>
+    <artifactId>employee-rostering</artifactId>
+    <version>7.28.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.optaweb.employeerostering</groupId>
   <artifactId>optaweb-employee-rostering-backend</artifactId>
-  <version>7.25.0-SNAPSHOT</version>
+  <version>7.28.0-SNAPSHOT</version>
   <name>optaweb-employee-rostering-backend</name>
   <description>Employee Rostering as a Service Spring Boot Backend</description>
 
@@ -54,17 +53,28 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>1.8</java.version>
-    <version.org.jacoco>0.8.3</version.org.jacoco>
+    <version.org.springframework>5.1.9.RELEASE</version.org.springframework>
+    <version.org.jacoco>0.8.4</version.org.jacoco>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.optaplanner</groupId>
-        <artifactId>optaplanner-bom</artifactId>
-        <version>7.23.0.Final</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>2.1.8.RELEASE</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy-dep</artifactId>
+        <version>1.9.12</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>2.0.1.Final</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -95,10 +105,6 @@
 
     <dependency>
       <groupId>org.optaplanner</groupId>
-      <artifactId>optaplanner-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.optaplanner</groupId>
       <artifactId>optaplanner-benchmark</artifactId>
       <exclusions>
         <exclusion>
@@ -112,11 +118,26 @@
       <artifactId>optaplanner-persistence-jackson</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy-dep</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+    </dependency>
+
     <!-- Testing dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.optaplanner</groupId>
@@ -128,6 +149,15 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <configuration>
+            <profiles>
+              <profile>local</profile>
+            </profiles>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
@@ -144,7 +174,7 @@
         <plugin>
           <groupId>org.pitest</groupId>
           <artifactId>pitest-maven</artifactId>
-          <version>1.4.3</version>
+          <version>1.4.10</version>
           <configuration>
             <reportsDirectory>local/pit-reports</reportsDirectory>
             <timestampedReports>true</timestampedReports>
@@ -208,7 +238,7 @@
         <plugin>
           <groupId>org.sonarsource.scanner.maven</groupId>
           <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.6.0.1398</version>
+          <version>3.6.2</version>
           <executions>
             <execution>
               <phase>verify</phase>
@@ -224,7 +254,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
         <executions>
           <execution>
             <id>validate</id>
@@ -278,15 +308,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <configuration>
-          <profiles>
-            <profile>local</profile>
-          </profiles>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
@@ -307,50 +328,6 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jacoco</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.jacoco</groupId>
-          <artifactId>org.jacoco.agent</artifactId>
-          <version>${version.org.jacoco}</version>
-          <classifier>runtime</classifier>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <configuration>
-                <systemPropertyVariables>
-                  <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
-                </systemPropertyVariables>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.cargo</groupId>
-            <artifactId>cargo-maven2-plugin</artifactId>
-            <configuration>
-              <configuration>
-                <properties>
-                  <cargo.start.jvmargs>${jacoco.agent.line}</cargo.start.jvmargs>
-                </properties>
-              </configuration>
-            </configuration>
           </plugin>
         </plugins>
       </build>
