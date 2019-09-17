@@ -23,6 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -31,9 +32,9 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("select e from Employee e " +
             "where e.tenantId = :tenantId " +
             "order by LOWER(e.name)")
-    List<Employee> findAllByTenantId(Integer tenantId, Pageable pageable);
+    List<Employee> findAllByTenantId(@Param("tenantId") Integer tenantId, Pageable pageable);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from Employee e where e.tenantId = :tenantId")
-    void deleteForTenant(Integer tenantId);
+    void deleteForTenant(@Param("tenantId") Integer tenantId);
 }

@@ -26,6 +26,7 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -37,12 +38,12 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             " left join fetch sa.employee e" +
             " where sa.tenantId = :tenantId" +
             " order by sa.startDateTime, s.name, e.name")
-    List<Shift> findAllByTenantId(Integer tenantId);
+    List<Shift> findAllByTenantId(@Param("tenantId") Integer tenantId);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from Shift s" +
             " where s.tenantId = :tenantId")
-    void deleteForTenant(Integer tenantId);
+    void deleteForTenant(@Param("tenantId") Integer tenantId);
 
     @Query("select distinct sa from Shift sa" +
             " left join fetch sa.spot s" +
@@ -53,8 +54,9 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             " and sa.endDateTime >= :startDateTime" +
             " and sa.startDateTime < :endDateTime" +
             " order by sa.startDateTime, s.name, e.name")
-    List<Shift> filterWithSpots(Integer tenantId, Set<Spot> spotSet, OffsetDateTime startDateTime,
-                                OffsetDateTime endDateTime);
+    List<Shift> filterWithSpots(@Param("tenantId") Integer tenantId, @Param("spotSet") Set<Spot> spotSet,
+                                @Param("startDateTime") OffsetDateTime startDateTime,
+                                @Param("endDateTime") OffsetDateTime endDateTime);
 
     @Query("select distinct sa from Shift sa" +
             " left join fetch sa.spot s" +
@@ -65,6 +67,8 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
             " and sa.endDateTime >= :startDateTime" +
             " and sa.startDateTime < :endDateTime" +
             " order by sa.startDateTime, s.name, e.name")
-    List<Shift> filterWithEmployees(Integer tenantId, Set<Employee> employeeSet, OffsetDateTime startDateTime,
-                                    OffsetDateTime endDateTime);
+    List<Shift> filterWithEmployees(@Param("tenantId") Integer tenantId,
+                                    @Param("employeeSet") Set<Employee> employeeSet,
+                                    @Param("startDateTime") OffsetDateTime startDateTime,
+                                    @Param("endDateTime") OffsetDateTime endDateTime);
 }
