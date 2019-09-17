@@ -25,6 +25,7 @@ import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -34,11 +35,11 @@ public interface EmployeeAvailabilityRepository extends JpaRepository<EmployeeAv
             " left join fetch ea.employee e" +
             " where ea.tenantId = :tenantId" +
             " order by e.name, ea.startDateTime")
-    List<EmployeeAvailability> findAllByTenantId(Integer tenantId);
+    List<EmployeeAvailability> findAllByTenantId(@Param("tenantId") Integer tenantId);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
     @Query("delete from EmployeeAvailability ea where ea.tenantId = :tenantId")
-    void deleteForTenant(Integer tenantId);
+    void deleteForTenant(@Param("tenantId") Integer tenantId);
 
     @Query("select distinct ea from EmployeeAvailability ea" +
             " left join fetch ea.employee e" +
@@ -47,6 +48,8 @@ public interface EmployeeAvailabilityRepository extends JpaRepository<EmployeeAv
             " and ea.endDateTime >= :startDateTime" +
             " and ea.startDateTime < :endDateTime" +
             " order by e.name, ea.startDateTime")
-    List<EmployeeAvailability> filterWithEmployee(Integer tenantId, Set<Employee> employeeSet,
-                                                  OffsetDateTime startDateTime, OffsetDateTime endDateTime);
+    List<EmployeeAvailability> filterWithEmployee(@Param("tenantId") Integer tenantId,
+                                                  @Param("employeeSet") Set<Employee> employeeSet,
+                                                  @Param("startDateTime") OffsetDateTime startDateTime,
+                                                  @Param("endDateTime") OffsetDateTime endDateTime);
 }
