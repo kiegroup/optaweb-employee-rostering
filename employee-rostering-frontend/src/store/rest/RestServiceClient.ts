@@ -21,6 +21,7 @@ import { ServerSideExceptionInfo, BasicObject } from 'types';
 import { ThunkDispatch } from 'redux-thunk';
 import { AppState } from 'store/types';
 
+const typeJsonRegex = new RegExp('application/json.*');
 export default class RestServiceClient {
 
   restClient: AxiosInstance;
@@ -61,7 +62,7 @@ export default class RestServiceClient {
       return Promise.resolve(res.data);
     }
     else if (this.dispatch !== null) {
-      if (res.headers["content-type"] === "application/json") {
+      if (typeJsonRegex.test(res.headers["content-type"])) {
         this.dispatch(alert.showServerError(res.data as unknown as ServerSideExceptionInfo & BasicObject))
       }
       else {
