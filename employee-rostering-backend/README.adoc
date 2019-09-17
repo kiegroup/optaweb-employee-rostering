@@ -1,6 +1,6 @@
 = OptaWeb Employee Rostering Backend
 
-image:https://sonarcloud.io/api/project_badges/measure?project=employee-rostering&metric=alert_status[
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=alert_status[
 "Quality Gate Status", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
 image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=reliability_rating[
 "Reliability Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
