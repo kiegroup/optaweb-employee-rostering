@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.generator;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.domain.contract.Contract;
@@ -27,6 +28,7 @@ import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
+import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -44,6 +46,11 @@ public class RosterGeneratorTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
+    
+    @Autowired
+    private RosterGenerator rosterGenerator;
+    
+    private Integer tenantId;
 
     private final String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
     private final String spotPathURI = "http://localhost:8080/rest/tenant/{tenantId}/spot/";
@@ -87,69 +94,55 @@ public class RosterGeneratorTest {
         return restTemplate.exchange(tenantPathURI, HttpMethod.GET, null,
                                      new ParameterizedTypeReference<List<Tenant>>() {});
     }
+    
+    @Before
+    public void setup() {
+        tenantId = rosterGenerator.generateRoster(2, 7).getTenantId();
+    }
 
     @Test
     public void generateSkillListTest() {
-        ResponseEntity<List<Skill>> response = getSkills(1);
+        ResponseEntity<List<Skill>> response = getSkills(tenantId);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getName()).isEqualTo("Ambulatory care");
-        assertThat(response.getBody().get(1).getName()).isEqualTo("Critical care");
+        assertThat(response.getBody()).size().isGreaterThan(0);
     }
 
     @Test
     public void generateSpotListTest() {
-        ResponseEntity<List<Spot>> response = getSpots(1);
+        ResponseEntity<List<Spot>> response = getSpots(tenantId);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getName()).isEqualTo("Anaesthetics");
-        assertThat(response.getBody().get(1).getName()).isEqualTo("Cardiology");
-        assertThat(response.getBody().get(2).getName()).isEqualTo("Critical care");
-        assertThat(response.getBody().get(3).getName()).isEqualTo("Ear nose throat");
-        assertThat(response.getBody().get(4).getName()).isEqualTo("Emergency");
-        assertThat(response.getBody().get(5).getName()).isEqualTo("Gastroenterology");
-        assertThat(response.getBody().get(6).getName()).isEqualTo("Haematology");
-        assertThat(response.getBody().get(7).getName()).isEqualTo("Maternity");
-        assertThat(response.getBody().get(8).getName()).isEqualTo("Neurology");
-        assertThat(response.getBody().get(9).getName()).isEqualTo("Oncology");
+        assertThat(response.getBody()).size().isGreaterThan(0);
     }
 
     @Test
     public void generateContractListTest() {
-        ResponseEntity<List<Contract>> response = getContracts(1);
+        ResponseEntity<List<Contract>> response = getContracts(tenantId);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getName()).isEqualTo("Max 16 Hours Per Week Contract");
-        assertThat(response.getBody().get(0).getMaximumMinutesPerWeek()).isEqualTo(960);
-        assertThat(response.getBody().get(1).getName()).isEqualTo("Max 16 Hours Per Week, 32 Hours Per Month Contract");
-        assertThat(response.getBody().get(1).getMaximumMinutesPerMonth()).isEqualTo(1920);
-        assertThat(response.getBody().get(2).getName()).isEqualTo("Part Time Contract");
-        assertThat(response.getBody().get(2).getMaximumMinutesPerYear()).isEqualTo(null);
+        assertThat(response.getBody()).size().isGreaterThan(0);
     }
 
     @Test
     public void generateEmployeeListTest() {
-        ResponseEntity<List<Employee>> response = getEmployees(1);
+        ResponseEntity<List<Employee>> response = getEmployees(tenantId);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getName()).isEqualTo("Amy Cole");
-        assertThat(response.getBody().get(1).getName()).isEqualTo("Amy Fox");
-        assertThat(response.getBody().get(2).getName()).isEqualTo("Amy Green");
+        assertThat(response.getBody()).size().isGreaterThan(0);
     }
 
     @Test
     public void generateShiftTemplateListTest() {
-        ResponseEntity<List<ShiftTemplateView>> response = getShiftTemplates(1);
+        ResponseEntity<List<ShiftTemplateView>> response = getShiftTemplates(tenantId);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getShiftTemplateDuration().toString()).isEqualTo("PT8H");
-        assertThat(response.getBody().get(0).getDurationBetweenRotationStartAndTemplateStart().toString()).isEqualTo(
-                "PT6H");
+        assertThat(response.getBody()).size().isGreaterThan(0);
     }
 
     @Test
     public void generateShiftListTest() {
-        ResponseEntity<List<ShiftView>> response = getShifts(1);
+        ResponseEntity<List<ShiftView>> response = getShifts(tenantId);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
@@ -158,7 +151,6 @@ public class RosterGeneratorTest {
     public void generateTenantListTest() {
         ResponseEntity<List<Tenant>> response = getTenants();
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().get(0).getName()).isEqualTo("Hospital Los Angeles (98 employees)");
+        assertThat(response.getBody()).size().isGreaterThan(0);
     }
 }
