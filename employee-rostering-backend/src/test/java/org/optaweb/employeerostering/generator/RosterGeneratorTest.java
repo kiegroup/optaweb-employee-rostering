@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.generator;
 
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,6 +99,11 @@ public class RosterGeneratorTest {
     @Before
     public void setup() {
         tenantId = rosterGenerator.generateRoster(2, 7).getTenantId();
+    }
+    
+    @After
+    public void cleanup() {
+        restTemplate.delete(tenantPathURI + "/remove/" + tenantId);
     }
 
     @Test
