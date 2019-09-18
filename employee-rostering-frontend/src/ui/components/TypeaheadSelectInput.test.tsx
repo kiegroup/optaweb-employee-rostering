@@ -59,7 +59,7 @@ describe('TypeaheadSelectInput component', () => {
   it('should set selected to undefined on clear selection and call onChange', () => {
     const defaultValue = {name: "Option 2"};
     const select = mount(<TypeaheadSelectInput {...selectProps} value={defaultValue} />);
-    (select.instance() as Select).clearSelection({ eventPhase: 2 });
+    (select.instance() as Select).clearSelection();
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith(undefined);
   });
