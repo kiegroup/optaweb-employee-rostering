@@ -160,7 +160,7 @@ describe("Rest Service Client", () => {
     expect(restServiceClient.handleResponse(response)).resolves.toEqual(data);
   });
 
-  it("Should reject the promise on failure and show an alert alert with text if not JSON", async () => {
+  it("Should reject the promise on failure and show an alert with text if not JSON", async () => {
     const dispatch = jest.fn();
 
     const baseURL = "/rest";
