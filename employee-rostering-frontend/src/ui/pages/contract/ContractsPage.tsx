@@ -31,13 +31,13 @@ interface StateProps extends DataTableProps<Contract> {
   tenantId: number;
 }
 
-const mapStateToProps = (state: AppState, { t }: WithTranslation): StateProps => ({
+const mapStateToProps = (state: AppState, { t }: Props): StateProps => ({
   title: t("contracts"),
   columnTitles: [t("name"), t("maxMinutesPerDay"), t("maxMinutesPerWeek"),
     t("maxMinutesPerMonth"), t("maxMinutesPerYear")],
   tableData: contractSelectors.getContractList(state),
   tenantId: state.tenantData.currentTenantId
-}); 
+  });
 
 export interface DispatchProps {
   addContract: typeof contractOperations.addContract;
@@ -162,4 +162,4 @@ export class ContractsPage extends DataTable<Contract, Props> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(ContractsPage));
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(ContractsPage));

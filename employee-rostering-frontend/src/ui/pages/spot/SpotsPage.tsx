@@ -29,15 +29,16 @@ import Skill from 'domain/Skill';
 import { Predicate, ReadonlyPartial, Sorter } from 'types';
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
   skillList: Skill[];
 }
 
-const mapStateToProps = (state: AppState): StateProps => ({
-  title: "Spots",
-  columnTitles: ["Name", "Required Skill Set"],
+const mapStateToProps = (state: AppState, { t }: Props): StateProps => ({
+  title: t("spots"),
+  columnTitles: [t("name"), t("requiredSkillSet")],
   tableData: spotSelectors.getSpotList(state),
   skillList: skillSelectors.getSkillList(state),
   tenantId: state.tenantData.currentTenantId
@@ -55,7 +56,7 @@ const mapDispatchToProps: DispatchProps = {
   removeSpot: spotOperations.removeSpot
 };
 
-export type Props = StateProps & DispatchProps;
+export type Props = StateProps & DispatchProps & WithTranslation;
 
 export class SpotsPage extends DataTable<Spot, Props> {
   constructor(props: Props) {
@@ -95,7 +96,7 @@ export class SpotsPage extends DataTable<Spot, Props> {
       />,
       <StatefulMultiTypeaheadSelectInput
         key={1}
-        emptyText="Select required skills"
+        emptyText={this.props.t("selectRequiredSkills")}
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
         value={data.requiredSkillSet? data.requiredSkillSet : []}
@@ -135,4 +136,4 @@ export class SpotsPage extends DataTable<Spot, Props> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SpotsPage);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(SpotsPage));

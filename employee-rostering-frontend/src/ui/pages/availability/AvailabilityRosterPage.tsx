@@ -263,7 +263,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
           <Trans
-            i18nKey="noEmployees"
+            i18nKey="noEmployeesAvailability"
             components={[
               <Title key={0} headingLevel="h5" size="lg" />,
               <EmptyStateBody key={1} />,

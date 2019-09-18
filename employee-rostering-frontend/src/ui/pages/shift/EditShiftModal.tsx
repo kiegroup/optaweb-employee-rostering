@@ -27,6 +27,7 @@ import Employee from 'domain/Employee';
 import { AppState } from 'store/types';
 import { employeeSelectors } from 'store/employee';
 import { spotSelectors } from 'store/spot';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
 import 'react-datepicker/dist/react-datepicker.css';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
@@ -60,8 +61,8 @@ interface State {
   editedValue: Partial<Shift>;
 }
 
-export class EditShiftModal extends React.Component<Props, State> {
-  constructor(props: Props) {
+export class EditShiftModal extends React.Component<Props & WithTranslation, State> {
+  constructor(props: Props & WithTranslation) {
     super(props);
 
     this.onSave = this.onSave.bind(this);
@@ -99,10 +100,11 @@ export class EditShiftModal extends React.Component<Props, State> {
   }
 
   render() {
+    const { t } = this.props;
     const dateFormat = "MMMM dd, hh:mm a";
     return (
       <Modal
-        title={this.props.shift? "Edit Shift" : "Create Shift"}
+        title={this.props.shift? t("editShift") : t("createShift")}
         onClose={this.props.onClose}
         isOpen={this.props.isOpen}
         actions={
@@ -113,7 +115,7 @@ export class EditShiftModal extends React.Component<Props, State> {
               key={0}
               onClick={this.props.onClose}
             >
-              Close
+              {t("close")}
             </Button>
           ].concat(this.props.shift? [
             <Button
@@ -122,17 +124,17 @@ export class EditShiftModal extends React.Component<Props, State> {
               key={1}
               onClick={() => this.props.onDelete(this.props.shift as Shift)}
             >
-              Delete
+              {t("delete")}
             </Button>
           ] : []).concat([
-            <Button aria-label="Save" key={2} onClick={this.onSave}>Save</Button>
+            <Button aria-label="Save" key={2} onClick={this.onSave}>{t("save")}</Button>
           ])
         }
         isSmall
       >
         <Form id="modal-element" key={this.state.resetCount} onSubmit={(e) => e.preventDefault()}>
           <InputGroup>
-            <Label>Shift Start</Label>
+            <Label>{t("shiftStart")}</Label>
             <DatePicker
               aria-label="Shift Start"
               selected={this.state.editedValue.startDateTime}
@@ -144,7 +146,7 @@ export class EditShiftModal extends React.Component<Props, State> {
             />
           </InputGroup>
           <InputGroup>
-            <Label>Shift End</Label>
+            <Label>{t("shiftEnd")}</Label>
             <DatePicker
               aria-label="Shift End"
               selected={this.state.editedValue.endDateTime}
@@ -156,10 +158,10 @@ export class EditShiftModal extends React.Component<Props, State> {
             />
           </InputGroup>
           <InputGroup>
-            <Label>Spot</Label>
+            <Label>{t("spot")}</Label>
             <TypeaheadSelectInput
               aria-label="Spot"
-              emptyText="Select a Spot"
+              emptyText={t("selectSpot")}
               value={this.state.editedValue.spot}
               options={this.props.spotList}
               optionToStringMap={spot => spot.name}
@@ -169,35 +171,35 @@ export class EditShiftModal extends React.Component<Props, State> {
             />
           </InputGroup>
           <InputGroup>
-            <Label>Employee</Label>
+            <Label>{t("employee")}</Label>
             <TypeaheadSelectInput
               aria-label="Employee"
-              emptyText="Unassigned"
+              emptyText={t("unassigned")}
               value={(this.state.editedValue.employee !== null)? 
                 this.state.editedValue.employee :  undefined}
               options={[undefined,...this.props.employeeList]}
-              optionToStringMap={employee => employee? employee.name : "Unassigned"}
+              optionToStringMap={employee => employee? employee.name : t("unassigned")}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, employee: (employee !== undefined)? employee : null }
               }))}
             />
           </InputGroup>
           <InputGroup>
-            <Label>Rotation Employee</Label>
+            <Label>{t("rotationEmployee")}</Label>
             <TypeaheadSelectInput
               aria-label="Rotation Employee"
-              emptyText="None"
+              emptyText={t("none")}
               value={(this.state.editedValue.rotationEmployee !== null)? 
                 this.state.editedValue.rotationEmployee :  undefined}
               options={[undefined,...this.props.employeeList]}
-              optionToStringMap={employee => employee? employee.name : "None"}
+              optionToStringMap={employee => employee? employee.name : t("none")}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, rotationEmployee: (employee !== undefined)? employee : null }
               }))}
             />
           </InputGroup>
           <InputGroup>
-            <Label>Is Pinned</Label>
+            <Label>{t("isPinned")}</Label>
             <Switch
               aria-label="Is Pinned"
               isChecked={this.state.editedValue.pinnedByUser}
@@ -212,4 +214,4 @@ export class EditShiftModal extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps)(EditShiftModal);
+export default connect(mapStateToProps)(withTranslation()(EditShiftModal));
