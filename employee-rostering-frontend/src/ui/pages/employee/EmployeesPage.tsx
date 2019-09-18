@@ -35,7 +35,8 @@ import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadS
 import { CubesIcon } from '@patternfly/react-icons';
 import {
   withRouter, RouteComponentProps,
-} from 'react-router-dom'
+} from 'react-router-dom';
+import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 
 interface StateProps extends DataTableProps<Employee> {
   tenantId: number;
@@ -43,9 +44,9 @@ interface StateProps extends DataTableProps<Employee> {
   contractList: Contract[];
 }
 
-const mapStateToProps = (state: AppState): StateProps => ({
-  title: "Spots",
-  columnTitles: ["Name", "Contract", "Skill Proficiencies"],
+const mapStateToProps = (state: AppState, { t }: WithTranslation): StateProps => ({
+  title: t("employees"),
+  columnTitles: [t("name"), t("contract"), t("skillProficiencies")],
   tableData: employeeSelectors.getEmployeeList(state),
   skillList: skillSelectors.getSkillList(state),
   contractList: contractSelectors.getContractList(state),
@@ -64,7 +65,7 @@ const mapDispatchToProps: DispatchProps = {
   removeEmployee: employeeOperations.removeEmployee
 };
 
-export type Props = RouteComponentProps & StateProps & DispatchProps;
+export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
 
 export class EmployeesPage extends DataTable<Employee, Props> {
   constructor(props: Props) {
@@ -105,7 +106,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
       />,
       <StatefulTypeaheadSelectInput
         key={1}
-        emptyText="Select a contract..."
+        emptyText={this.props.t("selectAContract")}
         optionToStringMap={c => c.name}
         value={data.contract}
         options={this.props.contractList}
@@ -113,7 +114,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
       />,
       <StatefulMultiTypeaheadSelectInput
         key={2}
-        emptyText="Select skill proficiencies"
+        emptyText={this.props.t("selectSkillProficiencies")}
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
         value={data.skillProficiencySet? data.skillProficiencySet : []}
@@ -159,20 +160,19 @@ export class EmployeesPage extends DataTable<Employee, Props> {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h5" size="lg">
-            There are no Contracts
-          </Title>
-          <EmptyStateBody>
-            The current tenant have no Contracts. You need at least one Contract to add Employees.
-            You can add a Contract in the &quot;Contracts&quot; page.
-          </EmptyStateBody>
-          <Button
-            aria-label="Contracts Page"
-            variant="primary"
-            onClick={() => this.props.history.push('/contracts')}
-          >
-            Go to the Contracts page
-          </Button>
+          <Trans
+            i18nKey="noContractsEmployees"
+            components={[
+              <Title headingLevel="h5" size="lg" key={0} />,
+              <EmptyStateBody key={1} />,
+              <Button
+                key={2}
+                aria-label="Contracts Page"
+                variant="primary"
+                onClick={() => this.props.history.push('/contracts')}
+              />
+            ]}
+          />
         </EmptyState>
       );
     }
@@ -180,4 +180,4 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(EmployeesPage));
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(withRouter(EmployeesPage)));

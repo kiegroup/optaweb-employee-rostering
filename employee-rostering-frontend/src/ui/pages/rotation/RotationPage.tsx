@@ -31,7 +31,7 @@ import RosterState from 'domain/RosterState';
 
 import ShiftTemplate from 'domain/ShiftTemplate';
 import { shiftTemplateSelectors, shiftTemplateOperations } from 'store/rotation';
-import { WithTranslation, withTranslation, useTranslation } from 'react-i18next';
+import { WithTranslation, withTranslation, useTranslation, Trans } from 'react-i18next';
 import EditShiftTemplateModal from './EditShiftTemplateModal';
 import { EditIcon, TrashIcon, CubesIcon } from '@patternfly/react-icons';
 import Schedule from 'ui/components/calendar/Schedule';
@@ -108,7 +108,7 @@ const ShiftTemplatePopoverHeader: React.FC<{
         {t('shiftTemplate', {
           spot: props.shiftTemplate.spot.name,
           rotationEmployee: props.shiftTemplate.rotationEmployee ? props.shiftTemplate.rotationEmployee.name
-            : 'Unassigned',
+            : t('Unassigned'),
           dayStart: Math.floor(modulo(
             props.shiftTemplate.durationBetweenRotationStartAndTemplateStart.asDays(),
             props.rotationLength,
@@ -197,25 +197,25 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
   }
 
   render() {
+    const { t } = this.props;
     if (this.props.rosterState === null || this.props.isLoading || this.props.spotList.length <= 0
       || this.state.shownSpot === null || !this.props.tReady) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h5" size="lg">
-            There are no Spots
-          </Title>
-          <EmptyStateBody>
-            The current tenant have no Spots. You need at least one Spot to see the Rotation.
-            You can add a Spot in the &quot;Spots&quot; page.
-          </EmptyStateBody>
-          <Button
-            aria-label="Spots Page"
-            variant="primary"
-            onClick={() => this.props.history.push('/spots')}
-          >
-            Go to the Spots page
-          </Button>
+          <Trans
+            i18nKey="noSpotsRotation"
+            components={[
+              <Title headingLevel="h5" size="lg" key={0} />,
+              <EmptyStateBody key={1} />,
+              <Button
+                key={2}
+                aria-label="Spots Page"
+                variant="primary"
+                onClick={() => this.props.history.push('/spots')}
+              />
+            ]}
+          />
         </EmptyState>
       );
     }
@@ -267,7 +267,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
           <LevelItem style={{ display: 'flex' }}>
             <TypeaheadSelectInput
               aria-label="Select Spot"
-              emptyText="Select Spot"
+              emptyText={t("selectSpot")}
               optionToStringMap={spot => spot.name}
               options={this.props.spotList}
               value={this.state.shownSpot}
@@ -286,17 +286,17 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
               perPage={7}
               perPageOptions={[]}
               titles={{
-                items: 'days',
-                page: 'week',
-                itemsPerPage: 'Week #',
-                perPageSuffix: 'Week #',
-                toFirstPage: 'Go to the first week',
-                toPreviousPage: 'Go to the previous week',
-                toLastPage: 'Go to the last week',
-                toNextPage: 'Go to the next week',
-                optionsToggle: 'Select',
-                currPage: 'Current week',
-                paginationTitle: 'Week Select',
+                items: t('days'),
+                page: t('week'),
+                itemsPerPage: t('weekNum'),
+                perPageSuffix: t('weekNum'),
+                toFirstPage: t('gotoFirstWeek'),
+                toPreviousPage: t('gotoPreviousWeek'),
+                toLastPage: t('gotoLastWeek'),
+                toNextPage: t('gotoNextWeek'),
+                optionsToggle: t('select'),
+                currPage: t('currentWeek'),
+                paginationTitle: t('weekSelect'),
               }}
             />
           </LevelItem>
@@ -311,7 +311,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
                 });
               }}
             >
-              Create Shift Template
+              {t('createShiftTemplate')}
             </Button>
           </LevelItem>
         </Level>
@@ -349,7 +349,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
           }
           events={events}
           titleAccessor={e => (e.shiftTemplate.rotationEmployee
-            ? e.shiftTemplate.rotationEmployee.name : 'Unassigned')}
+            ? e.shiftTemplate.rotationEmployee.name : t('unassigned'))}
           startAccessor={e => e.start}
           endAccessor={e => e.end}
           addEvent={

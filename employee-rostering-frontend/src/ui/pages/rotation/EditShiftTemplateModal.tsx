@@ -167,9 +167,10 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
   }
 
   render() {
+    const { t } = this.props;
     return (
       <Modal
-        title={this.props.shiftTemplate? "Edit Shift Template" : "Create Shift Template"}
+        title={this.props.shiftTemplate? t("editShiftTemplate") : t("createShiftTemplate")}
         onClose={this.props.onClose}
         isOpen={this.props.isOpen}
         actions={
@@ -180,7 +181,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
               key={0}
               onClick={this.props.onClose}
             >
-              Close
+              {t("close")}
             </Button>
           ].concat(this.props.shiftTemplate? [
             <Button 
@@ -189,20 +190,20 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
               key={1}
               onClick={() => this.props.onDelete(this.props.shiftTemplate as ShiftTemplate)}
             >
-              Delete
+              {t("delete")}
             </Button>
           ] : []).concat([
-            <Button aria-label="Save" key={2} onClick={this.onSave}>Save</Button>
+            <Button aria-label="Save" key={2} onClick={this.onSave}>{t("save")}</Button>
           ])
         }
         isSmall
       >
         <Form id="modal-element" key={this.state.resetCount} onSubmit={(e) => e.preventDefault()}>
           <InputGroup>
-            <Label>Spot</Label>
+            <Label>{t("spot")}</Label>
             <TypeaheadSelectInput
               aria-label="Spot"
-              emptyText="Select a Spot..."
+              emptyText={t("selectASpot")}
               value={this.state.editedValue.spot}
               options={this.props.spotList}
               optionToStringMap={spot => spot.name}
@@ -212,7 +213,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             />
           </InputGroup>
           <InputGroup>
-            <Label>Start Day Offset</Label>
+            <Label>{t("startDayOffset")}</Label>
             <TextInput
               aria-label="Start Day Offset"
               type="number"
@@ -229,9 +230,9 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
                 }));
               }}
             />
-            <Label>Start Time</Label>
+            <Label>{t("startTime")}</Label>
             <TextInput
-              aria-label="Start Time"
+              aria-label={t("startTime")}
               type="time"
               defaultValue={this.state.editedValue.startTime?
                 moment("2018-01-01T00:00").add(this.state.editedValue.startTime.hours, "hours")
@@ -253,7 +254,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             />
           </InputGroup>
           <InputGroup>
-            <Label>End Day Offset</Label>
+            <Label>{t("endDayOffset")}</Label>
             <TextInput
               aria-label="End Day Offset"
               type="number"
@@ -270,7 +271,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
                 }));
               }}
             />
-            <Label>End Time</Label>
+            <Label>{t("endTime")}</Label>
             <TextInput
               aria-label="End Time"
               defaultValue={this.state.editedValue.endTime? 
@@ -294,13 +295,13 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             />
           </InputGroup>
           <InputGroup>
-            <Label>Rotation Employee</Label>
+            <Label>{t("rotationEmployee")}</Label>
             <TypeaheadSelectInput
               aria-label="Employee"
-              emptyText="Unassigned"
+              emptyText={t("unassigned")}
               value={this.state.editedValue.rotationEmployee? this.state.editedValue.rotationEmployee : undefined}
               options={[undefined,...this.props.employeeList]}
-              optionToStringMap={employee => employee? employee.name : "Unassigned"}
+              optionToStringMap={employee => employee? employee.name : t("unassigned")}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, rotationEmployee: employee || null },
               }))}

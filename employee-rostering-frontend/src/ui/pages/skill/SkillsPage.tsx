@@ -24,14 +24,15 @@ import { connect } from 'react-redux';
 import { Predicate, Sorter, ReadonlyPartial } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
+import { withTranslation, WithTranslation } from 'react-i18next';
 
 interface StateProps extends DataTableProps<Skill> {
   tenantId: number;
 }
 
-const mapStateToProps = (state: AppState): StateProps => ({
-  title: "Skills",
-  columnTitles: ["Name"],
+const mapStateToProps = (state: AppState, { t }: Props): StateProps => ({
+  title: t("skills"),
+  columnTitles: [t("name")],
   tableData: skillSelectors.getSkillList(state),
   tenantId: state.tenantData.currentTenantId
 }); 
@@ -48,7 +49,7 @@ const mapDispatchToProps: DispatchProps = {
   removeSkill: skillOperations.removeSkill
 };
 
-export type Props = StateProps & DispatchProps;
+export type Props = StateProps & DispatchProps & WithTranslation;
 
 export class SkillsPage extends DataTable<Skill, Props> {
   constructor(props: Props) {
@@ -107,4 +108,4 @@ export class SkillsPage extends DataTable<Skill, Props> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SkillsPage);
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(SkillsPage));

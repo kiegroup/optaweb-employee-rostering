@@ -37,7 +37,7 @@ import {
   withRouter, RouteComponentProps,
 } from 'react-router-dom'
 import { CubesIcon } from '@patternfly/react-icons';
-
+import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 
 interface StateProps {
   isSolving: boolean;
@@ -99,7 +99,7 @@ const mapDispatchToProps: DispatchProps = {
   getInitialShiftRoster: rosterOperations.getInitialShiftRoster,
 }
 
-export type Props = RouteComponentProps & StateProps & DispatchProps;
+export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
 interface State {
   isCreatingOrEditingShift: boolean;
   selectedShift?: Shift;
@@ -193,6 +193,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 
   render() {
+    const { t } = this.props;
     if (this.props.shownSpotList.length <= 0) {
       if (!this.props.isLoading && this.props.allSpotList.length > 0) {
         this.props.getInitialShiftRoster();
@@ -200,20 +201,19 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
-          <Title headingLevel="h5" size="lg">
-            There are no Spots
-          </Title>
-          <EmptyStateBody>
-            The current tenant have no Spots. You need at least one Spot to see the Shift Roster.
-            You can add a Spot in the &quot;Spots&quot; page.
-          </EmptyStateBody>
-          <Button
-            aria-label="Spots Page"
-            variant="primary"
-            onClick={() => this.props.history.push('/spots')}
-          >
-            Go to the Spots page
-          </Button>
+          <Trans
+            i18nKey="noSpotsShift"
+            components={[
+              <Title headingLevel="h5" size="lg" key={0} />,
+              <EmptyStateBody key={1} />,
+              <Button
+                key={2}
+                aria-label="Spots Page"
+                variant="primary"
+                onClick={() => this.props.history.push('/spots')}
+              />
+            ]}
+          />
         </EmptyState>
       );
     }
@@ -234,7 +234,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           <LevelItem style={{ display: 'flex' }}>
             <TypeaheadSelectInput
               aria-label="Select Spot"
-              emptyText="Select Spot"
+              emptyText={t("selectSpot")}
               optionToStringMap={spot => spot.name}
               options={this.props.allSpotList}
               value={this.props.shownSpotList[0]}
@@ -252,7 +252,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               aria-label="Publish"
               onClick={this.props.publishRoster}
             >
-              Publish
+              {t("publish")}
             </Button>
             {(!this.props.isSolving
               && (
@@ -261,7 +261,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                   aria-label="Solve"
                   onClick={this.props.solveRoster}
                 >
-                  Schedule
+                  {t("schedule")}
                 </Button>
               )) || (
               <Button
@@ -269,7 +269,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 aria-label="Terminate Early"
                 onClick={this.props.terminateSolvingRosterEarly}
               >
-                Terminate Early
+                {t("terminateEarly")}
               </Button>
             )
             }
@@ -282,7 +282,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               }
               }
             >
-              Refresh
+              {t("refresh")}
             </Button>
             <Button
               style={{ margin: '5px' }}
@@ -294,7 +294,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 })
               }}
             >
-              Create Shift
+              {t("createShift")}
             </Button>
           </LevelItem>
         </Level>
@@ -322,7 +322,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           startDate={startDate}
           endDate={endDate}
           events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) as Shift[]}
-          titleAccessor={shift => (shift.employee ? shift.employee.name : 'Unassigned')}
+          titleAccessor={shift => (shift.employee ? shift.employee.name : t("unassigned"))}
           startAccessor={shift => moment(shift.startDateTime).toDate()}
           endAccessor={shift => moment(shift.endDateTime).toDate()}
           addEvent={
@@ -357,4 +357,4 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ShiftRosterPage));
+export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(ShiftRosterPage)));
