@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.service.admin;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/admin")
 @Validated
+@Api(tags = "Admin")
 public class AdminController {
 
     private final AdminService adminService;
