@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/shift")
 @Validated
+@Api(tags = "Shift")
 public class ShiftController {
 
     private final ShiftService shiftService;

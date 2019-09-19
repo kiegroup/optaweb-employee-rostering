@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/rotation")
 @Validated
+@Api(tags = "Rotation")
 public class RotationController {
 
     private final RotationService rotationService;

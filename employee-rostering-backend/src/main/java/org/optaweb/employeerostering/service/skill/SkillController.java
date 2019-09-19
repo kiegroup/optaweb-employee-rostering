@@ -21,6 +21,7 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.skill.view.SkillView;
@@ -39,6 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/tenant/{tenantId}/skill")
 @Validated
+@Api(tags = "Skill")
 public class SkillController {
 
     private final SkillService skillService;
