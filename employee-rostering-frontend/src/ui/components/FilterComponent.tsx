@@ -17,6 +17,7 @@ import * as React from "react";
 import { TextInput, Button, ButtonVariant } from "@patternfly/react-core";
 import './FilterComponent.css';
 import { Predicate } from "types";
+import { WithTranslation, withTranslation } from "react-i18next";
 
 export interface FilterProps<T> {
   filter: (filter: string) => Predicate<T>;
@@ -27,9 +28,9 @@ export interface FilterState {
   filterText: string;
 }
 
-class FilterComponent<T> extends React.Component<FilterProps<T>, FilterState> {
+class FilterComponent<T> extends React.Component<FilterProps<T> & WithTranslation, FilterState> {
 
-  constructor(props: FilterProps<T>) {
+  constructor(props: FilterProps<T> & WithTranslation) {
     super(props);
     this.state = {filterText: ""};
     this.updateFilter = this.updateFilter.bind(this);
@@ -41,11 +42,12 @@ class FilterComponent<T> extends React.Component<FilterProps<T>, FilterState> {
   }
 
   render() {
+	const { t } = this.props;
     return (
       <div className="search-icons">
         <TextInput
           aria-label="Search"
-          placeholder="Search..."
+          placeholder={t("search")}
           value={this.state.filterText}
           onChange={this.updateFilter} 
         />
@@ -81,4 +83,4 @@ class FilterComponent<T> extends React.Component<FilterProps<T>, FilterState> {
   }
 }
 
-export default FilterComponent;
+export default withTranslation()(FilterComponent);

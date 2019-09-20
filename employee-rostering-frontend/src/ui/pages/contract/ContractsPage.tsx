@@ -31,10 +31,11 @@ interface StateProps extends DataTableProps<Contract> {
   tenantId: number;
 }
 
-const mapStateToProps = (state: AppState, { t }: Props): StateProps => ({
-  title: t("contracts"),
-  columnTitles: [t("name"), t("maxMinutesPerDay"), t("maxMinutesPerWeek"),
-    t("maxMinutesPerMonth"), t("maxMinutesPerYear")],
+const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
+  ...ownProps,
+  title: ownProps.t("contracts"),
+  columnTitles: [ownProps.t("name"), ownProps.t("maxMinutesPerDay"), ownProps.t("maxMinutesPerWeek"),
+    ownProps.t("maxMinutesPerMonth"), ownProps.t("maxMinutesPerYear")],
   tableData: contractSelectors.getContractList(state),
   tenantId: state.tenantData.currentTenantId
   });

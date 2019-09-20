@@ -17,6 +17,21 @@ import i18n from 'i18next';
 import Backend from 'i18next-xhr-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
+import { registerLocale, setDefaultLocale } from 'react-datepicker';
+import cmn from 'date-fns/locale/zh-CN';
+
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+
+registerLocale('cmn', cmn);
+
+function languageToMomentLocale(lang: string): string {
+    switch (lang) {
+        case 'cmn':
+        return 'zh-cn';
+    }
+    return lang;
+}
 
 // From https://github.com/i18next/react-i18next/blob/master/example/react/src/i18n.js
 i18n
@@ -39,6 +54,10 @@ i18n
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     }
-  });
+  },() => {
+      moment.locale(languageToMomentLocale(i18n.language));
+      setDefaultLocale(i18n.language);
+      console.log(moment.locale());
+    });
 
 export default i18n;
