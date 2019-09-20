@@ -83,4 +83,4 @@ class FilterComponent<T> extends React.Component<FilterProps<T> & WithTranslatio
   }
 }
 
-export default withTranslation()(FilterComponent);
+export default withTranslation("FilterComponent")(FilterComponent);
