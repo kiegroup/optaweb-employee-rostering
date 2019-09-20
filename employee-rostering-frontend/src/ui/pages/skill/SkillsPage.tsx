@@ -30,9 +30,10 @@ interface StateProps extends DataTableProps<Skill> {
   tenantId: number;
 }
 
-const mapStateToProps = (state: AppState, { t }: Props): StateProps => ({
-  title: t("skills"),
-  columnTitles: [t("name")],
+const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
+  ...ownProps,
+  title: ownProps.t("skills"),
+  columnTitles: [ownProps.t("name")],
   tableData: skillSelectors.getSkillList(state),
   tenantId: state.tenantData.currentTenantId
 }); 

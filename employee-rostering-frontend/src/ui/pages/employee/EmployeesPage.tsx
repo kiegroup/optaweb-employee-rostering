@@ -44,9 +44,10 @@ interface StateProps extends DataTableProps<Employee> {
   contractList: Contract[];
 }
 
-const mapStateToProps = (state: AppState, { t }: WithTranslation): StateProps => ({
-  title: t("employees"),
-  columnTitles: [t("name"), t("contract"), t("skillProficiencies")],
+const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
+  ...ownProps,
+  title: ownProps.t("employees"),
+  columnTitles: [ownProps.t("name"), ownProps.t("contract"), ownProps.t("skillProficiencies")],
   tableData: employeeSelectors.getEmployeeList(state),
   skillList: skillSelectors.getSkillList(state),
   contractList: contractSelectors.getContractList(state),

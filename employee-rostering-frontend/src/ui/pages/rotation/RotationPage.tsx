@@ -90,7 +90,7 @@ interface State {
   weekNumber: number;
 }
 
-export const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
+//export const baseDate = moment('2018-01-01T00:00').locale('en').startOf('week').toDate();
 
 const ShiftTemplatePopoverHeader: React.FC<{
   shiftTemplate: ShiftTemplate;
@@ -197,6 +197,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
   }
 
   render() {
+    const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
     const { t } = this.props;
     if (this.props.rosterState === null || this.props.isLoading || this.props.spotList.length <= 0
       || this.state.shownSpot === null || !this.props.tReady) {

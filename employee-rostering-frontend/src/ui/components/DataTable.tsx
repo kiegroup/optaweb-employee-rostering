@@ -36,8 +36,9 @@ import { EditableComponent } from './EditableComponent';
 import FilterComponent from './FilterComponent';
 import { Predicate, ReadonlyPartial, Sorter } from 'types';
 import { toggleElement } from 'util/ImmutableCollectionOperations';
+import { WithTranslation } from 'react-i18next';
 
-export interface DataTableProps<T> {
+export interface DataTableProps<T> extends WithTranslation {
   title: string;
   columnTitles: string[];
   tableData: T[];
@@ -266,6 +267,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
   }
 
   render() {
+    const { t } = this.props;
     const setProperty = (key: keyof T, value: T[keyof T] | undefined) => {
       this.setState(prevState => ({ newRowData: { ...prevState.newRowData, [key]: value } }));
     };
@@ -318,7 +320,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
             />
           </LevelItem>
           <LevelItem style={{ display: 'flex' }}>
-            <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>Add</Button>
+            <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>{t("add")}</Button>
             <Pagination
               itemCount={filteredRows.length}
               perPage={this.state.perPage}
