@@ -57,7 +57,7 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     }
 
     private void deleteTenant(Integer id) {
-        restTemplate.delete(tenantPathURI + "remove/" + id);
+        restTemplate.postForEntity(tenantPathURI + "remove/" + id, null, Void.class);
     }
 
     private ResponseEntity<RosterParametrization> getRosterParametrization(Integer tenantId) {
