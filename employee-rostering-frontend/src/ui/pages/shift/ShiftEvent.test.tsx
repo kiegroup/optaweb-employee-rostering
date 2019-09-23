@@ -33,7 +33,7 @@ describe('ShiftEvent', () => {
         shift: baseShift
       }]
     };
-    const requiredSkillViolations = mount(<Indictments.RequiredSkillViolations {...shift}/>);
+    const requiredSkillViolations = mount(<Indictments.RequiredSkillViolations {...shift} />);
     expect(toJson(requiredSkillViolations)).toMatchSnapshot();
   });
 

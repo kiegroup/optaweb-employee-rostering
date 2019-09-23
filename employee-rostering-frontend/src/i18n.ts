@@ -26,11 +26,11 @@ import 'moment/locale/zh-cn';
 registerLocale('cmn', cmn);
 
 function languageToMomentLocale(lang: string): string {
-    switch (lang) {
-        case 'cmn':
-        return 'zh-cn';
-    }
-    return lang;
+  switch (lang) {
+    case 'cmn':
+      return 'zh-cn';
+  }
+  return lang;
 }
 
 // From https://github.com/i18next/react-i18next/blob/master/example/react/src/i18n.js
@@ -53,7 +53,7 @@ i18n
     ns: [
       'Alerts',
       'AvailabilityRosterPage',
-	  'Common',
+      'Common',
       'ContractsPage',
       'EditAvailabilityModal',
       'EditShiftModal',
@@ -76,9 +76,8 @@ i18n
       escapeValue: false, // not needed for react as it escapes by default
     }
   },() => {
-      moment.locale(languageToMomentLocale(i18n.language));
-      setDefaultLocale(i18n.language);
-      console.log(moment.locale());
-    });
+    moment.locale(languageToMomentLocale(i18n.language));
+    setDefaultLocale(i18n.language);
+  });
 
 export default i18n;

@@ -42,7 +42,7 @@ export class FilterComponent<T> extends React.Component<FilterProps<T> & WithTra
   }
 
   render() {
-	const { t } = this.props;
+    const { t } = this.props;
     return (
       <div className="search-icons">
         <TextInput

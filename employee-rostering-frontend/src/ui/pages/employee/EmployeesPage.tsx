@@ -182,4 +182,5 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   }
 }
 
-export default withTranslation("EmployeesPage")(connect(mapStateToProps, mapDispatchToProps)(withRouter(EmployeesPage)));
+export default withTranslation("EmployeesPage")(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(EmployeesPage)));

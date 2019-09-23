@@ -41,13 +41,13 @@ const LoadingSpinner: React.FC = () => (
 
 ReactDOM.render(
   <I18nextProvider i18n={i18n}>
-  <Provider store={store}>
-    <BrowserRouter>
-      <React.Suspense fallback={<LoadingSpinner />}> 
-        <App />
-      </React.Suspense>
-    </BrowserRouter>
-  </Provider>
+    <Provider store={store}>
+      <BrowserRouter>
+        <React.Suspense fallback={<LoadingSpinner />}> 
+          <App />
+        </React.Suspense>
+      </BrowserRouter>
+    </Provider>
   </I18nextProvider>,
   document.getElementById('root') as HTMLElement,
 );

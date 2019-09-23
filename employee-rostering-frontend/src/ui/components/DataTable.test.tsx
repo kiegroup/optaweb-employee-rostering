@@ -367,7 +367,7 @@ describe('DataTable component', () => {
 });
 
 const noRows: DataTableProps<MockData> = {
-   ...useTranslation(),
+  ...useTranslation(),
   tReady: true,
   title: "Data Table",
   columnTitles: ["Column 1", "Column 2"],
@@ -375,7 +375,7 @@ const noRows: DataTableProps<MockData> = {
 };
 
 const twoRows: DataTableProps<MockData> = {
-   ...useTranslation(),
+  ...useTranslation(),
   tReady: true,
   title: "Data Table",
   columnTitles: ["Column 1", "Column 2"],

@@ -392,4 +392,4 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
 }
 
 export default withTranslation("RotationPage")(
-	connect(mapStateToProps, mapDispatchToProps)(withRouter(RotationPage)));
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(RotationPage)));

@@ -38,7 +38,7 @@ const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
     ownProps.t("maxMinutesPerMonth"), ownProps.t("maxMinutesPerYear")],
   tableData: contractSelectors.getContractList(state),
   tenantId: state.tenantData.currentTenantId
-  });
+});
 
 export interface DispatchProps {
   addContract: typeof contractOperations.addContract;
