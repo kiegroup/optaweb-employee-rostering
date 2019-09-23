@@ -28,7 +28,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import 'ui/components/calendar/ReactBigCalendarOverrides.css';
 
 export const Indictments: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   const indictmentList = (
     <List>
       <RequiredSkillViolations {...shift} />
@@ -54,7 +54,7 @@ export const Indictments: React.FC<Shift> = (shift) => {
 }
 
 export const RequiredSkillViolations: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <>
       {(shift.requiredSkillViolationList || []).map((v, index) => (
@@ -80,7 +80,7 @@ export const RequiredSkillViolations: React.FC<Shift> = (shift) => {
 };
 
 export const ContractMinutesViolations: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <>
       {(shift.contractMinutesViolationPenaltyList || []).map((v, index) => (
@@ -107,7 +107,7 @@ export const ContractMinutesViolations: React.FC<Shift> = (shift) => {
 }
 
 export const UnavailableEmployeeViolations: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <>
       {(shift.unavailableEmployeeViolationList || []).map((v, index) => (
@@ -129,7 +129,7 @@ export const UnavailableEmployeeViolations: React.FC<Shift> = (shift) => {
 // - "At most one shift assignment per day per employee"
 // - "No 2 shifts within 10 hours from each other"
 export const ShiftEmployeeConflictViolations: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <>
       {(shift.shiftEmployeeConflictList || []).map((v, index) => (
@@ -151,7 +151,7 @@ export const ShiftEmployeeConflictViolations: React.FC<Shift> = (shift) => {
 } 
 
 export const RotationViolationPenalties: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <>
       {(shift.rotationViolationPenaltyList || []).map((v, index) => (
@@ -169,7 +169,7 @@ export const RotationViolationPenalties: React.FC<Shift> = (shift) => {
 }
 
 export const UnassignedShiftPenalties: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <>
       {(shift.unassignedShiftPenaltyList || []).map((v, index) => (
@@ -184,7 +184,7 @@ export const UnassignedShiftPenalties: React.FC<Shift> = (shift) => {
 }
 
 export const UndesiredTimeslotForEmployeePenalties: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <>
       {(shift.undesiredTimeslotForEmployeePenaltyList || []).map((v, index) => (
@@ -203,7 +203,7 @@ export const UndesiredTimeslotForEmployeePenalties: React.FC<Shift> = (shift) =>
 }
 
 export const DesiredTimeslotForEmployeeRewards: React.FC<Shift> = (shift) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <>
       {(shift.desiredTimeslotForEmployeeRewardList || []).map((v, index) => (
@@ -257,7 +257,7 @@ const ShiftPopupHeader: React.FC<{
   onEdit: (shift: Shift) => void;
   onDelete: (shift: Shift) => void;
 }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <span>
       <Text>
@@ -285,7 +285,7 @@ const ShiftPopupHeader: React.FC<{
 }
 
 const ShiftPopupBody: React.FC<Shift> = shift => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("ShiftEvent");
   return (
     <span
       style={{

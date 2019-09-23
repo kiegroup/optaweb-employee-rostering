@@ -109,4 +109,5 @@ export class SkillsPage extends DataTable<Skill, Props> {
   }
 }
 
+// Skills Page have no unique translations
 export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(SkillsPage));

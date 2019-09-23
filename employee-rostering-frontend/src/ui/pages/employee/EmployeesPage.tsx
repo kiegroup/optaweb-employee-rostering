@@ -162,7 +162,8 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
           <Trans
-            i18nKey="noContractsEmployees"
+            t={this.props.t}
+            i18nKey="noContracts"
             components={[
               <Title headingLevel="h5" size="lg" key={0} />,
               <EmptyStateBody key={1} />,
@@ -181,4 +182,4 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   }
 }
 
-export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(withRouter(EmployeesPage)));
+export default withTranslation("EmployeesPage")(connect(mapStateToProps, mapDispatchToProps)(withRouter(EmployeesPage)));

@@ -1,0 +1,22 @@
+---
+rotationDay: Day {{day}}
+shiftTemplate: "{{spot}}, {{rotationEmployee}}, starting on Day {{dayStart}} of the
+  rotation at {{startTime}}, ending on Day {{dayEnd}} of the rotation at {{endTime}}."
+noSpots: 
+  <0>There are no Spots</0>
+  <1>
+    The current tenant have no Spots. You need at least one Spot to see the Rotation.
+    You can add a Spot in the "Spots" page.
+  </1>
+  <2>Go to the Spots page</2>
+days: days
+week: week
+weekNum: 'Week #'
+gotoFirstWeek: Go to the first week
+gotoPreviousWeek: Go to the previous week
+gotoLastWeek: Go to the last week
+gotoNextWeek: Go to the next week
+select: Select
+currentWeek: Current Week
+weekSelect: Week Select
+createShiftTemplate: Create Shift Template

@@ -1,0 +1,28 @@
+---
+add: 加
+close: 关
+refresh: 刷新
+save: 存
+delete: 删除
+name: 起名
+employee: 雇员
+employees: 多个雇员
+rotationEmployee: 轮换员工
+unassigned: 未分配
+skills: 技能
+spot: 位置
+spots: 多个位置
+contract: 合同
+contracts: 合同
+tenants: 佃户
+publish: 发布
+schedule: 安排
+terminateEarly: 尽早终止
+
+selectEmployee: 选择一个员工...
+selectSpot: 选择一个位置...
+
+EmployeeAvailabilityState:
+  DESIRED: 期望
+  UNDESIRED: 不需要
+  UNAVAILABLE: 不可用

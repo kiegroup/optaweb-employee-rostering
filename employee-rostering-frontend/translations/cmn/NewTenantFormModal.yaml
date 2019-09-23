@@ -1,0 +1,9 @@
+---
+createTenant: 创建租户
+scheduleStartDate: 计划开始日期
+draftLength: 吃水长度（天）
+publishNotice: 发布通知（天）
+publishLength: 发布时间（天）
+rotationLength: 旋转时间（天）
+timezone: 时区
+selectATimezone: 选择一个时区...

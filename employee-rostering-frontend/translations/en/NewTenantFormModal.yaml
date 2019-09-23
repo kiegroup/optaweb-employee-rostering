@@ -1,0 +1,9 @@
+---
+createTenant: Create Tenant
+scheduleStartDate: Schedule Start Date
+draftLength: Draft Length (days)
+publishNotice: Publish Notice (days)
+publishLength: Publish Length (days)
+rotationLength: Rotation Length (days)
+timezone: Timezone
+selectATimezone: Select a timezone...

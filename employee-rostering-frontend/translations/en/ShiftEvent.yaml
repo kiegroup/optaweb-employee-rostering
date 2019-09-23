@@ -1,0 +1,29 @@
+---
+indictments: Indictments
+
+missingRequiredSkills: The Employee "{{employee}}" does not have the following skills
+  which are required for the Spot "spot"
+
+exceededContractMaximumMinutes: The Employee "{{employee}}" have exceeded their maximum
+  {{durationly}} minutes. They have worked {{minutesWorked}} this {{duration}}; they
+  are allowed to work at most {{maxMinutesAllowed}} per {{duration}}.
+
+unavailableEmployee: The Employee "{{employee}}" is unavailable from {{from}} to {{to}}.
+
+conflictingShifts: 'The Employee "{{employee}}" is assigned to a conflicting shift:
+  {{spot}}, {{from}} - {{to}}.'
+
+employeeDoesNotMatchRotationEmployee: The Shift's Employee "{{employee}}" does not
+  match the Shift's Rotation Employee "{{rotationEmployee}}".
+
+unassignedShift: The Shift is unassigned.
+
+undesiredShiftForEmployee: The Employee "{{employee}}" does not want to work from
+  {{from}} to {{to}}.
+
+desiredShiftForEmployee: The Employee "{{employee}}" desires to work from {{from}}
+  to {{to}}.
+
+totalIndictment: 'Shift Indictment Score: {{score}}'
+penalty: 'Penalty: {{score}}'
+reward: 'Reward: {{score}}'

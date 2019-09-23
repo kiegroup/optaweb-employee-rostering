@@ -51,7 +51,7 @@ export interface State {
 
 export const AdminPage: React.FC<Props> = (props) => {
   const { tenantList } = props;
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // We don't have any unique translations
   const [ page, setPage ] = React.useState(1);
   const [ perPage, setPerPage ] = React.useState(10);
   const [ filter, setFilter ] = React.useState<Predicate<Tenant>>(() => () => true);

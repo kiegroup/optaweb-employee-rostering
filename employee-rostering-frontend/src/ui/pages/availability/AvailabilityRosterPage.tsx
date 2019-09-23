@@ -263,7 +263,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
           <Trans
-            i18nKey="noEmployeesAvailability"
+            t={t}
+            i18nKey="noEmployees"
             components={[
               <Title key={0} headingLevel="h5" size="lg" />,
               <EmptyStateBody key={1} />,
@@ -509,4 +510,5 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
   }
 }
 
-export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(withRouter(AvailabilityRosterPage)));
+export default withTranslation("AvailabilityRosterPage")(
+	connect(mapStateToProps, mapDispatchToProps)(withRouter(AvailabilityRosterPage)));

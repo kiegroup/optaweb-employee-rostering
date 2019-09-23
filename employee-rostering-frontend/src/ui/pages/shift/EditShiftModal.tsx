@@ -214,4 +214,5 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
   }
 }
 
-export default connect(mapStateToProps)(withTranslation()(EditShiftModal));
+export default withTranslation("EditShiftModal")(
+	connect(mapStateToProps)(EditShiftModal));

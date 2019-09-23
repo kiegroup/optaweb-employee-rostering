@@ -1,0 +1,29 @@
+---
+# Common words used acrossed many UI components
+add: Add
+close: Close
+refresh: Refresh
+save: Save
+delete: Delete
+name: Name
+employee: Employee
+employees: Employees
+rotationEmployee: Rotation Employee
+unassigned: Unassigned
+skills: Skills
+spot: Spot
+spots: Spots
+contract: Contract
+contracts: Contracts
+tenants: Tenants
+publish: Publish
+schedule: Schedule
+terminateEarly: Terminate Early
+
+selectSpot: Select a Spot...
+selectEmployee: Select an Employee...
+
+EmployeeAvailabilityState:
+  DESIRED: Desired
+  UNDESIRED: Undesired
+  UNAVAILABLE: Unavailable

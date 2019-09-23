@@ -21,7 +21,7 @@ import { RouteComponentProps } from 'react-router';
 import { Link, withRouter } from 'react-router-dom';
 
 export const Navigation = ({ location }: RouteComponentProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("Navigation");
   return (
     <Nav aria-label="Nav">
       <NavList variant={NavVariants.horizontal}>
@@ -34,7 +34,7 @@ export const Navigation = ({ location }: RouteComponentProps) => {
               itemId={itemId}
               isActive={location.pathname === path}
             >
-              <Link to={path}>{t(`nav.${link}`)}</Link>
+              <Link to={path}>{t(link)}</Link>
             </NavItem>
           );
         })}
