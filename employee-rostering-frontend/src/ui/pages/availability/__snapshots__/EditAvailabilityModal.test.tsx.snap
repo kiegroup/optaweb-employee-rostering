@@ -9,13 +9,13 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Save"
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -27,7 +27,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Create Availability"
+  title="Trans(i18nKey=createAvailability)"
 >
   <Form
     id="modal-element"
@@ -36,7 +36,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
   >
     <InputGroup>
       <Label>
-        Availability Start
+        Trans(i18nKey=availabilityStart)
       </Label>
       <t
         allowSameDay={false}
@@ -79,7 +79,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Availability End
+        Trans(i18nKey=availabilityEnd)
       </Label>
       <t
         allowSameDay={false}
@@ -126,7 +126,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        emptyText="Select an Employee..."
+        emptyText="Trans(i18nKey=selectEmployee)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -161,7 +161,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Type
+        Trans(i18nKey=type)
       </Label>
       <TypeaheadSelectInput
         aria-label="Type"
@@ -190,13 +190,13 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Save"
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -208,7 +208,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Create Availability"
+  title="Trans(i18nKey=createAvailability)"
 >
   <Form
     id="modal-element"
@@ -217,7 +217,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
   >
     <InputGroup>
       <Label>
-        Availability Start
+        Trans(i18nKey=availabilityStart)
       </Label>
       <t
         allowSameDay={false}
@@ -260,7 +260,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Availability End
+        Trans(i18nKey=availabilityEnd)
       </Label>
       <t
         allowSameDay={false}
@@ -307,7 +307,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        emptyText="Select an Employee..."
+        emptyText="Trans(i18nKey=selectEmployee)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -342,7 +342,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Type
+        Trans(i18nKey=type)
       </Label>
       <TypeaheadSelectInput
         aria-label="Type"
@@ -371,20 +371,20 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Delete"
         onClick={[Function]}
         variant="danger"
       >
-        Delete
+        Trans(i18nKey=delete)
       </Button>,
       <Button
         aria-label="Save"
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -396,7 +396,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Edit Availability"
+  title="Trans(i18nKey=editAvailability)"
 >
   <Form
     id="modal-element"
@@ -405,7 +405,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
   >
     <InputGroup>
       <Label>
-        Availability Start
+        Trans(i18nKey=availabilityStart)
       </Label>
       <t
         allowSameDay={false}
@@ -449,7 +449,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
     </InputGroup>
     <InputGroup>
       <Label>
-        Availability End
+        Trans(i18nKey=availabilityEnd)
       </Label>
       <t
         allowSameDay={false}
@@ -497,7 +497,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        emptyText="Select an Employee..."
+        emptyText="Trans(i18nKey=selectEmployee)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -558,7 +558,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
     </InputGroup>
     <InputGroup>
       <Label>
-        Type
+        Trans(i18nKey=type)
       </Label>
       <TypeaheadSelectInput
         aria-label="Type"

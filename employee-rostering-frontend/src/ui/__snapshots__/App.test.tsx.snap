@@ -28,93 +28,37 @@ exports[`App should render correctly 1`] = `
       <Connect(Alerts) />
       <Switch>
         <Route
-          component={
-            Object {
-              "$$typeof": Symbol(react.memo),
-              "WrappedComponent": [Function],
-              "compare": null,
-              "displayName": "Connect(SkillsPage)",
-              "type": [Function],
-            }
-          }
+          component={[Function]}
           exact={true}
           path="/skills"
         />
         <Route
-          component={
-            Object {
-              "$$typeof": Symbol(react.memo),
-              "WrappedComponent": [Function],
-              "compare": null,
-              "displayName": "Connect(SpotsPage)",
-              "type": [Function],
-            }
-          }
+          component={[Function]}
           exact={true}
           path="/spots"
         />
         <Route
-          component={
-            Object {
-              "$$typeof": Symbol(react.memo),
-              "WrappedComponent": [Function],
-              "compare": null,
-              "displayName": "Connect(ContractsPage)",
-              "type": [Function],
-            }
-          }
+          component={[Function]}
           exact={true}
           path="/contracts"
         />
         <Route
-          component={
-            Object {
-              "$$typeof": Symbol(react.memo),
-              "WrappedComponent": [Function],
-              "compare": null,
-              "displayName": "Connect(withRouter(EmployeesPage))",
-              "type": [Function],
-            }
-          }
+          component={[Function]}
           exact={true}
           path="/employees"
         />
         <Route
-          component={
-            Object {
-              "$$typeof": Symbol(react.memo),
-              "WrappedComponent": [Function],
-              "compare": null,
-              "displayName": "Connect(withRouter(ShiftRosterPage))",
-              "type": [Function],
-            }
-          }
+          component={[Function]}
           exact={true}
           path="/shift"
         />
         <Route
-          component={
-            Object {
-              "$$typeof": Symbol(react.memo),
-              "WrappedComponent": [Function],
-              "compare": null,
-              "displayName": "Connect(withRouter(AvailabilityRosterPage))",
-              "type": [Function],
-            }
-          }
+          component={[Function]}
           exact={true}
           path="/availability"
         />
         <Route
-          component={
-            Object {
-              "$$typeof": Symbol(react.memo),
-              "WrappedComponent": [Function],
-              "compare": null,
-              "displayName": "Connect(Component)",
-              "type": [Function],
-            }
-          }
+          component={[Function]}
           exact={true}
           path="/rotation"
         />

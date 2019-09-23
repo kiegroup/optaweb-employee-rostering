@@ -251,6 +251,7 @@ describe('Edit Availability Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
+
     editAvailabilityModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate("change", employee);
     expect(editAvailabilityModal.state("editedValue")).toEqual({
       employee: employee

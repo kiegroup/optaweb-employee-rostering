@@ -2,7 +2,7 @@
 
 exports[`ServerSideExceptionDialog should render an ServerSideException Alert correctly 1`] = `
 <Fragment>
-  error1
+  Trans(i18nKey=error1)
   <Button
     aria-label="Show Stack Trace"
     onClick={[Function]}
@@ -16,7 +16,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
         aria-label="Close"
         onClick={[Function]}
       >
-        Close
+        Trans(i18nKey=close)
       </Button>
     }
     ariaDescribedById=""
@@ -27,7 +27,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
     isSmall={false}
     onClose={[Function]}
     showClose={true}
-    title="Server Side Error"
+    title="Trans(i18nKey=serverSideError)"
   >
     <Title
       size="md"
@@ -78,7 +78,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
 
 exports[`ServerSideExceptionDialog should render an ServerSideException Modal correctly 1`] = `
 <Fragment>
-  error1
+  Trans(i18nKey=error1)
   <Button
     aria-label="Show Stack Trace"
     onClick={[Function]}
@@ -92,7 +92,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Modal co
         aria-label="Close"
         onClick={[Function]}
       >
-        Close
+        Trans(i18nKey=close)
       </Button>
     }
     ariaDescribedById=""
@@ -103,7 +103,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Modal co
     isSmall={false}
     onClose={[Function]}
     showClose={true}
-    title="Server Side Error"
+    title="Trans(i18nKey=serverSideError)"
   >
     <Title
       size="md"

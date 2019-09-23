@@ -12,7 +12,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         filter={[Function]}
         onChange={[Function]}
       />
@@ -28,7 +28,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
         isDisabled={false}
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         itemCount={2}
@@ -140,7 +140,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                   <OptionalInput
                     defaultValue={null}
                     isValid={[Function]}
-                    label="Max minutes per day"
+                    label="Trans(i18nKey=maxMinutesPerDay)"
                     onChange={[Function]}
                     valueMapper={[Function]}
                     valueToString={[Function]}
@@ -156,7 +156,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                   <OptionalInput
                     defaultValue={null}
                     isValid={[Function]}
-                    label="Max minutes per week"
+                    label="Trans(i18nKey=maxMinutesPerWeek)"
                     onChange={[Function]}
                     valueMapper={[Function]}
                     valueToString={[Function]}
@@ -172,7 +172,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                   <OptionalInput
                     defaultValue={null}
                     isValid={[Function]}
-                    label="Max minutes per month"
+                    label="Trans(i18nKey=maxMinutesPerMonth)"
                     onChange={[Function]}
                     valueMapper={[Function]}
                     valueToString={[Function]}
@@ -188,7 +188,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                   <OptionalInput
                     defaultValue={null}
                     isValid={[Function]}
-                    label="Max minutes per year"
+                    label="Trans(i18nKey=maxMinutesPerYear)"
                     onChange={[Function]}
                     valueMapper={[Function]}
                     valueToString={[Function]}
@@ -311,7 +311,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                   <OptionalInput
                     defaultValue={1}
                     isValid={[Function]}
-                    label="Max minutes per day"
+                    label="Trans(i18nKey=maxMinutesPerDay)"
                     onChange={[Function]}
                     valueMapper={[Function]}
                     valueToString={[Function]}
@@ -331,7 +331,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                   <OptionalInput
                     defaultValue={20}
                     isValid={[Function]}
-                    label="Max minutes per week"
+                    label="Trans(i18nKey=maxMinutesPerWeek)"
                     onChange={[Function]}
                     valueMapper={[Function]}
                     valueToString={[Function]}
@@ -351,7 +351,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                   <OptionalInput
                     defaultValue={10}
                     isValid={[Function]}
-                    label="Max minutes per month"
+                    label="Trans(i18nKey=maxMinutesPerMonth)"
                     onChange={[Function]}
                     valueMapper={[Function]}
                     valueToString={[Function]}
@@ -371,7 +371,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                   <OptionalInput
                     defaultValue={120}
                     isValid={[Function]}
-                    label="Max minutes per year"
+                    label="Trans(i18nKey=maxMinutesPerYear)"
                     onChange={[Function]}
                     valueMapper={[Function]}
                     valueToString={[Function]}
@@ -489,7 +489,7 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         filter={[Function]}
         onChange={[Function]}
       />
@@ -505,7 +505,7 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
         isDisabled={false}
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         itemCount={0}
@@ -619,7 +619,7 @@ exports[`Contracts page should render the editor correctly 1`] = `
       defaultValue={1}
       isValid={[Function]}
       key="1"
-      label="Max minutes per day"
+      label="Trans(i18nKey=maxMinutesPerDay)"
       onChange={[Function]}
       valueMapper={[Function]}
       valueToString={[Function]}
@@ -632,7 +632,7 @@ exports[`Contracts page should render the editor correctly 1`] = `
       defaultValue={20}
       isValid={[Function]}
       key="2"
-      label="Max minutes per week"
+      label="Trans(i18nKey=maxMinutesPerWeek)"
       onChange={[Function]}
       valueMapper={[Function]}
       valueToString={[Function]}
@@ -645,7 +645,7 @@ exports[`Contracts page should render the editor correctly 1`] = `
       defaultValue={10}
       isValid={[Function]}
       key="3"
-      label="Max minutes per month"
+      label="Trans(i18nKey=maxMinutesPerMonth)"
       onChange={[Function]}
       valueMapper={[Function]}
       valueToString={[Function]}
@@ -658,7 +658,7 @@ exports[`Contracts page should render the editor correctly 1`] = `
       defaultValue={120}
       isValid={[Function]}
       key="4"
-      label="Max minutes per year"
+      label="Trans(i18nKey=maxMinutesPerYear)"
       onChange={[Function]}
       valueMapper={[Function]}
       valueToString={[Function]}

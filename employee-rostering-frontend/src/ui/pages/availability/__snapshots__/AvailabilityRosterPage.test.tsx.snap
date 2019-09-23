@@ -21,7 +21,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
     >
       <TypeaheadSelectInput
         aria-label="Select Employee"
-        emptyText="Select Employee"
+        emptyText="Trans(i18nKey=selectEmployee)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -101,7 +101,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
           }
         }
       >
-        Publish
+        Trans(i18nKey=publish)
       </Button>
       <Button
         aria-label="Solve"
@@ -112,7 +112,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
           }
         }
       >
-        Schedule
+        Trans(i18nKey=schedule)
       </Button>
       <Button
         aria-label="Refresh"
@@ -123,7 +123,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
           }
         }
       >
-        Refresh
+        Trans(i18nKey=refresh)
       </Button>
       <Button
         aria-label="Create Availability"
@@ -134,17 +134,17 @@ exports[`Availability Roster Page should render correctly when creating a new av
           }
         }
       >
-        Create Availability
+        Trans(i18nKey=createAvailability)
       </Button>
     </LevelItem>
   </Level>
-  <Connect(Component)
+  <Component
     isOpen={true}
     onClose={[Function]}
     onDelete={[Function]}
     onSave={[Function]}
   />
-  <Connect(EditShiftModal)
+  <Component
     aria-label="Edit Shift"
     isOpen={false}
     onClose={[Function]}
@@ -320,7 +320,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
     >
       <TypeaheadSelectInput
         aria-label="Select Employee"
-        emptyText="Select Employee"
+        emptyText="Trans(i18nKey=selectEmployee)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -400,7 +400,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
           }
         }
       >
-        Publish
+        Trans(i18nKey=publish)
       </Button>
       <Button
         aria-label="Solve"
@@ -411,7 +411,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
           }
         }
       >
-        Schedule
+        Trans(i18nKey=schedule)
       </Button>
       <Button
         aria-label="Refresh"
@@ -422,7 +422,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
           }
         }
       >
-        Refresh
+        Trans(i18nKey=refresh)
       </Button>
       <Button
         aria-label="Create Availability"
@@ -433,17 +433,17 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
           }
         }
       >
-        Create Availability
+        Trans(i18nKey=createAvailability)
       </Button>
     </LevelItem>
   </Level>
-  <Connect(Component)
+  <Component
     isOpen={false}
     onClose={[Function]}
     onDelete={[Function]}
     onSave={[Function]}
   />
-  <Connect(EditShiftModal)
+  <Component
     aria-label="Edit Shift"
     isOpen={false}
     onClose={[Function]}
@@ -605,22 +605,24 @@ exports[`Availability Roster Page should render correctly when loading 1`] = `
   <EmptyStateIcon
     icon={[Function]}
   />
-  <Title
-    headingLevel="h5"
-    size="lg"
-  >
-    There are no Employees
-  </Title>
-  <EmptyStateBody>
-    The current tenant have no Employees. You need at least one Employee to see the Availability Roster. You can add an Employee in the "Employees" page.
-  </EmptyStateBody>
-  <Button
-    aria-label="Employees Page"
-    onClick={[Function]}
-    variant="primary"
-  >
-    Go to the Employees page
-  </Button>
+  <Trans
+    components={
+      Array [
+        <Title
+          headingLevel="h5"
+          size="lg"
+        />,
+        <EmptyStateBody />,
+        <Button
+          aria-label="Employees Page"
+          onClick={[Function]}
+          variant="primary"
+        />,
+      ]
+    }
+    i18nKey="noEmployees"
+    t={[MockFunction]}
+  />
 </EmptyState>
 `;
 
@@ -645,7 +647,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
     >
       <TypeaheadSelectInput
         aria-label="Select Employee"
-        emptyText="Select Employee"
+        emptyText="Trans(i18nKey=selectEmployee)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -725,7 +727,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
           }
         }
       >
-        Publish
+        Trans(i18nKey=publish)
       </Button>
       <Button
         aria-label="Terminate Early"
@@ -736,7 +738,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
           }
         }
       >
-        Terminate Early
+        Trans(i18nKey=terminateEarly)
       </Button>
       <Button
         aria-label="Refresh"
@@ -747,7 +749,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
           }
         }
       >
-        Refresh
+        Trans(i18nKey=refresh)
       </Button>
       <Button
         aria-label="Create Availability"
@@ -758,17 +760,17 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
           }
         }
       >
-        Create Availability
+        Trans(i18nKey=createAvailability)
       </Button>
     </LevelItem>
   </Level>
-  <Connect(Component)
+  <Component
     isOpen={false}
     onClose={[Function]}
     onDelete={[Function]}
     onSave={[Function]}
   />
-  <Connect(EditShiftModal)
+  <Component
     aria-label="Edit Shift"
     isOpen={false}
     onClose={[Function]}
@@ -930,21 +932,23 @@ exports[`Availability Roster Page should render correctly when there are no empl
   <EmptyStateIcon
     icon={[Function]}
   />
-  <Title
-    headingLevel="h5"
-    size="lg"
-  >
-    There are no Employees
-  </Title>
-  <EmptyStateBody>
-    The current tenant have no Employees. You need at least one Employee to see the Availability Roster. You can add an Employee in the "Employees" page.
-  </EmptyStateBody>
-  <Button
-    aria-label="Employees Page"
-    onClick={[Function]}
-    variant="primary"
-  >
-    Go to the Employees page
-  </Button>
+  <Trans
+    components={
+      Array [
+        <Title
+          headingLevel="h5"
+          size="lg"
+        />,
+        <EmptyStateBody />,
+        <Button
+          aria-label="Employees Page"
+          onClick={[Function]}
+          variant="primary"
+        />,
+      ]
+    }
+    i18nKey="noEmployees"
+    t={[MockFunction]}
+  />
 </EmptyState>
 `;

@@ -27,12 +27,41 @@ exports[`Alerts should render correctly with alerts 1`] = `
     className="fade-and-slide-in"
     key="0"
     onMouseEnter={[Function]}
-    title="alerts.infoMessage.title"
+    title="Trans(i18nKey=infoMessage.title)"
     variant="info"
   >
     <Trans
       components={Array []}
-      i18nKey="alerts.infoMessage.message"
+      i18nKey="infoMessage.message"
+      t={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              "infoMessage.title",
+            ],
+            Array [
+              "successMessage.title",
+            ],
+            Array [
+              "dangerMessage.title",
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=infoMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=successMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=dangerMessage.title)",
+            },
+          ],
+        }
+      }
       values={Object {}}
     />
   </Alert>
@@ -45,12 +74,41 @@ exports[`Alerts should render correctly with alerts 1`] = `
     className="fade-and-slide-in"
     key="1"
     onMouseEnter={[Function]}
-    title="alerts.successMessage.title"
+    title="Trans(i18nKey=successMessage.title)"
     variant="success"
   >
     <Trans
       components={Array []}
-      i18nKey="alerts.successMessage.message"
+      i18nKey="successMessage.message"
+      t={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              "infoMessage.title",
+            ],
+            Array [
+              "successMessage.title",
+            ],
+            Array [
+              "dangerMessage.title",
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=infoMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=successMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=dangerMessage.title)",
+            },
+          ],
+        }
+      }
       values={Object {}}
     />
   </Alert>
@@ -63,12 +121,41 @@ exports[`Alerts should render correctly with alerts 1`] = `
     className="fade-and-slide-in"
     key="2"
     onMouseEnter={[Function]}
-    title="alerts.dangerMessage.title"
+    title="Trans(i18nKey=dangerMessage.title)"
     variant="danger"
   >
     <Trans
       components={Array []}
-      i18nKey="alerts.dangerMessage.message"
+      i18nKey="dangerMessage.message"
+      t={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              "infoMessage.title",
+            ],
+            Array [
+              "successMessage.title",
+            ],
+            Array [
+              "dangerMessage.title",
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=infoMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=successMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=dangerMessage.title)",
+            },
+          ],
+        }
+      }
       values={Object {}}
     />
   </Alert>
@@ -102,7 +189,7 @@ exports[`Alerts should render correctly with alerts with components 1`] = `
     className="fade-and-slide-in"
     key="0"
     onMouseEnter={[Function]}
-    title="alerts.exception.title"
+    title="Trans(i18nKey=exception.title)"
     variant="danger"
   >
     <Trans
@@ -141,7 +228,22 @@ exports[`Alerts should render correctly with alerts with components 1`] = `
           />,
         ]
       }
-      i18nKey="alerts.exception.message"
+      i18nKey="exception.message"
+      t={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              "exception.title",
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=exception.title)",
+            },
+          ],
+        }
+      }
       values={Object {}}
     />
   </Alert>

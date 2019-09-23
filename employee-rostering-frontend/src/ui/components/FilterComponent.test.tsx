@@ -16,8 +16,9 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import FilterComponent, { FilterProps } from './FilterComponent';
+import { FilterProps, FilterComponent } from './FilterComponent';
 import { Button } from '@patternfly/react-core';
+import { useTranslation, WithTranslation } from 'react-i18next';
 
 interface MockData {
   name: string;
@@ -63,7 +64,9 @@ describe('Filter component', () => {
   });
 });
 
-const props: FilterProps<MockData> = {
+const props: FilterProps<MockData> & WithTranslation = {
+  ...useTranslation("FilterComponent"),
+  tReady: true,
   filter: jest.fn(),
   onChange: jest.fn()
 };

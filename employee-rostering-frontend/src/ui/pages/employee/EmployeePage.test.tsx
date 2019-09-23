@@ -22,6 +22,7 @@ import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { Sorter } from 'types';
 import Employee from 'domain/Employee';
 import { act } from 'react-dom/test-utils';
+import { useTranslation } from 'react-i18next';
 
 describe('Employees page', () => {
   it('should render correctly with no employees', () => {
@@ -145,7 +146,7 @@ describe('Employees page', () => {
     const employeesPage = shallow(<EmployeesPage
       {...noEmployees}
     />);
-    employeesPage.find('Button[aria-label="Contracts Page"]').simulate("click");
+    shallow((employeesPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(noEmployees.history.push).toBeCalled();
     expect(noEmployees.history.push).toBeCalledWith("/contracts");
   });
@@ -207,6 +208,8 @@ describe('Employees page', () => {
 });
 
 const noEmployees: Props = {
+  ...useTranslation("EmployeePage"),
+  tReady: true,
   tenantId: 0,
   title: "Employees",
   columnTitles: ["Name", "Contract", "Skill Set"],
@@ -223,6 +226,8 @@ const noEmployees: Props = {
 };
 
 const twoEmployees: Props = {
+  ...useTranslation("EmployeePage"),
+  tReady: true,
   tenantId: 0,
   title: "Employees",
   columnTitles: ["Name", "Contract", "Skill Set"],

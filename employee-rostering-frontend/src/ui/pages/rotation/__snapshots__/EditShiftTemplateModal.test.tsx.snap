@@ -9,13 +9,13 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Save"
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -27,7 +27,7 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Create Shift Template"
+  title="Trans(i18nKey=createShiftTemplate)"
 >
   <Form
     id="modal-element"
@@ -36,11 +36,11 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
   >
     <InputGroup>
       <Label>
-        Spot
+        Trans(i18nKey=spot)
       </Label>
       <TypeaheadSelectInput
         aria-label="Spot"
-        emptyText="Select a Spot..."
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -65,7 +65,7 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Start Day Offset
+        Trans(i18nKey=startDayOffset)
       </Label>
       <TextInput
         aria-label="Start Day Offset"
@@ -80,7 +80,7 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
         type="number"
       />
       <Label>
-        Start Time
+        Trans(i18nKey=startTime)
       </Label>
       <TextInput
         aria-label="Start Time"
@@ -95,7 +95,7 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        End Day Offset
+        Trans(i18nKey=endDayOffset)
       </Label>
       <TextInput
         aria-label="End Day Offset"
@@ -110,7 +110,7 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
         type="number"
       />
       <Label>
-        End Time
+        Trans(i18nKey=endTime)
       </Label>
       <TextInput
         aria-label="End Time"
@@ -125,11 +125,11 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Rotation Employee
+        Trans(i18nKey=rotationEmployee)
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        emptyText="Unassigned"
+        emptyText="Trans(i18nKey=unassigned)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         optional={true}
@@ -177,13 +177,13 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Save"
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -195,7 +195,7 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Create Shift Template"
+  title="Trans(i18nKey=createShiftTemplate)"
 >
   <Form
     id="modal-element"
@@ -204,11 +204,11 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
   >
     <InputGroup>
       <Label>
-        Spot
+        Trans(i18nKey=spot)
       </Label>
       <TypeaheadSelectInput
         aria-label="Spot"
-        emptyText="Select a Spot..."
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -233,7 +233,7 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Start Day Offset
+        Trans(i18nKey=startDayOffset)
       </Label>
       <TextInput
         aria-label="Start Day Offset"
@@ -248,7 +248,7 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
         type="number"
       />
       <Label>
-        Start Time
+        Trans(i18nKey=startTime)
       </Label>
       <TextInput
         aria-label="Start Time"
@@ -263,7 +263,7 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        End Day Offset
+        Trans(i18nKey=endDayOffset)
       </Label>
       <TextInput
         aria-label="End Day Offset"
@@ -278,7 +278,7 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
         type="number"
       />
       <Label>
-        End Time
+        Trans(i18nKey=endTime)
       </Label>
       <TextInput
         aria-label="End Time"
@@ -293,11 +293,11 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Rotation Employee
+        Trans(i18nKey=rotationEmployee)
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        emptyText="Unassigned"
+        emptyText="Trans(i18nKey=unassigned)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         optional={true}
@@ -345,20 +345,20 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Delete"
         onClick={[Function]}
         variant="danger"
       >
-        Delete
+        Trans(i18nKey=delete)
       </Button>,
       <Button
         aria-label="Save"
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -370,7 +370,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Edit Shift Template"
+  title="Trans(i18nKey=editShiftTemplate)"
 >
   <Form
     id="modal-element"
@@ -379,11 +379,11 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
   >
     <InputGroup>
       <Label>
-        Spot
+        Trans(i18nKey=spot)
       </Label>
       <TypeaheadSelectInput
         aria-label="Spot"
-        emptyText="Select a Spot..."
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -424,7 +424,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
     </InputGroup>
     <InputGroup>
       <Label>
-        Start Day Offset
+        Trans(i18nKey=startDayOffset)
       </Label>
       <TextInput
         aria-label="Start Day Offset"
@@ -440,7 +440,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
         type="number"
       />
       <Label>
-        Start Time
+        Trans(i18nKey=startTime)
       </Label>
       <TextInput
         aria-label="Start Time"
@@ -456,7 +456,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
     </InputGroup>
     <InputGroup>
       <Label>
-        End Day Offset
+        Trans(i18nKey=endDayOffset)
       </Label>
       <TextInput
         aria-label="End Day Offset"
@@ -472,7 +472,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
         type="number"
       />
       <Label>
-        End Time
+        Trans(i18nKey=endTime)
       </Label>
       <TextInput
         aria-label="End Time"
@@ -488,11 +488,11 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
     </InputGroup>
     <InputGroup>
       <Label>
-        Rotation Employee
+        Trans(i18nKey=rotationEmployee)
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        emptyText="Unassigned"
+        emptyText="Trans(i18nKey=unassigned)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         optional={true}

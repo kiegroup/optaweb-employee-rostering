@@ -21,7 +21,7 @@ exports[`Navigation should activate a navigation link matching the current path 
       <Link
         to="/skills"
       >
-        Skills
+        Trans(i18nKey=skills)
       </Link>
     </NavItem>
     <NavItem
@@ -32,7 +32,7 @@ exports[`Navigation should activate a navigation link matching the current path 
       <Link
         to="/spots"
       >
-        Spots
+        Trans(i18nKey=spots)
       </Link>
     </NavItem>
     <NavItem
@@ -43,7 +43,7 @@ exports[`Navigation should activate a navigation link matching the current path 
       <Link
         to="/contracts"
       >
-        Contracts
+        Trans(i18nKey=contracts)
       </Link>
     </NavItem>
     <NavItem
@@ -54,7 +54,7 @@ exports[`Navigation should activate a navigation link matching the current path 
       <Link
         to="/employees"
       >
-        Employees
+        Trans(i18nKey=employees)
       </Link>
     </NavItem>
     <NavItem
@@ -65,7 +65,7 @@ exports[`Navigation should activate a navigation link matching the current path 
       <Link
         to="/shift"
       >
-        Shift
+        Trans(i18nKey=shift)
       </Link>
     </NavItem>
     <NavItem
@@ -76,7 +76,7 @@ exports[`Navigation should activate a navigation link matching the current path 
       <Link
         to="/availability"
       >
-        Availability
+        Trans(i18nKey=availability)
       </Link>
     </NavItem>
     <NavItem
@@ -87,7 +87,7 @@ exports[`Navigation should activate a navigation link matching the current path 
       <Link
         to="/rotation"
       >
-        Rotation
+        Trans(i18nKey=rotation)
       </Link>
     </NavItem>
   </NavList>

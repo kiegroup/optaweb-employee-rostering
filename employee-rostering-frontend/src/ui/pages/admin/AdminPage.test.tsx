@@ -92,7 +92,7 @@ describe('Admin Page', () => {
     const twoTenants = generateProps(2);
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     act(() => {
-      shallow((adminPage.find('[caption="Tenants"]').prop('rows') as unknown as any[]
+      shallow((adminPage.find('[caption="Trans(i18nKey=tenants)"]').prop('rows') as unknown as any[]
       )[0].cells[1]).find('Button').simulate('click');
     });
     expect(twoTenants.removeTenant).toBeCalled();

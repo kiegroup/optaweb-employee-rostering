@@ -18,12 +18,13 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
-import { RotationPage, Props, baseDate } from './RotationPage';
+import { RotationPage, Props } from './RotationPage';
 import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
 import ShiftTemplate from 'domain/ShiftTemplate';
 import { useTranslation, WithTranslation } from 'react-i18next';
 
+const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
 describe('Rotation Page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -105,7 +106,7 @@ describe('Rotation Page', () => {
       spotList={[]}
       spotIdToShiftTemplateListMap={new Map()}
     />);
-    rotationPage.find('Button[aria-label="Spots Page"]').simulate("click");
+    shallow((rotationPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(baseProps.history.push).toBeCalled();
     expect(baseProps.history.push).toBeCalledWith("/spots");
   });
@@ -135,7 +136,7 @@ describe('Rotation Page', () => {
       selectedShift: shiftTemplate,
       isCreatingOrEditingShiftTemplate: true
     });
-    rotationPage.find('Connect(Component)[aria-label="Edit Shift Template"]')
+    rotationPage.find('[aria-label="Edit Shift Template"]')
       .simulate("delete", shiftTemplate);
     expect(baseProps.removeShiftTemplate).toBeCalled();
     expect(baseProps.removeShiftTemplate).toBeCalledWith(shiftTemplate);
@@ -150,7 +151,7 @@ describe('Rotation Page', () => {
       selectedShift: null,
       isCreatingOrEditingShiftTemplate: true
     });
-    rotationPage.find('Connect(Component)[aria-label="Edit Shift Template"]')
+    rotationPage.find('[aria-label="Edit Shift Template"]')
       .simulate("save", shiftTemplate);
     expect(baseProps.addShiftTemplate).toBeCalled();
     expect(baseProps.addShiftTemplate).toBeCalledWith(shiftTemplate);
@@ -165,7 +166,7 @@ describe('Rotation Page', () => {
       selectedShift: shiftTemplate,
       isCreatingOrEditingShiftTemplate: true
     });
-    rotationPage.find('Connect(Component)[aria-label="Edit Shift Template"]')
+    rotationPage.find('[aria-label="Edit Shift Template"]')
       .simulate("save", shiftTemplate);
     expect(baseProps.addShiftTemplate).toBeCalled();
     expect(baseProps.addShiftTemplate).toBeCalledWith(shiftTemplate);
@@ -179,7 +180,7 @@ describe('Rotation Page', () => {
     rotationPage.setState({
       isCreatingOrEditingShiftTemplate: true
     });
-    rotationPage.find('Connect(Component)[aria-label="Edit Shift Template"]').simulate("close");
+    rotationPage.find('[aria-label="Edit Shift Template"]').simulate("close");
     expect(rotationPage.state("isCreatingOrEditingShiftTemplate")).toEqual(false);
   });
 

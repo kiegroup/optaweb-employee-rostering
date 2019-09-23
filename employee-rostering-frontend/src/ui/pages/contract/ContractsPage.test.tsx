@@ -20,6 +20,7 @@ import { ContractsPage, Props } from './ContractsPage';
 import OptionalInput from 'ui/components/OptionalInput';
 import { Sorter } from 'types';
 import Contract from 'domain/Contract';
+import { useTranslation } from 'react-i18next';
 
 describe('Contracts page', () => {
   it('should render correctly with no contracts', () => {
@@ -183,6 +184,8 @@ describe('Contracts page', () => {
 });
 
 const noContracts: Props = {
+  ...useTranslation("ContractsPage"),
+  tReady: true,
   tenantId: 0,
   title: "Contracts",
   columnTitles: ["Name", "Max Hours Per Day", "Max Hours Per Week", "Max Hours Per Month", "Max Hours Per Year"],
@@ -193,6 +196,8 @@ const noContracts: Props = {
 };
 
 const twoContracts: Props = {
+  ...useTranslation("ContractsPage"),
+  tReady: true,
   tenantId: 0,
   title: "Contracts",
   columnTitles: ["Name", "Max Hours Per Day", "Max Hours Per Week", "Max Hours Per Month", "Max Hours Per Year"],

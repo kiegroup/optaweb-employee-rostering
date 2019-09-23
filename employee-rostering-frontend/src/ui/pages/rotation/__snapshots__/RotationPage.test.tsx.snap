@@ -21,7 +21,7 @@ exports[`Rotation Page should render correctly when creating a new shift templat
     >
       <TypeaheadSelectInput
         aria-label="Select Spot"
-        emptyText="Select Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -67,17 +67,17 @@ exports[`Rotation Page should render correctly when creating a new shift templat
         perPageOptions={Array []}
         titles={
           Object {
-            "currPage": "Current week",
-            "items": "days",
-            "itemsPerPage": "Week #",
-            "optionsToggle": "Select",
-            "page": "week",
-            "paginationTitle": "Week Select",
-            "perPageSuffix": "Week #",
-            "toFirstPage": "Go to the first week",
-            "toLastPage": "Go to the last week",
-            "toNextPage": "Go to the next week",
-            "toPreviousPage": "Go to the previous week",
+            "currPage": "Trans(i18nKey=currentWeek)",
+            "items": "Trans(i18nKey=days)",
+            "itemsPerPage": "Trans(i18nKey=weekNum)",
+            "optionsToggle": "Trans(i18nKey=select)",
+            "page": "Trans(i18nKey=week)",
+            "paginationTitle": "Trans(i18nKey=weekSelect)",
+            "perPageSuffix": "Trans(i18nKey=weekNum)",
+            "toFirstPage": "Trans(i18nKey=gotoFirstWeek)",
+            "toLastPage": "Trans(i18nKey=gotoLastWeek)",
+            "toNextPage": "Trans(i18nKey=gotoNextWeek)",
+            "toPreviousPage": "Trans(i18nKey=gotoPreviousWeek)",
           }
         }
       />
@@ -98,11 +98,11 @@ exports[`Rotation Page should render correctly when creating a new shift templat
           }
         }
       >
-        Create Shift Template
+        Trans(i18nKey=createShiftTemplate)
       </Button>
     </LevelItem>
   </Level>
-  <Connect(Component)
+  <Component
     aria-label="Edit Shift Template"
     isOpen={true}
     onClose={[Function]}
@@ -202,7 +202,7 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
     >
       <TypeaheadSelectInput
         aria-label="Select Spot"
-        emptyText="Select Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -248,17 +248,17 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
         perPageOptions={Array []}
         titles={
           Object {
-            "currPage": "Current week",
-            "items": "days",
-            "itemsPerPage": "Week #",
-            "optionsToggle": "Select",
-            "page": "week",
-            "paginationTitle": "Week Select",
-            "perPageSuffix": "Week #",
-            "toFirstPage": "Go to the first week",
-            "toLastPage": "Go to the last week",
-            "toNextPage": "Go to the next week",
-            "toPreviousPage": "Go to the previous week",
+            "currPage": "Trans(i18nKey=currentWeek)",
+            "items": "Trans(i18nKey=days)",
+            "itemsPerPage": "Trans(i18nKey=weekNum)",
+            "optionsToggle": "Trans(i18nKey=select)",
+            "page": "Trans(i18nKey=week)",
+            "paginationTitle": "Trans(i18nKey=weekSelect)",
+            "perPageSuffix": "Trans(i18nKey=weekNum)",
+            "toFirstPage": "Trans(i18nKey=gotoFirstWeek)",
+            "toLastPage": "Trans(i18nKey=gotoLastWeek)",
+            "toNextPage": "Trans(i18nKey=gotoNextWeek)",
+            "toPreviousPage": "Trans(i18nKey=gotoPreviousWeek)",
           }
         }
       />
@@ -279,11 +279,11 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
           }
         }
       >
-        Create Shift Template
+        Trans(i18nKey=createShiftTemplate)
       </Button>
     </LevelItem>
   </Level>
-  <Connect(Component)
+  <Component
     aria-label="Edit Shift Template"
     isOpen={false}
     onClose={[Function]}
@@ -369,21 +369,23 @@ exports[`Rotation Page should render correctly when loading 1`] = `
   <EmptyStateIcon
     icon={[Function]}
   />
-  <Title
-    headingLevel="h5"
-    size="lg"
-  >
-    There are no Spots
-  </Title>
-  <EmptyStateBody>
-    The current tenant have no Spots. You need at least one Spot to see the Rotation. You can add a Spot in the "Spots" page.
-  </EmptyStateBody>
-  <Button
-    aria-label="Spots Page"
-    onClick={[Function]}
-    variant="primary"
-  >
-    Go to the Spots page
-  </Button>
+  <Trans
+    components={
+      Array [
+        <Title
+          headingLevel="h5"
+          size="lg"
+        />,
+        <EmptyStateBody />,
+        <Button
+          aria-label="Spots Page"
+          onClick={[Function]}
+          variant="primary"
+        />,
+      ]
+    }
+    i18nKey="noSpots"
+    t={[MockFunction]}
+  />
 </EmptyState>
 `;

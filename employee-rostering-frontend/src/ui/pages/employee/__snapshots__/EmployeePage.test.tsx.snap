@@ -12,7 +12,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         filter={[Function]}
         onChange={[Function]}
       />
@@ -28,7 +28,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
         isDisabled={false}
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         itemCount={2}
@@ -124,7 +124,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
               "title": <EditableComponent
                 editor={
                   <StatefulTypeaheadSelectInput
-                    emptyText="Select a contract..."
+                    emptyText="Trans(i18nKey=selectAContract)"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -177,7 +177,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
               "title": <EditableComponent
                 editor={
                   <StatefulMultiTypeaheadSelectInput
-                    emptyText="Select skill proficiencies"
+                    emptyText="Trans(i18nKey=selectSkillProficiencies)"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -317,7 +317,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
               "title": <EditableComponent
                 editor={
                   <StatefulTypeaheadSelectInput
-                    emptyText="Select a contract..."
+                    emptyText="Trans(i18nKey=selectAContract)"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -370,7 +370,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
               "title": <EditableComponent
                 editor={
                   <StatefulMultiTypeaheadSelectInput
-                    emptyText="Select skill proficiencies"
+                    emptyText="Trans(i18nKey=selectSkillProficiencies)"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -532,22 +532,24 @@ exports[`Employees page should render correctly with no employees 1`] = `
   <EmptyStateIcon
     icon={[Function]}
   />
-  <Title
-    headingLevel="h5"
-    size="lg"
-  >
-    There are no Contracts
-  </Title>
-  <EmptyStateBody>
-    The current tenant have no Contracts. You need at least one Contract to add Employees. You can add a Contract in the "Contracts" page.
-  </EmptyStateBody>
-  <Button
-    aria-label="Contracts Page"
-    onClick={[Function]}
-    variant="primary"
-  >
-    Go to the Contracts page
-  </Button>
+  <Trans
+    components={
+      Array [
+        <Title
+          headingLevel="h5"
+          size="lg"
+        />,
+        <EmptyStateBody />,
+        <Button
+          aria-label="Contracts Page"
+          onClick={[Function]}
+          variant="primary"
+        />,
+      ]
+    }
+    i18nKey="noContracts"
+    t={[MockFunction]}
+  />
 </EmptyState>
 `;
 
@@ -574,7 +576,7 @@ exports[`Employees page should render the editor correctly 1`] = `
     key="1"
   >
     <StatefulTypeaheadSelectInput
-      emptyText="Select a contract..."
+      emptyText="Trans(i18nKey=selectAContract)"
       key="1"
       onChange={[Function]}
       optionToStringMap={[Function]}
@@ -620,7 +622,7 @@ exports[`Employees page should render the editor correctly 1`] = `
     key="2"
   >
     <StatefulMultiTypeaheadSelectInput
-      emptyText="Select skill proficiencies"
+      emptyText="Trans(i18nKey=selectSkillProficiencies)"
       key="2"
       onChange={[Function]}
       optionToStringMap={[Function]}

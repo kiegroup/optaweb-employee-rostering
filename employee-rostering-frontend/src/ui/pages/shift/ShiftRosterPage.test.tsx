@@ -25,6 +25,7 @@ import moment from 'moment-timezone';
 import "moment/locale/en-ca";
 import { getShiftColor } from './ShiftEvent';
 import color from 'color';
+import { useTranslation } from 'react-i18next';
 
 describe('Shift Roster Page', () => {
   beforeEach(() => {
@@ -141,7 +142,7 @@ describe('Shift Roster Page', () => {
       shownSpotList={[]}
       spotIdToShiftListMap={new Map()}
     />);
-    shiftRosterPage.find('Button[aria-label="Spots Page"]').simulate("click");
+    shallow((shiftRosterPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(baseProps.history.push).toBeCalled();
     expect(baseProps.history.push).toBeCalledWith("/spots");
   });
@@ -222,7 +223,7 @@ describe('Shift Roster Page', () => {
       selectedShift: shift,
       isCreatingOrEditingShift: true
     });
-    shiftRosterPage.find('Connect(EditShiftModal)[aria-label="Edit Shift"]').simulate("delete", shift);
+    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate("delete", shift);
     expect(baseProps.removeShift).toBeCalled();
     expect(baseProps.removeShift).toBeCalledWith(shift);
     expect(shiftRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
@@ -242,7 +243,7 @@ describe('Shift Roster Page', () => {
       startDateTime: startDate,
       endDateTime: endDate
     };
-    shiftRosterPage.find('Connect(EditShiftModal)[aria-label="Edit Shift"]').simulate("save", newShift);
+    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate("save", newShift);
     expect(baseProps.addShift).toBeCalled();
     expect(baseProps.addShift).toBeCalledWith(newShift);
     expect(shiftRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
@@ -261,7 +262,7 @@ describe('Shift Roster Page', () => {
       startDateTime: startDate,
       endDateTime: endDate
     };
-    shiftRosterPage.find('Connect(EditShiftModal)[aria-label="Edit Shift"]').simulate("save", newShift);
+    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate("save", newShift);
     expect(baseProps.updateShift).toBeCalled();
     expect(baseProps.updateShift).toBeCalledWith(newShift);
     expect(shiftRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
@@ -274,7 +275,7 @@ describe('Shift Roster Page', () => {
     shiftRosterPage.setState({
       isCreatingOrEditingShift: true
     });
-    shiftRosterPage.find('Connect(EditShiftModal)[aria-label="Edit Shift"]').simulate("close");
+    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate("close");
     expect(shiftRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
   });
 
@@ -435,6 +436,8 @@ const rosterState: RosterState = {
 };
 
 const baseProps: Props = {
+  ...useTranslation("ShiftRosterPage"),
+  tReady: true,
   isSolving: false,
   isLoading: false,
   allSpotList: [spot],

@@ -21,7 +21,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
     >
       <TypeaheadSelectInput
         aria-label="Select Spot"
-        emptyText="Select Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -81,7 +81,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           }
         }
       >
-        Publish
+        Trans(i18nKey=publish)
       </Button>
       <Button
         aria-label="Solve"
@@ -92,7 +92,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           }
         }
       >
-        Schedule
+        Trans(i18nKey=schedule)
       </Button>
       <Button
         aria-label="Refresh"
@@ -103,7 +103,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           }
         }
       >
-        Refresh
+        Trans(i18nKey=refresh)
       </Button>
       <Button
         aria-label="Create Shift"
@@ -114,11 +114,11 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           }
         }
       >
-        Create Shift
+        Trans(i18nKey=createShift)
       </Button>
     </LevelItem>
   </Level>
-  <Connect(EditShiftModal)
+  <Component
     aria-label="Edit Shift"
     isOpen={true}
     onClose={[Function]}
@@ -251,7 +251,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
     >
       <TypeaheadSelectInput
         aria-label="Select Spot"
-        emptyText="Select Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -311,7 +311,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           }
         }
       >
-        Publish
+        Trans(i18nKey=publish)
       </Button>
       <Button
         aria-label="Solve"
@@ -322,7 +322,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           }
         }
       >
-        Schedule
+        Trans(i18nKey=schedule)
       </Button>
       <Button
         aria-label="Refresh"
@@ -333,7 +333,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           }
         }
       >
-        Refresh
+        Trans(i18nKey=refresh)
       </Button>
       <Button
         aria-label="Create Shift"
@@ -344,11 +344,11 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           }
         }
       >
-        Create Shift
+        Trans(i18nKey=createShift)
       </Button>
     </LevelItem>
   </Level>
-  <Connect(EditShiftModal)
+  <Component
     aria-label="Edit Shift"
     isOpen={false}
     onClose={[Function]}
@@ -467,22 +467,24 @@ exports[`Shift Roster Page should render correctly when loading 1`] = `
   <EmptyStateIcon
     icon={[Function]}
   />
-  <Title
-    headingLevel="h5"
-    size="lg"
-  >
-    There are no Spots
-  </Title>
-  <EmptyStateBody>
-    The current tenant have no Spots. You need at least one Spot to see the Shift Roster. You can add a Spot in the "Spots" page.
-  </EmptyStateBody>
-  <Button
-    aria-label="Spots Page"
-    onClick={[Function]}
-    variant="primary"
-  >
-    Go to the Spots page
-  </Button>
+  <Trans
+    components={
+      Array [
+        <Title
+          headingLevel="h5"
+          size="lg"
+        />,
+        <EmptyStateBody />,
+        <Button
+          aria-label="Spots Page"
+          onClick={[Function]}
+          variant="primary"
+        />,
+      ]
+    }
+    i18nKey="noSpots"
+    t={[MockFunction]}
+  />
 </EmptyState>
 `;
 
@@ -507,7 +509,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
     >
       <TypeaheadSelectInput
         aria-label="Select Spot"
-        emptyText="Select Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -567,7 +569,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           }
         }
       >
-        Publish
+        Trans(i18nKey=publish)
       </Button>
       <Button
         aria-label="Terminate Early"
@@ -578,7 +580,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           }
         }
       >
-        Terminate Early
+        Trans(i18nKey=terminateEarly)
       </Button>
       <Button
         aria-label="Refresh"
@@ -589,7 +591,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           }
         }
       >
-        Refresh
+        Trans(i18nKey=refresh)
       </Button>
       <Button
         aria-label="Create Shift"
@@ -600,11 +602,11 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           }
         }
       >
-        Create Shift
+        Trans(i18nKey=createShift)
       </Button>
     </LevelItem>
   </Level>
-  <Connect(EditShiftModal)
+  <Component
     aria-label="Edit Shift"
     isOpen={false}
     onClose={[Function]}

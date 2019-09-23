@@ -9,14 +9,14 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Save"
         isDisabled={true}
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -28,14 +28,14 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Create Tenant"
+  title="Trans(i18nKey=createTenant)"
 >
   <Form
     onSubmit={[Function]}
   >
     <InputGroup>
       <Label>
-        Name
+        Trans(i18nKey=name)
       </Label>
       <TextInput
         aria-label="Name"
@@ -50,7 +50,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Schedule Start Date
+        Trans(i18nKey=scheduleStartDate)
       </Label>
       <TextInput
         aria-label="Schedule Start Date"
@@ -65,7 +65,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Draft Length (days)
+        Trans(i18nKey=draftLength)
       </Label>
       <TextInput
         aria-label="Draft Length"
@@ -80,7 +80,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Publish Notice (days)
+        Trans(i18nKey=publishNotice)
       </Label>
       <TextInput
         aria-label="Publish Notice"
@@ -95,7 +95,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Publish Length (days)
+        Trans(i18nKey=publishLength)
       </Label>
       <TextInput
         aria-label="Publish Length"
@@ -111,7 +111,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Rotation Length (days)
+        Trans(i18nKey=rotationLength)
       </Label>
       <TextInput
         aria-label="Rotation Length"
@@ -127,11 +127,11 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Timezone
+        Trans(i18nKey=timezone)
       </Label>
       <TypeaheadSelectInput
         aria-label="Timezone"
-        emptyText="Select a timezone"
+        emptyText="Trans(i18nKey=selectATimezone)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -158,14 +158,14 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Save"
         isDisabled={true}
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -177,14 +177,14 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Create Tenant"
+  title="Trans(i18nKey=createTenant)"
 >
   <Form
     onSubmit={[Function]}
   >
     <InputGroup>
       <Label>
-        Name
+        Trans(i18nKey=name)
       </Label>
       <TextInput
         aria-label="Name"
@@ -199,7 +199,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Schedule Start Date
+        Trans(i18nKey=scheduleStartDate)
       </Label>
       <TextInput
         aria-label="Schedule Start Date"
@@ -214,7 +214,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Draft Length (days)
+        Trans(i18nKey=draftLength)
       </Label>
       <TextInput
         aria-label="Draft Length"
@@ -229,7 +229,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Publish Notice (days)
+        Trans(i18nKey=publishNotice)
       </Label>
       <TextInput
         aria-label="Publish Notice"
@@ -244,7 +244,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Publish Length (days)
+        Trans(i18nKey=publishLength)
       </Label>
       <TextInput
         aria-label="Publish Length"
@@ -260,7 +260,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Rotation Length (days)
+        Trans(i18nKey=rotationLength)
       </Label>
       <TextInput
         aria-label="Rotation Length"
@@ -276,11 +276,11 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Timezone
+        Trans(i18nKey=timezone)
       </Label>
       <TypeaheadSelectInput
         aria-label="Timezone"
-        emptyText="Select a timezone"
+        emptyText="Trans(i18nKey=selectATimezone)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={

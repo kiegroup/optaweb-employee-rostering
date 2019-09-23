@@ -23,12 +23,12 @@ configure({ adapter: new Adapter() });
 const mockDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
 MockDate.set(mockDate);
 
-const mockTranslate = jest.fn().mockImplementation(k => k);
+const mockTranslate = jest.fn().mockImplementation(k => `Trans(i18nKey=${k})`);
 export { mockTranslate };
 jest.mock('react-i18next', () => ({
   // this mock makes sure any components using the translate HoC receive the t function as a prop
   withTranslation: () => (Component: any) => {
-    Component.defaultProps = { ...Component.defaultProps, t: mockTranslate };
+    Component.defaultProps = { ...Component.defaultProps, t: mockTranslate, tReady: true };
     return () => Component;
   },
 

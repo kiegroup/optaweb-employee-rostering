@@ -19,7 +19,7 @@ import * as React from 'react';
 import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
-import ShiftEvent, * as shiftEvent from './ShiftEvent';
+import ShiftEvent, * as Indictments from './ShiftEvent';
 import EmployeeAvailability from 'domain/EmployeeAvailability';
 import moment from 'moment-timezone';
 import "moment/locale/en-ca";
@@ -33,7 +33,7 @@ describe('ShiftEvent', () => {
         shift: baseShift
       }]
     };
-    const requiredSkillViolations = mount(<>{shiftEvent.getRequiredSkillViolations(shift)}</>);
+    const requiredSkillViolations = mount(<Indictments.RequiredSkillViolations {...shift}/>);
     expect(toJson(requiredSkillViolations)).toMatchSnapshot();
   });
 
@@ -68,7 +68,7 @@ describe('ShiftEvent', () => {
       ]
     };
 
-    const contractMinutesViolations = mount(<>{shiftEvent.getContractMinutesViolations(shift)}</>);
+    const contractMinutesViolations = mount(<Indictments.ContractMinutesViolations {...shift} />);
     expect(toJson(contractMinutesViolations)).toMatchSnapshot();
   });
 
@@ -85,7 +85,7 @@ describe('ShiftEvent', () => {
         shift: baseShift
       }]
     };
-    const unavailableEmployeeViolations = mount(<>{shiftEvent.getUnavailableEmployeeViolations(shift)}</>);
+    const unavailableEmployeeViolations = mount(<Indictments.UnavailableEmployeeViolations {...shift} />);
     expect(toJson(unavailableEmployeeViolations)).toMatchSnapshot();
   });
 
@@ -114,7 +114,7 @@ describe('ShiftEvent', () => {
         }
       ]
     };
-    const shiftEmployeeConflictViolations = mount(<>{shiftEvent.getShiftEmployeeConflictViolations(shift)}</>);
+    const shiftEmployeeConflictViolations = mount(<Indictments.ShiftEmployeeConflictViolations {...shift} />);
     expect(toJson(shiftEmployeeConflictViolations)).toMatchSnapshot();
   });
 
@@ -128,7 +128,7 @@ describe('ShiftEvent', () => {
         }
       ]
     };
-    const rotationViolationPenalties = mount(<>{shiftEvent.getRotationViolationPenalties(shift)}</>);
+    const rotationViolationPenalties = mount(<Indictments.RotationViolationPenalties {...shift} />);
     expect(toJson(rotationViolationPenalties)).toMatchSnapshot();
   });
 
@@ -142,7 +142,7 @@ describe('ShiftEvent', () => {
         }
       ]
     };
-    const unassignedShiftPenalties = mount(<>{shiftEvent.getUnassignedShiftPenalties(shift)}</>);
+    const unassignedShiftPenalties = mount(<Indictments.UnassignedShiftPenalties {...shift} />);
     expect(toJson(unassignedShiftPenalties)).toMatchSnapshot();
   });
 
@@ -160,7 +160,7 @@ describe('ShiftEvent', () => {
       }]
     };
     const undesiredTimeslotForEmployeePenalties = mount(
-      <>{shiftEvent.getUndesiredTimeslotForEmployeePenalties(shift)}</>
+      <Indictments.UndesiredTimeslotForEmployeePenalties {...shift} />
     );
     expect(toJson(undesiredTimeslotForEmployeePenalties)).toMatchSnapshot();
   });
@@ -178,12 +178,12 @@ describe('ShiftEvent', () => {
         shift: baseShift
       }]
     };
-    const desiredTimeslotForEmployeeRewards = mount(<>{shiftEvent.getDesiredTimeslotForEmployeeRewards(shift)}</>);
+    const desiredTimeslotForEmployeeRewards = mount(<Indictments.DesiredTimeslotForEmployeeRewards {...shift} />);
     expect(toJson(desiredTimeslotForEmployeeRewards)).toMatchSnapshot();
   });
 
   it('getIndictments should render correctly with no indictments', () => {
-    const indictments = mount(<>{shiftEvent.getIndictments(baseShift)}</>);
+    const indictments = mount(<Indictments.Indictments {...baseShift} />);
     expect(toJson(indictments)).toMatchSnapshot();
   });
 
@@ -201,7 +201,7 @@ describe('ShiftEvent', () => {
         }
       ]
     };
-    const indictments = mount(<>{shiftEvent.getIndictments(shift)}</>);
+    const indictments = mount(<Indictments.Indictments {...shift} />);
     expect(toJson(indictments)).toMatchSnapshot();
   });
 
@@ -212,24 +212,24 @@ describe('ShiftEvent', () => {
     });
 
     expect({
-      negativeHardColor: shiftEvent.getShiftColor(getShiftWithScore(-5,0,0)),
-      negativeMediumColor: shiftEvent.getShiftColor(getShiftWithScore(0,-1,0)),
-      negativeSoftColor: shiftEvent.getShiftColor(getShiftWithScore(0,0,-10)),
-      zeroColor: shiftEvent.getShiftColor(getShiftWithScore(0,0,0)),
-      positiveSoftColor: shiftEvent.getShiftColor(getShiftWithScore(0,0,5))
+      negativeHardColor: Indictments.getShiftColor(getShiftWithScore(-5,0,0)),
+      negativeMediumColor: Indictments.getShiftColor(getShiftWithScore(0,-1,0)),
+      negativeSoftColor: Indictments.getShiftColor(getShiftWithScore(0,0,-10)),
+      zeroColor: Indictments.getShiftColor(getShiftWithScore(0,0,0)),
+      positiveSoftColor: Indictments.getShiftColor(getShiftWithScore(0,0,5))
     }).toMatchSnapshot();
   });
 
   it('should render ShiftPopupHeader correctly', () => {
     const shiftEventObj = shallow(
-      <shiftEvent.ShiftPopupHeader shift={baseShift} onEdit={jest.fn()} onDelete={jest.fn()} />
+      <Indictments.ShiftPopupHeader shift={baseShift} onEdit={jest.fn()} onDelete={jest.fn()} />
     );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });
 
   it('should render ShiftPopupBody correctly', () => {
     const shiftEventObj = shallow(
-      <shiftEvent.ShiftPopupBody {...baseShift} />
+      <Indictments.ShiftPopupBody {...baseShift} />
     );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });

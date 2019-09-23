@@ -28,7 +28,7 @@ export interface FilterState {
   filterText: string;
 }
 
-class FilterComponent<T> extends React.Component<FilterProps<T> & WithTranslation, FilterState> {
+export class FilterComponent<T> extends React.Component<FilterProps<T> & WithTranslation, FilterState> {
 
   constructor(props: FilterProps<T> & WithTranslation) {
     super(props);

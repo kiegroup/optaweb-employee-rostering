@@ -9,13 +9,13 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Save"
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -27,7 +27,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Create Shift"
+  title="Trans(i18nKey=createShift)"
 >
   <Form
     id="modal-element"
@@ -36,7 +36,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
   >
     <InputGroup>
       <Label>
-        Shift Start
+        Trans(i18nKey=shiftStart)
       </Label>
       <t
         allowSameDay={false}
@@ -79,7 +79,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Shift End
+        Trans(i18nKey=shiftEnd)
       </Label>
       <t
         allowSameDay={false}
@@ -122,11 +122,11 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Spot
+        Trans(i18nKey=spot)
       </Label>
       <TypeaheadSelectInput
         aria-label="Spot"
-        emptyText="Select a Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -151,11 +151,11 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Employee
+        Trans(i18nKey=employee)
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        emptyText="Unassigned"
+        emptyText="Trans(i18nKey=unassigned)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -191,11 +191,11 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Rotation Employee
+        Trans(i18nKey=rotationEmployee)
       </Label>
       <TypeaheadSelectInput
         aria-label="Rotation Employee"
-        emptyText="None"
+        emptyText="Trans(i18nKey=none)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -231,7 +231,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Is Pinned
+        Trans(i18nKey=isPinned)
       </Label>
       <Component
         aria-label="Is Pinned"
@@ -251,13 +251,13 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Save"
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -269,7 +269,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Create Shift"
+  title="Trans(i18nKey=createShift)"
 >
   <Form
     id="modal-element"
@@ -278,7 +278,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
   >
     <InputGroup>
       <Label>
-        Shift Start
+        Trans(i18nKey=shiftStart)
       </Label>
       <t
         allowSameDay={false}
@@ -321,7 +321,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Shift End
+        Trans(i18nKey=shiftEnd)
       </Label>
       <t
         allowSameDay={false}
@@ -364,11 +364,11 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Spot
+        Trans(i18nKey=spot)
       </Label>
       <TypeaheadSelectInput
         aria-label="Spot"
-        emptyText="Select a Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -393,11 +393,11 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Employee
+        Trans(i18nKey=employee)
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        emptyText="Unassigned"
+        emptyText="Trans(i18nKey=unassigned)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -433,11 +433,11 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Rotation Employee
+        Trans(i18nKey=rotationEmployee)
       </Label>
       <TypeaheadSelectInput
         aria-label="Rotation Employee"
-        emptyText="None"
+        emptyText="Trans(i18nKey=none)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -473,7 +473,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
-        Is Pinned
+        Trans(i18nKey=isPinned)
       </Label>
       <Component
         aria-label="Is Pinned"
@@ -493,20 +493,20 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
         onClick={[MockFunction]}
         variant="tertiary"
       >
-        Close
+        Trans(i18nKey=close)
       </Button>,
       <Button
         aria-label="Delete"
         onClick={[Function]}
         variant="danger"
       >
-        Delete
+        Trans(i18nKey=delete)
       </Button>,
       <Button
         aria-label="Save"
         onClick={[Function]}
       >
-        Save
+        Trans(i18nKey=save)
       </Button>,
     ]
   }
@@ -518,7 +518,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
   isSmall={true}
   onClose={[MockFunction]}
   showClose={true}
-  title="Edit Shift"
+  title="Trans(i18nKey=editShift)"
 >
   <Form
     id="modal-element"
@@ -527,7 +527,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
   >
     <InputGroup>
       <Label>
-        Shift Start
+        Trans(i18nKey=shiftStart)
       </Label>
       <t
         allowSameDay={false}
@@ -571,7 +571,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
     </InputGroup>
     <InputGroup>
       <Label>
-        Shift End
+        Trans(i18nKey=shiftEnd)
       </Label>
       <t
         allowSameDay={false}
@@ -615,11 +615,11 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
     </InputGroup>
     <InputGroup>
       <Label>
-        Spot
+        Trans(i18nKey=spot)
       </Label>
       <TypeaheadSelectInput
         aria-label="Spot"
-        emptyText="Select a Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -660,11 +660,11 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
     </InputGroup>
     <InputGroup>
       <Label>
-        Employee
+        Trans(i18nKey=employee)
       </Label>
       <TypeaheadSelectInput
         aria-label="Employee"
-        emptyText="Unassigned"
+        emptyText="Trans(i18nKey=unassigned)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -726,11 +726,11 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
     </InputGroup>
     <InputGroup>
       <Label>
-        Rotation Employee
+        Trans(i18nKey=rotationEmployee)
       </Label>
       <TypeaheadSelectInput
         aria-label="Rotation Employee"
-        emptyText="None"
+        emptyText="Trans(i18nKey=none)"
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -792,7 +792,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
     </InputGroup>
     <InputGroup>
       <Label>
-        Is Pinned
+        Trans(i18nKey=isPinned)
       </Label>
       <Component
         aria-label="Is Pinned"
