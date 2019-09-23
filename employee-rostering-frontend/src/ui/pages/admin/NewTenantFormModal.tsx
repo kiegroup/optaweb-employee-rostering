@@ -58,7 +58,7 @@ export function isFormCompleted(rs: Partial<RosterState>): rs is RosterState {
 }
 
 export const NewTenantFormModal: React.FC<Props> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("NewTenantFormModal");
   const { refreshSupportedTimezones } = props;
   React.useEffect(() => {
     refreshSupportedTimezones() 

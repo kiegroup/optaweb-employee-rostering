@@ -1,0 +1,25 @@
+---
+indictments: 控告
+
+missingRequiredSkills: 员工 "{{employee}}", 没有位置 "{{spot}}" 所需的以下技能。
+
+exceededContractMaximumMinutes: 员工 "{{employee}}" 已超过其最长 {{durationly}} 分钟。 他们在 {{minutesWorked}}
+  的 {{duration}} 工作； 他们每个 {{maxMinutesAllowed}} 最多可以工作 {{duration}}。
+
+unavailableEmployee: 员工 "{{employee}}" 不可用从 {{from}} 到 {{to}}。
+
+conflictingShifts: 员工 "{{employee}}" 被分配给有冲突的班次：{{spot}}, {{from}}-{{to}}。
+
+employeeDoesNotMatchRotationEmployee: 班次员工 "{{employee}}" 与班次轮换员工 "{{rotationEmployee}}"
+  不匹配。
+
+unassignedShift: 班次未分配。
+
+undesiredShiftForEmployee: 员工 "{{employee}}" 不想从 {{from}} 到 {{to}} 工作。
+
+desiredShiftForEmployee: 员工 "{{employee}}" 希望从 {{from}} 到 {{to}} 工作。
+
+totalIndictment: 轮换起诉分数：{{score}}
+
+penalty: 罚款：{{score}}
+reward: 奖励：{{score}}

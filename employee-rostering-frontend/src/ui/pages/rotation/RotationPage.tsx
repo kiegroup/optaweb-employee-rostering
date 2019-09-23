@@ -98,7 +98,7 @@ const ShiftTemplatePopoverHeader: React.FC<{
   onEdit: (shift: ShiftTemplate) => void;
   onDelete: (shift: ShiftTemplate) => void;
 }> = (props) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation("RotationPage");
   const durationBetweenRotationStartAndEnd = moment
     .duration(props.shiftTemplate.durationBetweenRotationStartAndTemplateStart)
     .add(props.shiftTemplate.shiftTemplateDuration);
@@ -205,7 +205,8 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
           <Trans
-            i18nKey="noSpotsRotation"
+            t={t}
+            i18nKey="noSpots"
             components={[
               <Title headingLevel="h5" size="lg" key={0} />,
               <EmptyStateBody key={1} />,
@@ -390,4 +391,5 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(RotationPage)));
+export default withTranslation("RotationPage")(
+	connect(mapStateToProps, mapDispatchToProps)(withRouter(RotationPage)));

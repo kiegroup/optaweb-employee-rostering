@@ -202,7 +202,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
           <Trans
-            i18nKey="noSpotsShift"
+            t={t}
+            i18nKey="noSpots"
             components={[
               <Title headingLevel="h5" size="lg" key={0} />,
               <EmptyStateBody key={1} />,
@@ -357,4 +358,5 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withTranslation()(withRouter(ShiftRosterPage)));
+export default withTranslation("ShiftRosterPage")(
+	connect(mapStateToProps, mapDispatchToProps)(withRouter(ShiftRosterPage)));

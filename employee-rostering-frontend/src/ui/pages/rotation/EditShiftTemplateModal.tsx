@@ -203,7 +203,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             <Label>{t("spot")}</Label>
             <TypeaheadSelectInput
               aria-label="Spot"
-              emptyText={t("selectASpot")}
+              emptyText={t("selectSpot")}
               value={this.state.editedValue.spot}
               options={this.props.spotList}
               optionToStringMap={spot => spot.name}
@@ -314,4 +314,5 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
   }
 }
 
-export default connect(mapStateToProps)(withTranslation()(EditShiftTemplateModal));
+export default withTranslation("EditShiftTemplateModal")(
+	connect(mapStateToProps)(EditShiftTemplateModal));

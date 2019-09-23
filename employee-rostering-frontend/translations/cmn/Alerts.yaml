@@ -1,0 +1,152 @@
+---
+addContract:
+  title: 成功添加了合同
+  message: 成功添加了合同与名为 "{{name}}"。
+
+removeContract:
+  title: 成功删除了合同
+  message: 成功删除了合同与名为 "{{name}}"。
+
+removeContractError:
+  title: 删除合同出了错误
+  message: 无法删除合同与名为 "{{name}}"。
+
+updateContract:
+  title: 成功更新了合同
+  message: 成功更新了合同与名为 "{{name}}"。
+
+addEmployee:
+  title: 成功添加了雇员
+  message: 成功添加了雇员与名为 "{{name}}"。
+
+removeEmployee:
+  title: 成功删除了雇员
+  message: 成功删除了雇员与名为 "{{name}}"。
+
+removeEmployeeError:
+  title: 删除雇员出了错误
+  message: 无法删除雇员与名为 "{{name}}"。
+
+updateEmployee:
+  title: 成功更新了雇员
+  message: 成功更新了雇员与名为 "{{name}}"。
+
+addShift:
+  title: 成功添加了轮班
+  message: 成功添加了从 {{startDateTime}} 开始到 {{endDateTime}} 结束的轮班。
+
+removeShift:
+  title: 成功删除了轮班
+  message: 成功删除了从 {{startDateTime}} 开始到 {{endDateTime}} 结束的轮班。
+
+removeShiftError:
+  title: 删除轮班出了错误
+  message: 无法删除从 {{startDateTime}} 开始到 {{endDateTime}} 结束的轮班。
+
+updateShift:
+  title: 成功更新了轮班
+  message: 成功更新了从 {{startDateTime}} 开始到 {{endDateTime}} 结束的轮班。
+
+addShiftTemplate:
+  title: 成功添加了轮班模板
+  message: 成功添加了轮班模板与 id 为 "{{id}}"。
+
+removeShiftTemplate:
+  title: 成功删除了轮班模板
+  message: 成功删除了轮班模板与 id 为 "{{id}}"。
+
+removeShiftTemplateError:
+  title: 删除轮班模板出了错误
+  message: 无法删除轮班模板与 id 为 "{{id}}"。
+
+updateShiftTemplate:
+  title: 成功更新了轮班模板
+  message: 成功更新了轮班模板与 id 为 "{{id}}"。
+
+addAvailability:
+  title: 成功添加了可用性
+  message: 成功添加了从 {{startDateTime}} 开始到 {{endDateTime}} 结束的可用性对于 {{employeeName}}。
+
+removeAvailability:
+  title: 成功删除了可用性
+  message: 成功删除了从 {{startDateTime}} 开始到 {{endDateTime}} 结束的可用性对于 {{employeeName}}。
+
+removeAvailabilityError:
+  title: 删除轮班模板出了可用性
+  message: 无法删除从 {{startDateTime}} 开始到 {{endDateTime}} 结束的可用性对于 {{employeeName}}。
+
+updateAvailability:
+  title: 成功更新了可用性
+  message: 成功更新了可用性与 id 为 "{{id}}"。
+
+addSkill:
+  title: 成功添加了技能
+  message: 成功添加了技能与名为 "{{name}}"。
+
+removeSkill:
+  title: 成功删除了技能
+  message: 成功删除了技能与名为 "{{name}}"。
+
+removeSkillError:
+  title: 删除技能出了错误
+  message: 无法删除技能与名为 "{{name}}"。
+
+updateSkill:
+  title: 成功更新了技能
+  message: 成功更新了技能与名为 "{{name}}"。
+
+addSpot:
+  title: 成功添加了位置
+  message: 成功添加了位置与名为 "{{name}}"。
+
+removeSpot:
+  title: 成功删除了位置
+  message: 成功删除了位置与名为 "{{name}}"。
+
+removeSpotError:
+  title: 删除位置出了错误
+  message: 无法删除位置与名为 "{{name}}"。
+
+updateSpot:
+  title: 成功更新了位置
+  message: 成功更新了位置与名为 "{{name}}"。
+
+addTenant:
+  title: 成功添加了佃户
+  message: 成功添加了佃户与名为 "{{name}}"。
+
+removeTenant:
+  title: 成功删除了佃户
+  message: 成功删除了佃户与名为 "{{name}}"。
+
+removeTenantError:
+  title: 删除佃户出了错误
+  message: 无法删除佃户与名为 "{{name}}"。
+
+startSolvingRoster:
+  title: 开始解决名册
+  message: 在 {{startSolvingTime}} 开始解决名册。
+
+finishSolvingRoster:
+  title: 完成解题名册
+  message: 在 {{startSolvingTime}} 完成解题名册。
+
+publish:
+  title: 公布名册
+  message: 发表于 {{from}} 至 {{to}}。
+
+shiftRosterRefresh:
+  title: 信息
+  message: 轮班名单得到了更新。
+
+availabilityRosterRefresh:
+  title: 信息
+  message: 可用性名册得到了更新。
+
+generic:
+  title: 例外
+  message: "{{message}}"
+
+exception:
+  title: 服务器异常
+  message: "<0>看堆栈跟踪。</0>"

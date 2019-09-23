@@ -1,0 +1,9 @@
+---
+createAvailability: Create Availability
+noEmployees:
+  <0>There are no Employees</0>
+  <1>
+    The current tenant have no Employees. You need at least one Employee to see the
+    Availability Roster. You can add an Employee in the "Employees" page.
+  </1>
+  <2>Go to the Employees page</2>

@@ -1,0 +1,7 @@
+---
+editShiftTemplate: 编辑班次模板
+createShiftTemplate: 创建班次模板
+startDayOffset: 开始日偏移
+startTime: 开始时间
+endDayOffset: 结束日偏移
+endTime: 结束时间

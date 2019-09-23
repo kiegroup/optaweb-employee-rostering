@@ -47,9 +47,30 @@ i18n
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
     fallbackLng: 'en',
+    fallbackNS: 'Common',
+    defaultNS: 'Common',
+    // Load all namespaces on boot so users don't see an empty screen
+    ns: [
+      'Alerts',
+      'AvailabilityRosterPage',
+	  'Common',
+      'ContractsPage',
+      'EditAvailabilityModal',
+      'EditShiftModal',
+      'EditShiftTemplateModal',
+      'EmployeesPage',
+      'Navigation',
+      'NewTenantFormModal',
+      'RestServiceClient',
+      'RotationPage',
+      'ServerSideException',
+      'ShiftEvent',
+      'ShiftRosterPage',
+      'SpotsPage'
+    ],
     debug: true,
     backend: {
-      loadPath: '/assets/locales/{{lng}}-{{ns}}.json'
+      loadPath: '/assets/locales/{{lng}}/{{ns}}.json'
     },
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default

@@ -56,7 +56,7 @@ const Alerts: React.FC<Props> = (props) => {
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
-  const { t } = useTranslation();
+  const { t } = useTranslation("Alerts");
   const [ hoveredOverAlerts, hoveredOverAlertsSetter ] = React.useState([] as number[]);
   const shouldUpdateNextSecond = props.alerts.filter(alert => 
     hoveredOverAlerts.find(id => id === alert.id) === undefined).length > 0;
@@ -102,7 +102,7 @@ const Alerts: React.FC<Props> = (props) => {
         <Alert
           className={additionClassNames(alert)}
           key={alert.id}
-          title={t("alerts." + alert.i18nKey + ".title")}
+          title={t( alert.i18nKey + ".title")}
           variant={alert.variant}
           onMouseEnter={() => {
             hoveredOverAlertsSetter(hoveredOverAlerts.concat([alert.id as number]));
@@ -114,7 +114,8 @@ const Alerts: React.FC<Props> = (props) => {
           )}
         >
           <Trans
-            i18nKey={"alerts." + alert.i18nKey + ".message"}
+            t={t}
+            i18nKey={alert.i18nKey + ".message"}
             values={alert.params}
             components={alert.components.map((c, index) => mapToComponent(c, alert.componentProps[index]))}
           />

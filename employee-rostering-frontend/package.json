@@ -34,8 +34,8 @@
     "webstomp-client": "^1.2.6"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "mvn generate-sources; react-scripts start",
+    "build": "mvn generate-sources; react-scripts build",
     "typecheck": "npx tsc --noEmit",
     "test": "TZ=UTC react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es))/\"",
     "eject": "react-scripts eject",

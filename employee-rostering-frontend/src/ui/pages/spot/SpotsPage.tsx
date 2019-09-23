@@ -137,4 +137,4 @@ export class SpotsPage extends DataTable<Spot, Props> {
   }
 }
 
-export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(SpotsPage));
+export default withTranslation("SpotsPage")(connect(mapStateToProps, mapDispatchToProps)(SpotsPage));

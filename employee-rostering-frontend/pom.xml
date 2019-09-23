@@ -106,7 +106,7 @@
                     <configuration>
                         <sourceDirectory>translations</sourceDirectory>
                         <includes>
-                            <include>*.yaml</include>
+                            <include>**/*.yaml</include>
                         </includes>
                         <outputDirectory>public/assets/locales</outputDirectory>
                     </configuration>
