@@ -1,4 +1,6 @@
 ---
+serverSideError: Server Side Error
+
 addContract:
   title: Successfully added Contract
   message: The Contract "{{name}}" was successfully added.
