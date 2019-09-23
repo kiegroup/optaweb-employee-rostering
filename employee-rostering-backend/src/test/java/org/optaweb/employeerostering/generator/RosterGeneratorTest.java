@@ -103,7 +103,7 @@ public class RosterGeneratorTest {
     
     @After
     public void cleanup() {
-        restTemplate.delete(tenantPathURI + "/remove/" + tenantId);
+        restTemplate.postForEntity(tenantPathURI + "remove/" + tenantId, null, Void.class);
     }
 
     @Test
