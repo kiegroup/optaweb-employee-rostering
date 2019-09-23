@@ -155,7 +155,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
           <InputGroup>
             <Label>Employee</Label>
             <TypeaheadSelectInput
-              aria-label={"Employee"}
+              aria-label="Employee"
               emptyText={t("selectEmployee")}
               value={this.state.editedValue.employee}
               options={this.props.employeeList}
@@ -186,4 +186,4 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
 
 // eslint-disable-next-line no-undef
 export default withTranslation("EditAvailabilityModal")(
-	connect(mapStateToProps)(EditAvailabilityModal));
+  connect(mapStateToProps)(EditAvailabilityModal));

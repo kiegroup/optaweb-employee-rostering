@@ -359,4 +359,4 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 }
 
 export default withTranslation("ShiftRosterPage")(
-	connect(mapStateToProps, mapDispatchToProps)(withRouter(ShiftRosterPage)));
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(ShiftRosterPage)));

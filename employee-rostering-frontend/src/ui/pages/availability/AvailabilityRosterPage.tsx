@@ -511,4 +511,4 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
 }
 
 export default withTranslation("AvailabilityRosterPage")(
-	connect(mapStateToProps, mapDispatchToProps)(withRouter(AvailabilityRosterPage)));
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(AvailabilityRosterPage)));
