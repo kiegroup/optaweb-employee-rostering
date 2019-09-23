@@ -12,7 +12,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         filter={[Function]}
         onChange={[Function]}
       />
@@ -28,7 +28,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
         isDisabled={false}
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         itemCount={2}
@@ -313,7 +313,7 @@ exports[`Skills page should render correctly with no skills 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         filter={[Function]}
         onChange={[Function]}
       />
@@ -329,7 +329,7 @@ exports[`Skills page should render correctly with no skills 1`] = `
         isDisabled={false}
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         itemCount={0}

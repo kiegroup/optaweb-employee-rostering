@@ -12,7 +12,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         filter={[Function]}
         onChange={[Function]}
       />
@@ -28,7 +28,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
         isDisabled={false}
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         itemCount={2}
@@ -106,7 +106,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
               "title": <EditableComponent
                 editor={
                   <StatefulMultiTypeaheadSelectInput
-                    emptyText="Select required skills"
+                    emptyText="Trans(i18nKey=selectRequiredSkills)"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -246,7 +246,7 @@ exports[`Spots page should render correctly with a few spots 1`] = `
               "title": <EditableComponent
                 editor={
                   <StatefulMultiTypeaheadSelectInput
-                    emptyText="Select required skills"
+                    emptyText="Trans(i18nKey=selectRequiredSkills)"
                     onChange={[Function]}
                     optionToStringMap={[Function]}
                     options={
@@ -413,7 +413,7 @@ exports[`Spots page should render correctly with no spots 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         filter={[Function]}
         onChange={[Function]}
       />
@@ -429,7 +429,7 @@ exports[`Spots page should render correctly with no spots 1`] = `
         isDisabled={false}
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         itemCount={0}
@@ -508,7 +508,7 @@ exports[`Spots page should render the editor correctly 1`] = `
     key="1"
   >
     <StatefulMultiTypeaheadSelectInput
-      emptyText="Select required skills"
+      emptyText="Trans(i18nKey=selectRequiredSkills)"
       key="1"
       onChange={[Function]}
       optionToStringMap={[Function]}

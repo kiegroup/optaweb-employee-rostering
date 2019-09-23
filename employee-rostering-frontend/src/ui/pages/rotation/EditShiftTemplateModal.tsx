@@ -232,7 +232,7 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
             />
             <Label>{t("startTime")}</Label>
             <TextInput
-              aria-label={t("startTime")}
+              aria-label={"Start Time"}
               type="time"
               defaultValue={this.state.editedValue.startTime?
                 moment("2018-01-01T00:00").add(this.state.editedValue.startTime.hours, "hours")

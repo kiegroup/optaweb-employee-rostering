@@ -8,7 +8,7 @@ exports[`Availability Event should render correctly 1`] = `
     <SplitItem
       isFilled={false}
     >
-      EmployeeAvailabilityState.DESIRED
+      Trans(i18nKey=EmployeeAvailabilityState.DESIRED)
     </SplitItem>
     <SplitItem
       isFilled={true}
@@ -44,7 +44,7 @@ exports[`Availability Event should render correctly 1`] = `
             "width": "min-content",
           }
         }
-        title="EmployeeAvailabilityState.DESIRED"
+        title="Trans(i18nKey=EmployeeAvailabilityState.DESIRED)"
         variant="tertiary"
       >
         <OkIcon
@@ -64,7 +64,7 @@ exports[`Availability Event should render correctly 1`] = `
             "width": "min-content",
           }
         }
-        title="EmployeeAvailabilityState.UNDESIRED"
+        title="Trans(i18nKey=EmployeeAvailabilityState.UNDESIRED)"
         variant="tertiary"
       >
         <WarningTriangleIcon
@@ -84,7 +84,7 @@ exports[`Availability Event should render correctly 1`] = `
             "width": "min-content",
           }
         }
-        title="EmployeeAvailabilityState.UNAVAILABLE"
+        title="Trans(i18nKey=EmployeeAvailabilityState.UNAVAILABLE)"
         variant="tertiary"
       >
         <ErrorCircleOIcon

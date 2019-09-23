@@ -19,6 +19,7 @@ import * as React from 'react';
 import { DataTable, DataTableProps } from './DataTable';
 import { stringSorter} from 'util/CommonSorters';
 import FilterComponent from './FilterComponent';
+import { useTranslation } from 'react-i18next';
 
 interface MockData {name: string; number: number}
 class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
@@ -366,12 +367,16 @@ describe('DataTable component', () => {
 });
 
 const noRows: DataTableProps<MockData> = {
+   ...useTranslation(),
+  tReady: true,
   title: "Data Table",
   columnTitles: ["Column 1", "Column 2"],
   tableData: [],
 };
 
 const twoRows: DataTableProps<MockData> = {
+   ...useTranslation(),
+  tReady: true,
   title: "Data Table",
   columnTitles: ["Column 1", "Column 2"],
   tableData: [{name: "Some Data", number: 1}, {name: "More Data", number: 2}],

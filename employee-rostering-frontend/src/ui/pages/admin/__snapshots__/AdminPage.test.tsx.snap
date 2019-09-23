@@ -12,7 +12,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         aria-label="Filter by Name"
         filter={[Function]}
         onChange={[Function]}
@@ -29,7 +29,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
         aria-label="Add Tenant"
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         aria-label="Change Page"
@@ -49,10 +49,10 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
   />
   <Table
     borders={true}
-    caption="Tenants"
+    caption="Trans(i18nKey=tenants)"
     cells={
       Array [
-        "Name",
+        "Trans(i18nKey=name)",
         "",
       ]
     }
@@ -154,7 +154,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         aria-label="Filter by Name"
         filter={[Function]}
         onChange={[Function]}
@@ -171,7 +171,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
         aria-label="Add Tenant"
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         aria-label="Change Page"
@@ -191,10 +191,10 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
   />
   <Table
     borders={true}
-    caption="Tenants"
+    caption="Trans(i18nKey=tenants)"
     cells={
       Array [
-        "Name",
+        "Trans(i18nKey=name)",
         "",
       ]
     }
@@ -296,7 +296,7 @@ exports[`Admin Page should filter by name 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         aria-label="Filter by Name"
         filter={[Function]}
         onChange={[Function]}
@@ -313,7 +313,7 @@ exports[`Admin Page should filter by name 1`] = `
         aria-label="Add Tenant"
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         aria-label="Change Page"
@@ -333,10 +333,10 @@ exports[`Admin Page should filter by name 1`] = `
   />
   <Table
     borders={true}
-    caption="Tenants"
+    caption="Trans(i18nKey=tenants)"
     cells={
       Array [
-        "Name",
+        "Trans(i18nKey=name)",
         "",
       ]
     }
@@ -438,7 +438,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         aria-label="Filter by Name"
         filter={[Function]}
         onChange={[Function]}
@@ -455,7 +455,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
         aria-label="Add Tenant"
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         aria-label="Change Page"
@@ -475,10 +475,10 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
   />
   <Table
     borders={true}
-    caption="Tenants"
+    caption="Trans(i18nKey=tenants)"
     cells={
       Array [
-        "Name",
+        "Trans(i18nKey=name)",
         "",
       ]
     }
@@ -844,7 +844,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         aria-label="Filter by Name"
         filter={[Function]}
         onChange={[Function]}
@@ -861,7 +861,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
         aria-label="Add Tenant"
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         aria-label="Change Page"
@@ -881,10 +881,10 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
   />
   <Table
     borders={true}
-    caption="Tenants"
+    caption="Trans(i18nKey=tenants)"
     cells={
       Array [
-        "Name",
+        "Trans(i18nKey=name)",
         "",
       ]
     }
@@ -986,7 +986,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         aria-label="Filter by Name"
         filter={[Function]}
         onChange={[Function]}
@@ -1003,7 +1003,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
         aria-label="Add Tenant"
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         aria-label="Change Page"
@@ -1023,10 +1023,10 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
   />
   <Table
     borders={true}
-    caption="Tenants"
+    caption="Trans(i18nKey=tenants)"
     cells={
       Array [
-        "Name",
+        "Trans(i18nKey=name)",
         "",
       ]
     }
@@ -1392,7 +1392,7 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         aria-label="Filter by Name"
         filter={[Function]}
         onChange={[Function]}
@@ -1409,7 +1409,7 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
         aria-label="Add Tenant"
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         aria-label="Change Page"
@@ -1429,10 +1429,10 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
   />
   <Table
     borders={true}
-    caption="Tenants"
+    caption="Trans(i18nKey=tenants)"
     cells={
       Array [
-        "Name",
+        "Trans(i18nKey=name)",
         "",
       ]
     }
@@ -1465,7 +1465,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
     }
   >
     <LevelItem>
-      <FilterComponent
+      <Component
         aria-label="Filter by Name"
         filter={[Function]}
         onChange={[Function]}
@@ -1482,7 +1482,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
         aria-label="Add Tenant"
         onClick={[Function]}
       >
-        Add
+        Trans(i18nKey=add)
       </Button>
       <Pagination
         aria-label="Change Page"
@@ -1502,10 +1502,10 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
   />
   <Table
     borders={true}
-    caption="Tenants"
+    caption="Trans(i18nKey=tenants)"
     cells={
       Array [
-        "Name",
+        "Trans(i18nKey=name)",
         "",
       ]
     }

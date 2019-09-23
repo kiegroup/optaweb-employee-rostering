@@ -36,9 +36,9 @@ describe('Alerts', () => {
   it('should render correctly with alerts', () => {
     const alertsElement = shallow(<Alerts {...someAlerts} />);
     expect(mockTranslate).toBeCalledTimes(3);
-    expect(mockTranslate).toHaveBeenNthCalledWith(1, "alerts.infoMessage.title");
-    expect(mockTranslate).toHaveBeenNthCalledWith(2, "alerts.successMessage.title");
-    expect(mockTranslate).toHaveBeenNthCalledWith(3, "alerts.dangerMessage.title");
+    expect(mockTranslate).toHaveBeenNthCalledWith(1, "infoMessage.title");
+    expect(mockTranslate).toHaveBeenNthCalledWith(2, "successMessage.title");
+    expect(mockTranslate).toHaveBeenNthCalledWith(3, "dangerMessage.title");
 
     expect(toJson(alertsElement)).toMatchSnapshot();
   });
@@ -46,7 +46,7 @@ describe('Alerts', () => {
   it('should render correctly with alerts with components', () => {
     const alertsElement = shallow(<Alerts {...someAlertsWithComponents} />);
     expect(mockTranslate).toBeCalledTimes(1);
-    expect(mockTranslate).toHaveBeenNthCalledWith(1, "alerts.exception.title");
+    expect(mockTranslate).toHaveBeenNthCalledWith(1, "exception.title");
 
     expect(toJson(alertsElement)).toMatchSnapshot();
   });

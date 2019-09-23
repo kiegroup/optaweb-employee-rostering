@@ -155,7 +155,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
           <InputGroup>
             <Label>Employee</Label>
             <TypeaheadSelectInput
-              aria-label={t("employee")}
+              aria-label={"Employee"}
               emptyText={t("selectEmployee")}
               value={this.state.editedValue.employee}
               options={this.props.employeeList}

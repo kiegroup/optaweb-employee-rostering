@@ -19,6 +19,7 @@ import * as React from 'react';
 import { SkillsPage, Props } from './SkillsPage';
 import Skill from 'domain/Skill';
 import { Sorter, ReadonlyPartial } from 'types';
+import { useTranslation } from 'react-i18next';
 
 describe('Skills page', () => {
   it('should render correctly with no skills', () => {
@@ -127,6 +128,8 @@ describe('Skills page', () => {
 });
 
 const noSkills: Props = {
+  ...useTranslation(),
+  tReady: true,
   tenantId: 0,
   title: "Skills",
   columnTitles: ["Name"],
@@ -137,6 +140,8 @@ const noSkills: Props = {
 };
 
 const twoSkills: Props = {
+  ...useTranslation(),
+  tReady: true,
   tenantId: 0,
   title: "Skills",
   columnTitles: ["Name"],

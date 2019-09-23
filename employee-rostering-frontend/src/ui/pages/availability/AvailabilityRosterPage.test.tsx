@@ -25,6 +25,7 @@ import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
 import "moment/locale/en-ca";
 import EmployeeAvailability from 'domain/EmployeeAvailability';
+import { useTranslation } from 'react-i18next';
 
 describe('Availability Roster Page', () => {
   beforeEach(() => {
@@ -155,7 +156,7 @@ describe('Availability Roster Page', () => {
       employeeIdToAvailabilityListMap={new Map()}
       employeeIdToShiftListMap={new Map()}
     />);
-    availabilityRosterPage.find('Button[aria-label="Employees Page"]').simulate("click");
+    shallow((availabilityRosterPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(baseProps.history.push).toBeCalled();
     expect(baseProps.history.push).toBeCalledWith("/employees");
   });
@@ -203,7 +204,7 @@ describe('Availability Roster Page', () => {
       selectedShift: shift,
       isCreatingOrEditingShift: true
     });
-    availabilityRosterPage.find('Connect(EditShiftModal)[aria-label="Edit Shift"]').simulate("delete", shift);
+    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate("delete", shift);
     expect(baseProps.removeShift).toBeCalled();
     expect(baseProps.removeShift).toBeCalledWith(shift);
     expect(availabilityRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
@@ -223,7 +224,7 @@ describe('Availability Roster Page', () => {
       startDateTime: startDate,
       endDateTime: endDate
     };
-    availabilityRosterPage.find('Connect(EditShiftModal)[aria-label="Edit Shift"]').simulate("save", newShift);
+    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate("save", newShift);
     expect(baseProps.addShift).toBeCalled();
     expect(baseProps.addShift).toBeCalledWith(newShift);
     expect(availabilityRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
@@ -242,7 +243,7 @@ describe('Availability Roster Page', () => {
       startDateTime: startDate,
       endDateTime: endDate
     };
-    availabilityRosterPage.find('Connect(EditShiftModal)[aria-label="Edit Shift"]').simulate("save", newShift);
+    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate("save", newShift);
     expect(baseProps.updateShift).toBeCalled();
     expect(baseProps.updateShift).toBeCalledWith(newShift);
     expect(availabilityRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
@@ -255,7 +256,7 @@ describe('Availability Roster Page', () => {
     availabilityRosterPage.setState({
       isCreatingOrEditingShift: true
     });
-    availabilityRosterPage.find('Connect(EditShiftModal)[aria-label="Edit Shift"]').simulate("close");
+    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate("close");
     expect(availabilityRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
   });
 
@@ -589,6 +590,8 @@ const rosterState: RosterState = {
 };
 
 const baseProps: Props = {
+  ...useTranslation("AvailabilityRosterPage"),
+  tReady: true,
   isSolving: false,
   isLoading: false,
   startDate: startDate,

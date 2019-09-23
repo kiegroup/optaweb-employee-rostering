@@ -21,6 +21,7 @@ import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
 import { EditShiftModal } from './EditShiftModal';
 import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 
 describe('Edit Shift Modal', () => {
   it('should render correctly when closed', () => {
@@ -376,6 +377,9 @@ const baseShift: Shift = {
 };
 
 const baseProps = {
+  ...useTranslation("EditShiftModal"),
+  shift: undefined,
+  tReady: true,
   tenantId: 0,
   spotList: [spot],
   employeeList: [employee]

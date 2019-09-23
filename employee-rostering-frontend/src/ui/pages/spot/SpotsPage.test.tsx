@@ -21,6 +21,7 @@ import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { Sorter } from 'types';
 import Spot from 'domain/Spot';
 import { act } from 'react-dom/test-utils';
+import { useTranslation } from 'react-i18next';
 
 describe('Spots page', () => {
   it('should render correctly with no spots', () => {
@@ -139,6 +140,8 @@ describe('Spots page', () => {
 });
 
 const noSpots: Props = {
+  ...useTranslation("SpotsPage"),
+  tReady: true,
   tenantId: 0,
   title: "Spots",
   columnTitles: ["Name"],
@@ -150,6 +153,8 @@ const noSpots: Props = {
 };
 
 const twoSpots: Props = {
+  ...useTranslation("SpotsPage"),
+  tReady: true,
   tenantId: 0,
   title: "Spots",
   columnTitles: ["Name"],
