@@ -48,7 +48,7 @@ function createStackTrace(exceptionInfo: ServerSideExceptionInfo|null): JSX.Elem
 export const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerSideExceptionInfo>> = (props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dialogBody = createStackTrace(props);
-  const { t } = useTranslation();
+  const { t } = useTranslation("ServerSideException");
   
   return (
     <>
