@@ -381,13 +381,26 @@
                 </systemPropertyVariables>
               </configuration>
             </plugin>
+            <!--
+              Disable Jacoco check inherited from kie-parent. Remove this when it's removed from kie-parent
+              (but some projects still use the check fail build).
+            -->
+            <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>default-check</id>
+                  <goals>
+                    <goal>check</goal>
+                  </goals>
+                  <phase>none</phase>
+                </execution>
+              </executions>
+            </plugin>
           </plugins>
         </pluginManagement>
         <plugins>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
-          </plugin>
           <plugin>
             <groupId>org.codehaus.cargo</groupId>
             <artifactId>cargo-maven2-plugin</artifactId>
