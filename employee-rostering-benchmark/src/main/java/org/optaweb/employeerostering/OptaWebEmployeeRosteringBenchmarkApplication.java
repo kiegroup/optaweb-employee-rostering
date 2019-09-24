@@ -14,45 +14,61 @@
  * limitations under the License.
  */
 
-package org.optaweb.employeerostering.benchmark;
+package org.optaweb.employeerostering;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 
 import org.optaplanner.benchmark.api.PlannerBenchmark;
 import org.optaplanner.benchmark.api.PlannerBenchmarkFactory;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
+import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.Transactional;
 
-public class OptaWebEmployeeRosteringBenchmarkApp {
+@SpringBootApplication
+public class OptaWebEmployeeRosteringBenchmarkApplication implements ApplicationRunner {
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static void main(String[] args) {
-        List<Roster> rosterList = generateRosters();
+        SpringApplication.run(OptaWebEmployeeRosteringBenchmarkApplication.class, args);
+    }
 
+    @Override
+    @Transactional
+    public void run(ApplicationArguments args) {
+        logger.info("Started benchmark application");
+
+        List<Roster> rosterList = generateRosters();
         SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(
-                "org/optaweb/employeerostering/service/solver/employeeRosteringSolverConfig.xml");
+                "org/optaweb/employeerostering/service/solver/employeeRosteringSolverConfig.xml",
+                WannabeSolverManager.class.getClassLoader());
         PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromSolverFactory(solverFactory);
         PlannerBenchmark plannerBenchmark = benchmarkFactory.buildPlannerBenchmark(rosterList);
         plannerBenchmark.benchmark();
     }
 
-    private static List<Roster> generateRosters() {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(
-                "optaweb-employee-rostering-persistence-unit");
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
+    private List<Roster> generateRosters() {
         RosterGenerator rosterGenerator = new RosterGenerator(entityManager);
 
         List<Roster> rosterList = new ArrayList<>();
         rosterList.add(rosterGenerator.generateRoster(10, 7));
         rosterList.add(rosterGenerator.generateRoster(80, (28 * 4)));
 
-        entityManager.close();
-        entityManagerFactory.close();
         return rosterList;
     }
 }
