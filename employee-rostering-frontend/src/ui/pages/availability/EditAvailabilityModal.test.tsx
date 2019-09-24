@@ -125,7 +125,7 @@ describe('Edit Availability Modal', () => {
 
     editAvailabilityModal.onSave();
     expect(onSave).toBeCalled();
-    expect(onSave).toBeCalledWith(baseEmployeeAvailability);
+    expect(onSave).toBeCalledWith({ ...baseEmployeeAvailability, tenantId: 1 });
   });
 
   it('should call onSave when the save button is clicked with a completed availability', () => {
@@ -141,7 +141,7 @@ describe('Edit Availability Modal', () => {
 
     editAvailabilityModal.find('button[aria-label="Save"]').simulate("click");
     expect(onSave).toBeCalled();
-    expect(onSave).toBeCalledWith(baseEmployeeAvailability);
+    expect(onSave).toBeCalledWith({ ...baseEmployeeAvailability, tenantId: 1 });
   });
 
   it('should call onClose when the bottom close button is clicked', () => {
@@ -319,7 +319,7 @@ const baseEmployeeAvailability: EmployeeAvailability = {
 const baseProps = {
   ...useTranslation(),
   tReady: true,
-  tenantId: 0,
+  tenantId: 1,
   isOpen: true,
   employeeList: [employee]
 }

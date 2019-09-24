@@ -130,7 +130,7 @@ describe('Edit Shift Modal', () => {
     };
     editShiftModal.onSave();
     expect(onSave).toBeCalled();
-    expect(onSave).toBeCalledWith(baseShift);
+    expect(onSave).toBeCalledWith({ ...baseShift, tenantId: 1});
   });
 
   it('should call onSave when the save button is clicked with a completed shift', () => {
@@ -146,7 +146,7 @@ describe('Edit Shift Modal', () => {
 
     editShiftModal.find('button[aria-label="Save"]').simulate("click");
     expect(onSave).toBeCalled();
-    expect(onSave).toBeCalledWith(baseShift);
+    expect(onSave).toBeCalledWith({ ...baseShift, tenantId: 1});
   });
 
   it('should call onClose when the bottom close button is clicked', () => {
@@ -380,7 +380,7 @@ const baseProps = {
   ...useTranslation("EditShiftModal"),
   shift: undefined,
   tReady: true,
-  tenantId: 0,
+  tenantId: 1,
   spotList: [spot],
   employeeList: [employee]
 }

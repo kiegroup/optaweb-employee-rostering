@@ -95,7 +95,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
     if (shift.spot !== undefined && shift.startDateTime !== undefined &&
         shift.endDateTime !== undefined && shift.employee !== undefined &&
         shift.pinnedByUser !== undefined && shift.rotationEmployee !== undefined) {
-      this.props.onSave(shift as Shift);
+      this.props.onSave({ ...shift, tenantId: this.props.tenantId } as Shift);
     }
   }
 

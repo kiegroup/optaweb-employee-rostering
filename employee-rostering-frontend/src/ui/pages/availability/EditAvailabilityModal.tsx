@@ -87,7 +87,7 @@ export class EditAvailabilityModal extends React.Component<Props & WithTranslati
     const availability = this.state.editedValue;
     if (availability.employee !== undefined && availability.startDateTime !== undefined &&
       availability.endDateTime !== undefined && availability.state !== undefined) {
-      this.props.onSave({ tenantId: this.props.tenantId, ...availability } as EmployeeAvailability);
+      this.props.onSave({ ...availability, tenantId: this.props.tenantId } as EmployeeAvailability);
     }
   }
 
