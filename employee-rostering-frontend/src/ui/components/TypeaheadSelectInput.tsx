@@ -23,7 +23,8 @@ export interface TypeaheadSelectProps<T> {
   value: T | undefined;
   optionToStringMap: (option: T) => string;
   onChange: (selected: T | undefined) => void;
-  optional?: boolean; 
+  optional?: boolean;
+  className?: string;
 }
 
 export interface TypeaheadSelectState {
@@ -89,6 +90,7 @@ TypeaheadSelectState
 
   render() {
     const { isExpanded } = this.state;
+    const className = this.props.className;
     const selected = this.props.value;
 
     const emptyText = this.props.emptyText;
@@ -115,6 +117,7 @@ TypeaheadSelectState
           isExpanded={isExpanded}
           placeholderText={emptyText}
           required={!this.props.optional}
+          className={className}
         >
           {this.props.options.map((option) => (
             <SelectOption

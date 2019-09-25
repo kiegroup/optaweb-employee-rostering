@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Page, PageSection } from '@patternfly/react-core';
-import * as React from 'react';
+import { Page, PageSection, PageSidebar } from '@patternfly/react-core';
+import React, { useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import './App.css';
 import Background from './components/Background';
@@ -23,11 +23,18 @@ import Header from './header/Header';
 import Alerts from './Alerts';
 import { AdminPage, ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage, 
   EmployeesPage, RotationPage } from './pages';
+import { useMediaQuery } from 'react-responsive';
+import Navigation from './header/Navigation';
 
 const App: React.FC = () => {
+  const [isNavExpanded, setNavExpanded] = useState(false);
+  const smallerThanLaptop = useMediaQuery({ maxWidth: 1399 });
+  if (!smallerThanLaptop && isNavExpanded) {
+    setNavExpanded(false);
+  }
   return (
     <>
-      <Page header={<Header />}>
+      <Page header={<Header onNavToggle={() => setNavExpanded(!isNavExpanded)} />} sidebar={<PageSidebar isNavOpen={isNavExpanded} nav={<Navigation variant="default" />} />}>
         <Background />
         <PageSection
           style={{

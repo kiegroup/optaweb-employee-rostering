@@ -43,6 +43,7 @@ import {
   withRouter, RouteComponentProps,
 } from 'react-router-dom';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
+import Actions from 'ui/components/Actions';
 
 interface StateProps {
   isSolving: boolean;
@@ -284,6 +285,24 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     const endDate = this.props.endDate as Date;
     const shownEmployee = this.props.shownEmployeeList[0];
     const events: ShiftOrAvailability[] = [];
+    const actions = [
+      { name: t("publish"), action: this.props.publishRoster },
+        { name: this.props.isSolving? t("terminateEarly") : t("schedule"),
+          action: this.props.isSolving? this.props.terminateSolvingRosterEarly : this.props.solveRoster
+        },
+        { name: t("refresh"), action: () => {
+        this.props.refreshAvailabilityRoster();
+          this.props.showInfoMessage('availabilityRosterRefresh');
+        }},
+        { name: t("createAvailability"), action: () => {
+          if (!this.state.isCreatingOrEditingShift) {
+            this.setState({
+              selectedAvailability: undefined,
+              isCreatingOrEditingAvailability: true,
+            })
+          }
+        }}
+      ];
 
     if (this.props.employeeIdToAvailabilityListMap.get(shownEmployee.id as number) !== undefined) {
       (this.props.employeeIdToAvailabilityListMap.get(shownEmployee.id as number) as EmployeeAvailability[])
@@ -309,15 +328,15 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     }
     return (
       <>
-        <Level
-          gutter="sm"
+        <span
           style={{
+	        display: "grid",
             height: '60px',
             padding: '5px 5px 5px 5px',
+            gridTemplateColumns: 'auto auto 1fr',
             backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >
-          <LevelItem style={{ display: 'flex' }}>
             <TypeaheadSelectInput
               aria-label="Select Employee"
               emptyText={t("selectEmployee")}
@@ -325,67 +344,17 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               options={this.props.allEmployeeList}
               value={this.props.shownEmployeeList[0]}
               onChange={this.onUpdateEmployeeList}
+              className="no-clear-button"
             />
             <WeekPicker
               aria-label="Select Week to View"
               value={this.props.startDate as Date}
               onChange={this.onDateChange}
             />
-          </LevelItem>
-          <LevelItem style={{ display: 'flex' }}>
-            <Button
-              style={{ margin: '5px' }}
-              aria-label="Publish"
-              onClick={this.props.publishRoster}
-            >
-              {t("publish")}
-            </Button>
-            {(!this.props.isSolving
-              && (
-                <Button
-                  style={{ margin: '5px' }}
-                  aria-label="Solve"
-                  onClick={this.props.solveRoster}
-                >
-                  {t("schedule")}
-                </Button>
-              )) || (
-              <Button
-                style={{ margin: '5px' }}
-                aria-label="Terminate Early"
-                onClick={this.props.terminateSolvingRosterEarly}
-              >
-                {t("terminateEarly")}
-              </Button>
-            )
-            }
-            <Button
-              style={{ margin: '5px' }}
-              aria-label="Refresh"
-              onClick={() => {
-                this.props.refreshAvailabilityRoster();
-                this.props.showInfoMessage('availabilityRosterRefresh');
-              }
-              }
-            >
-              {t("refresh")}
-            </Button>
-            <Button
-              style={{ margin: '5px' }}
-              aria-label="Create Availability"
-              onClick={() => {
-                if (!this.state.isCreatingOrEditingShift) {
-                  this.setState({
-                    selectedAvailability: undefined,
-                    isCreatingOrEditingAvailability: true,
-                  })
-                }
-              }}
-            >
-              {t("createAvailability")}
-            </Button>
-          </LevelItem>
-        </Level>
+            <Actions
+              actions={actions}
+            />
+        </span>
         <EditAvailabilityModal
           availability={this.state.selectedAvailability}
           isOpen={this.state.isCreatingOrEditingAvailability}

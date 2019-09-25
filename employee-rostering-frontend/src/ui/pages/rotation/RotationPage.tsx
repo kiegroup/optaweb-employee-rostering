@@ -278,6 +278,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
                   this.setState({ shownSpot: newSpot });
                 }
               }}
+              className="no-clear-button"
             />
             <Pagination
               itemCount={Math.ceil(this.props.rosterState.rotationLength)}
