@@ -18,6 +18,7 @@ import { TextInput, Button, ButtonVariant } from "@patternfly/react-core";
 import './FilterComponent.css';
 import { Predicate } from "types";
 import { WithTranslation, withTranslation } from "react-i18next";
+import "index.css";
 
 export interface FilterProps<T> {
   filter: (filter: string) => Predicate<T>;
@@ -51,9 +52,8 @@ export class FilterComponent<T> extends React.Component<FilterProps<T> & WithTra
           value={this.state.filterText}
           onChange={this.updateFilter} 
         />
-        <Button
+        {this.state.filterText.length !== 0 && <Button
           variant={ButtonVariant.plain}
-          isDisabled={this.state.filterText.length === 0} 
           onClick={() => this.updateFilter("")}
         >
           <svg 
@@ -77,7 +77,7 @@ export class FilterComponent<T> extends React.Component<FilterProps<T> & WithTra
               transform=""
             />
           </svg>
-        </Button>
+        </Button>}
       </div>
     );
   }

@@ -38,6 +38,8 @@ import {
 } from 'react-router-dom'
 import { CubesIcon } from '@patternfly/react-icons';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
+import "ui/components/TypeaheadSelectInput.css";
+import Actions from "ui/components/Actions";
 
 interface StateProps {
   isSolving: boolean;
@@ -222,17 +224,34 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
     const shownSpot = this.props.shownSpotList[0];
+    const actions = [
+	  { name: t("publish"), action: this.props.publishRoster },
+      { name: this.props.isSolving? t("terminateEarly") : t("schedule"),
+        action: this.props.isSolving? this.props.terminateSolvingRosterEarly : this.props.solveRoster
+      },
+      { name: t("refresh"), action: () => {
+	    this.props.refreshShiftRoster();
+        this.props.showInfoMessage('shiftRosterRefresh');
+      }},
+      { name: t("createShift"), action: () => {
+	    this.setState({
+          selectedShift: undefined,
+          isCreatingOrEditingShift: true,
+        })
+      }}
+    ];
+
     return (
       <>
-        <Level
-          gutter="sm"
+        <span
           style={{
+	        display: "grid",
             height: '60px',
             padding: '5px 5px 5px 5px',
+            gridTemplateColumns: 'auto auto 1fr',
             backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >
-          <LevelItem style={{ display: 'flex' }}>
             <TypeaheadSelectInput
               aria-label="Select Spot"
               emptyText={t("selectSpot")}
@@ -240,65 +259,17 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               options={this.props.allSpotList}
               value={this.props.shownSpotList[0]}
               onChange={this.onUpdateSpotList}
+              className="no-clear-button"
             />
             <WeekPicker
               aria-label="Select Week to View"
               value={this.props.startDate as Date}
               onChange={this.onDateChange}
             />
-          </LevelItem>
-          <LevelItem style={{ display: 'flex' }}>
-            <Button
-              style={{ margin: '5px' }}
-              aria-label="Publish"
-              onClick={this.props.publishRoster}
-            >
-              {t("publish")}
-            </Button>
-            {(!this.props.isSolving
-              && (
-                <Button
-                  style={{ margin: '5px' }}
-                  aria-label="Solve"
-                  onClick={this.props.solveRoster}
-                >
-                  {t("schedule")}
-                </Button>
-              )) || (
-              <Button
-                style={{ margin: '5px' }}
-                aria-label="Terminate Early"
-                onClick={this.props.terminateSolvingRosterEarly}
-              >
-                {t("terminateEarly")}
-              </Button>
-            )
-            }
-            <Button
-              style={{ margin: '5px' }}
-              aria-label="Refresh"
-              onClick={() => {
-                this.props.refreshShiftRoster();
-                this.props.showInfoMessage('shiftRosterRefresh');
-              }
-              }
-            >
-              {t("refresh")}
-            </Button>
-            <Button
-              style={{ margin: '5px' }}
-              aria-label="Create Shift"
-              onClick={() => {
-                this.setState({
-                  selectedShift: undefined,
-                  isCreatingOrEditingShift: true,
-                })
-              }}
-            >
-              {t("createShift")}
-            </Button>
-          </LevelItem>
-        </Level>
+            <Actions
+              actions={actions}
+            />
+        </span>
         <EditShiftModal
           aria-label="Edit Shift"
           isOpen={this.state.isCreatingOrEditingShift}
