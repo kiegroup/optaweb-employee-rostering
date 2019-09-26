@@ -121,11 +121,11 @@ updateSpot:
 
 addTenant:
   title: Successfully added Tenant
-  message: The Tenant "{{name}}" was succesfully added.
+  message: The Tenant "{{name}}" was successfully added.
 
 removeTenant:
   title: Successfully removed Tenant
-  message: The Tenant "{{name}}" was succesfully deleted.
+  message: The Tenant "{{name}}" was successfully deleted.
 
 removeTenantError:
   title: Error removing Tenant
