@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
 import {
-  Level, LevelItem, Button, EmptyState, EmptyStateVariant, Title, EmptyStateBody, EmptyStateIcon,
+  Button, EmptyState, EmptyStateVariant, Title, EmptyStateBody, EmptyStateIcon,
 } from '@patternfly/react-core';
 import EditShiftModal from './EditShiftModal';
 import Color from 'color';
@@ -225,16 +225,16 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     const endDate = this.props.endDate as Date;
     const shownSpot = this.props.shownSpotList[0];
     const actions = [
-	  { name: t("publish"), action: this.props.publishRoster },
+      { name: t("publish"), action: this.props.publishRoster },
       { name: this.props.isSolving? t("terminateEarly") : t("schedule"),
         action: this.props.isSolving? this.props.terminateSolvingRosterEarly : this.props.solveRoster
       },
       { name: t("refresh"), action: () => {
-	    this.props.refreshShiftRoster();
+        this.props.refreshShiftRoster();
         this.props.showInfoMessage('shiftRosterRefresh');
       }},
       { name: t("createShift"), action: () => {
-	    this.setState({
+        this.setState({
           selectedShift: undefined,
           isCreatingOrEditingShift: true,
         })
@@ -245,30 +245,30 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       <>
         <span
           style={{
-	        display: "grid",
+            display: "grid",
             height: '60px',
             padding: '5px 5px 5px 5px',
             gridTemplateColumns: 'auto auto 1fr',
             backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >
-            <TypeaheadSelectInput
-              aria-label="Select Spot"
-              emptyText={t("selectSpot")}
-              optionToStringMap={spot => spot.name}
-              options={this.props.allSpotList}
-              value={this.props.shownSpotList[0]}
-              onChange={this.onUpdateSpotList}
-              className="no-clear-button"
-            />
-            <WeekPicker
-              aria-label="Select Week to View"
-              value={this.props.startDate as Date}
-              onChange={this.onDateChange}
-            />
-            <Actions
-              actions={actions}
-            />
+          <TypeaheadSelectInput
+            aria-label="Select Spot"
+            emptyText={t("selectSpot")}
+            optionToStringMap={spot => spot.name}
+            options={this.props.allSpotList}
+            value={this.props.shownSpotList[0]}
+            onChange={this.onUpdateSpotList}
+            className="no-clear-button"
+          />
+          <WeekPicker
+            aria-label="Select Week to View"
+            value={this.props.startDate as Date}
+            onChange={this.onDateChange}
+          />
+          <Actions
+            actions={actions}
+          />
         </span>
         <EditShiftModal
           aria-label="Edit Shift"

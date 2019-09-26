@@ -23,11 +23,12 @@ import { Navigation } from './Navigation';
 
 describe('Navigation', () => {
   it('should activate a navigation link matching the current path', () => {
-    const props: RouteComponentProps = {
+    const props: RouteComponentProps & { variant: "horizontal" } = {
+      variant: "horizontal",
       location: {
         pathname: '/skills',
       } as Location<unknown>,
-    } as RouteComponentProps;
+    } as RouteComponentProps & { variant: "horizontal" };
 
     const navigation = shallow(<Navigation {...props} />);
     expect(toJson(navigation)).toMatchSnapshot();

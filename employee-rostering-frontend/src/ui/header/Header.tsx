@@ -24,7 +24,11 @@ const Header: React.FC<{ onNavToggle: () => void} > = ({ onNavToggle }) => {
   const laptopOrBigger = useMediaQuery({ minWidth: 1400 });
   return (
     <PageHeader
-      logo={<a href="https://www.optaplanner.org/"><Brand src="/assets/images/optaPlannerLogo200px.png" alt="OptaPlanner Logo" /></a>}
+      logo={(
+        <a href="https://www.optaplanner.org/">
+          <Brand src="/assets/images/optaPlannerLogo200px.png" alt="OptaPlanner Logo" />
+        </a>
+      )}
       toolbar={<Toolbar />}
       topNav={laptopOrBigger && <Navigation variant="horizontal" />}
       showNavToggle={!laptopOrBigger}

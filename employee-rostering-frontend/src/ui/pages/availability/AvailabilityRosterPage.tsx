@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
 import {
-  Level, LevelItem, Button, EmptyState, EmptyStateVariant, Title, EmptyStateIcon, EmptyStateBody,
+  Button, EmptyState, EmptyStateVariant, Title, EmptyStateIcon, EmptyStateBody,
 } from '@patternfly/react-core';
 import EditShiftModal from '../shift/EditShiftModal';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
@@ -287,22 +287,22 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     const events: ShiftOrAvailability[] = [];
     const actions = [
       { name: t("publish"), action: this.props.publishRoster },
-        { name: this.props.isSolving? t("terminateEarly") : t("schedule"),
-          action: this.props.isSolving? this.props.terminateSolvingRosterEarly : this.props.solveRoster
-        },
-        { name: t("refresh"), action: () => {
+      { name: this.props.isSolving? t("terminateEarly") : t("schedule"),
+        action: this.props.isSolving? this.props.terminateSolvingRosterEarly : this.props.solveRoster
+      },
+      { name: t("refresh"), action: () => {
         this.props.refreshAvailabilityRoster();
-          this.props.showInfoMessage('availabilityRosterRefresh');
-        }},
-        { name: t("createAvailability"), action: () => {
-          if (!this.state.isCreatingOrEditingShift) {
-            this.setState({
-              selectedAvailability: undefined,
-              isCreatingOrEditingAvailability: true,
-            })
-          }
-        }}
-      ];
+        this.props.showInfoMessage('availabilityRosterRefresh');
+      }},
+      { name: t("createAvailability"), action: () => {
+        if (!this.state.isCreatingOrEditingShift) {
+          this.setState({
+            selectedAvailability: undefined,
+            isCreatingOrEditingAvailability: true,
+          })
+        }
+      }}
+    ];
 
     if (this.props.employeeIdToAvailabilityListMap.get(shownEmployee.id as number) !== undefined) {
       (this.props.employeeIdToAvailabilityListMap.get(shownEmployee.id as number) as EmployeeAvailability[])
@@ -330,30 +330,30 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       <>
         <span
           style={{
-	        display: "grid",
+            display: "grid",
             height: '60px',
             padding: '5px 5px 5px 5px',
             gridTemplateColumns: 'auto auto 1fr',
             backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >
-            <TypeaheadSelectInput
-              aria-label="Select Employee"
-              emptyText={t("selectEmployee")}
-              optionToStringMap={employee => employee.name}
-              options={this.props.allEmployeeList}
-              value={this.props.shownEmployeeList[0]}
-              onChange={this.onUpdateEmployeeList}
-              className="no-clear-button"
-            />
-            <WeekPicker
-              aria-label="Select Week to View"
-              value={this.props.startDate as Date}
-              onChange={this.onDateChange}
-            />
-            <Actions
-              actions={actions}
-            />
+          <TypeaheadSelectInput
+            aria-label="Select Employee"
+            emptyText={t("selectEmployee")}
+            optionToStringMap={employee => employee.name}
+            options={this.props.allEmployeeList}
+            value={this.props.shownEmployeeList[0]}
+            onChange={this.onUpdateEmployeeList}
+            className="no-clear-button"
+          />
+          <WeekPicker
+            aria-label="Select Week to View"
+            value={this.props.startDate as Date}
+            onChange={this.onDateChange}
+          />
+          <Actions
+            actions={actions}
+          />
         </span>
         <EditAvailabilityModal
           availability={this.state.selectedAvailability}

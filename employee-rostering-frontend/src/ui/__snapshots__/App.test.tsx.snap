@@ -6,11 +6,24 @@ exports[`App should render correctly 1`] = `
     breadcrumb={null}
     className=""
     defaultManagedSidebarIsOpen={true}
-    header={<Header />}
+    header={
+      <Header
+        onNavToggle={[Function]}
+      />
+    }
     isManagedSidebar={false}
     mainContainerId={null}
     onPageResize={[Function]}
-    sidebar={null}
+    sidebar={
+      <PageSidebar
+        isNavOpen={false}
+        nav={
+          <withRouter(Navigation)
+            variant="default"
+          />
+        }
+      />
+    }
     skipToContent={null}
   >
     <Background />

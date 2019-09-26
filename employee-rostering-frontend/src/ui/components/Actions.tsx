@@ -19,7 +19,7 @@ import { Button, DropdownItem, Dropdown, KebabToggle } from '@patternfly/react-c
 import { withSize, SizeMeProps } from 'react-sizeme';
 
 interface Props {
-	actions: { name: string; action: () => void; }[];
+  actions: { name: string; action: () => void }[];
 }
 
 const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
@@ -29,52 +29,54 @@ const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
   let firstElementThatCannotFitIndex = 0;
   let remainingWidth = width - 5;
 
-  for (let i = 0; i < actions.length && remainingWidth > 0; i++) {
-	remainingWidth -= emUnitSize * actions[i].name.length + 6;// subtract estimated width (3pt padding on the sides)
-	if (remainingWidth >= 0) {
-	  firstElementThatCannotFitIndex++;
-	}
-	remainingWidth -= 5;// Subtract margin
+  for (let i = 0; i < actions.length && remainingWidth > 0; i += 1) {
+    remainingWidth -= emUnitSize * actions[i].name.length + 6;// subtract estimated width (3pt padding on the sides)
+    if (remainingWidth >= 0) {
+      firstElementThatCannotFitIndex += 1;
+    }
+    remainingWidth -= 5;// Subtract margin
   }
 
   const actionsOnButtons = actions.filter((a, index) => index < firstElementThatCannotFitIndex);
   const actionsInDropdown = actions.filter((a, index) => index >= firstElementThatCannotFitIndex);
 
   const dropdownItems = actionsInDropdown.map(a => (
-	<DropdownItem key={a.name}>
-        {a.name}
+    <DropdownItem key={a.name}>
+      {a.name}
     </DropdownItem>
   ));
 
   const [ isDropdownOpen, setDropdownOpen ] = useState(false);
 
   return (
-	<span style={{ display: "grid", gridTemplateColumns: "1fr auto" }}>
-    <span style={{ width: "100%" }} />
-    <span>
-	  {actionsOnButtons.map(a => (
-        <Button
-          style={{ margin: '5px' }}
-          aria-label={a.name}
-          onClick={a.action}
-        >
-          {a.name}
-        </Button>
-	  ))}
-      {actionsInDropdown.length >0 &&
-        <Dropdown
-          onSelect={(e) => {
-	        actionsInDropdown.filter(a => a.name === e.currentTarget.innerText).forEach(a => a.action());
-            setDropdownOpen(false);
-          }}
-          isOpen={isDropdownOpen}
-          toggle={<KebabToggle onToggle={() => setDropdownOpen(!isDropdownOpen)} />}
-          isPlain
-          dropdownItems={dropdownItems}
-        />
-      }
+    <span style={{ display: "grid", gridTemplateColumns: "1fr auto" }}>
+      <span style={{ width: "100%" }} />
+      <span>
+        {actionsOnButtons.map(a => (
+          <Button
+            key={a.name}
+            style={{ margin: '5px' }}
+            aria-label={a.name}
+            onClick={a.action}
+          >
+            {a.name}
+          </Button>
+        ))
+        }
+        {actionsInDropdown.length >0 && (
+          <Dropdown
+            onSelect={(e) => {
+              actionsInDropdown.filter(a => a.name === e.currentTarget.innerText).forEach(a => a.action());
+              setDropdownOpen(false);
+            }}
+            isOpen={isDropdownOpen}
+            toggle={<KebabToggle onToggle={() => setDropdownOpen(!isDropdownOpen)} />}
+            isPlain
+            dropdownItems={dropdownItems}
+          />
+        )}
+      </span>
     </span>
-	</span>
   );
 };
 

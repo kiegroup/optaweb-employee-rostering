@@ -51,6 +51,7 @@ describe('Filter component', () => {
 
   it('should call updateFilter with empty text when button is clicked', () => {
     const filter = shallow(<FilterComponent {...props} />);
+    filter.setState({ filterText: "Some text" });
     const predicate = jest.fn();
     (props.filter as jest.Mock).mockReturnValue(predicate);
     filter.instance().setState = jest.fn();

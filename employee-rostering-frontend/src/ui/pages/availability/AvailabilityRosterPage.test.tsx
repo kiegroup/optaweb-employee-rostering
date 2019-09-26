@@ -26,6 +26,7 @@ import moment from 'moment-timezone';
 import "moment/locale/en-ca";
 import EmployeeAvailability from 'domain/EmployeeAvailability';
 import { useTranslation } from 'react-i18next';
+import Actions from 'ui/components/Actions';
 
 describe('Availability Roster Page', () => {
   beforeEach(() => {
@@ -74,7 +75,9 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    availabilityRosterPage.find('Button[aria-label="Create Availability"]').simulate("click");
+    availabilityRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=createAvailability)")
+      .forEach(a => a.action());
     expect(toJson(availabilityRosterPage)).toMatchSnapshot();
   });
 
@@ -165,15 +168,19 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    availabilityRosterPage.find('Button[aria-label="Publish"]').simulate("click");
+    availabilityRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=publish)")
+      .forEach(a => a.action());
     expect(baseProps.publishRoster).toBeCalled();
   });
 
-  it('should call solveRoster when the solve button is clicked', () => {
+  it('should call solveRoster when the schedule button is clicked', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    availabilityRosterPage.find('Button[aria-label="Solve"]').simulate("click");
+    availabilityRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=schedule)")
+      .forEach(a => a.action());
     expect(baseProps.solveRoster).toBeCalled();
   });
 
@@ -182,7 +189,9 @@ describe('Availability Roster Page', () => {
       {...baseProps}
       isSolving
     />);
-    availabilityRosterPage.find('Button[aria-label="Terminate Early"]').simulate("click");
+    availabilityRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=terminateEarly)")
+      .forEach(a => a.action());
     expect(baseProps.terminateSolvingRosterEarly).toBeCalled();
   });
 
@@ -190,7 +199,9 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    availabilityRosterPage.find('Button[aria-label="Refresh"]').simulate("click");
+    availabilityRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=refresh)")
+      .forEach(a => a.action());
     expect(baseProps.refreshAvailabilityRoster).toBeCalled();
     expect(baseProps.showInfoMessage).toBeCalled();
     expect(baseProps.showInfoMessage).toBeCalledWith("availabilityRosterRefresh");

@@ -3,12 +3,18 @@
 exports[`Header component should render correctly 1`] = `
 <PageHeader
   logo={
-    <Brand
-      alt="OptaPlanner Logo"
-      src="/assets/images/optaPlannerLogo200px.png"
-    />
+    <a
+      href="https://www.optaplanner.org/"
+    >
+      <Brand
+        alt="OptaPlanner Logo"
+        src="/assets/images/optaPlannerLogo200px.png"
+      />
+    </a>
   }
+  onNavToggle={[MockFunction]}
+  showNavToggle={true}
   toolbar={<Memo(Connect(withRouter(ToolbarComponent))) />}
-  topNav={<withRouter(Navigation) />}
+  topNav={false}
 />
 `;
