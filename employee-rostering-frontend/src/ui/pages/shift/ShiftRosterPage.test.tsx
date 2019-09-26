@@ -26,6 +26,7 @@ import "moment/locale/en-ca";
 import { getShiftColor } from './ShiftEvent';
 import color from 'color';
 import { useTranslation } from 'react-i18next';
+import Actions from 'ui/components/Actions';
 
 describe('Shift Roster Page', () => {
   beforeEach(() => {
@@ -62,7 +63,9 @@ describe('Shift Roster Page', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    shiftRosterPage.find('Button[aria-label="Create Shift"]').simulate("click");
+    shiftRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=createShift)")
+      .forEach(a => a.action());
     expect(toJson(shiftRosterPage)).toMatchSnapshot();
   });
 
@@ -184,15 +187,19 @@ describe('Shift Roster Page', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    shiftRosterPage.find('Button[aria-label="Publish"]').simulate("click");
+    shiftRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=publish)")
+      .forEach(a => a.action());
     expect(baseProps.publishRoster).toBeCalled();
   });
 
-  it('should call solveRoster when the solve button is clicked', () => {
+  it('should call solveRoster when the schedule button is clicked', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    shiftRosterPage.find('Button[aria-label="Solve"]').simulate("click");
+    shiftRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=schedule)")
+      .forEach(a => a.action());
     expect(baseProps.solveRoster).toBeCalled();
   });
 
@@ -201,7 +208,9 @@ describe('Shift Roster Page', () => {
       {...baseProps}
       isSolving
     />);
-    shiftRosterPage.find('Button[aria-label="Terminate Early"]').simulate("click");
+    shiftRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=terminateEarly)")
+      .forEach(a => a.action());
     expect(baseProps.terminateSolvingRosterEarly).toBeCalled();
   });
 
@@ -209,7 +218,9 @@ describe('Shift Roster Page', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    shiftRosterPage.find('Button[aria-label="Refresh"]').simulate("click");
+    shiftRosterPage.find(Actions).prop('actions')
+      .filter(a => a.name === "Trans(i18nKey=refresh)")
+      .forEach(a => a.action());
     expect(baseProps.refreshShiftRoster).toBeCalled();
     expect(baseProps.showInfoMessage).toBeCalled();
     expect(baseProps.showInfoMessage).toBeCalledWith("shiftRosterRefresh");

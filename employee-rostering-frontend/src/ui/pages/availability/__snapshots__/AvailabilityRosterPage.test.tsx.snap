@@ -2,57 +2,25 @@
 
 exports[`Availability Roster Page should render correctly when creating a new availability via button 1`] = `
 <Fragment>
-  <Level
-    gutter="sm"
+  <span
     style={
       Object {
         "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+        "display": "grid",
+        "gridTemplateColumns": "auto auto 1fr",
         "height": "60px",
         "padding": "5px 5px 5px 5px",
       }
     }
   >
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <TypeaheadSelectInput
-        aria-label="Select Employee"
-        emptyText="Trans(i18nKey=selectEmployee)"
-        onChange={[Function]}
-        optionToStringMap={[Function]}
-        options={
-          Array [
-            Object {
-              "contract": Object {
-                "id": 5,
-                "maximumMinutesPerDay": 10,
-                "maximumMinutesPerMonth": 500,
-                "maximumMinutesPerWeek": 70,
-                "maximumMinutesPerYear": 6000,
-                "name": "Basic Contract",
-                "tenantId": 0,
-                "version": 0,
-              },
-              "id": 4,
-              "name": "Employee 1",
-              "skillProficiencySet": Array [
-                Object {
-                  "id": 6,
-                  "name": "Not Required Skill",
-                  "tenantId": 0,
-                  "version": 0,
-                },
-              ],
-              "tenantId": 0,
-              "version": 0,
-            },
-          ]
-        }
-        value={
+    <TypeaheadSelectInput
+      aria-label="Select Employee"
+      className="no-clear-button"
+      emptyText="Trans(i18nKey=selectEmployee)"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
           Object {
             "contract": Object {
               "id": 5,
@@ -76,68 +44,64 @@ exports[`Availability Roster Page should render correctly when creating a new av
             ],
             "tenantId": 0,
             "version": 0,
-          }
-        }
-      />
-      <WeekPicker
-        aria-label="Select Week to View"
-        onChange={[Function]}
-        value={2018-07-01T00:00:00.000Z}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
+          },
+        ]
+      }
+      value={
         Object {
-          "display": "flex",
+          "contract": Object {
+            "id": 5,
+            "maximumMinutesPerDay": 10,
+            "maximumMinutesPerMonth": 500,
+            "maximumMinutesPerWeek": 70,
+            "maximumMinutesPerYear": 6000,
+            "name": "Basic Contract",
+            "tenantId": 0,
+            "version": 0,
+          },
+          "id": 4,
+          "name": "Employee 1",
+          "skillProficiencySet": Array [
+            Object {
+              "id": 6,
+              "name": "Not Required Skill",
+              "tenantId": 0,
+              "version": 0,
+            },
+          ],
+          "tenantId": 0,
+          "version": 0,
         }
       }
-    >
-      <Button
-        aria-label="Publish"
-        onClick={[MockFunction]}
-        style={
+    />
+    <WeekPicker
+      aria-label="Select Week to View"
+      onChange={[Function]}
+      value={2018-07-01T00:00:00.000Z}
+    />
+    <SizeMe(Actions)
+      actions={
+        Array [
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=publish)
-      </Button>
-      <Button
-        aria-label="Solve"
-        onClick={[MockFunction]}
-        style={
+            "action": [MockFunction],
+            "name": "Trans(i18nKey=publish)",
+          },
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=schedule)
-      </Button>
-      <Button
-        aria-label="Refresh"
-        onClick={[Function]}
-        style={
+            "action": [MockFunction],
+            "name": "Trans(i18nKey=schedule)",
+          },
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=refresh)
-      </Button>
-      <Button
-        aria-label="Create Availability"
-        onClick={[Function]}
-        style={
+            "action": [Function],
+            "name": "Trans(i18nKey=refresh)",
+          },
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=createAvailability)
-      </Button>
-    </LevelItem>
-  </Level>
+            "action": [Function],
+            "name": "Trans(i18nKey=createAvailability)",
+          },
+        ]
+      }
+    />
+  </span>
   <Component
     isOpen={true}
     onClose={[Function]}
@@ -301,57 +265,25 @@ exports[`Availability Roster Page should render correctly when creating a new av
 
 exports[`Availability Roster Page should render correctly when loaded 1`] = `
 <Fragment>
-  <Level
-    gutter="sm"
+  <span
     style={
       Object {
         "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+        "display": "grid",
+        "gridTemplateColumns": "auto auto 1fr",
         "height": "60px",
         "padding": "5px 5px 5px 5px",
       }
     }
   >
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <TypeaheadSelectInput
-        aria-label="Select Employee"
-        emptyText="Trans(i18nKey=selectEmployee)"
-        onChange={[Function]}
-        optionToStringMap={[Function]}
-        options={
-          Array [
-            Object {
-              "contract": Object {
-                "id": 5,
-                "maximumMinutesPerDay": 10,
-                "maximumMinutesPerMonth": 500,
-                "maximumMinutesPerWeek": 70,
-                "maximumMinutesPerYear": 6000,
-                "name": "Basic Contract",
-                "tenantId": 0,
-                "version": 0,
-              },
-              "id": 4,
-              "name": "Employee 1",
-              "skillProficiencySet": Array [
-                Object {
-                  "id": 6,
-                  "name": "Not Required Skill",
-                  "tenantId": 0,
-                  "version": 0,
-                },
-              ],
-              "tenantId": 0,
-              "version": 0,
-            },
-          ]
-        }
-        value={
+    <TypeaheadSelectInput
+      aria-label="Select Employee"
+      className="no-clear-button"
+      emptyText="Trans(i18nKey=selectEmployee)"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
           Object {
             "contract": Object {
               "id": 5,
@@ -375,68 +307,64 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
             ],
             "tenantId": 0,
             "version": 0,
-          }
-        }
-      />
-      <WeekPicker
-        aria-label="Select Week to View"
-        onChange={[Function]}
-        value={2018-07-01T00:00:00.000Z}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
+          },
+        ]
+      }
+      value={
         Object {
-          "display": "flex",
+          "contract": Object {
+            "id": 5,
+            "maximumMinutesPerDay": 10,
+            "maximumMinutesPerMonth": 500,
+            "maximumMinutesPerWeek": 70,
+            "maximumMinutesPerYear": 6000,
+            "name": "Basic Contract",
+            "tenantId": 0,
+            "version": 0,
+          },
+          "id": 4,
+          "name": "Employee 1",
+          "skillProficiencySet": Array [
+            Object {
+              "id": 6,
+              "name": "Not Required Skill",
+              "tenantId": 0,
+              "version": 0,
+            },
+          ],
+          "tenantId": 0,
+          "version": 0,
         }
       }
-    >
-      <Button
-        aria-label="Publish"
-        onClick={[MockFunction]}
-        style={
+    />
+    <WeekPicker
+      aria-label="Select Week to View"
+      onChange={[Function]}
+      value={2018-07-01T00:00:00.000Z}
+    />
+    <SizeMe(Actions)
+      actions={
+        Array [
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=publish)
-      </Button>
-      <Button
-        aria-label="Solve"
-        onClick={[MockFunction]}
-        style={
+            "action": [MockFunction],
+            "name": "Trans(i18nKey=publish)",
+          },
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=schedule)
-      </Button>
-      <Button
-        aria-label="Refresh"
-        onClick={[Function]}
-        style={
+            "action": [MockFunction],
+            "name": "Trans(i18nKey=schedule)",
+          },
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=refresh)
-      </Button>
-      <Button
-        aria-label="Create Availability"
-        onClick={[Function]}
-        style={
+            "action": [Function],
+            "name": "Trans(i18nKey=refresh)",
+          },
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=createAvailability)
-      </Button>
-    </LevelItem>
-  </Level>
+            "action": [Function],
+            "name": "Trans(i18nKey=createAvailability)",
+          },
+        ]
+      }
+    />
+  </span>
   <Component
     isOpen={false}
     onClose={[Function]}
@@ -628,57 +556,25 @@ exports[`Availability Roster Page should render correctly when loading 1`] = `
 
 exports[`Availability Roster Page should render correctly when solving 1`] = `
 <Fragment>
-  <Level
-    gutter="sm"
+  <span
     style={
       Object {
         "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+        "display": "grid",
+        "gridTemplateColumns": "auto auto 1fr",
         "height": "60px",
         "padding": "5px 5px 5px 5px",
       }
     }
   >
-    <LevelItem
-      style={
-        Object {
-          "display": "flex",
-        }
-      }
-    >
-      <TypeaheadSelectInput
-        aria-label="Select Employee"
-        emptyText="Trans(i18nKey=selectEmployee)"
-        onChange={[Function]}
-        optionToStringMap={[Function]}
-        options={
-          Array [
-            Object {
-              "contract": Object {
-                "id": 5,
-                "maximumMinutesPerDay": 10,
-                "maximumMinutesPerMonth": 500,
-                "maximumMinutesPerWeek": 70,
-                "maximumMinutesPerYear": 6000,
-                "name": "Basic Contract",
-                "tenantId": 0,
-                "version": 0,
-              },
-              "id": 4,
-              "name": "Employee 1",
-              "skillProficiencySet": Array [
-                Object {
-                  "id": 6,
-                  "name": "Not Required Skill",
-                  "tenantId": 0,
-                  "version": 0,
-                },
-              ],
-              "tenantId": 0,
-              "version": 0,
-            },
-          ]
-        }
-        value={
+    <TypeaheadSelectInput
+      aria-label="Select Employee"
+      className="no-clear-button"
+      emptyText="Trans(i18nKey=selectEmployee)"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
           Object {
             "contract": Object {
               "id": 5,
@@ -702,68 +598,64 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
             ],
             "tenantId": 0,
             "version": 0,
-          }
-        }
-      />
-      <WeekPicker
-        aria-label="Select Week to View"
-        onChange={[Function]}
-        value={2018-07-01T00:00:00.000Z}
-      />
-    </LevelItem>
-    <LevelItem
-      style={
+          },
+        ]
+      }
+      value={
         Object {
-          "display": "flex",
+          "contract": Object {
+            "id": 5,
+            "maximumMinutesPerDay": 10,
+            "maximumMinutesPerMonth": 500,
+            "maximumMinutesPerWeek": 70,
+            "maximumMinutesPerYear": 6000,
+            "name": "Basic Contract",
+            "tenantId": 0,
+            "version": 0,
+          },
+          "id": 4,
+          "name": "Employee 1",
+          "skillProficiencySet": Array [
+            Object {
+              "id": 6,
+              "name": "Not Required Skill",
+              "tenantId": 0,
+              "version": 0,
+            },
+          ],
+          "tenantId": 0,
+          "version": 0,
         }
       }
-    >
-      <Button
-        aria-label="Publish"
-        onClick={[MockFunction]}
-        style={
+    />
+    <WeekPicker
+      aria-label="Select Week to View"
+      onChange={[Function]}
+      value={2018-07-01T00:00:00.000Z}
+    />
+    <SizeMe(Actions)
+      actions={
+        Array [
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=publish)
-      </Button>
-      <Button
-        aria-label="Terminate Early"
-        onClick={[MockFunction]}
-        style={
+            "action": [MockFunction],
+            "name": "Trans(i18nKey=publish)",
+          },
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=terminateEarly)
-      </Button>
-      <Button
-        aria-label="Refresh"
-        onClick={[Function]}
-        style={
+            "action": [MockFunction],
+            "name": "Trans(i18nKey=terminateEarly)",
+          },
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=refresh)
-      </Button>
-      <Button
-        aria-label="Create Availability"
-        onClick={[Function]}
-        style={
+            "action": [Function],
+            "name": "Trans(i18nKey=refresh)",
+          },
           Object {
-            "margin": "5px",
-          }
-        }
-      >
-        Trans(i18nKey=createAvailability)
-      </Button>
-    </LevelItem>
-  </Level>
+            "action": [Function],
+            "name": "Trans(i18nKey=createAvailability)",
+          },
+        ]
+      }
+    />
+  </span>
   <Component
     isOpen={false}
     onClose={[Function]}

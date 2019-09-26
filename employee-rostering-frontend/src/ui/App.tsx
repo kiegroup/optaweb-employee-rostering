@@ -34,7 +34,10 @@ const App: React.FC = () => {
   }
   return (
     <>
-      <Page header={<Header onNavToggle={() => setNavExpanded(!isNavExpanded)} />} sidebar={<PageSidebar isNavOpen={isNavExpanded} nav={<Navigation variant="default" />} />}>
+      <Page 
+        header={<Header onNavToggle={() => setNavExpanded(!isNavExpanded)} />}
+        sidebar={<PageSidebar isNavOpen={isNavExpanded} nav={<Navigation variant="default" />} />}
+      >
         <Background />
         <PageSection
           style={{

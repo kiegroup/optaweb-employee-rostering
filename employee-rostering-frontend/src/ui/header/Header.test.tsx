@@ -21,7 +21,11 @@ import Header from './Header';
 
 describe('Header component', () => {
   it('should render correctly', () => {
-    const header = shallow(<Header />);
+    const header = shallow(<Header {...props} />);
     expect(toJson(header)).toMatchSnapshot();
   });
 });
+
+const props = {
+  onNavToggle: jest.fn()
+}

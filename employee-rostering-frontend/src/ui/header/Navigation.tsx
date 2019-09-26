@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Nav, NavItem, NavList, NavVariants } from '@patternfly/react-core';
+import { Nav, NavItem, NavList } from '@patternfly/react-core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
@@ -24,23 +24,23 @@ export const Navigation = ({ variant, location }: RouteComponentProps & { varian
   const { t } = useTranslation("Navigation");
 
   return (
-      <Nav aria-label="Nav">
-        <NavList variant={variant}>
-          {['skills', 'spots', 'contracts', 'employees', 'shift', 'availability', 'rotation'].map(link => {
-            const itemId = link;
-            const path = `/${itemId}`;
-            return (
-              <NavItem
-                key={itemId}
-                itemId={itemId}
-                isActive={location.pathname === path}
-              >
-                <Link to={path}>{t(link)}</Link>
-              </NavItem>
-            );
-          })}
-        </NavList>
-      </Nav>
+    <Nav aria-label="Nav">
+      <NavList variant={variant}>
+        {['skills', 'spots', 'contracts', 'employees', 'shift', 'availability', 'rotation'].map(link => {
+          const itemId = link;
+          const path = `/${itemId}`;
+          return (
+            <NavItem
+              key={itemId}
+              itemId={itemId}
+              isActive={location.pathname === path}
+            >
+              <Link to={path}>{t(link)}</Link>
+            </NavItem>
+          );
+        })}
+      </NavList>
+    </Nav>
   );
 };
 
