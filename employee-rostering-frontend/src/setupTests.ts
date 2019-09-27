@@ -35,3 +35,13 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({ t: mockTranslate }),
   Trans: jest.requireActual("react-i18next").Trans
 }));
+
+function mockFunctions() {
+  const original = jest.requireActual('react-responsive');
+  return {
+    ...original, //Pass down all the exported objects
+    useMediaQuery: jest.fn(() => true),
+  }
+}
+
+jest.mock('react-responsive', () => mockFunctions());

@@ -1,0 +1,166 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Actions component should render as all buttons when given enough space 1`] = `
+<span
+  style={
+    Object {
+      "display": "grid",
+      "gridTemplateColumns": "1fr auto",
+    }
+  }
+>
+  <span
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+  />
+  <span>
+    <Button
+      aria-label="Action 1"
+      key="Action 1"
+      onClick={[MockFunction]}
+      style={
+        Object {
+          "margin": "5px",
+        }
+      }
+    >
+      Action 1
+    </Button>
+    <Button
+      aria-label="Action 2"
+      key="Action 2"
+      onClick={[MockFunction]}
+      style={
+        Object {
+          "margin": "5px",
+        }
+      }
+    >
+      Action 2
+    </Button>
+    <Button
+      aria-label="Action 3"
+      key="Action 3"
+      onClick={[MockFunction]}
+      style={
+        Object {
+          "margin": "5px",
+        }
+      }
+    >
+      Action 3
+    </Button>
+  </span>
+</span>
+`;
+
+exports[`Actions component should render as all dropdown when given no space 1`] = `
+<span
+  style={
+    Object {
+      "display": "grid",
+      "gridTemplateColumns": "1fr auto",
+    }
+  }
+>
+  <span
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+  />
+  <span>
+    <Dropdown
+      dropdownItems={
+        Array [
+          <DropdownItem>
+            Action 1
+          </DropdownItem>,
+          <DropdownItem>
+            Action 2
+          </DropdownItem>,
+          <DropdownItem>
+            Action 3
+          </DropdownItem>,
+        ]
+      }
+      isOpen={false}
+      isPlain={true}
+      onSelect={[Function]}
+      position="right"
+      toggle={
+        <KebabToggle
+          onToggle={[Function]}
+        />
+      }
+    />
+  </span>
+</span>
+`;
+
+exports[`Actions component should render as both buttons and dropdown when given some space 1`] = `
+<span
+  style={
+    Object {
+      "display": "grid",
+      "gridTemplateColumns": "1fr auto",
+    }
+  }
+>
+  <span
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+  />
+  <span>
+    <Button
+      aria-label="Action 1"
+      key="Action 1"
+      onClick={[MockFunction]}
+      style={
+        Object {
+          "margin": "5px",
+        }
+      }
+    >
+      Action 1
+    </Button>
+    <Button
+      aria-label="Action 2"
+      key="Action 2"
+      onClick={[MockFunction]}
+      style={
+        Object {
+          "margin": "5px",
+        }
+      }
+    >
+      Action 2
+    </Button>
+    <Dropdown
+      dropdownItems={
+        Array [
+          <DropdownItem>
+            Action 3
+          </DropdownItem>,
+        ]
+      }
+      isOpen={false}
+      isPlain={true}
+      onSelect={[Function]}
+      position="right"
+      toggle={
+        <KebabToggle
+          onToggle={[Function]}
+        />
+      }
+    />
+  </span>
+</span>
+`;
