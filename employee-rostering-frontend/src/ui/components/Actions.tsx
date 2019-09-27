@@ -18,11 +18,11 @@ import React, { FC, useState } from 'react';
 import { Button, DropdownItem, Dropdown, KebabToggle } from '@patternfly/react-core';
 import { withSize, SizeMeProps } from 'react-sizeme';
 
-interface Props {
+export interface Props {
   actions: { name: string; action: () => void }[];
 }
 
-const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
+export const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
   const width = size.width || 0;
   const emUnitSize = 16; // Pixels in a standard 'M'; can use to get an estimate of text width
 
@@ -69,6 +69,7 @@ const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
               actionsInDropdown.filter(a => a.name === e.currentTarget.innerText).forEach(a => a.action());
               setDropdownOpen(false);
             }}
+            position="right"
             isOpen={isDropdownOpen}
             toggle={<KebabToggle onToggle={() => setDropdownOpen(!isDropdownOpen)} />}
             isPlain

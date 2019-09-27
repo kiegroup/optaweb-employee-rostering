@@ -33,67 +33,65 @@ const App: React.FC = () => {
     setNavExpanded(false);
   }
   return (
-    <>
-      <Page 
-        header={<Header onNavToggle={() => setNavExpanded(!isNavExpanded)} />}
-        sidebar={<PageSidebar isNavOpen={isNavExpanded} nav={<Navigation variant="default" />} />}
+    <Page 
+      header={<Header onNavToggle={() => setNavExpanded(!isNavExpanded)} />}
+      sidebar={<PageSidebar isNavOpen={isNavExpanded} nav={<Navigation variant="default" />} />}
+    >
+      <Background />
+      <PageSection
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+          height: '100%',
+        }}
       >
-        <Background />
-        <PageSection
-          style={{
-            position: 'relative',
-            display: 'flex',
-            flexDirection: 'column',
-            overflowY: 'auto',
-            height: '100%',
-          }}
-        >
-          <Alerts />
-          <Switch>
-            <Route
-              path="/skills"
-              exact
-              component={SkillsPage}
-            />
-            <Route
-              path="/spots"
-              exact
-              component={SpotsPage}
-            />
-            <Route
-              path="/contracts"
-              exact
-              component={ContractsPage}
-            />
-            <Route
-              path="/employees"
-              exact
-              component={EmployeesPage}
-            />
-            <Route
-              path="/shift"
-              exact
-              component={ShiftRosterPage} 
-            />
-            <Route
-              path="/availability"
-              exact
-              component={AvailabilityRosterPage}
-            />
-            <Route
-              path="/rotation"
-              exact
-              component={RotationPage}
-            />
-            <Route
-              path="/admin"
-              exact
-              component={AdminPage}
-            />
-          </Switch>
-        </PageSection>
-      </Page>
-    </>
+        <Alerts />
+        <Switch>
+          <Route
+            path="/skills"
+            exact
+            component={SkillsPage}
+          />
+          <Route
+            path="/spots"
+            exact
+            component={SpotsPage}
+          />
+          <Route
+            path="/contracts"
+            exact
+            component={ContractsPage}
+          />
+          <Route
+            path="/employees"
+            exact
+            component={EmployeesPage}
+          />
+          <Route
+            path="/shift"
+            exact
+            component={ShiftRosterPage} 
+          />
+          <Route
+            path="/availability"
+            exact
+            component={AvailabilityRosterPage}
+          />
+          <Route
+            path="/rotation"
+            exact
+            component={RotationPage}
+          />
+          <Route
+            path="/admin"
+            exact
+            component={AdminPage}
+          />
+        </Switch>
+      </PageSection>
+    </Page>
   );
 };
 

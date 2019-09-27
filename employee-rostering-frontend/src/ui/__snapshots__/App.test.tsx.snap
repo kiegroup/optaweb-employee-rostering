@@ -1,95 +1,369 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App should render correctly 1`] = `
-<Fragment>
-  <Page
-    breadcrumb={null}
-    className=""
-    defaultManagedSidebarIsOpen={true}
-    header={
-      <Header
-        onNavToggle={[Function]}
-      />
-    }
-    isManagedSidebar={false}
-    mainContainerId={null}
-    onPageResize={[Function]}
-    sidebar={
-      <PageSidebar
-        isNavOpen={false}
-        nav={
-          <withRouter(Navigation)
-            variant="default"
-          />
-        }
-      />
-    }
-    skipToContent={null}
-  >
-    <Background />
-    <PageSection
-      style={
-        Object {
-          "display": "flex",
-          "flexDirection": "column",
-          "height": "100%",
-          "overflowY": "auto",
-          "position": "relative",
-        }
+exports[`App clicking the nav button should show the sidebar 1`] = `
+<Page
+  breadcrumb={null}
+  className=""
+  defaultManagedSidebarIsOpen={true}
+  header={
+    <Header
+      onNavToggle={[Function]}
+    />
+  }
+  isManagedSidebar={false}
+  mainContainerId={null}
+  onPageResize={[Function]}
+  sidebar={
+    <PageSidebar
+      isNavOpen={true}
+      nav={
+        <withRouter(Navigation)
+          variant="default"
+        />
       }
-    >
-      <Connect(Alerts) />
-      <Switch>
-        <Route
-          component={[Function]}
-          exact={true}
-          path="/skills"
-        />
-        <Route
-          component={[Function]}
-          exact={true}
-          path="/spots"
-        />
-        <Route
-          component={[Function]}
-          exact={true}
-          path="/contracts"
-        />
-        <Route
-          component={[Function]}
-          exact={true}
-          path="/employees"
-        />
-        <Route
-          component={[Function]}
-          exact={true}
-          path="/shift"
-        />
-        <Route
-          component={[Function]}
-          exact={true}
-          path="/availability"
-        />
-        <Route
-          component={[Function]}
-          exact={true}
-          path="/rotation"
-        />
-        <Route
-          component={
-            Object {
-              "$$typeof": Symbol(react.memo),
-              "WrappedComponent": [Function],
-              "compare": null,
-              "displayName": "Connect(AdminPage)",
-              "type": [Function],
-            }
+    />
+  }
+  skipToContent={null}
+>
+  <Background />
+  <PageSection
+    style={
+      Object {
+        "display": "flex",
+        "flexDirection": "column",
+        "height": "100%",
+        "overflowY": "auto",
+        "position": "relative",
+      }
+    }
+  >
+    <Connect(Alerts) />
+    <Switch>
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/skills"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/spots"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/contracts"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/employees"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/shift"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/availability"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/rotation"
+      />
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(AdminPage)",
+            "type": [Function],
           }
-          exact={true}
-          path="/admin"
+        }
+        exact={true}
+        path="/admin"
+      />
+    </Switch>
+  </PageSection>
+</Page>
+`;
+
+exports[`App clicking the nav button twice should hide the sidebar 1`] = `
+<Page
+  breadcrumb={null}
+  className=""
+  defaultManagedSidebarIsOpen={true}
+  header={
+    <Header
+      onNavToggle={[Function]}
+    />
+  }
+  isManagedSidebar={false}
+  mainContainerId={null}
+  onPageResize={[Function]}
+  sidebar={
+    <PageSidebar
+      isNavOpen={false}
+      nav={
+        <withRouter(Navigation)
+          variant="default"
         />
-      </Switch>
-    </PageSection>
-  </Page>
-</Fragment>
+      }
+    />
+  }
+  skipToContent={null}
+>
+  <Background />
+  <PageSection
+    style={
+      Object {
+        "display": "flex",
+        "flexDirection": "column",
+        "height": "100%",
+        "overflowY": "auto",
+        "position": "relative",
+      }
+    }
+  >
+    <Connect(Alerts) />
+    <Switch>
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/skills"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/spots"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/contracts"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/employees"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/shift"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/availability"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/rotation"
+      />
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(AdminPage)",
+            "type": [Function],
+          }
+        }
+        exact={true}
+        path="/admin"
+      />
+    </Switch>
+  </PageSection>
+</Page>
+`;
+
+exports[`App should render correctly on a desktop 1`] = `
+<Page
+  breadcrumb={null}
+  className=""
+  defaultManagedSidebarIsOpen={true}
+  header={
+    <Header
+      onNavToggle={[Function]}
+    />
+  }
+  isManagedSidebar={false}
+  mainContainerId={null}
+  onPageResize={[Function]}
+  sidebar={
+    <PageSidebar
+      isNavOpen={false}
+      nav={
+        <withRouter(Navigation)
+          variant="default"
+        />
+      }
+    />
+  }
+  skipToContent={null}
+>
+  <Background />
+  <PageSection
+    style={
+      Object {
+        "display": "flex",
+        "flexDirection": "column",
+        "height": "100%",
+        "overflowY": "auto",
+        "position": "relative",
+      }
+    }
+  >
+    <Connect(Alerts) />
+    <Switch>
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/skills"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/spots"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/contracts"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/employees"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/shift"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/availability"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/rotation"
+      />
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(AdminPage)",
+            "type": [Function],
+          }
+        }
+        exact={true}
+        path="/admin"
+      />
+    </Switch>
+  </PageSection>
+</Page>
+`;
+
+exports[`App should render correctly on a mobile 1`] = `
+<Page
+  breadcrumb={null}
+  className=""
+  defaultManagedSidebarIsOpen={true}
+  header={
+    <Header
+      onNavToggle={[Function]}
+    />
+  }
+  isManagedSidebar={false}
+  mainContainerId={null}
+  onPageResize={[Function]}
+  sidebar={
+    <PageSidebar
+      isNavOpen={false}
+      nav={
+        <withRouter(Navigation)
+          variant="default"
+        />
+      }
+    />
+  }
+  skipToContent={null}
+>
+  <Background />
+  <PageSection
+    style={
+      Object {
+        "display": "flex",
+        "flexDirection": "column",
+        "height": "100%",
+        "overflowY": "auto",
+        "position": "relative",
+      }
+    }
+  >
+    <Connect(Alerts) />
+    <Switch>
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/skills"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/spots"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/contracts"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/employees"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/shift"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/availability"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/rotation"
+      />
+      <Route
+        component={
+          Object {
+            "$$typeof": Symbol(react.memo),
+            "WrappedComponent": [Function],
+            "compare": null,
+            "displayName": "Connect(AdminPage)",
+            "type": [Function],
+          }
+        }
+        exact={true}
+        path="/admin"
+      />
+    </Switch>
+  </PageSection>
+</Page>
 `;

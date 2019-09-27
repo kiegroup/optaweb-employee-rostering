@@ -20,8 +20,34 @@ import * as React from 'react';
 import Header from './Header';
 
 describe('Header component', () => {
-  it('should render correctly', () => {
+  it('should render correctly on a desktop', () => {
+    const mediaQuery = jest.requireMock('react-responsive');
+    mediaQuery.useMediaQuery.mockReturnValueOnce(true);
+
     const header = shallow(<Header {...props} />);
+
+    expect(mediaQuery.useMediaQuery).toBeCalledWith({ minWidth: 1400 });
+    expect(toJson(header)).toMatchSnapshot();
+  });
+
+  it('should render correctly on a mobile', () => {
+    const mediaQuery = jest.requireMock('react-responsive');
+    mediaQuery.useMediaQuery.mockReturnValueOnce(false);
+
+    const header = shallow(<Header {...props} />);
+
+    expect(mediaQuery.useMediaQuery).toBeCalledWith({ minWidth: 1400 });
+    expect(toJson(header)).toMatchSnapshot();
+  });
+
+  it('logo should go to optaplanner.org', () => {
+    const mediaQuery = jest.requireMock('react-responsive');
+    mediaQuery.useMediaQuery.mockReturnValueOnce(true);
+
+    const header = shallow(<Header {...props} />);
+    const logo = shallow(header.prop("logo"));
+
+    expect(logo.prop("href")).toEqual("https://www.optaplanner.org/");
     expect(toJson(header)).toMatchSnapshot();
   });
 });
