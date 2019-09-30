@@ -20,9 +20,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.optaweb.employeerostering</groupId>
-  <artifactId>optaweb-employee-rostering-frontend</artifactId>
-  <version>7.25.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
+  <artifactId>employee-rostering-frontend</artifactId>
+  <version>7.28.0-SNAPSHOT</version>
 
   <name>Employee Rostering as a Service React Frontend</name>
 
@@ -109,6 +108,27 @@
                             <include>**/*.yaml</include>
                         </includes>
                         <outputDirectory>public/assets/locales</outputDirectory>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>position-react-build</id>
+                    <goals>
+                        <goal>copy-resources</goal>
+                    </goals>
+                    <phase>prepare-package</phase>
+                    <configuration>
+                        <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                        <resources>
+                            <resource>
+                                <directory>build</directory>
+                                <filtering>false</filtering>
+                            </resource>
+                        </resources>
                     </configuration>
                 </execution>
             </executions>
