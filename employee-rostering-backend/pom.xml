@@ -25,9 +25,7 @@
     <version>7.28.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.optaweb.employeerostering</groupId>
-  <artifactId>optaweb-employee-rostering-backend</artifactId>
-  <version>7.28.0-SNAPSHOT</version>
+  <artifactId>employee-rostering-backend</artifactId>
   <name>optaweb-employee-rostering-backend</name>
   <description>Employee Rostering as a Service Spring Boot Backend</description>
 
@@ -98,6 +96,12 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -171,6 +175,23 @@
       <artifactId>optaplanner-test</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <!-- Logging -->
+   <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    
   </dependencies>
 
   <build>
@@ -179,6 +200,7 @@
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>2.1.8.RELEASE</version>
           <configuration>
             <profiles>
               <profile>local</profile>
@@ -332,6 +354,20 @@
               <includeResources>true</includeResources>
               <includeTestResources>true</includeTestResources>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <classifier>exec</classifier>
+            </configuration>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

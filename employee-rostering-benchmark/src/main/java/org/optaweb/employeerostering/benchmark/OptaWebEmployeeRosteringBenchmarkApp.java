@@ -16,34 +16,20 @@
 
 package org.optaweb.employeerostering.benchmark;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
-import org.optaplanner.benchmark.api.PlannerBenchmark;
-import org.optaplanner.benchmark.api.PlannerBenchmarkFactory;
-import org.optaplanner.core.api.solver.SolverFactory;
-import org.optaweb.employeerostering.server.roster.RosterGenerator;
-import org.optaweb.employeerostering.shared.roster.Roster;
-
+// Julian expects this file for his Benchmark PR; Feel free to override it
 public class OptaWebEmployeeRosteringBenchmarkApp {
 
     public static void main(String[] args) {
-        List<Roster> rosterList = generateRosters();
+        /*List<Roster> rosterList = generateRosters();
 
         SolverFactory<Roster> solverFactory = SolverFactory.createFromXmlResource(
                 "org/optaweb/employeerostering/server/solver/employeeRosteringSolverConfig.xml");
         PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromSolverFactory(solverFactory);
         PlannerBenchmark plannerBenchmark = benchmarkFactory.buildPlannerBenchmark(rosterList);
-        plannerBenchmark.benchmark();
+        plannerBenchmark.benchmark();*/
     }
 
-    private static List<Roster> generateRosters() {
+    /*private static List<Roster> generateRosters() {
         Map<String, String> properties = new HashMap<>();
         properties.put("javax.persistence.transactionType", "RESOURCE_LOCAL");
         // Failed attempts to avoid persistence.xml duplication by overwriting jta-data-source
@@ -66,6 +52,6 @@ public class OptaWebEmployeeRosteringBenchmarkApp {
         entityManager.close();
         entityManagerFactory.close();
         return rosterList;
-    }
+    }*/
 
 }
