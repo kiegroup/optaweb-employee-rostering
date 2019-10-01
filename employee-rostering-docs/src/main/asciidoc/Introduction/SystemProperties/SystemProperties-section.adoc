@@ -3,13 +3,18 @@
 :imagesdir: ../..
 
 These system properties can overwrite default properties of the application,
-for example as `-Doptaweb.generator.zoneId="America/New_York"` to WildFly.
+for example, by passing `-Doptaweb.generator.zoneId="America/New_York"` to Spring Boot.
 These system properties might also be exposed as OpenShift template parameters.
 
 * *optaweb.generator.timeZoneId*:
 The time zone ID for the automatically generated tenants.
 For example `America/New_York`.
 This defaults to the system default Zone ID.
+
+* *optaweb.generator.initial.data*:
+What data to initially put in the database.
+Supported values are: `EMPTY` (no data) and `DEMO_DATA` (several tenants of various sizes).
+This defaults to `DEMO_DATA`
 
 The OpenShift docker image also supports these parameters:
 
