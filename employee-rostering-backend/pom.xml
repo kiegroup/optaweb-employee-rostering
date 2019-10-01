@@ -26,8 +26,8 @@
   </parent>
 
   <artifactId>employee-rostering-backend</artifactId>
-  <name>optaweb-employee-rostering-backend</name>
-  <description>Employee Rostering as a Service Spring Boot Backend</description>
+  <name>Employee Rostering as a Service Spring Boot Backend</name>
+  <description>Spring Boot backend for Employee Rostering as a Service</description>
 
   <properties>
     <checkstyle.header.template><![CDATA[
