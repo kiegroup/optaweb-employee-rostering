@@ -4,90 +4,16 @@ An end-to-end https://www.optaplanner.org/[OptaPlanner] web application ready to
 
 See https://www.youtube.com/watch?v=sOWC4qrXxFk[the video demo].
 
-== Running locally
+== Building
 
-Execute `mvn clean package`. When the command finishes, you can run the application by executing `java -jar employee-rostering-distribution/target/employee-rostering-distribution-${project.version}.jar`. Alternatively, you can run `npm start` in `employee-rostering-frontend` to start the frontend in one terminal, and run `mvn spring-boot:run` in `employee-rostering-backend` to start the backend in another terminal. 
+You can build the project by running `mvn clean package` in the project's root directory.
 
-== Running on OpenShift Dedicated (paid edition)
+== Running
 
-=== Prerequisites
-
-. Install https://www.openshift.org/download.html[the oc client tools]
-
-To copy-paste your command, go to https://manage.openshift.com/[the OpenShift Online web console] and look for _Help_ > _Command line tools_.
-
-=== Setup
-
-. Login to OpenShift Dedicated from command line:
-+
-----
-oc login https://api.YOUR_SERVER.openshift.com --token=<tokenId>
-----
-+
-If you don't know your `<tokenId>`, log in at https://manage.openshift.com/[the OpenShift web console]
-and look for _Help_ > _Command Line Tools_.
-
-. Create, build and deploy the project.
-+
-----
-./provision.sh setup --project-suffix mydemo
-----
-+
-The `--project-suffix` is optional.
-
-. It should now be building the pod and running it on OpenShift.
-Go to https://manage.openshift.com/[the OpenShift Online web console]
-to get the `*.openshiftapps.com` URL to visit.
-
-=== Updates
-
-To build and deploy new changes, use:
-----
-./provision.sh deploy
-----
-
-=== Deletion
-
-To delete the OpenShift application and project, run:
-----
-./provision.sh delete
-----
-
-== Running on OpenShift Online (free edition)
-
-This is not possible to due to resource limitations.
-
-== Running on a local OpenShift Origin
-
-. If you just installed oc client tools, follow the https://github.com/openshift/origin/blob/master/docs/cluster_up_down.md[OpenShift Local Cluster Management] docs to get `oc cluster (up|down)` working.
-. `oc cluster up`
-. `oc login`, enter `developer` for both username and password when prompted
-. `oc new-project optaweb-employee-rostering`
-// TODO Change to wildfly:11.0 once it is available
-. `oc new-app --image-stream="openshift/wildfly:10.1" https://github.com/kiegroup/optaweb-employee-rostering.git#master`
-
-To trigger a new build with the latest updates from the master branch, run
-
-----
-oc start-build optaweb-employee-rostering
-----
-
-To delete the OpenShift application and project, run
-
-----
-oc delete project optaweb-employee-rostering
-----
+After building the project, you can run the application by running `java -jar employee-rostering-distribution/target/employee-rostering-distribution-${project.version}.jar`. Alternatively, you can run `npm start` in `employee-rostering-frontend` to start the frontend in one terminal, and run `mvn spring-boot:run` in `employee-rostering-backend` to start the backend in another terminal.
 
 == Development
 
 === Code formatter
 
 Both IntelliJ and Eclipse formatters are available here: https://github.com/kiegroup/droolsjbpm-build-bootstrap/tree/master/ide-configuration
-
-
-=== IntelliJ IDEA Ultimate 2018.1
-. `TODO: Document`
-
-=== Eclipse
-. `TODO: Document`
-
