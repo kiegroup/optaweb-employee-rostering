@@ -27,9 +27,6 @@
               <goal>single</goal>
             </goals>
             <configuration>
-              <descriptorRefs>
-                <descriptorRef>src</descriptorRef>
-              </descriptorRefs>
               <descriptors>
                 <descriptor>src/main/assembly/assembly-optaweb-employee-rostering-sources.xml</descriptor>
               </descriptors>
