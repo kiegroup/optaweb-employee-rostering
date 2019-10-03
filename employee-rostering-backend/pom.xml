@@ -163,7 +163,7 @@
       <artifactId>optaplanner-test</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- Logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -183,12 +183,21 @@
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${version.org.springframework.boot}</version>
           <configuration>
             <profiles>
               <profile>local</profile>
             </profiles>
           </configuration>
+          <executions>
+            <execution>
+              <configuration>
+                <classifier>exec</classifier>
+              </configuration>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -337,20 +346,6 @@
               <includeResources>true</includeResources>
               <includeTestResources>true</includeTestResources>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <configuration>
-              <classifier>exec</classifier>
-            </configuration>
-            <goals>
-              <goal>repackage</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
