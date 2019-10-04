@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header component should render correctly 1`] = `
+<PageHeader
+  logo={
+    <Brand
+      alt="OptaPlanner Logo"
+      src="/assets/images/optaPlannerLogo200px.png"
+    />
+  }
+  toolbar={<Memo(Connect(withRouter(ToolbarComponent))) />}
+  topNav={<withRouter(Navigation) />}
+/>
+`;

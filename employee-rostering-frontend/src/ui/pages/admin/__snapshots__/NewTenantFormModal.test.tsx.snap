@@ -1,0 +1,299 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`New Tenant Form Modal should render correctly when closed 1`] = `
+<Modal
+  actions={
+    Array [
+      <Button
+        aria-label="Close Modal"
+        onClick={[MockFunction]}
+        variant="tertiary"
+      >
+        Trans(i18nKey=close)
+      </Button>,
+      <Button
+        aria-label="Save"
+        isDisabled={true}
+        onClick={[Function]}
+      >
+        Trans(i18nKey=save)
+      </Button>,
+    ]
+  }
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isLarge={false}
+  isOpen={false}
+  isSmall={true}
+  onClose={[MockFunction]}
+  showClose={true}
+  title="Trans(i18nKey=createTenant)"
+>
+  <Form
+    onSubmit={[Function]}
+  >
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=name)
+      </Label>
+      <TextInput
+        aria-label="Name"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="text"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=scheduleStartDate)
+      </Label>
+      <TextInput
+        aria-label="Schedule Start Date"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="date"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=draftLength)
+      </Label>
+      <TextInput
+        aria-label="Draft Length"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="number"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=publishNotice)
+      </Label>
+      <TextInput
+        aria-label="Publish Notice"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="number"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=publishLength)
+      </Label>
+      <TextInput
+        aria-label="Publish Length"
+        className=""
+        defaultValue="7"
+        isDisabled={true}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="number"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=rotationLength)
+      </Label>
+      <TextInput
+        aria-label="Rotation Length"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        min={2}
+        onChange={[Function]}
+        type="number"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=timezone)
+      </Label>
+      <TypeaheadSelectInput
+        aria-label="Timezone"
+        emptyText="Trans(i18nKey=selectATimezone)"
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            "Timezone/1",
+            "Timezone/2",
+            "Timezone/3",
+            "UTC",
+          ]
+        }
+        value="UTC"
+      />
+    </InputGroup>
+  </Form>
+</Modal>
+`;
+
+exports[`New Tenant Form Modal should render correctly when opened 1`] = `
+<Modal
+  actions={
+    Array [
+      <Button
+        aria-label="Close Modal"
+        onClick={[MockFunction]}
+        variant="tertiary"
+      >
+        Trans(i18nKey=close)
+      </Button>,
+      <Button
+        aria-label="Save"
+        isDisabled={true}
+        onClick={[Function]}
+      >
+        Trans(i18nKey=save)
+      </Button>,
+    ]
+  }
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isLarge={false}
+  isOpen={true}
+  isSmall={true}
+  onClose={[MockFunction]}
+  showClose={true}
+  title="Trans(i18nKey=createTenant)"
+>
+  <Form
+    onSubmit={[Function]}
+  >
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=name)
+      </Label>
+      <TextInput
+        aria-label="Name"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="text"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=scheduleStartDate)
+      </Label>
+      <TextInput
+        aria-label="Schedule Start Date"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="date"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=draftLength)
+      </Label>
+      <TextInput
+        aria-label="Draft Length"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="number"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=publishNotice)
+      </Label>
+      <TextInput
+        aria-label="Publish Notice"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="number"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=publishLength)
+      </Label>
+      <TextInput
+        aria-label="Publish Length"
+        className=""
+        defaultValue="7"
+        isDisabled={true}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        onChange={[Function]}
+        type="number"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=rotationLength)
+      </Label>
+      <TextInput
+        aria-label="Rotation Length"
+        className=""
+        isDisabled={false}
+        isReadOnly={false}
+        isRequired={false}
+        isValid={true}
+        min={2}
+        onChange={[Function]}
+        type="number"
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=timezone)
+      </Label>
+      <TypeaheadSelectInput
+        aria-label="Timezone"
+        emptyText="Trans(i18nKey=selectATimezone)"
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            "Timezone/1",
+            "Timezone/2",
+            "Timezone/3",
+            "UTC",
+          ]
+        }
+        value="UTC"
+      />
+    </InputGroup>
+  </Form>
+</Modal>
+`;

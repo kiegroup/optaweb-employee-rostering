@@ -1,0 +1,1695 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Admin Page should close the modal when the modal is closed 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        aria-label="Filter by Name"
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Add Tenant"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        aria-label="Change Page"
+        itemCount={2}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Connect(NewTenantFormModal)
+    aria-label="Add Tenant Modal"
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <Table
+    borders={true}
+    caption="Trans(i18nKey=tenants)"
+    cells={
+      Array [
+        "Trans(i18nKey=name)",
+        "",
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 1
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 2
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Admin Page should display modal when the Add Tenant button is clicked 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        aria-label="Filter by Name"
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Add Tenant"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        aria-label="Change Page"
+        itemCount={2}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Connect(NewTenantFormModal)
+    aria-label="Add Tenant Modal"
+    isOpen={true}
+    onClose={[Function]}
+  />
+  <Table
+    borders={true}
+    caption="Trans(i18nKey=tenants)"
+    cells={
+      Array [
+        "Trans(i18nKey=name)",
+        "",
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 1
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 2
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Admin Page should filter by name 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        aria-label="Filter by Name"
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Add Tenant"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        aria-label="Change Page"
+        itemCount={2}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Connect(NewTenantFormModal)
+    aria-label="Add Tenant Modal"
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <Table
+    borders={true}
+    caption="Trans(i18nKey=tenants)"
+    cells={
+      Array [
+        "Trans(i18nKey=name)",
+        "",
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 5
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 15
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Admin Page should go to the correct page when the page is changed 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        aria-label="Filter by Name"
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Add Tenant"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        aria-label="Change Page"
+        itemCount={20}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={2}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Connect(NewTenantFormModal)
+    aria-label="Add Tenant Modal"
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <Table
+    borders={true}
+    caption="Trans(i18nKey=tenants)"
+    cells={
+      Array [
+        "Trans(i18nKey=name)",
+        "",
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 11
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 12
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 13
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 14
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 15
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 16
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 17
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 18
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 19
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 20
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Admin Page should render correctly with 2 tenants 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        aria-label="Filter by Name"
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Add Tenant"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        aria-label="Change Page"
+        itemCount={2}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Connect(NewTenantFormModal)
+    aria-label="Add Tenant Modal"
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <Table
+    borders={true}
+    caption="Trans(i18nKey=tenants)"
+    cells={
+      Array [
+        "Trans(i18nKey=name)",
+        "",
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 1
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 2
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Admin Page should render correctly with many tenants 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        aria-label="Filter by Name"
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Add Tenant"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        aria-label="Change Page"
+        itemCount={20}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Connect(NewTenantFormModal)
+    aria-label="Add Tenant Modal"
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <Table
+    borders={true}
+    caption="Trans(i18nKey=tenants)"
+    cells={
+      Array [
+        "Trans(i18nKey=name)",
+        "",
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 1
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 2
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 3
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 4
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 5
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 6
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 7
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 8
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 9
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 10
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Admin Page should render correctly with no tenants 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        aria-label="Filter by Name"
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Add Tenant"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        aria-label="Change Page"
+        itemCount={0}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Connect(NewTenantFormModal)
+    aria-label="Add Tenant Modal"
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <Table
+    borders={true}
+    caption="Trans(i18nKey=tenants)"
+    cells={
+      Array [
+        "Trans(i18nKey=name)",
+        "",
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={Array []}
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Admin Page should show the desired number of tenants per page 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        aria-label="Filter by Name"
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Add Tenant"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        aria-label="Change Page"
+        itemCount={20}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={5}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Connect(NewTenantFormModal)
+    aria-label="Add Tenant Modal"
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <Table
+    borders={true}
+    caption="Trans(i18nKey=tenants)"
+    cells={
+      Array [
+        "Trans(i18nKey=name)",
+        "",
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 1
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 2
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 3
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 4
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 5
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;

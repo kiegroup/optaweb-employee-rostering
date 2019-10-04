@@ -1,0 +1,9 @@
+---
+createShift: Create Shift
+noSpots: 
+  <0>There are no Spots</0>
+  <1>
+    The current tenant have no Spots. You need at least one Spot to see the Shift Roster.
+    You can add a Spot in the Spots page.
+  </1>
+  <2>Go to the Spots page</2>

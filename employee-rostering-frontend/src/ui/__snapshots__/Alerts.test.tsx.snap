@@ -1,0 +1,305 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Alerts should render correctly with alerts 1`] = `
+<div
+  style={
+    Object {
+      "background": "transparent",
+      "display": "grid",
+      "gridAutoRows": "auto",
+      "gridRowGap": "5px",
+      "gridTemplateColumns": "auto",
+      "overflowY": "auto",
+      "paddingTop": "5px",
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "zIndex": 10000,
+    }
+  }
+>
+  <Alert
+    action={
+      <AlertActionCloseButton
+        onClose={[Function]}
+      />
+    }
+    className="fade-and-slide-in"
+    key="0"
+    onMouseEnter={[Function]}
+    title="Trans(i18nKey=infoMessage.title)"
+    variant="info"
+  >
+    <Trans
+      components={Array []}
+      i18nKey="infoMessage.message"
+      t={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              "infoMessage.title",
+            ],
+            Array [
+              "successMessage.title",
+            ],
+            Array [
+              "dangerMessage.title",
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=infoMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=successMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=dangerMessage.title)",
+            },
+          ],
+        }
+      }
+      values={Object {}}
+    />
+  </Alert>
+  <Alert
+    action={
+      <AlertActionCloseButton
+        onClose={[Function]}
+      />
+    }
+    className="fade-and-slide-in"
+    key="1"
+    onMouseEnter={[Function]}
+    title="Trans(i18nKey=successMessage.title)"
+    variant="success"
+  >
+    <Trans
+      components={Array []}
+      i18nKey="successMessage.message"
+      t={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              "infoMessage.title",
+            ],
+            Array [
+              "successMessage.title",
+            ],
+            Array [
+              "dangerMessage.title",
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=infoMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=successMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=dangerMessage.title)",
+            },
+          ],
+        }
+      }
+      values={Object {}}
+    />
+  </Alert>
+  <Alert
+    action={
+      <AlertActionCloseButton
+        onClose={[Function]}
+      />
+    }
+    className="fade-and-slide-in"
+    key="2"
+    onMouseEnter={[Function]}
+    title="Trans(i18nKey=dangerMessage.title)"
+    variant="danger"
+  >
+    <Trans
+      components={Array []}
+      i18nKey="dangerMessage.message"
+      t={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              "infoMessage.title",
+            ],
+            Array [
+              "successMessage.title",
+            ],
+            Array [
+              "dangerMessage.title",
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=infoMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=successMessage.title)",
+            },
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=dangerMessage.title)",
+            },
+          ],
+        }
+      }
+      values={Object {}}
+    />
+  </Alert>
+</div>
+`;
+
+exports[`Alerts should render correctly with alerts with components 1`] = `
+<div
+  style={
+    Object {
+      "background": "transparent",
+      "display": "grid",
+      "gridAutoRows": "auto",
+      "gridRowGap": "5px",
+      "gridTemplateColumns": "auto",
+      "overflowY": "auto",
+      "paddingTop": "5px",
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "zIndex": 10000,
+    }
+  }
+>
+  <Alert
+    action={
+      <AlertActionCloseButton
+        onClose={[Function]}
+      />
+    }
+    className="fade-and-slide-in"
+    key="0"
+    onMouseEnter={[Function]}
+    title="Trans(i18nKey=exception.title)"
+    variant="danger"
+  >
+    <Trans
+      components={
+        Array [
+          <ServerSideExceptionDialog
+            exceptionCause={
+              Object {
+                "exceptionCause": null,
+                "exceptionClass": "Error2",
+                "exceptionMessage": "message2",
+                "i18nKey": "error2",
+                "messageParameters": Array [],
+                "stackTrace": Array [
+                  "2.1",
+                  "2.2",
+                  "2.3",
+                ],
+              }
+            }
+            exceptionClass="Error1"
+            exceptionMessage="message1"
+            i18nKey="error1"
+            messageParameters={
+              Array [
+                "hi",
+              ]
+            }
+            stackTrace={
+              Array [
+                "1.1",
+                "1.2",
+                "1.3",
+              ]
+            }
+          />,
+        ]
+      }
+      i18nKey="exception.message"
+      t={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              "exception.title",
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": "Trans(i18nKey=exception.title)",
+            },
+          ],
+        }
+      }
+      values={Object {}}
+    />
+  </Alert>
+</div>
+`;
+
+exports[`Alerts should render correctly without alerts 1`] = `
+<div
+  style={
+    Object {
+      "background": "transparent",
+      "display": "grid",
+      "gridAutoRows": "auto",
+      "gridRowGap": "5px",
+      "gridTemplateColumns": "auto",
+      "overflowY": "auto",
+      "paddingTop": "5px",
+      "position": "absolute",
+      "right": 0,
+      "top": 0,
+      "zIndex": 10000,
+    }
+  }
+/>
+`;
+
+exports[`Alerts should render the correct component for AlertComponent.SERVER_SIDE_EXCEPTION_DIALOG 1`] = `
+<ServerSideExceptionDialog
+  exceptionCause={
+    Object {
+      "exceptionCause": null,
+      "exceptionClass": "Error2",
+      "exceptionMessage": "message2",
+      "i18nKey": "error2",
+      "messageParameters": Array [],
+      "stackTrace": Array [
+        "2.1",
+        "2.2",
+        "2.3",
+      ],
+    }
+  }
+  exceptionClass="Error1"
+  exceptionMessage="message1"
+  i18nKey="error1"
+  messageParameters={
+    Array [
+      "hi",
+    ]
+  }
+  stackTrace={
+    Array [
+      "1.1",
+      "1.2",
+      "1.3",
+    ]
+  }
+/>
+`;

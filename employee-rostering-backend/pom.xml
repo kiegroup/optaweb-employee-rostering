@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2019 Red Hat, Inc. and/or its affiliates.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.optaweb.employeerostering</groupId>
+    <artifactId>employee-rostering</artifactId>
+    <version>7.28.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>employee-rostering-backend</artifactId>
+  <name>Employee Rostering as a Service Spring Boot Backend</name>
+  <description>Spring Boot backend for Employee Rostering as a Service</description>
+
+  <properties>
+    <checkstyle.header.template><![CDATA[
+^\/\*$\n^
+\* Copyright \d\d\d\d Red Hat, Inc\. and\/or its affiliates\.$\n^
+\*$\n^
+\* Licensed under the Apache License, Version 2\.0 \(the &quot;License&quot;\);$\n^
+\* you may not use this file except in compliance with the License\.$\n^
+\* You may obtain a copy of the License at$\n^
+\*$\n^
+\*     http:\/\/www\.apache\.org\/licenses\/LICENSE-2\.0$\n^
+\*$\n^
+\* Unless required by applicable law or agreed to in writing, software$\n^
+\* distributed under the License is distributed on an &quot;AS IS&quot; BASIS,$\n^
+\* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied\.$\n^
+\* See the License for the specific language governing permissions and$\n^
+\* limitations under the License\.$\n^
+\*\/$
+]]>
+    </checkstyle.header.template>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <java.version>1.8</java.version>
+    <version.org.springframework>5.1.9.RELEASE</version.org.springframework>
+    <version.org.jacoco>0.8.4</version.org.jacoco>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${version.org.springframework.boot}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy-dep</artifactId>
+        <version>1.9.12</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.validation</groupId>
+        <artifactId>validation-api</artifactId>
+        <version>2.0.1.Final</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+        <version>2.9.2</version>
+      </dependency>
+      <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+        <version>2.9.2</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jacoco</groupId>
+        <artifactId>org.jacoco.agent</artifactId>
+        <version>${version.org.jacoco}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-benchmark</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.activation</groupId>
+          <artifactId>activation</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-persistence-jackson</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.bytebuddy</groupId>
+      <artifactId>byte-buddy-dep</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger-ui</artifactId>
+    </dependency>
+
+    <!-- Testing dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.optaplanner</groupId>
+      <artifactId>optaplanner-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${version.org.springframework.boot}</version>
+          <configuration>
+            <profiles>
+              <profile>local</profile>
+            </profiles>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <compilerArgs>
+              <!-- Visit https://docs.oracle.com/javase/8/docs/technotes/tools/windows/javac.html
+                   to learn more about javac warnings -->
+              <arg>-Xlint:all</arg>
+              <arg>-Xlint:-processing</arg>
+              <arg>-Xlint:-serial</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.pitest</groupId>
+          <artifactId>pitest-maven</artifactId>
+          <version>1.4.10</version>
+          <configuration>
+            <reportsDirectory>local/pit-reports</reportsDirectory>
+            <timestampedReports>true</timestampedReports>
+            <!--
+              Experimental. Using more than 2 threads doesn't reduce execution time further
+              and leads to minion timeouts.
+            -->
+            <threads>2</threads>
+            <mutators>
+              <!-- See http://pitest.org/quickstart/mutators/ -->
+              <mutator>DEFAULTS</mutator>
+              <mutator>NON_VOID_METHOD_CALLS</mutator>
+              <mutator>REMOVE_CONDITIONALS</mutator>
+            </mutators>
+            <avoidCallsTo>
+              <!--
+                String concatenation ("a" + "b") is implemented using StringBuilder.append() in bytecode.
+                We're not interested in mutations of these calls - it's mostly toString() and exception messages.
+                Reducing number of mutations also improves execution time.
+              -->
+              <avoidCallsTo>java.lang.StringBuilder</avoidCallsTo>
+              <avoidCallsTo>org.slf4j</avoidCallsTo>
+              <avoidCallsTo>org.springframework.boot.SpringApplication</avoidCallsTo>
+            </avoidCallsTo>
+            <excludedClasses>
+              <excludedClass>*Config</excludedClass>
+              <excludedClass>*Properties</excludedClass>
+            </excludedClasses>
+            <excludedMethods>hashCode</excludedMethods>
+            <excludedTestClasses>
+              <param>*IntegrationTest</param>
+            </excludedTestClasses>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${version.org.jacoco}</version>
+          <executions>
+            <execution>
+              <id>default-instrument</id>
+              <goals>
+                <goal>instrument</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>default-restore-instrumented-classes</id>
+              <goals>
+                <goal>restore-instrumented-classes</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>default-report</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>3.6.2</version>
+          <executions>
+            <execution>
+              <phase>verify</phase>
+              <goals>
+                <goal>sonar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>validate</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <checkstyleRules>
+                <module name="Checker">
+                  <!-- Checks for whitespace. -->
+                  <module name="FileTabCharacter">
+                    <property name="severity" value="error"/>
+                    <property name="eachLine" value="true"/>
+                  </module>
+                  <module name="TreeWalker">
+                    <!-- Import settings: getting rid of redundant import, forbid star notation,
+                         defined order of imports. -->
+                    <module name="RedundantImport"/>
+                    <module name="AvoidStarImport">
+                      <property name="allowClassImports" value="false"/>
+                      <property name="allowStaticMemberImports" value="false"/>
+                    </module>
+                    <module name="CustomImportOrder">
+                      <property name="customImportOrderRules"
+                                value="STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STATIC"/>
+                      <property name="specialImportsRegExp" value="^javax\."/>
+                      <property name="standardPackageRegExp" value="^java\."/>
+                      <property name="sortImportsInGroupAlphabetically" value="true"/>
+                      <property name="separateLineBetweenGroups" value="true"/>
+                    </module>
+                    <module name="UnusedImports"/>
+                    <module name="NeedBraces">
+                      <property name="tokens" value="LITERAL_IF, LITERAL_ELSE, LITERAL_FOR, LITERAL_WHILE, LITERAL_DO"/>
+                    </module>
+                    <module name="EqualsHashCode"/>
+                    <module name="LineLength">
+                      <property name="max" value="120"/>
+                    </module>
+                  </module>
+                  <module name="RegexpHeader">
+                    <property name="header" value="${checkstyle.header.template}"/>
+                    <property name="fileExtensions" value="java"/>
+                  </module>
+                </module>
+              </checkstyleRules>
+              <includeTestSourceDirectory>true</includeTestSourceDirectory>
+              <includeResources>true</includeResources>
+              <includeTestResources>true</includeTestResources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <configuration>
+              <classifier>exec</classifier>
+            </configuration>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>mutationCoverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-maven</artifactId>
+            <executions>
+              <execution>
+                <id>default-pitest</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>mutationCoverage</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>jacoco</id>
+      <properties>
+        <jacoco.excludes>*Lexer</jacoco.excludes>
+        <jacoco.exec.file>${project.build.directory}/jacoco.exec</jacoco.exec.file>
+        <jacoco.agent.line>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${version.jacoco.plugin}/org.jacoco.agent-${version.jacoco.plugin}-runtime.jar=destfile=${jacoco.exec.file},append=true,excludes=${jacoco.excludes}</jacoco.agent.line>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.jacoco</groupId>
+          <artifactId>org.jacoco.agent</artifactId>
+          <classifier>runtime</classifier>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.jacoco</groupId>
+              <artifactId>jacoco-maven-plugin</artifactId>
+              <version>${version.jacoco.plugin}</version>
+              <configuration>
+                <append>true</append>
+                <destFile>${jacoco.exec.file}</destFile>
+                <excludes>
+                  <exclude>${jacoco.excludes}</exclude>
+                </excludes>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>default-instrument</id>
+                  <goals>
+                    <goal>instrument</goal>
+                  </goals>
+                </execution>
+                <execution>
+                  <id>default-restore-instrumented-classes</id>
+                  <goals>
+                    <goal>restore-instrumented-classes</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.codehaus.cargo</groupId>
+              <artifactId>cargo-maven2-plugin</artifactId>
+              <configuration>
+                <configuration>
+                  <properties>
+                    <cargo.start.jvmargs>${jacoco.agent.line}</cargo.start.jvmargs>
+                  </properties>
+                </configuration>
+              </configuration>
+              <dependencies>
+                <dependency>
+                  <groupId>org.jacoco</groupId>
+                  <artifactId>org.jacoco.agent</artifactId>
+                  <version>${version.jacoco.plugin}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+            <plugin>
+              <artifactId>maven-surefire-plugin</artifactId>
+              <configuration>
+                <systemPropertyVariables>
+                  <jacoco-agent.destfile>${jacoco.exec.file}</jacoco-agent.destfile>
+                </systemPropertyVariables>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

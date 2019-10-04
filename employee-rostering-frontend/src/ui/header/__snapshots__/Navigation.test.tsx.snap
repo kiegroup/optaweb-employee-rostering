@@ -1,0 +1,95 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Navigation should activate a navigation link matching the current path 1`] = `
+<Nav
+  aria-label="Nav"
+  className=""
+  onSelect={[Function]}
+  onToggle={[Function]}
+>
+  <NavList
+    ariaLeftScroll="Scroll left"
+    ariaRightScroll="Scroll right"
+    className=""
+    variant="horizontal"
+  >
+    <NavItem
+      isActive={true}
+      itemId="skills"
+      key="skills"
+    >
+      <Link
+        to="/skills"
+      >
+        Trans(i18nKey=skills)
+      </Link>
+    </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="spots"
+      key="spots"
+    >
+      <Link
+        to="/spots"
+      >
+        Trans(i18nKey=spots)
+      </Link>
+    </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="contracts"
+      key="contracts"
+    >
+      <Link
+        to="/contracts"
+      >
+        Trans(i18nKey=contracts)
+      </Link>
+    </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="employees"
+      key="employees"
+    >
+      <Link
+        to="/employees"
+      >
+        Trans(i18nKey=employees)
+      </Link>
+    </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="shift"
+      key="shift"
+    >
+      <Link
+        to="/shift"
+      >
+        Trans(i18nKey=shift)
+      </Link>
+    </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="availability"
+      key="availability"
+    >
+      <Link
+        to="/availability"
+      >
+        Trans(i18nKey=availability)
+      </Link>
+    </NavItem>
+    <NavItem
+      isActive={false}
+      itemId="rotation"
+      key="rotation"
+    >
+      <Link
+        to="/rotation"
+      >
+        Trans(i18nKey=rotation)
+      </Link>
+    </NavItem>
+  </NavList>
+</Nav>
+`;

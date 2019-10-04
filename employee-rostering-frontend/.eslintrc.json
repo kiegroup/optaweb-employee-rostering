@@ -1,0 +1,136 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "header",
+    "jest"
+  ],
+  "env": {
+    "browser": true,
+    "jest/globals": true,
+    "node": true
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "linkComponents": [
+      // Components used as alternatives to <a> for linking, eg. <Link to={ url } />
+      "Hyperlink",
+      {"name": "Link", "linkAttribute": "to"}
+    ]
+  },
+  "extends": [
+    "airbnb",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:react/recommended",
+    "react-app"
+  ],
+  "rules": {
+    // New rules added by updating package-lock.json
+    "comma-spacing": "off",
+    "eol-last": "off",
+    "no-multiple-empty-lines": "off",
+    "brace-style": "off",
+    "no-multi-spaces": "off",
+    "comma-dangle": "off",
+    "prefer-const": "off",
+    "keyword-spacing": "off",
+    "no-else-return": "off",
+    "quotes": "off",
+    "object-curly-spacing": "off",
+    "semi": "off",
+    "quote-props": "off",
+    "no-trailing-spaces": "off",
+    "consistent-return": "off",
+    "space-infix-ops": "off",
+    "operator-linebreak": "off",
+    "arrow-parens": "off",
+    "object-curly-newline": "off",
+    "no-nested-ternary": "off",
+    "no-confusing-arrow": "off",
+    "class-methods-use-this": "off",
+    "object-shorthand": "off",
+    "block-spacing": "off",
+    "no-shadow": "off",
+    "prefer-template": "off",
+    "key-spacing": "off",
+    "operator-assignment": "off",
+    "radix": "off",
+    "implicit-arrow-linebreak": "off",
+    "space-before-blocks": "off",
+    "object-property-newline": "off",
+    "newline-per-chained-call": "off",
+    "prefer-destructuring": "off",
+    "padded-blocks": "off",
+    "arrow-body-style": "off",
+    "arrow-spacing": "off",
+    "function-paren-newline": "off",
+    "no-unneeded-ternary": "off",
+    "lines-between-class-members": "off",
+    "spaced-comment": "off",
+    "no-return-assign": "off",
+    "space-in-parens": "off",
+    "array-bracket-spacing": "off",
+    "no-return-await": "off",
+    "space-unary-ops": "off",
+    "yoda": "off",
+    "no-param-reassign": "off",
+    // End of new rules added by updating package-lock.json
+    "max-len": ["error", {
+      "code": 120
+    }],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-member-accessibility": ["error", {"accessibility": "no-public"}],
+    "@typescript-eslint/indent": ["error", 2],
+    "@typescript-eslint/no-empty-interface": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-object-literal-type-assertion": "off",
+    "@typescript-eslint/no-use-before-define": "off",
+    "header/header": [
+      "error", "block", [
+        "",
+        {
+          "pattern": " * Copyright \\d{4} Red Hat, Inc. and/or its affiliates.",
+          "template": " * Copyright 2019 Red Hat, Inc. and/or its affiliates."
+        },
+        " *",
+        " * Licensed under the Apache License, Version 2.0 (the \"License\");",
+        " * you may not use this file except in compliance with the License.",
+        " * You may obtain a copy of the License at",
+        " *",
+        " *     http://www.apache.org/licenses/LICENSE-2.0",
+        " *",
+        " * Unless required by applicable law or agreed to in writing, software",
+        " * distributed under the License is distributed on an \"AS IS\" BASIS,",
+        " * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.",
+        " * See the License for the specific language governing permissions and",
+        " * limitations under the License.",
+        " "
+      ]
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "**/*.test.ts",
+          "**/*.test.tsx",
+          "src/store/mockStore.ts",
+          "src/setupTests.ts"
+        ]
+      }
+    ],
+    "import/no-unresolved": "off",
+    "import/order": "off",
+    "import/prefer-default-export": "off",
+    "no-console": "warn",
+    "react/destructuring-assignment": "off",
+    "react/jsx-filename-extension": ["error", {"extensions": [".tsx"]}],
+    "react/prop-types": "off",
+    "react/sort-comp": "off"
+  }
+}

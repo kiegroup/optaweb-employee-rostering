@@ -1,0 +1,153 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ServerSideExceptionDialog should render an ServerSideException Alert correctly 1`] = `
+<Fragment>
+  Trans(i18nKey=error1)
+  <Button
+    aria-label="Show Stack Trace"
+    onClick={[Function]}
+    variant="link"
+  >
+    Show Stack Trace
+  </Button>
+  <Modal
+    actions={
+      <Button
+        aria-label="Close"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=close)
+      </Button>
+    }
+    ariaDescribedById=""
+    className=""
+    hideTitle={false}
+    isLarge={false}
+    isOpen={false}
+    isSmall={false}
+    onClose={[Function]}
+    showClose={true}
+    title="Trans(i18nKey=serverSideError)"
+  >
+    <Title
+      size="md"
+    >
+      Error1: message1
+    </Title>
+    <Text
+      key="1.1"
+    >
+      1.1
+    </Text>
+    <Text
+      key="1.2"
+    >
+      1.2
+    </Text>
+    <Text
+      key="1.3"
+    >
+      1.3
+    </Text>
+    <Text>
+      Caused By
+    </Text>
+    <Title
+      size="md"
+    >
+      Error2: message2
+    </Title>
+    <Text
+      key="2.1"
+    >
+      2.1
+    </Text>
+    <Text
+      key="2.2"
+    >
+      2.2
+    </Text>
+    <Text
+      key="2.3"
+    >
+      2.3
+    </Text>
+  </Modal>
+</Fragment>
+`;
+
+exports[`ServerSideExceptionDialog should render an ServerSideException Modal correctly 1`] = `
+<Fragment>
+  Trans(i18nKey=error1)
+  <Button
+    aria-label="Show Stack Trace"
+    onClick={[Function]}
+    variant="link"
+  >
+    Show Stack Trace
+  </Button>
+  <Modal
+    actions={
+      <Button
+        aria-label="Close"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=close)
+      </Button>
+    }
+    ariaDescribedById=""
+    className=""
+    hideTitle={false}
+    isLarge={false}
+    isOpen={true}
+    isSmall={false}
+    onClose={[Function]}
+    showClose={true}
+    title="Trans(i18nKey=serverSideError)"
+  >
+    <Title
+      size="md"
+    >
+      Error1: message1
+    </Title>
+    <Text
+      key="1.1"
+    >
+      1.1
+    </Text>
+    <Text
+      key="1.2"
+    >
+      1.2
+    </Text>
+    <Text
+      key="1.3"
+    >
+      1.3
+    </Text>
+    <Text>
+      Caused By
+    </Text>
+    <Title
+      size="md"
+    >
+      Error2: message2
+    </Title>
+    <Text
+      key="2.1"
+    >
+      2.1
+    </Text>
+    <Text
+      key="2.2"
+    >
+      2.2
+    </Text>
+    <Text
+      key="2.3"
+    >
+      2.3
+    </Text>
+  </Modal>
+</Fragment>
+`;

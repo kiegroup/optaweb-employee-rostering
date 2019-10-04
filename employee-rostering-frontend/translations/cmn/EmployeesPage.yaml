@@ -1,0 +1,10 @@
+---
+skillProficiencies: 技能熟练程度
+selectAContract: 选择合同...
+selectSkillProficiencies: 选择技能熟练程度...
+noContracts:
+  <0>没有合同</0>
+  <1>
+    当前租户没有合同。 您至少需要一份合同才能添加员工。 您可以在 "合同" 页面中添加合同。
+  </1>
+  <2>转到合同页面</2>

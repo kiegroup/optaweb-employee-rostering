@@ -1,0 +1,719 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Shift Roster Page should render correctly when creating a new shift via button 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+        "height": "60px",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <TypeaheadSelectInput
+        aria-label="Select Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            Object {
+              "id": 2,
+              "name": "Spot",
+              "requiredSkillSet": Array [
+                Object {
+                  "id": 3,
+                  "name": "Skill",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ],
+              "tenantId": 0,
+              "version": 0,
+            },
+          ]
+        }
+        value={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+      />
+      <WeekPicker
+        aria-label="Select Week to View"
+        onChange={[Function]}
+        value={2018-07-01T00:00:00.000Z}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Publish"
+        onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=publish)
+      </Button>
+      <Button
+        aria-label="Solve"
+        onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=schedule)
+      </Button>
+      <Button
+        aria-label="Refresh"
+        onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=refresh)
+      </Button>
+      <Button
+        aria-label="Create Shift"
+        onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=createShift)
+      </Button>
+    </LevelItem>
+  </Level>
+  <Component
+    aria-label="Edit Shift"
+    isOpen={true}
+    onClose={[Function]}
+    onDelete={[Function]}
+    onSave={[Function]}
+  />
+  <Schedule
+    addEvent={[Function]}
+    dayStyle={[Function]}
+    endAccessor={[Function]}
+    endDate={2018-07-07T23:59:59.999Z}
+    eventComponent={[Function]}
+    eventStyle={[Function]}
+    events={
+      Array [
+        Object {
+          "contractMinutesViolationPenaltyList": Array [],
+          "desiredTimeslotForEmployeeRewardList": Array [],
+          "employee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "endDateTime": 2018-07-01T17:00:00.000Z,
+          "id": 1,
+          "indictmentScore": Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          },
+          "pinnedByUser": false,
+          "requiredSkillViolationList": Array [],
+          "rotationEmployee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "rotationViolationPenaltyList": Array [],
+          "shiftEmployeeConflictList": Array [],
+          "spot": Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "startDateTime": 2018-07-01T09:00:00.000Z,
+          "tenantId": 0,
+          "unassignedShiftPenaltyList": Array [],
+          "unavailableEmployeeViolationList": Array [],
+          "undesiredTimeslotForEmployeePenaltyList": Array [],
+          "version": 0,
+        },
+      ]
+    }
+    key="2"
+    popoverBody={[Function]}
+    popoverHeader={[Function]}
+    startAccessor={[Function]}
+    startDate={2018-07-01T00:00:00.000Z}
+    titleAccessor={[Function]}
+    wrapperStyle={[Function]}
+  />
+</Fragment>
+`;
+
+exports[`Shift Roster Page should render correctly when loaded 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+        "height": "60px",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <TypeaheadSelectInput
+        aria-label="Select Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            Object {
+              "id": 2,
+              "name": "Spot",
+              "requiredSkillSet": Array [
+                Object {
+                  "id": 3,
+                  "name": "Skill",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ],
+              "tenantId": 0,
+              "version": 0,
+            },
+          ]
+        }
+        value={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+      />
+      <WeekPicker
+        aria-label="Select Week to View"
+        onChange={[Function]}
+        value={2018-07-01T00:00:00.000Z}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Publish"
+        onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=publish)
+      </Button>
+      <Button
+        aria-label="Solve"
+        onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=schedule)
+      </Button>
+      <Button
+        aria-label="Refresh"
+        onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=refresh)
+      </Button>
+      <Button
+        aria-label="Create Shift"
+        onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=createShift)
+      </Button>
+    </LevelItem>
+  </Level>
+  <Component
+    aria-label="Edit Shift"
+    isOpen={false}
+    onClose={[Function]}
+    onDelete={[Function]}
+    onSave={[Function]}
+  />
+  <Schedule
+    addEvent={[Function]}
+    dayStyle={[Function]}
+    endAccessor={[Function]}
+    endDate={2018-07-07T23:59:59.999Z}
+    eventComponent={[Function]}
+    eventStyle={[Function]}
+    events={
+      Array [
+        Object {
+          "contractMinutesViolationPenaltyList": Array [],
+          "desiredTimeslotForEmployeeRewardList": Array [],
+          "employee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "endDateTime": 2018-07-01T17:00:00.000Z,
+          "id": 1,
+          "indictmentScore": Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          },
+          "pinnedByUser": false,
+          "requiredSkillViolationList": Array [],
+          "rotationEmployee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "rotationViolationPenaltyList": Array [],
+          "shiftEmployeeConflictList": Array [],
+          "spot": Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "startDateTime": 2018-07-01T09:00:00.000Z,
+          "tenantId": 0,
+          "unassignedShiftPenaltyList": Array [],
+          "unavailableEmployeeViolationList": Array [],
+          "undesiredTimeslotForEmployeePenaltyList": Array [],
+          "version": 0,
+        },
+      ]
+    }
+    key="2"
+    popoverBody={[Function]}
+    popoverHeader={[Function]}
+    startAccessor={[Function]}
+    startDate={2018-07-01T00:00:00.000Z}
+    titleAccessor={[Function]}
+    wrapperStyle={[Function]}
+  />
+</Fragment>
+`;
+
+exports[`Shift Roster Page should render correctly when loading 1`] = `
+<EmptyState
+  variant="full"
+>
+  <EmptyStateIcon
+    icon={[Function]}
+  />
+  <Trans
+    components={
+      Array [
+        <Title
+          headingLevel="h5"
+          size="lg"
+        />,
+        <EmptyStateBody />,
+        <Button
+          aria-label="Spots Page"
+          onClick={[Function]}
+          variant="primary"
+        />,
+      ]
+    }
+    i18nKey="noSpots"
+    t={[MockFunction]}
+  />
+</EmptyState>
+`;
+
+exports[`Shift Roster Page should render correctly when solving 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--100)",
+        "height": "60px",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <TypeaheadSelectInput
+        aria-label="Select Spot"
+        emptyText="Trans(i18nKey=selectSpot)"
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={
+          Array [
+            Object {
+              "id": 2,
+              "name": "Spot",
+              "requiredSkillSet": Array [
+                Object {
+                  "id": 3,
+                  "name": "Skill",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ],
+              "tenantId": 0,
+              "version": 0,
+            },
+          ]
+        }
+        value={
+          Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          }
+        }
+      />
+      <WeekPicker
+        aria-label="Select Week to View"
+        onChange={[Function]}
+        value={2018-07-01T00:00:00.000Z}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Publish"
+        onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=publish)
+      </Button>
+      <Button
+        aria-label="Terminate Early"
+        onClick={[MockFunction]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=terminateEarly)
+      </Button>
+      <Button
+        aria-label="Refresh"
+        onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=refresh)
+      </Button>
+      <Button
+        aria-label="Create Shift"
+        onClick={[Function]}
+        style={
+          Object {
+            "margin": "5px",
+          }
+        }
+      >
+        Trans(i18nKey=createShift)
+      </Button>
+    </LevelItem>
+  </Level>
+  <Component
+    aria-label="Edit Shift"
+    isOpen={false}
+    onClose={[Function]}
+    onDelete={[Function]}
+    onSave={[Function]}
+  />
+  <Schedule
+    addEvent={[Function]}
+    dayStyle={[Function]}
+    endAccessor={[Function]}
+    endDate={2018-07-07T23:59:59.999Z}
+    eventComponent={[Function]}
+    eventStyle={[Function]}
+    events={
+      Array [
+        Object {
+          "contractMinutesViolationPenaltyList": Array [],
+          "desiredTimeslotForEmployeeRewardList": Array [],
+          "employee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 4,
+            "name": "Employee 1",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "endDateTime": 2018-07-01T17:00:00.000Z,
+          "id": 1,
+          "indictmentScore": Object {
+            "hardScore": 0,
+            "mediumScore": 0,
+            "softScore": 0,
+          },
+          "pinnedByUser": false,
+          "requiredSkillViolationList": Array [],
+          "rotationEmployee": Object {
+            "contract": Object {
+              "id": 5,
+              "maximumMinutesPerDay": 10,
+              "maximumMinutesPerMonth": 500,
+              "maximumMinutesPerWeek": 70,
+              "maximumMinutesPerYear": 6000,
+              "name": "Basic Contract",
+              "tenantId": 0,
+              "version": 0,
+            },
+            "id": 7,
+            "name": "Rotation Employee",
+            "skillProficiencySet": Array [
+              Object {
+                "id": 6,
+                "name": "Not Required Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "rotationViolationPenaltyList": Array [],
+          "shiftEmployeeConflictList": Array [],
+          "spot": Object {
+            "id": 2,
+            "name": "Spot",
+            "requiredSkillSet": Array [
+              Object {
+                "id": 3,
+                "name": "Skill",
+                "tenantId": 0,
+                "version": 0,
+              },
+            ],
+            "tenantId": 0,
+            "version": 0,
+          },
+          "startDateTime": 2018-07-01T09:00:00.000Z,
+          "tenantId": 0,
+          "unassignedShiftPenaltyList": Array [],
+          "unavailableEmployeeViolationList": Array [],
+          "undesiredTimeslotForEmployeePenaltyList": Array [],
+          "version": 0,
+        },
+      ]
+    }
+    key="2"
+    popoverBody={[Function]}
+    popoverHeader={[Function]}
+    startAccessor={[Function]}
+    startDate={2018-07-01T00:00:00.000Z}
+    titleAccessor={[Function]}
+    wrapperStyle={[Function]}
+  />
+</Fragment>
+`;

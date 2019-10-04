@@ -71,30 +71,15 @@
     <org.optaweb.employeerostering.persistence.datasource>java:jboss/datasources/ExampleDS</org.optaweb.employeerostering.persistence.datasource>
     <org.optaweb.employeerostering.persistence.dialect>org.hibernate.dialect.H2Dialect</org.optaweb.employeerostering.persistence.dialect>
     <org.optaweb.employeerostering.persistence.hbm2ddl.auto>create</org.optaweb.employeerostering.persistence.hbm2ddl.auto>
-
-    <version.com.github.nmorel.gwtjackson.restprocessor>0.4.1</version.com.github.nmorel.gwtjackson.restprocessor>
-    <version.com.github.nmorel.gwtjackson>0.14.2</version.com.github.nmorel.gwtjackson>
-    <version.com.google.jsinterop.base>1.0.0-beta-1</version.com.google.jsinterop.base>
-    <!-- TODO update gwt-maven-plugin version in kie-parent and then remove this override -->
-    <version.net.ltgt.gwt.maven>1.0-rc-9</version.net.ltgt.gwt.maven>
-    <version.org.gwtbootstrap3>0.9.4</version.org.gwtbootstrap3>
-    <version.org.webjars.bower.org.patternfly>3.18.1</version.org.webjars.bower.org.patternfly>
-    <version.org.webjars.Eonasdan-bootstrap-datetimepicker>4.17.47</version.org.webjars.Eonasdan-bootstrap-datetimepicker>
-    <version.org.webjars.momentjs>2.22.2</version.org.webjars.momentjs>
-    <!-- gwtmockito uses a different version of mockito than kie-parent, so we need to override the mockito version,
-         kie-parent manages version 1.x -->
+    
     <version.org.mockito>2.12.0</version.org.mockito>
-    <!-- this version ensures this is correctly taken version bytebuddy which works with mockito-core 2.x  -->
-    <version.net.bytebuddy>1.7.9</version.net.bytebuddy>
+    <version.org.springframework.boot>2.1.8.RELEASE</version.org.springframework.boot>
+    <version.org.springframework>5.1.9.RELEASE</version.org.springframework>
   </properties>
 
   <modules>
-    <module>employee-rostering-shared</module>
-    <module>employee-rostering-server</module>
-    <module>employee-rostering-restclient</module>
-    <!-- The modules employee-rostering-shared-gwt and employee-rostering-gwtui
-       are added by the maven profile withGwt (which is enabled by default) -->
-    <module>employee-rostering-webapp</module>
+    <module>employee-rostering-frontend</module>
+    <module>employee-rostering-backend</module>
     <module>employee-rostering-benchmark</module>
     <module>employee-rostering-docs</module>
     <module>employee-rostering-distribution</module>
@@ -102,50 +87,32 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Internal -->
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-shared</artifactId>
+        <artifactId>employee-rostering-frontend</artifactId>
+        <type>jar</type>
         <version>${project.version}</version>
       </dependency>
+      
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-shared</artifactId>
+        <artifactId>employee-rostering-backend</artifactId>
+        <type>jar</type>
         <version>${project.version}</version>
-        <classifier>sources</classifier>
       </dependency>
+      
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-shared-gwt</artifactId>
-        <type>gwt-lib</type>
+        <artifactId>employee-rostering-backend</artifactId>
+        <classifier>exec</classifier>
+        <type>jar</type>
         <version>${project.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-gwtui</artifactId>
-        <type>war</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-server</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-webapp</artifactId>
-        <type>war</type>
-        <version>${project.version}</version>
-      </dependency>
+      
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
         <artifactId>employee-rostering-docs</artifactId>
         <type>zip</type>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-restclient</artifactId>
         <version>${project.version}</version>
       </dependency>
 
@@ -189,40 +156,6 @@
         <artifactId>jackson-datatype-jsr310</artifactId>
         <version>${version.com.fasterxml.jackson}</version>
       </dependency>
-
-      <!-- GWT -->
-      <dependency>
-        <groupId>com.github.nmorel.gwtjackson</groupId>
-        <artifactId>gwt-jackson</artifactId>
-        <version>${version.com.github.nmorel.gwtjackson}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.github.nmorel.gwtjackson</groupId>
-        <artifactId>gwt-jackson-rest-processor</artifactId>
-        <version>${version.com.github.nmorel.gwtjackson.restprocessor}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.github.nmorel.gwtjackson</groupId>
-        <artifactId>gwt-jackson-rest-api</artifactId>
-        <version>${version.com.github.nmorel.gwtjackson.restprocessor}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.jsinterop</groupId>
-        <artifactId>base</artifactId>
-        <version>${version.com.google.jsinterop.base}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.elemental2</groupId>
-        <artifactId>elemental2-core</artifactId>
-        <version>${version.com.google.elemental2}</version>
-      </dependency>
-      <!-- byte-buddy is managed in kie-parent and we need to keep the same version mockito-core defines -->
-      <dependency>
-        <groupId>net.bytebuddy</groupId>
-        <artifactId>byte-buddy</artifactId>
-        <version>${version.net.bytebuddy}</version>
-        <scope>test</scope>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -235,140 +168,32 @@
           <failOnViolation>true</failOnViolation>
         </configuration>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <inherited>false</inherited>
-        <executions>
-          <execution>
-            <id>unpack</id>
-            <phase>package</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <skip>${wildfly.install.skip}</skip>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.wildfly</groupId>
-                  <artifactId>wildfly-dist</artifactId>
-                  <version>${version.org.wildfly}</version>
-                  <type>zip</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${wildfly.parent}</outputDirectory>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <inherited>false</inherited>
-        <executions>
-          <execution>
-            <id>create-symbolic-link</id>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <skip>${antrun.skip}</skip>
-              <target>
-                <symlink
-                    link="${wildfly.launchdir}/standalone/deployments/${deployment.name}.war"
-                    resource="${deployment.parent}/${deployment.name}"
-                    overwrite="true"/>
-              </target>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-
-      <plugin>
-        <groupId>net.ltgt.gwt.maven</groupId>
-        <artifactId>gwt-maven-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.wildfly.plugins</groupId>
-        <artifactId>wildfly-maven-plugin</artifactId>
-        <inherited>false</inherited>
-        <executions>
-          <execution>
-            <id>default-cli</id>
-            <goals>
-              <goal>start</goal>
-              <goal>deploy</goal>
-              <goal>redeploy-only</goal>
-            </goals>
-            <configuration>
-              <jbossHome>${wildfly.launchdir}</jbossHome>
-              <filename>${deployment.name}.war/</filename>
-              <targetDir>${wildfly.launchdir}/standalone/deployments</targetDir>
-              <name>optaweb-employee-rostering.war</name>
-              <checkPackaging>false</checkPackaging>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
 
     <pluginManagement>
       <plugins>
+        <!--
+          Disable Jacoco check inherited from kie-parent. Remove this when it's removed from kie-parent
+          (but some projects still use the check fail build).
+        -->
         <plugin>
-          <groupId>net.ltgt.gwt.maven</groupId>
-          <artifactId>gwt-maven-plugin</artifactId>
-          <version>${version.net.ltgt.gwt.maven}</version>
-          <extensions>true</extensions>
-          <configuration>
-            <style>PRETTY</style>
-            <!-- TODO turn this one, probably after GWT supports java.time -->
-            <!--<failOnError>true</failOnError> -->
-            <devmodeArgs>
-              <!-- GWT Super Dev Mode: Replace default backend by WildFly -->
-              <arg>-server</arg>
-              <arg>org.jboss.errai.cdi.server.gwt.EmbeddedWildFlyLauncher</arg>
-              <arg>-startupUrl</arg>
-              <arg>gwtui/gwtui.html</arg>
-            </devmodeArgs>
-            <jvmArgs>
-              <!-- Remote debugger: uncomment this line to debug the WildFly backend -->
-              <!--<arg>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</arg> -->
-            </jvmArgs>
-            <!-- GWT Super Dev Mode: deploy backend correctly -->
-            <launcherDir>${deployment.parent}/${deployment.name}</launcherDir>
-            <systemProperties>
-              <!-- GWT Super Dev Mode: which WildFly to use -->
-              <errai.jboss.home>${wildfly.home}</errai.jboss.home>
-              <!-- Make IDE war run config and GWT Super Dev Mode use same 
-                deployment context to avoid duplicate, conflicting deployment -->
-              <errai.dev.context>optaweb-employee-rostering</errai.dev.context>
-            </systemProperties>
-          </configuration>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>default-check</id>
+              <goals>
+                <goal>check</goal>
+              </goals>
+              <phase>none</phase>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>
   </build>
 
   <profiles>
-    <profile>
-      <id>withGwt</id>
-      <activation>
-        <property>
-          <name>!withoutGwt</name>
-        </property>
-      </activation>
-      <modules>
-        <module>employee-rostering-shared-gwt</module>
-        <module>employee-rostering-gwtui</module>
-      </modules>
-    </profile>
-
     <profile>
       <!-- Magic profileId that is activated automatically in OpenShift S2I builds -->
       <id>openshift</id>
@@ -379,24 +204,6 @@
       </properties>
       <build>
         <plugins>
-          <plugin>
-            <groupId>net.ltgt.gwt.maven</groupId>
-            <artifactId>gwt-maven-plugin</artifactId>
-            <configuration>
-              <!-- Minify the JavaScript code to improve latency -->
-              <!--<style>OBFUSCATED</style>-->
-              <compilerArgs>
-                <!-- Remove warnings that only appear on OpenShift -->
-                <arg>-XdisableUpdateCheck</arg>
-              </compilerArgs>
-              <!-- Avoid crash "error code 137" on OpenShift -->
-              <!--<localWorkers>1</localWorkers>-->
-              <!--<jvmArgs>-->
-              <!--<arg>-Xmx1024m</arg>-->
-              <!--<arg>-Xss256k</arg>-->
-              <!--</jvmArgs>-->
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
@@ -442,13 +249,6 @@
           </plugins>
         </pluginManagement>
       </build>
-    </profile>
-
-    <profile>
-      <id>deploy</id>
-      <properties>
-        <antrun.skip>true</antrun.skip>
-      </properties>
     </profile>
 
     <profile>
@@ -521,13 +321,6 @@
                   <version>${version.jacoco.plugin}</version>
                 </dependency>
               </dependencies>
-            </plugin>
-            <plugin>
-              <groupId>net.ltgt.gwt.maven</groupId>
-              <artifactId>gwt-maven-plugin</artifactId>
-              <configuration>
-                <skipCompilation>true</skipCompilation>
-              </configuration>
             </plugin>
             <plugin>
               <artifactId>maven-surefire-plugin</artifactId>
@@ -609,6 +402,83 @@
         </pluginManagement>
       </build>
     </profile>
-  </profiles>
 
+    <profile>
+      <id>sonar</id>
+      <properties>
+        <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+        <sonar.organization>kiegroup</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io/</sonar.host.url>
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.login>${env.SONARCLOUD_TOKEN}</sonar.login>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+            <version>3.6.0.1398</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sonar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!-- Skip Sonar plugin execution if SONARCLOUD_TOKEN is not set. -->
+      <id>skipSonar</id>
+      <activation>
+        <property>
+          <name>!env.SONARCLOUD_TOKEN</name>
+        </property>
+      </activation>
+      <properties>
+        <sonar.skip>true</sonar.skip>
+      </properties>
+    </profile>
+    <profile>
+      <id>pullRequestAnalysis</id>
+      <!-- Only set sonar.pullrequest properties when the Travis build is triggered by a PR.
+           When the build is triggered by push to a branch or by cron, the consumed env.TRAVIS properties are empty,
+           resulting in invalid sonar.pullrequest properties and the Sonar plugin would fail. -->
+      <activation>
+        <property>
+          <name>env.TRAVIS_EVENT_TYPE</name>
+          <value>pull_request</value>
+        </property>
+      </activation>
+      <!-- See https://docs.travis-ci.com/user/environment-variables/ for list of Travis environment variables. -->
+      <!-- See https://docs.sonarqube.org/latest/analysis/pull-request/ for properties required by Sonar for PR analysis. -->
+      <properties>
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.pullrequest.branch>${env.TRAVIS_PULL_REQUEST_BRANCH}</sonar.pullrequest.branch>
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.pullrequest.key>${env.TRAVIS_PULL_REQUEST}</sonar.pullrequest.key>
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.pullrequest.base>${env.TRAVIS_BRANCH}</sonar.pullrequest.base>
+      </properties>
+    </profile>
+    <profile>
+      <id>branchAnalysis</id>
+      <activation>
+        <property>
+          <name>env.TRAVIS_EVENT_TYPE</name>
+          <value>!pull_request</value>
+        </property>
+      </activation>
+      <!-- See https://docs.travis-ci.com/user/environment-variables/ for list of Travis environment variables. -->
+      <!-- See https://docs.sonarqube.org/latest/branches/overview/ for properties required by Sonar for branch analysis. -->
+      <properties>
+        <!--suppress UnresolvedMavenProperty -->
+        <sonar.branch.name>${env.TRAVIS_BRANCH}</sonar.branch.name>
+      </properties>
+    </profile>
+  </profiles>
 </project>

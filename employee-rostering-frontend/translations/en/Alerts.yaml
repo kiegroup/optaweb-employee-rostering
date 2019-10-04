@@ -1,0 +1,160 @@
+---
+serverSideError: Server Side Error
+
+addContract:
+  title: Successfully added Contract
+  message: The Contract "{{name}}" was successfully added.
+
+removeContract:
+  title: Successfully deleted Contract
+  message: The Contract "{{name}}" was successfully deleted.
+
+removeContractError:
+  title: Error deleting Contract
+  message: The Contract "{{name}}" could not be deleted.
+
+updateContract:
+  title: Successfully updated Contract
+  message: The Contract with id "{{id}}" was successfully updated.
+
+addEmployee:
+  title: Successfully added Employee
+  message: The Employee "{{name}}" was successfully added.
+
+removeEmployee:
+  title: Successfully deleted Employee
+  message: The Employee "{{name}}" was successfully deleted.
+
+removeEmployeeError:
+  title: Error deleting Employee
+  message: The Employee "{{name}}" could not be deleted.
+
+updateEmployee:
+  title: Successfully updated Employee
+  message: The Employee with id "{{id}}" was successfully updated.
+
+addShift:
+  title: Successfully added Shift
+  message: A new Shift starting at {{startDateTime}} and ending at {{endDateTime}}
+    was successfully added.
+
+removeShift:
+  title: Successfully deleted Shift
+  message: The Shift with id {{id}} starting at {{startDateTime}} and ending at
+    {{endDateTime}} was successfully deleted.
+
+removeShiftError:
+  title: Error deleting Shift
+  message: The Shift with id {{id}} starting at {{startDateTime}} and ending at
+    {{endDateTime}} could not be deleted.
+
+updateShift:
+  title: Successfully updated Shift
+  message: The Shift with id "{{id}}" was successfully updated.
+
+addShiftTemplate:
+  title: Successfully added Shift Template
+  message: A new Shift Template was successfully added with id "{{id}}".
+
+removeShiftTemplate:
+  title: Successfully deleted Shift Template
+  message: The Shift Template with id "{{id}}" was successfully deleted.
+
+removeShiftTemplateError:
+  title: Error deleting Shift Template
+  message: The Shift Template with id "{{id}}" could not be deleted.
+
+updateShiftTemplate:
+  title: Successfully updated Shift Template
+  message: The Shift Template with id "{{id}}" was successfully updated.
+
+addAvailability:
+  title: Successfully added Availability
+  message: A new Availability starting at {{startDateTime}} and ending at {{endDateTime}}
+    for employee {{employeeName}} was successfully added.
+
+removeAvailability:
+  title: Successfully deleted Availability
+  message: The Availability with id {{id}} starting at {{startDateTime}} and ending
+    at {{endDateTime}} for employee {{employeeName}} was successfully deleted.
+
+removeAvailabilityError:
+  title: Error deleting Availability
+  message: The Availability with id {{id}} starting at {{startDateTime}} and ending
+    at {{endDateTime}} for employee {{employeeName}} could not be deleted.
+
+updateAvailability:
+  title: Successfully updated Availability
+  message: The Availability with id {{id}} was successfully updated.
+
+addSkill:
+  title: Successfully added Skill
+  message: The Skill "{{name}}" was successfully added.
+
+removeSkill:
+  title: Successfully deleted Skill
+  message: The Skill "{{name}}" was successfully deleted.
+
+removeSkillError:
+  title: Error deleting Skill
+  message: The Skill "{{name}}" could not be deleted.
+
+updateSkill:
+  title: Successfully updated Skill
+  message: The Skill with id "{{id}}" was successfully updated.
+
+addSpot:
+  title: Successfully added Spot
+  message: The Spot "{{name}}" was successfully added.
+
+removeSpot:
+  title: Successfully deleted Spot
+  message: The Spot "{{name}}" was successfully deleted.
+
+removeSpotError:
+  title: Error deleting Spot
+  message: The Spot "{{name}}" could not be deleted.
+
+updateSpot:
+  title: Successfully updated Spot
+  message: The Spot with id "{{id}}" was successfully updated.
+
+addTenant:
+  title: Successfully added Tenant
+  message: The Tenant "{{name}}" was successfully added.
+
+removeTenant:
+  title: Successfully removed Tenant
+  message: The Tenant "{{name}}" was successfully deleted.
+
+removeTenantError:
+  title: Error removing Tenant
+  message: The Tenant "{{name}}" could not be deleted.
+
+startSolvingRoster:
+  title: Started Solving Roster
+  message: Started Solving Roster at {{startSolvingTime}}
+
+finishSolvingRoster:
+  title: Finished Solving Roster
+  message: Finished Solving Roster at {{finishSolvingTime}}
+
+publish:
+  title: Published Roster
+  message: Published from {{from}} to {{to}}.
+
+shiftRosterRefresh:
+  title: Info
+  message: The Shift Roster was refreshed.
+
+availabilityRosterRefresh:
+  title: Info
+  message: The Availability Roster was refreshed.
+
+generic:
+  title: Exception
+  message: "{{message}}"
+
+exception:
+  title: Server Exception
+  message: "<0>See Stack Trace.</0>"

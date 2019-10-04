@@ -1,0 +1,100 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Availability Event should render correctly 1`] = `
+<span
+  className="availability-event"
+>
+  <Split>
+    <SplitItem
+      isFilled={false}
+    >
+      Trans(i18nKey=EmployeeAvailabilityState.DESIRED)
+    </SplitItem>
+    <SplitItem
+      isFilled={true}
+    />
+    <SplitItem
+      isFilled={false}
+    >
+      <Button
+        aria-label="Delete"
+        onClick={[Function]}
+        variant="danger"
+      >
+        <TrashIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+    </SplitItem>
+  </Split>
+  <Level
+    gutter="sm"
+  >
+    <LevelItem>
+      <Button
+        aria-label="Desired"
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "green",
+            "margin": "1px",
+            "width": "min-content",
+          }
+        }
+        title="Trans(i18nKey=EmployeeAvailabilityState.DESIRED)"
+        variant="tertiary"
+      >
+        <OkIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+      <Button
+        aria-label="Undesired"
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "yellow",
+            "margin": "1px",
+            "width": "min-content",
+          }
+        }
+        title="Trans(i18nKey=EmployeeAvailabilityState.UNDESIRED)"
+        variant="tertiary"
+      >
+        <WarningTriangleIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+      <Button
+        aria-label="Unavailable"
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "red",
+            "margin": "1px",
+            "width": "min-content",
+          }
+        }
+        title="Trans(i18nKey=EmployeeAvailabilityState.UNAVAILABLE)"
+        variant="tertiary"
+      >
+        <ErrorCircleOIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+    </LevelItem>
+  </Level>
+</span>
+`;

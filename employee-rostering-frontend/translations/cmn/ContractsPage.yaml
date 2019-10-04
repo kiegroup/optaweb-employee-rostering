@@ -1,0 +1,5 @@
+---
+maxMinutesPerDay: 每天最多分钟数
+maxMinutesPerWeek: 每周最多分钟
+maxMinutesPerMonth: 每月最多分钟数
+maxMinutesPerYear: 每年最多分钟

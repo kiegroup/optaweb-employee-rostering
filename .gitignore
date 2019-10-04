@@ -10,6 +10,7 @@
 /*.ipr
 /*.iws
 /*.iml
+.settings
 
 # Repository wide ignore mac DS_Store files
 .DS_Store

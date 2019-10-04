@@ -1,0 +1,82 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App should render correctly 1`] = `
+<Fragment>
+  <Page
+    breadcrumb={null}
+    className=""
+    defaultManagedSidebarIsOpen={true}
+    header={<Header />}
+    isManagedSidebar={false}
+    mainContainerId={null}
+    onPageResize={[Function]}
+    sidebar={null}
+    skipToContent={null}
+  >
+    <Background />
+    <PageSection
+      style={
+        Object {
+          "display": "flex",
+          "flexDirection": "column",
+          "height": "100%",
+          "overflowY": "auto",
+          "position": "relative",
+        }
+      }
+    >
+      <Connect(Alerts) />
+      <Switch>
+        <Route
+          component={[Function]}
+          exact={true}
+          path="/skills"
+        />
+        <Route
+          component={[Function]}
+          exact={true}
+          path="/spots"
+        />
+        <Route
+          component={[Function]}
+          exact={true}
+          path="/contracts"
+        />
+        <Route
+          component={[Function]}
+          exact={true}
+          path="/employees"
+        />
+        <Route
+          component={[Function]}
+          exact={true}
+          path="/shift"
+        />
+        <Route
+          component={[Function]}
+          exact={true}
+          path="/availability"
+        />
+        <Route
+          component={[Function]}
+          exact={true}
+          path="/rotation"
+        />
+        <Route
+          component={
+            Object {
+              "$$typeof": Symbol(react.memo),
+              "WrappedComponent": [Function],
+              "compare": null,
+              "displayName": "Connect(AdminPage)",
+              "type": [Function],
+            }
+          }
+          exact={true}
+          path="/admin"
+        />
+      </Switch>
+    </PageSection>
+  </Page>
+</Fragment>
+`;

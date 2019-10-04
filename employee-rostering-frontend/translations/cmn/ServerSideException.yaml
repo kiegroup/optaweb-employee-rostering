@@ -1,0 +1,8 @@
+---
+ServerSideException:
+  entityNotFound: 找不到您请求的对象： {{0}}
+  generic: 看来开发人员在某处犯了错误。 请联系他们。
+  illegalArgument: 您传入的参数无效： {{0}}
+  nullPointer: 看来开发人员在某处犯了错误。 请联系他们。
+  rollback: 您尝试删除的对象仍从其他实体引用。 删除对象之前，请先更新/删除对该对象的所有引用。
+  unknown: 发生了一个例外： {{0}}

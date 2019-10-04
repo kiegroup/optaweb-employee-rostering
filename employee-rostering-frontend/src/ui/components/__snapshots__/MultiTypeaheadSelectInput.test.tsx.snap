@@ -1,0 +1,76 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MultiTypeaheadSelectInput component should render correctly 1`] = `
+<div>
+  <span
+    hidden={true}
+    id="multi-typeahead-select-id"
+  >
+    Enter some data
+  </span>
+  <Select
+    aria-label="Enter some data"
+    ariaLabelClear="Clear all"
+    ariaLabelRemove="Remove"
+    ariaLabelToggle="Options menu"
+    ariaLabelTypeAhead=""
+    ariaLabelledBy="multi-typeahead-select-id"
+    className=""
+    isDisabled={false}
+    isExpanded={false}
+    isGrouped={false}
+    isPlain={false}
+    onClear={[Function]}
+    onSelect={[Function]}
+    onToggle={[Function]}
+    placeholderText="Enter some data"
+    selections={Array []}
+    toggleId={null}
+    variant="typeaheadmulti"
+    width=""
+  >
+    <SelectOption
+      className=""
+      index={0}
+      isChecked={false}
+      isDisabled={false}
+      isFocused={false}
+      isPlaceholder={false}
+      isSelected={false}
+      key="Option 1"
+      keyHandler={[Function]}
+      onClick={[Function]}
+      sendRef={[Function]}
+      value="Option 1"
+    />
+    <SelectOption
+      className=""
+      index={0}
+      isChecked={false}
+      isDisabled={false}
+      isFocused={false}
+      isPlaceholder={false}
+      isSelected={false}
+      key="Option 2"
+      keyHandler={[Function]}
+      onClick={[Function]}
+      sendRef={[Function]}
+      value="Option 2"
+    />
+    <SelectOption
+      className=""
+      index={0}
+      isChecked={false}
+      isDisabled={false}
+      isFocused={false}
+      isPlaceholder={false}
+      isSelected={false}
+      key="Option 3"
+      keyHandler={[Function]}
+      onClick={[Function]}
+      sendRef={[Function]}
+      value="Option 3"
+    />
+  </Select>
+</div>
+`;

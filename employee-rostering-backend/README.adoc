@@ -1,0 +1,40 @@
+= OptaWeb Employee Rostering Backend
+
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=alert_status[
+"Quality Gate Status", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=reliability_rating[
+"Reliability Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=security_rating[
+"Security Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=sqale_rating[
+"Maintainability Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=ncloc[
+"Lines of Code", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=coverage[
+"Coverage", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+
+Web application for solving the https://www.optaplanner.org/learn/useCases/employeeRostering.html[Employee Rostering
+Problem] using https://www.optaplanner.org/[OptaPlanner].
+
+== Build and Run with Maven
+
+In the project backend directory, run the following command to build from source:
+
+----
+mvn clean install -DskipTests
+----
+
+Compile and run the backend:
+
+----
+mvn spring-boot:run
+----
+
+Once the application starts, open http://localhost:8080/swagger-ui.html to test the REST API.
+Select a specific HTTP method and click on the `Try it out` button.
+
+Open http://localhost:8080/h2-console to query the database.
+In the `JDBC URL` field, enter `jdbc:h2:mem:testdb` and keep the other default values.
+Once connected, the console displays the persisted data generated on startup, and a textbox for running SQL queries on the database.
+
+Note that the in-memory database loses all data when the application restarts.

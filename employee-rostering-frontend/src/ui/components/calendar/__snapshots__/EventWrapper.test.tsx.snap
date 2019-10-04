@@ -1,0 +1,356 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EventWrapper should render correctly when the event continues both before and after 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label=""
+  bodyContent="Body"
+  boundary="window"
+  className=""
+  closeBtnAriaLabel="Close"
+  distance={25}
+  enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  footerContent={null}
+  headerContent="Title"
+  hideOnOutsideClick={true}
+  isVisible={null}
+  maxWidth="calc(2rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="right"
+  shouldClose={[Function]}
+  zIndex={9999}
+>
+  <div
+    className="class continues-from-previous-day continues-next-day"
+    style={
+      Object {
+        "backgroundColor": "transparent",
+        "border": "none",
+        "color": "white",
+        "gridRowEnd": 101,
+        "gridRowStart": 1,
+        "height": "100%",
+        "top": "0%",
+      }
+    }
+  />
+</Popover>
+`;
+
+exports[`EventWrapper should render correctly when the event continues from eariler 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label=""
+  bodyContent="Body"
+  boundary="window"
+  className=""
+  closeBtnAriaLabel="Close"
+  distance={25}
+  enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  footerContent={null}
+  headerContent="Title"
+  hideOnOutsideClick={true}
+  isVisible={null}
+  maxWidth="calc(2rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="right"
+  shouldClose={[Function]}
+  zIndex={9999}
+>
+  <div
+    className="class continues-from-previous-day"
+    style={
+      Object {
+        "backgroundColor": "transparent",
+        "border": "none",
+        "color": "white",
+        "gridRowEnd": 26,
+        "gridRowStart": 1,
+        "height": "25%",
+        "top": "0%",
+      }
+    }
+  />
+</Popover>
+`;
+
+exports[`EventWrapper should render correctly when the event continues later 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label=""
+  bodyContent="Body"
+  boundary="window"
+  className=""
+  closeBtnAriaLabel="Close"
+  distance={25}
+  enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  footerContent={null}
+  headerContent="Title"
+  hideOnOutsideClick={true}
+  isVisible={null}
+  maxWidth="calc(2rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="right"
+  shouldClose={[Function]}
+  zIndex={9999}
+>
+  <div
+    className="class continues-next-day"
+    style={
+      Object {
+        "backgroundColor": "transparent",
+        "border": "none",
+        "color": "white",
+        "gridRowEnd": 101,
+        "gridRowStart": 76,
+        "height": "25%",
+        "top": "75%",
+      }
+    }
+  />
+</Popover>
+`;
+
+exports[`EventWrapper should render correctly when the event does not have a class name 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label=""
+  bodyContent="Body"
+  boundary="window"
+  className=""
+  closeBtnAriaLabel="Close"
+  distance={25}
+  enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  footerContent={null}
+  headerContent="Title"
+  hideOnOutsideClick={true}
+  isVisible={null}
+  maxWidth="calc(2rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="right"
+  shouldClose={[Function]}
+  zIndex={9999}
+>
+  <div
+    className="rbc-event"
+    style={
+      Object {
+        "backgroundColor": "transparent",
+        "border": "none",
+        "color": "white",
+        "gridRowEnd": 76,
+        "gridRowStart": 51,
+        "height": "25%",
+        "top": "50%",
+      }
+    }
+  />
+</Popover>
+`;
+
+exports[`EventWrapper should render correctly when the event does not span multiple days 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label=""
+  bodyContent="Body"
+  boundary="window"
+  className=""
+  closeBtnAriaLabel="Close"
+  distance={25}
+  enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  footerContent={null}
+  headerContent="Title"
+  hideOnOutsideClick={true}
+  isVisible={null}
+  maxWidth="calc(2rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="right"
+  shouldClose={[Function]}
+  zIndex={9999}
+>
+  <div
+    className="class"
+    style={
+      Object {
+        "backgroundColor": "transparent",
+        "border": "none",
+        "color": "white",
+        "gridRowEnd": 76,
+        "gridRowStart": 51,
+        "height": "25%",
+        "top": "50%",
+      }
+    }
+  />
+</Popover>
+`;
+
+exports[`EventWrapper should render correctly when the event has no height or top 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label=""
+  bodyContent="Body"
+  boundary="window"
+  className=""
+  closeBtnAriaLabel="Close"
+  distance={25}
+  enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  footerContent={null}
+  headerContent="Title"
+  hideOnOutsideClick={true}
+  isVisible={null}
+  maxWidth="calc(2rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="right"
+  shouldClose={[Function]}
+  zIndex={9999}
+>
+  <div
+    className="class"
+    style={
+      Object {
+        "backgroundColor": "transparent",
+        "border": "none",
+        "color": "white",
+      }
+    }
+  />
+</Popover>
+`;
+
+exports[`EventWrapper should render correctly without a style 1`] = `
+<Popover
+  appendTo={[Function]}
+  aria-label=""
+  bodyContent="Body"
+  boundary="window"
+  className=""
+  closeBtnAriaLabel="Close"
+  distance={25}
+  enableFlip={true}
+  flipBehavior={
+    Array [
+      "top",
+      "right",
+      "bottom",
+      "left",
+      "top",
+      "right",
+      "bottom",
+    ]
+  }
+  footerContent={null}
+  headerContent="Title"
+  hideOnOutsideClick={true}
+  isVisible={null}
+  maxWidth="calc(2rem + 18.75rem)"
+  onHidden={[Function]}
+  onHide={[Function]}
+  onMount={[Function]}
+  onShow={[Function]}
+  onShown={[Function]}
+  position="right"
+  shouldClose={[Function]}
+  zIndex={9999}
+>
+  <div
+    className="class"
+    style={
+      Object {
+        "backgroundColor": "transparent",
+        "border": "none",
+      }
+    }
+  />
+</Popover>
+`;

@@ -1,0 +1,191 @@
+/*
+ * Copyright 2019 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/* TODO: remove me when react-big-calendar displays concurrent events properly */
+/* See: https://github.com/intljusticemission/react-big-calendar/issues/1397 */
+
+/* Start of Hack */
+.rbc-events-container {
+    display: grid !important;
+    grid-template-rows: repeat(100, 1fr) !important;
+    margin-top: -6px;
+    margin-bottom: -6px;
+    overflow: hidden;
+}
+  
+.rbc-day-slot .rbc-event {
+    position: static !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+/* End of Hack */
+
+/* Hack to hide vertical scrollbar on Firefox */
+.rbc-time-content {
+    padding-bottom: 6px;
+}
+/* End Hack */
+
+.rbc-header.published-day::before {
+    content: " ";
+    font-family: "pficon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-style: normal;
+    font-weight: normal;
+    font-feature-settings: normal;
+    font-variant: normal;
+    text-decoration: none;
+    text-transform: none;
+}
+
+.rbc-header.draft-day::before {
+    content: " ";
+    font-family: "pficon";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-style: normal;
+    font-weight: normal;
+    font-feature-settings: normal;
+    font-variant: normal;
+    text-decoration: none;
+    text-transform: none;
+}
+
+.availability-wrapper {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0.75;
+}
+
+.availability-event {
+    display: "flex";
+    height: 100%;
+    width: 100%;
+}
+
+.availability-wrapper:not(:hover) button {
+    display: none;
+}
+
+.availability-allday-wrapper:not(:hover) button {
+    display: none;
+}
+
+.availability-allday-wrapper {
+    position: relative; 
+    margin-bottom: -100%;
+}
+
+.unavailable .rbc-time-slot {
+    border-top: 1px solid black;
+    background-color: var(--pf-global--danger-color--100);
+}
+
+.unavailable.rbc-day-bg {
+    background-color: var(--pf-global--danger-color--100);
+}
+
+.unavailable .rbc-timeslot-group {
+    border-bottom: 1px solid black;
+}
+
+.undesired .rbc-time-slot {
+    border-top: 1px solid black;
+    background-color: var(--pf-global--warning-color--100);
+}
+
+.undesired.rbc-day-bg {
+    background-color: var(--pf-global--warning-color--100);
+}
+
+.undesired .rbc-timeslot-group {
+    border-bottom: 1px solid black;
+}
+
+.desired .rbc-time-slot {
+    border-top: 1px solid black;
+    background-color: var(--pf-global--success-color--200);
+}
+
+.desired.rbc-day-bg {
+    background-color: var(--pf-global--success-color--200);
+}
+
+.desired .rbc-timeslot-group {
+    border-bottom: 1px solid black;
+}
+
+/* Change the background color to match PatternFly */
+.rbc-time-view {
+    background-color: var(--pf-global--BackgroundColor--100) !important;
+}
+
+.rbc-selected-cell {
+    background-color: var(--pf-global--active-color--200) !important;
+}
+
+.rbc-event {
+    color: black !important;
+    background-color: #bee1f4;
+}
+
+/* Hide the all day cell */
+.rbc-no-allday-cell .rbc-allday-cell {
+    display: none !important;
+}
+  
+.rbc-no-allday-cell .rbc-time-view .rbc-header {
+    border-bottom: none !important;
+}
+
+/* Make times centered on line */
+.rbc-time-slot {
+    margin-top: -0.75em;
+}
+
+.rbc-label {
+    text-align: left;
+    background-color: var(--pf-global--BackgroundColor--100) !important;
+}
+
+.rbc-time-gutter > .rbc-timeslot-group {
+    padding-right: 10px;
+}
+
+.rbc-time-header-gutter {
+    padding-right: 10px;
+}
+
+.rbc-timeslot-group:first-child > .rbc-time-slot > .rbc-label {
+    color: transparent; 
+}
+
+/* Make multi-day shifts look nice */
+.continues-next-day > .rbc-event {
+    border-bottom: none !important;
+    box-shadow: inset 0px -40px 20px -30px rgba(0,0,0,0.5);
+}
+
+.continues-from-previous-day > .rbc-event {
+    border-top: none !important;
+    box-shadow: inset 0px 40px 20px -30px rgba(0,0,0,0.5);
+}

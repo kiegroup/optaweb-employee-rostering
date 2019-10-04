@@ -1,0 +1,422 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Skills page should render correctly with a few skills 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        isDisabled={false}
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        itemCount={2}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Table
+    borders={true}
+    caption="Skills"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Name",
+          "transforms": Array [
+            [Function],
+          ],
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+          "transforms": undefined,
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onSort={[Function]}
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TextInput
+                    aria-label="Name"
+                    className=""
+                    defaultValue="Skill 1"
+                    isDisabled={false}
+                    isReadOnly={false}
+                    isRequired={false}
+                    isValid={true}
+                    name="name"
+                    onChange={[Function]}
+                    type="text"
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Skill 1
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                isEditing={false}
+                viewer={
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TextInput
+                    aria-label="Name"
+                    className=""
+                    defaultValue="Skill 2"
+                    isDisabled={false}
+                    isReadOnly={false}
+                    isRequired={false}
+                    isValid={true}
+                    name="name"
+                    onChange={[Function]}
+                    type="text"
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Skill 2
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                isEditing={false}
+                viewer={
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+      ]
+    }
+    sortBy={Object {}}
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Skills page should render correctly with no skills 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        isDisabled={false}
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        itemCount={0}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Table
+    borders={true}
+    caption="Skills"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Name",
+          "transforms": Array [
+            [Function],
+          ],
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+          "transforms": undefined,
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onSort={[Function]}
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={Array []}
+    sortBy={Object {}}
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Skills page should render the editor correctly 1`] = `
+<tr>
+  <td
+    key="0"
+  >
+    <TextInput
+      aria-label="Name"
+      className=""
+      defaultValue="Skill"
+      isDisabled={false}
+      isReadOnly={false}
+      isRequired={false}
+      isValid={true}
+      key="0"
+      name="name"
+      onChange={[Function]}
+      type="text"
+    />
+  </td>
+</tr>
+`;
+
+exports[`Skills page should render the viewer correctly 1`] = `
+<tr>
+  <td
+    key="0"
+  >
+    <Text
+      key="0"
+    >
+      Skill
+    </Text>
+  </td>
+</tr>
+`;

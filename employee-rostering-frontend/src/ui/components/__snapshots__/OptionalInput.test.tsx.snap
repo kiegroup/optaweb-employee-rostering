@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`OptionalInput component should render correctly 1`] = `
+<span>
+  <TextInput
+    aria-label="data"
+    className=""
+    defaultValue="Some name"
+    isDisabled={false}
+    isReadOnly={false}
+    isRequired={false}
+    isValid={true}
+    onChange={[Function]}
+    type="text"
+  />
+  <Component
+    aria-label="Enabled"
+    isChecked={true}
+    onChange={[Function]}
+  />
+</span>
+`;

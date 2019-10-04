@@ -1,0 +1,172 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Toolbar Component should render correctly when tenant select is open 1`] = `
+<Toolbar>
+  <ToolbarGroup>
+    <ToolbarItem>
+      <Dropdown
+        dropdownItems={
+          Array [
+            <DropdownItem
+              data-tenantid={1}
+            >
+              Tenant 1
+            </DropdownItem>,
+            <DropdownItem
+              data-tenantid={2}
+            >
+              Tenant 2
+            </DropdownItem>,
+          ]
+        }
+        isOpen={true}
+        isPlain={true}
+        onSelect={[Function]}
+        position="right"
+        toggle={
+          <DropdownToggle
+            onToggle={[Function]}
+          >
+            Tenant 2
+          </DropdownToggle>
+        }
+      />
+    </ToolbarItem>
+  </ToolbarGroup>
+  <ToolbarGroup>
+    <ToolbarItem>
+      <Button
+        aria-label="Notifications actions"
+        id="horizontal-example-uid-01"
+        variant="plain"
+      >
+        <BellIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+    </ToolbarItem>
+    <ToolbarItem>
+      <Button
+        aria-label="Settings actions"
+        id="horizontal-example-uid-02"
+        onClick={[Function]}
+        variant="plain"
+      >
+        <CogIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+    </ToolbarItem>
+  </ToolbarGroup>
+</Toolbar>
+`;
+
+exports[`Toolbar Component should render correctly with a few tenants 1`] = `
+<Toolbar>
+  <ToolbarGroup>
+    <ToolbarItem>
+      <Dropdown
+        dropdownItems={
+          Array [
+            <DropdownItem
+              data-tenantid={1}
+            >
+              Tenant 1
+            </DropdownItem>,
+            <DropdownItem
+              data-tenantid={2}
+            >
+              Tenant 2
+            </DropdownItem>,
+          ]
+        }
+        isOpen={false}
+        isPlain={true}
+        onSelect={[Function]}
+        position="right"
+        toggle={
+          <DropdownToggle
+            onToggle={[Function]}
+          >
+            Tenant 2
+          </DropdownToggle>
+        }
+      />
+    </ToolbarItem>
+  </ToolbarGroup>
+  <ToolbarGroup>
+    <ToolbarItem>
+      <Button
+        aria-label="Notifications actions"
+        id="horizontal-example-uid-01"
+        variant="plain"
+      >
+        <BellIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+    </ToolbarItem>
+    <ToolbarItem>
+      <Button
+        aria-label="Settings actions"
+        id="horizontal-example-uid-02"
+        onClick={[Function]}
+        variant="plain"
+      >
+        <CogIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+    </ToolbarItem>
+  </ToolbarGroup>
+</Toolbar>
+`;
+
+exports[`Toolbar Component should render correctly with no tenants 1`] = `
+<Toolbar>
+  <ToolbarGroup />
+  <ToolbarGroup>
+    <ToolbarItem>
+      <Button
+        aria-label="Notifications actions"
+        id="horizontal-example-uid-01"
+        variant="plain"
+      >
+        <BellIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+    </ToolbarItem>
+    <ToolbarItem>
+      <Button
+        aria-label="Settings actions"
+        id="horizontal-example-uid-02"
+        onClick={[Function]}
+        variant="plain"
+      >
+        <CogIcon
+          color="currentColor"
+          noVerticalAlign={false}
+          size="sm"
+          title={null}
+        />
+      </Button>
+    </ToolbarItem>
+  </ToolbarGroup>
+</Toolbar>
+`;

@@ -1,0 +1,715 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Employees page should render correctly with a few employees 1`] = `
+<Fragment>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        isDisabled={false}
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        itemCount={2}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Table
+    borders={true}
+    caption="Employees"
+    cells={
+      Array [
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Name",
+          "transforms": Array [
+            [Function],
+          ],
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Contract",
+          "transforms": Array [
+            [Function],
+          ],
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "Skill Set",
+          "transforms": undefined,
+        },
+        Object {
+          "cellTransforms": Array [
+            [Function],
+          ],
+          "props": Object {},
+          "title": "",
+          "transforms": undefined,
+        },
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    onSort={[Function]}
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TextInput
+                    aria-label="Name"
+                    className=""
+                    defaultValue="Employee 1"
+                    isDisabled={false}
+                    isReadOnly={false}
+                    isRequired={false}
+                    isValid={true}
+                    name="name"
+                    onChange={[Function]}
+                    type="text"
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Employee 1
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <StatefulTypeaheadSelectInput
+                    emptyText="Trans(i18nKey=selectAContract)"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        Object {
+                          "id": 0,
+                          "maximumMinutesPerDay": null,
+                          "maximumMinutesPerMonth": null,
+                          "maximumMinutesPerWeek": null,
+                          "maximumMinutesPerYear": null,
+                          "name": "Contract 1",
+                          "tenantId": 0,
+                          "version": 0,
+                        },
+                        Object {
+                          "id": 1,
+                          "maximumMinutesPerDay": null,
+                          "maximumMinutesPerMonth": null,
+                          "maximumMinutesPerWeek": null,
+                          "maximumMinutesPerYear": null,
+                          "name": "Contract 2",
+                          "tenantId": 0,
+                          "version": 0,
+                        },
+                      ]
+                    }
+                    value={
+                      Object {
+                        "id": 0,
+                        "maximumMinutesPerDay": null,
+                        "maximumMinutesPerMonth": null,
+                        "maximumMinutesPerWeek": null,
+                        "maximumMinutesPerYear": null,
+                        "name": "Contract 1",
+                        "tenantId": 0,
+                        "version": 0,
+                      }
+                    }
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Contract 1
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <StatefulMultiTypeaheadSelectInput
+                    emptyText="Trans(i18nKey=selectSkillProficiencies)"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        Object {
+                          "name": "Skill 1",
+                          "tenantId": 0,
+                        },
+                        Object {
+                          "name": "Skill 2",
+                          "tenantId": 0,
+                        },
+                      ]
+                    }
+                    value={Array []}
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <ChipGroup
+                    className=""
+                    collapsedText="\${remaining} more"
+                    expandedText="Show Less"
+                    withToolbar={false}
+                  />
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                isEditing={false}
+                viewer={
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+        Object {
+          "cells": Array [
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <TextInput
+                    aria-label="Name"
+                    className=""
+                    defaultValue="Employee 2"
+                    isDisabled={false}
+                    isReadOnly={false}
+                    isRequired={false}
+                    isValid={true}
+                    name="name"
+                    onChange={[Function]}
+                    type="text"
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Employee 2
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <StatefulTypeaheadSelectInput
+                    emptyText="Trans(i18nKey=selectAContract)"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        Object {
+                          "id": 0,
+                          "maximumMinutesPerDay": null,
+                          "maximumMinutesPerMonth": null,
+                          "maximumMinutesPerWeek": null,
+                          "maximumMinutesPerYear": null,
+                          "name": "Contract 1",
+                          "tenantId": 0,
+                          "version": 0,
+                        },
+                        Object {
+                          "id": 1,
+                          "maximumMinutesPerDay": null,
+                          "maximumMinutesPerMonth": null,
+                          "maximumMinutesPerWeek": null,
+                          "maximumMinutesPerYear": null,
+                          "name": "Contract 2",
+                          "tenantId": 0,
+                          "version": 0,
+                        },
+                      ]
+                    }
+                    value={
+                      Object {
+                        "id": 1,
+                        "maximumMinutesPerDay": null,
+                        "maximumMinutesPerMonth": null,
+                        "maximumMinutesPerWeek": null,
+                        "maximumMinutesPerYear": null,
+                        "name": "Contract 2",
+                        "tenantId": 0,
+                        "version": 0,
+                      }
+                    }
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Contract 2
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <StatefulMultiTypeaheadSelectInput
+                    emptyText="Trans(i18nKey=selectSkillProficiencies)"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        Object {
+                          "name": "Skill 1",
+                          "tenantId": 0,
+                        },
+                        Object {
+                          "name": "Skill 2",
+                          "tenantId": 0,
+                        },
+                      ]
+                    }
+                    value={
+                      Array [
+                        Object {
+                          "name": "Skill 1",
+                          "tenantId": 0,
+                        },
+                        Object {
+                          "name": "Skill 2",
+                          "tenantId": 0,
+                        },
+                      ]
+                    }
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <ChipGroup
+                    className=""
+                    collapsedText="\${remaining} more"
+                    expandedText="Show Less"
+                    withToolbar={false}
+                  >
+                    <Chip
+                      className=""
+                      closeBtnAriaLabel="close"
+                      component="div"
+                      isOverflowChip={false}
+                      isReadOnly={true}
+                      onClick={[Function]}
+                      tooltipPosition="top"
+                    >
+                      Skill 1
+                    </Chip>
+                    <Chip
+                      className=""
+                      closeBtnAriaLabel="close"
+                      component="div"
+                      isOverflowChip={false}
+                      isReadOnly={true}
+                      onClick={[Function]}
+                      tooltipPosition="top"
+                    >
+                      Skill 2
+                    </Chip>
+                  </ChipGroup>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
+                    <Button
+                      aria-label="Save"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <SaveIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Cancel"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <CloseIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+                isEditing={false}
+                viewer={
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridColumnGap": "5px",
+                        "gridTemplateColumns": "1fr auto auto",
+                      }
+                    }
+                  >
+                    <span />
+                    <Button
+                      aria-label="Edit"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <EditIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                    <Button
+                      aria-label="Delete"
+                      onClick={[Function]}
+                      variant="link"
+                    >
+                      <TrashIcon
+                        color="currentColor"
+                        noVerticalAlign={false}
+                        size="sm"
+                        title={null}
+                      />
+                    </Button>
+                  </span>
+                }
+              />,
+            },
+          ],
+        },
+      ]
+    }
+    sortBy={Object {}}
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
+exports[`Employees page should render correctly with no employees 1`] = `
+<EmptyState
+  variant="full"
+>
+  <EmptyStateIcon
+    icon={[Function]}
+  />
+  <Trans
+    components={
+      Array [
+        <Title
+          headingLevel="h5"
+          size="lg"
+        />,
+        <EmptyStateBody />,
+        <Button
+          aria-label="Contracts Page"
+          onClick={[Function]}
+          variant="primary"
+        />,
+      ]
+    }
+    i18nKey="noContracts"
+    t={[MockFunction]}
+  />
+</EmptyState>
+`;
+
+exports[`Employees page should render the editor correctly 1`] = `
+<tr>
+  <td
+    key="0"
+  >
+    <TextInput
+      aria-label="Name"
+      className=""
+      defaultValue="Employee 2"
+      isDisabled={false}
+      isReadOnly={false}
+      isRequired={false}
+      isValid={true}
+      key="0"
+      name="name"
+      onChange={[Function]}
+      type="text"
+    />
+  </td>
+  <td
+    key="1"
+  >
+    <StatefulTypeaheadSelectInput
+      emptyText="Trans(i18nKey=selectAContract)"
+      key="1"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          Object {
+            "id": 0,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract 1",
+            "tenantId": 0,
+            "version": 0,
+          },
+          Object {
+            "id": 1,
+            "maximumMinutesPerDay": null,
+            "maximumMinutesPerMonth": null,
+            "maximumMinutesPerWeek": null,
+            "maximumMinutesPerYear": null,
+            "name": "Contract 2",
+            "tenantId": 0,
+            "version": 0,
+          },
+        ]
+      }
+      value={
+        Object {
+          "id": 1,
+          "maximumMinutesPerDay": null,
+          "maximumMinutesPerMonth": null,
+          "maximumMinutesPerWeek": null,
+          "maximumMinutesPerYear": null,
+          "name": "Contract 2",
+          "tenantId": 0,
+          "version": 0,
+        }
+      }
+    />
+  </td>
+  <td
+    key="2"
+  >
+    <StatefulMultiTypeaheadSelectInput
+      emptyText="Trans(i18nKey=selectSkillProficiencies)"
+      key="2"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          Object {
+            "name": "Skill 1",
+            "tenantId": 0,
+          },
+          Object {
+            "name": "Skill 2",
+            "tenantId": 0,
+          },
+        ]
+      }
+      value={
+        Array [
+          Object {
+            "name": "Skill 1",
+            "tenantId": 0,
+          },
+          Object {
+            "name": "Skill 2",
+            "tenantId": 0,
+          },
+        ]
+      }
+    />
+  </td>
+</tr>
+`;
+
+exports[`Employees page should render the viewer correctly 1`] = `
+<tr>
+  <td
+    key="0"
+  >
+    <Text
+      key="0"
+    >
+      Employee 2
+    </Text>
+  </td>
+  <td
+    key="1"
+  >
+    <Text
+      key="1"
+    >
+      Contract 2
+    </Text>
+  </td>
+  <td
+    key="2"
+  >
+    <ChipGroup
+      className=""
+      collapsedText="\${remaining} more"
+      expandedText="Show Less"
+      key="2"
+      withToolbar={false}
+    >
+      <Chip
+        className=""
+        closeBtnAriaLabel="close"
+        component="div"
+        isOverflowChip={false}
+        isReadOnly={true}
+        key="Skill 1"
+        onClick={[Function]}
+        tooltipPosition="top"
+      >
+        Skill 1
+      </Chip>
+      <Chip
+        className=""
+        closeBtnAriaLabel="close"
+        component="div"
+        isOverflowChip={false}
+        isReadOnly={true}
+        key="Skill 2"
+        onClick={[Function]}
+        tooltipPosition="top"
+      >
+        Skill 2
+      </Chip>
+    </ChipGroup>
+  </td>
+</tr>
+`;

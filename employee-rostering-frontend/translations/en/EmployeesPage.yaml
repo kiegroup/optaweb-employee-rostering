@@ -1,0 +1,11 @@
+---
+skillProficiencies: Skill Proficiencies
+selectAContract: Select a contract...
+selectSkillProficiencies: Select skill proficiencies...
+noContracts:
+  <0>There are no Contracts</0>
+  <1>
+    The current tenant have no Contracts. You need at least one Contract to add Employees.
+    You can add a Contract in the "Contracts" page.
+  </1>
+  <2>Go to the Contracts page</2>

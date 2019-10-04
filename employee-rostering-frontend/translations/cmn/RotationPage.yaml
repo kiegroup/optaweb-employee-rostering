@@ -1,0 +1,21 @@
+---
+noSpots:
+  <0>没有位置</0>
+  <1>
+    当前的租户没有位置。 您至少需要一个位置才能看到旋转。 您可以在 "多个位置" 页面中添加竞价。
+  </1>
+  <2>转到位置页面</2>
+days: 天
+week: 周
+weekNum: 周数
+gotoFirstWeek: 转到第一周
+gotoPreviousWeek: 转到前一周
+gotoLastWeek: 转到最后一周
+gotoNextWeek: 转到下周
+select: 选择
+currentWeek: 当前周
+weekSelect: 周选择
+rotationDay: 天 {{day}}
+shiftTemplate: "{{spot}}, {{rotationEmployee}}, 轮换的 {{dayStart}} 从 {{startTime}} 开始,
+  到轮换的天 {{dayEnd}} 的 {{endTime}} 结束。"
+createShiftTemplate: 创建班次模板

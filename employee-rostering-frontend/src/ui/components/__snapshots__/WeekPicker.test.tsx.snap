@@ -1,0 +1,223 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WeekPicker component should render correctly when closed 1`] = `
+<div
+  className="week-picker-container"
+>
+  <Button
+    aria-label="Previous Week"
+    onClick={[Function]}
+    variant="plain"
+  >
+    <svg
+      aria-hidden="true"
+      fill="currentColor"
+      height="1em"
+      role="img"
+      style={
+        Object {
+          "verticalAlign": "-0.125em",
+        }
+      }
+      viewBox="0 0 256 512"
+      width="1em"
+    >
+      <path
+        d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"
+        transform=""
+      />
+    </svg>
+  </Button>
+  <DateRangePicker
+    calendarIcon={
+      <svg
+        className="react-daterange-picker__calendar-button__icon react-daterange-picker__button__icon"
+        height={19}
+        stroke="black"
+        strokeWidth={2}
+        viewBox="0 0 19 19"
+        width={19}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="none"
+          height="15"
+          width="15"
+          x="2"
+          y="2"
+        />
+        <line
+          x1="6"
+          x2="6"
+          y1="0"
+          y2="4"
+        />
+        <line
+          x1="13"
+          x2="13"
+          y1="0"
+          y2="4"
+        />
+      </svg>
+    }
+    className="week-picker"
+    clearIcon={
+      <HistoryIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+        title={null}
+      />
+    }
+    isOpen={false}
+    locale="en-US"
+    name="daterange"
+    onCalendarClose={[Function]}
+    onCalendarOpen={[Function]}
+    onChange={[Function]}
+    onClickDay={[Function]}
+    required={true}
+    value={
+      Array [
+        2019-06-30T00:00:00.000Z,
+        2019-07-06T23:59:59.999Z,
+      ]
+    }
+  />
+  <Button
+    aria-label="Next Week"
+    onClick={[Function]}
+    variant="plain"
+  >
+    <svg
+      aria-hidden="true"
+      fill="currentColor"
+      height="1em"
+      role="img"
+      style={
+        Object {
+          "verticalAlign": "-0.125em",
+        }
+      }
+      viewBox="0 0 256 512"
+      width="1em"
+    >
+      <path
+        d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
+        transform=""
+      />
+    </svg>
+  </Button>
+</div>
+`;
+
+exports[`WeekPicker component should render correctly when opened 1`] = `
+<div
+  className="week-picker-container"
+>
+  <Button
+    aria-label="Previous Week"
+    onClick={[Function]}
+    variant="plain"
+  >
+    <svg
+      aria-hidden="true"
+      fill="currentColor"
+      height="1em"
+      role="img"
+      style={
+        Object {
+          "verticalAlign": "-0.125em",
+        }
+      }
+      viewBox="0 0 256 512"
+      width="1em"
+    >
+      <path
+        d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z"
+        transform=""
+      />
+    </svg>
+  </Button>
+  <DateRangePicker
+    calendarIcon={
+      <svg
+        className="react-daterange-picker__calendar-button__icon react-daterange-picker__button__icon"
+        height={19}
+        stroke="black"
+        strokeWidth={2}
+        viewBox="0 0 19 19"
+        width={19}
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          fill="none"
+          height="15"
+          width="15"
+          x="2"
+          y="2"
+        />
+        <line
+          x1="6"
+          x2="6"
+          y1="0"
+          y2="4"
+        />
+        <line
+          x1="13"
+          x2="13"
+          y1="0"
+          y2="4"
+        />
+      </svg>
+    }
+    className="week-picker"
+    clearIcon={
+      <HistoryIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+        title={null}
+      />
+    }
+    isOpen={true}
+    locale="en-US"
+    name="daterange"
+    onCalendarClose={[Function]}
+    onCalendarOpen={[Function]}
+    onChange={[Function]}
+    onClickDay={[Function]}
+    required={true}
+    value={
+      Array [
+        2019-06-30T00:00:00.000Z,
+        2019-07-06T23:59:59.999Z,
+      ]
+    }
+  />
+  <Button
+    aria-label="Next Week"
+    onClick={[Function]}
+    variant="plain"
+  >
+    <svg
+      aria-hidden="true"
+      fill="currentColor"
+      height="1em"
+      role="img"
+      style={
+        Object {
+          "verticalAlign": "-0.125em",
+        }
+      }
+      viewBox="0 0 256 512"
+      width="1em"
+    >
+      <path
+        d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z"
+        transform=""
+      />
+    </svg>
+  </Button>
+</div>
+`;

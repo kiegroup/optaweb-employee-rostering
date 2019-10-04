@@ -1,0 +1,10 @@
+---
+ServerSideException:
+  entityNotFound: 'The object you requested was not found: {{0}}'
+  generic: It appears the developers made a mistake somewhere. Please contact them.
+  illegalArgument: 'The parameters you passed in were not valid: {{0}}'
+  nullPointer: It appears the developers made a mistake somewhere. Please contact
+    them.
+  rollback: The object you tried to delete is still referenced from other entities.
+    Update/delete all references to this object before deleting it.
+  unknown: 'An exception occurred: {{0}}'
