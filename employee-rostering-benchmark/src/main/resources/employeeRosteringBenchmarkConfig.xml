@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
   <benchmarkDirectory>local/benchmarkReport</benchmarkDirectory>
-  <parallelBenchmarkCount>AUTO</parallelBenchmarkCount>
   <warmUpSecondsSpentLimit>60</warmUpSecondsSpentLimit>
 
   <inheritedSolverBenchmark>
@@ -14,7 +13,7 @@
       </scoreDirectorFactory>
 
       <termination>
-        <minutesSpentLimit>5</minutesSpentLimit>
+        <minutesSpentLimit>10</minutesSpentLimit>
       </termination>
     </solver>
   </inheritedSolverBenchmark>
@@ -66,6 +65,38 @@
         <unionMoveSelector>
           <pillarChangeMoveSelector/>
           <pillarSwapMoveSelector/>
+        </unionMoveSelector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+
+  <solverBenchmark>
+    <name>Move Selector and Pillar Move Selector</name>
+    <solver>
+      <localSearch>
+        <unionMoveSelector>
+          <changeMoveSelector/>
+          <swapMoveSelector/>
+          <pillarChangeMoveSelector/>
+          <pillarSwapMoveSelector/>
+        </unionMoveSelector>
+      </localSearch>
+    </solver>
+  </solverBenchmark>
+
+  <solverBenchmark>
+    <name>Move Selector and Sequential Pillar Move Selector</name>
+    <solver>
+      <localSearch>
+        <unionMoveSelector>
+          <changeMoveSelector/>
+          <swapMoveSelector/>
+          <pillarChangeMoveSelector>
+            <subPillarType>SEQUENCE</subPillarType>
+          </pillarChangeMoveSelector>
+          <pillarSwapMoveSelector>
+            <subPillarType>SEQUENCE</subPillarType>
+          </pillarSwapMoveSelector>
         </unionMoveSelector>
       </localSearch>
     </solver>
