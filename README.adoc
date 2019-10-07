@@ -27,6 +27,15 @@ Then open http://localhost:8080/ to see the web application.
 Alternatively, run `npm start` in `employee-rostering-frontend` to start the frontend in one terminal,
 and run `mvn spring-boot:run` in `employee-rostering-backend` to start the backend in another terminal.
 
+=== Use a different port
+
+To run on an another port use `--server.port=...`:
+
+[source,shell]
+----
+java -jar employee-rostering-distribution/target/employee-rostering-distribution-*.jar --server.port=18080
+----
+
 == Development
 
 === Code formatter
