@@ -6,11 +6,26 @@ See https://www.youtube.com/watch?v=sOWC4qrXxFk[the video demo].
 
 == Building
 
-You can build the project by running `mvn clean package` in the project's root directory.
+Build the project with maven in the project's root directory:
+
+[source,shell]
+----
+mvn clean install -DskipTests
+----
 
 == Running
 
-After building the project, you can run the application by running `java -jar employee-rostering-distribution/target/employee-rostering-distribution-${project.version}.jar`. Alternatively, you can run `npm start` in `employee-rostering-frontend` to start the frontend in one terminal, and run `mvn spring-boot:run` in `employee-rostering-backend` to start the backend in another terminal.
+After building the project, run the application with:
+
+[source,shell]
+----
+java -jar employee-rostering-distribution/target/employee-rostering-distribution-*.jar
+----
+
+Then open http://localhost:8080/ to see the web application.
+
+Alternatively, run `npm start` in `employee-rostering-frontend` to start the frontend in one terminal,
+and run `mvn spring-boot:run` in `employee-rostering-backend` to start the backend in another terminal.
 
 == Development
 
