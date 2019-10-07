@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.domain.shift;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -33,7 +34,10 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 
 @Entity
 @PlanningEntity
-public class Shift extends AbstractPersistable {
+public class Shift extends AbstractPersistable implements Comparable<Shift> {
+
+    private static final Comparator<Shift> PILLAR_SEQUENCE_COMPARATOR = Comparator.comparing(Shift::getStartDateTime)
+            .thenComparing(Shift::getEndDateTime);
 
     @ManyToOne
     private Employee rotationEmployee;
@@ -89,6 +93,11 @@ public class Shift extends AbstractPersistable {
     @Override
     public String toString() {
         return spot + " " + startDateTime + "-" + endDateTime;
+    }
+
+    @Override
+    public int compareTo(Shift o) {
+        return PILLAR_SEQUENCE_COMPARATOR.compare(this, o);
     }
 
     // ************************************************************************
