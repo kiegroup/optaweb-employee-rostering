@@ -118,27 +118,6 @@
 
       <!-- BOMs -->
       <dependency>
-        <groupId>org.wildfly.bom</groupId>
-        <artifactId>wildfly-javaee8</artifactId>
-        <type>pom</type>
-        <version>${version.org.wildfly}</version>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jboss.errai.bom</groupId>
-        <artifactId>errai-internal-bom</artifactId>
-        <version>${version.org.jboss.errai}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.kie.soup</groupId>
-        <artifactId>kie-soup-bom</artifactId>
-        <type>pom</type>
-        <scope>import</scope>
-        <version>${version.org.kie}</version>
-      </dependency>
-      <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-bom</artifactId>
         <type>pom</type>
