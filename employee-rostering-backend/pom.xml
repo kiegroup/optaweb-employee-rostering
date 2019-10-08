@@ -178,25 +178,6 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-maven-plugin</artifactId>
-          <configuration>
-            <profiles>
-              <profile>local</profile>
-            </profiles>
-          </configuration>
-          <executions>
-            <execution>
-              <configuration>
-                <classifier>exec</classifier>
-              </configuration>
-              <goals>
-                <goal>repackage</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <configuration>
@@ -342,6 +323,25 @@
               <includeTestSourceDirectory>true</includeTestSourceDirectory>
               <includeResources>true</includeResources>
               <includeTestResources>true</includeTestResources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <profiles>
+            <profile>local</profile>
+          </profiles>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>
+              <classifier>exec</classifier>
             </configuration>
           </execution>
         </executions>
