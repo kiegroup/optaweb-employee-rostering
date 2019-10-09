@@ -81,15 +81,18 @@
             </goals>
             <configuration>
               <!--
-                Exclude backend and frontend artifacts. Since they are this module's dependencies,
-                the Spring Boot plugin would place them to BOOT-INF/lib but that's not what we want.
-                We only want to repackage the combination of these artifacts that have been unpacked
-                by dependency plugin.
+                Exclude this module's dependencies.
+                The Spring Boot plugin would place them to BOOT-INF/lib but that's not what we want.
+                We only want to repackage the combination of these artifacts that have been unpacked by dependency plugin.
               -->
               <excludes>
                 <exclude>
                   <groupId>org.optaweb.employeerostering</groupId>
                   <artifactId>employee-rostering-backend</artifactId>
+                </exclude>
+                <exclude>
+                  <groupId>org.optaweb.employeerostering</groupId>
+                  <artifactId>employee-rostering-docs</artifactId>
                 </exclude>
                 <exclude>
                   <groupId>org.optaweb.employeerostering</groupId>
