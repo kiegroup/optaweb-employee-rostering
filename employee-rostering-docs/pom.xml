@@ -13,7 +13,7 @@
   <artifactId>employee-rostering-docs</artifactId>
   <packaging>pom</packaging>
 
-  <name>Employee Rostering as a Service documentation</name>
+  <name>Employee Rostering as a Service Documentation</name>
 
   <properties>
     <source.document.name>index.adoc</source.document.name>
