@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plannerBenchmark>
   <benchmarkDirectory>local/benchmarkReport</benchmarkDirectory>
-  <warmUpSecondsSpentLimit>60</warmUpSecondsSpentLimit>
+  <warmUpSecondsSpentLimit>30</warmUpSecondsSpentLimit>
 
   <inheritedSolverBenchmark>
     <solver>
@@ -13,7 +13,7 @@
       </scoreDirectorFactory>
 
       <termination>
-        <minutesSpentLimit>10</minutesSpentLimit>
+        <secondsSpentLimit>10</secondsSpentLimit>
       </termination>
     </solver>
   </inheritedSolverBenchmark>
