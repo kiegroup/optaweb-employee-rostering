@@ -1,0 +1,6 @@
+[[RestAPI]]
+= Test the REST API
+:imagesdir: ../..
+
+As with testing the database, make sure the application backend is running to test the REST API.
+Go to http://localhost:8080/swagger-ui.html to view documentation and test the REST methods.

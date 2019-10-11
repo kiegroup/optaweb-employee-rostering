@@ -8,4 +8,5 @@
 :experimental:
 
 include::WhatIsOptaWeb/WhatIsOptaWeb-section.adoc[leveloffset=+1]
+include::BuildAndRun/BuildAndRun-section.adoc[leveloffset=+1]
 include::SystemProperties/SystemProperties-section.adoc[leveloffset=+1]
