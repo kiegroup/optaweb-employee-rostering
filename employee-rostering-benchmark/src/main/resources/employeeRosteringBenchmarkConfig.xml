@@ -93,9 +93,11 @@
           <swapMoveSelector/>
           <pillarChangeMoveSelector>
             <subPillarType>SEQUENCE</subPillarType>
+            <subPillarSequenceComparatorClass>org.optaweb.employeerostering.solver.ShiftComparator</subPillarSequenceComparatorClass>
           </pillarChangeMoveSelector>
           <pillarSwapMoveSelector>
             <subPillarType>SEQUENCE</subPillarType>
+            <subPillarSequenceComparatorClass>org.optaweb.employeerostering.solver.ShiftComparator</subPillarSequenceComparatorClass>
           </pillarSwapMoveSelector>
         </unionMoveSelector>
       </localSearch>
