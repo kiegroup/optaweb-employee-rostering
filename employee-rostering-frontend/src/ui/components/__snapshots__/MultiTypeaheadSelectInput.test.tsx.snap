@@ -21,6 +21,7 @@ exports[`MultiTypeaheadSelectInput component should render correctly 1`] = `
     isGrouped={false}
     isPlain={false}
     onClear={[Function]}
+    onFilter={[Function]}
     onSelect={[Function]}
     onToggle={[Function]}
     placeholderText="Enter some data"

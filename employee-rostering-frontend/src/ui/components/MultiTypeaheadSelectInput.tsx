@@ -15,6 +15,7 @@
  */
 import React from 'react';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
+import { stringFilter } from "util/CommonFilters";
 
 export interface MultiTypeaheadSelectProps<T> {
   emptyText: string;
@@ -40,6 +41,22 @@ const StatefulMultiTypeaheadSelectInput: React.FC<MultiTypeaheadSelectProps<any>
 }
 
 export { StatefulMultiTypeaheadSelectInput };
+
+export const substringFilter = (props: MultiTypeaheadSelectProps<any>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const substringFilter = stringFilter((child: any) => child.props.value)(e.target.value);
+  const options = props.options.map((option) => (
+    <SelectOption
+      isDisabled={false}
+      key={props.optionToStringMap(option)}
+      value={props.optionToStringMap(option)}
+    />
+  ));
+  const typeaheadFilteredChildren =
+    e.target.value !== ''
+      ? options.filter(substringFilter)
+      : options;
+  return typeaheadFilteredChildren;
+}
 
 export default class MultiTypeaheadSelectInput<T> extends React.Component<MultiTypeaheadSelectProps<T>,
 MultiTypeaheadSelectState>  {
@@ -97,6 +114,7 @@ MultiTypeaheadSelectState>  {
           onToggle={this.onToggle}
           onSelect={this.onSelect as any}
           onClear={this.clearSelection}
+          onFilter={substringFilter(this.props)}
           selections={selections}
           isExpanded={isExpanded}
           ariaLabelledBy={titleId}
