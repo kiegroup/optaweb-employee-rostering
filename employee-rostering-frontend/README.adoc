@@ -1,5 +1,14 @@
+:david-project: https://david-dm.org/kiegroup/optaweb-employee-rostering
+:david-path: path=employee-rostering-frontend
+:david-deps: {david-project}/status.svg?{david-path}
+:david-devDeps: {david-project}/dev-status.svg?{david-path}
+:david-link: {david-project}?{david-path}
+
 [[optaweb-employee-rostering-frontend]]
 = OptaWeb Employee Rostering Frontend
+
+image:{david-deps}["dependencies Status", link="{david-link}"]
+image:{david-devDeps}["devDependencies Status", link="{david-link}&type=dev"]
 
 [[available-scripts]]
 == Available Scripts
