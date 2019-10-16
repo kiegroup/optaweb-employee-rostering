@@ -57,12 +57,22 @@
           </execution>
           <execution>
             <id>npm typecheck</id>
-            <phase>test</phase>
+            <phase>compile</phase>
             <goals>
               <goal>npm</goal>
             </goals>
             <configuration>
               <arguments>run typecheck</arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>npm run lint</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run lint</arguments>
             </configuration>
           </execution>
           <execution>
@@ -76,17 +86,8 @@
             </configuration>
           </execution>
           <execution>
-            <id>npm run lint</id>
-            <goals>
-              <goal>npm</goal>
-            </goals>
-            <phase>test</phase>
-            <configuration>
-              <arguments>run lint</arguments>
-            </configuration>
-          </execution>
-          <execution>
             <id>npm run build</id>
+            <phase>prepare-package</phase>
             <goals>
               <goal>npm</goal>
             </goals>
