@@ -63,7 +63,7 @@ export const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
           </Button>
         ))
         }
-        {actionsInDropdown.length >0 && (
+        {actionsInDropdown.length > 0 && (
           <Dropdown
             onSelect={(e) => {
               actionsInDropdown.filter(a => a.name === e.currentTarget.innerText).forEach(a => a.action());

@@ -18,17 +18,16 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import { Location } from 'history';
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { Navigation } from './Navigation';
+import { Navigation, NavigationProps } from './Navigation';
 
 describe('Navigation', () => {
   it('should activate a navigation link matching the current path', () => {
-    const props: RouteComponentProps & { variant: "horizontal" } = {
+    const props: NavigationProps = {
       variant: "horizontal",
       location: {
         pathname: '/skills',
       } as Location<unknown>,
-    } as RouteComponentProps & { variant: "horizontal" };
+    } as NavigationProps;
 
     const navigation = shallow(<Navigation {...props} />);
     expect(toJson(navigation)).toMatchSnapshot();

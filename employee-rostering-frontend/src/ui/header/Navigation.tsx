@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-import { Nav, NavItem, NavList } from '@patternfly/react-core';
+import { Nav, NavItem, NavList, NavListProps } from '@patternfly/react-core';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RouteComponentProps } from 'react-router';
 import { Link, withRouter } from 'react-router-dom';
 
-export const Navigation = ({ variant, location }: RouteComponentProps & { variant: "default" | "horizontal"}) => {
+export type NavigationProps = RouteComponentProps & Pick<NavListProps, "variant">;
+
+export const Navigation = ({ variant, location }: NavigationProps) => {
   const { t } = useTranslation("Navigation");
 
   return (

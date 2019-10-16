@@ -24,7 +24,7 @@ export interface TypeaheadSelectProps<T> {
   optionToStringMap: (option: T) => string;
   onChange: (selected: T | undefined) => void;
   optional?: boolean;
-  className?: string;
+  noClearButton?: boolean;
 }
 
 export interface TypeaheadSelectState {
@@ -90,7 +90,7 @@ TypeaheadSelectState
 
   render() {
     const { isExpanded } = this.state;
-    const className = this.props.className;
+    const className = this.props.noClearButton? "no-clear-button" : "";
     const selected = this.props.value;
 
     const emptyText = this.props.emptyText;

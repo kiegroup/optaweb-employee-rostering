@@ -21,8 +21,8 @@ exports[`Rotation Page should render correctly when creating a new shift templat
     >
       <TypeaheadSelectInput
         aria-label="Select Spot"
-        className="no-clear-button"
         emptyText="Trans(i18nKey=selectSpot)"
+        noClearButton={true}
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
@@ -203,8 +203,8 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
     >
       <TypeaheadSelectInput
         aria-label="Select Spot"
-        className="no-clear-button"
         emptyText="Trans(i18nKey=selectSpot)"
+        noClearButton={true}
         onChange={[Function]}
         optionToStringMap={[Function]}
         options={
