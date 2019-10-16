@@ -37,7 +37,7 @@
   "scripts": {
     "start": "mvn generate-sources; react-scripts start",
     "build": "mvn generate-sources; react-scripts build",
-    "typecheck": "npx tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "test": "TZ=UTC react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es))/\"",
     "eject": "react-scripts eject",
     "coverage": "npm run test -- --coverage --watchAll=false",
