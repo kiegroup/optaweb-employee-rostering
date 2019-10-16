@@ -5,6 +5,8 @@ exports[`Header component logo should go to optaplanner.org 1`] = `
   logo={
     <a
       href="https://www.optaplanner.org/"
+      rel="noopener noreferrer"
+      target="_blank"
     >
       <Brand
         alt="OptaPlanner Logo"
@@ -28,6 +30,8 @@ exports[`Header component should render correctly on a desktop 1`] = `
   logo={
     <a
       href="https://www.optaplanner.org/"
+      rel="noopener noreferrer"
+      target="_blank"
     >
       <Brand
         alt="OptaPlanner Logo"
@@ -51,6 +55,8 @@ exports[`Header component should render correctly on a mobile 1`] = `
   logo={
     <a
       href="https://www.optaplanner.org/"
+      rel="noopener noreferrer"
+      target="_blank"
     >
       <Brand
         alt="OptaPlanner Logo"

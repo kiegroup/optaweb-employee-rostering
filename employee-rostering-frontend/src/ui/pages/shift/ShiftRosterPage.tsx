@@ -259,7 +259,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             options={this.props.allSpotList}
             value={this.props.shownSpotList[0]}
             onChange={this.onUpdateSpotList}
-            className="no-clear-button"
+            noClearButton
           />
           <WeekPicker
             aria-label="Select Week to View"

@@ -344,7 +344,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             options={this.props.allEmployeeList}
             value={this.props.shownEmployeeList[0]}
             onChange={this.onUpdateEmployeeList}
-            className="no-clear-button"
+            noClearButton
           />
           <WeekPicker
             aria-label="Select Week to View"
