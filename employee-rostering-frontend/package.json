@@ -38,11 +38,20 @@
     "start": "mvn generate-sources; react-scripts start",
     "build": "mvn generate-sources; react-scripts build",
     "typecheck": "tsc --noEmit",
-    "test": "TZ=UTC react-scripts test --transformIgnorePatterns \"node_modules/(?!(lodash-es))/\"",
+    "test": "TZ=UTC react-scripts test --reporters=default --reporters=jest-junit --transformIgnorePatterns \"node_modules/(?!(lodash-es))/\"",
     "eject": "react-scripts eject",
     "coverage": "npm run test -- --coverage --watchAll=false",
     "lint": "./node_modules/eslint/bin/eslint.js ./src --ext .ts,.tsx",
     "lint:fix": "npm run lint -- --fix"
+  },
+  "jest-junit": {
+    "outputDirectory": "./target/surefire-reports",
+    "outputName": "TEST-frontend.xml",
+    "suiteName": "org.optaweb.employeerostering.frontend.tests",
+    "suiteNameTemplate": "{filepath}",
+    "classNameTemplate": "org.optaweb.employeerostering.frontend.{filename}.{classname}",
+    "titleTemplate": "{title}",
+    "ancestorSeparator": "."
   },
   "devDependencies": {
     "@types/color": "^3.0.0",
@@ -76,6 +85,7 @@
     "moment-timezone": "^0.5.26",
     "history": "^4.9.0",
     "husky": "^2.3.0",
+    "jest-junit": "^8.0.0",
     "react-test-renderer": "^16.8.6",
     "redux-mock-store": "^1.5.3",
     "typescript": "^3.5.1"
