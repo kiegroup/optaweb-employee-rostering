@@ -1,24 +1,6 @@
 [[optaweb-employee-rostering-frontend]]
 = OptaWeb Employee Rostering Frontend
 
-image:https://sonarcloud.io/api/project_badges/measure?project=employee-rostering&metric=alert_status[
-"Quality Gate Status", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
-image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=reliability_rating[
-"Reliability Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
-image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=security_rating[
-"Security Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
-image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=sqale_rating[
-"Maintainability Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
-image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=ncloc[
-"Lines of Code", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
-image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=coverage[
-"Coverage", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
-
-image:https://david-dm.org/kiegroup/optaweb-employee-rostering/status.svg?path=optaweb-employee-rostering[
-"dependencies Status", link="https://david-dm.org/kiegroup/optaweb-employee-rostering?path=optaweb-employee-rostering"]
-image:https://david-dm.org/kiegroup/optaweb-employee-rostering/dev-status.svg?path=optaweb-employee-rostering[
-"devDependencies Status", link="https://david-dm.org/kiegroup/optaweb-employee-rostering?path=optaweb-employee-rostering&type=dev"]
-
 [[available-scripts]]
 == Available Scripts
 
