@@ -1,5 +1,18 @@
 = Employee Rostering Optimization as a Service
 
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=alert_status[
+"Quality Gate Status", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=reliability_rating[
+"Reliability Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=security_rating[
+"Security Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=sqale_rating[
+"Maintainability Rating", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=ncloc[
+"Lines of Code", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=coverage[
+"Coverage", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
+
 An end-to-end https://www.optaplanner.org/[OptaPlanner] web application ready to deploy on https://www.openshift.com/[OpenShift 3].
 
 See https://www.youtube.com/watch?v=sOWC4qrXxFk[the video demo].
