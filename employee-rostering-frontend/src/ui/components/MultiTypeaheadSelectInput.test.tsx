@@ -16,7 +16,8 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import MultiTypeaheadSelectInput, { MultiTypeaheadSelectProps } from './MultiTypeaheadSelectInput';
+import MultiTypeaheadSelectInput, { substringFilter, MultiTypeaheadSelectProps } from './MultiTypeaheadSelectInput';
+import { SelectOption } from '@patternfly/react-core';
 
 interface MockData {
   name: string;
@@ -68,6 +69,34 @@ describe('MultiTypeaheadSelectInput component', () => {
     (select.instance() as Select).onSelect(event, "Option 1", false);
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith([...defaultValue, {name: "Option 1"}]);
+  });
+
+  it('should filter correctly', () => {
+    expect(substringFilter(selectProps)({ target: { value: "3"}} as any)).toEqual(
+      [<SelectOption
+        isDisabled={false}
+        key="Option 3"
+        value="Option 3"
+      />]
+    );
+    expect(substringFilter(selectProps)({ target: { value: "Option"}} as any)).toEqual(
+      [
+        <SelectOption
+          isDisabled={false}
+          key="Option 1"
+          value="Option 1"
+        />,
+        <SelectOption
+          isDisabled={false}
+          key="Option 2"
+          value="Option 2"
+        />,
+        <SelectOption
+          isDisabled={false}
+          key="Option 3"
+          value="Option 3"
+        />]
+    );
   });
 
   it('should render correctly', () => {

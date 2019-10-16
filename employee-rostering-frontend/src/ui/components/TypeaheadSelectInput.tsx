@@ -15,6 +15,7 @@
  */
 import React from "react";
 import { Select, SelectOption, SelectVariant } from "@patternfly/react-core";
+import { stringFilter } from "util/CommonFilters";
 import "./TypeaheadSelectInput.css";
 
 export interface TypeaheadSelectProps<T> {
@@ -43,6 +44,22 @@ const StatefulTypeaheadSelectInput: React.FC<TypeaheadSelectProps<any>> = props 
 }
 
 export { StatefulTypeaheadSelectInput };
+
+export const substringFilter = (props: TypeaheadSelectProps<any>) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  const substringFilter = stringFilter((child: any) => child.props.value)(e.target.value);
+  const options = props.options.map((option) => (
+    <SelectOption
+      isDisabled={false}
+      key={props.optionToStringMap(option)}
+      value={props.optionToStringMap(option)}
+    />
+  ));
+  const typeaheadFilteredChildren =
+    e.target.value !== ''
+      ? options.filter(substringFilter)
+      : options;
+  return typeaheadFilteredChildren;
+}
 
 export default class TypeaheadSelectInput<T> extends React.Component<
 TypeaheadSelectProps<T>,
@@ -113,6 +130,7 @@ TypeaheadSelectState
           onToggle={this.onToggle}
           onSelect={this.onSelect as any}
           onClear={this.clearSelection}
+          onFilter={substringFilter(this.props)}
           selections={selection as any}
           isExpanded={isExpanded}
           placeholderText={emptyText}
