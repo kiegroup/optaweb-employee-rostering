@@ -73,7 +73,6 @@
 
     <version.javax.validation>2.0.1.Final</version.javax.validation>
     <version.org.mockito>2.12.0</version.org.mockito>
-    <version.org.springframework.boot>2.1.8.RELEASE</version.org.springframework.boot>
     <version.org.springframework>5.1.9.RELEASE</version.org.springframework>
   </properties>
 
@@ -122,13 +121,6 @@
         <version>${version.org.kie}</version>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${version.org.springframework.boot}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
 
       <dependency>
         <groupId>io.springfox</groupId>
@@ -156,11 +148,6 @@
 
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${version.org.springframework.boot}</version>
-        </plugin>
         <!--
           Disable Jacoco check inherited from kie-parent. Remove this when it's removed from kie-parent
           (but some projects still use the check fail build).
