@@ -94,10 +94,18 @@
           <pillarChangeMoveSelector>
             <subPillarType>SEQUENCE</subPillarType>
             <subPillarSequenceComparatorClass>org.optaweb.employeerostering.solver.ShiftComparator</subPillarSequenceComparatorClass>
+            <pillarSelector>
+              <minimumSubPillarSize>1</minimumSubPillarSize>
+              <maximumSubPillarSize>10</maximumSubPillarSize>
+            </pillarSelector>
           </pillarChangeMoveSelector>
           <pillarSwapMoveSelector>
             <subPillarType>SEQUENCE</subPillarType>
             <subPillarSequenceComparatorClass>org.optaweb.employeerostering.solver.ShiftComparator</subPillarSequenceComparatorClass>
+            <pillarSelector>
+              <minimumSubPillarSize>1</minimumSubPillarSize>
+              <maximumSubPillarSize>10</maximumSubPillarSize>
+            </pillarSelector>
           </pillarSwapMoveSelector>
         </unionMoveSelector>
       </localSearch>
