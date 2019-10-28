@@ -54,7 +54,7 @@ public class OptaWebEmployeeRosteringBenchmarkApplication implements Application
         PlannerBenchmarkFactory benchmarkFactory = PlannerBenchmarkFactory.createFromXmlResource(
                 "employeeRosteringBenchmarkConfig.xml", getClass().getClassLoader());
         PlannerBenchmark plannerBenchmark = benchmarkFactory.buildPlannerBenchmark(rosterList);
-        plannerBenchmark.benchmarkAndShowReportInBrowser();
+        plannerBenchmark.benchmark();
     }
 
     private List<Roster> generateRosters() {
