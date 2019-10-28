@@ -17,12 +17,12 @@
 package org.optaweb.employeerostering;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.BeforeClass;
@@ -48,11 +48,11 @@ public class BenchmarkTest {
     }
 
     @Test
-    public void isBenchmarkReportGeneratedTest() {
-        Optional<File> benchmarkReport = Arrays.stream(Paths.get("local/benchmarkReport").toFile().listFiles())
+    public void isBenchmarkReportGeneratedTest() throws FileNotFoundException {
+        File benchmarkReport = Arrays.stream(Paths.get("local/benchmarkReport").toFile().listFiles())
                 .filter(f -> !oldBenchmarkFilesInDirectory.contains(f))
-                .findAny();
-        assertTrue(benchmarkReport.isPresent());
-        assertTrue(benchmarkReport.get().exists());
+                .findAny()
+                .orElseThrow(() -> new FileNotFoundException("No benchmark report found"));
+        assertTrue(benchmarkReport.exists());
     }
 }
