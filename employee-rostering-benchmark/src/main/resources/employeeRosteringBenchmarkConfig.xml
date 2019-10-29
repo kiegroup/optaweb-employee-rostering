@@ -26,18 +26,6 @@
   </solverBenchmark>
 
   <solverBenchmark>
-    <name>Move Selector</name>
-    <solver>
-      <localSearch>
-        <unionMoveSelector>
-          <changeMoveSelector/>
-          <swapMoveSelector/>
-        </unionMoveSelector>
-      </localSearch>
-    </solver>
-  </solverBenchmark>
-
-  <solverBenchmark>
     <name>Move Selector and Pillar Move Selector</name>
     <solver>
       <localSearch>
