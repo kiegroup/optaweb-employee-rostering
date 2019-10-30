@@ -230,30 +230,30 @@ exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
   <li
     key="0"
   >
-    Trans(i18nKey=exceededContractMaximumMinutes)
+    Trans(i18nKey=exceededContractMaximumMinutes, {"employee":"Employee 1","durationly":"Trans(i18nKey=daily)","duration":"Trans(i18nKey=day)","minutesWorked":20,"maxMinutesAllowed":10})
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-1 Hard"})
   </li>
   <li
     key="1"
   >
-    Trans(i18nKey=exceededContractMaximumMinutes)
+    Trans(i18nKey=exceededContractMaximumMinutes, {"employee":"Employee 1","durationly":"Trans(i18nKey=weekly)","duration":"Trans(i18nKey=week)","minutesWorked":80,"maxMinutesAllowed":70})
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-1 Hard"})
   </li>
   <li
     key="2"
   >
-    Trans(i18nKey=exceededContractMaximumMinutes)
+    Trans(i18nKey=exceededContractMaximumMinutes, {"employee":"Employee 1","durationly":"Trans(i18nKey=monthly)","duration":"Trans(i18nKey=month)","minutesWorked":600,"maxMinutesAllowed":500})
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-1 Hard"})
   </li>
   <li
     key="3"
   >
-    Trans(i18nKey=exceededContractMaximumMinutes)
+    Trans(i18nKey=exceededContractMaximumMinutes, {"employee":"Employee 1","durationly":"Trans(i18nKey=yearly)","duration":"Trans(i18nKey=year)","minutesWorked":7000,"maxMinutesAllowed":6000})
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-1 Hard"})
   </li>
 </ContractMinutesViolations>
 `;
@@ -478,9 +478,9 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
   <li
     key="0"
   >
-    Trans(i18nKey=desiredShiftForEmployee)
+    Trans(i18nKey=desiredShiftForEmployee, {"employee":"Employee 1","from":"July 1, 2018 9:00 AM","to":"July 1, 2018 9:00 AM"})
     <br />
-    Trans(i18nKey=reward)
+    Trans(i18nKey=reward, {"score":"-1 Soft"})
   </li>
 </DesiredTimeslotForEmployeeRewards>
 `;
@@ -1055,7 +1055,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         <li
           key="0"
         >
-          Trans(i18nKey=missingRequiredSkills)
+          Trans(i18nKey=missingRequiredSkills, {"employee":"Employee 1","spot":"Spot"})
           <List>
             <ul
               className="pf-c-list"
@@ -1067,7 +1067,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               </li>
             </ul>
           </List>
-          Trans(i18nKey=penalty)
+          Trans(i18nKey=penalty, {"score":"-10 Hard"})
         </li>
       </RequiredSkillViolations>
       <ContractMinutesViolations
@@ -2458,9 +2458,9 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         <li
           key="1"
         >
-          Trans(i18nKey=employeeDoesNotMatchRotationEmployee)
+          Trans(i18nKey=employeeDoesNotMatchRotationEmployee, {"employee":"Employee 1","rotationEmployee":"Rotation Employee"})
           <br />
-          Trans(i18nKey=penalty)
+          Trans(i18nKey=penalty, {"score":"-100 Soft"})
         </li>
       </RotationViolationPenalties>
       <UndesiredTimeslotForEmployeePenalties
@@ -4047,7 +4047,7 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
   <li
     key="0"
   >
-    Trans(i18nKey=missingRequiredSkills)
+    Trans(i18nKey=missingRequiredSkills, {"employee":"Employee 1","spot":"Spot"})
     <List>
       <ul
         className="pf-c-list"
@@ -4059,7 +4059,7 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
         </li>
       </ul>
     </List>
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-10 Hard"})
   </li>
 </RequiredSkillViolations>
 `;
@@ -4252,9 +4252,9 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
   <li
     key="1"
   >
-    Trans(i18nKey=employeeDoesNotMatchRotationEmployee)
+    Trans(i18nKey=employeeDoesNotMatchRotationEmployee, {"employee":"Employee 1","rotationEmployee":"Rotation Employee"})
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-100 Soft"})
   </li>
 </RotationViolationPenalties>
 `;
@@ -4713,16 +4713,16 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
   <li
     key="0"
   >
-    Trans(i18nKey=conflictingShifts)
+    Trans(i18nKey=conflictingShifts, {"employee":"Employee 1","spot":"Spot","from":"10:00 AM","to":"5:00 PM"})
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-1 Hard"})
   </li>
   <li
     key="1"
   >
-    Trans(i18nKey=conflictingShifts)
+    Trans(i18nKey=conflictingShifts, {"employee":"Employee 1","spot":"Spot","from":"8:00 AM","to":"5:00 PM"})
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-1 Hard"})
   </li>
 </ShiftEmployeeConflictViolations>
 `;
@@ -4917,7 +4917,7 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
   >
     Trans(i18nKey=unassignedShift)
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-1 Medium"})
   </li>
 </UnassignedShiftPenalties>
 `;
@@ -5142,9 +5142,9 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
   <li
     key="0"
   >
-    Trans(i18nKey=unavailableEmployee)
+    Trans(i18nKey=unavailableEmployee, {"employee":"Employee 1","from":"July 1, 2018 9:00 AM","to":"July 1, 2018 9:00 AM"})
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-1 Hard"})
   </li>
 </UnavailableEmployeeViolations>
 `;
@@ -5369,9 +5369,9 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
   <li
     key="0"
   >
-    Trans(i18nKey=undesiredShiftForEmployee)
+    Trans(i18nKey=undesiredShiftForEmployee, {"employee":"Employee 1","from":"July 1, 2018 9:00 AM","to":"July 1, 2018 9:00 AM"})
     <br />
-    Trans(i18nKey=penalty)
+    Trans(i18nKey=penalty, {"score":"-1 Soft"})
   </li>
 </UndesiredTimeslotForEmployeePenalties>
 `;
@@ -5390,6 +5390,26 @@ exports[`ShiftEvent should render ShiftEvent correctly 1`] = `
 </span>
 `;
 
+exports[`ShiftEvent should render ShiftEvent correctly when pinned 1`] = `
+<span
+  style={
+    Object {
+      "display": "flex",
+      "height": "100%",
+      "width": "100%",
+    }
+  }
+>
+  <ThumbTackIcon
+    color="currentColor"
+    noVerticalAlign={false}
+    size="sm"
+    title={null}
+  />
+  Employee
+</span>
+`;
+
 exports[`ShiftEvent should render ShiftPopupBody correctly 1`] = `
 <span
   style={
@@ -5401,7 +5421,7 @@ exports[`ShiftEvent should render ShiftPopupBody correctly 1`] = `
     }
   }
 >
-  Trans(i18nKey=totalIndictment)
+  Trans(i18nKey=totalIndictment, {"score":"0"})
   <br />
   <Indictments
     contractMinutesViolationPenaltyList={Array []}

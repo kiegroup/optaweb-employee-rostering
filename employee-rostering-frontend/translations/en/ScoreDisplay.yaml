@@ -1,0 +1,4 @@
+---
+hardScore: "Hard: {{hardScore}}"
+mediumScore: "Medium: {{mediumScore}}"
+softScore: "Soft: {{softScore}}"

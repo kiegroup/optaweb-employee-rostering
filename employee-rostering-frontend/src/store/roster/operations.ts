@@ -40,21 +40,24 @@ import AvailabilityRosterView from 'domain/AvailabilityRosterView';
 import { employeeSelectors } from 'store/employee';
 import { spotSelectors } from 'store/spot';
 import { serializeLocalDate  } from 'store/rest/DataSerialization';
+import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 
 export interface RosterSliceInfo {
   fromDate: Date;
   toDate: Date;
 }
 
-interface KindaShiftRosterView extends Omit<ShiftRosterView, 'spotIdToShiftViewListMap'> {
+interface KindaShiftRosterView extends Omit<ShiftRosterView, 'spotIdToShiftViewListMap' | 'score'> {
   spotIdToShiftViewListMap: ObjectNumberMap<KindaShiftView[]>;
+  score: string;
 }
 
 interface KindaAvailabilityRosterView extends Omit<AvailabilityRosterView,
-'employeeIdToShiftViewListMap' | 'employeeIdToAvailabilityViewListMap' | 'unassignedShiftViewList' > {
+'employeeIdToShiftViewListMap' | 'employeeIdToAvailabilityViewListMap' | 'unassignedShiftViewList' | 'score' > {
   employeeIdToShiftViewListMap: ObjectNumberMap<KindaShiftView[]>;
   employeeIdToAvailabilityViewListMap: ObjectNumberMap<KindaEmployeeAvailabilityView[]>;
   unassignedShiftViewList: KindaShiftView[];
+  score: string;
 }
 
 let lastCalledShiftRosterArgs: any | null;
@@ -212,6 +215,7 @@ function convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView: KindaS
     ...newShiftRosterView,
     spotIdToShiftViewListMap: mapObjectNumberMap(newShiftRosterView.spotIdToShiftViewListMap,
       shiftViewList => shiftViewList.map(kindaShiftViewAdapter)),
+    score: getHardMediumSoftScoreFromString(newShiftRosterView.score)
   };
 }
 
@@ -230,6 +234,7 @@ function convertKindaAvailabilityRosterViewToAvailabilityRosterView(
       ),
     ),
     unassignedShiftViewList: newAvailabilityRosterView.unassignedShiftViewList.map(kindaShiftViewAdapter),
+    score: getHardMediumSoftScoreFromString(newAvailabilityRosterView.score)
   };
 }
 

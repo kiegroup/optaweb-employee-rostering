@@ -23,8 +23,13 @@ configure({ adapter: new Adapter() });
 const mockDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
 MockDate.set(mockDate);
 
-const mockTranslate = jest.fn().mockImplementation(k => `Trans(i18nKey=${k})`);
+const mockTranslate = jest.fn().mockImplementation((k,p) => `Trans(i18nKey=${k}${p? ", " + JSON.stringify(p) : ""})`);
 export { mockTranslate };
+
+// it appears await does not work with promises that have a then
+const flushPromises = () => new Promise(setImmediate);
+export { flushPromises };
+
 jest.mock('react-i18next', () => ({
   // this mock makes sure any components using the translate HoC receive the t function as a prop
   withTranslation: () => (Component: any) => {

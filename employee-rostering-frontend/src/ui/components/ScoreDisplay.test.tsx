@@ -13,18 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { shallow } from 'enzyme';
+import * as React from 'react';
+import { ScoreDisplay } from './ScoreDisplay';
+import HardMediumSoftScore from 'domain/HardMediumSoftScore';
 
-import Employee from './Employee';
-import RosterState from './RosterState';
-import Spot from './Spot';
-import HardMediumSoftScore from './HardMediumSoftScore';
-
-export default interface RosterView {
-  tenantId: number;
-  startDate: string;
-  endDate: string;
-  score: HardMediumSoftScore;
-  spotList: Spot[];
-  employeeList: Employee[];
-  rosterState: RosterState;
-}
+describe('ScoreDisplay component', () => {
+  it('should renderCorrectly', () => {
+    const score: HardMediumSoftScore = {
+      hardScore: -10,
+      mediumScore: -5,
+      softScore: 20
+    };
+    const scoreDisplay = shallow(<ScoreDisplay score={score} />);
+    expect(scoreDisplay).toMatchSnapshot();
+  });
+});
