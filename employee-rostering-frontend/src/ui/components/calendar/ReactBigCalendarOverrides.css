@@ -96,7 +96,7 @@
 }
 
 .unavailable .rbc-time-slot {
-    border-top: 1px solid black;
+    border-top: none;
     background-color: var(--pf-global--danger-color--100);
 }
 
@@ -109,7 +109,7 @@
 }
 
 .undesired .rbc-time-slot {
-    border-top: 1px solid black;
+    border-top: none;
     background-color: var(--pf-global--warning-color--100);
 }
 
@@ -122,7 +122,7 @@
 }
 
 .desired .rbc-time-slot {
-    border-top: 1px solid black;
+    border-top: none;
     background-color: var(--pf-global--success-color--200);
 }
 

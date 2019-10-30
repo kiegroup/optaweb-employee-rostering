@@ -240,6 +240,13 @@ describe('ShiftEvent', () => {
     );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });
+
+  it('should render ShiftEvent correctly when pinned', () => {
+    const shiftEventObj = shallow(
+      <ShiftEvent event={{...baseShift, pinnedByUser: true}} title="Employee" />
+    );
+    expect(toJson(shiftEventObj)).toMatchSnapshot();
+  });
 });
 
 const spot: Spot = {

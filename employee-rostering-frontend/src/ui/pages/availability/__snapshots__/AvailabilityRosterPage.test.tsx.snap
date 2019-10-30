@@ -7,7 +7,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
       Object {
         "backgroundColor": "var(--pf-global--BackgroundColor--100)",
         "display": "grid",
-        "gridTemplateColumns": "auto auto 1fr",
+        "gridTemplateColumns": "auto auto auto 1fr",
         "height": "60px",
         "padding": "5px 5px 5px 5px",
       }
@@ -78,6 +78,15 @@ exports[`Availability Roster Page should render correctly when creating a new av
       aria-label="Select Week to View"
       onChange={[Function]}
       value={2018-07-01T00:00:00.000Z}
+    />
+    <ScoreDisplay
+      score={
+        Object {
+          "hardScore": 0,
+          "mediumScore": 0,
+          "softScore": 0,
+        }
+      }
     />
     <SizeMe(Actions)
       actions={
@@ -270,7 +279,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
       Object {
         "backgroundColor": "var(--pf-global--BackgroundColor--100)",
         "display": "grid",
-        "gridTemplateColumns": "auto auto 1fr",
+        "gridTemplateColumns": "auto auto auto 1fr",
         "height": "60px",
         "padding": "5px 5px 5px 5px",
       }
@@ -341,6 +350,15 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
       aria-label="Select Week to View"
       onChange={[Function]}
       value={2018-07-01T00:00:00.000Z}
+    />
+    <ScoreDisplay
+      score={
+        Object {
+          "hardScore": 0,
+          "mediumScore": 0,
+          "softScore": 0,
+        }
+      }
     />
     <SizeMe(Actions)
       actions={
@@ -561,7 +579,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
       Object {
         "backgroundColor": "var(--pf-global--BackgroundColor--100)",
         "display": "grid",
-        "gridTemplateColumns": "auto auto 1fr",
+        "gridTemplateColumns": "auto auto auto 1fr",
         "height": "60px",
         "padding": "5px 5px 5px 5px",
       }
@@ -632,6 +650,15 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
       aria-label="Select Week to View"
       onChange={[Function]}
       value={2018-07-01T00:00:00.000Z}
+    />
+    <ScoreDisplay
+      score={
+        Object {
+          "hardScore": 0,
+          "mediumScore": 0,
+          "softScore": 0,
+        }
+      }
     />
     <SizeMe(Actions)
       actions={

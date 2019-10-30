@@ -2,7 +2,7 @@
 
 exports[`ServerSideExceptionDialog should render an ServerSideException Alert correctly 1`] = `
 <Fragment>
-  Trans(i18nKey=error1)
+  Trans(i18nKey=error1, ["hi"])
   <Button
     aria-label="Show Stack Trace"
     onClick={[Function]}
@@ -78,7 +78,7 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
 
 exports[`ServerSideExceptionDialog should render an ServerSideException Modal correctly 1`] = `
 <Fragment>
-  Trans(i18nKey=error1)
+  Trans(i18nKey=error1, ["hi"])
   <Button
     aria-label="Show Stack Trace"
     onClick={[Function]}

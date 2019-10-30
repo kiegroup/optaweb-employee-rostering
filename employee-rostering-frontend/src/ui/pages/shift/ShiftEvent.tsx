@@ -20,7 +20,7 @@ import { Text, Button, ButtonVariant, List } from "@patternfly/react-core";
 import moment from "moment";
 import Employee from "domain/Employee";
 import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
-import { EditIcon, TrashIcon } from "@patternfly/react-icons";
+import { EditIcon, TrashIcon, ThumbTackIcon } from "@patternfly/react-icons";
 import Color from 'color';
 import { useTranslation } from 'react-i18next';
 
@@ -311,6 +311,7 @@ const ShiftEvent: React.FC<EventProps<Shift>> = (props) => (
       width: "100%"
     }}
   >
+    {props.event.pinnedByUser && <ThumbTackIcon />}
     {props.title}
   </span>
 );

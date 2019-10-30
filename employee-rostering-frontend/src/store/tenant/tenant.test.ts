@@ -36,6 +36,7 @@ import moment from 'moment';
 import { shiftTemplateOperations } from 'store/rotation';
 import RosterState from 'domain/RosterState';
 import * as immutableOperations from 'util/ImmutableCollectionOperations';
+import { flushPromises } from 'setupTests';
 
 describe('Tenant operations', () => {
   const mockRefreshSkillList = jest.spyOn(skillOperations, "refreshSkillList");
@@ -103,6 +104,7 @@ describe('Tenant operations', () => {
       onGet(`/tenant/`, mockTenantList);
     
       await store.dispatch(tenantOperations.refreshTenantList());
+      await flushPromises();
     
       expect(store.getActions()).toEqual(expect.arrayContaining([
         actions.refreshTenantList({currentTenantId: 1, tenantList: mockTenantList}),
@@ -145,6 +147,7 @@ describe('Tenant operations', () => {
       mockTenantList[1].id = 0;
 
       await store.dispatch(tenantOperations.refreshTenantList());
+      await flushPromises();
 
       expect(store.getActions()).toEqual(expect.arrayContaining([
         actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),
@@ -284,6 +287,7 @@ describe('Tenant operations', () => {
     onGet(`/tenant/`, mockTenantList);
 
     await store.dispatch(tenantOperations.refreshTenantList());
+    await flushPromises();
 
     expect(store.getActions()).toEqual(expect.arrayContaining([
       actions.refreshTenantList({currentTenantId: 0, tenantList: mockTenantList}),

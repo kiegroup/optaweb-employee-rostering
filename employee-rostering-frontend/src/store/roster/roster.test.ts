@@ -32,6 +32,7 @@ import { availabilityRosterReducer } from './reducers';
 import DomainObjectView from 'domain/DomainObjectView';
 import RosterState from 'domain/RosterState';
 import { serializeLocalDate } from 'store/rest/DataSerialization';
+import { flushPromises } from 'setupTests';
 
 const mockShiftRoster: ShiftRosterView = {
   tenantId: 0,
@@ -91,6 +92,11 @@ const mockShiftRoster: ShiftRosterView = {
       },
       pinnedByUser: false
     }]
+  },
+  score: {
+    hardScore: 0,
+    mediumScore: 0,
+    softScore: 0
   }
 };
 
@@ -162,7 +168,12 @@ const mockAvailabilityRoster: AvailabilityRosterView = {
       state: "DESIRED"
     }]
   },
-  unassignedShiftViewList: []
+  unassignedShiftViewList: [],
+  score: {
+    hardScore: 0,
+    mediumScore: 0,
+    softScore: 0
+  }
 };
 
 describe('Roster operations', () => {
@@ -204,6 +215,7 @@ describe('Roster operations', () => {
 
     onPost(`/tenant/${tenantId}/roster/terminate`, {}, {});
     await(store.dispatch(rosterOperations.terminateSolvingRosterEarly()));
+    await flushPromises();
 
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/terminate`, {});
@@ -228,12 +240,12 @@ describe('Roster operations', () => {
 
       switch (method) {
         case 'get': {
-          onGet(restURL, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+          onGet(restURL, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: "0hard/0medium/0soft" });
           break;
         }
 
         case 'post': {
-          onPost(restURL, restArg, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+          onPost(restURL, restArg, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: "0hard/0medium/0soft" });
           break;
         }
       }
@@ -317,7 +329,8 @@ describe('Roster operations', () => {
           onGet(restURL, { 
             ...mockAvailabilityRoster,
             employeeIdToAvailabilityViewListMap: {},
-            employeeIdToShiftViewListMap: {}
+            employeeIdToShiftViewListMap: {},
+            score: "0hard/0medium/0soft"
           });
           break;
         }
@@ -326,7 +339,8 @@ describe('Roster operations', () => {
           onPost(restURL, restArg, { 
             ...mockAvailabilityRoster,
             employeeIdToAvailabilityViewListMap: {},
-            employeeIdToShiftViewListMap: {}
+            employeeIdToShiftViewListMap: {},
+            score: "0hard/0medium/0soft"
           });
           break;
         }
@@ -459,7 +473,7 @@ describe('Roster operations', () => {
     
     onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
     `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
-    spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+    spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: "0hard/0medium/0soft" });
     await store.dispatch(rosterOperations.getInitialShiftRoster());
 
     expect(store.getActions()).toEqual([
@@ -517,7 +531,11 @@ describe('Roster operations', () => {
     };
     
     onGet(`/tenant/${tenantId}/roster/shiftRosterView/current?p=${pagination.pageNumber}` + 
-    `&n=${pagination.itemsPerPage}`, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+    `&n=${pagination.itemsPerPage}`, { 
+      ...mockShiftRoster,
+      spotIdToShiftViewListMap: {},
+      score: "0hard/0medium/0soft" 
+    });
     await store.dispatch(rosterOperations.getCurrentShiftRoster(pagination));
 
     expect(store.getActions()).toEqual([
@@ -547,7 +565,8 @@ describe('Roster operations', () => {
     `&startDate=${serializeLocalDate(fromDate)}&` + 
     `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, {
       ...mockShiftRoster,
-      spotIdToShiftViewListMap: {}
+      spotIdToShiftViewListMap: {},
+      score: "0hard/0medium/0soft"
     });
     await store.dispatch(rosterOperations.getShiftRoster({
       fromDate: fromDate,
@@ -578,7 +597,7 @@ describe('Roster operations', () => {
     
     onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
     `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
-    spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {} });
+    spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: "0hard/0medium/0soft" });
     await store.dispatch(rosterOperations.getShiftRosterFor({
       fromDate: fromDate,
       toDate: toDate,
@@ -611,7 +630,8 @@ describe('Roster operations', () => {
     employeeList, {
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
-      employeeIdToAvailabilityViewListMap: {}
+      employeeIdToAvailabilityViewListMap: {},
+      score: "0hard/0medium/0soft"
     });
     await store.dispatch(rosterOperations.getInitialAvailabilityRoster());
 
@@ -678,7 +698,8 @@ describe('Roster operations', () => {
     `&n=${pagination.itemsPerPage}`, {
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
-      employeeIdToAvailabilityViewListMap: {}
+      employeeIdToAvailabilityViewListMap: {},
+      score: "0hard/0medium/0soft"
     });
     await store.dispatch(rosterOperations.getCurrentAvailabilityRoster(pagination));
 
@@ -714,7 +735,8 @@ describe('Roster operations', () => {
     `&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, { 
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
-      employeeIdToAvailabilityViewListMap: {}
+      employeeIdToAvailabilityViewListMap: {},
+      score: "0hard/0medium/0soft"
     });
     await store.dispatch(rosterOperations.getAvailabilityRoster({
       fromDate: fromDate,
@@ -750,7 +772,8 @@ describe('Roster operations', () => {
     employeeList, {
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
-      employeeIdToAvailabilityViewListMap: {}
+      employeeIdToAvailabilityViewListMap: {},
+      score: "0hard/0medium/0soft"
     });
     await store.dispatch(rosterOperations.getAvailabilityRosterFor({
       fromDate: fromDate,

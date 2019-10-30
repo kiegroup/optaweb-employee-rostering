@@ -44,6 +44,8 @@ import {
 } from 'react-router-dom';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 import Actions from 'ui/components/Actions';
+import HardMediumSoftScore from 'domain/HardMediumSoftScore';
+import { ScoreDisplay } from 'ui/components/ScoreDisplay';
 
 interface StateProps {
   isSolving: boolean;
@@ -56,6 +58,7 @@ interface StateProps {
   endDate: Date | null;
   totalNumOfSpots: number;
   rosterState: RosterState | null;
+  score: HardMediumSoftScore | null;
 }
 
 // Snapshot of the last value to show when loading
@@ -87,6 +90,7 @@ const mapStateToProps = (state: AppState): StateProps => ({
     ? moment(state.availabilityRoster.availabilityRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState,
+  score: state.availabilityRoster.availabilityRosterView? state.availabilityRoster.availabilityRosterView.score : null
 });
 
 export interface DispatchProps {
@@ -284,6 +288,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
     const shownEmployee = this.props.shownEmployeeList[0];
+    const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const events: ShiftOrAvailability[] = [];
     const actions = [
       { name: t("publish"), action: this.props.publishRoster },
@@ -333,7 +338,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             display: "grid",
             height: '60px',
             padding: '5px 5px 5px 5px',
-            gridTemplateColumns: 'auto auto 1fr',
+            gridTemplateColumns: 'auto auto auto 1fr',
             backgroundColor: 'var(--pf-global--BackgroundColor--100)',
           }}
         >
@@ -351,6 +356,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             value={this.props.startDate as Date}
             onChange={this.onDateChange}
           />
+          <ScoreDisplay score={score} />
           <Actions
             actions={actions}
           />
