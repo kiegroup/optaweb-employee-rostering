@@ -50,7 +50,7 @@ describe('Toolbar Component', () => {
 
   it('should redirect to admin page when you click on the gear', () => {
     const toolbarComponent = shallow(<ToolbarComponent {...twoTenants} />);
-    toolbarComponent.find('[aria-label="Settings actions"]').simulate('click');
+    toolbarComponent.find('[aria-label="Settings"]').simulate('click');
     expect(twoTenants.history.push).toBeCalled();
     expect(twoTenants.history.push).toBeCalledWith("/admin");
   });
