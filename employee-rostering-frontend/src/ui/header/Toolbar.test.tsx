@@ -19,6 +19,10 @@ import * as React from 'react';
 import { ToolbarComponent, Props } from './Toolbar';
 
 describe('Toolbar Component', () => {
+  beforeAll(() => {
+    process.env.REACT_APP_BACKEND_URL = "backend";
+  });
+  
   it('should render correctly with no tenants', () => {
     const toolbarComponent = shallow(<ToolbarComponent {...noTenants} />);
     expect(toJson(toolbarComponent)).toMatchSnapshot();
@@ -36,8 +40,7 @@ describe('Toolbar Component', () => {
   });
 
   it('should refresh tenant list on mount', async () => {
-    const toolbarComponent = shallow(<ToolbarComponent {...twoTenants} />);
-    await toolbarComponent.instance().componentDidMount;
+    shallow(<ToolbarComponent {...twoTenants} />);
     expect(twoTenants.refreshTenantList).toBeCalled();
   });
 
@@ -54,6 +57,7 @@ describe('Toolbar Component', () => {
     expect(twoTenants.history.push).toBeCalled();
     expect(twoTenants.history.push).toBeCalledWith("/admin");
   });
+  
 });
 
 const noTenants: Props = {

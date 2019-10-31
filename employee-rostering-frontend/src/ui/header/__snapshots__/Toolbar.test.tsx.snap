@@ -64,18 +64,21 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
       </Button>
     </ToolbarItem>
     <ToolbarItem>
-      <Button
+      <a
         aria-label="REST Reference"
-        onClick={[Function]}
-        variant="plain"
+        href="backend/swagger-ui.html"
       >
-        <BookIcon
-          color="currentColor"
-          noVerticalAlign={false}
-          size="sm"
-          title={null}
-        />
-      </Button>
+        <Button
+          variant="plain"
+        >
+          <BookIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+            title={null}
+          />
+        </Button>
+      </a>
     </ToolbarItem>
   </ToolbarGroup>
 </Toolbar>
@@ -145,18 +148,21 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
       </Button>
     </ToolbarItem>
     <ToolbarItem>
-      <Button
+      <a
         aria-label="REST Reference"
-        onClick={[Function]}
-        variant="plain"
+        href="backend/swagger-ui.html"
       >
-        <BookIcon
-          color="currentColor"
-          noVerticalAlign={false}
-          size="sm"
-          title={null}
-        />
-      </Button>
+        <Button
+          variant="plain"
+        >
+          <BookIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+            title={null}
+          />
+        </Button>
+      </a>
     </ToolbarItem>
   </ToolbarGroup>
 </Toolbar>
@@ -196,18 +202,21 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
       </Button>
     </ToolbarItem>
     <ToolbarItem>
-      <Button
+      <a
         aria-label="REST Reference"
-        onClick={[Function]}
-        variant="plain"
+        href="backend/swagger-ui.html"
       >
-        <BookIcon
-          color="currentColor"
-          noVerticalAlign={false}
-          size="sm"
-          title={null}
-        />
-      </Button>
+        <Button
+          variant="plain"
+        >
+          <BookIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+            title={null}
+          />
+        </Button>
+      </a>
     </ToolbarItem>
   </ToolbarGroup>
 </Toolbar>
