@@ -29,7 +29,7 @@ import { I18nextProvider } from 'react-i18next';
 import { configureStore } from 'store';
 
 const store = configureStore({
-  restBaseURL: '/rest'
+  restBaseURL: `${process.env.REACT_APP_BACKEND_URL}/rest`
 });
 
 const LoadingSpinner: React.FC = () => (
