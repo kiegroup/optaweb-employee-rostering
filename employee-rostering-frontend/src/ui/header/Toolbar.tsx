@@ -22,7 +22,7 @@ import {
   DropdownToggle,
   Toolbar,
   ToolbarGroup,
-  ToolbarItem,
+  ToolbarItem
 } from '@patternfly/react-core';
 import { BellIcon, CogIcon, BookIcon } from '@patternfly/react-icons';
 import Tenant from 'domain/Tenant';
@@ -103,13 +103,16 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
           </Button>
         </ToolbarItem>
         <ToolbarItem>
-          <Button
+          <a
             aria-label="REST Reference"
-            variant={ButtonVariant.plain}
-            onClick={() => window.location.href = `${process.env.REACT_APP_BACKEND_URL}/swagger-ui.html`}
+            href={`${process.env.REACT_APP_BACKEND_URL}/swagger-ui.html`}
           >
-            <BookIcon />
-          </Button>
+            <Button
+              variant={ButtonVariant.plain}
+            >
+              <BookIcon />
+            </Button>
+          </a>
         </ToolbarItem>
       </ToolbarGroup>
     );
