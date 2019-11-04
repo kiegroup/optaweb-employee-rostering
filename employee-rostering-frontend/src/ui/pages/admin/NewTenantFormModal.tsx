@@ -94,6 +94,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           <Button
             isDisabled={!isFormCompleted(formData)}
             aria-label="Save"
+            data-cy="save"
             key={2}
             onClick={() => {
               if (isFormCompleted(formData)) {
@@ -114,6 +115,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           <Label>{t("name")}</Label>
           <TextInput
             aria-label="Name"
+            data-cy="name"
             onChange={name => setProperty({
               tenant: {
                 name: name
@@ -126,6 +128,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           <TextInput
             type="date"
             aria-label="Schedule Start Date"
+            data-cy="schedule-start-date"
             onChange={date => setProperty({ 
               lastHistoricDate: moment(date).subtract(1, "day").toDate(),
               firstDraftDate: moment(date).toDate()
@@ -137,6 +140,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           <TextInput
             type="number"
             aria-label="Draft Length"
+            data-cy="draft-length"
             onChange={length => setProperty({ draftLength: parseInt(length) })}
           />
         </InputGroup>
@@ -145,6 +149,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
           <TextInput
             type="number"
             aria-label="Publish Notice"
+            data-cy="publish-notice"
             onChange={notice => setProperty({ publishNotice: parseInt(notice) })}
           />
         </InputGroup>
@@ -155,6 +160,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
             type="number"
             onChange={length => setProperty({ publishLength: parseInt(length) })}
             aria-label="Publish Length"
+            data-cy="publish-length"
             isDisabled
           />
         </InputGroup>
@@ -164,6 +170,7 @@ export const NewTenantFormModal: React.FC<Props> = (props) => {
             type="number"
             aria-label="Rotation Length"
             onChange={length => setProperty({ rotationLength: parseInt(length) })}
+            data-cy="rotation-length"
             min={2}
           />
         </InputGroup>

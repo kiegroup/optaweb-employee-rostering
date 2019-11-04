@@ -51,6 +51,7 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
     <ToolbarItem>
       <Button
         aria-label="Settings actions"
+        data-cy="settings"
         id="horizontal-example-uid-02"
         onClick={[Function]}
         variant="plain"
@@ -118,6 +119,7 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
     <ToolbarItem>
       <Button
         aria-label="Settings actions"
+        data-cy="settings"
         id="horizontal-example-uid-02"
         onClick={[Function]}
         variant="plain"
@@ -155,6 +157,7 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
     <ToolbarItem>
       <Button
         aria-label="Settings actions"
+        data-cy="settings"
         id="horizontal-example-uid-02"
         onClick={[Function]}
         variant="plain"

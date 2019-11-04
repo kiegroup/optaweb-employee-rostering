@@ -98,6 +98,7 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
             id="horizontal-example-uid-02"
             aria-label="Settings actions"
             variant={ButtonVariant.plain}
+            data-cy="settings"
             onClick={() => this.props.history.push("/admin")}
           >
             <CogIcon />

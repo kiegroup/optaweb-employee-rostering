@@ -98,6 +98,13 @@ describe('Admin Page', () => {
     expect(twoTenants.removeTenant).toBeCalled();
     expect(twoTenants.removeTenant).toBeCalledWith(twoTenants.tenantList[0]);
   });
+  
+  it('should call reset application when reset application button is clicked', () => {
+    const twoTenants = generateProps(2);
+    const adminPage = shallow(<AdminPage {...twoTenants} />);
+    adminPage.find('[data-cy="reset-application"]').simulate("click");
+    expect(twoTenants.resetApplication).toBeCalled();
+  });
 });
 
 function generateProps(numberOfTenants: number): Props {
@@ -107,6 +114,7 @@ function generateProps(numberOfTenants: number): Props {
   }
   return {
     tenantList: tenants,
-    removeTenant: jest.fn()
+    removeTenant: jest.fn(),
+    resetApplication: jest.fn()
   }
 }
