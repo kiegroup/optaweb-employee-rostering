@@ -22,6 +22,7 @@ import { Predicate } from "types";
 import { stringFilter } from 'util/CommonFilters';
 import Tenant from 'domain/Tenant';
 import { tenantOperations } from 'store/tenant';
+import * as adminOperations from 'store/admin/operations';
 import FilterComponent from 'ui/components/FilterComponent';
 import { Table, IRow, TableHeader, TableBody } from '@patternfly/react-table';
 import { TrashIcon } from '@patternfly/react-icons';
@@ -38,10 +39,12 @@ const mapStateToProps = (state: AppState): StateProps => ({
 
 export interface DispatchProps {
   removeTenant: typeof tenantOperations.removeTenant;
+  resetApplication: typeof adminOperations.resetApplication;
 }
 
 const mapDispatchToProps: DispatchProps = {
-  removeTenant: tenantOperations.removeTenant
+  removeTenant: tenantOperations.removeTenant,
+  resetApplication: adminOperations.resetApplication
 };
 
 export type Props = StateProps & DispatchProps;
@@ -51,7 +54,7 @@ export interface State {
 
 export const AdminPage: React.FC<Props> = (props) => {
   const { tenantList } = props;
-  const { t } = useTranslation(); // We don't have any unique translations
+  const { t } = useTranslation("AdminPage");
   const [ page, setPage ] = React.useState(1);
   const [ perPage, setPerPage ] = React.useState(10);
   const [ filter, setFilter ] = React.useState<Predicate<Tenant>>(() => () => true);
@@ -62,6 +65,15 @@ export const AdminPage: React.FC<Props> = (props) => {
 
   return (
     <>
+      <Button
+        style={{ width: "min-content" }}
+        aria-label="Reset Application"
+        data-cy="reset-application"
+        variant="danger"
+        onClick={() => props.resetApplication()}
+      >
+        {t("resetApplication")}
+      </Button>
       <Level
         gutter="sm"
         style={{
@@ -77,7 +89,13 @@ export const AdminPage: React.FC<Props> = (props) => {
           />
         </LevelItem>
         <LevelItem style={{ display: "flex" }}>
-          <Button aria-label="Add Tenant" onClick={() => setIsCreatingTenant(true)}>{t("add")}</Button>
+          <Button
+            aria-label="Add Tenant"
+            data-cy="add-tenant"
+            onClick={() => setIsCreatingTenant(true)}
+          >
+            {t("add")}
+          </Button>
           <Pagination
             aria-label="Change Page"
             itemCount={filteredRows.length}

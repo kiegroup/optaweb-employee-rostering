@@ -13,6 +13,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       </Button>,
       <Button
         aria-label="Save"
+        data-cy="save"
         isDisabled={true}
         onClick={[Function]}
       >
@@ -40,6 +41,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <TextInput
         aria-label="Name"
         className=""
+        data-cy="name"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}
@@ -55,6 +57,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <TextInput
         aria-label="Schedule Start Date"
         className=""
+        data-cy="schedule-start-date"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}
@@ -70,6 +73,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <TextInput
         aria-label="Draft Length"
         className=""
+        data-cy="draft-length"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}
@@ -85,6 +89,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <TextInput
         aria-label="Publish Notice"
         className=""
+        data-cy="publish-notice"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}
@@ -100,6 +105,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <TextInput
         aria-label="Publish Length"
         className=""
+        data-cy="publish-length"
         defaultValue="7"
         isDisabled={true}
         isReadOnly={false}
@@ -116,6 +122,7 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <TextInput
         aria-label="Rotation Length"
         className=""
+        data-cy="rotation-length"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}
@@ -162,6 +169,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       </Button>,
       <Button
         aria-label="Save"
+        data-cy="save"
         isDisabled={true}
         onClick={[Function]}
       >
@@ -189,6 +197,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <TextInput
         aria-label="Name"
         className=""
+        data-cy="name"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}
@@ -204,6 +213,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <TextInput
         aria-label="Schedule Start Date"
         className=""
+        data-cy="schedule-start-date"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}
@@ -219,6 +229,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <TextInput
         aria-label="Draft Length"
         className=""
+        data-cy="draft-length"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}
@@ -234,6 +245,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <TextInput
         aria-label="Publish Notice"
         className=""
+        data-cy="publish-notice"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}
@@ -249,6 +261,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <TextInput
         aria-label="Publish Length"
         className=""
+        data-cy="publish-length"
         defaultValue="7"
         isDisabled={true}
         isReadOnly={false}
@@ -265,6 +278,7 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <TextInput
         aria-label="Rotation Length"
         className=""
+        data-cy="rotation-length"
         isDisabled={false}
         isReadOnly={false}
         isRequired={false}

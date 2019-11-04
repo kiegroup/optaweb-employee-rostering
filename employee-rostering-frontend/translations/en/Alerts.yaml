@@ -151,6 +151,10 @@ availabilityRosterRefresh:
   title: Info
   message: The Availability Roster was refreshed.
 
+resetApplicationSuccessful:
+  title: Info
+  message: The Application was reset successfully.
+
 generic:
   title: Exception
   message: "{{message}}"
