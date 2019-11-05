@@ -31,6 +31,7 @@ import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -43,14 +44,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@AutoConfigureTestDatabase
 public class RosterGeneratorTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
-    
+
     @Autowired
     private RosterGenerator rosterGenerator;
-    
+
     private Integer tenantId;
 
     private final String skillPathURI = "http://localhost:8080/rest/tenant/{tenantId}/skill/";
@@ -95,12 +97,12 @@ public class RosterGeneratorTest {
         return restTemplate.exchange(tenantPathURI, HttpMethod.GET, null,
                                      new ParameterizedTypeReference<List<Tenant>>() {});
     }
-    
+
     @Before
     public void setup() {
         tenantId = rosterGenerator.generateRoster(2, 7).getTenantId();
     }
-    
+
     @After
     public void cleanup() {
         restTemplate.postForEntity(tenantPathURI + "remove/" + tenantId, null, Void.class);

@@ -56,6 +56,7 @@ import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +72,7 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@AutoConfigureTestDatabase
 public class SolverTest {
 
     private static final int TENANT_ID = 0;
