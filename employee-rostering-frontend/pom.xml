@@ -28,6 +28,13 @@
   <artifactId>employee-rostering-frontend</artifactId>
   <name>Employee Rostering as a Service React Frontend</name>
   <description>React frontend for Employee Rostering as a Service</description>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+  </dependencies>
 
   <properties>
     <node.version>v11.6.0</node.version>
@@ -35,6 +42,8 @@
   </properties>
 
   <build>
+    <sourceDirectory>spring-boot/java</sourceDirectory>
+    
     <plugins>
       <plugin>
         <groupId>com.github.eirslett</groupId>
