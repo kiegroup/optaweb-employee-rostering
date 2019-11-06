@@ -52,8 +52,7 @@ function dragCreateShift(day, from, to) {
 }
 
 function closeAlerts() {
-    cy.wait(1000);
-    cy.get(".pf-c-alert__action > button").click({ multiple: true });
+    cy.get(".pf-c-alert__action > button").click({ multiple: true, force: true });
 }
 
 describe('A new tenant can be created, who can have their own employees, spots, skills and shifts', () => {
@@ -76,7 +75,8 @@ describe('A new tenant can be created, who can have their own employees, spots, 
         cy.get('[data-cy=schedule-start-date]').type("2018-01-01");
         cy.get('[data-cy=draft-length]').type("7");
         cy.get('[data-cy=publish-notice]').type("7");
-        // publish length is disabled/not supported by backend
+        // TODO: publish length is disabled/not supported by backend, uncomment when supported
+        // (if ever)
         // cy.get('[data-cy=publish-length]').type("7");
         cy.get('[data-cy=rotation-length]').type("7");
         selectValue("Select a timezone...", "UTC");
@@ -156,7 +156,6 @@ describe('A new tenant can be created, who can have their own employees, spots, 
         
         // The second shift should have the employee with skills
         cy.contains("Employee with Skills").should('exist');
-        
         
         // The first shift should have the employee without skills
         selectValue("Select a Spot...", "No Skill Spot");
