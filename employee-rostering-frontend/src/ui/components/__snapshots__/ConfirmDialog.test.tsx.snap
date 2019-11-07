@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConfirmDialog component should render correctly when closed 1`] = `
+<Modal
+  actions={
+    Array [
+      <Button
+        aria-label="Close Modal"
+        onClick={[MockFunction]}
+        variant="tertiary"
+      >
+        Trans(i18nKey=close)
+      </Button>,
+      <Button
+        aria-label="Trans(i18nKey=confirm)"
+        data-cy="confirm"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=confirm)
+      </Button>,
+    ]
+  }
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isLarge={false}
+  isOpen={false}
+  isSmall={true}
+  onClose={[MockFunction]}
+  showClose={true}
+  title="Confirm Dialog Title"
+>
+  Body
+</Modal>
+`;
+
+exports[`ConfirmDialog component should render correctly when opened 1`] = `
+<Modal
+  actions={
+    Array [
+      <Button
+        aria-label="Close Modal"
+        onClick={[MockFunction]}
+        variant="tertiary"
+      >
+        Trans(i18nKey=close)
+      </Button>,
+      <Button
+        aria-label="Trans(i18nKey=confirm)"
+        data-cy="confirm"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=confirm)
+      </Button>,
+    ]
+  }
+  ariaDescribedById=""
+  className=""
+  hideTitle={false}
+  isLarge={false}
+  isOpen={true}
+  isSmall={true}
+  onClose={[MockFunction]}
+  showClose={true}
+  title="Confirm Dialog Title"
+>
+  Body
+</Modal>
+`;

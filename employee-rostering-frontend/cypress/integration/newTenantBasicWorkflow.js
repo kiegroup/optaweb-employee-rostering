@@ -64,6 +64,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     beforeEach(() => {
        cy.get('[data-cy=settings]').click();
        cy.get('[data-cy=reset-application]').click();
+       cy.get('[data-cy=confirm]').click();
        closeAlerts();
     });
     
@@ -137,12 +138,12 @@ describe('A new tenant can be created, who can have their own employees, spots, 
         
         // First shift is on Monday, and is for the spot that doesn't require any skills
         selectValue("Select a Spot...", "No Skill Spot");
-        cy.wait(1000);
+        cy.get(`[placeholder="Select a Spot..."]`).get('[value="No Skill Spot"]',  { timeout: 5000 });
         dragCreateShift(1, "09:00", "17:00");
         
         // Second shift is in the early morning on Tuesday, and is for the spot that requires our skill
         selectValue("Select a Spot...", "Required Skill Spot");
-        cy.wait(1000);
+        cy.get(`[placeholder="Select a Spot..."]`).get('[value="Required Skill Spot"]',  { timeout: 5000 });
         dragCreateShift(2, "00:00", "06:00");
         
         // Schedule for 5 seconds
@@ -159,7 +160,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
         
         // The first shift should have the employee without skills
         selectValue("Select a Spot...", "No Skill Spot");
-        cy.wait(1000);
+        cy.get(`[placeholder="Select a Spot..."]`).get('[value="No Skill Spot"]',  { timeout: 5000 });
         cy.contains("No Skills Employee").should('exist');
     });
 });

@@ -99,10 +99,18 @@ describe('Admin Page', () => {
     expect(twoTenants.removeTenant).toBeCalledWith(twoTenants.tenantList[0]);
   });
   
-  it('should call reset application when reset application button is clicked', () => {
+  it('should show confirm dialog when the reset button is clicked', () => {
     const twoTenants = generateProps(2);
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     adminPage.find('[data-cy="reset-application"]').simulate("click");
+    expect(twoTenants.resetApplication).not.toBeCalled();
+    expect(adminPage).toMatchSnapshot();
+  });
+  
+  it('confirm dialog should reset application', () => {
+    const twoTenants = generateProps(2);
+    const adminPage = shallow(<AdminPage {...twoTenants} />);
+    adminPage.find("ConfirmDialog[title='Trans(i18nKey=confirmResetTitle)']").simulate("confirm");
     expect(twoTenants.resetApplication).toBeCalled();
   });
 });

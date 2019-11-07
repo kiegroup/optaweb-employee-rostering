@@ -1,2 +1,5 @@
 ---
 resetApplication: Reset Application
+confirmResetTitle: Reset the Application?
+confirmResetBody:
+  Any data in the application will not be able to be recovered after the reset. Continue?

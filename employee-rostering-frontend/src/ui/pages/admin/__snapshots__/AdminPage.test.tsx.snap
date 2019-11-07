@@ -15,6 +15,14 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
   >
     Trans(i18nKey=resetApplication)
   </Button>
+  <ConfirmDialog
+    isOpen={false}
+    onClose={[Function]}
+    onConfirm={[Function]}
+    title="Trans(i18nKey=confirmResetTitle)"
+  >
+    Trans(i18nKey=confirmResetBody)
+  </ConfirmDialog>
   <Level
     gutter="sm"
     style={
@@ -171,6 +179,14 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
   >
     Trans(i18nKey=resetApplication)
   </Button>
+  <ConfirmDialog
+    isOpen={false}
+    onClose={[Function]}
+    onConfirm={[Function]}
+    title="Trans(i18nKey=confirmResetTitle)"
+  >
+    Trans(i18nKey=confirmResetBody)
+  </ConfirmDialog>
   <Level
     gutter="sm"
     style={
@@ -327,6 +343,14 @@ exports[`Admin Page should filter by name 1`] = `
   >
     Trans(i18nKey=resetApplication)
   </Button>
+  <ConfirmDialog
+    isOpen={false}
+    onClose={[Function]}
+    onConfirm={[Function]}
+    title="Trans(i18nKey=confirmResetTitle)"
+  >
+    Trans(i18nKey=confirmResetBody)
+  </ConfirmDialog>
   <Level
     gutter="sm"
     style={
@@ -483,6 +507,14 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
   >
     Trans(i18nKey=resetApplication)
   </Button>
+  <ConfirmDialog
+    isOpen={false}
+    onClose={[Function]}
+    onConfirm={[Function]}
+    title="Trans(i18nKey=confirmResetTitle)"
+  >
+    Trans(i18nKey=confirmResetBody)
+  </ConfirmDialog>
   <Level
     gutter="sm"
     style={
@@ -903,6 +935,14 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
   >
     Trans(i18nKey=resetApplication)
   </Button>
+  <ConfirmDialog
+    isOpen={false}
+    onClose={[Function]}
+    onConfirm={[Function]}
+    title="Trans(i18nKey=confirmResetTitle)"
+  >
+    Trans(i18nKey=confirmResetBody)
+  </ConfirmDialog>
   <Level
     gutter="sm"
     style={
@@ -1059,6 +1099,14 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
   >
     Trans(i18nKey=resetApplication)
   </Button>
+  <ConfirmDialog
+    isOpen={false}
+    onClose={[Function]}
+    onConfirm={[Function]}
+    title="Trans(i18nKey=confirmResetTitle)"
+  >
+    Trans(i18nKey=confirmResetBody)
+  </ConfirmDialog>
   <Level
     gutter="sm"
     style={
@@ -1479,6 +1527,14 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
   >
     Trans(i18nKey=resetApplication)
   </Button>
+  <ConfirmDialog
+    isOpen={false}
+    onClose={[Function]}
+    onConfirm={[Function]}
+    title="Trans(i18nKey=confirmResetTitle)"
+  >
+    Trans(i18nKey=confirmResetBody)
+  </ConfirmDialog>
   <Level
     gutter="sm"
     style={
@@ -1551,6 +1607,170 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
 </Fragment>
 `;
 
+exports[`Admin Page should show confirm dialog when the reset button is clicked 1`] = `
+<Fragment>
+  <Button
+    aria-label="Reset Application"
+    data-cy="reset-application"
+    onClick={[Function]}
+    style={
+      Object {
+        "width": "min-content",
+      }
+    }
+    variant="danger"
+  >
+    Trans(i18nKey=resetApplication)
+  </Button>
+  <ConfirmDialog
+    isOpen={true}
+    onClose={[Function]}
+    onConfirm={[Function]}
+    title="Trans(i18nKey=confirmResetTitle)"
+  >
+    Trans(i18nKey=confirmResetBody)
+  </ConfirmDialog>
+  <Level
+    gutter="sm"
+    style={
+      Object {
+        "backgroundColor": "var(--pf-global--BackgroundColor--200)",
+        "padding": "5px 5px 5px 5px",
+      }
+    }
+  >
+    <LevelItem>
+      <Component
+        aria-label="Filter by Name"
+        filter={[Function]}
+        onChange={[Function]}
+      />
+    </LevelItem>
+    <LevelItem
+      style={
+        Object {
+          "display": "flex",
+        }
+      }
+    >
+      <Button
+        aria-label="Add Tenant"
+        data-cy="add-tenant"
+        onClick={[Function]}
+      >
+        Trans(i18nKey=add)
+      </Button>
+      <Pagination
+        aria-label="Change Page"
+        itemCount={2}
+        onPerPageSelect={[Function]}
+        onSetPage={[Function]}
+        page={1}
+        perPage={10}
+        widgetId="pagination-options-menu-top"
+      />
+    </LevelItem>
+  </Level>
+  <Connect(NewTenantFormModal)
+    aria-label="Add Tenant Modal"
+    isOpen={false}
+    onClose={[Function]}
+  />
+  <Table
+    borders={true}
+    caption="Trans(i18nKey=tenants)"
+    cells={
+      Array [
+        "Trans(i18nKey=name)",
+        "",
+      ]
+    }
+    className=""
+    contentId="expanded-content"
+    dropdownDirection="down"
+    dropdownPosition="right"
+    expandId="expandable-toggle"
+    gridBreakPoint="grid-md"
+    role="grid"
+    rowLabeledBy="simple-node"
+    rows={
+      Array [
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 1
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+        Object {
+          "cells": Array [
+            <td>
+              <Text>
+                Tenant 2
+              </Text>
+            </td>,
+            <td>
+              <span
+                style={
+                  Object {
+                    "display": "grid",
+                    "gridColumnGap": "5px",
+                    "gridTemplateColumns": "1fr auto",
+                  }
+                }
+              >
+                <span />
+                <Button
+                  onClick={[Function]}
+                  variant="danger"
+                >
+                  <TrashIcon
+                    color="currentColor"
+                    noVerticalAlign={false}
+                    size="sm"
+                    title={null}
+                  />
+                </Button>
+              </span>
+            </td>,
+          ],
+        },
+      ]
+    }
+    variant={null}
+  >
+    <TableHeader />
+    <TableBody />
+  </Table>
+</Fragment>
+`;
+
 exports[`Admin Page should show the desired number of tenants per page 1`] = `
 <Fragment>
   <Button
@@ -1566,6 +1786,14 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
   >
     Trans(i18nKey=resetApplication)
   </Button>
+  <ConfirmDialog
+    isOpen={false}
+    onClose={[Function]}
+    onConfirm={[Function]}
+    title="Trans(i18nKey=confirmResetTitle)"
+  >
+    Trans(i18nKey=confirmResetBody)
+  </ConfirmDialog>
   <Level
     gutter="sm"
     style={
