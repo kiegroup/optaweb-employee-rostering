@@ -28,6 +28,7 @@ import { Table, IRow, TableHeader, TableBody } from '@patternfly/react-table';
 import { TrashIcon } from '@patternfly/react-icons';
 import NewTenantFormModal from './NewTenantFormModal';
 import { useTranslation } from 'react-i18next';
+import { ConfirmDialog } from 'ui/components/ConfirmDialog';
 
 interface StateProps {
   tenantList: Tenant[];
@@ -59,6 +60,7 @@ export const AdminPage: React.FC<Props> = (props) => {
   const [ perPage, setPerPage ] = React.useState(10);
   const [ filter, setFilter ] = React.useState<Predicate<Tenant>>(() => () => true);
   const [ isCreatingTenant, setIsCreatingTenant ] = React.useState(false);
+  const [ isResetDialogOpen, setIsResetDialogOpen ] = React.useState(false);
 
   const filteredRows = tenantList.filter(filter);
   const rowsInPage = filteredRows.filter((v, i) => (page - 1) * perPage <= i && i < page * perPage);
@@ -70,10 +72,19 @@ export const AdminPage: React.FC<Props> = (props) => {
         aria-label="Reset Application"
         data-cy="reset-application"
         variant="danger"
-        onClick={() => props.resetApplication()}
+        onClick={() => setIsResetDialogOpen(true)}
       >
         {t("resetApplication")}
       </Button>
+      <ConfirmDialog
+        title={t("confirmResetTitle")}
+        isOpen={isResetDialogOpen}
+        onClose={() => setIsResetDialogOpen(false)}
+        onConfirm={() => props.resetApplication()}
+      >
+        {t("confirmResetBody")}
+      </ConfirmDialog>
+      
       <Level
         gutter="sm"
         style={{
