@@ -13,7 +13,7 @@ image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-
 image:https://sonarcloud.io/api/project_badges/measure?project=optaweb-employee-rostering&metric=coverage[
 "Coverage", link="https://sonarcloud.io/dashboard?id=optaweb-employee-rostering"]
 
-An end-to-end https://www.optaplanner.org/[OptaPlanner] web application ready to deploy on https://www.openshift.com/[OpenShift 3].
+An end-to-end https://www.optaplanner.org/[OptaPlanner] web application ready to deploy on https://www.openshift.com/[OpenShift 4].
 
 See https://www.youtube.com/watch?v=sOWC4qrXxFk[the video demo].
 
@@ -47,6 +47,66 @@ To run on an another port use `--server.port=...`:
 [source,shell]
 ----
 java -jar employee-rostering-distribution/target/employee-rostering-distribution-*.jar --server.port=18080
+----
+
+== Running on a local OpenShift cluster
+
+Use https://developers.redhat.com/products/codeready-containers[Red Hat CodeReady Containers]
+to easily set up a single-node OpenShift 4 cluster on your local computer.
+
+.Prerequisites
+You have successfully built the project with Maven.
+
+.Procedure
+1. To install CRC, follow the https://code-ready.github.io/crc/[Getting Started Guide].
+
+2. When the cluster has started,
+
+a. add oc command-line interface to your `$PATH`:
++
+[source,shell]
+----
+eval $(crc oc-env)
+----
+
+b. log in as "developer".
+
+3. Create a new project
++
+[source,subs="quotes"]
+----
+oc new-project _project_name_
+----
+
+4. Run the script:
++
+[source,shell]
+----
+./provision.sh
+----
+
+=== Updating the deployed application with local changes
+
+==== Backend
+
+Change the source code and build the backend module with Maven.
+Then start OpenShift build:
+
+[source,shell]
+----
+cd employee-rostering-backend
+oc start-build backend --from-dir=. --follow
+----
+
+==== Frontend
+
+Change the source code and build the frontend module with npm.
+Then start OpenShift build:
+
+[source,shell]
+----
+cd employee-rostering-frontend
+oc start-build frontend --from-dir=docker --follow
 ----
 
 == Development
