@@ -21,12 +21,21 @@ command -v oc > /dev/null 2>&1 || {
 
 # Print info about the current user and project
 echo "Current user: $(oc whoami)"
+# Check that the current user has at least one project
+[[ -z "$(oc projects -q)" ]] && {
+  echo >&2 "You have no projects. Use ‘oc new-project <project-name>’ to create one."
+  exit 1
+}
+# Display info about the current project
 oc project
 
-if oc status | grep "You have no services" > /dev/null
+# Check that the current project is empty
+get_all=$(oc get all -o name)
+if [[ -z "$get_all" ]]
 then
   echo "The project appears to be empty."
 else
+  echo >&2 -e "\nProject content:\n\n${get_all}\n"
   echo >&2 "ERROR: The project is not empty."
   exit 1
 fi
@@ -36,13 +45,6 @@ read -r -p "Do you want to continue? [y/N]: " "answer_continue"
 [[ "$answer_continue" == "y" ]] || {
   echo "Aborted."
   exit 0
-}
-
-get_all=$(oc get all -o name)
-[[ "x$get_all" == "x" ]] || {
-  echo >&2 "Project not empty:"
-  echo >&2 "${get_all}"
-  exit 1
 }
 
 # Set up PostgreSQL
