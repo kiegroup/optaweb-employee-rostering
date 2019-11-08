@@ -49,6 +49,30 @@ To run on an another port use `--server.port=...`:
 java -jar employee-rostering-distribution/target/employee-rostering-distribution-*.jar --server.port=18080
 ----
 
+== Benchmark Application
+
+After building the project above, run the benchmark application with:
+
+[source,shell]
+----
+java -jar employee-rostering-benchmark/target/employee-rostering-benchmark-*.jar
+----
+
+Note: make sure to run the project application and benchmark application on different ports if they are run
+simultaneously.
+
+After benchmarking is complete, a benchmark report will be generated in the `local/benchmarkReport` directory.
+Open the `index.html` file in your browser to view the benchmark results.
+
+=== Configure the benchmarker
+
+To configure the benchmarker, modify the `employeeRosteringBenchmarkConfig.xml` file found in the
+`employee-rostering-benchmark/src/main/resources` directory. Make sure to rebuild the project after modifying the
+config file for the benchmarker changes to be applied.
+
+Refer to the https://docs.optaplanner.org/latestFinal/optaplanner-docs/html_single/index.html#benchmarker[OptaPlanner
+ Docs] for more information on benchmark tweaking.
+
 == Running on a local OpenShift cluster
 
 Use https://developers.redhat.com/products/codeready-containers[Red Hat CodeReady Containers]
