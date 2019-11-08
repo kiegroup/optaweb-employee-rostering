@@ -65,7 +65,7 @@
           </execution>
           <execution>
             <id>lock-treatment-tool execution</id>
-            <phase>compile</phase>
+            <phase>package</phase>
             <goals>
               <goal>npm</goal>
             </goals>
