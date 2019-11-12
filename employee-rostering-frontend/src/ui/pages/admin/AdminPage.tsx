@@ -19,6 +19,7 @@ import { AppState } from 'store/types';
 import { Text, Level, LevelItem, Pagination, Button } from '@patternfly/react-core';
 import { connect } from 'react-redux';
 import { Predicate } from "types";
+import { Stream } from 'util/ImmutableCollectionOperations';
 import { stringFilter } from 'util/CommonFilters';
 import Tenant from 'domain/Tenant';
 import { tenantOperations } from 'store/tenant';
@@ -58,12 +59,22 @@ export const AdminPage: React.FC<Props> = (props) => {
   const { t } = useTranslation("AdminPage");
   const [ page, setPage ] = React.useState(1);
   const [ perPage, setPerPage ] = React.useState(10);
-  const [ filter, setFilter ] = React.useState<Predicate<Tenant>>(() => () => true);
+  const [ filterText, setFilterText ] = React.useState("");
   const [ isCreatingTenant, setIsCreatingTenant ] = React.useState(false);
   const [ isResetDialogOpen, setIsResetDialogOpen ] = React.useState(false);
+  const filter = stringFilter((t: Tenant) => t.name)(filterText)
+  
+  const filteredRows = new Stream(tenantList)
+    .filter(filter);
+    
+  const numOfFilteredRows = filteredRows.collect(c => c.length);
+  
+  const rowsInPage = filteredRows
+    .page(page, perPage)
+    .collect(c => c);
 
-  const filteredRows = tenantList.filter(filter);
-  const rowsInPage = filteredRows.filter((v, i) => (page - 1) * perPage <= i && i < page * perPage);
+  // const filteredRows = tenantList.filter(filter);
+  // const rowsInPage = filteredRows.filter((v, i) => (page - 1) * perPage <= i && i < page * perPage);
 
   return (
     <>
@@ -95,8 +106,8 @@ export const AdminPage: React.FC<Props> = (props) => {
         <LevelItem>
           <FilterComponent
             aria-label="Filter by Name"
-            filter={stringFilter((t: Tenant) => t.name)}
-            onChange={f => setFilter(() => f)}
+            filterText={filterText}
+            onChange={setFilterText}
           />
         </LevelItem>
         <LevelItem style={{ display: "flex" }}>
@@ -109,7 +120,7 @@ export const AdminPage: React.FC<Props> = (props) => {
           </Button>
           <Pagination
             aria-label="Change Page"
-            itemCount={filteredRows.length}
+            itemCount={numOfFilteredRows}
             perPage={perPage}
             page={page}
             onSetPage={(e, page) => setPage(page)}

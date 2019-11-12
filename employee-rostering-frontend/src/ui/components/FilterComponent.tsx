@@ -16,46 +16,28 @@
 import * as React from "react";
 import { TextInput, Button, ButtonVariant } from "@patternfly/react-core";
 import './FilterComponent.css';
-import { Predicate } from "types";
-import { WithTranslation, withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import "index.css";
 
-export interface FilterProps<T> {
-  filter: (filter: string) => Predicate<T>;
-  onChange: (filter: Predicate<T>) => void;
-}
-
-export interface FilterState {
+export interface FilterProps {
   filterText: string;
+  onChange: (filterText: string) => void;
 }
 
-export class FilterComponent<T> extends React.Component<FilterProps<T> & WithTranslation, FilterState> {
-
-  constructor(props: FilterProps<T> & WithTranslation) {
-    super(props);
-    this.state = {filterText: ""};
-    this.updateFilter = this.updateFilter.bind(this);
-  }
-
-  updateFilter(filterText: string) {
-    this.props.onChange(this.props.filter(filterText));
-    this.setState({filterText});
-  }
-
-  render() {
-    const { t } = this.props;
-    return (
-      <div className="search-icons">
-        <TextInput
-          aria-label="Search"
-          placeholder={t("search")}
-          value={this.state.filterText}
-          onChange={this.updateFilter} 
-        />
-        {this.state.filterText.length !== 0 && (
+export const FilterComponent: React.FC<FilterProps> = (props) => {
+  const { t } = useTranslation("FilterComponent");
+  return (
+    <div className="search-icons">
+      <TextInput
+        aria-label="Search"
+        placeholder={t("search")}
+        value={props.filterText}
+        onChange={props.onChange} 
+      />
+        {props.filterText.length !== 0 && (
           <Button
             variant={ButtonVariant.plain}
-            onClick={() => this.updateFilter("")}
+            onClick={() => props.onChange("")}
           >
             <svg 
               style={{verticalAlign: "-0.125em"}}
@@ -83,6 +65,5 @@ export class FilterComponent<T> extends React.Component<FilterProps<T> & WithTra
       </div>
     );
   }
-}
 
-export default withTranslation("FilterComponent")(FilterComponent);
+export default FilterComponent;

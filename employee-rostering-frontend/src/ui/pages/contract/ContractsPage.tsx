@@ -26,6 +26,7 @@ import { Predicate, Sorter, ReadonlyPartial } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import { withRouter } from 'react-router';
 
 interface StateProps extends DataTableProps<Contract> {
   tenantId: number;
@@ -163,4 +164,4 @@ export class ContractsPage extends DataTable<Contract, Props> {
   }
 }
 
-export default withTranslation("ContractsPage")(connect(mapStateToProps, mapDispatchToProps)(ContractsPage));
+export default withTranslation("ContractsPage")(connect(mapStateToProps, mapDispatchToProps)(withRouter(ContractsPage)));
