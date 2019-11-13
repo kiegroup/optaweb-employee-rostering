@@ -19,6 +19,8 @@
     <frontend.project.name>employee-rostering-frontend</frontend.project.name>
     <version.cypress.docker>3.6.0</version.cypress.docker>
     <skipITs>false</skipITs>
+    <!-- Override to run with Podman -->
+    <container.runtime>docker</container.runtime>
   </properties>
 
   <build>
@@ -170,7 +172,7 @@
             </goals>
             <configuration>
               <skip>${skipITs}</skip>
-              <executable>docker</executable>
+              <executable>${container.runtime}</executable>
               <arguments>
                 <argument>run</argument>
                 <argument>--network=host</argument> <!-- Cypress accesses UI running on the host -->
