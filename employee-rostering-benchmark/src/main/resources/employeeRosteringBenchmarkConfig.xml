@@ -32,12 +32,12 @@
         <unionMoveSelector>
           <changeMoveSelector/>
           <swapMoveSelector/>
-          <pillarSwapMoveSelector>
+          <pillarChangeMoveSelector>
             <pillarSelector>
               <minimumSubPillarSize>1</minimumSubPillarSize>
               <maximumSubPillarSize>10</maximumSubPillarSize>
             </pillarSelector>
-          </pillarSwapMoveSelector>
+          </pillarChangeMoveSelector>
           <pillarSwapMoveSelector>
             <pillarSelector>
               <minimumSubPillarSize>1</minimumSubPillarSize>
