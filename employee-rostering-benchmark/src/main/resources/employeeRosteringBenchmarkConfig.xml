@@ -32,8 +32,18 @@
         <unionMoveSelector>
           <changeMoveSelector/>
           <swapMoveSelector/>
-          <pillarChangeMoveSelector/>
-          <pillarSwapMoveSelector/>
+          <pillarSwapMoveSelector>
+            <pillarSelector>
+              <minimumSubPillarSize>1</minimumSubPillarSize>
+              <maximumSubPillarSize>10</maximumSubPillarSize>
+            </pillarSelector>
+          </pillarSwapMoveSelector>
+          <pillarSwapMoveSelector>
+            <pillarSelector>
+              <minimumSubPillarSize>1</minimumSubPillarSize>
+              <maximumSubPillarSize>10</maximumSubPillarSize>
+            </pillarSelector>
+          </pillarSwapMoveSelector>
         </unionMoveSelector>
       </localSearch>
     </solver>
