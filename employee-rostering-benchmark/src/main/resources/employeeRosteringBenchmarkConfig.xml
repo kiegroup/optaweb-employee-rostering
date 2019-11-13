@@ -25,6 +25,9 @@
     </solver>
   </solverBenchmark>
 
+  <!-- A GC Overhead Limit occurs on machines with 24 threads  -->
+  <!-- Machines with 8 threads do not seem to be affected -->
+  <!--
   <solverBenchmark>
     <name>Move Selector and Pillar Move Selector</name>
     <solver>
@@ -38,6 +41,7 @@
       </localSearch>
     </solver>
   </solverBenchmark>
+  -->
 
   <solverBenchmark>
     <name>Move Selector and Sequential Pillar Move Selector</name>
