@@ -16,9 +16,9 @@
  */
 
 function selectValue(selectPlaceholder, selectValue) {
-  cy.get(`[placeholder="${selectPlaceholder}"]`).clear({ force: true });
-  cy.get(`[placeholder="${selectPlaceholder}"]`).type(selectValue, { force: true });
-  cy.get("button").contains(selectValue).last().click({ force: true });
+  cy.get(`[placeholder="${selectPlaceholder}"]`).clear();
+  cy.get(`[placeholder="${selectPlaceholder}"]`).type(selectValue);
+  cy.get("button").contains(selectValue).last().click();
 }
 
 function changeToTenant(tenant) {
@@ -59,6 +59,11 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     before(() => {
       cy.server();
       cy.visit('/');
+      cy.route('/rest/**').as('get-api');
+      cy.route('POST', '/rest/**').as('post-api');
+      cy.route('PUT', '/rest/**').as('put-api');
+      cy.route('DELETE', '/rest/**').as('delete-api');
+      cy.wait(2000);
     });
     
     beforeEach(() => {
@@ -142,6 +147,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
         dragCreateShift(1, "09:00", "17:00");
         
         // Second shift is in the early morning on Tuesday, and is for the spot that requires our skill
+        cy.wait('@post-api');
         selectValue("Select a Spot...", "Required Skill Spot");
         cy.get(`[placeholder="Select a Spot..."]`).get('[value="Required Skill Spot"]',  { timeout: 5000 });
         dragCreateShift(2, "00:00", "06:00");
