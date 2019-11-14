@@ -43,7 +43,7 @@
     "test": "TZ=UTC react-scripts test --reporters=default --reporters=jest-junit --transformIgnorePatterns \"node_modules/(?!(lodash-es))/\"",
     "eject": "react-scripts eject",
     "coverage": "npm run test -- --coverage --watchAll=false",
-    "lint": "./node_modules/eslint/bin/eslint.js ./src --ext .ts,.tsx",
+    "lint": "eslint --ext .js,.ts,.tsx src/ cypress/",
     "lint:fix": "npm run lint -- --fix",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run"
@@ -82,6 +82,7 @@
     "enzyme-adapter-react-16": "^1.13.2",
     "enzyme-to-json": "^3.3.5",
     "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-cypress": "^2.7.0",
     "eslint-plugin-header": "^3.0.0",
     "eslint-plugin-import": "^2.17.3",
     "eslint-plugin-jest": "^22.6.4",
