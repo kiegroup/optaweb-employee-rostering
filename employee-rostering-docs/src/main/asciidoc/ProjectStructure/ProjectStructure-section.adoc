@@ -31,8 +31,6 @@ The most important classes to understand the domain model are:
 The constraints are defined in the *employee-rostering-backend* module, with the implementation of the backend REST
 service.
 
-*Worth noting:*
-
 * The solver configuration file:
 `employee-rostering-backend/src/main/resources/org/optaweb/employeerostering/service/solver/employeeRosteringSolverConfig.xml`
 * The constraints definition file: `employee-rostering-backend/src/main/resources/org/optaweb/employeerostering/service/solver/employeeRosteringScoreRules.drl`
@@ -74,7 +72,7 @@ rule "Unavailable time slot for an employee"
                 $endDateTime : endDateTime)
         Shift(
                 employee == $e,
-                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
+                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -50);
@@ -136,6 +134,33 @@ end time, the time difference between the end time of the _left_ shift and the s
 
 Action: The hard score is decreased by 1 unit.
 
+*Daily minutes must not exceed contract maximum*
+
+[source,ruby]
+----
+rule "Daily minutes must not exceed contract maximum"
+    when
+        $employee : Employee($contract : contract, $contract.getMaximumMinutesPerDay() != null)
+        $s : Shift(employee == $employee, $startDateTime : startDateTime)
+        Number( intValue > $contract.getMaximumMinutesPerDay() ) from accumulate(
+            Shift(employee == $employee, $shiftStart : startDateTime,
+            $shiftEnd : endDateTime,
+            $shiftStart.toLocalDate().equals($startDateTime.toLocalDate())),
+            sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
+        )
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+----
+
+Condition: The sum of the total minutes assigned to one employee in a day is greater than the maximum minutes
+specified by the employee's contract.
+
+Action: The hard score is decreased by 1 unit.
+
+The remaining three hard constraints are similar to this last one, but for different time frames specified by the
+contract (weekly, monthly, yearly).
+
 ==== Medium Constraints
 
 *Assign every shift*
@@ -170,7 +195,7 @@ rule "Undesired time slot for an employee"
                 $endDateTime : endDateTime)
         Shift(
                 employee == $e,
-                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
+                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getUndesiredTimeSlotWeight());
@@ -198,7 +223,7 @@ rule "Desired time slot for an employee"
                 $endDateTime : endDateTime)
         Shift(
                 employee == $e,
-                GwtJavaTimeWorkaroundUtil.doTimeslotsIntersect($startDateTime,$endDateTime,
+                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
         scoreHolder.addSoftConstraintMatch(kcontext, +$rosterParametrization.getDesiredTimeSlotWeight());
