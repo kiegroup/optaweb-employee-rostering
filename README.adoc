@@ -23,7 +23,7 @@ Build the project with maven in the project's root directory:
 
 [source,shell]
 ----
-mvn clean install -DskipTests
+mvn clean install -DskipTests -DskipITs
 ----
 
 == Running
