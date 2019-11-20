@@ -18,7 +18,6 @@
     <application.port>8180</application.port>
     <frontend.project.name>employee-rostering-frontend</frontend.project.name>
     <version.cypress.docker>3.6.0</version.cypress.docker>
-    <skipITs>true</skipITs>
     <!-- Override to run with Podman -->
     <container.runtime>docker</container.runtime>
   </properties>
