@@ -89,6 +89,7 @@
               <goal>repackage</goal>
             </goals>
             <configuration>
+              <classifier>exec</classifier>
               <!--
                 Exclude this module's dependencies.
                 The Spring Boot plugin would place them to BOOT-INF/lib but that's not what we want.
