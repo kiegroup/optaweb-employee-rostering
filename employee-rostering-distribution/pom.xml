@@ -159,7 +159,7 @@
                     <argument>-Dspring.profiles.active=dev</argument>
                     <argument>-Dserver.port=${application.port}</argument>
                     <argument>-jar</argument>
-                    <argument>${project.artifactId}-${project.version}.jar</argument>
+                    <argument>${project.artifactId}-${project.version}-exec.jar</argument>
                   </arguments>
                 </configuration>
               </execution>
