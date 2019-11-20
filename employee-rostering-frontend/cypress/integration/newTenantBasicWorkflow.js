@@ -61,6 +61,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
   });
 
   beforeEach(() => {
+    cy.wait(3000);// Wait for all data from last test/start to finish loading
     cy.get('[data-cy=settings]').click();
     cy.get('[data-cy=reset-application]').click();
     cy.get('[data-cy=confirm]').click();
@@ -92,16 +93,8 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     cy.get('[aria-label="Save"]').click();
     closeAlerts();
 
-    // Create two spots
+    // Create a spot
     gotoPage("spots");
-
-    // First spot doesn't require any skills
-    cy.get("button").contains("Add").click();
-    cy.get('[aria-label="Name"]').type("No Skill Spot");
-    cy.get('[aria-label="Save"]').click();
-    closeAlerts();
-
-    // Second spot requires our skill
     cy.get("button").contains("Add").click();
     cy.get('[aria-label="Name"]').type("Required Skill Spot");
     selectValue("Select required skills...", "New Skill");
@@ -115,16 +108,8 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     cy.get('[aria-label="Save"]').click();
     closeAlerts();
 
-    // Create two employees
+    // Create a employee
     gotoPage("employees");
-
-    // First employee doesn't have any skills
-    cy.get("button").contains("Add").click();
-    cy.get('[aria-label="Name"]').type("No Skills Employee");
-    selectValue("Select a contract...", "New Contract");
-    cy.get('[aria-label="Save"]').click();
-
-    // Second employee has our skill
     cy.get("button").contains("Add").click();
     cy.get('[aria-label="Name"]').type("Employee with Skills");
     selectValue("Select a contract...", "New Contract");
@@ -132,15 +117,8 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     cy.get('[aria-label="Save"]').click();
     closeAlerts();
 
-    // Create some shifts
+    // Create a shifts
     gotoPage("shift");
-
-    // First shift is on Monday, and is for the spot that doesn't require any skills
-    selectValue("Select a Spot...", "No Skill Spot");
-    cy.get(`[placeholder="Select a Spot..."]`).get('[value="No Skill Spot"]',  { timeout: 5000 });
-    dragCreateShift(1, "09:00", "17:00");
-
-    // Second shift is in the early morning on Tuesday, and is for the spot that requires our skill
     selectValue("Select a Spot...", "Required Skill Spot");
     cy.get(`[placeholder="Select a Spot..."]`).get('[value="Required Skill Spot"]',  { timeout: 5000 });
     dragCreateShift(2, "00:00", "06:00");
@@ -154,12 +132,7 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     cy.contains("Terminate Early").click();
     closeAlerts();
 
-    // The second shift should have the employee with skills
+    // Verify the shift is assigned to our created employee
     cy.contains("Employee with Skills").should('exist');
-
-    // The first shift should have the employee without skills
-    selectValue("Select a Spot...", "No Skill Spot");
-    cy.get(`[placeholder="Select a Spot..."]`).get('[value="No Skill Spot"]',  { timeout: 5000 });
-    cy.contains("No Skills Employee").should('exist');
   });
 });
