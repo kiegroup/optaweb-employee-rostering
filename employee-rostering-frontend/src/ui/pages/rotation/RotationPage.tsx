@@ -368,6 +368,17 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
               });
             }
           }
+          updateEvent={
+            (event, start, end) => {
+              this.updateShiftTemplate({
+                ...event.shiftTemplate,
+                durationBetweenRotationStartAndTemplateStart: moment.duration(moment(start)
+                  .diff(baseDate)),
+                shiftTemplateDuration: moment.duration(moment(end).diff(baseDate))
+                  .subtract(moment(start).diff(baseDate)),
+              });
+            }
+          }
           eventStyle={() => ({})}
           dayStyle={() => ({})}
           wrapperStyle={() => ({})}

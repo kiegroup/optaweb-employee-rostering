@@ -421,6 +421,20 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               });
             }
           }
+          updateEvent={
+            (event, start, end) => {
+              if (isAvailability(event.reference)) {
+                this.props.updateEmployeeAvailability({
+                  ...event.reference,
+                  startDateTime: start,
+                  endDateTime: end
+                });
+              }
+              else {
+                this.props.showInfoMessage("createShiftsInShiftRoster");
+              }
+            }  
+          }
           eventStyle={this.getEventStyle}
           dayStyle={this.getDayStyle(
             (this.props.employeeIdToAvailabilityListMap

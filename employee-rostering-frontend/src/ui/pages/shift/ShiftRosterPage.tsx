@@ -316,6 +316,15 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               });
             }
           }
+          updateEvent={
+            (shift, start, end) => {
+              this.updateShift({
+                ...shift,
+                startDateTime: start,
+                endDateTime: end
+              });
+            }  
+          }
           eventStyle={this.getShiftStyle}
           dayStyle={this.getDayStyle}
           wrapperStyle={() => ({})}

@@ -31,7 +31,7 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   popoverBody: React.ReactNode;
   style?: React.CSSProperties;
 }>): JSX.Element {
-  let className = (props.className) ? props.className : 'rbc-event';
+  let className = (props.className) ? props.className : '';
   const style: React.CSSProperties = {
     backgroundColor: 'transparent',
     border: 'none',
@@ -39,9 +39,6 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   };
 
   if (props.style !== undefined && props.style.top !== undefined && props.style.height !== undefined) {
-    style.gridRowStart = parseInt(props.style.top as string) + 1;
-    style.gridRowEnd = parseInt(props.style.height as string) + style.gridRowStart;
-
     if (props.continuesEarlier) {
       className += " continues-from-previous-day";
     }
@@ -51,17 +48,17 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   }
 
   return (
-    <Popover
-      position="right"
-      headerContent={props.popoverHeader}
-      bodyContent={props.popoverBody}
+    <div
+      className={className}
+      style={style}
     >
-      <div
-        className={className}
-        style={style}
+      <Popover
+        position="right"
+        headerContent={props.popoverHeader}
+        bodyContent={props.popoverBody}
       >
-        {props.children}
-      </div>
-    </Popover>
+        {props.children as React.ReactElement}
+      </Popover>
+    </div>
   );
 }

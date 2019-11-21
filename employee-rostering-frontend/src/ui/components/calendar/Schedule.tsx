@@ -17,9 +17,12 @@ import * as React from 'react';
 import { Calendar, momentLocalizer, EventProps } from 'react-big-calendar'
 import moment from 'moment';
 import EventWrapper from './EventWrapper';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
 import './ReactBigCalendarOverrides.css';
+
+const DragAndDropCalendar = withDragAndDrop(Calendar);
 
 export interface StyleContainer {
   style?: React.CSSProperties;
@@ -38,6 +41,7 @@ export interface Props<T extends object> {
   endAccessor: (event: T) => Date;
   titleAccessor: (event: T) => string;
   addEvent: (start: Date, end: Date) => void;
+  updateEvent: (event: T, start: Date, end: Date) => void;
   eventStyle: StyleSupplier<T>;
   wrapperStyle: StyleSupplier<T>;
   dayStyle: StyleSupplier<Date>;
@@ -54,13 +58,18 @@ export function isDay(start: Date, end: Date) {
 const localizer = momentLocalizer(moment);
 export default function Schedule<T extends object>(props: Props<T>): React.ReactElement<Props<T>> {
   const length = Math.ceil(moment(props.endDate).diff(moment(props.startDate), "days")) + 1;
+  // TODO: Remove @ts-ignore when @types/react-big-calendar is updated
+  /* eslint-disable react/jsx-tag-spacing */
   return (
     <div style={{
       height: "calc(100% - 20px)"
     }}
     >
-      <Calendar
-        className={(props.showAllDayCell)? undefined : "rbc-no-allday-cell"}
+      <
+      // @ts-ignore
+        DragAndDropCalendar
+        className={(props.showAllDayCell)? undefined : "rbc-no-allday-cell"}  
+        dayLayoutAlgorithm="no-overlap"
         date={props.startDate}
         length={length}
         localizer={localizer}
@@ -88,12 +97,50 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
           }
         }
         }
+        onEventDrop={(dropLocation: { event: T; start: string|Date; end: string|Date }) => {
+          if (isDay(moment(dropLocation.start).toDate(), moment(dropLocation.end).toDate())) {
+            props.updateEvent(dropLocation.event, moment(dropLocation.start).toDate(), 
+              moment(dropLocation.end).add(1, "day").toDate());
+          }
+          else if(moment(dropLocation.start).dayOfYear() !== moment(dropLocation.end).dayOfYear()) {
+            props.updateEvent(dropLocation.event, moment(dropLocation.start).toDate(), moment(dropLocation.start)
+              .add(
+                moment(props.endAccessor(dropLocation.event))
+                  .diff(moment(props.startAccessor(dropLocation.event)),
+                    'minutes'),
+                'minutes')
+              .toDate());
+          }
+          else {
+            props.updateEvent(dropLocation.event, moment(dropLocation.start).toDate(), moment(dropLocation.end)
+              .toDate());
+          }
+        }}
+        onEventResize={(resizeInfo: { event: T; start: string|Date; end: string|Date }) => {
+          const origEventStart = moment(props.startAccessor(resizeInfo.event));
+          const origEventEnd = moment(props.startAccessor(resizeInfo.event));
+          if (isDay(moment(resizeInfo.start).toDate(), moment(resizeInfo.end).toDate())) {
+            props.updateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end)
+              .add(1, "day").toDate());
+          }
+          else if(origEventStart.dayOfYear() !== moment(resizeInfo.start).dayOfYear()) {
+            props.updateEvent(resizeInfo.event, origEventStart.toDate(), moment(resizeInfo.end).toDate());
+          }
+          else if (origEventEnd.dayOfYear() !== moment(resizeInfo.end).dayOfYear()) {
+            props.updateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), origEventEnd.toDate());
+
+          }
+          else {
+            props.updateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end).toDate());
+          }
+        }}
         onView={() => {}}
         onNavigate={() => {}}
         timeslots={4}
         eventPropGetter={props.eventStyle}
         dayPropGetter={props.dayStyle}
         selectable
+        resizable
         showMultiDayTimes
         components={{
           eventWrapper: (wrapperProps) => {
@@ -114,4 +161,5 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
       />
     </div>
   )
+  /* eslint-enable react/jsx-tag-spacing */
 }

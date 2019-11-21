@@ -14,27 +14,6 @@
  * limitations under the License.
  */
 
-/* TODO: remove me when react-big-calendar displays concurrent events properly */
-/* See: https://github.com/intljusticemission/react-big-calendar/issues/1397 */
-
-/* Start of Hack */
-.rbc-events-container {
-    display: grid !important;
-    grid-template-rows: repeat(100, 1fr) !important;
-    margin-top: -6px;
-    margin-bottom: -6px;
-    overflow: hidden;
-}
-  
-.rbc-day-slot .rbc-event {
-    position: static !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-}
-/* End of Hack */
-
 /* Hack to hide vertical scrollbar on Firefox */
 .rbc-time-content {
     padding-bottom: 6px;
@@ -160,6 +139,10 @@
 /* Make times centered on line */
 .rbc-time-slot {
     margin-top: -0.75em;
+}
+
+.rbc-time-content {
+    overflow: hidden;
 }
 
 .rbc-label {
