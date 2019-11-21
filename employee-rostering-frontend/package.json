@@ -49,7 +49,7 @@
     "cypress:run": "cypress run"
   },
   "jest-junit": {
-    "outputDirectory": "./target/surefire-reports",
+    "outputDirectory": "./target/test-reports",
     "outputName": "TEST-frontend.xml",
     "suiteName": "org.optaweb.employeerostering.frontend.tests",
     "suiteNameTemplate": "{filepath}",
