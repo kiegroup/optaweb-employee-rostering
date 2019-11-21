@@ -57,7 +57,7 @@ export default function EventWrapper(props: React.PropsWithChildren<{
         headerContent={props.popoverHeader}
         bodyContent={props.popoverBody}
       >
-        {props.children as React.ReactElement}
+        <div>{props.children as React.ReactElement}</div>
       </Popover>
     </div>
   );
