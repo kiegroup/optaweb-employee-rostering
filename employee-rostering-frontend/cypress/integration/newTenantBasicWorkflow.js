@@ -51,7 +51,7 @@ function dragCreateShift(day, from, to) {
 }
 
 function closeAlerts() {
-  cy.get(".pf-c-alert__action > button").click({ multiple: true, force: true });
+  cy.get(".pf-c-alert__action > button", { timeout: 120000 }).click({ multiple: true, force: true });
 }
 
 describe('A new tenant can be created, who can have their own employees, spots, skills and shifts', () => {
