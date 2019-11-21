@@ -177,6 +177,7 @@ exports[`Rotation Page should render correctly when creating a new shift templat
     startAccessor={[Function]}
     startDate={2017-12-31T00:00:00.000Z}
     titleAccessor={[Function]}
+    updateEvent={[Function]}
     wrapperStyle={[Function]}
   />
 </Fragment>
@@ -359,6 +360,7 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
     startAccessor={[Function]}
     startDate={2017-12-31T00:00:00.000Z}
     titleAccessor={[Function]}
+    updateEvent={[Function]}
     wrapperStyle={[Function]}
   />
 </Fragment>

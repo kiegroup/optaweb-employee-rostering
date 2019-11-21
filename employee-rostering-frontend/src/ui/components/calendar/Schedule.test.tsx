@@ -17,9 +17,13 @@ import * as React from 'react';
 import Schedule, { isDay, Props } from './Schedule';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { CalendarProps, EventProps, EventWrapperProps } from 'react-big-calendar';
+import { withDragAndDropProps } from 'react-big-calendar/lib/addons/dragAndDrop';
 
-function calendarProps(wrapper: ShallowWrapper): CalendarProps<{ start: Date; end: Date; title: string }> {
-  return (wrapper.find("ForwardRef").props() as CalendarProps<{ start: Date; end: Date; title: string }>);
+function calendarProps(wrapper: ShallowWrapper): withDragAndDropProps<{ start: Date; end: Date; title: string }> & 
+CalendarProps<{ start: Date; end: Date; title: string }> {
+  return (wrapper.find("DragAndDropCalendar").props() as
+    withDragAndDropProps<{ start: Date; end: Date; title: string }> &
+    CalendarProps<{ start: Date; end: Date; title: string }>);
 }
 
 function reportError(prop: string): never {
@@ -132,6 +136,32 @@ describe('Schedule', () => {
     expect(props.addEvent).toBeCalled();
     expect(props.addEvent).toBeCalledWith(props.events[0].start, props.events[0].end);
   });
+  
+  it('should move event on drag', () => {
+    const schedule = shallow(<Schedule {...props} />);
+    const onEventDrop = calendarProps(schedule).onEventDrop || reportError("onEventDrop");
+    onEventDrop({
+      event: props.events[0],
+      start: props.events[0].start,
+      end: props.events[0].end,
+      allDay: false
+    });
+    expect(props.updateEvent).toBeCalled();
+    expect(props.updateEvent).toBeCalledWith(props.events[0], props.events[0].start, props.events[0].end);
+  });
+  
+  it('should resize event on resize', () => {
+    const schedule = shallow(<Schedule {...props} />);
+    const onEventResize = calendarProps(schedule).onEventResize || reportError("onEventResize");
+    onEventResize({
+      event: props.events[0],
+      start: props.events[0].start,
+      end: props.events[0].end,
+      allDay: false
+    });
+    expect(props.updateEvent).toBeCalled();
+    expect(props.updateEvent).toBeCalledWith(props.events[0], props.events[0].start, props.events[0].end);
+  });
 
   it('should create event of proper length if it span a day', () => {
     const schedule = shallow(<Schedule {...props} />);
@@ -237,6 +267,7 @@ const props: Props<{ start: Date; end: Date; title: string }> = {
   endAccessor: jest.fn(e => e.end),
   titleAccessor: jest.fn(e => e.title),
   addEvent: jest.fn(),
+  updateEvent: jest.fn(),
   eventStyle: jest.fn(() => ({ style: { color: "red" }, className: "class" })),
   wrapperStyle: jest.fn(() => ({ style: { color: "red" }, className: "class", props: { prop: true } })),
   dayStyle: jest.fn(() => ({ style: { color: "red" }, className: "class" })),

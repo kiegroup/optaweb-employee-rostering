@@ -198,6 +198,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
     startAccessor={[Function]}
     startDate={2018-07-01T00:00:00.000Z}
     titleAccessor={[Function]}
+    updateEvent={[Function]}
     wrapperStyle={[Function]}
   />
 </Fragment>
@@ -401,6 +402,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
     startAccessor={[Function]}
     startDate={2018-07-01T00:00:00.000Z}
     titleAccessor={[Function]}
+    updateEvent={[Function]}
     wrapperStyle={[Function]}
   />
 </Fragment>
@@ -632,6 +634,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
     startAccessor={[Function]}
     startDate={2018-07-01T00:00:00.000Z}
     titleAccessor={[Function]}
+    updateEvent={[Function]}
     wrapperStyle={[Function]}
   />
 </Fragment>
