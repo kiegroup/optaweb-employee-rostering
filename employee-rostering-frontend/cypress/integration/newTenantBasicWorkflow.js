@@ -119,8 +119,9 @@ describe('A new tenant can be created, who can have their own employees, spots, 
 
     // Create a shifts
     gotoPage("shift");
-    selectValue("Select a Spot...", "Required Skill Spot");
-    cy.get(`[placeholder="Select a Spot..."]`).get('[value="Required Skill Spot"]',  { timeout: 5000 });
+    
+    // Sometimes a shift is not created, so wait to make the test stable
+    cy.wait(1500);
     dragCreateShift(2, "00:00", "06:00");
 
     // Schedule for 5 seconds
