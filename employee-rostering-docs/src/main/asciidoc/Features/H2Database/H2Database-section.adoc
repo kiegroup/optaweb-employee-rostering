@@ -11,6 +11,6 @@ mvn spring-boot:run
 ----
 
 Go to http://localhost:8080/h2-console to view the H2 database console.
-Enter `org.h2.Driver` in the `Driver Class` field and `jdbc:h2:mem:testdb` in the `JDBC URL` field, and keep the other default values.
+Enter `org.h2.Driver` in the `Driver Class` field and `jdbc:h2:mem:employeerostering` in the `JDBC URL` field, and keep the other default values.
 Connect, and click on the entities on the left to run SQL statements.
 This console allows you to view and modify the application database.
