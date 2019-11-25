@@ -13,7 +13,7 @@
    height="600"
    id="svg2"
    version="1.1"
-   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   inkscape:version="0.92.4 (unknown)"
    sodipodi:docname="optaWebEmployeeRosteringClassDiagram.svg"
    inkscape:export-filename="optaWebEmployeeRosteringClassDiagram.png"
    inkscape:export-xdpi="96"
@@ -246,18 +246,18 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="1.2783333"
-     inkscape:cx="401.56454"
-     inkscape:cy="300"
+     inkscape:cx="408.36897"
+     inkscape:cy="234.28944"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="layer1"
      showgrid="true"
      width="800px"
      borderlayer="true"
      gridtolerance="10"
-     inkscape:window-width="1680"
-     inkscape:window-height="991"
-     inkscape:window-x="1680"
-     inkscape:window-y="27"
+     inkscape:window-width="1920"
+     inkscape:window-height="1043"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:snap-grids="true"
      inkscape:snap-bbox="false"
@@ -320,7 +320,7 @@
            y="220.0002"
            style="font-size:36px;text-align:center;text-anchor:middle" /></flowRegion><flowPara
          id="flowPara4621"
-         style="font-size:36px;line-height:1.25">OptaWeb Employee Rostering class diagram</flowPara></flowRoot>    <g
+         style="font-size:36px;line-height:1.25">OptaWeb Employee Rostering Class Diagram</flowPara></flowRoot>    <g
        id="g3709"
        transform="translate(0,19.999997)" />
     <flowRoot
@@ -472,7 +472,7 @@
          style="font-size:16px;line-height:1.25"
          id="flowPara258" /><flowPara
          style="font-size:16px;line-height:1.25"
-         id="flowPara260">skillSet</flowPara></flowRoot>    <flowRoot
+         id="flowPara260">skillProficiencySet</flowPara></flowRoot>    <flowRoot
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0.01%;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none"
        id="flowRoot272"
        xml:space="preserve"
