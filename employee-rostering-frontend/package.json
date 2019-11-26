@@ -14,7 +14,6 @@
     "i18next": "^17.0.6",
     "i18next-browser-languagedetector": "^3.0.1",
     "i18next-xhr-backend": "^3.0.0",
-    "lock-treatment-tool": "^0.3.2",
     "moment": "^2.24.0",
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
@@ -46,7 +45,8 @@
     "lint": "eslint --ext .js,.ts,.tsx src/ cypress/",
     "lint:fix": "npm run lint -- --fix",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "locktt": "locktt"
   },
   "jest-junit": {
     "outputDirectory": "./target/surefire-reports",
@@ -92,6 +92,7 @@
     "history": "^4.9.0",
     "husky": "^2.3.0",
     "jest-junit": "^8.0.0",
+    "lock-treatment-tool": "^0.4.1",
     "mockdate": "^2.0.3",
     "moment-timezone": "^0.5.26",
     "react-test-renderer": "^16.8.6",
