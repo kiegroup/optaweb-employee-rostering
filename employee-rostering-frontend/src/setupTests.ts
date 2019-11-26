@@ -18,6 +18,10 @@ import Adapter from 'enzyme-adapter-react-16';
 import MockDate from 'mockdate';
 import moment from 'moment';
 
+// @ts-ignore
+import setTZ from 'set-tz';
+
+setTZ('UTC');
 configure({ adapter: new Adapter() });
 
 const mockDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
