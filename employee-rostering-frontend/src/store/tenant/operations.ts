@@ -56,7 +56,6 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
     dispatch(employeeOperations.refreshEmployeeList()),
     dispatch(shiftTemplateOperations.refreshShiftTemplateList()),
   ]).then(() => {
-    dispatch(rosterOperations.getInitialShiftRoster());
     dispatch(rosterOperations.getInitialAvailabilityRoster());
   });
 }

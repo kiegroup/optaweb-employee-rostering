@@ -42,6 +42,7 @@ import "ui/components/TypeaheadSelectInput.css";
 import Actions from "ui/components/Actions";
 import HardMediumSoftScore from "domain/HardMediumSoftScore";
 import { ScoreDisplay } from "ui/components/ScoreDisplay";
+import { getPropsFromUrl, setPropsInUrl, UrlProps } from "util/BookmarkableUtils";
 
 interface StateProps {
   isSolving: boolean;
@@ -56,6 +57,7 @@ interface StateProps {
   score: HardMediumSoftScore | null;
 }
 
+type ShiftRosterUrlProps = UrlProps<"spot"|"week">;
 // Snapshot of the last value to show when loading
 let lastSpotIdToShiftListMap: Map<number, Shift[]> = new Map<number, Shift[]>();
 let lastShownSpotList: Spot[] = [];
@@ -107,6 +109,7 @@ const mapDispatchToProps: DispatchProps = {
 
 export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
 interface State {
+  firstLoad: boolean;
   isCreatingOrEditingShift: boolean;
   selectedShift?: Shift;
 }
@@ -114,33 +117,29 @@ interface State {
 export class ShiftRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.onDateChange = this.onDateChange.bind(this);
-    this.onUpdateSpotList = this.onUpdateSpotList.bind(this);
+    this.onUpdateShiftRoster = this.onUpdateShiftRoster.bind(this);
     this.addShift = this.addShift.bind(this);
     this.deleteShift = this.deleteShift.bind(this);
     this.updateShift = this.updateShift.bind(this);
     this.getShiftStyle = this.getShiftStyle.bind(this);
     this.getDayStyle = this.getDayStyle.bind(this);
     this.state = {
+      firstLoad: true,
       isCreatingOrEditingShift: false,
     };
   }
 
-  onDateChange(startDate: Date, endDate: Date) {
-    this.props.getShiftRosterFor({
-      fromDate: startDate,
-      toDate: endDate,
-      spotList: this.props.shownSpotList,
-    });
-  }
-
-  onUpdateSpotList(spot: Spot|undefined) {
+  onUpdateShiftRoster(urlProps: ShiftRosterUrlProps) {
+    const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList[0];
+    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
+    const endDate = moment(startDate).endOf('week').toDate();
     if (spot) {
       this.props.getShiftRosterFor({
-        fromDate: this.props.startDate as Date,
-        toDate: this.props.endDate as Date,
+        fromDate: startDate,
+        toDate: endDate,
         spotList: [spot],
       });
+      setPropsInUrl(this.props, { ...urlProps, spot: spot.name});
     }
   }
 
@@ -200,9 +199,21 @@ export class ShiftRosterPage extends React.Component<Props, State> {
 
   render() {
     const { t } = this.props;
-    if (this.props.shownSpotList.length <= 0) {
-      if (!this.props.isLoading && this.props.allSpotList.length > 0) {
-        this.props.getInitialShiftRoster();
+    const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
+        spot: null,
+        week: null
+    });
+    
+    if (urlProps.spot !== null && !this.props.allSpotList.find(s => s.name === urlProps.spot) && !this.state.firstLoad) {
+      setPropsInUrl(this.props, { "spot": null });
+      this.setState({ firstLoad: true });
+      return <div></div>;
+    }
+    
+    if (this.props.shownSpotList.length <= 0 || this.state.firstLoad) {
+      if ((this.state.firstLoad || !this.props.isLoading) && this.props.allSpotList.length > 0) {
+        this.setState({ firstLoad: false });
+        this.onUpdateShiftRoster(urlProps);
       }
       return (
         <EmptyState variant={EmptyStateVariant.full}>
@@ -224,10 +235,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         </EmptyState>
       );
     }
-
+    
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
-    const shownSpot = this.props.shownSpotList[0];
+    const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) as Spot;
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 }; 
     const actions = [
       { name: t("publish"), action: this.props.publishRoster },
@@ -262,14 +273,24 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             emptyText={t("selectSpot")}
             optionToStringMap={spot => spot.name}
             options={this.props.allSpotList}
-            value={this.props.shownSpotList[0]}
-            onChange={this.onUpdateSpotList}
+            value={shownSpot}
+            onChange={(s) => {
+                this.onUpdateShiftRoster({
+                    ...urlProps,
+                    spot: s? s.name : null
+                })
+            }}
             noClearButton
           />
           <WeekPicker
             aria-label="Select Week to View"
             value={this.props.startDate as Date}
-            onChange={this.onDateChange}
+            onChange={(weekStart) => {
+                this.onUpdateShiftRoster({
+                    ...urlProps,
+                    week: moment(weekStart).format("YYYY-MM-DD") 
+                });
+            }}
           />
           <ScoreDisplay score={score} />
           <Actions
@@ -296,10 +317,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           onClose={() => this.setState({ isCreatingOrEditingShift: false })}
         />
         <Schedule<Shift>
-          key={shownSpot.id}
+          key={this.props.shownSpotList[0].id}
           startDate={startDate}
           endDate={endDate}
-          events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) as Shift[]}
+          events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) || []}
           titleAccessor={shift => (shift.employee ? shift.employee.name : t("unassigned"))}
           startAccessor={shift => moment(shift.startDateTime).toDate()}
           endAccessor={shift => moment(shift.endDateTime).toDate()}
