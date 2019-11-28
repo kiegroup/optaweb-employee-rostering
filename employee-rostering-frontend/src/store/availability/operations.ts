@@ -49,7 +49,7 @@ export const addEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, 
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
     return client.post<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/add`,
-      availabilityAdapter(employeeAvailability)).then(newEmployeeAvailability => {
+      availabilityAdapter(employeeAvailability)).then(() => {
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
@@ -79,7 +79,7 @@ export const updateEmployeeAvailability: ThunkCommandFactory<EmployeeAvailabilit
   (dispatch, state, client) => {
     const tenantId = employeeAvailability.tenantId;
     return client.put<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/update`,
-      availabilityAdapter(employeeAvailability)).then(updatedAvailability => {
+      availabilityAdapter(employeeAvailability)).then(() => {
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });

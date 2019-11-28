@@ -248,6 +248,8 @@ describe('Roster operations', () => {
           onPost(restURL, restArg, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: "0hard/0medium/0soft" });
           break;
         }
+
+        default: throw new Error();
       }
 
       await operation();
@@ -275,6 +277,8 @@ describe('Roster operations', () => {
           expect(client.post).toHaveBeenNthCalledWith(2, restURL, restArg);
           break;
         }
+
+        default: throw new Error();
       }
     };
 
@@ -344,6 +348,8 @@ describe('Roster operations', () => {
           });
           break;
         }
+
+        default: throw new Error();
       }
 
       await operation();
@@ -374,6 +380,8 @@ describe('Roster operations', () => {
           expect(client.post).toHaveBeenNthCalledWith(2, restURL, restArg);
           break;
         }
+
+        default: throw new Error();
       }
     };
 

@@ -48,7 +48,7 @@ describe('MultiTypeaheadSelectInput component', () => {
     const defaultValue = [{name: "Option 2"}];
     const select = mount(<MultiTypeaheadSelectInput {...selectProps} value={defaultValue} />);
     const event: any = {};
-    (select.instance() as Select).onSelect(event, "Option 2", false);
+    (select.instance() as Select).onSelect(event, "Option 2");
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith([]);
   });
@@ -66,7 +66,7 @@ describe('MultiTypeaheadSelectInput component', () => {
     const defaultValue = [{name: "Option 2"}];
     const select = mount(<MultiTypeaheadSelectInput {...selectProps} value={defaultValue} />);
     const event: any = {};
-    (select.instance() as Select).onSelect(event, "Option 1", false);
+    (select.instance() as Select).onSelect(event, "Option 1");
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith([...defaultValue, {name: "Option 1"}]);
   });

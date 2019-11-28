@@ -64,7 +64,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     this.state = {
       editedRows: [],
       newRowData: null,
-      currentFilter: t => true,
+      currentFilter: () => true,
       page: 1,
       perPage: 10,
       sortBy: {},

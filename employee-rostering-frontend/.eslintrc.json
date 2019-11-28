@@ -24,11 +24,11 @@
     ]
   },
   "extends": [
-    "airbnb",
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
-    "react-app"
+    "react-app",
+    "airbnb"
   ],
   "rules": {
     // New rules added by updating package-lock.json
@@ -81,9 +81,7 @@
     "yoda": "off",
     "no-param-reassign": "off",
     // End of new rules added by updating package-lock.json
-    "max-len": ["error", {
-      "code": 120
-    }],
+    "@typescript-eslint/camelcase": "off", // duplicates "camelcase" from airbnb
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-member-accessibility": ["error", {"accessibility": "no-public"}],
     "@typescript-eslint/indent": ["error", 2],
@@ -119,6 +117,7 @@
         "devDependencies": [
           "**/*.test.ts",
           "**/*.test.tsx",
+          "cypress/**",
           "src/store/mockStore.ts",
           "src/setupTests.ts"
         ]
@@ -127,7 +126,9 @@
     "import/no-unresolved": "off",
     "import/order": "off",
     "import/prefer-default-export": "off",
+    "max-len": ["error", {"code": 120}],
     "no-console": "warn",
+    "no-use-before-define": "off",
     "react/destructuring-assignment": "off",
     "react/jsx-filename-extension": ["error", {"extensions": [".tsx"]}],
     "react/prop-types": "off",

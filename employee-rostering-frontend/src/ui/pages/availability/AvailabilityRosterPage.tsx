@@ -205,6 +205,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           style.backgroundColor = 'red';
           break;
         }
+        default:
+          throw new Error(`Unexpected availability state: ${soa.reference.state}`);
       }
     }
 
@@ -237,6 +239,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             className = "unavailable";
             break;
           }
+          default:
+            throw new Error(`Unexpected availability state: ${dayAvailability.state}`);
         }
       }
       if (this.props.rosterState !== null && moment(date).isBefore(this.props.rosterState.firstDraftDate)) {

@@ -42,12 +42,12 @@ export function kindaShiftViewAdapter(kindaShiftView: KindaShiftView): ShiftView
   
   // Since property P is related to indictments iff it is an array,
   // We can convert all indictments by mapping all keys that are arrays
-  for(const key in kindaShiftViewClone) {
+  Object.keys(kindaShiftViewClone).forEach(key => {
     if (Array.isArray(kindaShiftViewClone[key])) {
       kindaShiftViewClone[key] = kindaShiftViewClone[key].map((s: any) => 
         ({ ...s, score: getHardMediumSoftScoreFromString(s.score) }));
     }
-  }
+  });
 
   return {
     ...kindaShiftViewClone,

@@ -91,8 +91,7 @@ TypeaheadSelectState
   }
 
   onSelect(event: any,
-    selection: string,
-    isPlaceholder: boolean) {
+    selection: string) {
     const selectedOption = this.props.options.find(
       option => this.props.optionToStringMap(option) === selection
     ) as T;

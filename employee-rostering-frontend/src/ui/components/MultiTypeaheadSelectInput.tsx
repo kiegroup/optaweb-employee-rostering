@@ -79,7 +79,7 @@ MultiTypeaheadSelectState>  {
     });
   }
 
-  onSelect(event: any, selection: string, isPlaceholder: boolean) {
+  onSelect(event: any, selection: string) {
     const selected = this.props.value;
     const selectedOption = this.props.options.find((option) => this.props.optionToStringMap(option) === selection) as T;
     if (selected.map(this.props.optionToStringMap).includes(selection)) {

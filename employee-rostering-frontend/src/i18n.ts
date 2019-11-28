@@ -29,8 +29,9 @@ function languageToMomentLocale(lang: string): string {
   switch (lang) {
     case 'cmn':
       return 'zh-cn';
+    default:
+      return lang;
   }
-  return lang;
 }
 
 // From https://github.com/i18next/react-i18next/blob/master/example/react/src/i18n.js

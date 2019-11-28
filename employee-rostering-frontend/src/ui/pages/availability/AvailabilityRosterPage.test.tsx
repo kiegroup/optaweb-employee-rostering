@@ -332,7 +332,7 @@ describe('Availability Roster Page', () => {
     });
   });
 
-  it('should color desired availablities green', () => {
+  it('should color desired availabilities green', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
     const draftAvailability: ShiftOrAvailability = {
@@ -354,7 +354,7 @@ describe('Availability Roster Page', () => {
     });
   });
 
-  it('should color undesired availablities yellow', () => {
+  it('should color undesired availabilities yellow', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
     const draftAvailability: ShiftOrAvailability = {
@@ -376,7 +376,7 @@ describe('Availability Roster Page', () => {
     });
   });
 
-  it('should color unavailable availablities red', () => {
+  it('should color unavailable availabilities red', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
     const draftAvailability: ShiftOrAvailability = {
@@ -396,6 +396,19 @@ describe('Availability Roster Page', () => {
         border: "1px dashed"
       }
     });
+  });
+
+  it('getEventStyle() should throw error on wrong state', () => {
+    const draftAvailability: ShiftOrAvailability = {
+      type: 'Availability',
+      start: availability.startDateTime,
+      end: availability.endDateTime,
+      reference: {
+        ...availability,
+        state: 'wrong state' as 'DESIRED',
+      },
+    };
+    expect(() => new AvailabilityRosterPage(baseProps).getEventStyle(draftAvailability)).toThrow(Error);
   });
 
   it('day should be white if it is draft and no availabilities falls on the day', () => {
@@ -465,6 +478,13 @@ describe('Availability Roster Page', () => {
       style: {
       }
     });
+  });
+
+  it('getDayStyle() should throw error on wrong state', () => {
+    expect(() => new AvailabilityRosterPage(baseProps).getDayStyle([{
+      ...availability,
+      state: "wrong state" as "DESIRED"
+    }])(availability.startDateTime)).toThrow(Error);
   });
 
   // isDay
