@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>employee-rostering-distribution</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
 
   <name>Employee Rostering as a Service Distribution</name>
 
