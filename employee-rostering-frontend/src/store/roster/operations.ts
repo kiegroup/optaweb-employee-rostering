@@ -123,7 +123,7 @@ ThunkCommandFactory<void, TerminateSolvingRosterEarlyAction> = () => (dispatch, 
 };
 
 export const getInitialShiftRoster:
-ThunkCommandFactory<void, ShiftRosterViewAction> = () => (dispatch, state, client) => {
+ThunkCommandFactory<void, ShiftRosterViewAction> = () => (dispatch, state) => {
   const { rosterState } = state().rosterState;
   if (rosterState !== null) {
     const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
@@ -146,7 +146,7 @@ ThunkCommandFactory<void, ShiftRosterViewAction> = () => (dispatch, state, clien
 }
 
 export const getInitialAvailabilityRoster:
-ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => (dispatch, state, client) => {
+ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => (dispatch, state) => {
   const { rosterState } = state().rosterState;
   if (rosterState !== null) {
     const startDate = moment(rosterState.firstDraftDate).startOf('week').toDate();
@@ -170,7 +170,7 @@ ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => (dispatch, state
 
 export const refreshShiftRoster:
 ThunkCommandFactory<void, SetShiftRosterIsLoadingAction |
-SetShiftRosterViewAction> = () => (dispatch, state, client) => {
+SetShiftRosterViewAction> = () => (dispatch) => {
   if (lastCalledShiftRosterArgs !== null && lastCalledShiftRoster !== null) {
     dispatch(lastCalledShiftRoster(lastCalledShiftRosterArgs));
   }
@@ -178,7 +178,7 @@ SetShiftRosterViewAction> = () => (dispatch, state, client) => {
 
 export const refreshAvailabilityRoster:
 ThunkCommandFactory<void, SetAvailabilityRosterIsLoadingAction |
-SetAvailabilityRosterViewAction> = () => (dispatch, state, client) => {
+SetAvailabilityRosterViewAction> = () => (dispatch) => {
   if (lastCalledAvailabilityRosterArgs !== null && lastCalledAvailabilityRoster !== null) {
     dispatch(lastCalledAvailabilityRoster(lastCalledAvailabilityRosterArgs));
   }

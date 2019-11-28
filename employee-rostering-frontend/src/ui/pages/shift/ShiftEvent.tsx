@@ -148,13 +148,13 @@ export const ShiftEmployeeConflictViolations: React.FC<Shift> = (shift) => {
       ))}
     </>
   );
-} 
+}
 
 export const RotationViolationPenalties: React.FC<Shift> = (shift) => {
   const { t } = useTranslation("ShiftEvent");
   return (
     <>
-      {(shift.rotationViolationPenaltyList || []).map((v, index) => (
+      {(shift.rotationViolationPenaltyList || []).map((v) => (
         <li key={v.shift.id}>
           {t("employeeDoesNotMatchRotationEmployee", {
             employee: (v.shift.employee as Employee).name,
@@ -172,7 +172,7 @@ export const UnassignedShiftPenalties: React.FC<Shift> = (shift) => {
   const { t } = useTranslation("ShiftEvent");
   return (
     <>
-      {(shift.unassignedShiftPenaltyList || []).map((v, index) => (
+      {(shift.unassignedShiftPenaltyList || []).map((v) => (
         <li key={v.shift.id}>
           {t("unassignedShift")}
           <br />

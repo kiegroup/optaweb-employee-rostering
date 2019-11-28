@@ -26,12 +26,12 @@ class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
   displayDataRow = jest.fn((data) => [<span key={0} id="viewer">{data.name}</span>,
     <span key={1}>{data.number}</span>]);
   getInitialStateForNewRow = jest.fn(() => ({}));
-  editDataRow = jest.fn((data) => [<input key={0} id="editor" />,
+  editDataRow = jest.fn(() => [<input key={0} id="editor" />,
     <input key={1} />]);
   isValid = jest.fn();
   isDataComplete = jest.fn() as any;
   getSorters = jest.fn(() => [null, stringSorter((d: MockData) => String(d.number))]);
-  getFilter = jest.fn((() => (filter: string) => (t: MockData) => Boolean(true)));
+  getFilter = jest.fn((() => () => () => Boolean(true)));
 
   updateData = jest.fn();
   addData = jest.fn();

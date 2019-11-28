@@ -45,10 +45,8 @@ const mapDispatchToProps: DispatchProps = {
 export type Props = StateProps & DispatchProps;
 
 export function mapToComponent(component: AlertComponent, componentProps: BasicObject): React.ReactNode {
-  switch (component) {
-    case AlertComponent.SERVER_SIDE_EXCEPTION_DIALOG: {
-      return <ServerSideExceptionDialog {...componentProps as unknown as ServerSideExceptionInfo} />
-    }
+  if (component === AlertComponent.SERVER_SIDE_EXCEPTION_DIALOG) {
+    return <ServerSideExceptionDialog {...componentProps as unknown as ServerSideExceptionInfo} />;
   }
 }
 

@@ -50,7 +50,7 @@ describe('TypeaheadSelectInput component', () => {
     const select = mount(<TypeaheadSelectInput {...selectProps} value={defaultValue} />);
     const event: any = {};
     select.setState({ isExpanded: true });
-    (select.instance() as Select).onSelect(event, "Option 1", false);
+    (select.instance() as Select).onSelect(event, "Option 1");
     jest.runOnlyPendingTimers();
     expect(select.state("isExpanded")).toEqual(false);
     expect(selectProps.onChange).toBeCalled();

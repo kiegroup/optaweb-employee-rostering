@@ -133,7 +133,7 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
                     {currentTenant.name}
                   </DropdownToggle>
                 )}
-                dropdownItems={tenantList.map((tenant, index) => {
+                dropdownItems={tenantList.map((tenant) => {
                   return <DropdownItem data-tenantid={tenant.id} key={tenant.id}>{tenant.name}</DropdownItem>;
                 })}
               />

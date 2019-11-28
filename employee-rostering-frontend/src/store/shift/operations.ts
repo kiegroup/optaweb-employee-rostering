@@ -24,7 +24,7 @@ import { refreshShiftRoster, refreshAvailabilityRoster } from 'store/roster/oper
 export const addShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
-    return client.post<KindaShiftView>(`/tenant/${tenantId}/shift/add`, shiftAdapter(shift)).then(newShift => {
+    return client.post<KindaShiftView>(`/tenant/${tenantId}/shift/add`, shiftAdapter(shift)).then(() => {
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });
@@ -51,7 +51,7 @@ export const removeShift: ThunkCommandFactory<Shift, any> = shift =>
 export const updateShift: ThunkCommandFactory<Shift, any> = shift =>
   (dispatch, state, client) => {
     const tenantId = shift.tenantId;
-    return client.put<KindaShiftView>(`/tenant/${tenantId}/shift/update`, shiftAdapter(shift)).then(updatedShift => {
+    return client.put<KindaShiftView>(`/tenant/${tenantId}/shift/update`, shiftAdapter(shift)).then(() => {
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
     });

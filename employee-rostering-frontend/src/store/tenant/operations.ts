@@ -15,7 +15,7 @@
  */
 
 import Tenant from 'domain/Tenant';
-import { ThunkCommandFactory, AppState } from '../types';
+import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
 import {
   ChangeTenantAction, RefreshTenantListAction, RefreshSupportedTimezoneListAction,
@@ -39,7 +39,7 @@ import { alert } from 'store/alert';
 import RosterState from 'domain/RosterState';
 import { AddAlertAction } from 'store/alert/types';
 
-function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>, state: () => AppState): Promise<any> {
+function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<any> {
   dispatch(rosterActions.setShiftRosterIsLoading(true));
   dispatch(rosterActions.setAvailabilityRosterIsLoading(true));
   dispatch(rosterActions.setRosterStateIsLoading(true));
@@ -61,9 +61,9 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>, state: () =
   });
 }
 
-export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId => (dispatch, state, client) => {
+export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId => (dispatch) => {
   dispatch(actions.changeTenant(tenantId));
-  return refreshData(dispatch, state);
+  return refreshData(dispatch);
 };
 
 export const refreshTenantList:
@@ -78,7 +78,7 @@ ThunkCommandFactory<void, RefreshTenantListAction> = () => (dispatch, state, cli
       // TODO: this case occurs iff there are no tenants; need a special screen for that
       dispatch(actions.refreshTenantList({ tenantList, currentTenantId: 0 }));
     }
-    refreshData(dispatch, state);
+    refreshData(dispatch);
   }));
 
 export const addTenant:

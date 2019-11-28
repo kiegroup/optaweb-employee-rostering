@@ -27,14 +27,11 @@
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
 
-/* eslint-disable global-require */
-/* eslint-disable import/no-extraneous-dependencies */
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
 module.exports = (on, config) => {
   // `on` is used to hook into various events Cypress emits
   // `config` is the resolved Cypress config
   on('task', {
     failed: require('cypress-failed-log/src/failed')(),
-  })
-}
-/* eslint-enable global-require */
-/* eslint-enable import/no-extraneous-dependencies */
+  });
+};

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 // ***********************************************************
 // This example support/index.js is processed and
 // loaded automatically before your test files.
@@ -28,8 +28,4 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
-/* eslint-disable global-require */
-/* eslint-disable import/no-extraneous-dependencies */
 require('cypress-failed-log');
-/* eslint-enable global-require */
-/* eslint-enable import/no-extraneous-dependencies */

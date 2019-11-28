@@ -57,7 +57,7 @@ export function objectWithout<F>(obj: F, ...without: (keyof F)[]): F {
 export function mapDomainObjectToView<T extends DomainObject>(obj: T|DomainObjectView<T>): DomainObjectView<T> {
   let result = {} as ObjectWithKeys;
   const objWithKeys = obj as ObjectWithKeys;
-  for(const key in obj) {
+  Object.keys(objWithKeys).forEach(key => {
     if (objWithKeys[key] !== null && objWithKeys[key].id !== undefined) {
       result[key] = objWithKeys[key].id;
     }
@@ -67,7 +67,7 @@ export function mapDomainObjectToView<T extends DomainObject>(obj: T|DomainObjec
     else {
       result[key] = objWithKeys[key];
     }
-  }
+  });
   return result as DomainObjectView<T>;
 }
 
