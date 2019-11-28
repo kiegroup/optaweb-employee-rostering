@@ -19,8 +19,12 @@ import { RouteComponentProps } from "react-router";
 export type UrlProps<T extends string> = { [K in T]: string|null };
 
 export function setTenantIdInUrl(props: RouteComponentProps, tenantId: number) {
-  props.history.push(`/${tenantId}${props.location.pathname
-    .slice(props.location.pathname.indexOf('/', 1))}`);
+  const endOfTenantId = props.location.pathname.indexOf('/', 1);
+  if (endOfTenantId !== -1) {
+    props.history.push(`/${tenantId}${props.location.pathname
+      .slice(props.location.pathname.indexOf('/', 1))}`);
+  }
+  // Else, the page is not specific to a tenant, so we do nothing
 }
 
 export function getPropsFromUrl<T extends UrlProps<string> >(props: RouteComponentProps, defaultValues: T): T {

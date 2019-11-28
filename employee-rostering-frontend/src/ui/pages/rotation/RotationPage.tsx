@@ -38,6 +38,7 @@ import Schedule from 'ui/components/calendar/Schedule';
 import {
   withRouter, RouteComponentProps,
 } from 'react-router-dom'
+import { UrlProps, getPropsFromUrl, setPropsInUrl } from 'util/BookmarkableUtils';
 
 interface StateProps {
   isLoading: boolean;
@@ -84,10 +85,8 @@ const mapDispatchToProps: DispatchProps = {
 
 export type Props = RouteComponentProps & StateProps & DispatchProps;
 interface State {
-  shownSpot: Spot|null;
   isCreatingOrEditingShiftTemplate: boolean;
   selectedShiftTemplate?: ShiftTemplate;
-  weekNumber: number;
 }
 
 //export const baseDate = moment('2018-01-01T00:00').locale('en').startOf('week').toDate();
@@ -155,6 +154,7 @@ const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate>> = (props) => {
   )
 };
 
+type RotationPageUrlProps = UrlProps<"weekNumber" | "shownSpot">;
 export class RotationPage extends React.Component<Props & WithTranslation, State> {
   constructor(props: Props & WithTranslation) {
     super(props);
@@ -162,25 +162,9 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
     this.updateShiftTemplate = this.updateShiftTemplate.bind(this);
     this.deleteShiftTemplate = this.deleteShiftTemplate.bind(this);
 
-    const shownSpot = (props.spotList.length > 0) ? props.spotList[0] : null;
     this.state = {
       isCreatingOrEditingShiftTemplate: false,
-      weekNumber: 0,
-      shownSpot,
     };
-  }
-
-  componentDidUpdate() {
-    const { shownSpot } = this.state;
-    if (this.props.spotList.length > 0 && ((shownSpot !== null
-      && this.props.spotList.find(spot => spot.id === shownSpot.id) === undefined)
-      || (shownSpot === null))
-    ) {
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({
-        shownSpot: this.props.spotList[0],
-      });
-    }
   }
 
   addShiftTemplate(addedShiftTemplate: ShiftTemplate) {
@@ -197,10 +181,14 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
   }
 
   render() {
+    const urlProps = getPropsFromUrl<RotationPageUrlProps>(this.props, {
+        weekNumber: "0",
+        shownSpot: (this.props.spotList.length > 0) ? this.props.spotList[0].name : null
+    });
     const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
     const { t } = this.props;
     if (this.props.rosterState === null || this.props.isLoading || this.props.spotList.length <= 0
-      || this.state.shownSpot === null || !this.props.tReady) {
+      || urlProps.shownSpot === null || !this.props.tReady) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
@@ -221,13 +209,15 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
         </EmptyState>
       );
     }
-
-    const startDate = moment(baseDate).add(this.state.weekNumber, 'weeks').toDate();
+    
+    const weekNumber = parseInt(urlProps.weekNumber as string);
+    const shownSpot = this.props.spotList.find(s => s.name === urlProps.shownSpot) as Spot;
+    
+    const startDate = moment(baseDate).add(weekNumber, 'weeks').toDate();
     const endDate = moment(startDate).add(1, 'week').toDate();
-    const { shownSpot } = this.state;
     const events: { shiftTemplate: ShiftTemplate; start: Date; end: Date }[] = [];
 
-    (this.props.spotIdToShiftTemplateListMap.get(this.state.shownSpot.id as number) as ShiftTemplate[])
+    (this.props.spotIdToShiftTemplateListMap.get(shownSpot.id as number) as ShiftTemplate[])
       .forEach((st) => {
         const startHours = st.shiftTemplateDuration.hours();
         const startMinutes = st.shiftTemplateDuration.minutes();
@@ -272,19 +262,19 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
               emptyText={t("selectSpot")}
               optionToStringMap={spot => spot.name}
               options={this.props.spotList}
-              value={this.state.shownSpot}
+              value={shownSpot}
               onChange={(newSpot) => {
                 if (newSpot !== undefined) {
-                  this.setState({ shownSpot: newSpot });
+                  setPropsInUrl(this.props, { shownSpot: newSpot.name });
                 }
               }}
               noClearButton
             />
             <Pagination
               itemCount={Math.ceil(this.props.rosterState.rotationLength)}
-              page={this.state.weekNumber + 1}
+              page={weekNumber + 1}
               onSetPage={(e, page) => {
-                this.setState({ weekNumber: page - 1 });
+                setPropsInUrl(this.props, { weekNumber: `${page - 1}` });
               }}
               perPage={7}
               perPageOptions={[]}
