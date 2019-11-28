@@ -18,6 +18,11 @@ import { RouteComponentProps } from "react-router";
 
 export type UrlProps<T extends string> = { [K in T]: string|null };
 
+export function setTenantIdInUrl(props: RouteComponentProps, tenantId: number) {
+  props.history.push(`/${tenantId}${props.location.pathname
+    .slice(props.location.pathname.indexOf('/', 1))}`);
+}
+
 export function getPropsFromUrl<T extends UrlProps<string> >(props: RouteComponentProps, defaultValues: T): T {
   const searchParams = new URLSearchParams(props.location.search);
   const out: { [index: string]: string|null }  = { ...defaultValues };

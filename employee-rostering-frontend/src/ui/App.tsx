@@ -50,37 +50,37 @@ const App: React.FC = () => {
         <Alerts />
         <Switch>
           <Route
-            path="/skills"
+            path="/:tenantId/skills"
             exact
             component={SkillsPage}
           />
           <Route
-            path="/spots"
+            path="/:tenantId/spots"
             exact
             component={SpotsPage}
           />
           <Route
-            path="/contracts"
+            path="/:tenantId/contracts"
             exact
             component={ContractsPage}
           />
           <Route
-            path="/employees"
+            path="/:tenantId/employees"
             exact
             component={EmployeesPage}
           />
           <Route
-            path="/shift"
+            path="/:tenantId/shift"
             exact
             component={ShiftRosterPage} 
           />
           <Route
-            path="/availability"
+            path="/:tenantId/availability"
             exact
             component={AvailabilityRosterPage}
           />
           <Route
-            path="/rotation"
+            path="/:tenantId/rotation"
             exact
             component={RotationPage}
           />
