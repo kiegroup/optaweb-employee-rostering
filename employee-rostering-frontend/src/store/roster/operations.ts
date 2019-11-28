@@ -332,6 +332,7 @@ SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params
     const availabilityRosterView = convertKindaAvailabilityRosterViewToAvailabilityRosterView(
       newAvailabilityRosterView,
     );
+    console.log(availabilityRosterView);
     dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
     lastCalledAvailabilityRoster = getAvailabilityRosterFor;
     lastCalledAvailabilityRosterArgs = params;

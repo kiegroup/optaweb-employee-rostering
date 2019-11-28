@@ -66,16 +66,16 @@ let lastShownSpotList: Spot[] = [];
 const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
   isSolving: state.solverState.isSolving,
-  isLoading: rosterSelectors.isLoading(state),
+  isLoading: rosterSelectors.isShiftRosterLoading(state),
   allSpotList: spotSelectors.getSpotList(state),
   // The use of "x = isLoading? x : getUpdatedData()" is a way to use old value if data is still loading
-  shownSpotList: lastShownSpotList = rosterSelectors.isLoading(state) ? lastShownSpotList
+  shownSpotList: lastShownSpotList = rosterSelectors.isShiftRosterLoading(state) ? lastShownSpotList
     : rosterSelectors.getSpotListInShiftRoster(state),
   spotIdToShiftListMap: lastSpotIdToShiftListMap = rosterSelectors.getSpotListInShiftRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForSpot(state, curr)),
     // reducing an empty array returns the starting value
-    rosterSelectors.isLoading(state) ? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
+    rosterSelectors.isShiftRosterLoading(state) ? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
   startDate: (state.shiftRoster.shiftRosterView) ? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
   endDate: (state.shiftRoster.shiftRosterView) ? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
@@ -224,9 +224,9 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         spot: null,
         week: null
     });
-    const changedTenant = this.props.shownSpotList.length === 0 || urlProps.spot !== null && this.props.tenantId !== this.props.allSpotList[0].tenantId;
+    const changedTenant = this.props.shownSpotList.length === 0 || this.props.tenantId !== this.props.shownSpotList[0].tenantId;
     
-    if (this.props.shownSpotList.length === 0 || changedTenant) {
+    if (this.props.shownSpotList.length === 0 || this.state.firstLoad || changedTenant) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />

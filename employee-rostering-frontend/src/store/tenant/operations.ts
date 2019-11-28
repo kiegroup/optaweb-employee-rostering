@@ -57,9 +57,7 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList()),
     dispatch(shiftTemplateOperations.refreshShiftTemplateList()),
-  ]).then(() => {
-    dispatch(rosterOperations.getInitialAvailabilityRoster());
-  });
+  ]);
 }
 
 export const changeTenant: ThunkCommandFactory<{ tenantId: number, routeProps: RouteComponentProps }, ChangeTenantAction> = params => (dispatch) => {
