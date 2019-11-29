@@ -126,26 +126,6 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>com.github.ngeor</groupId>
-        <artifactId>yak4j-json-yaml-converter-maven-plugin</artifactId>
-        <version>0.0.4</version>
-        <executions>
-          <execution>
-            <id>yaml2json</id>
-            <goals>
-              <goal>yaml2json</goal>
-            </goals>
-            <configuration>
-              <sourceDirectory>translations</sourceDirectory>
-              <includes>
-                <include>**/*.yaml</include>
-              </includes>
-              <outputDirectory>public/assets/locales</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>

@@ -19,6 +19,7 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 import { registerLocale, setDefaultLocale } from 'react-datepicker';
 import cmn from 'date-fns/locale/zh-CN';
+import YAML from 'yaml';
 
 import moment from 'moment';
 import 'moment/locale/zh-cn';
@@ -70,7 +71,8 @@ i18n
     ],
     debug: true,
     backend: {
-      loadPath: '/assets/locales/{{lng}}/{{ns}}.json'
+      loadPath: '/assets/translations/{{lng}}/{{ns}}.yaml',
+      parse: (d: string) => YAML.parseDocument(d).toJSON()
     },
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
