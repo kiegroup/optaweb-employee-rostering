@@ -9,10 +9,6 @@
 # production
 /build
 
-# JSON of generated translation files (so frontend doesn't need to use a
-# YAML parser)
-/public/assets/locales
-
 # misc
 .env.local
 .env.development.local
