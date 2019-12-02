@@ -382,7 +382,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             onDelete: shiftTemplate => this.props.removeShiftTemplate(shiftTemplate),
           })
           }
-          popoverBody={() => ShiftTemplatePopoverBody}
+          popoverBody={() => ShiftTemplatePopoverBody({})}
           eventComponent={params => ShiftTemplateEvent({
             ...params,
             event: params.event.shiftTemplate,

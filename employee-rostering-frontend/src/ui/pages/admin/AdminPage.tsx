@@ -18,7 +18,7 @@ import * as React from 'react';
 import { AppState } from 'store/types';
 import { Text, Level, LevelItem, Pagination, Button } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { Predicate } from "types";
+import { DataTableUrlProps } from "ui/components/DataTable";
 import { Stream } from 'util/ImmutableCollectionOperations';
 import { stringFilter } from 'util/CommonFilters';
 import Tenant from 'domain/Tenant';
@@ -30,6 +30,8 @@ import { TrashIcon } from '@patternfly/react-icons';
 import NewTenantFormModal from './NewTenantFormModal';
 import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from 'ui/components/ConfirmDialog';
+import { getPropsFromUrl, setPropsInUrl } from 'util/BookmarkableUtils';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 interface StateProps {
   tenantList: Tenant[];
@@ -49,7 +51,7 @@ const mapDispatchToProps: DispatchProps = {
   resetApplication: adminOperations.resetApplication
 };
 
-export type Props = StateProps & DispatchProps;
+export type Props = StateProps & DispatchProps & RouteComponentProps;
 export interface State {
   isEditingOrCreatingTenant: boolean;
 }
@@ -57,24 +59,29 @@ export interface State {
 export const AdminPage: React.FC<Props> = (props) => {
   const { tenantList } = props;
   const { t } = useTranslation("AdminPage");
-  const [ page, setPage ] = React.useState(1);
-  const [ perPage, setPerPage ] = React.useState(10);
-  const [ filterText, setFilterText ] = React.useState("");
   const [ isCreatingTenant, setIsCreatingTenant ] = React.useState(false);
   const [ isResetDialogOpen, setIsResetDialogOpen ] = React.useState(false);
-  const filter = stringFilter((t: Tenant) => t.name)(filterText)
+
+  const urlProps = getPropsFromUrl<DataTableUrlProps>(props, {
+        page: "1",
+        itemsPerPage: "10",
+        filter: null,
+        sortBy: null,
+        asc: "true"
+    });
   
+  const filterText = urlProps.filter || "";
+  const page = parseInt(urlProps.page as string);
+  const itemsPerPage = parseInt(urlProps.itemsPerPage as string)
+  const filter = stringFilter((t: Tenant) => t.name)(filterText);
   const filteredRows = new Stream(tenantList)
     .filter(filter);
     
   const numOfFilteredRows = filteredRows.collect(c => c.length);
   
   const rowsInPage = filteredRows
-    .page(page, perPage)
+    .page(page, itemsPerPage)
     .collect(c => c);
-
-  // const filteredRows = tenantList.filter(filter);
-  // const rowsInPage = filteredRows.filter((v, i) => (page - 1) * perPage <= i && i < page * perPage);
 
   return (
     <>
@@ -106,8 +113,8 @@ export const AdminPage: React.FC<Props> = (props) => {
         <LevelItem>
           <FilterComponent
             aria-label="Filter by Name"
-            filterText={filterText}
-            onChange={setFilterText}
+            filterText={urlProps.filter || ""}
+            onChange={filter => setPropsInUrl<DataTableUrlProps>(props, { page: "1", filter })}
           />
         </LevelItem>
         <LevelItem style={{ display: "flex" }}>
@@ -121,11 +128,11 @@ export const AdminPage: React.FC<Props> = (props) => {
           <Pagination
             aria-label="Change Page"
             itemCount={numOfFilteredRows}
-            perPage={perPage}
+            perPage={itemsPerPage}
             page={page}
-            onSetPage={(e, page) => setPage(page)}
+            onSetPage={(e, newPage) =>  setPropsInUrl<DataTableUrlProps>(props, { page: String(newPage) })}
             widgetId="pagination-options-menu-top"
-            onPerPageSelect={(e, perPage) => setPerPage(perPage)}
+            onPerPageSelect={(e, newItemsPerPage) => setPropsInUrl<DataTableUrlProps>(props, { itemsPerPage: String(newItemsPerPage) })}
           />
         </LevelItem>
       </Level>
@@ -169,4 +176,4 @@ export const AdminPage: React.FC<Props> = (props) => {
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AdminPage);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminPage));

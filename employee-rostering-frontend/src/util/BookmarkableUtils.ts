@@ -18,6 +18,8 @@ import { RouteComponentProps } from "react-router";
 
 export type UrlProps<T extends string> = { [K in T]: string|null };
 
+const pathnameToQueryStringMap: Map<string, string> = new Map();
+
 export function setTenantIdInUrl(props: RouteComponentProps, tenantId: number) {
   const endOfTenantId = props.location.pathname.indexOf('/', 1);
   if (endOfTenantId !== -1) {
@@ -28,16 +30,25 @@ export function setTenantIdInUrl(props: RouteComponentProps, tenantId: number) {
 }
 
 export function getPropsFromUrl<T extends UrlProps<string> >(props: RouteComponentProps, defaultValues: T): T {
-  const searchParams = new URLSearchParams(props.location.search);
   const out: { [index: string]: string|null }  = { ...defaultValues };
-  
-  searchParams.forEach((value, key) => out[key] = value);
-  
+  if (props.location.search === "" && pathnameToQueryStringMap.has(props.location.pathname)) {
+    console.log("HI");
+    const searchParams = new URLSearchParams(pathnameToQueryStringMap.get(props.location.pathname));
+    searchParams.forEach((value, key) => out[key] = value);
+    // defer updating URL since that counts as an update operation and 
+    // you cannot update in render
+    setTimeout(() => requestAnimationFrame(() => setPropsInUrl(props, out as T)));
+  }
+  else {
+    const searchParams = new URLSearchParams(props.location.search);
+    searchParams.forEach((value, key) => out[key] = value);
+  }
   return out as T;
 }
 
 export function setPropsInUrl<T extends UrlProps<string> >(props: RouteComponentProps, urlProps: Partial<T>) {
   const searchParams = new URLSearchParams(props.location.search);
+  
   for (const key in urlProps) {
     const value = urlProps[key] as string|null|undefined;
     if (value !== undefined) {
@@ -49,5 +60,6 @@ export function setPropsInUrl<T extends UrlProps<string> >(props: RouteComponent
       }
     }
   }
+  pathnameToQueryStringMap.set(props.location.pathname, `?${searchParams.toString()}`);
   props.history.push(`${props.location.pathname}?${searchParams.toString()}`);
 }

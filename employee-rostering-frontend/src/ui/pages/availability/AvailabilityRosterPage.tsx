@@ -512,7 +512,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             }))
           }
           popoverBody={
-            soa => ((isShift(soa.reference)) ? ShiftPopupBody(soa.reference) : AvailabilityPopoverBody)
+            soa => ((isShift(soa.reference)) ? ShiftPopupBody(soa.reference) : AvailabilityPopoverBody({}))
           }
           eventComponent={props => (isShift(props.event.reference) ? ShiftEvent(
             {

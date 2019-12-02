@@ -336,7 +336,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
               filterText={filterText}
               onChange={filterText => {
                 this.setState({ editedRows: [] });
-                setPropsInUrl(this.props, { filter: filterText })
+                setPropsInUrl(this.props, { page: "1", filter: filterText })
               }}
             />
           </LevelItem>
