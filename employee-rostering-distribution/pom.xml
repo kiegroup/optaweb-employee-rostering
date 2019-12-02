@@ -28,7 +28,7 @@
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>src/main/assembly/assembly-optaweb-employee-rostering-sources.xml</descriptor>
+                <descriptor>src/main/assembly/assembly-optaweb-employee-rostering.xml</descriptor>
               </descriptors>
               <appendAssemblyId>false</appendAssemblyId>
             </configuration>
