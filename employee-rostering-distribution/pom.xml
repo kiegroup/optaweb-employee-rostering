@@ -30,7 +30,7 @@
               <descriptors>
                 <descriptor>src/main/assembly/assembly-optaweb-employee-rostering-sources.xml</descriptor>
               </descriptors>
-              <appendAssemblyId>true</appendAssemblyId>
+              <appendAssemblyId>false</appendAssemblyId>
             </configuration>
           </execution>
         </executions>

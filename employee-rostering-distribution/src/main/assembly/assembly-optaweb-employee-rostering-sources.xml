@@ -45,6 +45,14 @@
   </fileSets>
 
   <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>org.optaweb.employeerostering:employee-rostering-frontend:jar</include>
+      </includes>
+      <outputDirectory>binaries</outputDirectory>
+      <useStrictFiltering>true</useStrictFiltering>
+      <useTransitiveFiltering>false</useTransitiveFiltering><!-- Only include war -->
+    </dependencySet>    
     <!-- Reference manual -->
     <dependencySet>
       <includes>
