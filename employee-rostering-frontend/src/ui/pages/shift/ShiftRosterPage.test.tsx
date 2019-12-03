@@ -19,7 +19,7 @@ import * as React from 'react';
 import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
-import { ShiftRosterPage, Props } from './ShiftRosterPage';
+import { ShiftRosterPage, Props, ShiftRosterUrlProps } from './ShiftRosterPage';
 import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
 import "moment/locale/en-ca";
@@ -28,6 +28,7 @@ import color from 'color';
 import { useTranslation } from 'react-i18next';
 import Actions from 'ui/components/Actions';
 import Schedule from 'ui/components/calendar/Schedule';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 describe('Shift Roster Page', () => {
   beforeEach(() => {
@@ -68,42 +69,6 @@ describe('Shift Roster Page', () => {
       .filter(a => a.name === "Trans(i18nKey=createShift)")
       .forEach(a => a.action());
     expect(toJson(shiftRosterPage)).toMatchSnapshot();
-  });
-
-  it('should call getShiftRosterFor on onDateChange', () => {
-    const shiftRosterPage = new ShiftRosterPage(baseProps);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
-    shiftRosterPage.onDateChange(newDateStart, newDateEnd);
-    expect(baseProps.getShiftRosterFor).toBeCalled();
-    expect(baseProps.getShiftRosterFor).toBeCalledWith({
-      fromDate: newDateStart,
-      toDate: newDateEnd,
-      spotList: baseProps.shownSpotList
-    });
-  });
-
-  it('should call getShiftRosterFor on spot change', () => {
-    const shiftRosterPage = new ShiftRosterPage(baseProps);
-    const newSpot: Spot = {
-      ...spot,
-      id: 111,
-      name: "New Spot"
-    };
-
-    shiftRosterPage.onUpdateSpotList(newSpot);
-    expect(baseProps.getShiftRosterFor).toBeCalled();
-    expect(baseProps.getShiftRosterFor).toBeCalledWith({
-      fromDate: baseProps.startDate,
-      toDate: baseProps.endDate,
-      spotList: [newSpot]
-    });
-  });
-
-  it('should not call getShiftRosterFor on spot change if invalid', () => {
-    const shiftRosterPage = new ShiftRosterPage(baseProps);
-    shiftRosterPage.onUpdateSpotList(undefined);
-    expect(baseProps.getShiftRosterFor).not.toBeCalled();
   });
 
   it('should call addShift on addShift', () => {
@@ -170,11 +135,6 @@ describe('Shift Roster Page', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    const newSpot: Spot = {
-      ...spot,
-      id: 111,
-      name: "New Spot"
-    };
     shiftRosterPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate("change", newSpot);
     expect(baseProps.getShiftRosterFor).toBeCalled();
     expect(baseProps.getShiftRosterFor).toBeCalledWith({
@@ -397,6 +357,12 @@ const spot: Spot = {
   ]
 }
 
+const newSpot: Spot = {
+  ...spot,
+  id: 111,
+  name: "New Spot"
+};
+
 const employee: Employee = {
   tenantId: 0,
   id: 4,
@@ -466,10 +432,12 @@ const rosterState: RosterState = {
 
 const baseProps: Props = {
   ...useTranslation("ShiftRosterPage"),
+  tenantId: 0,
+  score: { hardScore: 0, mediumScore: 0, softScore: 0},
   tReady: true,
   isSolving: false,
   isLoading: false,
-  allSpotList: [spot],
+  allSpotList: [spot,newSpot],
   shownSpotList: [spot],
   spotIdToShiftListMap: new Map<number, Shift[]>([
     [2, [shift]]
@@ -487,8 +455,5 @@ const baseProps: Props = {
   publishRoster:jest.fn(),
   terminateSolvingRosterEarly: jest.fn(),
   showInfoMessage: jest.fn(),
-  // @ts-ignore
-  history: {
-    push: jest.fn()
-  }
+  ...getRouterProps<ShiftRosterUrlProps>("/shift", { spot: "Spot", week: "2018-07-01" })
 }

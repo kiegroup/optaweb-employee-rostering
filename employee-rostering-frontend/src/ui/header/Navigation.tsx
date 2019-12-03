@@ -23,15 +23,18 @@ import { AppState } from 'store/types';
 import { connect } from 'react-redux';
 
 interface StateProps {
-    tenantId: number;
-};
+  tenantId: number;
+}
 
-const mapStateToProps = (state: AppState, ownProps: Pick<NavListProps, "variant">): StateProps & Pick<NavListProps, "variant"> => ({
-    tenantId: state.tenantData.currentTenantId,
-    variant: ownProps.variant
+const mapStateToProps = (state: AppState, ownProps: Pick<NavListProps, "variant">):
+StateProps & Pick<NavListProps, "variant"> => ({
+  tenantId: state.tenantData.currentTenantId,
+  variant: ownProps.variant
 });
 
-export const Navigation = ({ variant, tenantId, location }: RouteComponentProps & StateProps & Pick<NavListProps, "variant"> ) => {
+export type NavigationProps = RouteComponentProps & StateProps & Pick<NavListProps, "variant">;
+
+export const Navigation = ({ variant, tenantId, location }: NavigationProps) => {
   const { t } = useTranslation("Navigation");
   return (
     <Nav aria-label="Nav">

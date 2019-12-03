@@ -45,7 +45,7 @@ import { ScoreDisplay } from "ui/components/ScoreDisplay";
 import { getPropsFromUrl, setPropsInUrl, UrlProps } from "util/BookmarkableUtils";
 
 interface StateProps {
-  tenantId: number,
+  tenantId: number;
   isSolving: boolean;
   isLoading: boolean;
   allSpotList: Spot[];
@@ -58,7 +58,7 @@ interface StateProps {
   score: HardMediumSoftScore | null;
 }
 
-type ShiftRosterUrlProps = UrlProps<"spot"|"week">;
+export type ShiftRosterUrlProps = UrlProps<"spot"|"week">;
 // Snapshot of the last value to show when loading
 let lastSpotIdToShiftListMap: Map<number, Shift[]> = new Map<number, Shift[]>();
 let lastShownSpotList: Spot[] = [];
@@ -93,7 +93,6 @@ export interface DispatchProps {
   publishRoster: typeof rosterOperations.publish;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
   showInfoMessage: typeof alert.showInfoMessage;
-  getInitialShiftRoster: typeof rosterOperations.getInitialShiftRoster;
 }
 
 const mapDispatchToProps: DispatchProps = {
@@ -106,7 +105,6 @@ const mapDispatchToProps: DispatchProps = {
   publishRoster: rosterOperations.publish,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
   showInfoMessage: alert.showInfoMessage,
-  getInitialShiftRoster: rosterOperations.getInitialShiftRoster,
 }
 
 export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
@@ -202,16 +200,16 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   
   componentDidMount() {
     const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
-        spot: null,
-        week: null
+      spot: null,
+      week: null
     });
     this.onUpdateShiftRoster(urlProps);
   }
   
-  componentDidUpdate(prevProps : Props) {
+  componentDidUpdate(prevProps: Props) {
     const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
-        spot: null,
-        week: null
+      spot: null,
+      week: null
     });
     if (this.state.firstLoad || prevProps.tenantId !== this.props.tenantId || urlProps.spot === null) {
       this.onUpdateShiftRoster(urlProps);
@@ -221,10 +219,11 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   render() {
     const { t } = this.props;
     const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
-        spot: null,
-        week: null
+      spot: null,
+      week: null
     });
-    const changedTenant = this.props.shownSpotList.length === 0 || this.props.tenantId !== this.props.shownSpotList[0].tenantId;
+    const changedTenant = this.props.shownSpotList.length === 0 ||
+      this.props.tenantId !== this.props.shownSpotList[0].tenantId;
     
     if (this.props.shownSpotList.length === 0 || this.state.firstLoad || changedTenant) {
       return (
@@ -287,10 +286,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             options={this.props.allSpotList}
             value={shownSpot}
             onChange={(s) => {
-                this.onUpdateShiftRoster({
-                    ...urlProps,
-                    spot: s? s.name : null
-                })
+              this.onUpdateShiftRoster({
+                ...urlProps,
+                spot: s? s.name : null
+              })
             }}
             noClearButton
           />
@@ -298,10 +297,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             aria-label="Select Week to View"
             value={this.props.startDate as Date}
             onChange={(weekStart) => {
-                this.onUpdateShiftRoster({
-                    ...urlProps,
-                    week: moment(weekStart).format("YYYY-MM-DD") 
-                });
+              this.onUpdateShiftRoster({
+                ...urlProps,
+                week: moment(weekStart).format("YYYY-MM-DD") 
+              });
             }}
           />
           <ScoreDisplay score={score} />

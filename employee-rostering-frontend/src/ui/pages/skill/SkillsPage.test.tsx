@@ -20,6 +20,7 @@ import { SkillsPage, Props } from './SkillsPage';
 import Skill from 'domain/Skill';
 import { Sorter, ReadonlyPartial } from 'types';
 import { useTranslation } from 'react-i18next';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 describe('Skills page', () => {
   it('should render correctly with no skills', () => {
@@ -136,7 +137,8 @@ const noSkills: Props = {
   tableData: [],
   addSkill: jest.fn(),
   updateSkill: jest.fn(),
-  removeSkill: jest.fn()
+  removeSkill: jest.fn(),
+  ...getRouterProps("/skills", {})
 };
 
 const twoSkills: Props = {
@@ -159,5 +161,6 @@ const twoSkills: Props = {
   }],
   addSkill: jest.fn(),
   updateSkill: jest.fn(),
-  removeSkill: jest.fn()
+  removeSkill: jest.fn(),
+  ...getRouterProps("/skills", {})
 };

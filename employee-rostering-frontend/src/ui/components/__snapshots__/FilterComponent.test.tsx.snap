@@ -11,7 +11,7 @@ exports[`Filter component should render correctly with no text 1`] = `
     isReadOnly={false}
     isRequired={false}
     isValid={true}
-    onChange={[Function]}
+    onChange={[MockFunction]}
     placeholder="Trans(i18nKey=search)"
     type="text"
     value=""
@@ -30,7 +30,7 @@ exports[`Filter component should render correctly with text 1`] = `
     isReadOnly={false}
     isRequired={false}
     isValid={true}
-    onChange={[Function]}
+    onChange={[MockFunction]}
     placeholder="Trans(i18nKey=search)"
     type="text"
     value="Test"

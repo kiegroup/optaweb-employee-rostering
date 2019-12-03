@@ -164,4 +164,5 @@ export class ContractsPage extends DataTable<Contract, Props> {
   }
 }
 
-export default withTranslation("ContractsPage")(connect(mapStateToProps, mapDispatchToProps)(withRouter(ContractsPage)));
+export default withTranslation("ContractsPage")(connect(mapStateToProps, mapDispatchToProps)(
+  withRouter(ContractsPage)));

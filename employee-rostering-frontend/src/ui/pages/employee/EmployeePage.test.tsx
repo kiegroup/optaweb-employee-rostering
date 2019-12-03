@@ -23,6 +23,7 @@ import { Sorter } from 'types';
 import Employee from 'domain/Employee';
 import { act } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 describe('Employees page', () => {
   it('should render correctly with no employees', () => {
@@ -219,10 +220,7 @@ const noEmployees: Props = {
   addEmployee: jest.fn(),
   updateEmployee: jest.fn(),
   removeEmployee: jest.fn(),
-  // @ts-ignore
-  history: {
-    push: jest.fn()
-  }
+  ...getRouterProps("/contacts", {})
 };
 
 const twoEmployees: Props = {
@@ -291,8 +289,5 @@ const twoEmployees: Props = {
   addEmployee: jest.fn(),
   updateEmployee: jest.fn(),
   removeEmployee: jest.fn(),
-  // @ts-ignore
-  history: {
-    push: jest.fn()
-  }
+  ...getRouterProps("/employees", {})
 };

@@ -21,6 +21,7 @@ import OptionalInput from 'ui/components/OptionalInput';
 import { Sorter } from 'types';
 import Contract from 'domain/Contract';
 import { useTranslation } from 'react-i18next';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 describe('Contracts page', () => {
   it('should render correctly with no contracts', () => {
@@ -192,7 +193,8 @@ const noContracts: Props = {
   tableData: [],
   addContract: jest.fn(),
   updateContract: jest.fn(),
-  removeContract: jest.fn()
+  removeContract: jest.fn(),
+  ...getRouterProps("/contacts", {})
 };
 
 const twoContracts: Props = {
@@ -223,5 +225,6 @@ const twoContracts: Props = {
   }],
   addContract: jest.fn(),
   updateContract: jest.fn(),
-  removeContract: jest.fn()
+  removeContract: jest.fn(),
+  ...getRouterProps("/contacts", {})
 };

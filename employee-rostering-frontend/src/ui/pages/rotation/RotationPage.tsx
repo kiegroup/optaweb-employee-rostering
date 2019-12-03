@@ -154,7 +154,7 @@ const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate>> = (props) => {
   )
 };
 
-type RotationPageUrlProps = UrlProps<"weekNumber" | "shownSpot">;
+export type RotationPageUrlProps = UrlProps<"weekNumber" | "shownSpot">;
 export class RotationPage extends React.Component<Props & WithTranslation, State> {
   constructor(props: Props & WithTranslation) {
     super(props);
@@ -182,8 +182,8 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
 
   render() {
     const urlProps = getPropsFromUrl<RotationPageUrlProps>(this.props, {
-        weekNumber: "0",
-        shownSpot: (this.props.spotList.length > 0) ? this.props.spotList[0].name : null
+      weekNumber: "0",
+      shownSpot: (this.props.spotList.length > 0) ? this.props.spotList[0].name : null
     });
     const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
     const { t } = this.props;

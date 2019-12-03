@@ -20,7 +20,7 @@ import { withElement, withoutElement } from 'util/ImmutableCollectionOperations'
 const path = window.location.pathname;
 let windowTenantId: number | null = null;
 if (path.indexOf('/', 1) > 0) {
-    windowTenantId = parseInt(path.substring(1, path.indexOf('/', 1)));
+  windowTenantId = parseInt(path.substring(1, path.indexOf('/', 1)));
 }
 
 const initialState: TenantData = {

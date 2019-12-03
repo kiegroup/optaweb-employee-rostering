@@ -37,6 +37,7 @@ import { shiftTemplateOperations } from 'store/rotation';
 import RosterState from 'domain/RosterState';
 import * as immutableOperations from 'util/ImmutableCollectionOperations';
 import { flushPromises } from 'setupTests';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 describe('Tenant operations', () => {
   const mockRefreshSkillList = jest.spyOn(skillOperations, "refreshSkillList");
@@ -44,8 +45,6 @@ describe('Tenant operations', () => {
   const mockRefreshContractList = jest.spyOn(contractOperations, "refreshContractList");
   const mockRefreshEmployeeList = jest.spyOn(employeeOperations, "refreshEmployeeList");
   const mockRefreshShiftTemplateList = jest.spyOn(shiftTemplateOperations, "refreshShiftTemplateList");
-  const mockGetInitialShiftRoster = jest.spyOn(rosterOperations, "getInitialShiftRoster");
-  const mockGetInitialAvailabilityRoster = jest.spyOn(rosterOperations, "getInitialAvailabilityRoster");
   const mockRefreshRosterState = jest.spyOn(rosterOperations, "getRosterState");
 
   const loadingActions = [
@@ -67,8 +66,6 @@ describe('Tenant operations', () => {
     mockRefreshShiftTemplateList.mockImplementation(() => () => {});
     mockRefreshRosterState.mockImplementation(() => () => {});
     mockRefreshShiftTemplateList.mockImplementation(() => () => {});
-    mockGetInitialShiftRoster.mockImplementation(() => () => {});
-    mockGetInitialAvailabilityRoster.mockImplementation(() => () => {});
   });
 
   afterAll(() => {
@@ -79,8 +76,6 @@ describe('Tenant operations', () => {
     mockRefreshShiftTemplateList.mockRestore();
     mockRefreshRosterState.mockRestore();
     mockRefreshShiftTemplateList.mockRestore();
-    mockGetInitialShiftRoster.mockRestore();
-    mockGetInitialAvailabilityRoster.mockRestore();
   });
 
   it('should dispatch actions and change tenant when current tenant not in refreshed the tenant list ',
@@ -114,8 +109,6 @@ describe('Tenant operations', () => {
       expect(client.get).toHaveBeenCalledTimes(1);
       expect(client.get).toHaveBeenCalledWith(`/tenant/`);
 
-      expect(mockGetInitialShiftRoster).toBeCalled();
-      expect(mockGetInitialAvailabilityRoster).toBeCalled();
       expect(mockRefreshSkillList).toBeCalled();
       expect(mockRefreshSpotList).toBeCalled();
       expect(mockRefreshContractList).toBeCalled();
@@ -167,7 +160,10 @@ describe('Tenant operations', () => {
 
   it('should change the tenant and refresh all lists on change tenant', async () => {
     const { store, client } = mockStore(state);
-    await store.dispatch(tenantOperations.changeTenant(0));
+    await store.dispatch(tenantOperations.changeTenant({
+      routeProps: getRouterProps("/test", {}),
+      tenantId: 0
+    }));
 
     expect(store.getActions()).toEqual(expect.arrayContaining([
       actions.changeTenant(0),
@@ -176,8 +172,6 @@ describe('Tenant operations', () => {
 
     expect(client.get).not.toBeCalled();
 
-    expect(mockGetInitialShiftRoster).toBeCalled();
-    expect(mockGetInitialAvailabilityRoster).toBeCalled();
     expect(mockRefreshSkillList).toBeCalled();
     expect(mockRefreshSpotList).toBeCalled();
     expect(mockRefreshContractList).toBeCalled();
@@ -302,8 +296,6 @@ describe('Tenant operations', () => {
     expect(mockRefreshContractList).toBeCalled();
     expect(mockRefreshEmployeeList).toBeCalled();
     expect(mockRefreshRosterState).toBeCalled();
-    expect(mockGetInitialShiftRoster).toBeCalled();
-    expect(mockGetInitialAvailabilityRoster).toBeCalled();
     expect(mockRefreshShiftTemplateList).toBeCalled();
   });
 

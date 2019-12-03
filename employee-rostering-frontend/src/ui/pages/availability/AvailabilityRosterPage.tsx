@@ -102,7 +102,6 @@ export interface DispatchProps {
   updateEmployeeAvailability: typeof availabilityOperations.updateEmployeeAvailability;
   getAvailabilityRosterFor: typeof rosterOperations.getAvailabilityRosterFor;
   refreshAvailabilityRoster: typeof rosterOperations.refreshAvailabilityRoster;
-  getInitialAvailabilityRoster: typeof rosterOperations.getInitialAvailabilityRoster;
   solveRoster: typeof rosterOperations.solveRoster;
   publishRoster: typeof rosterOperations.publish;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
@@ -118,7 +117,6 @@ const mapDispatchToProps: DispatchProps = {
   updateEmployeeAvailability: availabilityOperations.updateEmployeeAvailability,
   getAvailabilityRosterFor: rosterOperations.getAvailabilityRosterFor,
   refreshAvailabilityRoster: rosterOperations.refreshAvailabilityRoster,
-  getInitialAvailabilityRoster: rosterOperations.getInitialAvailabilityRoster,
   solveRoster: rosterOperations.solveRoster,
   publishRoster: rosterOperations.publish,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
@@ -162,7 +160,7 @@ export function isAllDayAvailability(ea: EmployeeAvailability) {
   return isDay(ea.startDateTime, ea.endDateTime);
 }
 
-type EmployeeRosterUrlProps = UrlProps<"employee"|"week">;
+export type AvailabilityRosterUrlProps = UrlProps<"employee"|"week">;
 export class AvailabilityRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -176,8 +174,9 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     };
   }
   
-  onUpdateAvailabilityRoster(urlProps: EmployeeRosterUrlProps) {
-    const employee = this.props.allEmployeeList.find(e => e.name === urlProps.employee) || this.props.allEmployeeList[0];
+  onUpdateAvailabilityRoster(urlProps: AvailabilityRosterUrlProps) {
+    const employee = this.props.allEmployeeList
+      .find(e => e.name === urlProps.employee) || this.props.allEmployeeList[0];
     const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
     if (employee) {
@@ -259,20 +258,20 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       }
 
       return { className: className.trim() , style };
-   }
+    }
     
   componentDidMount() {
-    const urlProps = getPropsFromUrl<EmployeeRosterUrlProps>(this.props, {
-        employee: null,
-        week: null
+    const urlProps = getPropsFromUrl<AvailabilityRosterUrlProps>(this.props, {
+      employee: null,
+      week: null
     });
     this.onUpdateAvailabilityRoster(urlProps);
   }
   
-  componentDidUpdate(prevProps : Props) {
-    const urlProps = getPropsFromUrl<EmployeeRosterUrlProps>(this.props, {
-        employee: null,
-        week: null
+  componentDidUpdate(prevProps: Props) {
+    const urlProps = getPropsFromUrl<AvailabilityRosterUrlProps>(this.props, {
+      employee: null,
+      week: null
     });
     if (this.state.firstLoad || prevProps.tenantId !== this.props.tenantId || urlProps.employee === null) {
       this.onUpdateAvailabilityRoster(urlProps);
@@ -285,11 +284,13 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     if (!tReady) {
       return (<></>);
     }
-    const urlProps = getPropsFromUrl<EmployeeRosterUrlProps>(this.props, {
-        employee: null,
-        week: null
+    const urlProps = getPropsFromUrl<AvailabilityRosterUrlProps>(this.props, {
+      employee: null,
+      week: null
     });
-    const changedTenant = this.props.shownEmployeeList.length === 0 || (urlProps.employee !== null && this.props.tenantId !== this.props.shownEmployeeList[0].tenantId);
+    const changedTenant = this.props.shownEmployeeList.length === 0 || 
+      (urlProps.employee !== null && 
+      this.props.tenantId !== this.props.shownEmployeeList[0].tenantId);
 
     if (this.props.shownEmployeeList.length === 0 || changedTenant) {
       return (
@@ -315,7 +316,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
 
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
-    const shownEmployee = this.props.allEmployeeList.find(e => e.name === urlProps.employee) || this.props.shownEmployeeList[0];
+    const shownEmployee = this.props.allEmployeeList.find(e => e.name === urlProps.employee) || 
+      this.props.shownEmployeeList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const events: ShiftOrAvailability[] = [];
     const actions = [
@@ -379,7 +381,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             onChange={e => {
               this.onUpdateAvailabilityRoster({
                 ...urlProps,
-                 employee: e? e.name : null
+                employee: e? e.name : null
               })
             }}
             noClearButton
@@ -388,10 +390,10 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             aria-label="Select Week to View"
             value={this.props.startDate as Date}
             onChange={weekStart => {
-                this.onUpdateAvailabilityRoster({
-                    ...urlProps,
-                    week: moment(weekStart).format("YYYY-MM-DD") 
-                });
+              this.onUpdateAvailabilityRoster({
+                ...urlProps,
+                week: moment(weekStart).format("YYYY-MM-DD") 
+              });
             }}
           />
           <ScoreDisplay score={score} />

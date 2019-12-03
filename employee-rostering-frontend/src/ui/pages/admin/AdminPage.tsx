@@ -63,12 +63,12 @@ export const AdminPage: React.FC<Props> = (props) => {
   const [ isResetDialogOpen, setIsResetDialogOpen ] = React.useState(false);
 
   const urlProps = getPropsFromUrl<DataTableUrlProps>(props, {
-        page: "1",
-        itemsPerPage: "10",
-        filter: null,
-        sortBy: null,
-        asc: "true"
-    });
+    page: "1",
+    itemsPerPage: "10",
+    filter: null,
+    sortBy: null,
+    asc: "true"
+  });
   
   const filterText = urlProps.filter || "";
   const page = parseInt(urlProps.page as string);
@@ -132,7 +132,9 @@ export const AdminPage: React.FC<Props> = (props) => {
             page={page}
             onSetPage={(e, newPage) =>  setPropsInUrl<DataTableUrlProps>(props, { page: String(newPage) })}
             widgetId="pagination-options-menu-top"
-            onPerPageSelect={(e, newItemsPerPage) => setPropsInUrl<DataTableUrlProps>(props, { itemsPerPage: String(newItemsPerPage) })}
+            onPerPageSelect={(e, newItemsPerPage) => setPropsInUrl<DataTableUrlProps>(props, { 
+              itemsPerPage: String(newItemsPerPage) 
+            })}
           />
         </LevelItem>
       </Level>

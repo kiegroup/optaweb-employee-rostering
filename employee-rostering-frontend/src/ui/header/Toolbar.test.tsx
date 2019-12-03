@@ -17,6 +17,7 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { ToolbarComponent, Props } from './Toolbar';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 describe('Toolbar Component', () => {
   it('should render correctly with no tenants', () => {
@@ -36,8 +37,7 @@ describe('Toolbar Component', () => {
   });
 
   it('should refresh tenant list on mount', async () => {
-    const toolbarComponent = shallow(<ToolbarComponent {...twoTenants} />);
-    await toolbarComponent.instance().componentDidMount;
+    shallow(<ToolbarComponent {...twoTenants} />);
     expect(twoTenants.refreshTenantList).toBeCalled();
   });
 
@@ -45,7 +45,7 @@ describe('Toolbar Component', () => {
     const toolbarComponent = shallow(<ToolbarComponent {...twoTenants} />);
     (toolbarComponent.instance() as ToolbarComponent).setCurrentTenant(2);
     expect(twoTenants.changeTenant).toBeCalled();
-    expect(twoTenants.changeTenant).toBeCalledWith(2);
+    expect(twoTenants.changeTenant).toBeCalledWith({ routeProps: twoTenants, tenantId: 2 });
   });
 
   it('should redirect to admin page when you click on the gear', () => {
@@ -61,10 +61,7 @@ const noTenants: Props = {
   currentTenantId: 0,
   refreshTenantList: jest.fn(),
   changeTenant: jest.fn(),
-  // @ts-ignore
-  history: {
-    push: jest.fn()
-  }
+  ...getRouterProps("/toolbar", {})
 };
 
 const twoTenants: Props = {
@@ -83,8 +80,5 @@ const twoTenants: Props = {
   currentTenantId: 2,
   refreshTenantList: jest.fn(),
   changeTenant: jest.fn(),
-  // @ts-ignore
-  history: {
-    push: jest.fn()
-  }
+  ...getRouterProps("/toolbar", {})
 };

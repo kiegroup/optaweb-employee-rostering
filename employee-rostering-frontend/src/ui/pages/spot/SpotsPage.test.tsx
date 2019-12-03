@@ -22,6 +22,7 @@ import { Sorter } from 'types';
 import Spot from 'domain/Spot';
 import { act } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 describe('Spots page', () => {
   it('should render correctly with no spots', () => {
@@ -149,7 +150,8 @@ const noSpots: Props = {
   skillList: [],
   addSpot: jest.fn(),
   updateSpot: jest.fn(),
-  removeSpot: jest.fn()
+  removeSpot: jest.fn(),
+  ...getRouterProps("/spots", {})
 };
 
 const twoSpots: Props = {
@@ -175,5 +177,6 @@ const twoSpots: Props = {
   skillList: [{tenantId: 0, name: "Skill 1"}, {tenantId: 0, name: "Skill 2"}],
   addSpot: jest.fn(),
   updateSpot: jest.fn(),
-  removeSpot: jest.fn()
+  removeSpot: jest.fn(),
+  ...getRouterProps("/spots", {})
 };

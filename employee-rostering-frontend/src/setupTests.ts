@@ -54,3 +54,4 @@ function mockFunctions() {
 }
 
 jest.mock('react-responsive', () => mockFunctions());
+jest.mock('util/BookmarkableUtils');

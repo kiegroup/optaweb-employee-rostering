@@ -24,7 +24,6 @@ import {
   ICell,
   sortable,
   SortByDirection,
-  ISortBy,
 } from '@patternfly/react-table';
 import {
   Button, ButtonVariant, Pagination, Level, LevelItem,
@@ -270,11 +269,11 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
       this.setState(prevState => ({ newRowData: { ...prevState.newRowData, [key]: value } }));
     };
     const urlProps = getPropsFromUrl<DataTableUrlProps>(this.props, {
-        page: "1",
-        itemsPerPage: "10",
-        filter: null,
-        sortBy: null,
-        asc: "true"
+      page: "1",
+      itemsPerPage: "10",
+      filter: null,
+      sortBy: null,
+      asc: "true"
     });
     const [page, perPage] = [parseInt(urlProps.page as string), parseInt(urlProps.itemsPerPage as string)];
     const filterText = urlProps.filter? urlProps.filter : "";
@@ -296,8 +295,8 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
         if (urlProps.sortBy !== null) {
           return s.sort(sorters[parseInt(urlProps.sortBy)] as Sorter<T>,
             urlProps.asc === "true");
-          }
         }
+      }
       )
       .conditionally(s => {
         if (urlProps.filter !== null) {
@@ -307,8 +306,6 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
         
     const rowsThatMatchFilter = filteredRows.collect(c => c.length);
     
-    console.log(filteredRows
-      .page(page, perPage).collect(c => c));
     const rows = additionalRows.concat(filteredRows
       .page(page, perPage)
       .map(this.convertDataToTableRow)

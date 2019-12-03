@@ -19,57 +19,48 @@ import * as React from 'react';
 import { AdminPage, Props } from './AdminPage';
 import { act } from 'react-dom/test-utils';
 import Tenant from 'domain/Tenant';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { DataTableUrlProps } from 'ui/components/DataTable';
 
 describe('Admin Page', () => {
   it('should render correctly with no tenants', () => {
-    const noTenants = generateProps(0);
+    const noTenants = generateProps(0, {});
     const adminPage = shallow(<AdminPage {...noTenants} />);
     expect(toJson(adminPage)).toMatchSnapshot();
   });
 
   it('should render correctly with 2 tenants', () => {
-    const twoTenants = generateProps(2);
+    const twoTenants = generateProps(2, {});
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     expect(toJson(adminPage)).toMatchSnapshot();
   });
 
   it('should render correctly with many tenants', () => {
-    const manyTenants = generateProps(20);
+    const manyTenants = generateProps(20, {});
     const adminPage = shallow(<AdminPage {...manyTenants} />);
     expect(toJson(adminPage)).toMatchSnapshot();
   });
 
   it('should go to the correct page when the page is changed', () => {
-    const manyTenants = generateProps(20);
+    const manyTenants = generateProps(20, { page: "2" });
     const adminPage = shallow(<AdminPage {...manyTenants} />);
-    act(() => {
-      adminPage.find('[aria-label="Change Page"]').simulate("setPage", {}, 2);
-    });
     expect(toJson(adminPage)).toMatchSnapshot();
   });
 
   it('should show the desired number of tenants per page', () => {
-    const manyTenants = generateProps(20);
+    const manyTenants = generateProps(20, { itemsPerPage: "5" });
     const adminPage = shallow(<AdminPage {...manyTenants} />);
-    act(() => {
-      adminPage.find('[aria-label="Change Page"]').simulate("perPageSelect", {}, 5);
-    });
     expect(toJson(adminPage)).toMatchSnapshot();
   });
 
   it('should filter by name', () => {
-    const manyTenants = generateProps(20);
+    const manyTenants = generateProps(20, { filter: "5" });
     const adminPage = shallow(<AdminPage {...manyTenants} />);
-    act(() => {
-      const filter = adminPage.find('[aria-label="Filter by Name"]');
-      adminPage.find('[aria-label="Filter by Name"]').simulate("change",
-        (filter.prop('filter') as unknown as Function)('5'));
-    });
     expect(toJson(adminPage)).toMatchSnapshot();
   });
 
   it('should display modal when the Add Tenant button is clicked', () => {
-    const twoTenants = generateProps(2);
+    const twoTenants = generateProps(2, {});
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     act(() => {
       adminPage.find('[aria-label="Add Tenant"]').simulate('click');
@@ -79,7 +70,7 @@ describe('Admin Page', () => {
 
 
   it('should close the modal when the modal is closed', () => {
-    const twoTenants = generateProps(2);
+    const twoTenants = generateProps(2, {});
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     act(() => {
       adminPage.find('[aria-label="Add Tenant"]').simulate('click');
@@ -89,7 +80,7 @@ describe('Admin Page', () => {
   });
 
   it('should call remove tenant when the delete tenant button is clicked', () => {
-    const twoTenants = generateProps(2);
+    const twoTenants = generateProps(2, {});
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     act(() => {
       shallow((adminPage.find('[caption="Trans(i18nKey=tenants)"]').prop('rows') as unknown as any[]
@@ -100,7 +91,7 @@ describe('Admin Page', () => {
   });
   
   it('should show confirm dialog when the reset button is clicked', () => {
-    const twoTenants = generateProps(2);
+    const twoTenants = generateProps(2, {});
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     adminPage.find('[data-cy="reset-application"]').simulate("click");
     expect(twoTenants.resetApplication).not.toBeCalled();
@@ -108,14 +99,14 @@ describe('Admin Page', () => {
   });
   
   it('confirm dialog should reset application', () => {
-    const twoTenants = generateProps(2);
+    const twoTenants = generateProps(2, {});
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     adminPage.find("ConfirmDialog[title='Trans(i18nKey=confirmResetTitle)']").simulate("confirm");
     expect(twoTenants.resetApplication).toBeCalled();
   });
 });
 
-function generateProps(numberOfTenants: number): Props {
+function generateProps(numberOfTenants: number, urlProps: Partial<DataTableUrlProps>): Props {
   const tenants: Tenant[] = new Array(numberOfTenants);
   for (let i = 0; i < numberOfTenants; i += 1) {
     tenants[i] = { name: `Tenant ${i + 1}`, id: i, version: 0 };
@@ -123,6 +114,7 @@ function generateProps(numberOfTenants: number): Props {
   return {
     tenantList: tenants,
     removeTenant: jest.fn(),
-    resetApplication: jest.fn()
+    resetApplication: jest.fn(),
+    ...getRouterProps("/admin", { ...urlProps as any })
   }
 }
