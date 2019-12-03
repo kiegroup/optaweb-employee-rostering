@@ -51,19 +51,17 @@ export function setPropsInUrl<T extends UrlProps<string> >(props: RouteComponent
   const searchParams = new URLSearchParams(pathnameToQueryStringMap.has(props.location.pathname)?
     pathnameToQueryStringMap.get(props.location.pathname) : props.location.search);
   
-  for (const key in urlProps) {
-    if (Object.prototype.hasOwnProperty.call(urlProps, key)) {
-      const value = urlProps[key] as string|null|undefined;
-      if (value !== undefined) {
-        if (value !== null && value.length > 0) {
-          searchParams.set(key, value);
-        }
-        else {
-          searchParams.delete(key);
-        }
+  Object.keys(urlProps).forEach(key => {
+    const value = urlProps[key] as string|null|undefined;
+    if (value !== undefined) {
+      if (value !== null && value.length > 0) {
+        searchParams.set(key, value);
+      }
+      else {
+        searchParams.delete(key);
       }
     }
-  }
+  });
   pathnameToQueryStringMap.set(props.location.pathname, `?${searchParams.toString()}`);
   props.history.push(`${props.location.pathname}?${searchParams.toString()}`);
 }

@@ -60,7 +60,8 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
   ]);
 }
 
-export const changeTenant: ThunkCommandFactory<{ tenantId: number, routeProps: RouteComponentProps }, ChangeTenantAction> = params => (dispatch) => {
+export const changeTenant: ThunkCommandFactory<{ tenantId: number; routeProps: RouteComponentProps },
+ChangeTenantAction> = params => (dispatch) => {
   dispatch(actions.changeTenant(params.tenantId));
   setTenantIdInUrl(params.routeProps, params.tenantId);
   return refreshData(dispatch);

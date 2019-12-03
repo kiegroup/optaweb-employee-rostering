@@ -36,6 +36,8 @@ import FilterComponent from './FilterComponent';
 import { Predicate, ReadonlyPartial, Sorter } from 'types';
 import { toggleElement, Stream } from 'util/ImmutableCollectionOperations';
 import { WithTranslation } from 'react-i18next';
+import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
+import { RouteComponentProps } from 'react-router';
 
 export interface DataTableProps<T> extends WithTranslation, RouteComponentProps {
   title: string;
@@ -49,6 +51,7 @@ interface DataTableState<T> {
 }
 
 export type PropertySetter<T> = (propertyName: keyof T, value: T[keyof T] | undefined) => void;
+export type DataTableUrlProps = UrlProps<"page"|"itemsPerPage"|"filter"|"sortBy"|"asc">;
 
 export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
   constructor(props: P) {

@@ -19,14 +19,12 @@ import { UrlProps } from "./BookmarkableUtils";
 
 export function getRouterProps<T extends UrlProps<any>>(pathname: string, props: Partial<T>): RouteComponentProps {
   const searchParams = new URLSearchParams();
-  for (const key in props) {
-    if (Object.prototype.hasOwnProperty.call(props, key)) {
-      const value = props[key] as string | null | undefined;
-      if (value) {
-        searchParams.set(key, value);
-      }
+  Object.keys(props).forEach(key => {
+    const value = props[key] as string | null | undefined;
+    if (value) {
+      searchParams.set(key, value);
     }
-  }
+  });
   const location = {
     pathname,
     search: `?${searchParams.toString()}`,
