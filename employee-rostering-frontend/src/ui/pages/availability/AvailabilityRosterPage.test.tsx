@@ -277,7 +277,7 @@ describe('Availability Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
-    ((availabilityRosterPage.find('Schedule').props()) as { addEvent: Function}).addEvent(newDateStart,
+    availabilityRosterPage.find('Schedule').simulate("addEvent", newDateStart,
       newDateEnd);
 
     expect(baseProps.addEmployeeAvailability).toBeCalled();
@@ -288,6 +288,38 @@ describe('Availability Roster Page', () => {
       employee: employee,
       state: "UNAVAILABLE"
     });
+  });
+  
+  it('should call updateAvailability when an availability is updated', () => {
+    const availabilityRosterPage = shallow(<AvailabilityRosterPage
+      {...baseProps}
+    />);
+    const newDateStart = moment(startDate).add(7, "days").toDate();
+    const newDateEnd = moment(endDate).add(7, "days").toDate();
+    // An event in availability roster stores the availability in reference
+    availabilityRosterPage.find('Schedule').simulate("updateEvent", { reference: availability }, newDateStart,
+      newDateEnd);
+
+    expect(baseProps.updateEmployeeAvailability).toBeCalled();
+    expect(baseProps.updateEmployeeAvailability).toBeCalledWith({
+      ...availability,
+      startDateTime: newDateStart,
+      endDateTime: newDateEnd,
+    });
+  });
+  
+  it('should NOT call updateShift when a shift is updated', () => {
+    const availabilityRosterPage = shallow(<AvailabilityRosterPage
+      {...baseProps}
+    />);
+    const newDateStart = moment(startDate).add(7, "days").toDate();
+    const newDateEnd = moment(endDate).add(7, "days").toDate();
+    // An event in availability roster stores the availability in reference
+    availabilityRosterPage.find('Schedule').simulate("updateEvent", { reference: shift }, newDateStart,
+      newDateEnd);
+
+    expect(baseProps.updateShift).not.toBeCalled();
+    expect(baseProps.showInfoMessage).toBeCalledWith("createShiftsInShiftRoster");
   });
 
   it('should have solid border if the shift is published', () => {

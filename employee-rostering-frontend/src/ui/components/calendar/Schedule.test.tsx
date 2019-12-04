@@ -108,7 +108,7 @@ describe('Schedule', () => {
       slots: [],
       action: "doubleClick"
     });
-    expect(props.addEvent).not.toBeCalled();
+    expect(props.onAddEvent).not.toBeCalled();
   });
 
   it('should create event on click', () => {
@@ -120,8 +120,8 @@ describe('Schedule', () => {
       slots: [],
       action: "click"
     });
-    expect(props.addEvent).toBeCalled();
-    expect(props.addEvent).toBeCalledWith(props.events[0].start, props.events[0].end);
+    expect(props.onAddEvent).toBeCalled();
+    expect(props.onAddEvent).toBeCalledWith(props.events[0].start, props.events[0].end);
   });
 
   it('should create event on select', () => {
@@ -133,8 +133,8 @@ describe('Schedule', () => {
       slots: [],
       action: "select"
     });
-    expect(props.addEvent).toBeCalled();
-    expect(props.addEvent).toBeCalledWith(props.events[0].start, props.events[0].end);
+    expect(props.onAddEvent).toBeCalled();
+    expect(props.onAddEvent).toBeCalledWith(props.events[0].start, props.events[0].end);
   });
   
   it('should move event on drag', () => {
@@ -146,8 +146,8 @@ describe('Schedule', () => {
       end: props.events[0].end,
       allDay: false
     });
-    expect(props.updateEvent).toBeCalled();
-    expect(props.updateEvent).toBeCalledWith(props.events[0], props.events[0].start, props.events[0].end);
+    expect(props.onUpdateEvent).toBeCalled();
+    expect(props.onUpdateEvent).toBeCalledWith(props.events[0], props.events[0].start, props.events[0].end);
   });
   
   it('should resize event on resize', () => {
@@ -159,8 +159,8 @@ describe('Schedule', () => {
       end: props.events[0].end,
       allDay: false
     });
-    expect(props.updateEvent).toBeCalled();
-    expect(props.updateEvent).toBeCalledWith(props.events[0], props.events[0].start, props.events[0].end);
+    expect(props.onUpdateEvent).toBeCalled();
+    expect(props.onUpdateEvent).toBeCalledWith(props.events[0], props.events[0].start, props.events[0].end);
   });
 
   it('should create event of proper length if it span a day', () => {
@@ -172,8 +172,8 @@ describe('Schedule', () => {
       slots: [],
       action: "click"
     });
-    expect(props.addEvent).toBeCalled();
-    expect(props.addEvent).toBeCalledWith(props.events[1].start, props.events[1].end);
+    expect(props.onAddEvent).toBeCalled();
+    expect(props.onAddEvent).toBeCalledWith(props.events[1].start, props.events[1].end);
   });
 
   it('eventPropGetter should be prop', () => {
@@ -266,8 +266,8 @@ const props: Props<{ start: Date; end: Date; title: string }> = {
   startAccessor: jest.fn(e => e.start),
   endAccessor: jest.fn(e => e.end),
   titleAccessor: jest.fn(e => e.title),
-  addEvent: jest.fn(),
-  updateEvent: jest.fn(),
+  onAddEvent: jest.fn(),
+  onUpdateEvent: jest.fn(),
   eventStyle: jest.fn(() => ({ style: { color: "red" }, className: "class" })),
   wrapperStyle: jest.fn(() => ({ style: { color: "red" }, className: "class", props: { prop: true } })),
   dayStyle: jest.fn(() => ({ style: { color: "red" }, className: "class" })),
