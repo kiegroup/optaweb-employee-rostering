@@ -73,7 +73,7 @@ export const AdminPage: React.FC<Props> = (props) => {
   const filterText = urlProps.filter || "";
   const page = parseInt(urlProps.page as string);
   const itemsPerPage = parseInt(urlProps.itemsPerPage as string)
-  const filter = stringFilter((t: Tenant) => t.name)(filterText);
+  const filter = stringFilter((tenant: Tenant) => tenant.name)(filterText);
   const filteredRows = new Stream(tenantList)
     .filter(filter);
     
@@ -114,7 +114,7 @@ export const AdminPage: React.FC<Props> = (props) => {
           <FilterComponent
             aria-label="Filter by Name"
             filterText={urlProps.filter || ""}
-            onChange={filter => setPropsInUrl<DataTableUrlProps>(props, { page: "1", filter })}
+            onChange={newFilterText => setPropsInUrl<DataTableUrlProps>(props, { page: "1", filter: newFilterText })}
           />
         </LevelItem>
         <LevelItem style={{ display: "flex" }}>

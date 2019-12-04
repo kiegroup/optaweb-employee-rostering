@@ -334,9 +334,9 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
           <LevelItem>
             <FilterComponent
               filterText={filterText}
-              onChange={filterText => {
+              onChange={newFilterText => {
                 this.setState({ editedRows: [] });
-                setPropsInUrl(this.props, { page: "1", filter: filterText })
+                setPropsInUrl(this.props, { page: "1", filter: newFilterText })
               }}
             />
           </LevelItem>
@@ -348,7 +348,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
               page={page}
               onSetPage={this.onSetPage}
               widgetId="pagination-options-menu-top"
-              onPerPageSelect={(e, perPage) => this.onPerPageSelect(e, perPage, urlProps)}
+              onPerPageSelect={(e, newPerPage) => this.onPerPageSelect(e, newPerPage, urlProps)}
             />
           </LevelItem>
         </Level>
