@@ -355,7 +355,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             ? e.shiftTemplate.rotationEmployee.name : t('unassigned'))}
           startAccessor={e => e.start}
           endAccessor={e => e.end}
-          addEvent={
+          onAddEvent={
             (start, end) => {
               this.addShiftTemplate({
                 tenantId: shownSpot.tenantId,
@@ -368,7 +368,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
               });
             }
           }
-          updateEvent={
+          onUpdateEvent={
             (event, start, end) => {
               this.updateShiftTemplate({
                 ...event.shiftTemplate,

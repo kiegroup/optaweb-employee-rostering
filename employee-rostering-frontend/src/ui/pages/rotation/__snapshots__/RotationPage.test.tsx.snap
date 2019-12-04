@@ -111,7 +111,6 @@ exports[`Rotation Page should render correctly when creating a new shift templat
     onSave={[Function]}
   />
   <Schedule
-    addEvent={[Function]}
     dateFormat={[Function]}
     dayStyle={[Function]}
     endAccessor={[Function]}
@@ -172,12 +171,13 @@ exports[`Rotation Page should render correctly when creating a new shift templat
       ]
     }
     key="2"
+    onAddEvent={[Function]}
+    onUpdateEvent={[Function]}
     popoverBody={[Function]}
     popoverHeader={[Function]}
     startAccessor={[Function]}
     startDate={2017-12-31T00:00:00.000Z}
     titleAccessor={[Function]}
-    updateEvent={[Function]}
     wrapperStyle={[Function]}
   />
 </Fragment>
@@ -294,7 +294,6 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
     onSave={[Function]}
   />
   <Schedule
-    addEvent={[Function]}
     dateFormat={[Function]}
     dayStyle={[Function]}
     endAccessor={[Function]}
@@ -355,12 +354,13 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
       ]
     }
     key="2"
+    onAddEvent={[Function]}
+    onUpdateEvent={[Function]}
     popoverBody={[Function]}
     popoverHeader={[Function]}
     startAccessor={[Function]}
     startDate={2017-12-31T00:00:00.000Z}
     titleAccessor={[Function]}
-    updateEvent={[Function]}
     wrapperStyle={[Function]}
   />
 </Fragment>

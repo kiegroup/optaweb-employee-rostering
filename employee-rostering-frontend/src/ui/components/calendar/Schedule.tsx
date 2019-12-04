@@ -40,8 +40,8 @@ export interface Props<T extends object> {
   startAccessor: (event: T) => Date;
   endAccessor: (event: T) => Date;
   titleAccessor: (event: T) => string;
-  addEvent: (start: Date, end: Date) => void;
-  updateEvent: (event: T, start: Date, end: Date) => void;
+  onAddEvent: (start: Date, end: Date) => void;
+  onUpdateEvent: (event: T, start: Date, end: Date) => void;
   eventStyle: StyleSupplier<T>;
   wrapperStyle: StyleSupplier<T>;
   dayStyle: StyleSupplier<Date>;
@@ -89,21 +89,21 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
           action: "select"|"click"|"doubleClick"; }) => {
           if (slotInfo.action === "select" || slotInfo.action === "click") {
             if (isDay(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate())) {
-              props.addEvent(moment(slotInfo.start).toDate(), moment(slotInfo.end).add(1, "day").toDate());
+              props.onAddEvent(moment(slotInfo.start).toDate(), moment(slotInfo.end).add(1, "day").toDate());
             }
             else {
-              props.addEvent(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate());
+              props.onAddEvent(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate());
             }
           }
         }
         }
         onEventDrop={(dropLocation: { event: T; start: string|Date; end: string|Date }) => {
           if (isDay(moment(dropLocation.start).toDate(), moment(dropLocation.end).toDate())) {
-            props.updateEvent(dropLocation.event, moment(dropLocation.start).toDate(), 
+            props.onUpdateEvent(dropLocation.event, moment(dropLocation.start).toDate(), 
               moment(dropLocation.end).add(1, "day").toDate());
           }
           else if(moment(dropLocation.start).dayOfYear() !== moment(dropLocation.end).dayOfYear()) {
-            props.updateEvent(dropLocation.event, moment(dropLocation.start).toDate(), moment(dropLocation.start)
+            props.onUpdateEvent(dropLocation.event, moment(dropLocation.start).toDate(), moment(dropLocation.start)
               .add(
                 moment(props.endAccessor(dropLocation.event))
                   .diff(moment(props.startAccessor(dropLocation.event)),
@@ -112,7 +112,7 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
               .toDate());
           }
           else {
-            props.updateEvent(dropLocation.event, moment(dropLocation.start).toDate(), moment(dropLocation.end)
+            props.onUpdateEvent(dropLocation.event, moment(dropLocation.start).toDate(), moment(dropLocation.end)
               .toDate());
           }
         }}
@@ -120,18 +120,18 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
           const origEventStart = moment(props.startAccessor(resizeInfo.event));
           const origEventEnd = moment(props.startAccessor(resizeInfo.event));
           if (isDay(moment(resizeInfo.start).toDate(), moment(resizeInfo.end).toDate())) {
-            props.updateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end)
+            props.onUpdateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end)
               .add(1, "day").toDate());
           }
           else if(origEventStart.dayOfYear() !== moment(resizeInfo.start).dayOfYear()) {
-            props.updateEvent(resizeInfo.event, origEventStart.toDate(), moment(resizeInfo.end).toDate());
+            props.onUpdateEvent(resizeInfo.event, origEventStart.toDate(), moment(resizeInfo.end).toDate());
           }
           else if (origEventEnd.dayOfYear() !== moment(resizeInfo.end).dayOfYear()) {
-            props.updateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), origEventEnd.toDate());
+            props.onUpdateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), origEventEnd.toDate());
 
           }
           else {
-            props.updateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end).toDate());
+            props.onUpdateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end).toDate());
           }
         }}
         onView={() => {}}

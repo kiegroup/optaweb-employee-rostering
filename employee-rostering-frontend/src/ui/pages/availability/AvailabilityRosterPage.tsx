@@ -410,7 +410,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           titleAccessor={soa => (isShift(soa.reference) ? soa.reference.spot.name : soa.reference.state)}
           startAccessor={soa => soa.start}
           endAccessor={soa => soa.end}
-          addEvent={
+          onAddEvent={
             (start, end) => {
               this.props.addEmployeeAvailability({
                 tenantId: shownEmployee.tenantId,
@@ -421,7 +421,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               });
             }
           }
-          updateEvent={
+          onUpdateEvent={
             (event, start, end) => {
               if (isAvailability(event.reference)) {
                 this.props.updateEmployeeAvailability({

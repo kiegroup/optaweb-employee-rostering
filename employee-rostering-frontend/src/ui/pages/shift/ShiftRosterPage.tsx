@@ -303,7 +303,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           titleAccessor={shift => (shift.employee ? shift.employee.name : t("unassigned"))}
           startAccessor={shift => moment(shift.startDateTime).toDate()}
           endAccessor={shift => moment(shift.endDateTime).toDate()}
-          addEvent={
+          onAddEvent={
             (start, end) => {
               this.addShift({
                 tenantId: shownSpot.tenantId,
@@ -316,7 +316,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               });
             }
           }
-          updateEvent={
+          onUpdateEvent={
             (shift, start, end) => {
               this.updateShift({
                 ...shift,

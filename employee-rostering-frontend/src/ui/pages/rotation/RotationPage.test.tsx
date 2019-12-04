@@ -190,7 +190,7 @@ describe('Rotation Page', () => {
     />);
     const newDateStart = moment(baseDate).add(7, "days").toDate();
     const newDateEnd = moment(baseDate).add(7, "days").add(8, "hours").toDate();
-    ((rotationPage.find('Schedule').props()) as { addEvent: Function}).addEvent(newDateStart,
+    rotationPage.find('Schedule').simulate("addEvent", newDateStart,
       newDateEnd);
 
     expect(baseProps.addShiftTemplate).toBeCalled();
@@ -200,6 +200,24 @@ describe('Rotation Page', () => {
       shiftTemplateDuration: moment.duration(8, "hours"),
       spot: spot,
       rotationEmployee: null
+    });
+  });
+  
+  it('should call updateShiftTemplate when an event is updated', () => {
+    const rotationPage = shallow(<RotationPage
+      {...baseProps}
+    />);
+    const newDateStart = moment(baseDate).add(7, "days").toDate();
+    const newDateEnd = moment(baseDate).add(7, "days").add(8, "hours").toDate();
+    // An event in rotation page stores shiftTemplate in a property called shiftTemplate
+    rotationPage.find('Schedule').simulate("updateEvent", { shiftTemplate: shiftTemplate }, newDateStart,
+      newDateEnd);
+
+    expect(baseProps.updateShiftTemplate).toBeCalled();
+    expect(baseProps.updateShiftTemplate).toBeCalledWith({
+      ...shiftTemplate,
+      durationBetweenRotationStartAndTemplateStart: moment.duration(168, "hours"),
+      shiftTemplateDuration: moment.duration(8, "hours"),
     });
   });
 });

@@ -296,7 +296,7 @@ describe('Shift Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
-    ((shiftRosterPage.find('Schedule').props()) as { addEvent: Function}).addEvent(newDateStart,
+    shiftRosterPage.find('Schedule').simulate("addEvent", newDateStart,
       newDateEnd);
 
     expect(baseProps.addShift).toBeCalled();
@@ -308,6 +308,23 @@ describe('Shift Roster Page', () => {
       employee: null,
       rotationEmployee: null,
       pinnedByUser: false
+    });
+  });
+  
+  it('should call updateShift when an event is updated', () => {
+    const shiftRosterPage = shallow(<ShiftRosterPage
+      {...baseProps}
+    />);
+    const newDateStart = moment(startDate).add(7, "days").toDate();
+    const newDateEnd = moment(endDate).add(7, "days").toDate();
+    shiftRosterPage.find('Schedule').simulate("updateEvent", shift, newDateStart,
+      newDateEnd);
+
+    expect(baseProps.updateShift).toBeCalled();
+    expect(baseProps.updateShift).toBeCalledWith({
+      ...shift,
+      startDateTime: newDateStart,
+      endDateTime: newDateEnd,
     });
   });
 
