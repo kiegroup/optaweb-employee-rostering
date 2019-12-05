@@ -27,7 +27,7 @@ export function getRouterProps<T extends UrlProps<any>>(pathname: string, props:
   });
   const location = {
     pathname,
-    search: `?${searchParams.toString()}`,
+    search: Object.keys(props).length > 0 ? `?${searchParams.toString()}` : '',
     hash: "",
     state: undefined
   };
