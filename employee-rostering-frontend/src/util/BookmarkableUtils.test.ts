@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import * as bookmarkableUtils from './BookmarkableUtils';
 import { getRouterProps } from './BookmarkableTestUtils';
 
 // Ugly workaround for having no way to wait for all requestAnimationFrame to finish
 const flushPromisesCallback = (cb: () => void) =>
   window.requestAnimationFrame(() => new Promise(setImmediate).then(cb));
+
+const bookmarkableUtils = jest.requireActual("util/BookmarkableUtils");
+
 describe('Bookmarkable Utils', () => {
-  beforeAll(() => {
-    jest.unmock("util/BookmarkableUtils");
-  });
-  
-  afterAll(() => {
-    jest.mock("util/BookmarkableUtils");
-  });
   
   it('should do nothing if url has no tenant id in setTenantIdInUrl', () => {
     const routerProps = getRouterProps("/test", {});
