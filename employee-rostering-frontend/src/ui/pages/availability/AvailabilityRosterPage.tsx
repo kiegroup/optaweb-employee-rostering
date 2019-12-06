@@ -431,7 +431,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                 });
               }
               else {
-                this.props.showInfoMessage("createShiftsInShiftRoster");
+                this.props.showInfoMessage("editShiftsInShiftRoster");
               }
             }  
           }

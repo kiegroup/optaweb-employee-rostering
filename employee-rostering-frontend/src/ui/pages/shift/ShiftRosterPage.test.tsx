@@ -27,6 +27,7 @@ import { getShiftColor } from './ShiftEvent';
 import color from 'color';
 import { useTranslation } from 'react-i18next';
 import Actions from 'ui/components/Actions';
+import Schedule from 'ui/components/calendar/Schedule';
 
 describe('Shift Roster Page', () => {
   beforeEach(() => {
@@ -296,7 +297,7 @@ describe('Shift Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
-    shiftRosterPage.find('Schedule').simulate("addEvent", newDateStart,
+    shiftRosterPage.find(Schedule).simulate("addEvent", newDateStart,
       newDateEnd);
 
     expect(baseProps.addShift).toBeCalled();
@@ -317,7 +318,7 @@ describe('Shift Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
-    shiftRosterPage.find('Schedule').simulate("updateEvent", shift, newDateStart,
+    shiftRosterPage.find(Schedule).simulate("updateEvent", shift, newDateStart,
       newDateEnd);
 
     expect(baseProps.updateShift).toBeCalled();

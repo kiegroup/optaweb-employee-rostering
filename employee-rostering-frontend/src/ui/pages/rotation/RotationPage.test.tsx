@@ -23,6 +23,7 @@ import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
 import ShiftTemplate from 'domain/ShiftTemplate';
 import { useTranslation, WithTranslation } from 'react-i18next';
+import Schedule from 'ui/components/calendar/Schedule';
 
 const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
 describe('Rotation Page', () => {
@@ -190,7 +191,7 @@ describe('Rotation Page', () => {
     />);
     const newDateStart = moment(baseDate).add(7, "days").toDate();
     const newDateEnd = moment(baseDate).add(7, "days").add(8, "hours").toDate();
-    rotationPage.find('Schedule').simulate("addEvent", newDateStart,
+    rotationPage.find(Schedule).simulate("addEvent", newDateStart,
       newDateEnd);
 
     expect(baseProps.addShiftTemplate).toBeCalled();
@@ -210,7 +211,7 @@ describe('Rotation Page', () => {
     const newDateStart = moment(baseDate).add(7, "days").toDate();
     const newDateEnd = moment(baseDate).add(7, "days").add(8, "hours").toDate();
     // An event in rotation page stores shiftTemplate in a property called shiftTemplate
-    rotationPage.find('Schedule').simulate("updateEvent", { shiftTemplate: shiftTemplate }, newDateStart,
+    rotationPage.find(Schedule).simulate("updateEvent", { shiftTemplate: shiftTemplate }, newDateStart,
       newDateEnd);
 
     expect(baseProps.updateShiftTemplate).toBeCalled();
