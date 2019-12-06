@@ -27,6 +27,7 @@ import "moment/locale/en-ca";
 import EmployeeAvailability from 'domain/EmployeeAvailability';
 import { useTranslation } from 'react-i18next';
 import Actions from 'ui/components/Actions';
+import Schedule from 'ui/components/calendar/Schedule';
 
 describe('Availability Roster Page', () => {
   beforeEach(() => {
@@ -277,7 +278,7 @@ describe('Availability Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
-    availabilityRosterPage.find('Schedule').simulate("addEvent", newDateStart,
+    availabilityRosterPage.find(Schedule).simulate("addEvent", newDateStart,
       newDateEnd);
 
     expect(baseProps.addEmployeeAvailability).toBeCalled();
@@ -297,7 +298,7 @@ describe('Availability Roster Page', () => {
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
     // An event in availability roster stores the availability in reference
-    availabilityRosterPage.find('Schedule').simulate("updateEvent", { reference: availability }, newDateStart,
+    availabilityRosterPage.find(Schedule).simulate("updateEvent", { reference: availability }, newDateStart,
       newDateEnd);
 
     expect(baseProps.updateEmployeeAvailability).toBeCalled();
@@ -315,11 +316,11 @@ describe('Availability Roster Page', () => {
     const newDateStart = moment(startDate).add(7, "days").toDate();
     const newDateEnd = moment(endDate).add(7, "days").toDate();
     // An event in availability roster stores the availability in reference
-    availabilityRosterPage.find('Schedule').simulate("updateEvent", { reference: shift }, newDateStart,
+    availabilityRosterPage.find(Schedule).simulate("updateEvent", { reference: shift }, newDateStart,
       newDateEnd);
 
     expect(baseProps.updateShift).not.toBeCalled();
-    expect(baseProps.showInfoMessage).toBeCalledWith("createShiftsInShiftRoster");
+    expect(baseProps.showInfoMessage).toBeCalledWith("editShiftsInShiftRoster");
   });
 
   it('should have solid border if the shift is published', () => {

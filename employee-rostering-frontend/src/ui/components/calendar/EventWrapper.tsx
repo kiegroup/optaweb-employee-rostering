@@ -31,7 +31,7 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   popoverBody: React.ReactNode;
   style?: React.CSSProperties;
 }>): JSX.Element {
-  let className = (props.className) ? props.className : '';
+  let className = props.className;
   const style: React.CSSProperties = {
     backgroundColor: 'transparent',
     border: 'none',
