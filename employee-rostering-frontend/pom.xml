@@ -28,19 +28,7 @@
   <artifactId>employee-rostering-frontend</artifactId>
   <name>Employee Rostering as a Service React Frontend</name>
   <description>React frontend for Employee Rostering as a Service</description>
-  
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>jakarta.validation</groupId>
-          <artifactId>jakarta.validation-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-  </dependencies>
+  <packaging>pom</packaging>
 
   <properties>
     <node.version>v11.6.0</node.version>
@@ -48,8 +36,6 @@
   </properties>
 
   <build>
-    <sourceDirectory>spring-boot/java</sourceDirectory>
-    
     <plugins>
       <plugin>
         <groupId>com.github.eirslett</groupId>
@@ -156,24 +142,6 @@
                 </resource>
               </resources>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>assembly/sources.xml</descriptor>
-          </descriptors>
-          <appendAssemblyId>true</appendAssemblyId>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
