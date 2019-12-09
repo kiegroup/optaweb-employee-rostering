@@ -1,7 +1,6 @@
 {
   "private": true,
   "license": "Apache-2.0",
-  "proxy": "http://localhost:8080",
   "dependencies": {
     "@patternfly/patternfly": "^2.6.16",
     "@patternfly/react-core": "^3.30.1",
