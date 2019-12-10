@@ -239,7 +239,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 key={2}
                 aria-label="Spots Page"
                 variant="primary"
-                onClick={() => this.props.history.push('/spots')}
+                onClick={() => this.props.history.push(`/${this.props.tenantId}/spots`)}
               />
             ]}
           />

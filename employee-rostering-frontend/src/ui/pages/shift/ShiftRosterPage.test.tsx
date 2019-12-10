@@ -113,7 +113,7 @@ describe('Shift Roster Page', () => {
     />);
     shallow((shiftRosterPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith("/spots");
+    expect(baseProps.history.push).toBeCalledWith("/0/spots");
   });
 
   it('should change the week when the user change the week', () => {

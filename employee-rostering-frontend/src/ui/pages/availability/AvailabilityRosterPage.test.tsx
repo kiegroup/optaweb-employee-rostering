@@ -123,7 +123,7 @@ describe('Availability Roster Page', () => {
     />);
     shallow((availabilityRosterPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith("/employees");
+    expect(baseProps.history.push).toBeCalledWith("/0/employees");
   });
 
   it('should call publishRoster when the publish button is clicked', () => {

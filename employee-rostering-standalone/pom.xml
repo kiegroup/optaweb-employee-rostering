@@ -39,7 +39,8 @@
                 <artifactItem>
                   <groupId>org.optaweb.employeerostering</groupId>
                   <artifactId>employee-rostering-frontend</artifactId>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <type>zip</type>
+                  <outputDirectory>${project.build.directory}/react</outputDirectory>
                   <includes>**\/*</includes>
                 </artifactItem>
                 <artifactItem>
@@ -56,6 +57,27 @@
                   <excludes>**\/org/optaweb/employeerostering\/**\/*</excludes>
                 </artifactItem>
               </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>position-react-build</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/react/employee-rostering-frontend-${project.version}</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
             </configuration>
           </execution>
         </executions>
@@ -83,10 +105,6 @@
                 <exclude>
                   <groupId>org.optaweb.employeerostering</groupId>
                   <artifactId>employee-rostering-docs</artifactId>
-                </exclude>
-                <exclude>
-                  <groupId>org.optaweb.employeerostering</groupId>
-                  <artifactId>employee-rostering-frontend</artifactId>
                 </exclude>
               </excludes>
             </configuration>
@@ -203,10 +221,6 @@
           <artifactId>jakarta.validation-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>employee-rostering-frontend</artifactId>
     </dependency>
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>

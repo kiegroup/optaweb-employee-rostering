@@ -149,7 +149,7 @@ describe('Employees page', () => {
     />);
     shallow((employeesPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(noEmployees.history.push).toBeCalled();
-    expect(noEmployees.history.push).toBeCalledWith("/contracts");
+    expect(noEmployees.history.push).toBeCalledWith("/0/contracts");
   });
 
   it('should treat incompleted data as incomplete', () => {

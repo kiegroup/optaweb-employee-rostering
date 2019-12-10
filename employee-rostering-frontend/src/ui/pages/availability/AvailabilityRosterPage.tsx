@@ -306,7 +306,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                 key={2}
                 aria-label="Employees Page"
                 variant="primary"
-                onClick={() => this.props.history.push('/employees')}
+                onClick={() => this.props.history.push(`/${this.props.tenantId}/employees`)}
               />
             ]}
           />

@@ -103,7 +103,7 @@ describe('Rotation Page', () => {
     />);
     shallow((rotationPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith("/spots");
+    expect(baseProps.history.push).toBeCalledWith("/0/spots");
   });
 
   it('should call updateShift on updateShift', () => {
@@ -289,6 +289,7 @@ const rosterState: RosterState = {
 
 const baseProps: Props & WithTranslation = {
   ...useTranslation(),
+  tenantId: 0,
   tReady: true,
   isLoading: false,
   spotList: [spot, newSpot],

@@ -41,6 +41,7 @@ import {
 import { UrlProps, getPropsFromUrl, setPropsInUrl } from 'util/BookmarkableUtils';
 
 interface StateProps {
+  tenantId: number;
   isLoading: boolean;
   spotList: Spot[];
   spotIdToShiftTemplateListMap: Map<number, ShiftTemplate[]>;
@@ -48,6 +49,7 @@ interface StateProps {
 }
 
 const mapStateToProps = (state: AppState): StateProps => ({
+  tenantId: state.tenantData.currentTenantId,
   isLoading: state.shiftTemplateList.isLoading,
   spotList: spotSelectors.getSpotList(state),
   spotIdToShiftTemplateListMap: shiftTemplateSelectors.getShiftTemplateList(state)
@@ -202,7 +204,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
                 key={2}
                 aria-label="Spots Page"
                 variant="primary"
-                onClick={() => this.props.history.push('/spots')}
+                onClick={() => this.props.history.push(`/${this.props.tenantId}/spots`)}
               />
             ]}
           />

@@ -171,7 +171,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
                 key={2}
                 aria-label="Contracts Page"
                 variant="primary"
-                onClick={() => this.props.history.push('/contracts')}
+                onClick={() => this.props.history.push(`/${this.props.tenantId}/contracts`)}
               />
             ]}
           />

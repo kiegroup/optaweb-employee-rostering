@@ -26,26 +26,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         // Arcane Spring Boot Magic from https://stackoverflow.com/a/42998817
-        // From what I can tell:
-        // registry.addViewController(String) add a new handler for URLs,
-        // and controller.setViewName(String) tell the handler what to do.
-        // In this case, controller.setViewName("forward:/") tell the handler
-        // to redirect any requests it handles to "/" (which is index.html,
-        // where our frontend exists.
         
-        // probably handles requests with no trailing paths (/app, /admin,
-        // but not /employees/0)
-        registry.addViewController("/{spring:\\w+}") 
-              .setViewName("forward:/");
-        
-        // probably handles requests with trailing paths (/employees/0 but
-        // not /app)
+        // Forwards requests without file extensions (/0/employees, /admin,
+        // but not /assets/images/optaplanner.png) to /index.html
         registry.addViewController("/**/{spring:\\w+}")
-              .setViewName("forward:/");
-        
-        // I have no idea what this does; does react have javascript files
-        // with a $ suffix?
-        registry.addViewController("/{spring:\\w+}/**{spring:?!(\\.js|\\.css)$}") 
               .setViewName("forward:/");
     }
 
