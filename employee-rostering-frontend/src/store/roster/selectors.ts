@@ -30,7 +30,7 @@ export function isShiftRosterLoading(state: AppState) {
     || state.rosterState.isLoading;
 }
 
-export function isAvaliablityRosterLoading(state: AppState) {
+export function isAvailabilityRosterLoading(state: AppState) {
   return state.spotList.isLoading || state.employeeList.isLoading || state.skillList.isLoading
     || state.contractList.isLoading || state.availabilityRoster.isLoading
     || state.rosterState.isLoading;
@@ -66,7 +66,7 @@ export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
 };
 
 export const getEmployeeListInAvailabilityRoster = (state: AppState): Employee[] => {
-  if (isAvaliablityRosterLoading(state)) {
+  if (isAvailabilityRosterLoading(state)) {
     return [];
   }
   return (state.availabilityRoster.availabilityRosterView as AvailabilityRosterView).employeeList
@@ -74,7 +74,7 @@ export const getEmployeeListInAvailabilityRoster = (state: AppState): Employee[]
 };
 
 export const getShiftListForEmployee = (state: AppState, employee: Employee): Shift[] => {
-  if (isAvaliablityRosterLoading(state)) {
+  if (isAvailabilityRosterLoading(state)) {
     throw Error('Availability Roster is loading');
   }
   if (getEmployeeListInAvailabilityRoster(state).find(e => e.id === employee.id) !== undefined
@@ -94,7 +94,7 @@ export const getShiftListForEmployee = (state: AppState, employee: Employee): Sh
 };
 
 export const getAvailabilityListForEmployee = (state: AppState, employee: Employee): EmployeeAvailability[] => {
-  if (isAvaliablityRosterLoading(state)) {
+  if (isAvailabilityRosterLoading(state)) {
     throw Error('Availability Roster is loading');
   }
   if (getEmployeeListInAvailabilityRoster(state).find(e => e.id === employee.id) !== undefined

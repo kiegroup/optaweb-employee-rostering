@@ -16,12 +16,8 @@
 import { shallow } from 'enzyme';
 import * as React from 'react';
 import { FilterProps, FilterComponent } from './FilterComponent';
-import { Button } from '@patternfly/react-core';
+import { Button, TextInput } from '@patternfly/react-core';
 import { useTranslation, WithTranslation } from 'react-i18next';
-
-interface MockData {
-  name: string;
-}
 
 describe('Filter component', () => {
   it('should render correctly with no text', () => {
@@ -37,7 +33,7 @@ describe('Filter component', () => {
 
   it('should call filter and onChange on updateFilter', () => {
     const filter = shallow(<FilterComponent {...props} />);
-    filter.find("TextInput").simulate("change", "New Filter");
+    filter.find(TextInput).simulate("change", "New Filter");
     expect(props.onChange).toBeCalled();
     expect(props.onChange).toBeCalledWith("New Filter");
   });

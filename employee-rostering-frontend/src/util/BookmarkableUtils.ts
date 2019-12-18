@@ -24,7 +24,7 @@ export function setTenantIdInUrl(props: RouteComponentProps, tenantId: number) {
   const endOfTenantId = props.location.pathname.indexOf('/', 1);
   if (endOfTenantId !== -1) {
     props.history.push(`/${tenantId}${props.location.pathname
-      .slice(props.location.pathname.indexOf('/', 1))}`);
+      .slice(endOfTenantId)}`);
   }
   // Else, the page is not specific to a tenant, so we do nothing
 }

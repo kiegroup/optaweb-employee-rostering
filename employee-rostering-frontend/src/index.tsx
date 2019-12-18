@@ -28,8 +28,20 @@ import i18n from './i18n';
 import { I18nextProvider } from 'react-i18next';
 import { configureStore } from 'store';
 
+const path = window.location.pathname;
+let windowTenantId = 0;
+if (path.indexOf('/', 1) > 0) {
+  windowTenantId = parseInt(path.substring(1, path.indexOf('/', 1)));
+}
+
 const store = configureStore({
   restBaseURL: '/rest',
+}, {
+  tenantData: {
+    currentTenantId: windowTenantId,
+    tenantList: [],
+    timezoneList: []
+  }
 });
 
 const LoadingSpinner: React.FC = () => (

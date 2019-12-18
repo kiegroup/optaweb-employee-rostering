@@ -72,20 +72,20 @@ let lastShownEmployeeList: Employee[] = [];
 const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
   isSolving: state.solverState.isSolving,
-  isLoading: rosterSelectors.isAvaliablityRosterLoading(state),
+  isLoading: rosterSelectors.isAvailabilityRosterLoading(state),
   allEmployeeList: employeeSelectors.getEmployeeList(state),
-  shownEmployeeList: lastShownEmployeeList = rosterSelectors.isAvaliablityRosterLoading(state)
+  shownEmployeeList: lastShownEmployeeList = rosterSelectors.isAvailabilityRosterLoading(state)
     ? lastShownEmployeeList : rosterSelectors.getEmployeeListInAvailabilityRoster(state),
   employeeIdToShiftListMap: lastEmployeeIdToShiftListMap = rosterSelectors
     .getEmployeeListInAvailabilityRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForEmployee(state, curr)),
-    rosterSelectors.isAvaliablityRosterLoading(state) ? lastEmployeeIdToShiftListMap : new Map<number, Shift[]>()),
+    rosterSelectors.isAvailabilityRosterLoading(state) ? lastEmployeeIdToShiftListMap : new Map<number, Shift[]>()),
   employeeIdToAvailabilityListMap: lastEmployeeIdToAvailabilityListMap = rosterSelectors
     .getEmployeeListInAvailabilityRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getAvailabilityListForEmployee(state, curr)),
-    rosterSelectors.isAvaliablityRosterLoading(state) ? lastEmployeeIdToAvailabilityListMap
+    rosterSelectors.isAvailabilityRosterLoading(state) ? lastEmployeeIdToAvailabilityListMap
       : new Map<number, EmployeeAvailability[]>()),
   startDate: (state.availabilityRoster.availabilityRosterView)
     ? moment(state.availabilityRoster.availabilityRosterView.startDate).toDate() : null,
