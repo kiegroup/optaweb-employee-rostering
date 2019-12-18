@@ -68,7 +68,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>run locktt --</arguments>
+              <arguments>run locktt -- </arguments>
             </configuration>
           </execution>
           <execution>
