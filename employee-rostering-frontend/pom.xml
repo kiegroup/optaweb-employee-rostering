@@ -30,7 +30,7 @@
   <description>React frontend for Employee Rostering as a Service</description>
 
   <properties>
-    <node.version>v8.12.0</node.version>
+    <node.version>v11.6.0</node.version>
     <npm.version>6.9.0</npm.version>
   </properties>
 
@@ -79,6 +79,21 @@
             </goals>
             <configuration>
               <arguments>install</arguments>
+            </configuration>
+          </execution>
+          <!--
+            This is needed to avoid node-sass compilation failure due to missing Node binding
+            when Node version used by the frontend plugin is upgraded.
+            See https://issues.redhat.com/browse/PLANNER-1751 for details.
+          -->
+          <execution>
+            <id>npm rebuild node-sass</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>rebuild node-sass</arguments>
             </configuration>
           </execution>
           <execution>
@@ -173,6 +188,34 @@
         <sonar.test.inclusions>**/*test.ts,**/*test.tsx</sonar.test.inclusions>
         <sonar.typescript.lcov.reportPaths>coverage/lcov.info</sonar.typescript.lcov.reportPaths>
       </properties>
+    </profile>
+    <profile>
+      <id>productized</id>
+      <activation>
+        <property>
+          <name>productized</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>locktt final cleanup</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <configuration>
+                  <arguments>run locktt</arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 

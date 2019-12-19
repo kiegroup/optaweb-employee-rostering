@@ -1,43 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Header component logo should go to optaplanner.org 1`] = `
-<PageHeader
-  logo={
-    <a
-      href="https://www.optaplanner.org/"
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      <Brand
-        alt="OptaPlanner Logo"
-        src="/assets/images/optaPlannerLogo200px.png"
-      />
-    </a>
-  }
-  onNavToggle={[MockFunction]}
-  showNavToggle={false}
-  toolbar={<Memo(Connect(withRouter(ToolbarComponent))) />}
-  topNav={
-    <withRouter(Navigation)
-      variant="horizontal"
-    />
-  }
-/>
-`;
-
 exports[`Header component should render correctly on a desktop 1`] = `
 <PageHeader
   logo={
-    <a
-      href="https://www.optaplanner.org/"
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      <Brand
-        alt="OptaPlanner Logo"
-        src="/assets/images/optaPlannerLogo200px.png"
-      />
-    </a>
+    <Brand
+      alt="OptaPlanner Logo"
+      src="/assets/images/optaPlannerLogo200px.png"
+    />
+  }
+  logoProps={
+    Object {
+      "href": "https://www.optaplanner.org",
+      "rel": "noopener noreferrer",
+      "target": "_blank",
+    }
   }
   onNavToggle={[MockFunction]}
   showNavToggle={false}
@@ -53,16 +29,17 @@ exports[`Header component should render correctly on a desktop 1`] = `
 exports[`Header component should render correctly on a mobile 1`] = `
 <PageHeader
   logo={
-    <a
-      href="https://www.optaplanner.org/"
-      rel="noopener noreferrer"
-      target="_blank"
-    >
-      <Brand
-        alt="OptaPlanner Logo"
-        src="/assets/images/optaPlannerLogo200px.png"
-      />
-    </a>
+    <Brand
+      alt="OptaPlanner Logo"
+      src="/assets/images/optaPlannerLogo200px.png"
+    />
+  }
+  logoProps={
+    Object {
+      "href": "https://www.optaplanner.org",
+      "rel": "noopener noreferrer",
+      "target": "_blank",
+    }
   }
   onNavToggle={[MockFunction]}
   showNavToggle={true}

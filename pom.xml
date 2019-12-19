@@ -58,12 +58,6 @@
 \*\/$
 ]]>
     </checkstyle.header.template>
-    <antrun.skip>false</antrun.skip>
-
-    <!-- Maven resource filtering -->
-    <org.optaweb.employeerostering.persistence.datasource>java:jboss/datasources/ExampleDS</org.optaweb.employeerostering.persistence.datasource>
-    <org.optaweb.employeerostering.persistence.dialect>org.hibernate.dialect.H2Dialect</org.optaweb.employeerostering.persistence.dialect>
-    <org.optaweb.employeerostering.persistence.hbm2ddl.auto>create</org.optaweb.employeerostering.persistence.hbm2ddl.auto>
 
     <version.org.mockito>2.12.0</version.org.mockito>
     <version.org.postgresql>42.2.6</version.org.postgresql>
@@ -121,17 +115,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
-      <dependency>
-        <groupId>io.springfox</groupId>
-        <artifactId>springfox-swagger2</artifactId>
-        <version>2.9.2</version>
-      </dependency>
-      <dependency>
-        <groupId>io.springfox</groupId>
-        <artifactId>springfox-swagger-ui</artifactId>
-        <version>2.9.2</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -175,63 +158,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <!-- Magic profileId that is activated automatically in OpenShift S2I builds -->
-      <id>openshift</id>
-      <properties>
-        <wildfly.install.skip>true</wildfly.install.skip>
-        <antrun.skip>true</antrun.skip>
-        <cargo.maven.skip>true</cargo.maven.skip>
-      </properties>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-            <configuration>
-              <!-- Because cargo was skipped -->
-              <skipITs>true</skipITs>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <!-- To activate use -Dproductized (not -P) -->
-      <id>productized</id>
-      <activation>
-        <property>
-          <name>productized</name>
-        </property>
-      </activation>
-      <properties>
-        <!-- Maven resource filtering -->
-        <dollarSign>$</dollarSign><!-- HACK to escape maven property interpolation -->
-        <!-- The productized docker image has EAP <spec-descriptor-property-replacement> set to true -->
-        <!-- to dynamically configure the database type (mysql, postgresql, ...). -->
-        <org.optaweb.employeerostering.persistence.datasource>${dollarSign}{org.optaweb.employeerostering.persistence.datasource:java:jboss/datasources/ExampleDS}</org.optaweb.employeerostering.persistence.datasource>
-        <org.optaweb.employeerostering.persistence.dialect>${dollarSign}{org.optaweb.employeerostering.persistence.dialect:org.hibernate.dialect.H2Dialect}</org.optaweb.employeerostering.persistence.dialect>
-        <org.optaweb.employeerostering.persistence.hbm2ddl.auto>${dollarSign}{org.optaweb.employeerostering.persistence.hbm2ddl.auto:update}</org.optaweb.employeerostering.persistence.hbm2ddl.auto>
-      </properties>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.codehaus.cargo</groupId>
-              <artifactId>cargo-maven2-plugin</artifactId>
-              <configuration>
-                <configuration>
-                  <properties>
-                    <cargo.wildfly.script.cli.embedded.descriptor-replacement>${project.build.testOutputDirectory}/descriptor-replacement.cli</cargo.wildfly.script.cli.embedded.descriptor-replacement>
-                  </properties>
-                </configuration>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-
     <profile>
       <id>run-code-coverage</id>
       <properties>
@@ -348,35 +274,6 @@
                   </fileSet>
                 </fileSets>
                 <destFile>${jacoco.master.exec.file}</destFile>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-      </build>
-    </profile>
-
-    <profile>
-      <!-- environment-specific profile that should be activated only when running in travis-ci. -->
-      <id>travis-ci</id>
-      <activation>
-        <property>
-          <name>env.TRAVIS</name>
-          <value>true</value>
-        </property>
-      </activation>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.codehaus.cargo</groupId>
-              <artifactId>cargo-maven2-plugin</artifactId>
-              <configuration>
-                <container>
-                  <systemProperties>
-                    <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
-                    <java.net.preferIPv4Addresses>true</java.net.preferIPv4Addresses>
-                  </systemProperties>
-                </container>
               </configuration>
             </plugin>
           </plugins>

@@ -2,6 +2,7 @@
     "baseUrl": "http://localhost:3000",
     "reporter": "junit",
     "reporterOptions": {
-        "mochaFile": "target/TEST-cypress.xml"
+        "mochaFile": "target/test-reports/TEST-cypress.xml",
+        "jenkinsMode": true
     }
 }
