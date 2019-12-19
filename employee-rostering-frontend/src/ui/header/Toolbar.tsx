@@ -22,9 +22,9 @@ import {
   DropdownToggle,
   Toolbar,
   ToolbarGroup,
-  ToolbarItem,
+  ToolbarItem
 } from '@patternfly/react-core';
-import { BellIcon, CogIcon } from '@patternfly/react-icons';
+import { BellIcon, CogIcon, BookIcon } from '@patternfly/react-icons';
 import Tenant from 'domain/Tenant';
 import * as React from 'react';
 import { connect } from 'react-redux';
@@ -86,8 +86,7 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
       <ToolbarGroup>
         <ToolbarItem>
           <Button
-            id="horizontal-example-uid-01"
-            aria-label="Notifications actions"
+            aria-label="Notifications"
             variant={ButtonVariant.plain}
           >
             <BellIcon />
@@ -95,14 +94,25 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
         </ToolbarItem>
         <ToolbarItem>
           <Button
-            id="horizontal-example-uid-02"
-            aria-label="Settings actions"
+            aria-label="Settings"
             variant={ButtonVariant.plain}
             data-cy="settings"
             onClick={() => this.props.history.push("/admin")}
           >
             <CogIcon />
           </Button>
+        </ToolbarItem>
+        <ToolbarItem>
+          <a
+            aria-label="REST Reference"
+            href={`${process.env.REACT_APP_BACKEND_URL}/swagger-ui.html`}
+          >
+            <Button
+              variant={ButtonVariant.plain}
+            >
+              <BookIcon />
+            </Button>
+          </a>
         </ToolbarItem>
       </ToolbarGroup>
     );

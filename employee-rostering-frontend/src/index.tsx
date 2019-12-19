@@ -35,7 +35,7 @@ if (path.indexOf('/', 1) > 0) {
 }
 
 const store = configureStore({
-  restBaseURL: '/rest',
+  restBaseURL: `${process.env.REACT_APP_BACKEND_URL}/rest`,
 }, {
   tenantData: {
     currentTenantId: windowTenantId,

@@ -82,6 +82,21 @@
               <arguments>install</arguments>
             </configuration>
           </execution>
+          <!--
+            This is needed to avoid node-sass compilation failure due to missing Node binding
+            when Node version used by the frontend plugin is upgraded.
+            See https://issues.redhat.com/browse/PLANNER-1751 for details.
+          -->
+          <execution>
+            <id>npm rebuild node-sass</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>rebuild node-sass</arguments>
+            </configuration>
+          </execution>
           <execution>
             <id>npm typecheck</id>
             <phase>compile</phase>

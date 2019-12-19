@@ -36,8 +36,7 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
   <ToolbarGroup>
     <ToolbarItem>
       <Button
-        aria-label="Notifications actions"
-        id="horizontal-example-uid-01"
+        aria-label="Notifications"
         variant="plain"
       >
         <BellIcon
@@ -50,9 +49,8 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
     </ToolbarItem>
     <ToolbarItem>
       <Button
-        aria-label="Settings actions"
+        aria-label="Settings"
         data-cy="settings"
-        id="horizontal-example-uid-02"
         onClick={[Function]}
         variant="plain"
       >
@@ -63,6 +61,23 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
           title={null}
         />
       </Button>
+    </ToolbarItem>
+    <ToolbarItem>
+      <a
+        aria-label="REST Reference"
+        href="backend/swagger-ui.html"
+      >
+        <Button
+          variant="plain"
+        >
+          <BookIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+            title={null}
+          />
+        </Button>
+      </a>
     </ToolbarItem>
   </ToolbarGroup>
 </Toolbar>
@@ -104,8 +119,7 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
   <ToolbarGroup>
     <ToolbarItem>
       <Button
-        aria-label="Notifications actions"
-        id="horizontal-example-uid-01"
+        aria-label="Notifications"
         variant="plain"
       >
         <BellIcon
@@ -118,9 +132,8 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
     </ToolbarItem>
     <ToolbarItem>
       <Button
-        aria-label="Settings actions"
+        aria-label="Settings"
         data-cy="settings"
-        id="horizontal-example-uid-02"
         onClick={[Function]}
         variant="plain"
       >
@@ -131,6 +144,23 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
           title={null}
         />
       </Button>
+    </ToolbarItem>
+    <ToolbarItem>
+      <a
+        aria-label="REST Reference"
+        href="backend/swagger-ui.html"
+      >
+        <Button
+          variant="plain"
+        >
+          <BookIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+            title={null}
+          />
+        </Button>
+      </a>
     </ToolbarItem>
   </ToolbarGroup>
 </Toolbar>
@@ -142,8 +172,7 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
   <ToolbarGroup>
     <ToolbarItem>
       <Button
-        aria-label="Notifications actions"
-        id="horizontal-example-uid-01"
+        aria-label="Notifications"
         variant="plain"
       >
         <BellIcon
@@ -156,9 +185,8 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
     </ToolbarItem>
     <ToolbarItem>
       <Button
-        aria-label="Settings actions"
+        aria-label="Settings"
         data-cy="settings"
-        id="horizontal-example-uid-02"
         onClick={[Function]}
         variant="plain"
       >
@@ -169,6 +197,23 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
           title={null}
         />
       </Button>
+    </ToolbarItem>
+    <ToolbarItem>
+      <a
+        aria-label="REST Reference"
+        href="backend/swagger-ui.html"
+      >
+        <Button
+          variant="plain"
+        >
+          <BookIcon
+            color="currentColor"
+            noVerticalAlign={false}
+            size="sm"
+            title={null}
+          />
+        </Button>
+      </a>
     </ToolbarItem>
   </ToolbarGroup>
 </Toolbar>

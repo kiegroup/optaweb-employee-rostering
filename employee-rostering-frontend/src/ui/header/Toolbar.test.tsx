@@ -20,6 +20,10 @@ import { ToolbarComponent, Props } from './Toolbar';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 describe('Toolbar Component', () => {
+  beforeAll(() => {
+    process.env.REACT_APP_BACKEND_URL = "backend";
+  });
+  
   it('should render correctly with no tenants', () => {
     const toolbarComponent = shallow(<ToolbarComponent {...noTenants} />);
     expect(toJson(toolbarComponent)).toMatchSnapshot();
@@ -50,10 +54,11 @@ describe('Toolbar Component', () => {
 
   it('should redirect to admin page when you click on the gear', () => {
     const toolbarComponent = shallow(<ToolbarComponent {...twoTenants} />);
-    toolbarComponent.find('[aria-label="Settings actions"]').simulate('click');
+    toolbarComponent.find('[aria-label="Settings"]').simulate('click');
     expect(twoTenants.history.push).toBeCalled();
     expect(twoTenants.history.push).toBeCalledWith("/admin");
   });
+  
 });
 
 const noTenants: Props = {
