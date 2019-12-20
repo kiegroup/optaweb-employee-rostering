@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.optaweb.employeerostering</groupId>
+    <artifactId>employee-rostering</artifactId>
+    <version>7.32.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>employee-rostering-standalone</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Employee Rostering as a Service Standalone</name>
+
+  <properties>
+    <application.port>8180</application.port>
+    <frontend.project.name>employee-rostering-frontend</frontend.project.name>
+    <version.cypress.docker>3.6.0</version.cypress.docker>
+    <!-- Override to run with Podman -->
+    <container.runtime>docker</container.runtime>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>unpack</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.optaweb.employeerostering</groupId>
+                  <artifactId>employee-rostering-frontend</artifactId>
+                  <type>zip</type>
+                  <outputDirectory>${project.build.directory}/react</outputDirectory>
+                  <includes>**\/*</includes>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.optaweb.employeerostering</groupId>
+                  <artifactId>employee-rostering-backend</artifactId>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <includes>**\/*</includes>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.optaweb.employeerostering</groupId>
+                  <artifactId>employee-rostering-backend</artifactId>
+                  <classifier>exec</classifier>
+                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                  <excludes>**\/org/optaweb/employeerostering\/**\/*</excludes>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>position-react-build</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}/react/employee-rostering-frontend-${project.version}</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+            <configuration>
+              <classifier>exec</classifier>
+              <!--
+                Exclude this module's dependencies.
+                The Spring Boot plugin would place them to BOOT-INF/lib but that's not what we want.
+                We only want to repackage the combination of these artifacts that have been unpacked by dependency plugin.
+              -->
+              <excludes>
+                <exclude>
+                  <groupId>org.optaweb.employeerostering</groupId>
+                  <artifactId>employee-rostering-backend</artifactId>
+                </exclude>
+                <exclude>
+                  <groupId>org.optaweb.employeerostering</groupId>
+                  <artifactId>employee-rostering-docs</artifactId>
+                </exclude>
+              </excludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>integration-tests</id>
+      <activation>
+        <property>
+          <name>integration-tests</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>com.bazaarvoice.maven.plugins</groupId>
+              <artifactId>process-exec-maven-plugin</artifactId>
+              <version>0.9</version>
+              <configuration>
+              <skip>${skipITs}</skip>
+              </configuration>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+        <plugins>
+          <plugin> <!-- Start the application as a separate process -->
+            <groupId>com.bazaarvoice.maven.plugins</groupId>
+            <artifactId>process-exec-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>start-backend-service</id>
+                <phase>pre-integration-test</phase>
+                <goals>
+                  <goal>start</goal>
+                </goals>
+                <configuration>
+                  <name>Run application</name>
+                  <healthcheckUrl>http://localhost:${application.port}</healthcheckUrl>
+                  <workingDir>${project.build.directory}</workingDir>
+                  <processLogFile>${project.build.directory}/${project.artifactId}.log</processLogFile>
+                  <arguments>
+                    <argument>java</argument>
+                    <argument>-Dspring.profiles.active=dev</argument>
+                    <argument>-Dserver.port=${application.port}</argument>
+                    <argument>-jar</argument>
+                    <argument>${project.artifactId}-${project.version}-exec.jar</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+              <!-- Kill all running processes -->
+              <execution>
+                <id>stop-running-processes</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                  <goal>stop-all</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- Run Cypress tests in a docker container.
+                   See https://www.cypress.io/blog/2019/05/02/run-cypress-with-a-single-docker-command -->
+          <plugin>
+            <artifactId>exec-maven-plugin</artifactId>
+            <groupId>org.codehaus.mojo</groupId>
+            <executions>
+              <execution>
+                <id>run-cypress-tests</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>exec</goal>
+                </goals>
+                <configuration>
+                  <skip>${skipITs}</skip>
+                  <executable>${container.runtime}</executable>
+                  <arguments>
+                    <argument>run</argument>
+                    <argument>--network=host</argument> <!-- Cypress accesses UI running on the host -->
+                    <argument>-v</argument>
+                    <argument>${project.parent.basedir}/${frontend.project.name}:/e2e:Z</argument>
+                    <argument>-w</argument>
+                    <argument>/e2e</argument>
+                    <argument>--entrypoint</argument>
+                    <argument>cypress</argument>
+                    <argument>cypress/included:${version.cypress.docker}</argument>
+                    <argument>run</argument> <!-- Executing cypress:run -->
+                    <argument>--project</argument>
+                    <argument>.</argument>
+                    <argument>--config</argument>
+                    <argument>baseUrl=http://localhost:${application.port}</argument>
+                  </arguments>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.validation</groupId>
+          <artifactId>jakarta.validation-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.optaweb.employeerostering</groupId>
+      <artifactId>employee-rostering-backend</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.optaweb.employeerostering</groupId>
+      <artifactId>employee-rostering-backend</artifactId>
+      <classifier>exec</classifier>
+    </dependency>
+  </dependencies>
+</project>

@@ -12,8 +12,8 @@ exports[`Employees page should render correctly with a few employees 1`] = `
     }
   >
     <LevelItem>
-      <Component
-        filter={[Function]}
+      <FilterComponent
+        filterText=""
         onChange={[Function]}
       />
     </LevelItem>

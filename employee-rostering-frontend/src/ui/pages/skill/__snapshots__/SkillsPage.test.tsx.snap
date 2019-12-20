@@ -12,8 +12,8 @@ exports[`Skills page should render correctly with a few skills 1`] = `
     }
   >
     <LevelItem>
-      <Component
-        filter={[Function]}
+      <FilterComponent
+        filterText=""
         onChange={[Function]}
       />
     </LevelItem>
@@ -313,8 +313,8 @@ exports[`Skills page should render correctly with no skills 1`] = `
     }
   >
     <LevelItem>
-      <Component
-        filter={[Function]}
+      <FilterComponent
+        filterText=""
         onChange={[Function]}
       />
     </LevelItem>

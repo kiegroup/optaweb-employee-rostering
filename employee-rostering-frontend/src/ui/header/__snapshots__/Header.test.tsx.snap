@@ -19,7 +19,7 @@ exports[`Header component should render correctly on a desktop 1`] = `
   showNavToggle={false}
   toolbar={<Memo(Connect(withRouter(ToolbarComponent))) />}
   topNav={
-    <withRouter(Navigation)
+    <Memo(Connect(withRouter(Navigation)))
       variant="horizontal"
     />
   }

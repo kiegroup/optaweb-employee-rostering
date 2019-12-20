@@ -16,6 +16,7 @@
 
 import DomainObject from 'domain/DomainObject';
 import DomainObjectView from 'domain/DomainObjectView';
+import { Sorter } from 'types';
 
 export function toggleElement<T>(collection: T[], element: T): T[] {
   if (collection.indexOf(element) !== -1) {
@@ -96,3 +97,39 @@ export function mapWithUpdatedElement<T extends DomainObject>(map: Map<number, D
   return mapWithElement(map, updatedElement);
 }
 
+// An immutable version of a collection with a lot of helpful methods
+export class Stream<T> {
+  private collection: T[];
+  
+  constructor(collection: T[]) {
+    this.collection = collection;
+  }
+  
+  map<X>(fn: (ele: T, index: number) => X): Stream<X> {
+    return new Stream(this.collection.map(fn));
+  }
+  
+  filter(predicate: (ele: T, index: number) => boolean): Stream<T> {
+    return new Stream(this.collection.filter(predicate));
+  }
+  
+  // Note: page starts at 1
+  page(page: number, perPage: number): Stream<T> {
+    return this.filter((v, i) => (page - 1) * perPage <= i && i < page * perPage);
+  }
+  
+  sort(sorter: Sorter<T>, asc: boolean=true): Stream<T> {
+    const comparator: Sorter<T> = asc? sorter : (a,b) => sorter(b,a);
+    return new Stream([ ...this.collection ].sort(comparator));
+  }
+  
+  conditionally(streamMap: (stream: Stream<T>) => Stream<T>|undefined): Stream<T> {
+    const out = streamMap(this);
+    return (out !== undefined)? out : this;
+  }
+  
+  collect<X>(collector: (collection: T[]) => X): X {
+    return collector([ ...this.collection ]);
+  }
+  
+}

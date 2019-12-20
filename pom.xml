@@ -69,6 +69,7 @@
     <module>employee-rostering-benchmark</module>
     <module>employee-rostering-docs</module>
     <module>employee-rostering-distribution</module>
+    <module>employee-rostering-standalone</module>
   </modules>
 
   <dependencyManagement>

@@ -42,8 +42,10 @@ import "ui/components/TypeaheadSelectInput.css";
 import Actions from "ui/components/Actions";
 import HardMediumSoftScore from "domain/HardMediumSoftScore";
 import { ScoreDisplay } from "ui/components/ScoreDisplay";
+import { getPropsFromUrl, setPropsInUrl, UrlProps } from "util/BookmarkableUtils";
 
 interface StateProps {
+  tenantId: number;
   isSolving: boolean;
   isLoading: boolean;
   allSpotList: Spot[];
@@ -56,22 +58,24 @@ interface StateProps {
   score: HardMediumSoftScore | null;
 }
 
+export type ShiftRosterUrlProps = UrlProps<"spot"|"week">;
 // Snapshot of the last value to show when loading
 let lastSpotIdToShiftListMap: Map<number, Shift[]> = new Map<number, Shift[]>();
 let lastShownSpotList: Spot[] = [];
 
 const mapStateToProps = (state: AppState): StateProps => ({
+  tenantId: state.tenantData.currentTenantId,
   isSolving: state.solverState.isSolving,
-  isLoading: rosterSelectors.isLoading(state),
+  isLoading: rosterSelectors.isShiftRosterLoading(state),
   allSpotList: spotSelectors.getSpotList(state),
   // The use of "x = isLoading? x : getUpdatedData()" is a way to use old value if data is still loading
-  shownSpotList: lastShownSpotList = rosterSelectors.isLoading(state) ? lastShownSpotList
+  shownSpotList: lastShownSpotList = rosterSelectors.isShiftRosterLoading(state) ? lastShownSpotList
     : rosterSelectors.getSpotListInShiftRoster(state),
   spotIdToShiftListMap: lastSpotIdToShiftListMap = rosterSelectors.getSpotListInShiftRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForSpot(state, curr)),
     // reducing an empty array returns the starting value
-    rosterSelectors.isLoading(state) ? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
+    rosterSelectors.isShiftRosterLoading(state) ? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
   startDate: (state.shiftRoster.shiftRosterView) ? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
   endDate: (state.shiftRoster.shiftRosterView) ? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
@@ -89,7 +93,6 @@ export interface DispatchProps {
   publishRoster: typeof rosterOperations.publish;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
   showInfoMessage: typeof alert.showInfoMessage;
-  getInitialShiftRoster: typeof rosterOperations.getInitialShiftRoster;
 }
 
 const mapDispatchToProps: DispatchProps = {
@@ -102,20 +105,19 @@ const mapDispatchToProps: DispatchProps = {
   publishRoster: rosterOperations.publish,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
   showInfoMessage: alert.showInfoMessage,
-  getInitialShiftRoster: rosterOperations.getInitialShiftRoster,
 }
 
 export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
 interface State {
   isCreatingOrEditingShift: boolean;
   selectedShift?: Shift;
+  firstLoad: boolean;
 }
 
 export class ShiftRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.onDateChange = this.onDateChange.bind(this);
-    this.onUpdateSpotList = this.onUpdateSpotList.bind(this);
+    this.onUpdateShiftRoster = this.onUpdateShiftRoster.bind(this);
     this.addShift = this.addShift.bind(this);
     this.deleteShift = this.deleteShift.bind(this);
     this.updateShift = this.updateShift.bind(this);
@@ -123,24 +125,22 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     this.getDayStyle = this.getDayStyle.bind(this);
     this.state = {
       isCreatingOrEditingShift: false,
+      firstLoad: true
     };
   }
 
-  onDateChange(startDate: Date, endDate: Date) {
-    this.props.getShiftRosterFor({
-      fromDate: startDate,
-      toDate: endDate,
-      spotList: this.props.shownSpotList,
-    });
-  }
-
-  onUpdateSpotList(spot: Spot|undefined) {
+  onUpdateShiftRoster(urlProps: ShiftRosterUrlProps) {
+    const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList[0];
+    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
+    const endDate = moment(startDate).endOf('week').toDate();
     if (spot) {
       this.props.getShiftRosterFor({
-        fromDate: this.props.startDate as Date,
-        toDate: this.props.endDate as Date,
+        fromDate: startDate,
+        toDate: endDate,
         spotList: [spot],
       });
+      this.setState({ firstLoad: false });
+      setPropsInUrl(this.props, { ...urlProps, spot: spot.name});
     }
   }
 
@@ -197,13 +197,35 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       },
     }
   }
+  
+  componentDidMount() {
+    const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
+      spot: null,
+      week: null
+    });
+    this.onUpdateShiftRoster(urlProps);
+  }
+  
+  componentDidUpdate(prevProps: Props) {
+    const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
+      spot: null,
+      week: null
+    });
+    if (this.state.firstLoad || prevProps.tenantId !== this.props.tenantId || urlProps.spot === null) {
+      this.onUpdateShiftRoster(urlProps);
+    }
+  }
 
   render() {
     const { t } = this.props;
-    if (this.props.shownSpotList.length <= 0) {
-      if (!this.props.isLoading && this.props.allSpotList.length > 0) {
-        this.props.getInitialShiftRoster();
-      }
+    const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
+      spot: null,
+      week: null
+    });
+    const changedTenant = this.props.shownSpotList.length === 0 ||
+      this.props.tenantId !== this.props.shownSpotList[0].tenantId;
+    
+    if (this.props.shownSpotList.length === 0 || this.state.firstLoad || changedTenant) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
@@ -217,17 +239,17 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 key={2}
                 aria-label="Spots Page"
                 variant="primary"
-                onClick={() => this.props.history.push('/spots')}
+                onClick={() => this.props.history.push(`/${this.props.tenantId}/spots`)}
               />
             ]}
           />
         </EmptyState>
       );
     }
-
+    
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
-    const shownSpot = this.props.shownSpotList[0];
+    const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.shownSpotList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 }; 
     const actions = [
       { name: t("publish"), action: this.props.publishRoster },
@@ -262,14 +284,24 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             emptyText={t("selectSpot")}
             optionToStringMap={spot => spot.name}
             options={this.props.allSpotList}
-            value={this.props.shownSpotList[0]}
-            onChange={this.onUpdateSpotList}
+            value={shownSpot}
+            onChange={(s) => {
+              this.onUpdateShiftRoster({
+                ...urlProps,
+                spot: s? s.name : null
+              })
+            }}
             noClearButton
           />
           <WeekPicker
             aria-label="Select Week to View"
             value={this.props.startDate as Date}
-            onChange={this.onDateChange}
+            onChange={(weekStart) => {
+              this.onUpdateShiftRoster({
+                ...urlProps,
+                week: moment(weekStart).format("YYYY-MM-DD") 
+              });
+            }}
           />
           <ScoreDisplay score={score} />
           <Actions
@@ -296,10 +328,10 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           onClose={() => this.setState({ isCreatingOrEditingShift: false })}
         />
         <Schedule<Shift>
-          key={shownSpot.id}
+          key={this.props.shownSpotList[0].id}
           startDate={startDate}
           endDate={endDate}
-          events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) as Shift[]}
+          events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) || []}
           titleAccessor={shift => (shift.employee ? shift.employee.name : t("unassigned"))}
           startAccessor={shift => moment(shift.startDateTime).toDate()}
           endAccessor={shift => moment(shift.endDateTime).toDate()}

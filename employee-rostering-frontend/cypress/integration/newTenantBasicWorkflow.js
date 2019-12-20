@@ -27,7 +27,7 @@ function changeToTenant(tenant) {
 
 function gotoPage(page) {
   cy.get("#nav-toggle").click();
-  cy.get(`[href="/${page}"]`).click();
+  cy.get(`[href*="/${page}"]`).click();
   cy.get("#nav-toggle").click();
 }
 

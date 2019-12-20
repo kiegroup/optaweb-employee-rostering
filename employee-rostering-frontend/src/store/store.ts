@@ -39,7 +39,7 @@ export interface StoreConfig {
 
 export function configureStore(
   { restBaseURL }: StoreConfig,
-  preloadedState?: AppState,
+  preloadedState?: Partial<AppState>,
 ): Store<AppState> {
 
   const restServiceClient = new RestServiceClient(restBaseURL, axios);

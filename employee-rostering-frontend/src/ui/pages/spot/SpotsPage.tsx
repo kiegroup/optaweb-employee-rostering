@@ -30,6 +30,7 @@ import { Predicate, ReadonlyPartial, Sorter } from 'types';
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import { withRouter } from 'react-router';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
@@ -137,4 +138,4 @@ export class SpotsPage extends DataTable<Spot, Props> {
   }
 }
 
-export default withTranslation("SpotsPage")(connect(mapStateToProps, mapDispatchToProps)(SpotsPage));
+export default withTranslation("SpotsPage")(connect(mapStateToProps, mapDispatchToProps)(withRouter(SpotsPage)));

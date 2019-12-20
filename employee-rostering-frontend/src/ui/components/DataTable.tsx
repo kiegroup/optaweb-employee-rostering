@@ -24,7 +24,6 @@ import {
   ICell,
   sortable,
   SortByDirection,
-  ISortBy,
 } from '@patternfly/react-table';
 import {
   Button, ButtonVariant, Pagination, Level, LevelItem,
@@ -35,10 +34,12 @@ import {
 import { EditableComponent } from './EditableComponent';
 import FilterComponent from './FilterComponent';
 import { Predicate, ReadonlyPartial, Sorter } from 'types';
-import { toggleElement } from 'util/ImmutableCollectionOperations';
+import { toggleElement, Stream } from 'util/ImmutableCollectionOperations';
 import { WithTranslation } from 'react-i18next';
+import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
+import { RouteComponentProps } from 'react-router';
 
-export interface DataTableProps<T> extends WithTranslation {
+export interface DataTableProps<T> extends WithTranslation, RouteComponentProps {
   title: string;
   columnTitles: string[];
   tableData: T[];
@@ -47,13 +48,10 @@ export interface DataTableProps<T> extends WithTranslation {
 interface DataTableState<T> {
   newRowData: Partial<T> | null;
   editedRows: T[];
-  page: number;
-  perPage: number;
-  currentFilter: (rowData: T) => boolean;
-  sortBy: ISortBy;
 }
 
 export type PropertySetter<T> = (propertyName: keyof T, value: T[keyof T] | undefined) => void;
+export type DataTableUrlProps = UrlProps<"page"|"itemsPerPage"|"filter"|"sortBy"|"asc">;
 
 export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Component<P, DataTableState<T>> {
   constructor(props: P) {
@@ -63,11 +61,7 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     this.convertDataToTableRow = this.convertDataToTableRow.bind(this);
     this.state = {
       editedRows: [],
-      newRowData: null,
-      currentFilter: () => true,
-      page: 1,
-      perPage: 10,
-      sortBy: {},
+      newRowData: null
     };
     this.onSetPage = this.onSetPage.bind(this);
     this.onPerPageSelect = this.onPerPageSelect.bind(this);
@@ -94,16 +88,21 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
   onSetPage(event: any, pageNumber: number): void {
     this.setState({
       editedRows: [],
-      page: pageNumber,
     });
+    setPropsInUrl<DataTableUrlProps>(this.props, { page: pageNumber.toString() });
   }
 
-  onPerPageSelect(event: any, perPage: number): void {
-    this.setState(prevState => ({
+  onPerPageSelect(event: any, perPage: number, urlProps: DataTableUrlProps): void {
+    this.setState({
       editedRows: [],
-      page: Math.floor(((prevState.page - 1) * prevState.perPage) / perPage) + 1,
-      perPage,
-    }));
+    });
+    const oldPage = parseInt(urlProps.page as string);
+    const oldPerPage = parseInt(urlProps.itemsPerPage as string);
+    const newPage = Math.floor(((oldPage - 1) * oldPerPage) / perPage) + 1;
+    setPropsInUrl<DataTableUrlProps>(this.props, {
+      page: newPage.toString(),
+      itemsPerPage: perPage.toString()
+    });
   }
 
   createNewRow() {
@@ -258,11 +257,12 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
 
   onSort(event: any, index: number, direction: any) {
     this.setState({
-      editedRows: [],
-      sortBy: {
-        index,
-        direction,
-      },
+      editedRows: []
+    });
+    
+    setPropsInUrl<DataTableUrlProps>(this.props, {
+      sortBy: index.toString(),
+      asc: (direction === SortByDirection.asc).toString()
     });
   }
 
@@ -271,6 +271,17 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
     const setProperty = (key: keyof T, value: T[keyof T] | undefined) => {
       this.setState(prevState => ({ newRowData: { ...prevState.newRowData, [key]: value } }));
     };
+    const urlProps = getPropsFromUrl<DataTableUrlProps>(this.props, {
+      page: "1",
+      itemsPerPage: "10",
+      filter: null,
+      sortBy: null,
+      asc: "true"
+    });
+    const [page, perPage] = [parseInt(urlProps.page as string), parseInt(urlProps.itemsPerPage as string)];
+    const filterText = urlProps.filter? urlProps.filter : "";
+    const sortDirection: "asc"|"desc" = urlProps.asc === "true"? "asc" : "desc";
+    const sortBy = urlProps.sortBy? { index: parseInt(urlProps.sortBy), direction: sortDirection } : {};
 
     const additionalRows: IRow[] = (this.state.newRowData !== null)
       ? [
@@ -281,20 +292,27 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
         },
       ] : [];
     const sorters = this.getSorters();
-    const sortedRows = [...this.props.tableData];
-    if (this.state.sortBy.index !== undefined) {
-      sortedRows.sort(sorters[this.state.sortBy.index] as Sorter<T>);
-      // @ts-ignore
-      if (this.state.sortBy.direction === SortByDirection.desc) {
-        sortedRows.reverse();
+    
+    const filteredRows = new Stream(this.props.tableData)
+      .conditionally(s => {
+        if (urlProps.sortBy !== null) {
+          return s.sort(sorters[parseInt(urlProps.sortBy)] as Sorter<T>,
+            urlProps.asc === "true");
+        }
       }
-    }
-
-    const filteredRows = sortedRows.filter(this.state.currentFilter);
-    const rowsOnPage = filteredRows.filter((row, index) => this.state.perPage * (this.state.page - 1) <= index
-      && index < this.state.perPage * this.state.page).map(this.convertDataToTableRow);
-
-    const rows = additionalRows.concat(rowsOnPage);
+      )
+      .conditionally(s => {
+        if (urlProps.filter !== null) {
+          return s.filter(this.getFilter()(urlProps.filter));
+        }
+      });
+        
+    const rowsThatMatchFilter = filteredRows.collect(c => c.length);
+    
+    const rows = additionalRows.concat(filteredRows
+      .page(page, perPage)
+      .map(this.convertDataToTableRow)
+      .collect(c => c));
 
     const columns: ICell[] = this.props.columnTitles.map((t, index) => ({
       title: t,
@@ -315,23 +333,26 @@ export abstract class DataTable<T, P extends DataTableProps<T>> extends React.Co
         >
           <LevelItem>
             <FilterComponent
-              filter={this.getFilter()}
-              onChange={currentFilter => this.setState({ editedRows: [], currentFilter })}
+              filterText={filterText}
+              onChange={newFilterText => {
+                this.setState({ editedRows: [] });
+                setPropsInUrl(this.props, { page: "1", filter: newFilterText })
+              }}
             />
           </LevelItem>
           <LevelItem style={{ display: 'flex' }}>
             <Button isDisabled={this.state.newRowData !== null} onClick={this.createNewRow}>{t("add")}</Button>
             <Pagination
-              itemCount={filteredRows.length}
-              perPage={this.state.perPage}
-              page={this.state.page}
+              itemCount={rowsThatMatchFilter}
+              perPage={perPage}
+              page={page}
               onSetPage={this.onSetPage}
               widgetId="pagination-options-menu-top"
-              onPerPageSelect={this.onPerPageSelect}
+              onPerPageSelect={(e, newPerPage) => this.onPerPageSelect(e, newPerPage, urlProps)}
             />
           </LevelItem>
         </Level>
-        <Table caption={this.props.title} sortBy={this.state.sortBy} onSort={this.onSort} cells={columns} rows={rows}>
+        <Table caption={this.props.title} sortBy={sortBy} onSort={this.onSort} cells={columns} rows={rows}>
           <TableHeader />
           <TableBody />
         </Table>

@@ -25,6 +25,7 @@ import { Predicate, Sorter, ReadonlyPartial } from "types";
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
+import { withRouter } from 'react-router';
 
 interface StateProps extends DataTableProps<Skill> {
   tenantId: number;
@@ -110,4 +111,4 @@ export class SkillsPage extends DataTable<Skill, Props> {
 }
 
 // Skills Page have no unique translations
-export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(SkillsPage));
+export default withTranslation()(connect(mapStateToProps, mapDispatchToProps)(withRouter(SkillsPage)));

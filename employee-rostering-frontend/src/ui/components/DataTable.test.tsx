@@ -16,10 +16,10 @@
 import { mount, shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import { DataTable, DataTableProps } from './DataTable';
+import { DataTable, DataTableProps, DataTableUrlProps } from './DataTable';
 import { stringSorter} from 'util/CommonSorters';
-import FilterComponent from './FilterComponent';
 import { useTranslation } from 'react-i18next';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 interface MockData {name: string; number: number}
 class MockDataTable extends DataTable<MockData, DataTableProps<MockData>> {
@@ -243,126 +243,65 @@ describe('DataTable component', () => {
     expect(dataTable.cancelAddingRow).toBeCalled();
   });
 
-  it('should pass getFilter to the FilterComponent', () => {
-    const dataTable = shallow(<MockDataTable {...twoRows} />);
-    const filter = jest.fn();
-    (dataTable.instance() as MockDataTable).getFilter.mockReturnValue(filter);
-    (dataTable.instance() as MockDataTable).forceUpdate();
-
-    const filterComponent = dataTable.find(FilterComponent);
-    const filterMap = filterComponent.props().filter;
-    expect(filterMap).toEqual(filter);
-  });
-
   it('should only render rows that match filter', () => {
-    const dataTable = mount(<MockDataTable {...twoRows} />);
-    (dataTable.instance() as MockDataTable).displayDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).editDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).setState({ currentFilter: v => v.number === 2 });
-
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(1);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(1);
-    expect((dataTable.instance() as MockDataTable).displayDataRow)
-      .toHaveBeenNthCalledWith(1, twoRows.tableData[1]);
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(1, twoRows.tableData[1], expect.any(Function));
-
-    expect(toJson(dataTable)).toMatchSnapshot();
-  });
-
-  it('should have perPage set to 10 and page set to 1 initially', () => {
-    const dataTable = new MockDataTable(twoRows);
-    expect(dataTable.state.perPage).toEqual(10);
-    expect(dataTable.state.page).toEqual(1);
+    let urlProps = getRouterProps("/table", { filter: "Some" });
+    let props = { ...twoRows, ...urlProps };
+    let dataTable = shallow(<MockDataTable {...props} />);
+    expect(dataTable).toMatchSnapshot();
+    
+    urlProps = getRouterProps("/table", { filter: "More" });
+    props = { ...twoRows, ...urlProps };
+    dataTable = shallow(<MockDataTable {...props} />);
+    expect(dataTable).toMatchSnapshot();
+    
+    urlProps = getRouterProps("/table", { filter: "Data" });
+    props = { ...twoRows, ...urlProps };
+    dataTable = shallow(<MockDataTable {...props} />);
+    expect(dataTable).toMatchSnapshot();
   });
 
   it('should update page on set page', () => {
     const dataTable = new MockDataTable(twoRows);
-    dataTable.setState = jest.fn();
-    dataTable.onSetPage({}, 3);
-    expect(dataTable.setState).toBeCalled();
-    expect(dataTable.setState).toBeCalledWith({ editedRows: [], page: 3 });
+    dataTable.onPerPageSelect({}, 2, { page: "50", itemsPerPage: "1", filter: null, sortBy: null, asc: null });
+    expect(twoRows.history.push).toHaveBeenLastCalledWith("/table?page=25&itemsPerPage=2");
   });
 
   it('should update perPage on set per page', () => {
     const dataTable = new MockDataTable(twoRows);
-    dataTable.setState = jest.fn();
-    dataTable.onPerPageSelect({}, 50);
-    expect(dataTable.setState).toBeCalled();
-    expect(dataTable.setState).toBeCalledWith(expect.any(Function));
-    const value = (dataTable.setState as jest.Mock).mock.calls[0][0]({ page: 2, perPage: 25 });
-    expect(value.editedRows).toEqual([]);
-    expect(value.perPage).toEqual(50);
-    expect(value.page).toEqual(1);
+    dataTable.onPerPageSelect({}, 25, { page: "50", itemsPerPage: "1", filter: null, sortBy: null, asc: null });
+    expect(twoRows.history.push).toHaveBeenLastCalledWith("/table?page=2&itemsPerPage=25");
   });
 
   it('should only render data on page', () => {
-    const dataTable = mount(<MockDataTable {...twoRows} />);
-    (dataTable.instance() as MockDataTable).displayDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).editDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).setState({ perPage: 1, page: 1 });
-
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(1);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(1);
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
-
-    (dataTable.instance() as MockDataTable).displayDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).editDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).setState({ perPage: 1, page: 2 });
-
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(1);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[1]);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(1);
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(1, twoRows.tableData[1], expect.any(Function));
-
-    expect(toJson(dataTable)).toMatchSnapshot();
+    let urlProps = getRouterProps("/table", { page: "1", perPage: "1"});
+    let props = { ...twoRows, ...urlProps };
+    let dataTable = shallow(<MockDataTable {...props} />);
+    expect(dataTable).toMatchSnapshot();
+    
+    urlProps = getRouterProps("/table", { page: "2", perPage: "1"});
+    props = { ...twoRows, ...urlProps };
+    dataTable = shallow(<MockDataTable {...props} />);
+    expect(dataTable).toMatchSnapshot();
   });
 
   it('should update sortBy on sort', () => {
     const dataTable = new MockDataTable(twoRows);
-    dataTable.setState = jest.fn();
     dataTable.onSort({}, 0, "asc");
-    expect(dataTable.setState).toBeCalled();
-    expect(dataTable.setState).toBeCalledWith({ editedRows: [], sortBy: { index: 0, direction: "asc" } });
+    expect(twoRows.history.push).toHaveBeenLastCalledWith("/table?sortBy=0&asc=true");
   });
 
   it('should render rows in sorted order when ascending', () => {
-    const dataTable = mount(<MockDataTable {...twoRows} tableData={[twoRows.tableData[1], twoRows.tableData[0]]} />);
-    (dataTable.instance() as MockDataTable).displayDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).editDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).onSort({}, 1, "asc");
-
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(2);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[0]);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[1]);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(2);
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(1, twoRows.tableData[0], expect.any(Function));
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(2, twoRows.tableData[1], expect.any(Function));
-
-    expect(toJson(dataTable)).toMatchSnapshot();
+    const urlProps = getRouterProps("/table", { sortBy: "1", asc: "true"});
+    const props = { ...twoRows, ...urlProps };
+    const dataTable = shallow(<MockDataTable {...props} />);
+    expect(dataTable).toMatchSnapshot();
   });
 
   it('should render rows in reverse of sorted order when descending', () => {
-    const dataTable = mount(<MockDataTable {...twoRows} />);
-    (dataTable.instance() as MockDataTable).displayDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).editDataRow.mockClear();
-    (dataTable.instance() as MockDataTable).onSort({}, 1, "desc");
-
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toBeCalledTimes(2);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(1, twoRows.tableData[1]);
-    expect((dataTable.instance() as MockDataTable).displayDataRow).toHaveBeenNthCalledWith(2, twoRows.tableData[0]);
-    expect((dataTable.instance() as MockDataTable).editDataRow).toBeCalledTimes(2);
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(1, twoRows.tableData[1], expect.any(Function));
-    expect((dataTable.instance() as MockDataTable).editDataRow)
-      .toHaveBeenNthCalledWith(2, twoRows.tableData[0], expect.any(Function));
-
-    expect(toJson(dataTable)).toMatchSnapshot();
+    const urlProps = getRouterProps("/table", { sortBy: "1", asc: "false"});
+    const props = { ...twoRows, ...urlProps };
+    const dataTable = shallow(<MockDataTable {...props} />);
+    expect(dataTable).toMatchSnapshot();
   });
 });
 
@@ -372,6 +311,7 @@ const noRows: DataTableProps<MockData> = {
   title: "Data Table",
   columnTitles: ["Column 1", "Column 2"],
   tableData: [],
+  ...getRouterProps<DataTableUrlProps>("/table", {})
 };
 
 const twoRows: DataTableProps<MockData> = {
@@ -380,4 +320,5 @@ const twoRows: DataTableProps<MockData> = {
   title: "Data Table",
   columnTitles: ["Column 1", "Column 2"],
   tableData: [{name: "Some Data", number: 1}, {name: "More Data", number: 2}],
+  ...getRouterProps<DataTableUrlProps>("/table", {})
 };

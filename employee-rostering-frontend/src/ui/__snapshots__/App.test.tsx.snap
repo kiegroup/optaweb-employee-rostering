@@ -17,7 +17,7 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
     <PageSidebar
       isNavOpen={true}
       nav={
-        <withRouter(Navigation)
+        <Memo(Connect(withRouter(Navigation)))
           variant="default"
         />
       }
@@ -42,37 +42,37 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
       <Route
         component={[Function]}
         exact={true}
-        path="/skills"
+        path="/:tenantId/skills"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/spots"
+        path="/:tenantId/spots"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/contracts"
+        path="/:tenantId/contracts"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/employees"
+        path="/:tenantId/employees"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/shift"
+        path="/:tenantId/shift"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/availability"
+        path="/:tenantId/availability"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/rotation"
+        path="/:tenantId/rotation"
       />
       <Route
         component={
@@ -80,7 +80,7 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
             "$$typeof": Symbol(react.memo),
             "WrappedComponent": [Function],
             "compare": null,
-            "displayName": "Connect(AdminPage)",
+            "displayName": "Connect(withRouter(AdminPage))",
             "type": [Function],
           }
         }
@@ -109,7 +109,7 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
     <PageSidebar
       isNavOpen={false}
       nav={
-        <withRouter(Navigation)
+        <Memo(Connect(withRouter(Navigation)))
           variant="default"
         />
       }
@@ -134,37 +134,37 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
       <Route
         component={[Function]}
         exact={true}
-        path="/skills"
+        path="/:tenantId/skills"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/spots"
+        path="/:tenantId/spots"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/contracts"
+        path="/:tenantId/contracts"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/employees"
+        path="/:tenantId/employees"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/shift"
+        path="/:tenantId/shift"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/availability"
+        path="/:tenantId/availability"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/rotation"
+        path="/:tenantId/rotation"
       />
       <Route
         component={
@@ -172,7 +172,7 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
             "$$typeof": Symbol(react.memo),
             "WrappedComponent": [Function],
             "compare": null,
-            "displayName": "Connect(AdminPage)",
+            "displayName": "Connect(withRouter(AdminPage))",
             "type": [Function],
           }
         }
@@ -201,7 +201,7 @@ exports[`App should render correctly on a desktop 1`] = `
     <PageSidebar
       isNavOpen={false}
       nav={
-        <withRouter(Navigation)
+        <Memo(Connect(withRouter(Navigation)))
           variant="default"
         />
       }
@@ -226,37 +226,37 @@ exports[`App should render correctly on a desktop 1`] = `
       <Route
         component={[Function]}
         exact={true}
-        path="/skills"
+        path="/:tenantId/skills"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/spots"
+        path="/:tenantId/spots"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/contracts"
+        path="/:tenantId/contracts"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/employees"
+        path="/:tenantId/employees"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/shift"
+        path="/:tenantId/shift"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/availability"
+        path="/:tenantId/availability"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/rotation"
+        path="/:tenantId/rotation"
       />
       <Route
         component={
@@ -264,7 +264,7 @@ exports[`App should render correctly on a desktop 1`] = `
             "$$typeof": Symbol(react.memo),
             "WrappedComponent": [Function],
             "compare": null,
-            "displayName": "Connect(AdminPage)",
+            "displayName": "Connect(withRouter(AdminPage))",
             "type": [Function],
           }
         }
@@ -293,7 +293,7 @@ exports[`App should render correctly on a mobile 1`] = `
     <PageSidebar
       isNavOpen={false}
       nav={
-        <withRouter(Navigation)
+        <Memo(Connect(withRouter(Navigation)))
           variant="default"
         />
       }
@@ -318,37 +318,37 @@ exports[`App should render correctly on a mobile 1`] = `
       <Route
         component={[Function]}
         exact={true}
-        path="/skills"
+        path="/:tenantId/skills"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/spots"
+        path="/:tenantId/spots"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/contracts"
+        path="/:tenantId/contracts"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/employees"
+        path="/:tenantId/employees"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/shift"
+        path="/:tenantId/shift"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/availability"
+        path="/:tenantId/availability"
       />
       <Route
         component={[Function]}
         exact={true}
-        path="/rotation"
+        path="/:tenantId/rotation"
       />
       <Route
         component={
@@ -356,7 +356,7 @@ exports[`App should render correctly on a mobile 1`] = `
             "$$typeof": Symbol(react.memo),
             "WrappedComponent": [Function],
             "compare": null,
-            "displayName": "Connect(AdminPage)",
+            "displayName": "Connect(withRouter(AdminPage))",
             "type": [Function],
           }
         }

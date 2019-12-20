@@ -16,18 +16,17 @@
 import { NavItem } from '@patternfly/react-core';
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
-import { Location } from 'history';
 import * as React from 'react';
 import { Navigation, NavigationProps } from './Navigation';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 describe('Navigation', () => {
   it('should activate a navigation link matching the current path', () => {
     const props: NavigationProps = {
+      tenantId: 0,
       variant: "horizontal",
-      location: {
-        pathname: '/skills',
-      } as Location<unknown>,
-    } as NavigationProps;
+      ...getRouterProps("/0/skills", {})
+    };
 
     const navigation = shallow(<Navigation {...props} />);
     expect(toJson(navigation)).toMatchSnapshot();

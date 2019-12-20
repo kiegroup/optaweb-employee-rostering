@@ -303,3 +303,103 @@ describe('Immutable Collection Operations', () => {
     ]));
   });
 });
+
+describe('Stream operations', () => {
+  
+  it('should map the collection element in map', () => {
+    const orig = [1,2,3]
+    const result = new immutableCollectionOperations.Stream(orig).map(n => n + 1).collect(r => r);
+    expect(result).not.toBe(orig);
+    expect(orig).toEqual([1,2,3]);
+    expect(result).toEqual([2,3,4]);
+  });
+  
+  it('should filter the collection element in filter', () => {
+    const orig = [1,2,3]
+    const result = new immutableCollectionOperations.Stream(orig).filter(n => n === 1).collect(r => r);
+    expect(result).not.toBe(orig);
+    expect(orig).toEqual([1,2,3]);
+    expect(result).toEqual([1]);
+  });
+  
+  it('should paged the collection element in page', () => {
+    const orig = [1,2,3]
+    const result = new immutableCollectionOperations.Stream(orig).page(1,2).collect(r => r);
+    expect(result).not.toBe(orig);
+    expect(orig).toEqual([1,2,3]);
+    expect(result).toEqual([1,2]);
+  });
+  
+  it('should sort the collection element in sort', () => {
+    const orig = [1,2,3]
+    const result = new immutableCollectionOperations.Stream(orig).sort((a,b) => b - a).collect(r => r);
+    expect(result).not.toBe(orig);
+    expect(orig).toEqual([1,2,3]);
+    expect(result).toEqual([3,2,1]);
+    
+    const revResult = new immutableCollectionOperations.Stream(orig).sort((a,b) => b - a, false).collect(r => r);
+    expect(revResult).not.toBe(orig);
+    expect(orig).toEqual([1,2,3]);
+    expect(revResult).toEqual([1,2,3]);
+  });
+  
+  it('should replace the stream in conditionally', () => {
+    const orig = [1,2,3]
+    const replaceResult = new immutableCollectionOperations.Stream(orig)
+      .conditionally(s => s.filter(x => x === 1)).collect(r => r);
+    expect(replaceResult).not.toBe(orig);
+    expect(orig).toEqual([1,2,3]);
+    expect(replaceResult).toEqual([1]);
+    
+    const noReplaceResult = new immutableCollectionOperations.Stream(orig)
+      .conditionally(() => undefined).collect(r => r);
+    expect(noReplaceResult).not.toBe(orig);
+    expect(orig).toEqual([1,2,3]);
+    expect(noReplaceResult).toEqual([1,2,3]);
+  });
+  
+  it('should collect a result in collect', () => {
+    const orig = [1,2,3]
+    const result = new immutableCollectionOperations.Stream(orig).collect(r => r);
+    expect(result).not.toBe(orig);
+    expect(orig).toEqual([1,2,3]);
+    expect(result).toEqual([1,2,3]);
+    
+    const length = new immutableCollectionOperations.Stream(orig).collect(r => r.length);
+    expect(length).toEqual(3);
+  });
+  
+  it('streams themselves should be immutable', () => {
+    const stream = new immutableCollectionOperations.Stream([1,2,3]);
+    const filterStream = stream.filter(n => n === 1);
+    expect(stream).not.toBe(filterStream);
+    expect(stream.collect(c => c)).toEqual([1,2,3]);
+    expect(filterStream.collect(c => c)).toEqual([1]);
+    
+    const mapStream = stream.map(n => n + 1);
+    expect(stream).not.toBe(mapStream);
+    expect(stream.collect(c => c)).toEqual([1,2,3]);
+    expect(mapStream.collect(c => c)).toEqual([2,3,4]);
+    
+    const pageStream = stream.page(1,2);
+    expect(stream).not.toBe(pageStream);
+    expect(stream.collect(c => c)).toEqual([1,2,3]);
+    expect(pageStream.collect(c => c)).toEqual([1,2]);
+    
+    const sortStream = stream.sort((a,b) => b - a);
+    expect(stream).not.toBe(sortStream);
+    expect(stream.collect(c => c)).toEqual([1,2,3]);
+    expect(sortStream.collect(c => c)).toEqual([3,2,1]);
+    
+    const replaceStream = stream.conditionally(s => s.map(x => x + 1));
+    expect(stream).not.toBe(replaceStream);
+    expect(stream.collect(c => c)).toEqual([1,2,3]);
+    expect(replaceStream.collect(c => c)).toEqual([2,3,4]);
+    
+    const noReplaceStream = stream.conditionally(() => undefined);
+    // In the no replace case, the collection doesn't change, so it safe
+    // for the stream to be the same
+    expect(stream.collect(c => c)).toEqual([1,2,3]);
+    expect(noReplaceStream.collect(c => c)).toEqual([1,2,3]);
+  });
+});

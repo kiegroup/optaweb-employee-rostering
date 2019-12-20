@@ -38,6 +38,8 @@ import * as shiftTemplateActions from 'store/rotation/actions';
 import { alert } from 'store/alert';
 import RosterState from 'domain/RosterState';
 import { AddAlertAction } from 'store/alert/types';
+import { RouteComponentProps } from 'react-router';
+import { setTenantIdInUrl } from 'util/BookmarkableUtils';
 
 function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<any> {
   dispatch(rosterActions.setShiftRosterIsLoading(true));
@@ -55,14 +57,13 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList()),
     dispatch(shiftTemplateOperations.refreshShiftTemplateList()),
-  ]).then(() => {
-    dispatch(rosterOperations.getInitialShiftRoster());
-    dispatch(rosterOperations.getInitialAvailabilityRoster());
-  });
+  ]);
 }
 
-export const changeTenant: ThunkCommandFactory<number, ChangeTenantAction> = tenantId => (dispatch) => {
-  dispatch(actions.changeTenant(tenantId));
+export const changeTenant: ThunkCommandFactory<{ tenantId: number; routeProps: RouteComponentProps },
+ChangeTenantAction> = params => (dispatch) => {
+  dispatch(actions.changeTenant(params.tenantId));
+  setTenantIdInUrl(params.routeProps, params.tenantId);
   return refreshData(dispatch);
 };
 

@@ -12,8 +12,8 @@ exports[`Spots page should render correctly with a few spots 1`] = `
     }
   >
     <LevelItem>
-      <Component
-        filter={[Function]}
+      <FilterComponent
+        filterText=""
         onChange={[Function]}
       />
     </LevelItem>
@@ -413,8 +413,8 @@ exports[`Spots page should render correctly with no spots 1`] = `
     }
   >
     <LevelItem>
-      <Component
-        filter={[Function]}
+      <FilterComponent
+        filterText=""
         onChange={[Function]}
       />
     </LevelItem>

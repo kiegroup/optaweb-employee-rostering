@@ -14,60 +14,42 @@
  * limitations under the License.
  */
 import { shallow } from 'enzyme';
-import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { FilterProps, FilterComponent } from './FilterComponent';
-import { Button } from '@patternfly/react-core';
+import { Button, TextInput } from '@patternfly/react-core';
 import { useTranslation, WithTranslation } from 'react-i18next';
-
-interface MockData {
-  name: string;
-}
 
 describe('Filter component', () => {
   it('should render correctly with no text', () => {
-    const filter = shallow(<FilterComponent {...props} />);
-    expect(toJson(filter)).toMatchSnapshot();
+    const myProps = { ...props, filterText: "" };
+    const filter = shallow(<FilterComponent {...myProps} />);
+    expect(filter).toMatchSnapshot();
   });
 
   it('should render correctly with text', () => {
     const filter = shallow(<FilterComponent {...props} />);
-    (filter.instance() as FilterComponent<MockData>).updateFilter("Test");
-    expect(toJson(filter)).toMatchSnapshot();
+    expect(filter).toMatchSnapshot();
   });
 
   it('should call filter and onChange on updateFilter', () => {
-    const filter = new FilterComponent<MockData>(props);
-    const predicate = jest.fn();
-    filter.setState = jest.fn();
-    (props.filter as jest.Mock).mockReturnValue(predicate);
-    filter.updateFilter("Test");
-    expect(props.filter).toBeCalled();
-    expect(props.filter).toBeCalledWith("Test");
+    const filter = shallow(<FilterComponent {...props} />);
+    filter.find(TextInput).simulate("change", "New Filter");
     expect(props.onChange).toBeCalled();
-    expect(props.onChange).toBeCalledWith(predicate);
-    expect(filter.setState).toBeCalledWith({filterText: "Test"});
+    expect(props.onChange).toBeCalledWith("New Filter");
   });
 
   it('should call updateFilter with empty text when button is clicked', () => {
     const filter = shallow(<FilterComponent {...props} />);
-    filter.setState({ filterText: "Some text" });
-    const predicate = jest.fn();
-    (props.filter as jest.Mock).mockReturnValue(predicate);
-    filter.instance().setState = jest.fn();
 
     filter.find(Button).simulate("click");
-    expect(props.filter).toBeCalled();
-    expect(props.filter).toBeCalledWith("");
     expect(props.onChange).toBeCalled();
-    expect(props.onChange).toBeCalledWith(predicate);
-    expect(filter.instance().setState).toBeCalledWith({filterText: ""});
+    expect(props.onChange).toBeCalledWith("");
   });
 });
 
-const props: FilterProps<MockData> & WithTranslation = {
+const props: FilterProps & WithTranslation = {
   ...useTranslation("FilterComponent"),
   tReady: true,
-  filter: jest.fn(),
+  filterText: "Test",
   onChange: jest.fn()
 };

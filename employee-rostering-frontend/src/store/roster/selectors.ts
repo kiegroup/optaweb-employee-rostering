@@ -24,14 +24,21 @@ import AvailabilityRosterView from 'domain/AvailabilityRosterView';
 import { spotSelectors } from 'store/spot';
 import EmployeeAvailability from 'domain/EmployeeAvailability';
 
-export function isLoading(state: AppState) {
+export function isShiftRosterLoading(state: AppState) {
   return state.spotList.isLoading || state.employeeList.isLoading || state.skillList.isLoading
-    || state.contractList.isLoading || state.shiftRoster.isLoading || state.availabilityRoster.isLoading
+    || state.contractList.isLoading || state.shiftRoster.isLoading
     || state.rosterState.isLoading;
 }
 
+export function isAvailabilityRosterLoading(state: AppState) {
+  return state.spotList.isLoading || state.employeeList.isLoading || state.skillList.isLoading
+    || state.contractList.isLoading || state.availabilityRoster.isLoading
+    || state.rosterState.isLoading;
+}
+
+
 export const getSpotListInShiftRoster = (state: AppState): Spot[] => {
-  if (isLoading(state)) {
+  if (isShiftRosterLoading(state)) {
     return [];
   }
   return (state.shiftRoster.shiftRosterView as ShiftRosterView).spotList
@@ -39,7 +46,7 @@ export const getSpotListInShiftRoster = (state: AppState): Spot[] => {
 };
 
 export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
-  if (isLoading(state)) {
+  if (isShiftRosterLoading(state)) {
     throw Error('Shift Roster is loading');
   }
   if (getSpotListInShiftRoster(state).find(s => s.id === spot.id) !== undefined
@@ -59,7 +66,7 @@ export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
 };
 
 export const getEmployeeListInAvailabilityRoster = (state: AppState): Employee[] => {
-  if (isLoading(state)) {
+  if (isAvailabilityRosterLoading(state)) {
     return [];
   }
   return (state.availabilityRoster.availabilityRosterView as AvailabilityRosterView).employeeList
@@ -67,7 +74,7 @@ export const getEmployeeListInAvailabilityRoster = (state: AppState): Employee[]
 };
 
 export const getShiftListForEmployee = (state: AppState, employee: Employee): Shift[] => {
-  if (isLoading(state)) {
+  if (isAvailabilityRosterLoading(state)) {
     throw Error('Availability Roster is loading');
   }
   if (getEmployeeListInAvailabilityRoster(state).find(e => e.id === employee.id) !== undefined
@@ -87,7 +94,7 @@ export const getShiftListForEmployee = (state: AppState, employee: Employee): Sh
 };
 
 export const getAvailabilityListForEmployee = (state: AppState, employee: Employee): EmployeeAvailability[] => {
-  if (isLoading(state)) {
+  if (isAvailabilityRosterLoading(state)) {
     throw Error('Availability Roster is loading');
   }
   if (getEmployeeListInAvailabilityRoster(state).find(e => e.id === employee.id) !== undefined

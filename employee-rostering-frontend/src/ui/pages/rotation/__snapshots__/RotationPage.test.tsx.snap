@@ -41,6 +41,20 @@ exports[`Rotation Page should render correctly when creating a new shift templat
               "tenantId": 0,
               "version": 0,
             },
+            Object {
+              "id": 111,
+              "name": "New Spot",
+              "requiredSkillSet": Array [
+                Object {
+                  "id": 3,
+                  "name": "Skill",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ],
+              "tenantId": 0,
+              "version": 0,
+            },
           ]
         }
         value={
@@ -213,6 +227,20 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
             Object {
               "id": 2,
               "name": "Spot",
+              "requiredSkillSet": Array [
+                Object {
+                  "id": 3,
+                  "name": "Skill",
+                  "tenantId": 0,
+                  "version": 0,
+                },
+              ],
+              "tenantId": 0,
+              "version": 0,
+            },
+            Object {
+              "id": 111,
+              "name": "New Spot",
               "requiredSkillSet": Array [
                 Object {
                   "id": 3,

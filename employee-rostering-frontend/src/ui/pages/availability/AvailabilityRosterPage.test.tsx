@@ -20,13 +20,14 @@ import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
 import Shift from 'domain/Shift';
 import  { AvailabilityRosterPage, Props, ShiftOrAvailability, isShift, isAvailability,
-  isAllDayAvailability, isDay } from './AvailabilityRosterPage';
+  isAllDayAvailability, isDay, AvailabilityRosterUrlProps } from './AvailabilityRosterPage';
 import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
 import "moment/locale/en-ca";
 import EmployeeAvailability from 'domain/EmployeeAvailability';
 import { useTranslation } from 'react-i18next';
 import Actions from 'ui/components/Actions';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 import Schedule from 'ui/components/calendar/Schedule';
 
 describe('Availability Roster Page', () => {
@@ -82,42 +83,6 @@ describe('Availability Roster Page', () => {
     expect(toJson(availabilityRosterPage)).toMatchSnapshot();
   });
 
-  it('should call getAvailabilityRosterFor on onDateChange', () => {
-    const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
-    availabilityRosterPage.onDateChange(newDateStart, newDateEnd);
-    expect(baseProps.getAvailabilityRosterFor).toBeCalled();
-    expect(baseProps.getAvailabilityRosterFor).toBeCalledWith({
-      fromDate: newDateStart,
-      toDate: newDateEnd,
-      employeeList: baseProps.shownEmployeeList
-    });
-  });
-
-  it('should call getAvailabilityRosterFor on employee change', () => {
-    const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
-    const newEmployee: Employee = {
-      ...employee,
-      id: 111,
-      name: "New Employee"
-    };
-
-    availabilityRosterPage.onUpdateEmployeeList(newEmployee);
-    expect(baseProps.getAvailabilityRosterFor).toBeCalled();
-    expect(baseProps.getAvailabilityRosterFor).toBeCalledWith({
-      fromDate: baseProps.startDate,
-      toDate: baseProps.endDate,
-      employeeList: [newEmployee]
-    });
-  });
-
-  it('should not call getAvailabilityRosterFor on employee change if invalid', () => {
-    const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
-    availabilityRosterPage.onUpdateEmployeeList(undefined);
-    expect(baseProps.getAvailabilityRosterFor).not.toBeCalled();
-  });
-
   it('should change the week when the user change the week', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
@@ -138,12 +103,8 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    const newEmployee: Employee = {
-      ...employee,
-      id: 111,
-      name: "New Employee"
-    };
     availabilityRosterPage.find('TypeaheadSelectInput[aria-label="Select Employee"]').simulate("change", newEmployee);
+    availabilityRosterPage.update();
     expect(baseProps.getAvailabilityRosterFor).toBeCalled();
     expect(baseProps.getAvailabilityRosterFor).toBeCalledWith({
       fromDate: baseProps.startDate,
@@ -162,7 +123,7 @@ describe('Availability Roster Page', () => {
     />);
     shallow((availabilityRosterPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith("/employees");
+    expect(baseProps.history.push).toBeCalledWith("/0/employees");
   });
 
   it('should call publishRoster when the publish button is clicked', () => {
@@ -599,6 +560,12 @@ const employee: Employee = {
   }]
 }
 
+const newEmployee: Employee = {
+  ...employee,
+  id: 111,
+  name: "New Employee"
+}
+
 const shift: Shift = {
   tenantId: 0,
   id: 1,
@@ -656,13 +623,15 @@ const rosterState: RosterState = {
 const baseProps: Props = {
   ...useTranslation("AvailabilityRosterPage"),
   tReady: true,
+  tenantId: 0,
+  score: { hardScore: 0, mediumScore: 0, softScore: 0},
   isSolving: false,
   isLoading: false,
   startDate: startDate,
   endDate: endDate,
   totalNumOfSpots: 1,
   rosterState: rosterState,
-  allEmployeeList: [employee],
+  allEmployeeList: [employee, newEmployee],
   shownEmployeeList: [employee],
   employeeIdToShiftListMap: new Map([
     [4, [shift]]
@@ -682,8 +651,5 @@ const baseProps: Props = {
   addShift: jest.fn(),
   updateShift: jest.fn(),
   removeShift: jest.fn(),
-  // @ts-ignore
-  history: {
-    push: jest.fn()
-  }
+  ...getRouterProps<AvailabilityRosterUrlProps>("/shift", { employee: "Employee 1", week: "2018-07-01" })
 }

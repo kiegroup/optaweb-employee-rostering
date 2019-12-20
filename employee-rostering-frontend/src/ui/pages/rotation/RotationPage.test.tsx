@@ -18,12 +18,13 @@ import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import Spot from 'domain/Spot';
 import Employee from 'domain/Employee';
-import { RotationPage, Props } from './RotationPage';
+import { RotationPage, Props, RotationPageUrlProps } from './RotationPage';
 import RosterState from 'domain/RosterState';
 import moment from 'moment-timezone';
 import ShiftTemplate from 'domain/ShiftTemplate';
 import { useTranslation, WithTranslation } from 'react-i18next';
 import Schedule from 'ui/components/calendar/Schedule';
+import { getRouterProps } from 'util/BookmarkableTestUtils';
 
 const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
 describe('Rotation Page', () => {
@@ -61,23 +62,16 @@ describe('Rotation Page', () => {
       {...baseProps}
     />);
     rotationPage.find('Pagination').simulate("setPage", null, 2);
-    expect(rotationPage.state("weekNumber")).toEqual(1);
+    expect(baseProps.history.push).toHaveBeenLastCalledWith("/rotation?shownSpot=Spot&weekNumber=1");
   });
 
   it('should update shownSpot on spot change', () => {
     const rotationPage = shallow(<RotationPage
       {...baseProps}
     />);
-    const newSpot: Spot = {
-      ...spot,
-      id: 111,
-      name: "New Spot"
-    };
 
-    const setStateSpy = jest.spyOn(rotationPage.instance(), "setState");
     rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate("change", newSpot);
-    // Bug in enzyme; wrapper.state is not updated after setState sometimes
-    expect(setStateSpy).toBeCalledWith({ shownSpot: newSpot });
+    expect(baseProps.history.push).toHaveBeenLastCalledWith("/rotation?shownSpot=New+Spot&weekNumber=0");
   });
 
   it('should not update shownSpot on spot change if invalid', () => {
@@ -109,7 +103,7 @@ describe('Rotation Page', () => {
     />);
     shallow((rotationPage.find('Trans').prop('components') as any)[2]).simulate("click");
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith("/spots");
+    expect(baseProps.history.push).toBeCalledWith("/0/spots");
   });
 
   it('should call updateShift on updateShift', () => {
@@ -238,6 +232,12 @@ const spot: Spot = {
   ]
 }
 
+const newSpot: Spot = {
+  ...spot,
+  id: 111,
+  name: "New Spot"
+};
+
 const employee: Employee = {
   tenantId: 0,
   id: 4,
@@ -289,9 +289,10 @@ const rosterState: RosterState = {
 
 const baseProps: Props & WithTranslation = {
   ...useTranslation(),
+  tenantId: 0,
   tReady: true,
   isLoading: false,
-  spotList: [spot],
+  spotList: [spot, newSpot],
   spotIdToShiftTemplateListMap: new Map<number, ShiftTemplate[]>([
     [2, [shiftTemplate]],
     [111, []]
@@ -301,8 +302,5 @@ const baseProps: Props & WithTranslation = {
   removeShiftTemplate: jest.fn(),
   updateShiftTemplate: jest.fn(),
   showInfoMessage: jest.fn(),
-  // @ts-ignore
-  history: {
-    push: jest.fn()
-  }
+  ...getRouterProps<RotationPageUrlProps>("/rotation", { shownSpot: "Spot", weekNumber: "0" })
 }

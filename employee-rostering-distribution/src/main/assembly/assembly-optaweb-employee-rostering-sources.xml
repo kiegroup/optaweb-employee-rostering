@@ -6,7 +6,6 @@
   <formats>
     <format>dir</format>
     <format>zip</format>
-    <format>jar</format>
   </formats>
 
   <includeBaseDirectory>true</includeBaseDirectory>

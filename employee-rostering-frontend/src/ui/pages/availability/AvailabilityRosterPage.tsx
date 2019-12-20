@@ -46,8 +46,10 @@ import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 import Actions from 'ui/components/Actions';
 import HardMediumSoftScore from 'domain/HardMediumSoftScore';
 import { ScoreDisplay } from 'ui/components/ScoreDisplay';
+import { UrlProps, setPropsInUrl, getPropsFromUrl } from 'util/BookmarkableUtils';
 
 interface StateProps {
+  tenantId: number;
   isSolving: boolean;
   isLoading: boolean;
   allEmployeeList: Employee[];
@@ -68,21 +70,22 @@ Map<number, EmployeeAvailability[]> = new Map<number, EmployeeAvailability[]>();
 let lastShownEmployeeList: Employee[] = [];
 
 const mapStateToProps = (state: AppState): StateProps => ({
+  tenantId: state.tenantData.currentTenantId,
   isSolving: state.solverState.isSolving,
-  isLoading: rosterSelectors.isLoading(state),
+  isLoading: rosterSelectors.isAvailabilityRosterLoading(state),
   allEmployeeList: employeeSelectors.getEmployeeList(state),
-  shownEmployeeList: lastShownEmployeeList = rosterSelectors.isLoading(state)
+  shownEmployeeList: lastShownEmployeeList = rosterSelectors.isAvailabilityRosterLoading(state)
     ? lastShownEmployeeList : rosterSelectors.getEmployeeListInAvailabilityRoster(state),
   employeeIdToShiftListMap: lastEmployeeIdToShiftListMap = rosterSelectors
     .getEmployeeListInAvailabilityRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getShiftListForEmployee(state, curr)),
-    rosterSelectors.isLoading(state) ? lastEmployeeIdToShiftListMap : new Map<number, Shift[]>()),
+    rosterSelectors.isAvailabilityRosterLoading(state) ? lastEmployeeIdToShiftListMap : new Map<number, Shift[]>()),
   employeeIdToAvailabilityListMap: lastEmployeeIdToAvailabilityListMap = rosterSelectors
     .getEmployeeListInAvailabilityRoster(state)
     .reduce((prev, curr) => prev.set(curr.id as number,
       rosterSelectors.getAvailabilityListForEmployee(state, curr)),
-    rosterSelectors.isLoading(state) ? lastEmployeeIdToAvailabilityListMap
+    rosterSelectors.isAvailabilityRosterLoading(state) ? lastEmployeeIdToAvailabilityListMap
       : new Map<number, EmployeeAvailability[]>()),
   startDate: (state.availabilityRoster.availabilityRosterView)
     ? moment(state.availabilityRoster.availabilityRosterView.startDate).toDate() : null,
@@ -99,7 +102,6 @@ export interface DispatchProps {
   updateEmployeeAvailability: typeof availabilityOperations.updateEmployeeAvailability;
   getAvailabilityRosterFor: typeof rosterOperations.getAvailabilityRosterFor;
   refreshAvailabilityRoster: typeof rosterOperations.refreshAvailabilityRoster;
-  getInitialAvailabilityRoster: typeof rosterOperations.getInitialAvailabilityRoster;
   solveRoster: typeof rosterOperations.solveRoster;
   publishRoster: typeof rosterOperations.publish;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
@@ -115,7 +117,6 @@ const mapDispatchToProps: DispatchProps = {
   updateEmployeeAvailability: availabilityOperations.updateEmployeeAvailability,
   getAvailabilityRosterFor: rosterOperations.getAvailabilityRosterFor,
   refreshAvailabilityRoster: rosterOperations.refreshAvailabilityRoster,
-  getInitialAvailabilityRoster: rosterOperations.getInitialAvailabilityRoster,
   solveRoster: rosterOperations.solveRoster,
   publishRoster: rosterOperations.publish,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
@@ -131,6 +132,7 @@ interface State {
   isCreatingOrEditingAvailability: boolean;
   isCreatingOrEditingShift: boolean;
   selectedShift?: Shift;
+  firstLoad: boolean;
 }
 
 export interface ShiftOrAvailability {
@@ -158,34 +160,33 @@ export function isAllDayAvailability(ea: EmployeeAvailability) {
   return isDay(ea.startDateTime, ea.endDateTime);
 }
 
+export type AvailabilityRosterUrlProps = UrlProps<"employee"|"week">;
 export class AvailabilityRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.onDateChange = this.onDateChange.bind(this);
-    this.onUpdateEmployeeList = this.onUpdateEmployeeList.bind(this);
+    this.onUpdateAvailabilityRoster = this.onUpdateAvailabilityRoster.bind(this);
     this.getEventStyle = this.getEventStyle.bind(this);
     this.getDayStyle = this.getDayStyle.bind(this);
     this.state = {
       isCreatingOrEditingShift: false,
       isCreatingOrEditingAvailability: false,
+      firstLoad: true
     };
   }
-
-  onDateChange(startDate: Date, endDate: Date) {
-    this.props.getAvailabilityRosterFor({
-      fromDate: startDate,
-      toDate: endDate,
-      employeeList: this.props.shownEmployeeList,
-    });
-  }
-
-  onUpdateEmployeeList(employee: Employee|undefined) {
+  
+  onUpdateAvailabilityRoster(urlProps: AvailabilityRosterUrlProps) {
+    const employee = this.props.allEmployeeList
+      .find(e => e.name === urlProps.employee) || this.props.allEmployeeList[0];
+    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
+    const endDate = moment(startDate).endOf('week').toDate();
     if (employee) {
       this.props.getAvailabilityRosterFor({
-        fromDate: this.props.startDate as Date,
-        toDate: this.props.endDate as Date,
+        fromDate: startDate,
+        toDate: endDate,
         employeeList: [employee],
       });
+      this.setState({ firstLoad: false });
+      setPropsInUrl(this.props, { ...urlProps, employee: employee.name});
     }
   }
 
@@ -258,16 +259,40 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
 
       return { className: className.trim() , style };
     }
+    
+  componentDidMount() {
+    const urlProps = getPropsFromUrl<AvailabilityRosterUrlProps>(this.props, {
+      employee: null,
+      week: null
+    });
+    this.onUpdateAvailabilityRoster(urlProps);
+  }
+  
+  componentDidUpdate(prevProps: Props) {
+    const urlProps = getPropsFromUrl<AvailabilityRosterUrlProps>(this.props, {
+      employee: null,
+      week: null
+    });
+    if (this.state.firstLoad || prevProps.tenantId !== this.props.tenantId || urlProps.employee === null) {
+      this.onUpdateAvailabilityRoster(urlProps);
+    }
+  }
+ 
 
   render() {
     const { t, tReady } = this.props;
     if (!tReady) {
       return (<></>);
     }
-    if (this.props.shownEmployeeList.length <= 0) {
-      if (!this.props.isLoading && this.props.allEmployeeList.length > 0) {
-        this.props.getInitialAvailabilityRoster();
-      }
+    const urlProps = getPropsFromUrl<AvailabilityRosterUrlProps>(this.props, {
+      employee: null,
+      week: null
+    });
+    const changedTenant = this.props.shownEmployeeList.length === 0 || 
+      (urlProps.employee !== null && 
+      this.props.tenantId !== this.props.shownEmployeeList[0].tenantId);
+
+    if (this.props.shownEmployeeList.length === 0 || changedTenant) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
@@ -281,7 +306,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                 key={2}
                 aria-label="Employees Page"
                 variant="primary"
-                onClick={() => this.props.history.push('/employees')}
+                onClick={() => this.props.history.push(`/${this.props.tenantId}/employees`)}
               />
             ]}
           />
@@ -291,7 +316,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
 
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
-    const shownEmployee = this.props.shownEmployeeList[0];
+    const shownEmployee = this.props.allEmployeeList.find(e => e.name === urlProps.employee) || 
+      this.props.shownEmployeeList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const events: ShiftOrAvailability[] = [];
     const actions = [
@@ -352,13 +378,23 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             optionToStringMap={employee => employee.name}
             options={this.props.allEmployeeList}
             value={this.props.shownEmployeeList[0]}
-            onChange={this.onUpdateEmployeeList}
+            onChange={e => {
+              this.onUpdateAvailabilityRoster({
+                ...urlProps,
+                employee: e? e.name : null
+              })
+            }}
             noClearButton
           />
           <WeekPicker
             aria-label="Select Week to View"
             value={this.props.startDate as Date}
-            onChange={this.onDateChange}
+            onChange={weekStart => {
+              this.onUpdateAvailabilityRoster({
+                ...urlProps,
+                week: moment(weekStart).format("YYYY-MM-DD") 
+              });
+            }}
           />
           <ScoreDisplay score={score} />
           <Actions
@@ -438,7 +474,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           eventStyle={this.getEventStyle}
           dayStyle={this.getDayStyle(
             (this.props.employeeIdToAvailabilityListMap
-              .get(shownEmployee.id as number) as EmployeeAvailability[])
+              .get(shownEmployee.id as number) || [])
               .filter(isAllDayAvailability))}
           wrapperStyle={event => ({
             className: (isAvailability(event.reference))
@@ -478,7 +514,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             }))
           }
           popoverBody={
-            soa => ((isShift(soa.reference)) ? ShiftPopupBody(soa.reference) : AvailabilityPopoverBody)
+            soa => ((isShift(soa.reference)) ? ShiftPopupBody(soa.reference) : AvailabilityPopoverBody({}))
           }
           eventComponent={props => (isShift(props.event.reference) ? ShiftEvent(
             {

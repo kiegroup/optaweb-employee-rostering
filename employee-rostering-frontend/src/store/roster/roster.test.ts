@@ -956,8 +956,8 @@ describe('Roster selectors', () => {
     })).toEqual([]);
     expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
       ...state,
-      shiftRoster: { 
-        ...state.shiftRoster, isLoading: true
+      availabilityRoster: { 
+        ...state.availabilityRoster, isLoading: true
       }
     })).toEqual([]);
     expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
@@ -1083,10 +1083,10 @@ describe('Roster selectors', () => {
         ...state.contractList, isLoading: true
       }
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getShiftListForEmployee({ 
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
       ...state,
-      shiftRoster: { 
-        ...state.shiftRoster, isLoading: true
+      availabilityRoster: { 
+        ...state.availabilityRoster, isLoading: true
       }
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getShiftListForEmployee({ 
@@ -1180,8 +1180,8 @@ describe('Roster selectors', () => {
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
       ...state,
-      shiftRoster: { 
-        ...state.shiftRoster, isLoading: true
+      availabilityRoster: { 
+        ...state.availabilityRoster, isLoading: true
       }
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
     expect(() => rosterSelectors.getAvailabilityListForEmployee({ 

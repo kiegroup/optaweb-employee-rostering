@@ -12,8 +12,8 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
     }
   >
     <LevelItem>
-      <Component
-        filter={[Function]}
+      <FilterComponent
+        filterText=""
         onChange={[Function]}
       />
     </LevelItem>
@@ -489,8 +489,8 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
     }
   >
     <LevelItem>
-      <Component
-        filter={[Function]}
+      <FilterComponent
+        filterText=""
         onChange={[Function]}
       />
     </LevelItem>

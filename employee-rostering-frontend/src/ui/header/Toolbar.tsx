@@ -74,7 +74,7 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
     this.setState({
       isTenantSelectOpen: false
     });
-    this.props.changeTenant(newTenantId);
+    this.props.changeTenant({ tenantId: newTenantId, routeProps: this.props });
   }
 
   setIsTenantSelectOpen(isOpen: boolean) {
