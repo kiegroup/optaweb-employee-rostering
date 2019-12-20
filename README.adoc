@@ -46,7 +46,7 @@ To run on an another port use `--server.port=...`:
 
 [source,shell]
 ----
-java -jar employee-rostering-distribution/target/employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev --server.port=18080
+java -jar employee-rostering-standalone/target/employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev --server.port=18080
 ----
 
 == Benchmark Application
