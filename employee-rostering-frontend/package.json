@@ -46,7 +46,8 @@
     "lint": "eslint --ext .js,.ts,.tsx src/ cypress/",
     "lint:fix": "npm run lint -- --fix",
     "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "cypress:run": "cypress run",
+    "locktt": "locktt"
   },
   "jest-junit": {
     "outputDirectory": "./target/surefire-reports",
