@@ -20,7 +20,7 @@ import reducer from './reducers';
 
 export {
   shiftTemplateOperations,
-  shiftTemplateSelectors
+  shiftTemplateSelectors,
 };
 
 export default reducer;

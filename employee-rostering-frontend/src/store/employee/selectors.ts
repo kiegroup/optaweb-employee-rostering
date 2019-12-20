@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AppState } from '../types';
 import { contractSelectors } from 'store/contract';
 import { skillSelectors } from 'store/skill';
-import Employee from 'domain/Employee';
+import { Employee } from 'domain/Employee';
 import DomainObjectView from 'domain/DomainObjectView';
+import { AppState } from '../types';
 
 export const getEmployeeById = (state: AppState, id: number): Employee => {
   if (state.employeeList.isLoading || state.skillList.isLoading || state.contractList.isLoading) {
-    throw Error("Employee list is loading");
+    throw Error('Employee list is loading');
   }
   const employeeView = state.employeeList.employeeMapById.get(id) as DomainObjectView<Employee>;
   return {
     ...employeeView,
     skillProficiencySet: employeeView.skillProficiencySet.map(skillId => skillSelectors.getSkillById(state, skillId)),
-    contract: contractSelectors.getContractById(state, employeeView.contract)
-  }
+    contract: contractSelectors.getContractById(state, employeeView.contract),
+  };
 };
 
 export const getEmployeeList = (state: AppState): Employee[] => {

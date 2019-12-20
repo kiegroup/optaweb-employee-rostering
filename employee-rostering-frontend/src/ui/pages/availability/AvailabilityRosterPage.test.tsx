@@ -16,19 +16,21 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import Spot from 'domain/Spot';
-import Employee from 'domain/Employee';
-import Shift from 'domain/Shift';
-import  { AvailabilityRosterPage, Props, ShiftOrAvailability, isShift, isAvailability,
-  isAllDayAvailability, isDay, AvailabilityRosterUrlProps } from './AvailabilityRosterPage';
-import RosterState from 'domain/RosterState';
+import { Spot } from 'domain/Spot';
+import { Employee } from 'domain/Employee';
+import { Shift } from 'domain/Shift';
+import { RosterState } from 'domain/RosterState';
 import moment from 'moment-timezone';
-import "moment/locale/en-ca";
-import EmployeeAvailability from 'domain/EmployeeAvailability';
+import 'moment/locale/en-ca';
+import { EmployeeAvailability } from 'domain/EmployeeAvailability';
 import { useTranslation } from 'react-i18next';
 import Actions from 'ui/components/Actions';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import Schedule from 'ui/components/calendar/Schedule';
+import {
+  AvailabilityRosterPage, Props, ShiftOrAvailability, isShift, isAvailability,
+  isAllDayAvailability, isDay, AvailabilityRosterUrlProps,
+} from './AvailabilityRosterPage';
 
 describe('Availability Roster Page', () => {
   beforeEach(() => {
@@ -78,7 +80,7 @@ describe('Availability Roster Page', () => {
       {...baseProps}
     />);
     availabilityRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=createAvailability)")
+      .filter(a => a.name === 'Trans(i18nKey=createAvailability)')
       .forEach(a => a.action());
     expect(toJson(availabilityRosterPage)).toMatchSnapshot();
   });
@@ -87,15 +89,15 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
+    const newDateStart = moment(startDate).add(7, 'days').toDate();
+    const newDateEnd = moment(endDate).add(7, 'days').toDate();
     availabilityRosterPage.find('WeekPicker[aria-label="Select Week to View"]')
-      .simulate("change", newDateStart, newDateEnd);
+      .simulate('change', newDateStart, newDateEnd);
     expect(baseProps.getAvailabilityRosterFor).toBeCalled();
     expect(baseProps.getAvailabilityRosterFor).toBeCalledWith({
       fromDate: newDateStart,
       toDate: newDateEnd,
-      employeeList: baseProps.shownEmployeeList
+      employeeList: baseProps.shownEmployeeList,
     });
   });
 
@@ -103,13 +105,13 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    availabilityRosterPage.find('TypeaheadSelectInput[aria-label="Select Employee"]').simulate("change", newEmployee);
+    availabilityRosterPage.find('TypeaheadSelectInput[aria-label="Select Employee"]').simulate('change', newEmployee);
     availabilityRosterPage.update();
     expect(baseProps.getAvailabilityRosterFor).toBeCalled();
     expect(baseProps.getAvailabilityRosterFor).toBeCalledWith({
       fromDate: baseProps.startDate,
       toDate: baseProps.endDate,
-      employeeList: [newEmployee]
+      employeeList: [newEmployee],
     });
   });
 
@@ -121,9 +123,9 @@ describe('Availability Roster Page', () => {
       employeeIdToAvailabilityListMap={new Map()}
       employeeIdToShiftListMap={new Map()}
     />);
-    shallow((availabilityRosterPage.find('Trans').prop('components') as any)[2]).simulate("click");
+    shallow((availabilityRosterPage.find('Trans').prop('components') as any)[2]).simulate('click');
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith("/0/employees");
+    expect(baseProps.history.push).toBeCalledWith('/0/employees');
   });
 
   it('should call publishRoster when the publish button is clicked', () => {
@@ -131,7 +133,7 @@ describe('Availability Roster Page', () => {
       {...baseProps}
     />);
     availabilityRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=publish)")
+      .filter(a => a.name === 'Trans(i18nKey=publish)')
       .forEach(a => a.action());
     expect(baseProps.publishRoster).toBeCalled();
   });
@@ -141,7 +143,7 @@ describe('Availability Roster Page', () => {
       {...baseProps}
     />);
     availabilityRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=schedule)")
+      .filter(a => a.name === 'Trans(i18nKey=schedule)')
       .forEach(a => a.action());
     expect(baseProps.solveRoster).toBeCalled();
   });
@@ -152,7 +154,7 @@ describe('Availability Roster Page', () => {
       isSolving
     />);
     availabilityRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=terminateEarly)")
+      .filter(a => a.name === 'Trans(i18nKey=terminateEarly)')
       .forEach(a => a.action());
     expect(baseProps.terminateSolvingRosterEarly).toBeCalled();
   });
@@ -162,11 +164,11 @@ describe('Availability Roster Page', () => {
       {...baseProps}
     />);
     availabilityRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=refresh)")
+      .filter(a => a.name === 'Trans(i18nKey=refresh)')
       .forEach(a => a.action());
     expect(baseProps.refreshAvailabilityRoster).toBeCalled();
     expect(baseProps.showInfoMessage).toBeCalled();
-    expect(baseProps.showInfoMessage).toBeCalledWith("availabilityRosterRefresh");
+    expect(baseProps.showInfoMessage).toBeCalledWith('availabilityRosterRefresh');
   });
 
   it('call deleteShift when the EditShiftModal delete a shift', () => {
@@ -175,12 +177,12 @@ describe('Availability Roster Page', () => {
     />);
     availabilityRosterPage.setState({
       selectedShift: shift,
-      isCreatingOrEditingShift: true
+      isCreatingOrEditingShift: true,
     });
-    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate("delete", shift);
+    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate('delete', shift);
     expect(baseProps.removeShift).toBeCalled();
     expect(baseProps.removeShift).toBeCalledWith(shift);
-    expect(availabilityRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
+    expect(availabilityRosterPage.state('isCreatingOrEditingShift')).toEqual(false);
   });
 
   it('call addShift when the EditShiftModal add a new shift', () => {
@@ -188,19 +190,19 @@ describe('Availability Roster Page', () => {
       {...baseProps}
     />);
     availabilityRosterPage.setState({
-      isCreatingOrEditingShift: true
+      isCreatingOrEditingShift: true,
     });
     const newShift: Shift = {
       ...shift,
       id: undefined,
       version: undefined,
       startDateTime: startDate,
-      endDateTime: endDate
+      endDateTime: endDate,
     };
-    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate("save", newShift);
+    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate('save', newShift);
     expect(baseProps.addShift).toBeCalled();
     expect(baseProps.addShift).toBeCalledWith(newShift);
-    expect(availabilityRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
+    expect(availabilityRosterPage.state('isCreatingOrEditingShift')).toEqual(false);
   });
 
   it('call updateShift when the EditShiftModal updates a shift', () => {
@@ -209,17 +211,17 @@ describe('Availability Roster Page', () => {
     />);
     availabilityRosterPage.setState({
       selectedShift: shift,
-      isCreatingOrEditingShift: true
+      isCreatingOrEditingShift: true,
     });
     const newShift: Shift = {
       ...shift,
       startDateTime: startDate,
-      endDateTime: endDate
+      endDateTime: endDate,
     };
-    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate("save", newShift);
+    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate('save', newShift);
     expect(baseProps.updateShift).toBeCalled();
     expect(baseProps.updateShift).toBeCalledWith(newShift);
-    expect(availabilityRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
+    expect(availabilityRosterPage.state('isCreatingOrEditingShift')).toEqual(false);
   });
 
   it('should set isEditingOrCreatingShift to false when closed', () => {
@@ -227,19 +229,19 @@ describe('Availability Roster Page', () => {
       {...baseProps}
     />);
     availabilityRosterPage.setState({
-      isCreatingOrEditingShift: true
+      isCreatingOrEditingShift: true,
     });
-    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate("close");
-    expect(availabilityRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
+    availabilityRosterPage.find('[aria-label="Edit Shift"]').simulate('close');
+    expect(availabilityRosterPage.state('isCreatingOrEditingShift')).toEqual(false);
   });
 
   it('should call addAvailability when a timeslot is selected', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
-    availabilityRosterPage.find(Schedule).simulate("addEvent", newDateStart,
+    const newDateStart = moment(startDate).add(7, 'days').toDate();
+    const newDateEnd = moment(endDate).add(7, 'days').toDate();
+    availabilityRosterPage.find(Schedule).simulate('addEvent', newDateStart,
       newDateEnd);
 
     expect(baseProps.addEmployeeAvailability).toBeCalled();
@@ -247,19 +249,19 @@ describe('Availability Roster Page', () => {
       tenantId: employee.tenantId,
       startDateTime: newDateStart,
       endDateTime: newDateEnd,
-      employee: employee,
-      state: "UNAVAILABLE"
+      employee,
+      state: 'UNAVAILABLE',
     });
   });
-  
+
   it('should call updateAvailability when an availability is updated', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
+    const newDateStart = moment(startDate).add(7, 'days').toDate();
+    const newDateEnd = moment(endDate).add(7, 'days').toDate();
     // An event in availability roster stores the availability in reference
-    availabilityRosterPage.find(Schedule).simulate("updateEvent", { reference: availability }, newDateStart,
+    availabilityRosterPage.find(Schedule).simulate('updateEvent', { reference: availability }, newDateStart,
       newDateEnd);
 
     expect(baseProps.updateEmployeeAvailability).toBeCalled();
@@ -269,42 +271,42 @@ describe('Availability Roster Page', () => {
       endDateTime: newDateEnd,
     });
   });
-  
+
   it('should NOT call updateShift when a shift is updated', () => {
     const availabilityRosterPage = shallow(<AvailabilityRosterPage
       {...baseProps}
     />);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
+    const newDateStart = moment(startDate).add(7, 'days').toDate();
+    const newDateEnd = moment(endDate).add(7, 'days').toDate();
     // An event in availability roster stores the availability in reference
-    availabilityRosterPage.find(Schedule).simulate("updateEvent", { reference: shift }, newDateStart,
+    availabilityRosterPage.find(Schedule).simulate('updateEvent', { reference: shift }, newDateStart,
       newDateEnd);
 
     expect(baseProps.updateShift).not.toBeCalled();
-    expect(baseProps.showInfoMessage).toBeCalledWith("editShiftsInShiftRoster");
+    expect(baseProps.showInfoMessage).toBeCalledWith('editShiftsInShiftRoster');
   });
 
   it('should have solid border if the shift is published', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
-    const startDateTime = moment(startDate).subtract("2", "day").toDate();
-    const endDateTime = moment(startDate).subtract("1", "day").toDate();
+    const startDateTime = moment(startDate).subtract('2', 'day').toDate();
+    const endDateTime = moment(startDate).subtract('1', 'day').toDate();
 
     const publishedShift: ShiftOrAvailability = {
-      type: "Shift",
+      type: 'Shift',
       start: startDateTime,
       end: endDateTime,
       reference: {
         ...shift,
         startDateTime,
-        endDateTime
+        endDateTime,
       },
     };
 
     const style = availabilityRosterPage.getEventStyle(publishedShift);
     expect(style).toEqual({
       style: {
-        border: "1px solid",
-      }
+        border: '1px solid',
+      },
     });
   });
 
@@ -312,17 +314,17 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
     const draftShift: ShiftOrAvailability = {
-      type: "Shift",
+      type: 'Shift',
       start: shift.startDateTime,
       end: shift.endDateTime,
-      reference: shift
+      reference: shift,
     };
 
     const style = availabilityRosterPage.getEventStyle(draftShift);
     expect(style).toEqual({
       style: {
-        border: "1px dashed"
-      }
+        border: '1px dashed',
+      },
     });
   });
 
@@ -330,21 +332,21 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
     const draftAvailability: ShiftOrAvailability = {
-      type: "Availability",
+      type: 'Availability',
       start: availability.startDateTime,
       end: availability.endDateTime,
       reference: {
         ...availability,
-        state: "DESIRED"
-      }
+        state: 'DESIRED',
+      },
     };
 
     const style = availabilityRosterPage.getEventStyle(draftAvailability);
     expect(style).toEqual({
       style: {
-        backgroundColor: "green",
-        border: "1px dashed"
-      }
+        backgroundColor: 'green',
+        border: '1px dashed',
+      },
     });
   });
 
@@ -352,21 +354,21 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
     const draftAvailability: ShiftOrAvailability = {
-      type: "Availability",
+      type: 'Availability',
       start: availability.startDateTime,
       end: availability.endDateTime,
       reference: {
         ...availability,
-        state: "UNDESIRED"
-      }
+        state: 'UNDESIRED',
+      },
     };
 
     const style = availabilityRosterPage.getEventStyle(draftAvailability);
     expect(style).toEqual({
       style: {
-        backgroundColor: "yellow",
-        border: "1px dashed"
-      }
+        backgroundColor: 'yellow',
+        border: '1px dashed',
+      },
     });
   });
 
@@ -374,21 +376,21 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
     const draftAvailability: ShiftOrAvailability = {
-      type: "Availability",
+      type: 'Availability',
       start: availability.startDateTime,
       end: availability.endDateTime,
       reference: {
         ...availability,
-        state: "UNAVAILABLE"
-      }
+        state: 'UNAVAILABLE',
+      },
     };
 
     const style = availabilityRosterPage.getEventStyle(draftAvailability);
     expect(style).toEqual({
       style: {
-        backgroundColor: "red",
-        border: "1px dashed"
-      }
+        backgroundColor: 'red',
+        border: '1px dashed',
+      },
     });
   });
 
@@ -410,22 +412,22 @@ describe('Availability Roster Page', () => {
 
     const style = availabilityRosterPage.getDayStyle([availability])(endDate);
     expect(style).toEqual({
-      className: "draft-day",
+      className: 'draft-day',
       style: {
-        backgroundColor: "var(--pf-global--BackgroundColor--100)"
-      }
+        backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+      },
     });
   });
 
   it('day should be gray if it is published and no availabilities falls on the day', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
 
-    const style = availabilityRosterPage.getDayStyle([availability])(moment(startDate).subtract(1, "day").toDate());
+    const style = availabilityRosterPage.getDayStyle([availability])(moment(startDate).subtract(1, 'day').toDate());
     expect(style).toEqual({
-      className: "published-day",
+      className: 'published-day',
       style: {
-        backgroundColor: "var(--pf-global--BackgroundColor--300)"
-      }
+        backgroundColor: 'var(--pf-global--BackgroundColor--300)',
+      },
     });
   });
 
@@ -433,14 +435,14 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
     const availabilityClone: EmployeeAvailability = {
       ...availability,
-      state: "DESIRED"  
-    }
+      state: 'DESIRED',
+    };
     const date = availability.startDateTime;
     const style = availabilityRosterPage.getDayStyle([availabilityClone])(date);
     expect(style).toEqual({
-      className: "desired draft-day",
+      className: 'desired draft-day',
       style: {
-      }
+      },
     });
   });
 
@@ -448,14 +450,14 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
     const availabilityClone: EmployeeAvailability = {
       ...availability,
-      state: "UNDESIRED"  
-    }
+      state: 'UNDESIRED',
+    };
     const date = availability.startDateTime;
     const style = availabilityRosterPage.getDayStyle([availabilityClone])(date);
     expect(style).toEqual({
-      className: "undesired draft-day",
+      className: 'undesired draft-day',
       style: {
-      }
+      },
     });
   });
 
@@ -463,21 +465,21 @@ describe('Availability Roster Page', () => {
     const availabilityRosterPage = new AvailabilityRosterPage(baseProps);
     const availabilityClone: EmployeeAvailability = {
       ...availability,
-      state: "UNAVAILABLE"  
-    }
+      state: 'UNAVAILABLE',
+    };
     const date = availability.startDateTime;
     const style = availabilityRosterPage.getDayStyle([availabilityClone])(date);
     expect(style).toEqual({
-      className: "unavailable draft-day",
+      className: 'unavailable draft-day',
       style: {
-      }
+      },
     });
   });
 
   it('getDayStyle() should throw error on wrong state', () => {
     expect(() => new AvailabilityRosterPage(baseProps).getDayStyle([{
       ...availability,
-      state: "wrong state" as "DESIRED"
+      state: 'wrong state' as 'DESIRED',
     }])(availability.startDateTime)).toThrow(Error);
   });
 
@@ -496,29 +498,29 @@ describe('Availability Roster Page', () => {
     expect(isAllDayAvailability(availability)).toEqual(true);
     expect(isAllDayAvailability({
       ...availability,
-      endDateTime: moment(availability.endDateTime).add(2, 'days').toDate()
+      endDateTime: moment(availability.endDateTime).add(2, 'days').toDate(),
     })).toEqual(true);
     expect(isAllDayAvailability({
       ...availability,
-      endDateTime: moment(availability.endDateTime).add(9, 'hours').toDate()
-    })).toEqual(false);
-    expect(isAllDayAvailability({
-      ...availability,
-      startDateTime: moment(availability.startDateTime).subtract(9, 'hours').toDate()
+      endDateTime: moment(availability.endDateTime).add(9, 'hours').toDate(),
     })).toEqual(false);
     expect(isAllDayAvailability({
       ...availability,
       startDateTime: moment(availability.startDateTime).subtract(9, 'hours').toDate(),
-      endDateTime: moment(availability.endDateTime).add(9, 'hours').toDate()
+    })).toEqual(false);
+    expect(isAllDayAvailability({
+      ...availability,
+      startDateTime: moment(availability.startDateTime).subtract(9, 'hours').toDate(),
+      endDateTime: moment(availability.endDateTime).add(9, 'hours').toDate(),
     })).toEqual(false);
   });
 
-  it('isDay should return true iff both the start date time and the end date time time ' + 
-    'components are exactly midnight', () => {
-    expect(isDay(moment("2018-07-01T09:00").toDate(), moment("2018-07-02T00:00").toDate())).toEqual(false);
-    expect(isDay(moment("2018-07-01T00:00").toDate(), moment("2018-07-02T09:00").toDate())).toEqual(false);
-    expect(isDay(moment("2018-07-01T00:00").toDate(), moment("2018-07-02T00:00").toDate())).toEqual(true);
-    expect(isDay(moment("2018-07-01T00:00").toDate(), moment("2018-07-04T00:00").toDate())).toEqual(true);
+  it('isDay should return true iff both the start date time and the end date time time '
+    + 'components are exactly midnight', () => {
+    expect(isDay(moment('2018-07-01T09:00').toDate(), moment('2018-07-02T00:00').toDate())).toEqual(false);
+    expect(isDay(moment('2018-07-01T00:00').toDate(), moment('2018-07-02T09:00').toDate())).toEqual(false);
+    expect(isDay(moment('2018-07-01T00:00').toDate(), moment('2018-07-02T00:00').toDate())).toEqual(true);
+    expect(isDay(moment('2018-07-01T00:00').toDate(), moment('2018-07-04T00:00').toDate())).toEqual(true);
   });
 });
 
@@ -526,58 +528,58 @@ const spot: Spot = {
   tenantId: 0,
   id: 2,
   version: 0,
-  name: "Spot",
+  name: 'Spot',
   requiredSkillSet: [
     {
       tenantId: 0,
       id: 3,
       version: 0,
-      name: "Skill"
-    }
-  ]
-}
+      name: 'Skill',
+    },
+  ],
+};
 
 const employee: Employee = {
   tenantId: 0,
   id: 4,
   version: 0,
-  name: "Employee 1",
+  name: 'Employee 1',
   contract: {
     tenantId: 0,
     id: 5,
     version: 0,
-    name: "Basic Contract",
+    name: 'Basic Contract',
     maximumMinutesPerDay: 10,
     maximumMinutesPerWeek: 70,
     maximumMinutesPerMonth: 500,
-    maximumMinutesPerYear: 6000
+    maximumMinutesPerYear: 6000,
   },
   skillProficiencySet: [{
     tenantId: 0,
     id: 6,
     version: 0,
-    name: "Not Required Skill"
-  }]
-}
+    name: 'Not Required Skill',
+  }],
+};
 
 const newEmployee: Employee = {
   ...employee,
   id: 111,
-  name: "New Employee"
-}
+  name: 'New Employee',
+};
 
 const shift: Shift = {
   tenantId: 0,
   id: 1,
-  version: 0, 
-  startDateTime: moment("2018-07-01T09:00").toDate(),
-  endDateTime: moment("2018-07-01T17:00").toDate(),
-  spot: spot,
-  employee: employee,
+  version: 0,
+  startDateTime: moment('2018-07-01T09:00').toDate(),
+  endDateTime: moment('2018-07-01T17:00').toDate(),
+  spot,
+  employee,
   rotationEmployee: {
     ...employee,
     id: 7,
-    name: "Rotation Employee"
+    name: 'Rotation Employee',
   },
   pinnedByUser: false,
   indictmentScore: { hardScore: 0, mediumScore: 0, softScore: 0 },
@@ -588,62 +590,62 @@ const shift: Shift = {
   undesiredTimeslotForEmployeePenaltyList: [],
   rotationViolationPenaltyList: [],
   unassignedShiftPenaltyList: [],
-  contractMinutesViolationPenaltyList: []
+  contractMinutesViolationPenaltyList: [],
 };
 
 const availability: EmployeeAvailability = {
   tenantId: 0,
   id: 123,
   version: 0,
-  startDateTime: moment("2018-07-01T00:00").toDate(),
-  endDateTime: moment("2018-07-02T00:00").toDate(),
-  employee: employee,
-  state: "DESIRED"
-}
+  startDateTime: moment('2018-07-01T00:00').toDate(),
+  endDateTime: moment('2018-07-02T00:00').toDate(),
+  employee,
+  state: 'DESIRED',
+};
 
-const startDate = moment("2018-07-01T09:00").startOf('week').toDate();
-const endDate = moment("2018-07-01T09:00").endOf('week').toDate()
+const startDate = moment('2018-07-01T09:00').startOf('week').toDate();
+const endDate = moment('2018-07-01T09:00').endOf('week').toDate();
 
 const rosterState: RosterState = {
   tenant: {
     id: 0,
     version: 0,
-    name: "Tenant"
+    name: 'Tenant',
   },
   publishNotice: 14,
   publishLength: 7,
-  firstDraftDate: new Date("2018-07-01"),
+  firstDraftDate: new Date('2018-07-01'),
   draftLength: 7,
   unplannedRotationOffset: 0,
   rotationLength: 7,
-  lastHistoricDate: new Date("2018-07-01"),
-  timeZone: "EST"
+  lastHistoricDate: new Date('2018-07-01'),
+  timeZone: 'EST',
 };
 
 const baseProps: Props = {
-  ...useTranslation("AvailabilityRosterPage"),
+  ...useTranslation('AvailabilityRosterPage'),
   tReady: true,
   tenantId: 0,
-  score: { hardScore: 0, mediumScore: 0, softScore: 0},
+  score: { hardScore: 0, mediumScore: 0, softScore: 0 },
   isSolving: false,
   isLoading: false,
-  startDate: startDate,
-  endDate: endDate,
+  startDate,
+  endDate,
   totalNumOfSpots: 1,
-  rosterState: rosterState,
+  rosterState,
   allEmployeeList: [employee, newEmployee],
   shownEmployeeList: [employee],
   employeeIdToShiftListMap: new Map([
-    [4, [shift]]
+    [4, [shift]],
   ]),
   employeeIdToAvailabilityListMap: new Map([
-    [4, [availability]]
+    [4, [availability]],
   ]),
   addEmployeeAvailability: jest.fn(),
   removeEmployeeAvailability: jest.fn(),
   updateEmployeeAvailability: jest.fn(),
   getAvailabilityRosterFor: jest.fn(),
-  refreshAvailabilityRoster:jest.fn(),
+  refreshAvailabilityRoster: jest.fn(),
   solveRoster: jest.fn(),
   publishRoster: jest.fn(),
   terminateSolvingRosterEarly: jest.fn(),
@@ -651,5 +653,5 @@ const baseProps: Props = {
   addShift: jest.fn(),
   updateShift: jest.fn(),
   removeShift: jest.fn(),
-  ...getRouterProps<AvailabilityRosterUrlProps>("/shift", { employee: "Employee 1", week: "2018-07-01" })
-}
+  ...getRouterProps<AvailabilityRosterUrlProps>('/shift', { employee: 'Employee 1', week: '2018-07-01' }),
+};

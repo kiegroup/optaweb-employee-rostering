@@ -14,174 +14,174 @@
  * limitations under the License.
  */
 
-import { mockStore } from '../mockStore';
-import { AppState } from '../types';
-import * as actions from './actions';
 import { alert } from 'store/alert';
-import { rosterStateReducer, shiftRosterViewReducer, rosterSelectors, rosterOperations, solverReducer } from './index';
 import { resetRestClientMock, onGet, onPost } from 'store/rest/RestTestUtils';
 import { spotSelectors } from 'store/spot';
 import { employeeSelectors } from 'store/employee';
 import MockDate from 'mockdate';
 import moment from 'moment';
-import Spot from 'domain/Spot';
-import ShiftRosterView from 'domain/ShiftRosterView';
-import AvailabilityRosterView from 'domain/AvailabilityRosterView';
-import Employee from 'domain/Employee';
-import { availabilityRosterReducer } from './reducers';
+import { Spot } from 'domain/Spot';
+import { ShiftRosterView } from 'domain/ShiftRosterView';
+import { AvailabilityRosterView } from 'domain/AvailabilityRosterView';
+import { Employee } from 'domain/Employee';
 import DomainObjectView from 'domain/DomainObjectView';
-import RosterState from 'domain/RosterState';
+import { RosterState } from 'domain/RosterState';
 import { serializeLocalDate } from 'store/rest/DataSerialization';
 import { flushPromises } from 'setupTests';
+import { availabilityRosterReducer } from './reducers';
+import { rosterStateReducer, shiftRosterViewReducer, rosterSelectors, rosterOperations, solverReducer } from './index';
+import * as actions from './actions';
+import { AppState } from '../types';
+import { mockStore } from '../mockStore';
 
 const mockShiftRoster: ShiftRosterView = {
   tenantId: 0,
-  startDate: moment("2018-01-01", "YYYY-MM-DD").toISOString(),
-  endDate: moment("2018-01-01", "YYYY-MM-DD").toISOString(),
+  startDate: moment('2018-01-01', 'YYYY-MM-DD').toISOString(),
+  endDate: moment('2018-01-01', 'YYYY-MM-DD').toISOString(),
   spotList: [{
     tenantId: 0,
     id: 10,
     version: 0,
-    name: "Spot",
-    requiredSkillSet: []
+    name: 'Spot',
+    requiredSkillSet: [],
   }],
   employeeList: [
     {
       tenantId: 0,
       id: 20,
       version: 0,
-      name: "Employee",
+      name: 'Employee',
       skillProficiencySet: [],
       contract: {
         tenantId: 0,
         id: 30,
         version: 0,
-        name: "Contract",
+        name: 'Contract',
         maximumMinutesPerDay: null,
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null
-      }
-    }
+        maximumMinutesPerYear: null,
+      },
+    },
   ],
   rosterState: {
     publishNotice: 0,
-    firstDraftDate: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+    firstDraftDate: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
     publishLength: 0,
     draftLength: 0,
     unplannedRotationOffset: 5,
     rotationLength: 10,
-    lastHistoricDate: moment("2018-01-01", "YYYY-MM-DD").toDate(),
-    timeZone: "",
+    lastHistoricDate: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
+    timeZone: '',
     tenant: {
-      name: "Tenant"
-    }
+      name: 'Tenant',
+    },
   },
   spotIdToShiftViewListMap: {
     10: [{
       tenantId: 0,
-      startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
-      endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+      startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
+      endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
       spotId: 10,
       employeeId: 20,
       rotationEmployeeId: null,
       indictmentScore: {
         hardScore: 0,
         mediumScore: 0,
-        softScore: 0
+        softScore: 0,
       },
-      pinnedByUser: false
-    }]
+      pinnedByUser: false,
+    }],
   },
   score: {
     hardScore: 0,
     mediumScore: 0,
-    softScore: 0
-  }
+    softScore: 0,
+  },
 };
 
 const mockAvailabilityRoster: AvailabilityRosterView = {
   tenantId: 0,
-  startDate: moment("2018-01-01", "YYYY-MM-DD").toISOString(),
-  endDate: moment("2018-01-01", "YYYY-MM-DD").toISOString(),
+  startDate: moment('2018-01-01', 'YYYY-MM-DD').toISOString(),
+  endDate: moment('2018-01-01', 'YYYY-MM-DD').toISOString(),
   spotList: [{
     tenantId: 0,
     id: 10,
     version: 0,
-    name: "Spot",
-    requiredSkillSet: []
+    name: 'Spot',
+    requiredSkillSet: [],
   }],
   employeeList: [
     {
       tenantId: 0,
       id: 20,
       version: 0,
-      name: "Employee",
+      name: 'Employee',
       skillProficiencySet: [],
       contract: {
         tenantId: 0,
         id: 30,
         version: 0,
-        name: "Contract",
+        name: 'Contract',
         maximumMinutesPerDay: null,
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null
-      }
-    }
+        maximumMinutesPerYear: null,
+      },
+    },
   ],
   rosterState: {
     publishNotice: 0,
-    firstDraftDate: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+    firstDraftDate: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
     publishLength: 0,
     draftLength: 0,
     unplannedRotationOffset: 5,
     rotationLength: 10,
-    lastHistoricDate: moment("2018-01-01", "YYYY-MM-DD").toDate(),
-    timeZone: "",
+    lastHistoricDate: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
+    timeZone: '',
     tenant: {
-      name: "Tenant"
-    }
+      name: 'Tenant',
+    },
   },
   employeeIdToShiftViewListMap: {
     20: [{
       tenantId: 0,
-      startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
-      endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+      startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
+      endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
       spotId: 10,
       employeeId: 20,
       rotationEmployeeId: null,
       indictmentScore: {
         hardScore: 0,
         mediumScore: 0,
-        softScore: 0
+        softScore: 0,
       },
-      pinnedByUser: false
-    }]
+      pinnedByUser: false,
+    }],
   },
   employeeIdToAvailabilityViewListMap: {
     20: [{
       tenantId: 0,
-      startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
-      endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+      startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
+      endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
       employeeId: 20,
-      state: "DESIRED"
-    }]
+      state: 'DESIRED',
+    }],
   },
   unassignedShiftViewList: [],
   score: {
     hardScore: 0,
     mediumScore: 0,
-    softScore: 0
-  }
+    softScore: 0,
+  },
 };
 
 describe('Roster operations', () => {
   it('should dispatch actions and call client on solve roster', async () => {
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster")
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster')
       .mockImplementation(() => () => {});
     jest.useFakeTimers();
-    const solvingStartTime = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    const solvingStartTime = moment('2018-01-01', 'YYYY-MM-DD').toDate();
     MockDate.set(solvingStartTime);
 
     const { store, client } = mockStore(state);
@@ -191,9 +191,9 @@ describe('Roster operations', () => {
     await store.dispatch(rosterOperations.solveRoster());
     expect(store.getActions()).toEqual([
       actions.solveRoster(),
-      alert.showInfoMessage("startSolvingRoster", { 
-        startSolvingTime: moment(solvingStartTime).format("LLL") 
-      })
+      alert.showInfoMessage('startSolvingRoster', {
+        startSolvingTime: moment(solvingStartTime).format('LLL'),
+      }),
     ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/solve`, {});
@@ -205,24 +205,24 @@ describe('Roster operations', () => {
   });
 
   it('should dispatch actions and call client on terminate solving roster', async () => {
-    const solvingEndTime = moment("2018-01-01", "YYYY-MM-DD").toDate();
+    const solvingEndTime = moment('2018-01-01', 'YYYY-MM-DD').toDate();
     MockDate.set(solvingEndTime);
 
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster")
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster')
       .mockImplementation(() => () => {});
 
     onPost(`/tenant/${tenantId}/roster/terminate`, {}, {});
-    await(store.dispatch(rosterOperations.terminateSolvingRosterEarly()));
+    await (store.dispatch(rosterOperations.terminateSolvingRosterEarly()));
     await flushPromises();
 
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/roster/terminate`, {});
-    
+
     expect(store.getActions()).toEqual([
       actions.terminateSolvingRosterEarly(),
-      alert.showInfoMessage("finishSolvingRoster", { finishSolvingTime: moment(solvingEndTime).format("LLL") })
+      alert.showInfoMessage('finishSolvingRoster', { finishSolvingTime: moment(solvingEndTime).format('LLL') }),
     ]);
 
     expect(mockRefreshShiftRoster).toBeCalled();
@@ -231,21 +231,21 @@ describe('Roster operations', () => {
   it('should dispatch the last shift roster REST call on refreshShiftRoster', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    jest.spyOn(rosterOperations, "refreshShiftRoster").mockRestore();
+    jest.spyOn(rosterOperations, 'refreshShiftRoster').mockRestore();
 
-    const testOperation = async (operation: () => Promise<void>, method: 'get'|'post', 
+    const testOperation = async (operation: () => Promise<void>, method: 'get'|'post',
       restURL: string, restArg?: any) => {
       store.clearActions();
       resetRestClientMock(client);
 
       switch (method) {
         case 'get': {
-          onGet(restURL, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: "0hard/0medium/0soft" });
+          onGet(restURL, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: '0hard/0medium/0soft' });
           break;
         }
 
         case 'post': {
-          onPost(restURL, restArg, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: "0hard/0medium/0soft" });
+          onPost(restURL, restArg, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: '0hard/0medium/0soft' });
           break;
         }
 
@@ -260,7 +260,7 @@ describe('Roster operations', () => {
       expect(store.getActions()).toEqual([
         actions.setShiftRosterIsLoading(true),
         actions.setShiftRosterView({ ...mockShiftRoster, spotIdToShiftViewListMap: {} }),
-        actions.setShiftRosterIsLoading(false)
+        actions.setShiftRosterIsLoading(false),
       ]);
 
       switch (method) {
@@ -284,45 +284,43 @@ describe('Roster operations', () => {
 
     const paginationInfo = {
       pageNumber: 0,
-      itemsPerPage: 10
+      itemsPerPage: 10,
     };
-    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
-    const toDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
-    
-    await testOperation(async () => await store.dispatch(rosterOperations.getCurrentShiftRoster(paginationInfo)),
-      'get',
-      `/tenant/${tenantId}/roster/shiftRosterView/current?p=${paginationInfo.pageNumber}` +
-      `&n=${paginationInfo.itemsPerPage}`
-    );
+    const fromDate = moment('2018-01-01', 'YYYY-MM-DD').toDate();
+    const toDate = moment('2018-01-01', 'YYYY-MM-DD').toDate();
 
-    await testOperation(async () => await store.dispatch(rosterOperations.getShiftRoster({
-      fromDate: fromDate,
-      toDate: toDate,
-      pagination: paginationInfo
+    await testOperation(async () => store.dispatch(rosterOperations.getCurrentShiftRoster(paginationInfo)),
+      'get',
+      `/tenant/${tenantId}/roster/shiftRosterView/current?p=${paginationInfo.pageNumber}`
+      + `&n=${paginationInfo.itemsPerPage}`);
+
+    await testOperation(async () => store.dispatch(rosterOperations.getShiftRoster({
+      fromDate,
+      toDate,
+      pagination: paginationInfo,
     })),
     'get',
-    `/tenant/${tenantId}/roster/shiftRosterView?` +
-      `p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}` +
-      `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`
-    );
+    `/tenant/${tenantId}/roster/shiftRosterView?`
+      + `p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}`
+      + `&startDate=${serializeLocalDate(fromDate)}&endDate=${
+        serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`);
 
-    await testOperation(async () => await store.dispatch(rosterOperations.getShiftRosterFor({
-      fromDate: fromDate,
-      toDate: toDate,
-      spotList: []
+    await testOperation(async () => store.dispatch(rosterOperations.getShiftRosterFor({
+      fromDate,
+      toDate,
+      spotList: [],
     })),
     'post',
-    `/tenant/${tenantId}/roster/shiftRosterView/for?` +
-      `&startDate=${serializeLocalDate(fromDate)}` + 
-      `&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`,
-    []
-    );
+    `/tenant/${tenantId}/roster/shiftRosterView/for?`
+      + `&startDate=${serializeLocalDate(fromDate)}`
+      + `&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`,
+    []);
   });
 
   it('should dispatch the last shift roster REST call on refreshAvailabilityRoster', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    jest.spyOn(rosterOperations, "refreshAvailabilityRoster").mockRestore();
+    jest.spyOn(rosterOperations, 'refreshAvailabilityRoster').mockRestore();
 
     const testOperation = async (operation: () => void, method: 'get'|'post', restURL: string, restArg?: any) => {
       store.clearActions();
@@ -330,21 +328,21 @@ describe('Roster operations', () => {
 
       switch (method) {
         case 'get': {
-          onGet(restURL, { 
+          onGet(restURL, {
             ...mockAvailabilityRoster,
             employeeIdToAvailabilityViewListMap: {},
             employeeIdToShiftViewListMap: {},
-            score: "0hard/0medium/0soft"
+            score: '0hard/0medium/0soft',
           });
           break;
         }
 
         case 'post': {
-          onPost(restURL, restArg, { 
+          onPost(restURL, restArg, {
             ...mockAvailabilityRoster,
             employeeIdToAvailabilityViewListMap: {},
             employeeIdToShiftViewListMap: {},
-            score: "0hard/0medium/0soft"
+            score: '0hard/0medium/0soft',
           });
           break;
         }
@@ -361,9 +359,8 @@ describe('Roster operations', () => {
         actions.setAvailabilityRosterIsLoading(true),
         actions.setAvailabilityRosterView({ ...mockAvailabilityRoster,
           employeeIdToAvailabilityViewListMap: {},
-          employeeIdToShiftViewListMap: {}
-        }),
-        actions.setAvailabilityRosterIsLoading(false)
+          employeeIdToShiftViewListMap: {} }),
+        actions.setAvailabilityRosterIsLoading(false),
       ]);
 
       switch (method) {
@@ -387,53 +384,51 @@ describe('Roster operations', () => {
 
     const paginationInfo = {
       pageNumber: 0,
-      itemsPerPage: 10
+      itemsPerPage: 10,
     };
-    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
-    const toDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
-    
-    await testOperation(async () => await store.dispatch(rosterOperations.getCurrentAvailabilityRoster(paginationInfo)),
-      'get',
-      `/tenant/${tenantId}/roster/availabilityRosterView/current?p=${paginationInfo.pageNumber}` + 
-      `&n=${paginationInfo.itemsPerPage}`
-    );
+    const fromDate = moment('2018-01-01', 'YYYY-MM-DD').toDate();
+    const toDate = moment('2018-01-01', 'YYYY-MM-DD').toDate();
 
-    await testOperation(async () => await store.dispatch(rosterOperations.getAvailabilityRoster({
-      fromDate: fromDate,
-      toDate: toDate,
-      pagination: paginationInfo
+    await testOperation(async () => store.dispatch(rosterOperations.getCurrentAvailabilityRoster(paginationInfo)),
+      'get',
+      `/tenant/${tenantId}/roster/availabilityRosterView/current?p=${paginationInfo.pageNumber}`
+      + `&n=${paginationInfo.itemsPerPage}`);
+
+    await testOperation(async () => store.dispatch(rosterOperations.getAvailabilityRoster({
+      fromDate,
+      toDate,
+      pagination: paginationInfo,
     })),
     'get',
-    `/tenant/${tenantId}/roster/availabilityRosterView?` +
-      `p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}` +
-      `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`
-    );
+    `/tenant/${tenantId}/roster/availabilityRosterView?`
+      + `p=${paginationInfo.pageNumber}&n=${paginationInfo.itemsPerPage}`
+      + `&startDate=${serializeLocalDate(fromDate)}&endDate=${
+        serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`);
 
-    await testOperation(async () => await store.dispatch(rosterOperations.getAvailabilityRosterFor({
-      fromDate: fromDate,
-      toDate: toDate,
-      employeeList: []
+    await testOperation(async () => store.dispatch(rosterOperations.getAvailabilityRosterFor({
+      fromDate,
+      toDate,
+      employeeList: [],
     })),
     'post',
-    `/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-      `&startDate=${serializeLocalDate(fromDate)}` + 
-      `&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
-    []
-    );
+    `/tenant/${tenantId}/roster/availabilityRosterView/for?`
+      + `&startDate=${serializeLocalDate(fromDate)}`
+      + `&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`,
+    []);
   });
 
   it('should dispatch actions and call client on getRosterState', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const rosterState = mockShiftRoster.rosterState;
-    
+    const { rosterState } = mockShiftRoster;
+
     onGet(`/tenant/${tenantId}/roster/state`, rosterState);
     await store.dispatch(rosterOperations.getRosterState());
 
     expect(store.getActions()).toEqual([
       actions.setRosterStateIsLoading(true),
       actions.setRosterState(rosterState),
-      actions.setRosterStateIsLoading(false)
+      actions.setRosterStateIsLoading(false),
     ]);
 
     expect(client.get).toBeCalledTimes(1);
@@ -444,23 +439,23 @@ describe('Roster operations', () => {
   it('should dispatch actions and call client on publish', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster")
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster')
       .mockImplementation(() => () => {});
 
     onPost(`/tenant/${tenantId}/roster/publishAndProvision`, {}, {
-      publishedFromDate: "2018-01-01",
-      publishedToDate: "2018-01-08"
+      publishedFromDate: '2018-01-01',
+      publishedToDate: '2018-01-08',
     });
 
     await store.dispatch(rosterOperations.publish());
 
     expect(store.getActions()).toEqual([
       actions.publishRoster({
-        publishedFromDate: moment("2018-01-01").toDate(),
-        publishedToDate: moment("2018-01-08").toDate()
+        publishedFromDate: moment('2018-01-01').toDate(),
+        publishedToDate: moment('2018-01-08').toDate(),
       }),
-      alert.showSuccessMessage("publish",
-        { from: moment("2018-01-01").format("LL"), to: moment("2018-01-08").format("LL") })
+      alert.showSuccessMessage('publish',
+        { from: moment('2018-01-01').format('LL'), to: moment('2018-01-08').format('LL') }),
     ]);
 
     expect(client.post).toBeCalledTimes(1);
@@ -478,22 +473,22 @@ describe('Roster operations', () => {
       .startOf('week').toDate();
     const toDate = moment((state.rosterState.rosterState as RosterState).firstDraftDate)
       .endOf('week').toDate();
-    
-    onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
-    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
-    spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: "0hard/0medium/0soft" });
+
+    onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?`
+    + `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`,
+    spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: '0hard/0medium/0soft' });
     await store.dispatch(rosterOperations.getInitialShiftRoster());
 
     expect(store.getActions()).toEqual([
       actions.setShiftRosterIsLoading(true),
       actions.setShiftRosterView({ ...mockShiftRoster, spotIdToShiftViewListMap: {} }),
-      actions.setShiftRosterIsLoading(false)
+      actions.setShiftRosterIsLoading(false),
     ]);
 
     expect(client.post).toBeCalledTimes(1);
-    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
-    `&startDate=${serializeLocalDate(fromDate)}&` + 
-    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, spotList);
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/for?`
+    + `&startDate=${serializeLocalDate(fromDate)}&`
+    + `endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`, spotList);
   });
 
   it('should not dispatch actions and call client on getInitialShiftRoster if no spots', async () => {
@@ -501,13 +496,13 @@ describe('Roster operations', () => {
       ...state,
       spotList: {
         spotMapById: new Map<number, DomainObjectView<Spot>>(),
-        isLoading: false
-      }
+        isLoading: false,
+      },
     });
     await store.dispatch(rosterOperations.getInitialShiftRoster());
 
     expect(store.getActions()).toEqual([
-      actions.setShiftRosterIsLoading(false)
+      actions.setShiftRosterIsLoading(false),
     ]);
 
     expect(client.post).not.toBeCalled();
@@ -518,13 +513,13 @@ describe('Roster operations', () => {
       ...state,
       rosterState: {
         rosterState: null,
-        isLoading: false
-      }
+        isLoading: false,
+      },
     });
     await store.dispatch(rosterOperations.getInitialShiftRoster());
 
     expect(store.getActions()).toEqual([
-      actions.setShiftRosterIsLoading(false)
+      actions.setShiftRosterIsLoading(false),
     ]);
 
     expect(client.post).not.toBeCalled();
@@ -535,93 +530,92 @@ describe('Roster operations', () => {
     const tenantId = store.getState().tenantData.currentTenantId;
     const pagination = {
       pageNumber: 0,
-      itemsPerPage: 10
+      itemsPerPage: 10,
     };
-    
-    onGet(`/tenant/${tenantId}/roster/shiftRosterView/current?p=${pagination.pageNumber}` + 
-    `&n=${pagination.itemsPerPage}`, { 
+
+    onGet(`/tenant/${tenantId}/roster/shiftRosterView/current?p=${pagination.pageNumber}`
+    + `&n=${pagination.itemsPerPage}`, {
       ...mockShiftRoster,
       spotIdToShiftViewListMap: {},
-      score: "0hard/0medium/0soft" 
+      score: '0hard/0medium/0soft',
     });
     await store.dispatch(rosterOperations.getCurrentShiftRoster(pagination));
 
     expect(store.getActions()).toEqual([
       actions.setShiftRosterIsLoading(true),
       actions.setShiftRosterView({ ...mockShiftRoster, spotIdToShiftViewListMap: {} }),
-      actions.setShiftRosterIsLoading(false)
+      actions.setShiftRosterIsLoading(false),
     ]);
 
     expect(client.get).toBeCalledTimes(1);
-    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/current?` +
-      `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/current?`
+      + `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`);
   });
 
   it('should dispatch actions and call client on getShiftRoster', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
-    const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
+    const fromDate = moment('2018-01-01', 'YYYY-MM-DD').toDate();
+    const toDate = moment('2018-01-02', 'YYYY-MM-DD').toDate();
 
     const pagination = {
       pageNumber: 0,
-      itemsPerPage: 10
+      itemsPerPage: 10,
     };
-    
-    onGet(`/tenant/${tenantId}/roster/shiftRosterView?` +
-    `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
-    `&startDate=${serializeLocalDate(fromDate)}&` + 
-    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, {
+
+    onGet(`/tenant/${tenantId}/roster/shiftRosterView?`
+    + `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`
+    + `&startDate=${serializeLocalDate(fromDate)}&`
+    + `endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`, {
       ...mockShiftRoster,
       spotIdToShiftViewListMap: {},
-      score: "0hard/0medium/0soft"
+      score: '0hard/0medium/0soft',
     });
     await store.dispatch(rosterOperations.getShiftRoster({
-      fromDate: fromDate,
-      toDate: toDate,
-      pagination: pagination
+      fromDate,
+      toDate,
+      pagination,
     }));
 
     expect(store.getActions()).toEqual([
       actions.setShiftRosterIsLoading(true),
       actions.setShiftRosterView({ ...mockShiftRoster, spotIdToShiftViewListMap: {} }),
-      actions.setShiftRosterIsLoading(false)
+      actions.setShiftRosterIsLoading(false),
     ]);
 
     expect(client.get).toBeCalledTimes(1);
-    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView?` +
-    `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
-    `&startDate=${serializeLocalDate(fromDate)}`+
-    `&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`);
-
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView?`
+    + `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`
+    + `&startDate=${serializeLocalDate(fromDate)}`
+    + `&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`);
   });
 
   it('should dispatch actions and call client on getShiftRosterFor', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const spotList: Spot[] = [];
-    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
-    const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
-    
-    onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
-    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
-    spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: "0hard/0medium/0soft" });
+    const fromDate = moment('2018-01-01', 'YYYY-MM-DD').toDate();
+    const toDate = moment('2018-01-02', 'YYYY-MM-DD').toDate();
+
+    onPost(`/tenant/${tenantId}/roster/shiftRosterView/for?`
+    + `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`,
+    spotList, { ...mockShiftRoster, spotIdToShiftViewListMap: {}, score: '0hard/0medium/0soft' });
     await store.dispatch(rosterOperations.getShiftRosterFor({
-      fromDate: fromDate,
-      toDate: toDate,
-      spotList: spotList
+      fromDate,
+      toDate,
+      spotList,
     }));
 
     expect(store.getActions()).toEqual([
       actions.setShiftRosterIsLoading(true),
       actions.setShiftRosterView({ ...mockShiftRoster, spotIdToShiftViewListMap: {} }),
-      actions.setShiftRosterIsLoading(false)
+      actions.setShiftRosterIsLoading(false),
     ]);
 
     expect(client.post).toBeCalledTimes(1);
-    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/for?` +
-    `&startDate=${serializeLocalDate(fromDate)}&` + 
-    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, []);
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/shiftRosterView/for?`
+    + `&startDate=${serializeLocalDate(fromDate)}&`
+    + `endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`, []);
   });
 
   it('should dispatch actions and call client on getInitialAvailabilityRoster', async () => {
@@ -632,14 +626,14 @@ describe('Roster operations', () => {
       .startOf('week').toDate();
     const toDate = moment((state.rosterState.rosterState as RosterState).firstDraftDate)
       .endOf('week').toDate();
-    
-    onPost(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
+
+    onPost(`/tenant/${tenantId}/roster/availabilityRosterView/for?`
+    + `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`,
     employeeList, {
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
       employeeIdToAvailabilityViewListMap: {},
-      score: "0hard/0medium/0soft"
+      score: '0hard/0medium/0soft',
     });
     await store.dispatch(rosterOperations.getInitialAvailabilityRoster());
 
@@ -648,15 +642,15 @@ describe('Roster operations', () => {
       actions.setAvailabilityRosterView({
         ...mockAvailabilityRoster,
         employeeIdToShiftViewListMap: {},
-        employeeIdToAvailabilityViewListMap: {}
+        employeeIdToAvailabilityViewListMap: {},
       }),
-      actions.setAvailabilityRosterIsLoading(false)
+      actions.setAvailabilityRosterIsLoading(false),
     ]);
 
     expect(client.post).toBeCalledTimes(1);
-    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-    `&startDate=${serializeLocalDate(fromDate)}&` + 
-    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, employeeList);
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/for?`
+    + `&startDate=${serializeLocalDate(fromDate)}&`
+    + `endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`, employeeList);
   });
 
   it('should not dispatch actions and call client on getInitialAvailabilityRoster if no employees', async () => {
@@ -664,13 +658,13 @@ describe('Roster operations', () => {
       ...state,
       employeeList: {
         employeeMapById: new Map<number, DomainObjectView<Employee>>(),
-        isLoading: false
-      }
+        isLoading: false,
+      },
     });
     await store.dispatch(rosterOperations.getInitialAvailabilityRoster());
 
     expect(store.getActions()).toEqual([
-      actions.setAvailabilityRosterIsLoading(false)
+      actions.setAvailabilityRosterIsLoading(false),
     ]);
 
     expect(client.post).not.toBeCalled();
@@ -682,13 +676,13 @@ describe('Roster operations', () => {
       ...state,
       rosterState: {
         rosterState: null,
-        isLoading: false
-      }
+        isLoading: false,
+      },
     });
     await store.dispatch(rosterOperations.getInitialAvailabilityRoster());
 
     expect(store.getActions()).toEqual([
-      actions.setAvailabilityRosterIsLoading(false)
+      actions.setAvailabilityRosterIsLoading(false),
     ]);
 
     expect(client.post).not.toBeCalled();
@@ -699,15 +693,15 @@ describe('Roster operations', () => {
     const tenantId = store.getState().tenantData.currentTenantId;
     const pagination = {
       pageNumber: 0,
-      itemsPerPage: 10
+      itemsPerPage: 10,
     };
-    
-    onGet(`/tenant/${tenantId}/roster/availabilityRosterView/current?p=${pagination.pageNumber}` + 
-    `&n=${pagination.itemsPerPage}`, {
+
+    onGet(`/tenant/${tenantId}/roster/availabilityRosterView/current?p=${pagination.pageNumber}`
+    + `&n=${pagination.itemsPerPage}`, {
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
       employeeIdToAvailabilityViewListMap: {},
-      score: "0hard/0medium/0soft"
+      score: '0hard/0medium/0soft',
     });
     await store.dispatch(rosterOperations.getCurrentAvailabilityRoster(pagination));
 
@@ -716,40 +710,40 @@ describe('Roster operations', () => {
       actions.setAvailabilityRosterView({
         ...mockAvailabilityRoster,
         employeeIdToShiftViewListMap: {},
-        employeeIdToAvailabilityViewListMap: {}
+        employeeIdToAvailabilityViewListMap: {},
       }),
-      actions.setAvailabilityRosterIsLoading(false)
+      actions.setAvailabilityRosterIsLoading(false),
     ]);
 
     expect(client.get).toBeCalledTimes(1);
-    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/current?` + 
-      `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/current?`
+      + `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`);
   });
 
   it('should dispatch actions and call client on getAvailabilityRoster', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
-    const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
+    const fromDate = moment('2018-01-01', 'YYYY-MM-DD').toDate();
+    const toDate = moment('2018-01-02', 'YYYY-MM-DD').toDate();
 
     const pagination = {
       pageNumber: 0,
-      itemsPerPage: 10
+      itemsPerPage: 10,
     };
-    
-    onGet(`/tenant/${tenantId}/roster/availabilityRosterView?` +
-    `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
-    `&startDate=${serializeLocalDate(fromDate)}` + 
-    `&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, { 
+
+    onGet(`/tenant/${tenantId}/roster/availabilityRosterView?`
+    + `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`
+    + `&startDate=${serializeLocalDate(fromDate)}`
+    + `&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`, {
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
       employeeIdToAvailabilityViewListMap: {},
-      score: "0hard/0medium/0soft"
+      score: '0hard/0medium/0soft',
     });
     await store.dispatch(rosterOperations.getAvailabilityRoster({
-      fromDate: fromDate,
-      toDate: toDate,
-      pagination: pagination
+      fromDate,
+      toDate,
+      pagination,
     }));
 
     expect(store.getActions()).toEqual([
@@ -757,36 +751,37 @@ describe('Roster operations', () => {
       actions.setAvailabilityRosterView({
         ...mockAvailabilityRoster,
         employeeIdToShiftViewListMap: {},
-        employeeIdToAvailabilityViewListMap: {}
+        employeeIdToAvailabilityViewListMap: {},
       }),
-      actions.setAvailabilityRosterIsLoading(false)
+      actions.setAvailabilityRosterIsLoading(false),
     ]);
 
     expect(client.get).toBeCalledTimes(1);
-    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView?` +
-    `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}` +
-    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`);
+    expect(client.get).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView?`
+    + `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`
+    + `&startDate=${serializeLocalDate(fromDate)}&endDate=${
+      serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`);
   });
 
   it('should dispatch actions and call client on getAvailabilityRosterFor', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const employeeList: Employee[] = [];
-    const fromDate = moment("2018-01-01", "YYYY-MM-DD").toDate();
-    const toDate = moment("2018-01-02", "YYYY-MM-DD").toDate();
-    
-    onPost(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-    `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`,
+    const fromDate = moment('2018-01-01', 'YYYY-MM-DD').toDate();
+    const toDate = moment('2018-01-02', 'YYYY-MM-DD').toDate();
+
+    onPost(`/tenant/${tenantId}/roster/availabilityRosterView/for?`
+    + `&startDate=${serializeLocalDate(fromDate)}&endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`,
     employeeList, {
       ...mockAvailabilityRoster,
       employeeIdToShiftViewListMap: {},
       employeeIdToAvailabilityViewListMap: {},
-      score: "0hard/0medium/0soft"
+      score: '0hard/0medium/0soft',
     });
     await store.dispatch(rosterOperations.getAvailabilityRosterFor({
-      fromDate: fromDate,
-      toDate: toDate,
-      employeeList: []
+      fromDate,
+      toDate,
+      employeeList: [],
     }));
 
     expect(store.getActions()).toEqual([
@@ -794,134 +789,136 @@ describe('Roster operations', () => {
       actions.setAvailabilityRosterView({
         ...mockAvailabilityRoster,
         employeeIdToShiftViewListMap: {},
-        employeeIdToAvailabilityViewListMap: {}
+        employeeIdToAvailabilityViewListMap: {},
       }),
-      actions.setAvailabilityRosterIsLoading(false)
+      actions.setAvailabilityRosterIsLoading(false),
     ]);
 
     expect(client.post).toBeCalledTimes(1);
-    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/for?` +
-    `&startDate=${serializeLocalDate(fromDate)}&` + 
-    `endDate=${serializeLocalDate(moment(toDate).add(1, "day").toDate())}`, []);
+    expect(client.post).toBeCalledWith(`/tenant/${tenantId}/roster/availabilityRosterView/for?`
+    + `&startDate=${serializeLocalDate(fromDate)}&`
+    + `endDate=${serializeLocalDate(moment(toDate).add(1, 'day').toDate())}`, []);
   });
 });
 
 describe('Roster reducers', () => {
   it('set is roster state loading', () => {
     expect(
-      rosterStateReducer(state.rosterState, actions.setRosterStateIsLoading(true))
+      rosterStateReducer(state.rosterState, actions.setRosterStateIsLoading(true)),
     ).toEqual({ ...state.rosterState, isLoading: true });
   });
 
   it('set roster state', () => {
     expect(
-      rosterStateReducer(state.rosterState, actions.setRosterState(mockShiftRoster.rosterState))
+      rosterStateReducer(state.rosterState, actions.setRosterState(mockShiftRoster.rosterState)),
     ).toEqual({ ...state.rosterState, rosterState: mockShiftRoster.rosterState });
   });
 
   it('publishes correctly', () => {
     expect(
       rosterStateReducer(state.rosterState, actions.publishRoster({
-        publishedFromDate: moment("2019-01-01", "YYYY-MM-DD").toDate(),
-        publishedToDate: moment("2019-01-08", "YYYY-MM-DD").toDate()
-      }))
-    ).toEqual({ ...state.rosterState, rosterState: {
-      ...mockShiftRoster.rosterState,
-      firstDraftDate: moment("2019-01-08", "YYYY-MM-DD").toDate(),
-      unplannedRotationOffset: (mockShiftRoster.rosterState.unplannedRotationOffset + 7) %
-      mockShiftRoster.rosterState.rotationLength
-    }
-    });
+        publishedFromDate: moment('2019-01-01', 'YYYY-MM-DD').toDate(),
+        publishedToDate: moment('2019-01-08', 'YYYY-MM-DD').toDate(),
+      })),
+    ).toEqual({ ...state.rosterState,
+      rosterState: {
+        ...mockShiftRoster.rosterState,
+        firstDraftDate: moment('2019-01-08', 'YYYY-MM-DD').toDate(),
+        unplannedRotationOffset: (mockShiftRoster.rosterState.unplannedRotationOffset + 7)
+      % mockShiftRoster.rosterState.rotationLength,
+      } });
   });
 
   it('set is shift roster loading', () => {
     expect(
-      shiftRosterViewReducer(state.shiftRoster, actions.setShiftRosterIsLoading(true))
+      shiftRosterViewReducer(state.shiftRoster, actions.setShiftRosterIsLoading(true)),
     ).toEqual({ ...state.shiftRoster, isLoading: true });
   });
 
   it('set shift roster', () => {
     expect(
       shiftRosterViewReducer(state.shiftRoster, actions.setShiftRosterView({
-        ...mockShiftRoster, tenantId: 1
-      }))
-    ).toEqual({ ...state.shiftRoster, shiftRosterView: {
-      ...mockShiftRoster,
-      tenantId: 1
-    } });
+        ...mockShiftRoster, tenantId: 1,
+      })),
+    ).toEqual({ ...state.shiftRoster,
+      shiftRosterView: {
+        ...mockShiftRoster,
+        tenantId: 1,
+      } });
   });
 
   it('set is availability roster loading', () => {
     expect(
-      availabilityRosterReducer(state.availabilityRoster, actions.setAvailabilityRosterIsLoading(true))
+      availabilityRosterReducer(state.availabilityRoster, actions.setAvailabilityRosterIsLoading(true)),
     ).toEqual({ ...state.availabilityRoster, isLoading: true });
   });
 
   it('set availability roster', () => {
     expect(
       availabilityRosterReducer(state.availabilityRoster, actions.setAvailabilityRosterView({
-        ...mockAvailabilityRoster, tenantId: 1
-      }))
-    ).toEqual({ ...state.availabilityRoster, availabilityRosterView: {
-      ...mockAvailabilityRoster,
-      tenantId: 1
-    } });
+        ...mockAvailabilityRoster, tenantId: 1,
+      })),
+    ).toEqual({ ...state.availabilityRoster,
+      availabilityRosterView: {
+        ...mockAvailabilityRoster,
+        tenantId: 1,
+      } });
   });
 
   it('set solving during solving', () => {
     expect(
-      solverReducer(state.solverState, actions.solveRoster())
+      solverReducer(state.solverState, actions.solveRoster()),
     ).toEqual({
-      isSolving: true
+      isSolving: true,
     });
   });
 
   it('unset solving after termination', () => {
     expect(
-      solverReducer(state.solverState, actions.terminateSolvingRosterEarly())
+      solverReducer(state.solverState, actions.terminateSolvingRosterEarly()),
     ).toEqual({
-      isSolving: false
+      isSolving: false,
     });
   });
 });
 
 describe('Roster selectors', () => {
   it('should return an empty list if loading on getSpotListInShiftRoster', () => {
-    expect(rosterSelectors.getSpotListInShiftRoster({ 
+    expect(rosterSelectors.getSpotListInShiftRoster({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true
-      }
+      skillList: {
+        ...state.skillList, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getSpotListInShiftRoster({ 
+    expect(rosterSelectors.getSpotListInShiftRoster({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true
-      }
+      spotList: {
+        ...state.spotList, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getSpotListInShiftRoster({ 
+    expect(rosterSelectors.getSpotListInShiftRoster({
       ...state,
-      employeeList: { 
-        ...state.employeeList, isLoading: true
-      }
+      employeeList: {
+        ...state.employeeList, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getSpotListInShiftRoster({ 
+    expect(rosterSelectors.getSpotListInShiftRoster({
       ...state,
-      contractList: { 
-        ...state.contractList, isLoading: true
-      }
+      contractList: {
+        ...state.contractList, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getSpotListInShiftRoster({ 
+    expect(rosterSelectors.getSpotListInShiftRoster({
       ...state,
-      shiftRoster: { 
-        ...state.shiftRoster, isLoading: true
-      }
+      shiftRoster: {
+        ...state.shiftRoster, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getSpotListInShiftRoster({ 
+    expect(rosterSelectors.getSpotListInShiftRoster({
       ...state,
-      rosterState: { 
-        ...state.rosterState, isLoading: true
-      }
+      rosterState: {
+        ...state.rosterState, isLoading: true,
+      },
     })).toEqual([]);
   });
 
@@ -930,41 +927,41 @@ describe('Roster selectors', () => {
   });
 
   it('should return an empty list if loading on getEmployeeListInAvailabilityRoster', () => {
-    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true
-      }
+      skillList: {
+        ...state.skillList, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true
-      }
+      spotList: {
+        ...state.spotList, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
       ...state,
-      employeeList: { 
-        ...state.employeeList, isLoading: true
-      }
+      employeeList: {
+        ...state.employeeList, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
       ...state,
-      contractList: { 
-        ...state.contractList, isLoading: true
-      }
+      contractList: {
+        ...state.contractList, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
       ...state,
-      availabilityRoster: { 
-        ...state.availabilityRoster, isLoading: true
-      }
+      availabilityRoster: {
+        ...state.availabilityRoster, isLoading: true,
+      },
     })).toEqual([]);
-    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({ 
+    expect(rosterSelectors.getEmployeeListInAvailabilityRoster({
       ...state,
-      rosterState: { 
-        ...state.rosterState, isLoading: true
-      }
+      rosterState: {
+        ...state.rosterState, isLoading: true,
+      },
     })).toEqual([]);
   });
 
@@ -973,41 +970,41 @@ describe('Roster selectors', () => {
   });
 
   it('should throw an exception if loading in getShiftListForSpot', () => {
-    expect(() => rosterSelectors.getShiftListForSpot({ 
+    expect(() => rosterSelectors.getShiftListForSpot({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true
-      }
+      skillList: {
+        ...state.skillList, isLoading: true,
+      },
     }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
-    expect(() => rosterSelectors.getShiftListForSpot({ 
+    expect(() => rosterSelectors.getShiftListForSpot({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true
-      }
+      spotList: {
+        ...state.spotList, isLoading: true,
+      },
     }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
-    expect(() => rosterSelectors.getShiftListForSpot({ 
+    expect(() => rosterSelectors.getShiftListForSpot({
       ...state,
-      employeeList: { 
-        ...state.employeeList, isLoading: true
-      }
+      employeeList: {
+        ...state.employeeList, isLoading: true,
+      },
     }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
-    expect(() => rosterSelectors.getShiftListForSpot({ 
+    expect(() => rosterSelectors.getShiftListForSpot({
       ...state,
-      contractList: { 
-        ...state.contractList, isLoading: true
-      }
+      contractList: {
+        ...state.contractList, isLoading: true,
+      },
     }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
-    expect(() => rosterSelectors.getShiftListForSpot({ 
+    expect(() => rosterSelectors.getShiftListForSpot({
       ...state,
-      shiftRoster: { 
-        ...state.shiftRoster, isLoading: true
-      }
+      shiftRoster: {
+        ...state.shiftRoster, isLoading: true,
+      },
     }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
-    expect(() => rosterSelectors.getShiftListForSpot({ 
+    expect(() => rosterSelectors.getShiftListForSpot({
       ...state,
-      rosterState: { 
-        ...state.rosterState, isLoading: true
-      }
+      rosterState: {
+        ...state.rosterState, isLoading: true,
+      },
     }, state.spotList.spotMapById.get(10) as any as Spot)).toThrow();
   });
 
@@ -1016,34 +1013,34 @@ describe('Roster selectors', () => {
       .toEqual([
         {
           tenantId: 0,
-          startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
-          endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+          startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
+          endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
           spot: mockShiftRoster.spotList[0],
-          employee:  {
+          employee: {
             tenantId: 0,
             id: 20,
             version: 0,
-            name: "Employee",
+            name: 'Employee',
             skillProficiencySet: [],
             contract: {
               tenantId: 0,
               id: 30,
               version: 0,
-              name: "Contract",
+              name: 'Contract',
               maximumMinutesPerDay: null,
               maximumMinutesPerWeek: null,
               maximumMinutesPerMonth: null,
-              maximumMinutesPerYear: null
-            }
+              maximumMinutesPerYear: null,
+            },
           },
           rotationEmployee: null,
           indictmentScore: {
             hardScore: 0,
             mediumScore: 0,
-            softScore: 0
+            softScore: 0,
           },
-          pinnedByUser: false
-        }
+          pinnedByUser: false,
+        },
       ]);
   });
 
@@ -1052,48 +1049,48 @@ describe('Roster selectors', () => {
       tenantId: 0,
       id: 999,
       version: 0,
-      name: "Missing Spot",
-      requiredSkillSet: []
+      name: 'Missing Spot',
+      requiredSkillSet: [],
     }))
       .toEqual([]);
   });
 
   it('should throw an exception if loading in getShiftListForEmployee', () => {
-    expect(() => rosterSelectors.getShiftListForEmployee({ 
+    expect(() => rosterSelectors.getShiftListForEmployee({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true
-      }
+      skillList: {
+        ...state.skillList, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getShiftListForEmployee({ 
+    expect(() => rosterSelectors.getShiftListForEmployee({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true
-      }
+      spotList: {
+        ...state.spotList, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getShiftListForEmployee({ 
+    expect(() => rosterSelectors.getShiftListForEmployee({
       ...state,
-      employeeList: { 
-        ...state.employeeList, isLoading: true
-      }
+      employeeList: {
+        ...state.employeeList, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getShiftListForEmployee({ 
+    expect(() => rosterSelectors.getShiftListForEmployee({
       ...state,
-      contractList: { 
-        ...state.contractList, isLoading: true
-      }
+      contractList: {
+        ...state.contractList, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({
       ...state,
-      availabilityRoster: { 
-        ...state.availabilityRoster, isLoading: true
-      }
+      availabilityRoster: {
+        ...state.availabilityRoster, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getShiftListForEmployee({ 
+    expect(() => rosterSelectors.getShiftListForEmployee({
       ...state,
-      rosterState: { 
-        ...state.rosterState, isLoading: true
-      }
+      rosterState: {
+        ...state.rosterState, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
   });
 
@@ -1102,34 +1099,34 @@ describe('Roster selectors', () => {
       .toEqual([
         {
           tenantId: 0,
-          startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
-          endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+          startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
+          endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
           spot: mockShiftRoster.spotList[0],
-          employee:  {
+          employee: {
             tenantId: 0,
             id: 20,
             version: 0,
-            name: "Employee",
+            name: 'Employee',
             skillProficiencySet: [],
             contract: {
               tenantId: 0,
               id: 30,
               version: 0,
-              name: "Contract",
+              name: 'Contract',
               maximumMinutesPerDay: null,
               maximumMinutesPerWeek: null,
               maximumMinutesPerMonth: null,
-              maximumMinutesPerYear: null
-            }
+              maximumMinutesPerYear: null,
+            },
           },
           rotationEmployee: null,
           indictmentScore: {
             hardScore: 0,
             mediumScore: 0,
-            softScore: 0
+            softScore: 0,
           },
-          pinnedByUser: false
-        }
+          pinnedByUser: false,
+        },
       ]);
   });
 
@@ -1138,57 +1135,57 @@ describe('Roster selectors', () => {
       tenantId: 0,
       id: 999,
       version: 0,
-      name: "Missing Employee",
+      name: 'Missing Employee',
       skillProficiencySet: [],
       contract: {
         tenantId: 0,
         id: 9999,
-        name: "Contract",
+        name: 'Contract',
         maximumMinutesPerDay: null,
         maximumMinutesPerMonth: null,
         maximumMinutesPerWeek: null,
-        maximumMinutesPerYear: null
-      }
+        maximumMinutesPerYear: null,
+      },
     }))
       .toEqual([]);
   });
 
   it('should throw an exception if loading in getAvailabilityListForEmployee', () => {
-    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true
-      }
+      skillList: {
+        ...state.skillList, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true
-      }
+      spotList: {
+        ...state.spotList, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({
       ...state,
-      employeeList: { 
-        ...state.employeeList, isLoading: true
-      }
+      employeeList: {
+        ...state.employeeList, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({
       ...state,
-      contractList: { 
-        ...state.contractList, isLoading: true
-      }
+      contractList: {
+        ...state.contractList, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({
       ...state,
-      availabilityRoster: { 
-        ...state.availabilityRoster, isLoading: true
-      }
+      availabilityRoster: {
+        ...state.availabilityRoster, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
-    expect(() => rosterSelectors.getAvailabilityListForEmployee({ 
+    expect(() => rosterSelectors.getAvailabilityListForEmployee({
       ...state,
-      rosterState: { 
-        ...state.rosterState, isLoading: true
-      }
+      rosterState: {
+        ...state.rosterState, isLoading: true,
+      },
     }, state.employeeList.employeeMapById.get(20) as any as Employee)).toThrow();
   });
 
@@ -1197,27 +1194,27 @@ describe('Roster selectors', () => {
       .toEqual([
         {
           tenantId: 0,
-          startDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
-          endDateTime: moment("2018-01-01", "YYYY-MM-DD").toDate(),
+          startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
+          endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
           employee: {
             tenantId: 0,
             id: 20,
             version: 0,
-            name: "Employee",
+            name: 'Employee',
             skillProficiencySet: [],
             contract: {
               tenantId: 0,
               id: 30,
               version: 0,
-              name: "Contract",
+              name: 'Contract',
               maximumMinutesPerDay: null,
               maximumMinutesPerWeek: null,
               maximumMinutesPerMonth: null,
-              maximumMinutesPerYear: null
-            }
+              maximumMinutesPerYear: null,
+            },
           },
-          state: "DESIRED"
-        }
+          state: 'DESIRED',
+        },
       ]);
   });
 
@@ -1226,17 +1223,17 @@ describe('Roster selectors', () => {
       tenantId: 0,
       id: 999,
       version: 0,
-      name: "Missing Employee",
+      name: 'Missing Employee',
       skillProficiencySet: [],
       contract: {
         tenantId: 0,
         id: 9999,
-        name: "Contract",
+        name: 'Contract',
         maximumMinutesPerDay: null,
         maximumMinutesPerMonth: null,
         maximumMinutesPerWeek: null,
-        maximumMinutesPerYear: null
-      }
+        maximumMinutesPerYear: null,
+      },
     }))
       .toEqual([]);
   });
@@ -1246,7 +1243,7 @@ const state: AppState = {
   tenantData: {
     currentTenantId: 0,
     tenantList: [],
-    timezoneList: ["America/Toronto"]
+    timezoneList: ['America/Toronto'],
   },
   employeeList: {
     isLoading: false,
@@ -1255,11 +1252,11 @@ const state: AppState = {
         tenantId: 0,
         id: 20,
         version: 0,
-        name: "Employee",
+        name: 'Employee',
         skillProficiencySet: [],
-        contract: 30
-      }
-    ]])
+        contract: 30,
+      },
+    ]]),
   },
   contractList: {
     isLoading: false,
@@ -1268,13 +1265,13 @@ const state: AppState = {
         tenantId: 0,
         id: 30,
         version: 0,
-        name: "Contract",
+        name: 'Contract',
         maximumMinutesPerDay: null,
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null
-      }
-    ]])
+        maximumMinutesPerYear: null,
+      },
+    ]]),
   },
   spotList: {
     isLoading: false,
@@ -1283,36 +1280,36 @@ const state: AppState = {
         tenantId: 0,
         id: 10,
         version: 0,
-        name: "Spot",
-        requiredSkillSet: []
-      }
-    ]])
+        name: 'Spot',
+        requiredSkillSet: [],
+      },
+    ]]),
   },
   skillList: {
     isLoading: false,
-    skillMapById: new Map()
+    skillMapById: new Map(),
   },
   shiftTemplateList: {
     isLoading: false,
-    shiftTemplateMapById: new Map()
+    shiftTemplateMapById: new Map(),
   },
   rosterState: {
     isLoading: false,
-    rosterState: mockShiftRoster.rosterState 
+    rosterState: mockShiftRoster.rosterState,
   },
   shiftRoster: {
     isLoading: false,
-    shiftRosterView: mockShiftRoster
+    shiftRosterView: mockShiftRoster,
   },
   availabilityRoster: {
     isLoading: false,
-    availabilityRosterView: mockAvailabilityRoster
+    availabilityRosterView: mockAvailabilityRoster,
   },
   solverState: {
-    isSolving: false
+    isSolving: false,
   },
   alerts: {
     alertList: [],
-    idGeneratorIndex: 0
-  }
+    idGeneratorIndex: 0,
+  },
 };

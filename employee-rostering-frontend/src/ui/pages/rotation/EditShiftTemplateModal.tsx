@@ -16,13 +16,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-  Button, InputGroup, Label, Form, Modal, ButtonVariant, TextInput,
-} from '@patternfly/react-core';
+import { Button, InputGroup, Label, Form, Modal, ButtonVariant, TextInput } from '@patternfly/react-core';
 
-import ShiftTemplate from 'domain/ShiftTemplate';
-import Spot from 'domain/Spot';
-import Employee from 'domain/Employee';
+import { ShiftTemplate } from 'domain/ShiftTemplate';
+import { Spot } from 'domain/Spot';
+import { Employee } from 'domain/Employee';
 import { AppState } from 'store/types';
 import { spotSelectors } from 'store/spot';
 import { employeeSelectors } from 'store/employee';
@@ -33,7 +31,7 @@ import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
 import moment from 'moment';
-import RosterState from 'domain/RosterState';
+import { RosterState } from 'domain/RosterState';
 
 export interface Props {
   tenantId: number;
@@ -80,41 +78,41 @@ interface State {
   editedValue: Partial<ShiftTemplateData>;
 }
 
-export function shiftTemplateDataToShiftTemplate(data: ShiftTemplateData, 
+export function shiftTemplateDataToShiftTemplate(data: ShiftTemplateData,
   rotationLength: number): ShiftTemplate {
   return {
-    ...objectWithout(data, "startDayOffset", "startTime", "endDayOffset", "endTime"),
-    durationBetweenRotationStartAndTemplateStart: 
-      moment.duration(data.startDayOffset, "days").add(data.startTime.hours, "hours")
-        .add(data.startTime.minutes, "minutes"),
-    shiftTemplateDuration: (data.endDayOffset >= data.startDayOffset)?
-      moment.duration(data.endDayOffset, "days").add(data.endTime.hours, "hours")
-        .add(data.endTime.minutes, "minutes").subtract(moment.duration(data.startDayOffset, "days")
-          .add(data.startTime.hours, "hours").add(data.startTime.minutes, "minutes"))
-      :
-      moment.duration(rotationLength, "days").subtract(moment.duration(data.startDayOffset, "days")
-        .add(data.startTime.hours, "hours").add(data.startTime.minutes, "minutes"))
-        .add(data.endDayOffset, "days").add(data.endTime.hours, "hours").add(data.endTime.minutes, "minutes")
+    ...objectWithout(data, 'startDayOffset', 'startTime', 'endDayOffset', 'endTime'),
+    durationBetweenRotationStartAndTemplateStart:
+      moment.duration(data.startDayOffset, 'days').add(data.startTime.hours, 'hours')
+        .add(data.startTime.minutes, 'minutes'),
+    shiftTemplateDuration: (data.endDayOffset >= data.startDayOffset)
+      ? moment.duration(data.endDayOffset, 'days').add(data.endTime.hours, 'hours')
+        .add(data.endTime.minutes, 'minutes').subtract(moment.duration(data.startDayOffset, 'days')
+          .add(data.startTime.hours, 'hours').add(data.startTime.minutes, 'minutes'))
+      : moment.duration(rotationLength, 'days').subtract(moment.duration(data.startDayOffset, 'days')
+        .add(data.startTime.hours, 'hours').add(data.startTime.minutes, 'minutes'))
+        .add(data.endDayOffset, 'days').add(data.endTime.hours, 'hours')
+        .add(data.endTime.minutes, 'minutes'),
   };
 }
 
-export function shiftTemplateToShiftTemplateData(shiftTemplate: ShiftTemplate, 
+export function shiftTemplateToShiftTemplateData(shiftTemplate: ShiftTemplate,
   rotationLength: number): ShiftTemplateData {
   const durationBetweenRotationStartAndEnd = moment
     .duration(shiftTemplate.durationBetweenRotationStartAndTemplateStart).add(shiftTemplate.shiftTemplateDuration);
   return {
-    ...objectWithout(shiftTemplate, "durationBetweenRotationStartAndTemplateStart", "shiftTemplateDuration"),
+    ...objectWithout(shiftTemplate, 'durationBetweenRotationStartAndTemplateStart', 'shiftTemplateDuration'),
     startDayOffset: modulo(Math.floor(shiftTemplate.durationBetweenRotationStartAndTemplateStart.asDays()),
       rotationLength),
     startTime: {
       hours: shiftTemplate.durationBetweenRotationStartAndTemplateStart.hours(),
-      minutes: shiftTemplate.durationBetweenRotationStartAndTemplateStart.minutes()
+      minutes: shiftTemplate.durationBetweenRotationStartAndTemplateStart.minutes(),
     },
     endDayOffset: modulo(Math.floor(durationBetweenRotationStartAndEnd.asDays()), rotationLength),
     endTime: {
       hours: durationBetweenRotationStartAndEnd.hours(),
       minutes: durationBetweenRotationStartAndEnd.minutes(),
-    }
+    },
   };
 }
 
@@ -123,28 +121,29 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
     super(props);
 
     this.onSave = this.onSave.bind(this);
-    this.state = (this.props.shiftTemplate && this.props.rotationLength)? {
-      resetCount: 0, editedValue: { 
-        ...shiftTemplateToShiftTemplateData(this.props.shiftTemplate, this.props.rotationLength)
-      }
+    this.state = (this.props.shiftTemplate && this.props.rotationLength) ? {
+      resetCount: 0,
+      editedValue: {
+        ...shiftTemplateToShiftTemplateData(this.props.shiftTemplate, this.props.rotationLength),
+      },
     } : { resetCount: 0, editedValue: {} };
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
     if (this.props.shiftTemplate === undefined && prevProps.shiftTemplate !== undefined) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ resetCount: prevState.resetCount + 1, editedValue: {
-        tenantId: this.props.tenantId,
-      } });
-    }
-    else if (this.props.shiftTemplate !== undefined &&
-      this.props.rotationLength !== null &&
-      (this.props.shiftTemplate.id !== prevState.editedValue.id || 
-        this.props.shiftTemplate.version !== prevState.editedValue.version)) {
+      this.setState({ resetCount: prevState.resetCount + 1,
+        editedValue: {
+          tenantId: this.props.tenantId,
+        } });
+    } else if (this.props.shiftTemplate !== undefined
+      && this.props.rotationLength !== null
+      && (this.props.shiftTemplate.id !== prevState.editedValue.id
+        || this.props.shiftTemplate.version !== prevState.editedValue.version)) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ 
-        resetCount: prevState.resetCount + 1, 
-        editedValue: shiftTemplateToShiftTemplateData(this.props.shiftTemplate, this.props.rotationLength)
+      this.setState({
+        resetCount: prevState.resetCount + 1,
+        editedValue: shiftTemplateToShiftTemplateData(this.props.shiftTemplate, this.props.rotationLength),
       });
     }
   }
@@ -155,13 +154,13 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
       shiftTemplateData.rotationEmployee = null;
     }
 
-    if (shiftTemplateData.spot !== undefined && shiftTemplateData.startDayOffset !== undefined &&
-      shiftTemplateData.startTime !== undefined && shiftTemplateData.endDayOffset !== undefined
+    if (shiftTemplateData.spot !== undefined && shiftTemplateData.startDayOffset !== undefined
+      && shiftTemplateData.startTime !== undefined && shiftTemplateData.endDayOffset !== undefined
       && shiftTemplateData.endTime !== undefined) {
-      this.props.onSave({ 
+      this.props.onSave({
         tenantId: this.props.tenantId,
         ...shiftTemplateDataToShiftTemplate(shiftTemplateData as ShiftTemplateData,
-          this.props.rotationLength as number)
+          this.props.rotationLength as number),
       } as ShiftTemplate);
     }
   }
@@ -170,138 +169,138 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
     const { t } = this.props;
     return (
       <Modal
-        title={this.props.shiftTemplate? t("editShiftTemplate") : t("createShiftTemplate")}
+        title={this.props.shiftTemplate ? t('editShiftTemplate') : t('createShiftTemplate')}
         onClose={this.props.onClose}
         isOpen={this.props.isOpen}
         actions={
           [
-            <Button 
+            <Button
               aria-label="Close Modal"
               variant={ButtonVariant.tertiary}
               key={0}
               onClick={this.props.onClose}
             >
-              {t("close")}
-            </Button>
-          ].concat(this.props.shiftTemplate? [
-            <Button 
+              {t('close')}
+            </Button>,
+          ].concat(this.props.shiftTemplate ? [
+            <Button
               aria-label="Delete"
               variant={ButtonVariant.danger}
               key={1}
               onClick={() => this.props.onDelete(this.props.shiftTemplate as ShiftTemplate)}
             >
-              {t("delete")}
-            </Button>
+              {t('delete')}
+            </Button>,
           ] : []).concat([
-            <Button aria-label="Save" key={2} onClick={this.onSave}>{t("save")}</Button>
+            <Button aria-label="Save" key={2} onClick={this.onSave}>{t('save')}</Button>,
           ])
         }
         isSmall
       >
-        <Form id="modal-element" key={this.state.resetCount} onSubmit={(e) => e.preventDefault()}>
+        <Form id="modal-element" key={this.state.resetCount} onSubmit={e => e.preventDefault()}>
           <InputGroup>
-            <Label>{t("spot")}</Label>
+            <Label>{t('spot')}</Label>
             <TypeaheadSelectInput
               aria-label="Spot"
-              emptyText={t("selectSpot")}
+              emptyText={t('selectSpot')}
               value={this.state.editedValue.spot}
               options={this.props.spotList}
               optionToStringMap={spot => spot.name}
               onChange={spot => this.setState(prevState => ({
-                editedValue: { ...prevState.editedValue, spot: spot }
+                editedValue: { ...prevState.editedValue, spot },
               }))}
             />
           </InputGroup>
           <InputGroup>
-            <Label>{t("startDayOffset")}</Label>
+            <Label>{t('startDayOffset')}</Label>
             <TextInput
               aria-label="Start Day Offset"
               type="number"
-              defaultValue={(this.state.editedValue.startDayOffset !== undefined)? String(
-                this.state.editedValue.startDayOffset + 1) : undefined}
+              defaultValue={(this.state.editedValue.startDayOffset !== undefined) ? String(
+                this.state.editedValue.startDayOffset + 1,
+              ) : undefined}
               min={1}
-              max={this.props.rotationLength? this.props.rotationLength : undefined}
+              max={this.props.rotationLength ? this.props.rotationLength : undefined}
               onChange={(v) => {
                 this.setState(old => ({
                   editedValue: {
                     ...old.editedValue,
-                    startDayOffset: v? parseInt(v) - 1 : undefined
-                  }
+                    startDayOffset: v ? parseInt(v, 10) - 1 : undefined,
+                  },
                 }));
               }}
             />
-            <Label>{t("startTime")}</Label>
+            <Label>{t('startTime')}</Label>
             <TextInput
               aria-label="Start Time"
               type="time"
-              defaultValue={this.state.editedValue.startTime?
-                moment("2018-01-01T00:00").add(this.state.editedValue.startTime.hours, "hours")
-                  .add(this.state.editedValue.startTime.minutes, "minutes").format("HH:mm") 
-                : 
-                undefined}
+              defaultValue={this.state.editedValue.startTime
+                ? moment('2018-01-01T00:00').add(this.state.editedValue.startTime.hours, 'hours')
+                  .add(this.state.editedValue.startTime.minutes, 'minutes').format('HH:mm')
+                : undefined}
               onChange={(v) => {
-                const parts = v.split(":");
+                const parts = v.split(':');
                 this.setState(old => ({
                   editedValue: {
                     ...old.editedValue,
                     startTime: {
-                      hours: parseInt(parts[0]),
-                      minutes: parseInt(parts[1])
-                    }
-                  }
+                      hours: parseInt(parts[0], 10),
+                      minutes: parseInt(parts[1], 10),
+                    },
+                  },
                 }));
               }}
             />
           </InputGroup>
           <InputGroup>
-            <Label>{t("endDayOffset")}</Label>
+            <Label>{t('endDayOffset')}</Label>
             <TextInput
               aria-label="End Day Offset"
               type="number"
-              defaultValue={(this.state.editedValue.endDayOffset !== undefined)? String(
-                this.state.editedValue.endDayOffset + 1) : undefined}
+              defaultValue={(this.state.editedValue.endDayOffset !== undefined) ? String(
+                this.state.editedValue.endDayOffset + 1,
+              ) : undefined}
               min={1}
-              max={this.props.rotationLength? this.props.rotationLength : undefined}
+              max={this.props.rotationLength ? this.props.rotationLength : undefined}
               onChange={(v) => {
                 this.setState(old => ({
                   editedValue: {
                     ...old.editedValue,
-                    endDayOffset: v? parseInt(v) - 1 : undefined
-                  }
+                    endDayOffset: v ? parseInt(v, 10) - 1 : undefined,
+                  },
                 }));
               }}
             />
-            <Label>{t("endTime")}</Label>
+            <Label>{t('endTime')}</Label>
             <TextInput
               aria-label="End Time"
-              defaultValue={this.state.editedValue.endTime? 
-                moment("2018-01-01T00:00").add(this.state.editedValue.endTime.hours, "hours")
-                  .add(this.state.editedValue.endTime.minutes, "minutes").format("HH:mm")
-                : 
-                undefined}
+              defaultValue={this.state.editedValue.endTime
+                ? moment('2018-01-01T00:00').add(this.state.editedValue.endTime.hours, 'hours')
+                  .add(this.state.editedValue.endTime.minutes, 'minutes').format('HH:mm')
+                : undefined}
               type="time"
               onChange={(v) => {
-                const parts = v.split(":");
+                const parts = v.split(':');
                 this.setState(old => ({
                   editedValue: {
                     ...old.editedValue,
                     endTime: {
-                      hours: parseInt(parts[0]),
-                      minutes: parseInt(parts[1])
-                    }
-                  }
+                      hours: parseInt(parts[0], 10),
+                      minutes: parseInt(parts[1], 10),
+                    },
+                  },
                 }));
               }}
             />
           </InputGroup>
           <InputGroup>
-            <Label>{t("rotationEmployee")}</Label>
+            <Label>{t('rotationEmployee')}</Label>
             <TypeaheadSelectInput
               aria-label="Employee"
-              emptyText={t("unassigned")}
-              value={this.state.editedValue.rotationEmployee? this.state.editedValue.rotationEmployee : undefined}
-              options={[undefined,...this.props.employeeList]}
-              optionToStringMap={employee => employee? employee.name : t("unassigned")}
+              emptyText={t('unassigned')}
+              value={this.state.editedValue.rotationEmployee ? this.state.editedValue.rotationEmployee : undefined}
+              options={[undefined, ...this.props.employeeList]}
+              optionToStringMap={employee => (employee ? employee.name : t('unassigned'))}
               onChange={employee => this.setState(prevState => ({
                 editedValue: { ...prevState.editedValue, rotationEmployee: employee || null },
               }))}
@@ -314,5 +313,6 @@ export class EditShiftTemplateModal extends React.Component<Props & WithTranslat
   }
 }
 
-export default withTranslation("EditShiftTemplateModal")(
-  connect(mapStateToProps)(EditShiftTemplateModal));
+export default withTranslation('EditShiftTemplateModal')(
+  connect(mapStateToProps)(EditShiftTemplateModal),
+);

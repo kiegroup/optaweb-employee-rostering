@@ -38,6 +38,6 @@ const Header: React.FC<{ onNavToggle: () => void} > = ({ onNavToggle }) => {
       onNavToggle={onNavToggle}
     />
   );
-}
+};
 
 export default Header;

@@ -40,8 +40,9 @@ export interface ServerSideExceptionInfo {
   exceptionCause: ServerSideExceptionInfo|null;
 }
 
-export function mapObjectNumberMap<F,T>(map: ObjectNumberMap<F>, mapper: (value: F) => T): ObjectNumberMap<T> {
-  const out:  ObjectNumberMap<T> = {}
-  Object.keys(map).forEach(key => out[parseInt(key)] = mapper(map[parseInt(key)]));
+export function mapObjectNumberMap<F, T>(map: ObjectNumberMap<F>, mapper: (value: F) => T): ObjectNumberMap<T> {
+  const out: ObjectNumberMap<T> = {};
+  // eslint-disable-next-line no-return-assign
+  Object.keys(map).forEach(key => out[parseInt(key, 10)] = mapper(map[parseInt(key, 10)]));
   return out;
 }

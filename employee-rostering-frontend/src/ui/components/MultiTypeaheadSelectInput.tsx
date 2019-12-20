@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
-import { stringFilter } from "util/CommonFilters";
+import { stringFilter } from 'util/CommonFilters';
 
 export interface MultiTypeaheadSelectProps<T> {
   emptyText: string;
@@ -29,38 +29,36 @@ export interface MultiTypeaheadSelectState {
   isExpanded: boolean;
 }
 
-const StatefulMultiTypeaheadSelectInput: React.FC<MultiTypeaheadSelectProps<any>> = props => {
+const StatefulMultiTypeaheadSelectInput: React.FC<MultiTypeaheadSelectProps<any>> = (props) => {
   const [value, setValue] = React.useState(props.value);
   return (
     <MultiTypeaheadSelectInput
       {...props}
       value={value}
-      onChange={v => {props.onChange(v); setValue(v);}}
+      onChange={(v) => { props.onChange(v); setValue(v); }}
     />
   );
-}
+};
 
 export { StatefulMultiTypeaheadSelectInput };
 
 export const substringFilter = (props: MultiTypeaheadSelectProps<any>) => (e: React.ChangeEvent<HTMLInputElement>) => {
-  const substringFilter = stringFilter((child: any) => child.props.value)(e.target.value);
-  const options = props.options.map((option) => (
+  const filter = stringFilter((child: any) => child.props.value)(e.target.value);
+  const options = props.options.map(option => (
     <SelectOption
       isDisabled={false}
       key={props.optionToStringMap(option)}
       value={props.optionToStringMap(option)}
     />
   ));
-  const typeaheadFilteredChildren =
-    e.target.value !== ''
-      ? options.filter(substringFilter)
-      : options;
+  const typeaheadFilteredChildren = e.target.value !== ''
+    ? options.filter(filter)
+    : options;
   return typeaheadFilteredChildren;
-}
+};
 
 export default class MultiTypeaheadSelectInput<T> extends React.Component<MultiTypeaheadSelectProps<T>,
-MultiTypeaheadSelectState>  {
-
+MultiTypeaheadSelectState> {
   constructor(props: MultiTypeaheadSelectProps<T>) {
     super(props);
 
@@ -75,13 +73,13 @@ MultiTypeaheadSelectState>  {
 
   onToggle(isExpanded: boolean) {
     this.setState({
-      isExpanded
+      isExpanded,
     });
   }
 
   onSelect(event: any, selection: string) {
     const selected = this.props.value;
-    const selectedOption = this.props.options.find((option) => this.props.optionToStringMap(option) === selection) as T;
+    const selectedOption = this.props.options.find(option => this.props.optionToStringMap(option) === selection) as T;
     if (selected.map(this.props.optionToStringMap).includes(selection)) {
       this.props.onChange(this.props.value.filter(option => this.props.optionToStringMap(option) !== selection));
     } else {
@@ -100,7 +98,7 @@ MultiTypeaheadSelectState>  {
     const { isExpanded } = this.state;
     const selected = this.props.value;
     const titleId = 'multi-typeahead-select-id';
-    const emptyText = this.props.emptyText;
+    const { emptyText } = this.props;
     const selections = selected.map(this.props.optionToStringMap);
 
     return (
@@ -120,7 +118,7 @@ MultiTypeaheadSelectState>  {
           ariaLabelledBy={titleId}
           placeholderText={emptyText}
         >
-          {this.props.options.map((option) => (
+          {this.props.options.map(option => (
             <SelectOption
               isDisabled={false}
               key={this.props.optionToStringMap(option)}

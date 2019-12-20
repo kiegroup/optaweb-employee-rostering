@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-import { ThunkCommandFactory } from '../types';
-import EmployeeAvailability from 'domain/EmployeeAvailability';
-import EmployeeAvailabilityView, { availabilityToAvailabilityView } from 'domain/EmployeeAvailabilityView';
+import { EmployeeAvailability } from 'domain/EmployeeAvailability';
+import { availabilityToAvailabilityView, EmployeeAvailabilityView } from 'domain/EmployeeAvailabilityView';
 import moment from 'moment';
 import { alert } from 'store/alert';
 import { refreshShiftRoster, refreshAvailabilityRoster } from 'store/roster/operations';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
 import { serializeLocalDateTime } from 'store/rest/DataSerialization';
+import { ThunkCommandFactory } from '../types';
 
-export interface KindaEmployeeAvailabilityView extends Omit<EmployeeAvailabilityView, "startDateTime" | "endDateTime"> {
+export interface KindaEmployeeAvailabilityView extends Omit<EmployeeAvailabilityView, 'startDateTime' | 'endDateTime'> {
   startDateTime: string;
   endDateTime: string;
 }
 
 export function availabilityAdapter(employeeAvailability: EmployeeAvailability): KindaEmployeeAvailabilityView {
   return {
-    ...objectWithout(availabilityToAvailabilityView(employeeAvailability), "startDateTime", "endDateTime"),
+    ...objectWithout(availabilityToAvailabilityView(employeeAvailability), 'startDateTime', 'endDateTime'),
     startDateTime: serializeLocalDateTime(employeeAvailability.startDateTime),
-    endDateTime: serializeLocalDateTime(employeeAvailability.endDateTime)
+    endDateTime: serializeLocalDateTime(employeeAvailability.endDateTime),
   };
 }
 
@@ -45,42 +45,40 @@ EmployeeAvailabilityView {
   };
 }
 
-export const addEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability =>
-  (dispatch, state, client) => {
-    const tenantId = employeeAvailability.tenantId;
-    return client.post<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/add`,
-      availabilityAdapter(employeeAvailability)).then(() => {
+export const addEmployeeAvailability:
+ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability => (dispatch, state, client) => {
+  const { tenantId } = employeeAvailability;
+  return client.post<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/add`,
+    availabilityAdapter(employeeAvailability)).then(() => {
+    dispatch(refreshShiftRoster());
+    dispatch(refreshAvailabilityRoster());
+  });
+};
+
+export const removeEmployeeAvailability:
+ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability => (dispatch, state, client) => {
+  const { tenantId } = employeeAvailability;
+  const shiftId = employeeAvailability.id;
+  return client.delete<boolean>(`/tenant/${tenantId}/employee/availability/${shiftId}`).then((isSuccess) => {
+    if (isSuccess) {
       dispatch(refreshShiftRoster());
       dispatch(refreshAvailabilityRoster());
-    });
-  };
+    } else {
+      dispatch(alert.showErrorMessage('removeAvailabilityError', {
+        employeeName: employeeAvailability.employee.name,
+        startDateTime: moment(employeeAvailability.startDateTime).format('LLL'),
+        endDateTime: moment(employeeAvailability.endDateTime).format('LLL'),
+      }));
+    }
+  });
+};
 
-export const removeEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, any> = 
-employeeAvailability =>
-  (dispatch, state, client) => {
-    const tenantId = employeeAvailability.tenantId;
-    const shiftId = employeeAvailability.id;
-    return client.delete<boolean>(`/tenant/${tenantId}/employee/availability/${shiftId}`).then(isSuccess => {
-      if (isSuccess) {
-        dispatch(refreshShiftRoster());
-        dispatch(refreshAvailabilityRoster());
-      }
-      else {
-        dispatch(alert.showErrorMessage("removeAvailabilityError", { 
-          employeeName: employeeAvailability.employee.name,
-          startDateTime: moment(employeeAvailability.startDateTime).format("LLL"),
-          endDateTime: moment(employeeAvailability.endDateTime).format("LLL") 
-        }));
-      }
-    });
-  };
-
-export const updateEmployeeAvailability: ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability =>
-  (dispatch, state, client) => {
-    const tenantId = employeeAvailability.tenantId;
-    return client.put<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/update`,
-      availabilityAdapter(employeeAvailability)).then(() => {
-      dispatch(refreshShiftRoster());
-      dispatch(refreshAvailabilityRoster());
-    });
-  };
+export const updateEmployeeAvailability:
+ThunkCommandFactory<EmployeeAvailability, any> = employeeAvailability => (dispatch, state, client) => {
+  const { tenantId } = employeeAvailability;
+  return client.put<KindaEmployeeAvailabilityView>(`/tenant/${tenantId}/employee/availability/update`,
+    availabilityAdapter(employeeAvailability)).then(() => {
+    dispatch(refreshShiftRoster());
+    dispatch(refreshAvailabilityRoster());
+  });
+};

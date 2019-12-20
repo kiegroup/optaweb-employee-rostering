@@ -15,7 +15,7 @@
  */
 
 import { Action } from 'redux';
-import Tenant from 'domain/Tenant';
+import { Tenant } from 'domain/Tenant';
 
 export enum ActionType {
   CHANGE_TENANT = 'CHANGE_TENANT',

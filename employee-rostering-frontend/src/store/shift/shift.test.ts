@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-import { mockStore } from '../mockStore';
-import { AppState } from '../types';
 import { alert } from 'store/alert';
 import * as rosterOperations from 'store/roster/operations';
-import { shiftOperations } from './index';
-import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './KindaShiftView';
 import { onPost, onPut, onDelete } from 'store/rest/RestTestUtils';
-import Shift from 'domain/Shift';
+import { Shift } from 'domain/Shift';
 import moment from 'moment';
 import { serializeLocalDateTime } from 'store/rest/DataSerialization';
+import { shiftAdapter, KindaShiftView, kindaShiftViewAdapter } from './KindaShiftView';
+import { shiftOperations } from './index';
+import { AppState } from '../types';
+import { mockStore } from '../mockStore';
 
 describe('Shift operations', () => {
   it('should dispatch actions and call client on addShift', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+    const shiftStartTime = moment('2018-01-01T09:00').toDate();
+    const shiftEndTime = moment('2018-01-01T12:00').toDate();
 
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster');
 
     const addedShift: Shift = {
-      tenantId: tenantId,
+      tenantId,
       startDateTime: shiftStartTime,
       endDateTime: shiftEndTime,
       spot: {
         tenantId: 0,
         id: 20,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       employee: null,
       rotationEmployee: null,
-      pinnedByUser: true
+      pinnedByUser: true,
     };
 
     onPost(`/tenant/${tenantId}/shift/add`, shiftAdapter(addedShift), shiftAdapter(addedShift));
@@ -55,21 +55,21 @@ describe('Shift operations', () => {
 
     expect(client.post).toBeCalled();
     expect(client.post).toBeCalledWith(`/tenant/${tenantId}/shift/add`, shiftAdapter(addedShift));
-    expect(mockRefreshShiftRoster).toBeCalled()
-    
+    expect(mockRefreshShiftRoster).toBeCalled();
+
     expect(store.getActions()).toEqual([]);
   });
 
   it('should dispatch actions and call client on a successful delete shift', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+    const shiftStartTime = moment('2018-01-01T09:00').toDate();
+    const shiftEndTime = moment('2018-01-01T12:00').toDate();
 
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster');
 
     const deletedShift: Shift = {
-      tenantId: tenantId,
+      tenantId,
       startDateTime: shiftStartTime,
       endDateTime: shiftEndTime,
       id: 10,
@@ -77,12 +77,12 @@ describe('Shift operations', () => {
       spot: {
         tenantId: 0,
         id: 20,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       employee: null,
       rotationEmployee: null,
-      pinnedByUser: true
+      pinnedByUser: true,
     };
 
     onDelete(`/tenant/${tenantId}/shift/${deletedShift.id}`, true);
@@ -99,13 +99,13 @@ describe('Shift operations', () => {
   it('should call client but not dispatch actions on a failed delete shift', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+    const shiftStartTime = moment('2018-01-01T09:00').toDate();
+    const shiftEndTime = moment('2018-01-01T12:00').toDate();
 
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster');
 
     const deletedShift: Shift = {
-      tenantId: tenantId,
+      tenantId,
       startDateTime: shiftStartTime,
       endDateTime: shiftEndTime,
       id: 10,
@@ -113,12 +113,12 @@ describe('Shift operations', () => {
       spot: {
         tenantId: 0,
         id: 20,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       employee: null,
       rotationEmployee: null,
-      pinnedByUser: true
+      pinnedByUser: true,
     };
 
     onDelete(`/tenant/${tenantId}/shift/${deletedShift.id}`, false);
@@ -130,24 +130,24 @@ describe('Shift operations', () => {
     expect(mockRefreshShiftRoster).not.toBeCalled();
 
     expect(store.getActions()).toEqual([
-      alert.showErrorMessage("removeShiftError", {
+      alert.showErrorMessage('removeShiftError', {
         id: deletedShift.id,
-        startDateTime: moment(deletedShift.startDateTime).format("LLL"),
-        endDateTime: moment(deletedShift.endDateTime).format("LLL")
-      })
+        startDateTime: moment(deletedShift.startDateTime).format('LLL'),
+        endDateTime: moment(deletedShift.endDateTime).format('LLL'),
+      }),
     ]);
   });
 
   it('should dispatch actions and call client on updateShift', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+    const shiftStartTime = moment('2018-01-01T09:00').toDate();
+    const shiftEndTime = moment('2018-01-01T12:00').toDate();
 
-    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, "refreshShiftRoster");
+    const mockRefreshShiftRoster = jest.spyOn(rosterOperations, 'refreshShiftRoster');
 
     const updatedShift: Shift = {
-      tenantId: tenantId,
+      tenantId,
       id: 11,
       version: 0,
       startDateTime: shiftStartTime,
@@ -155,17 +155,17 @@ describe('Shift operations', () => {
       spot: {
         tenantId: 0,
         id: 20,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       employee: null,
       rotationEmployee: null,
-      pinnedByUser: true
+      pinnedByUser: true,
     };
 
     const updatedShiftWithUpdatedVersion: Shift = {
       ...updatedShift,
-      version: 1
+      version: 1,
     };
 
     onPut(`/tenant/${tenantId}/shift/update`, shiftAdapter(updatedShift), shiftAdapter(updatedShiftWithUpdatedVersion));
@@ -180,8 +180,8 @@ describe('Shift operations', () => {
 
 describe('shift adapters', () => {
   it('shiftAdapter should convert a Shift to a KindaShiftView', () => {
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+    const shiftStartTime = moment('2018-01-01T09:00').toDate();
+    const shiftEndTime = moment('2018-01-01T12:00').toDate();
     const shift: Shift = {
       tenantId: 0,
       id: 11,
@@ -191,29 +191,29 @@ describe('shift adapters', () => {
       spot: {
         tenantId: 0,
         id: 20,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       employee: {
         tenantId: 10,
         id: 20,
         version: 0,
-        name: "Bill",
+        name: 'Bill',
         contract: {
           tenantId: 0,
           id: 100,
           version: 0,
-          name: "Contract",
+          name: 'Contract',
           maximumMinutesPerDay: null,
           maximumMinutesPerWeek: null,
           maximumMinutesPerMonth: null,
-          maximumMinutesPerYear: null
+          maximumMinutesPerYear: null,
         },
-        skillProficiencySet: []
+        skillProficiencySet: [],
       },
       rotationEmployee: null,
       pinnedByUser: true,
-      indictmentScore: { hardScore: 0, mediumScore: 0, softScore: 0},
+      indictmentScore: { hardScore: 0, mediumScore: 0, softScore: 0 },
       desiredTimeslotForEmployeeRewardList: [],
       shiftEmployeeConflictList: [],
     };
@@ -227,13 +227,13 @@ describe('shift adapters', () => {
       spotId: 20,
       employeeId: 20,
       rotationEmployeeId: null,
-      pinnedByUser: true
+      pinnedByUser: true,
     });
   });
 
   it('kindaShiftAdapter should convert a KindaShiftView to a ShiftView', () => {
-    const shiftStartTime = moment("2018-01-01T09:00").toDate();
-    const shiftEndTime = moment("2018-01-01T12:00").toDate();
+    const shiftStartTime = moment('2018-01-01T09:00').toDate();
+    const shiftEndTime = moment('2018-01-01T12:00').toDate();
     const kindaShiftView: KindaShiftView = {
       tenantId: 0,
       id: 11,
@@ -244,10 +244,10 @@ describe('shift adapters', () => {
       employeeId: null,
       rotationEmployeeId: null,
       pinnedByUser: true,
-      indictmentScore: "5hard/0medium/-14soft",
+      indictmentScore: '5hard/0medium/-14soft',
       // @ts-ignore
       unassignedShiftPenaltyList: [{
-        score: "5hard/0medium/-14soft",
+        score: '5hard/0medium/-14soft',
         shift: {
           tenantId: 0,
           id: 11,
@@ -258,14 +258,14 @@ describe('shift adapters', () => {
             tenantId: 0,
             id: 20,
             version: 0,
-            name: "Spot",
-            requiredSkillSet: []
+            name: 'Spot',
+            requiredSkillSet: [],
           },
           employee: null,
           rotationEmployee: null,
-          pinnedByUser: true
-        }
-      }]
+          pinnedByUser: true,
+        },
+      }],
     };
 
     expect(kindaShiftViewAdapter(kindaShiftView)).toEqual({
@@ -292,14 +292,14 @@ describe('shift adapters', () => {
             tenantId: 0,
             id: 20,
             version: 0,
-            name: "Spot",
-            requiredSkillSet: []
+            name: 'Spot',
+            requiredSkillSet: [],
           },
           employee: null,
           rotationEmployee: null,
-          pinnedByUser: true
-        }
-      }]
+          pinnedByUser: true,
+        },
+      }],
     });
   });
 });
@@ -308,19 +308,19 @@ const state: AppState = {
   tenantData: {
     currentTenantId: 0,
     tenantList: [],
-    timezoneList: ["America/Toronto"]
+    timezoneList: ['America/Toronto'],
   },
   employeeList: {
     isLoading: false,
-    employeeMapById: new Map()
+    employeeMapById: new Map(),
   },
   contractList: {
     isLoading: false,
-    contractMapById: new Map()
+    contractMapById: new Map(),
   },
   spotList: {
     isLoading: false,
-    spotMapById: new Map()
+    spotMapById: new Map(),
   },
   skillList: {
     isLoading: false,
@@ -329,37 +329,37 @@ const state: AppState = {
         tenantId: 0,
         id: 1234,
         version: 0,
-        name: "Skill 2"
+        name: 'Skill 2',
       }],
       [2312, {
         tenantId: 0,
         id: 2312,
         version: 1,
-        name: "Skill 3"
-      }]
-    ])
+        name: 'Skill 3',
+      }],
+    ]),
   },
   shiftTemplateList: {
     isLoading: false,
-    shiftTemplateMapById: new Map()
+    shiftTemplateMapById: new Map(),
   },
   rosterState: {
     isLoading: true,
-    rosterState: null
+    rosterState: null,
   },
   shiftRoster: {
     isLoading: true,
-    shiftRosterView: null
+    shiftRosterView: null,
   },
   availabilityRoster: {
     isLoading: true,
-    availabilityRosterView: null
+    availabilityRosterView: null,
   },
   solverState: {
-    isSolving: false
+    isSolving: false,
   },
   alerts: {
     alertList: [],
-    idGeneratorIndex: 0
-  }
+    idGeneratorIndex: 0,
+  },
 };

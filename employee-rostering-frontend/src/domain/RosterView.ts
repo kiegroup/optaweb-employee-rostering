@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import Employee from './Employee';
-import RosterState from './RosterState';
-import Spot from './Spot';
-import HardMediumSoftScore from './HardMediumSoftScore';
+import { Employee } from './Employee';
+import { RosterState } from './RosterState';
+import { Spot } from './Spot';
+import { HardMediumSoftScore } from './HardMediumSoftScore';
 
-export default interface RosterView {
+export interface RosterView {
   tenantId: number;
   startDate: string;
   endDate: string;

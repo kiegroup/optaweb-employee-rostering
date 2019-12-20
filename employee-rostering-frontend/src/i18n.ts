@@ -68,17 +68,17 @@ i18n
       'ServerSideException',
       'ShiftEvent',
       'ShiftRosterPage',
-      'SpotsPage'
+      'SpotsPage',
     ],
     debug: true,
     backend: {
       loadPath: '/assets/translations/{{lng}}/{{ns}}.yaml',
-      parse: (d: string) => YAML.parseDocument(d).toJSON()
+      parse: (d: string) => YAML.parseDocument(d).toJSON(),
     },
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
-    }
-  },() => {
+    },
+  }, () => {
     moment.locale(languageToMomentLocale(i18n.language));
     setDefaultLocale(i18n.language);
   });

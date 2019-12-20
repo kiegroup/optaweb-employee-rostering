@@ -15,7 +15,7 @@
  */
 
 import { Action } from 'redux';
-import Spot from 'domain/Spot';
+import { Spot } from 'domain/Spot';
 import DomainObjectView from 'domain/DomainObjectView';
 
 export enum ActionType {

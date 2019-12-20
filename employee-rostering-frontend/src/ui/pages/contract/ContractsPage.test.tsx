@@ -16,12 +16,12 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import { ContractsPage, Props } from './ContractsPage';
 import OptionalInput from 'ui/components/OptionalInput';
 import { Sorter } from 'types';
-import Contract from 'domain/Contract';
+import { Contract } from 'domain/Contract';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { ContractsPage, Props } from './ContractsPage';
 
 describe('Contracts page', () => {
   it('should render correctly with no contracts', () => {
@@ -53,53 +53,53 @@ describe('Contracts page', () => {
     const setProperty = jest.fn();
     const editor = spotsPage.editDataRow(spotsPage.getInitialStateForNewRow(), setProperty);
     const nameCol = shallow(editor[0]);
-    nameCol.simulate("change", { currentTarget: { value: "Test" } });
+    nameCol.simulate('change', { currentTarget: { value: 'Test' } });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith("name", "Test");
+    expect(setProperty).toBeCalledWith('name', 'Test');
 
     setProperty.mockClear();
     const maxMinutesPerDayCol = mount(editor[1]).find(OptionalInput);
-    expect(maxMinutesPerDayCol.props().valueToString(10)).toEqual("10");
-    expect(maxMinutesPerDayCol.props().valueMapper("10")).toEqual(10);
-    expect(maxMinutesPerDayCol.props().isValid("10")).toEqual(true);
-    expect(maxMinutesPerDayCol.props().isValid("ab10")).toEqual(false);
-    expect(maxMinutesPerDayCol.props().isValid("-10")).toEqual(false);
+    expect(maxMinutesPerDayCol.props().valueToString(10)).toEqual('10');
+    expect(maxMinutesPerDayCol.props().valueMapper('10')).toEqual(10);
+    expect(maxMinutesPerDayCol.props().isValid('10')).toEqual(true);
+    expect(maxMinutesPerDayCol.props().isValid('ab10')).toEqual(false);
+    expect(maxMinutesPerDayCol.props().isValid('-10')).toEqual(false);
     maxMinutesPerDayCol.find(OptionalInput).props().onChange(10);
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith("maximumMinutesPerDay", 10);
+    expect(setProperty).toBeCalledWith('maximumMinutesPerDay', 10);
 
     setProperty.mockClear();
     const maxMinutesPerWeekCol = mount(editor[2]).find(OptionalInput);
-    expect(maxMinutesPerWeekCol.props().valueToString(10)).toEqual("10");
-    expect(maxMinutesPerWeekCol.props().valueMapper("10")).toEqual(10);
-    expect(maxMinutesPerWeekCol.props().isValid("10")).toEqual(true);
-    expect(maxMinutesPerWeekCol.props().isValid("ab10")).toEqual(false);
-    expect(maxMinutesPerWeekCol.props().isValid("-10")).toEqual(false);
+    expect(maxMinutesPerWeekCol.props().valueToString(10)).toEqual('10');
+    expect(maxMinutesPerWeekCol.props().valueMapper('10')).toEqual(10);
+    expect(maxMinutesPerWeekCol.props().isValid('10')).toEqual(true);
+    expect(maxMinutesPerWeekCol.props().isValid('ab10')).toEqual(false);
+    expect(maxMinutesPerWeekCol.props().isValid('-10')).toEqual(false);
     maxMinutesPerWeekCol.props().onChange(10);
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith("maximumMinutesPerWeek", 10);
+    expect(setProperty).toBeCalledWith('maximumMinutesPerWeek', 10);
 
     setProperty.mockClear();
     const maxMinutesPerMonthCol = mount(editor[3]).find(OptionalInput);
-    expect(maxMinutesPerMonthCol.props().valueToString(10)).toEqual("10");
-    expect(maxMinutesPerMonthCol.props().valueMapper("10")).toEqual(10);
-    expect(maxMinutesPerMonthCol.props().isValid("10")).toEqual(true);
-    expect(maxMinutesPerMonthCol.props().isValid("ab10")).toEqual(false);
-    expect(maxMinutesPerMonthCol.props().isValid("-10")).toEqual(false);
+    expect(maxMinutesPerMonthCol.props().valueToString(10)).toEqual('10');
+    expect(maxMinutesPerMonthCol.props().valueMapper('10')).toEqual(10);
+    expect(maxMinutesPerMonthCol.props().isValid('10')).toEqual(true);
+    expect(maxMinutesPerMonthCol.props().isValid('ab10')).toEqual(false);
+    expect(maxMinutesPerMonthCol.props().isValid('-10')).toEqual(false);
     maxMinutesPerMonthCol.props().onChange(10);
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith("maximumMinutesPerMonth", 10);
+    expect(setProperty).toBeCalledWith('maximumMinutesPerMonth', 10);
 
     setProperty.mockClear();
     const maxMinutesPerYearCol = mount(editor[4]).find(OptionalInput);
-    expect(maxMinutesPerYearCol.props().valueToString(10)).toEqual("10");
-    expect(maxMinutesPerYearCol.props().valueMapper("10")).toEqual(10);
-    expect(maxMinutesPerYearCol.props().isValid("10")).toEqual(true);
-    expect(maxMinutesPerYearCol.props().isValid("ab10")).toEqual(false);
-    expect(maxMinutesPerYearCol.props().isValid("-10")).toEqual(false);
+    expect(maxMinutesPerYearCol.props().valueToString(10)).toEqual('10');
+    expect(maxMinutesPerYearCol.props().valueMapper('10')).toEqual(10);
+    expect(maxMinutesPerYearCol.props().isValid('10')).toEqual(true);
+    expect(maxMinutesPerYearCol.props().isValid('ab10')).toEqual(false);
+    expect(maxMinutesPerYearCol.props().isValid('-10')).toEqual(false);
     maxMinutesPerYearCol.props().onChange(10);
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith("maximumMinutesPerYear", 10);
+    expect(setProperty).toBeCalledWith('maximumMinutesPerYear', 10);
   });
 
   it('should call addContract on addData', () => {
@@ -171,60 +171,60 @@ describe('Contracts page', () => {
 
   it('should treat empty name as invalid', () => {
     const contractsPage = new ContractsPage(twoContracts);
-    const contract = {...twoContracts.tableData[1], name: ""};
+    const contract = { ...twoContracts.tableData[1], name: '' };
     const result = contractsPage.isValid(contract);
     expect(result).toEqual(false);
   });
 
   it('should treat non-empty name as valid', () => {
     const contractsPage = new ContractsPage(twoContracts);
-    const contract = {...twoContracts.tableData[1], name: "Contract"};
+    const contract = { ...twoContracts.tableData[1], name: 'Contract' };
     const result = contractsPage.isValid(contract);
     expect(result).toEqual(true);
   });
 });
 
 const noContracts: Props = {
-  ...useTranslation("ContractsPage"),
+  ...useTranslation('ContractsPage'),
   tReady: true,
   tenantId: 0,
-  title: "Contracts",
-  columnTitles: ["Name", "Max Hours Per Day", "Max Hours Per Week", "Max Hours Per Month", "Max Hours Per Year"],
+  title: 'Contracts',
+  columnTitles: ['Name', 'Max Hours Per Day', 'Max Hours Per Week', 'Max Hours Per Month', 'Max Hours Per Year'],
   tableData: [],
   addContract: jest.fn(),
   updateContract: jest.fn(),
   removeContract: jest.fn(),
-  ...getRouterProps("/contacts", {})
+  ...getRouterProps('/contacts', {}),
 };
 
 const twoContracts: Props = {
-  ...useTranslation("ContractsPage"),
+  ...useTranslation('ContractsPage'),
   tReady: true,
   tenantId: 0,
-  title: "Contracts",
-  columnTitles: ["Name", "Max Hours Per Day", "Max Hours Per Week", "Max Hours Per Month", "Max Hours Per Year"],
+  title: 'Contracts',
+  columnTitles: ['Name', 'Max Hours Per Day', 'Max Hours Per Week', 'Max Hours Per Month', 'Max Hours Per Year'],
   tableData: [{
     id: 0,
     version: 0,
     tenantId: 0,
-    name: "Contract 1",
+    name: 'Contract 1',
     maximumMinutesPerDay: null,
     maximumMinutesPerWeek: null,
     maximumMinutesPerMonth: null,
-    maximumMinutesPerYear: null
+    maximumMinutesPerYear: null,
   },
   {
     id: 1,
     version: 0,
     tenantId: 0,
-    name: "Contract 2",
+    name: 'Contract 2',
     maximumMinutesPerDay: 1,
     maximumMinutesPerWeek: 20,
     maximumMinutesPerMonth: 10,
-    maximumMinutesPerYear: 120
+    maximumMinutesPerYear: 120,
   }],
   addContract: jest.fn(),
   updateContract: jest.fn(),
   removeContract: jest.fn(),
-  ...getRouterProps("/contacts", {})
+  ...getRouterProps('/contacts', {}),
 };

@@ -15,7 +15,7 @@
  */
 
 import { Action } from 'redux';
-import Employee from 'domain/Employee';
+import { Employee } from 'domain/Employee';
 import DomainObjectView from 'domain/DomainObjectView';
 
 export enum ActionType {

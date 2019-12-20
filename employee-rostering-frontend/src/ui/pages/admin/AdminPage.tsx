@@ -18,28 +18,28 @@ import * as React from 'react';
 import { AppState } from 'store/types';
 import { Text, Level, LevelItem, Pagination, Button } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { DataTableUrlProps } from "ui/components/DataTable";
+import { DataTableUrlProps } from 'ui/components/DataTable';
 import { Stream } from 'util/ImmutableCollectionOperations';
 import { stringFilter } from 'util/CommonFilters';
-import Tenant from 'domain/Tenant';
+import { Tenant } from 'domain/Tenant';
 import { tenantOperations } from 'store/tenant';
 import * as adminOperations from 'store/admin/operations';
 import FilterComponent from 'ui/components/FilterComponent';
 import { Table, IRow, TableHeader, TableBody } from '@patternfly/react-table';
 import { TrashIcon } from '@patternfly/react-icons';
-import NewTenantFormModal from './NewTenantFormModal';
 import { useTranslation } from 'react-i18next';
 import { ConfirmDialog } from 'ui/components/ConfirmDialog';
 import { getPropsFromUrl, setPropsInUrl } from 'util/BookmarkableUtils';
 import { withRouter, RouteComponentProps } from 'react-router';
+import NewTenantFormModal from './NewTenantFormModal';
 
 interface StateProps {
   tenantList: Tenant[];
 }
 
 const mapStateToProps = (state: AppState): StateProps => ({
-  tenantList: state.tenantData.tenantList
-}); 
+  tenantList: state.tenantData.tenantList,
+});
 
 export interface DispatchProps {
   removeTenant: typeof tenantOperations.removeTenant;
@@ -48,7 +48,7 @@ export interface DispatchProps {
 
 const mapDispatchToProps: DispatchProps = {
   removeTenant: tenantOperations.removeTenant,
-  resetApplication: adminOperations.resetApplication
+  resetApplication: adminOperations.resetApplication,
 };
 
 export type Props = StateProps & DispatchProps & RouteComponentProps;
@@ -58,27 +58,27 @@ export interface State {
 
 export const AdminPage: React.FC<Props> = (props) => {
   const { tenantList } = props;
-  const { t } = useTranslation("AdminPage");
-  const [ isCreatingTenant, setIsCreatingTenant ] = React.useState(false);
-  const [ isResetDialogOpen, setIsResetDialogOpen ] = React.useState(false);
+  const { t } = useTranslation('AdminPage');
+  const [isCreatingTenant, setIsCreatingTenant] = React.useState(false);
+  const [isResetDialogOpen, setIsResetDialogOpen] = React.useState(false);
 
   const urlProps = getPropsFromUrl<DataTableUrlProps>(props, {
-    page: "1",
-    itemsPerPage: "10",
+    page: '1',
+    itemsPerPage: '10',
     filter: null,
     sortBy: null,
-    asc: "true"
+    asc: 'true',
   });
-  
-  const filterText = urlProps.filter || "";
-  const page = parseInt(urlProps.page as string);
-  const itemsPerPage = parseInt(urlProps.itemsPerPage as string)
+
+  const filterText = urlProps.filter || '';
+  const page = parseInt(urlProps.page as string, 10);
+  const itemsPerPage = parseInt(urlProps.itemsPerPage as string, 10);
   const filter = stringFilter((tenant: Tenant) => tenant.name)(filterText);
   const filteredRows = new Stream(tenantList)
     .filter(filter);
-    
+
   const numOfFilteredRows = filteredRows.collect(c => c.length);
-  
+
   const rowsInPage = filteredRows
     .page(page, itemsPerPage)
     .collect(c => c);
@@ -86,54 +86,54 @@ export const AdminPage: React.FC<Props> = (props) => {
   return (
     <>
       <Button
-        style={{ width: "min-content" }}
+        style={{ width: 'min-content' }}
         aria-label="Reset Application"
         data-cy="reset-application"
         variant="danger"
         onClick={() => setIsResetDialogOpen(true)}
       >
-        {t("resetApplication")}
+        {t('resetApplication')}
       </Button>
       <ConfirmDialog
-        title={t("confirmResetTitle")}
+        title={t('confirmResetTitle')}
         isOpen={isResetDialogOpen}
         onClose={() => setIsResetDialogOpen(false)}
         onConfirm={() => props.resetApplication()}
       >
-        {t("confirmResetBody")}
+        {t('confirmResetBody')}
       </ConfirmDialog>
-      
+
       <Level
         gutter="sm"
         style={{
-          padding: "5px 5px 5px 5px",
-          backgroundColor: "var(--pf-global--BackgroundColor--200)"
+          padding: '5px 5px 5px 5px',
+          backgroundColor: 'var(--pf-global--BackgroundColor--200)',
         }}
       >
         <LevelItem>
           <FilterComponent
             aria-label="Filter by Name"
-            filterText={urlProps.filter || ""}
-            onChange={newFilterText => setPropsInUrl<DataTableUrlProps>(props, { page: "1", filter: newFilterText })}
+            filterText={urlProps.filter || ''}
+            onChange={newFilterText => setPropsInUrl<DataTableUrlProps>(props, { page: '1', filter: newFilterText })}
           />
         </LevelItem>
-        <LevelItem style={{ display: "flex" }}>
+        <LevelItem style={{ display: 'flex' }}>
           <Button
             aria-label="Add Tenant"
             data-cy="add-tenant"
             onClick={() => setIsCreatingTenant(true)}
           >
-            {t("add")}
+            {t('add')}
           </Button>
           <Pagination
             aria-label="Change Page"
             itemCount={numOfFilteredRows}
             perPage={itemsPerPage}
             page={page}
-            onSetPage={(e, newPage) =>  setPropsInUrl<DataTableUrlProps>(props, { page: String(newPage) })}
+            onSetPage={(e, newPage) => setPropsInUrl<DataTableUrlProps>(props, { page: String(newPage) })}
             widgetId="pagination-options-menu-top"
-            onPerPageSelect={(e, newItemsPerPage) => setPropsInUrl<DataTableUrlProps>(props, { 
-              itemsPerPage: String(newItemsPerPage) 
+            onPerPageSelect={(e, newItemsPerPage) => setPropsInUrl<DataTableUrlProps>(props, {
+              itemsPerPage: String(newItemsPerPage),
             })}
           />
         </LevelItem>
@@ -144,8 +144,8 @@ export const AdminPage: React.FC<Props> = (props) => {
         onClose={() => setIsCreatingTenant(false)}
       />
       <Table
-        caption={t("tenants")}
-        cells={[t("name"), ""]}
+        caption={t('tenants')}
+        cells={[t('name'), '']}
         rows={
           rowsInPage.map<IRow>(tenant => (
             {
@@ -154,10 +154,10 @@ export const AdminPage: React.FC<Props> = (props) => {
                 (
                   <td key={1}>
                     <span
-                      style={{ 
-                        display: "grid",
-                        gridTemplateColumns: "1fr auto",
-                        gridColumnGap: "5px"
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr auto',
+                        gridColumnGap: '5px',
                       }}
                     >
                       <span />
@@ -166,8 +166,8 @@ export const AdminPage: React.FC<Props> = (props) => {
                       </Button>
                     </span>
                   </td>
-                )
-              ]
+                ),
+              ],
             }))
         }
       >
@@ -176,6 +176,6 @@ export const AdminPage: React.FC<Props> = (props) => {
       </Table>
     </>
   );
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AdminPage));

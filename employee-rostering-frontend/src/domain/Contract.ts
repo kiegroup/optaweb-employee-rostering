@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainObject from './DomainObject';
+import { DomainObject } from './DomainObject';
 
-export default interface Contract extends DomainObject {
+export interface Contract extends DomainObject {
   name: string;
   maximumMinutesPerDay: number|null;
   maximumMinutesPerWeek: number|null;

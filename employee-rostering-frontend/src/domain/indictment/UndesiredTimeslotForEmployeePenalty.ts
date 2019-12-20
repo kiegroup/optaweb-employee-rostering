@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ConstraintMatch from './ConstraintMatch';
-import EmployeeAvailability from '../EmployeeAvailability';
-import Shift from '../Shift';
+import { ConstraintMatch } from './ConstraintMatch';
+import { EmployeeAvailability } from '../EmployeeAvailability';
+import { Shift } from '../Shift';
 
 
-export default interface UndesiredTimeslotForEmployeePenalty extends ConstraintMatch {
+export interface UndesiredTimeslotForEmployeePenalty extends ConstraintMatch {
   employeeAvailability: EmployeeAvailability;
   shift: Shift;
 }

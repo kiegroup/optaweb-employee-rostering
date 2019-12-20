@@ -16,8 +16,8 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import TypeaheadSelectInput, { substringFilter, TypeaheadSelectProps } from './TypeaheadSelectInput';
 import { SelectOption } from '@patternfly/react-core';
+import TypeaheadSelectInput, { substringFilter, TypeaheadSelectProps } from './TypeaheadSelectInput';
 
 interface MockData {
   name: string;
@@ -46,19 +46,19 @@ describe('TypeaheadSelectInput component', () => {
 
   it('should set selected and call onChange', () => {
     jest.useFakeTimers();
-    const defaultValue = {name: "Option 2"};
+    const defaultValue = { name: 'Option 2' };
     const select = mount(<TypeaheadSelectInput {...selectProps} value={defaultValue} />);
     const event: any = {};
     select.setState({ isExpanded: true });
-    (select.instance() as Select).onSelect(event, "Option 1");
+    (select.instance() as Select).onSelect(event, 'Option 1');
     jest.runOnlyPendingTimers();
-    expect(select.state("isExpanded")).toEqual(false);
+    expect(select.state('isExpanded')).toEqual(false);
     expect(selectProps.onChange).toBeCalled();
-    expect(selectProps.onChange).toBeCalledWith({ name: "Option 1" });
+    expect(selectProps.onChange).toBeCalledWith({ name: 'Option 1' });
   });
 
   it('should set selected to undefined on clear selection and call onChange', () => {
-    const defaultValue = {name: "Option 2"};
+    const defaultValue = { name: 'Option 2' };
     const select = mount(<TypeaheadSelectInput {...selectProps} value={defaultValue} />);
     (select.instance() as Select).clearSelection();
     expect(selectProps.onChange).toBeCalled();
@@ -66,14 +66,14 @@ describe('TypeaheadSelectInput component', () => {
   });
 
   it('should filter correctly', () => {
-    expect(substringFilter(selectProps)({ target: { value: "3"}} as any)).toEqual(
+    expect(substringFilter(selectProps)({ target: { value: '3' } } as any)).toEqual(
       [<SelectOption
         isDisabled={false}
         key="Option 3"
         value="Option 3"
-      />]
+      />],
     );
-    expect(substringFilter(selectProps)({ target: { value: "Option"}} as any)).toEqual(
+    expect(substringFilter(selectProps)({ target: { value: 'Option' } } as any)).toEqual(
       [
         <SelectOption
           isDisabled={false}
@@ -89,7 +89,7 @@ describe('TypeaheadSelectInput component', () => {
           isDisabled={false}
           key="Option 3"
           value="Option 3"
-        />]
+        />],
     );
   });
 
@@ -100,9 +100,9 @@ describe('TypeaheadSelectInput component', () => {
 });
 
 const selectProps: TypeaheadSelectProps<MockData> = {
-  emptyText: "Enter some data",
-  options: [{name: "Option 1"}, {name: "Option 2"}, {name: "Option 3"}],
+  emptyText: 'Enter some data',
+  options: [{ name: 'Option 1' }, { name: 'Option 2' }, { name: 'Option 3' }],
   value: undefined,
   optionToStringMap: jest.fn(option => option.name),
-  onChange: jest.fn()
+  onChange: jest.fn(),
 };

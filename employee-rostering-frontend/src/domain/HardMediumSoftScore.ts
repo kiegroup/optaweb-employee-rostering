@@ -18,29 +18,29 @@ export function isScoreZero(score: HardMediumSoftScore): boolean {
 }
 
 export function getHardMediumSoftScoreFromString(hardMediumSoftScore: string): HardMediumSoftScore {
-  const components = hardMediumSoftScore.split("/");
+  const components = hardMediumSoftScore.split('/');
   return {
-    hardScore: parseInt(components[0]),
-    mediumScore: parseInt(components[1]),
-    softScore: parseInt(components[2])
+    hardScore: parseInt(components[0], 10),
+    mediumScore: parseInt(components[1], 10),
+    softScore: parseInt(components[2], 10),
   };
 }
 
 export function convertHardMediumSoftScoreToString(hardMediumSoftScore: HardMediumSoftScore) {
-  let out = "";
+  let out = '';
   if (hardMediumSoftScore.hardScore !== 0) {
-    out = out + `${hardMediumSoftScore.hardScore} Hard`;
+    out += `${hardMediumSoftScore.hardScore} Hard`;
   }
   if (hardMediumSoftScore.mediumScore !== 0) {
-    out = out + (out? "/" : "") + `${hardMediumSoftScore.mediumScore} Medium`;
+    out = `${out + (out ? '/' : '')}${hardMediumSoftScore.mediumScore} Medium`;
   }
   if (hardMediumSoftScore.softScore !== 0) {
-    out = out + (out? "/" : "") + `${hardMediumSoftScore.softScore} Soft`;
+    out = `${out + (out ? '/' : '')}${hardMediumSoftScore.softScore} Soft`;
   }
-  return out? out : "0";
+  return out || '0';
 }
 
-export default interface HardMediumSoftScore {
+export interface HardMediumSoftScore {
   hardScore: number;
   mediumScore: number;
   softScore: number;

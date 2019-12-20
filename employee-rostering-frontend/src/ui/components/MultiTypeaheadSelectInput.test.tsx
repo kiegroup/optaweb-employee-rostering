@@ -16,8 +16,8 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import MultiTypeaheadSelectInput, { substringFilter, MultiTypeaheadSelectProps } from './MultiTypeaheadSelectInput';
 import { SelectOption } from '@patternfly/react-core';
+import MultiTypeaheadSelectInput, { substringFilter, MultiTypeaheadSelectProps } from './MultiTypeaheadSelectInput';
 
 interface MockData {
   name: string;
@@ -45,16 +45,16 @@ describe('MultiTypeaheadSelectInput component', () => {
   });
 
   it('should remove selected from list when selected again and call onChange', () => {
-    const defaultValue = [{name: "Option 2"}];
+    const defaultValue = [{ name: 'Option 2' }];
     const select = mount(<MultiTypeaheadSelectInput {...selectProps} value={defaultValue} />);
     const event: any = {};
-    (select.instance() as Select).onSelect(event, "Option 2");
+    (select.instance() as Select).onSelect(event, 'Option 2');
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith([]);
   });
 
   it('should set selected to an empty list on clear selection and call onChange', () => {
-    const defaultValue = [{name: "Option 2"}];
+    const defaultValue = [{ name: 'Option 2' }];
     const select = mount(<MultiTypeaheadSelectInput {...selectProps} value={defaultValue} />);
     (select.instance() as Select).clearSelection();
     expect(selectProps.onChange).toBeCalled();
@@ -63,23 +63,23 @@ describe('MultiTypeaheadSelectInput component', () => {
 
 
   it('should add option to selection when it is selected and not already in the list and call onChange', () => {
-    const defaultValue = [{name: "Option 2"}];
+    const defaultValue = [{ name: 'Option 2' }];
     const select = mount(<MultiTypeaheadSelectInput {...selectProps} value={defaultValue} />);
     const event: any = {};
-    (select.instance() as Select).onSelect(event, "Option 1");
+    (select.instance() as Select).onSelect(event, 'Option 1');
     expect(selectProps.onChange).toBeCalled();
-    expect(selectProps.onChange).toBeCalledWith([...defaultValue, {name: "Option 1"}]);
+    expect(selectProps.onChange).toBeCalledWith([...defaultValue, { name: 'Option 1' }]);
   });
 
   it('should filter correctly', () => {
-    expect(substringFilter(selectProps)({ target: { value: "3"}} as any)).toEqual(
+    expect(substringFilter(selectProps)({ target: { value: '3' } } as any)).toEqual(
       [<SelectOption
         isDisabled={false}
         key="Option 3"
         value="Option 3"
-      />]
+      />],
     );
-    expect(substringFilter(selectProps)({ target: { value: "Option"}} as any)).toEqual(
+    expect(substringFilter(selectProps)({ target: { value: 'Option' } } as any)).toEqual(
       [
         <SelectOption
           isDisabled={false}
@@ -95,7 +95,7 @@ describe('MultiTypeaheadSelectInput component', () => {
           isDisabled={false}
           key="Option 3"
           value="Option 3"
-        />]
+        />],
     );
   });
 
@@ -106,9 +106,9 @@ describe('MultiTypeaheadSelectInput component', () => {
 });
 
 const selectProps: MultiTypeaheadSelectProps<MockData> = {
-  emptyText: "Enter some data",
-  options: [{name: "Option 1"}, {name: "Option 2"}, {name: "Option 3"}],
+  emptyText: 'Enter some data',
+  options: [{ name: 'Option 1' }, { name: 'Option 2' }, { name: 'Option 3' }],
   value: [],
   optionToStringMap: jest.fn(option => option.name),
-  onChange: jest.fn()
+  onChange: jest.fn(),
 };

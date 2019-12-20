@@ -20,7 +20,7 @@ import reducer from './reducers';
 
 export {
   spotOperations,
-  spotSelectors
+  spotSelectors,
 };
 
 export default reducer;

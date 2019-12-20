@@ -16,14 +16,14 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import { EmployeesPage, Props } from './EmployeesPage';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { Sorter } from 'types';
-import Employee from 'domain/Employee';
+import { Employee } from 'domain/Employee';
 import { act } from 'react-dom/test-utils';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { EmployeesPage, Props } from './EmployeesPage';
 
 describe('Employees page', () => {
   it('should render correctly with no employees', () => {
@@ -55,9 +55,9 @@ describe('Employees page', () => {
     const setProperty = jest.fn();
     const editor = employeesPage.editDataRow(employeesPage.getInitialStateForNewRow(), setProperty);
     const nameCol = shallow(editor[0] as React.ReactElement);
-    nameCol.simulate("change", { currentTarget: { value: "Test" } });
+    nameCol.simulate('change', { currentTarget: { value: 'Test' } });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith("name", "Test");
+    expect(setProperty).toBeCalledWith('name', 'Test');
 
     setProperty.mockClear();
     const contractCol = mount(editor[1] as React.ReactElement);
@@ -65,7 +65,7 @@ describe('Employees page', () => {
       contractCol.find(TypeaheadSelectInput).props().onChange(twoEmployees.contractList[0]);
     });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith("contract", twoEmployees.contractList[0]);
+    expect(setProperty).toBeCalledWith('contract', twoEmployees.contractList[0]);
 
     setProperty.mockClear();
     const skillProficiencySetCol = mount(editor[2] as React.ReactElement);
@@ -73,18 +73,18 @@ describe('Employees page', () => {
       skillProficiencySetCol.find(MultiTypeaheadSelectInput).props().onChange([twoEmployees.skillList[0]]);
     });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith("skillProficiencySet", [twoEmployees.skillList[0]]);
+    expect(setProperty).toBeCalledWith('skillProficiencySet', [twoEmployees.skillList[0]]);
   });
 
   it('should call addEmployee on addData', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
     const employee: Employee = {
-      name: "Employee",
+      name: 'Employee',
       skillProficiencySet: [],
       contract: twoEmployees.contractList[0],
       tenantId: 0,
       id: 1,
-      version: 0
+      version: 0,
     };
     employeesPage.addData(employee);
     expect(twoEmployees.addEmployee).toBeCalled();
@@ -94,12 +94,12 @@ describe('Employees page', () => {
   it('should call updateEmployee on updateData', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
     const employee: Employee = {
-      name: "Employee",
+      name: 'Employee',
       skillProficiencySet: [],
       contract: twoEmployees.contractList[0],
       tenantId: 0,
       id: 1,
-      version: 0
+      version: 0,
     };
     employeesPage.updateData(employee);
     expect(twoEmployees.updateEmployee).toBeCalled();
@@ -109,12 +109,12 @@ describe('Employees page', () => {
   it('should call removeEmployee on removeData', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
     const employee: Employee = {
-      name: "Employee",
+      name: 'Employee',
       skillProficiencySet: [],
       contract: twoEmployees.contractList[0],
       tenantId: 0,
       id: 1,
-      version: 0
+      version: 0,
     };
     employeesPage.removeData(employee);
     expect(twoEmployees.removeEmployee).toBeCalled();
@@ -147,9 +147,9 @@ describe('Employees page', () => {
     const employeesPage = shallow(<EmployeesPage
       {...noEmployees}
     />);
-    shallow((employeesPage.find('Trans').prop('components') as any)[2]).simulate("click");
+    shallow((employeesPage.find('Trans').prop('components') as any)[2]).simulate('click');
     expect(noEmployees.history.push).toBeCalled();
-    expect(noEmployees.history.push).toBeCalledWith("/0/contracts");
+    expect(noEmployees.history.push).toBeCalledWith('/0/contracts');
   });
 
   it('should treat incompleted data as incomplete', () => {
@@ -157,32 +157,32 @@ describe('Employees page', () => {
     const noName = {
       tenantId: 0,
       skillProficiencySet: [],
-      contract: twoEmployees.contractList[0]
+      contract: twoEmployees.contractList[0],
     };
     const result1 = employeesPage.isDataComplete(noName);
     expect(result1).toEqual(false);
 
     const noSkills = {
       tenantId: 0,
-      name: "Name",
-      contract: twoEmployees.contractList[0]
+      name: 'Name',
+      contract: twoEmployees.contractList[0],
     };
     const result2 = employeesPage.isDataComplete(noSkills);
     expect(result2).toEqual(false);
 
     const noContract = {
       tenantId: 0,
-      name: "Name",
-      skillProficiencySet: []
+      name: 'Name',
+      skillProficiencySet: [],
     };
     const result3 = employeesPage.isDataComplete(noContract);
     expect(result3).toEqual(false);
 
     const completed = {
       tenantId: 0,
-      name: "Name",
+      name: 'Name',
       skillProficiencySet: [],
-      contract: twoEmployees.contractList[0]
+      contract: twoEmployees.contractList[0],
     };
     const result4 = employeesPage.isDataComplete(completed);
     expect(result4).toEqual(true);
@@ -192,9 +192,9 @@ describe('Employees page', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
     const noName = {
       tenantId: 0,
-      name: "",
+      name: '',
       skillProficiencySet: [],
-      contract: twoEmployees.contractList[0]
+      contract: twoEmployees.contractList[0],
     };
     const result1 = employeesPage.isValid(noName);
     expect(result1).toEqual(false);
@@ -209,67 +209,67 @@ describe('Employees page', () => {
 });
 
 const noEmployees: Props = {
-  ...useTranslation("EmployeePage"),
+  ...useTranslation('EmployeePage'),
   tReady: true,
   tenantId: 0,
-  title: "Employees",
-  columnTitles: ["Name", "Contract", "Skill Set"],
+  title: 'Employees',
+  columnTitles: ['Name', 'Contract', 'Skill Set'],
   tableData: [],
   skillList: [],
   contractList: [],
   addEmployee: jest.fn(),
   updateEmployee: jest.fn(),
   removeEmployee: jest.fn(),
-  ...getRouterProps("/contacts", {})
+  ...getRouterProps('/contacts', {}),
 };
 
 const twoEmployees: Props = {
-  ...useTranslation("EmployeePage"),
+  ...useTranslation('EmployeePage'),
   tReady: true,
   tenantId: 0,
-  title: "Employees",
-  columnTitles: ["Name", "Contract", "Skill Set"],
+  title: 'Employees',
+  columnTitles: ['Name', 'Contract', 'Skill Set'],
   tableData: [{
     id: 0,
     version: 0,
     tenantId: 0,
-    name: "Employee 1",
+    name: 'Employee 1',
     skillProficiencySet: [],
     contract: {
       tenantId: 0,
       id: 0,
       version: 0,
-      name: "Contract 1",
+      name: 'Contract 1',
       maximumMinutesPerDay: null,
       maximumMinutesPerWeek: null,
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
-    }
+    },
   },
   {
     id: 1,
     version: 0,
     tenantId: 0,
-    name: "Employee 2",
-    skillProficiencySet: [{tenantId: 0, name: "Skill 1"}, {tenantId: 0, name: "Skill 2"}],
+    name: 'Employee 2',
+    skillProficiencySet: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
     contract: {
       tenantId: 0,
       id: 1,
       version: 0,
-      name: "Contract 2",
+      name: 'Contract 2',
       maximumMinutesPerDay: null,
       maximumMinutesPerWeek: null,
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
-    }
+    },
   }],
-  skillList: [{tenantId: 0, name: "Skill 1"}, {tenantId: 0, name: "Skill 2"}],
+  skillList: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
   contractList: [
     {
       tenantId: 0,
       id: 0,
       version: 0,
-      name: "Contract 1",
+      name: 'Contract 1',
       maximumMinutesPerDay: null,
       maximumMinutesPerWeek: null,
       maximumMinutesPerMonth: null,
@@ -279,15 +279,15 @@ const twoEmployees: Props = {
       tenantId: 0,
       id: 1,
       version: 0,
-      name: "Contract 2",
+      name: 'Contract 2',
       maximumMinutesPerDay: null,
       maximumMinutesPerWeek: null,
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
-    }
+    },
   ],
   addEmployee: jest.fn(),
   updateEmployee: jest.fn(),
   removeEmployee: jest.fn(),
-  ...getRouterProps("/employees", {})
+  ...getRouterProps('/employees', {}),
 };

@@ -31,7 +31,7 @@ export default function EventWrapper(props: React.PropsWithChildren<{
   popoverBody: React.ReactNode;
   style?: React.CSSProperties;
 }>): JSX.Element {
-  let className = props.className;
+  let { className } = props;
   const style: React.CSSProperties = {
     backgroundColor: 'transparent',
     border: 'none',
@@ -40,10 +40,10 @@ export default function EventWrapper(props: React.PropsWithChildren<{
 
   if (props.style !== undefined && props.style.top !== undefined && props.style.height !== undefined) {
     if (props.continuesEarlier) {
-      className += " continues-from-previous-day";
+      className += ' continues-from-previous-day';
     }
     if (props.continuesLater) {
-      className += " continues-next-day";
+      className += ' continues-next-day';
     }
   }
 

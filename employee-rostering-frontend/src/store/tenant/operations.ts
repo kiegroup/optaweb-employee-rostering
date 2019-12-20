@@ -14,13 +14,7 @@
  * limitations under the License.
  */
 
-import Tenant from 'domain/Tenant';
-import { ThunkCommandFactory } from '../types';
-import * as actions from './actions';
-import {
-  ChangeTenantAction, RefreshTenantListAction, RefreshSupportedTimezoneListAction,
-  AddTenantAction, RemoveTenantAction,
-} from './types';
+import { Tenant } from 'domain/Tenant';
 import { ThunkDispatch } from 'redux-thunk';
 import { Action } from 'redux';
 import { rosterOperations } from 'store/roster';
@@ -36,10 +30,16 @@ import * as contractActions from 'store/contract/actions';
 import * as employeeActions from 'store/employee/actions';
 import * as shiftTemplateActions from 'store/rotation/actions';
 import { alert } from 'store/alert';
-import RosterState from 'domain/RosterState';
+import { RosterState } from 'domain/RosterState';
 import { AddAlertAction } from 'store/alert/types';
 import { RouteComponentProps } from 'react-router';
 import { setTenantIdInUrl } from 'util/BookmarkableUtils';
+import {
+  ChangeTenantAction, RefreshTenantListAction, RefreshSupportedTimezoneListAction,
+  AddTenantAction, RemoveTenantAction,
+} from './types';
+import * as actions from './actions';
+import { ThunkCommandFactory } from '../types';
 
 function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<any> {
   dispatch(rosterActions.setShiftRosterIsLoading(true));
@@ -85,7 +85,7 @@ ThunkCommandFactory<void, RefreshTenantListAction> = () => (dispatch, state, cli
 export const addTenant:
 ThunkCommandFactory<RosterState, AddTenantAction | AddAlertAction> = rs => (dispatch, state, client) => (
   client.post<Tenant>('/tenant/add', rs).then((tenant) => {
-    dispatch(alert.showSuccessMessage("addTenant", { name: tenant.name }))
+    dispatch(alert.showSuccessMessage('addTenant', { name: tenant.name }));
     dispatch(actions.addTenant(tenant));
   })
 );
@@ -94,10 +94,10 @@ export const removeTenant:
 ThunkCommandFactory<Tenant, RemoveTenantAction | AddAlertAction> = tenant => (dispatch, state, client) => (
   client.post<boolean>(`/tenant/remove/${tenant.id}`, {}).then((isSuccess) => {
     if (isSuccess) {
-      dispatch(alert.showSuccessMessage("removeTenant", { name: tenant.name }))
+      dispatch(alert.showSuccessMessage('removeTenant', { name: tenant.name }));
       dispatch(actions.removeTenant(tenant));
     } else {
-      dispatch(alert.showErrorMessage("removeTenantError", { name: tenant.name }))
+      dispatch(alert.showErrorMessage('removeTenantError', { name: tenant.name }));
     }
   })
 );

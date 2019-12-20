@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ConstraintMatch from './ConstraintMatch';
-import Shift from '../Shift';
+import { ConstraintMatch } from './ConstraintMatch';
+import { Shift } from '../Shift';
 
 
-export default interface RequiredSkillViolation extends ConstraintMatch {
+export interface RequiredSkillViolation extends ConstraintMatch {
   shift: Shift;
 }

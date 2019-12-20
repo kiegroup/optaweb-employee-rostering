@@ -15,7 +15,7 @@
  */
 
 import { Action } from 'redux';
-import ShiftTemplate from 'domain/ShiftTemplate';
+import { ShiftTemplate } from 'domain/ShiftTemplate';
 import DomainObjectView from 'domain/DomainObjectView';
 
 export enum ActionType {

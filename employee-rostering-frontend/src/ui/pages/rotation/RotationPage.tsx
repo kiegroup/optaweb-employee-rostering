@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import Spot from 'domain/Spot';
+import { Spot } from 'domain/Spot';
 import { AppState } from 'store/types';
 import { spotSelectors } from 'store/spot';
 import { connect } from 'react-redux';
@@ -27,18 +27,16 @@ import { EventProps } from 'react-big-calendar';
 import { modulo } from 'util/MathUtils';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { alert } from 'store/alert';
-import RosterState from 'domain/RosterState';
+import { RosterState } from 'domain/RosterState';
 
-import ShiftTemplate from 'domain/ShiftTemplate';
+import { ShiftTemplate } from 'domain/ShiftTemplate';
 import { shiftTemplateSelectors, shiftTemplateOperations } from 'store/rotation';
 import { WithTranslation, withTranslation, useTranslation, Trans } from 'react-i18next';
-import EditShiftTemplateModal from './EditShiftTemplateModal';
 import { EditIcon, TrashIcon, CubesIcon } from '@patternfly/react-icons';
 import Schedule from 'ui/components/calendar/Schedule';
-import {
-  withRouter, RouteComponentProps,
-} from 'react-router-dom'
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { UrlProps, getPropsFromUrl, setPropsInUrl } from 'util/BookmarkableUtils';
+import EditShiftTemplateModal from './EditShiftTemplateModal';
 
 interface StateProps {
   tenantId: number;
@@ -91,7 +89,7 @@ interface State {
   selectedShiftTemplate?: ShiftTemplate;
 }
 
-//export const baseDate = moment('2018-01-01T00:00').locale('en').startOf('week').toDate();
+// export const baseDate = moment('2018-01-01T00:00').locale('en').startOf('week').toDate();
 
 const ShiftTemplatePopoverHeader: React.FC<{
   shiftTemplate: ShiftTemplate;
@@ -99,7 +97,7 @@ const ShiftTemplatePopoverHeader: React.FC<{
   onEdit: (shift: ShiftTemplate) => void;
   onDelete: (shift: ShiftTemplate) => void;
 }> = (props) => {
-  const { t } = useTranslation("RotationPage");
+  const { t } = useTranslation('RotationPage');
   const durationBetweenRotationStartAndEnd = moment
     .duration(props.shiftTemplate.durationBetweenRotationStartAndTemplateStart)
     .add(props.shiftTemplate.shiftTemplateDuration);
@@ -141,22 +139,19 @@ const ShiftTemplatePopoverHeader: React.FC<{
 
 const ShiftTemplatePopoverBody: React.FC = () => <></>;
 
-const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate>> = (props) => {
+const ShiftTemplateEvent: React.FC<EventProps<ShiftTemplate>> = props => (
+  <span
+    style={{
+      display: 'flex',
+      height: '100%',
+      width: '100%',
+    }}
+  >
+    {props.title}
+  </span>
+);
 
-  return (
-    <span
-      style={{
-        display: "flex",
-        height: "100%",
-        width: "100%"
-      }}
-    >
-      {props.title}
-    </span>
-  )
-};
-
-export type RotationPageUrlProps = UrlProps<"weekNumber" | "shownSpot">;
+export type RotationPageUrlProps = UrlProps<'weekNumber' | 'shownSpot'>;
 export class RotationPage extends React.Component<Props & WithTranslation, State> {
   constructor(props: Props & WithTranslation) {
     super(props);
@@ -184,8 +179,8 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
 
   render() {
     const urlProps = getPropsFromUrl<RotationPageUrlProps>(this.props, {
-      weekNumber: "0",
-      shownSpot: (this.props.spotList.length > 0) ? this.props.spotList[0].name : null
+      weekNumber: '0',
+      shownSpot: (this.props.spotList.length > 0) ? this.props.spotList[0].name : null,
     });
     const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
     const { t } = this.props;
@@ -205,16 +200,16 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
                 aria-label="Spots Page"
                 variant="primary"
                 onClick={() => this.props.history.push(`/${this.props.tenantId}/spots`)}
-              />
+              />,
             ]}
           />
         </EmptyState>
       );
     }
-    
-    const weekNumber = parseInt(urlProps.weekNumber as string);
+
+    const weekNumber = parseInt(urlProps.weekNumber as string, 10);
     const shownSpot = this.props.spotList.find(s => s.name === urlProps.shownSpot) as Spot;
-    
+
     const startDate = moment(baseDate).add(weekNumber, 'weeks').toDate();
     const endDate = moment(startDate).add(1, 'week').toDate();
     const events: { shiftTemplate: ShiftTemplate; start: Date; end: Date }[] = [];
@@ -261,7 +256,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
           <LevelItem style={{ display: 'flex' }}>
             <TypeaheadSelectInput
               aria-label="Select Spot"
-              emptyText={t("selectSpot")}
+              emptyText={t('selectSpot')}
               optionToStringMap={spot => spot.name}
               options={this.props.spotList}
               value={shownSpot}
@@ -395,5 +390,6 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
   }
 }
 
-export default withTranslation("RotationPage")(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(RotationPage)));
+export default withTranslation('RotationPage')(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(RotationPage)),
+);

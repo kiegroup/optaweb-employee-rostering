@@ -16,13 +16,15 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import Spot from 'domain/Spot';
-import Employee from 'domain/Employee';
-import ShiftTemplate from 'domain/ShiftTemplate';
-import { EditShiftTemplateModal, Props, shiftTemplateDataToShiftTemplate, 
-  shiftTemplateToShiftTemplateData } from './EditShiftTemplateModal';
+import { Spot } from 'domain/Spot';
+import { Employee } from 'domain/Employee';
+import { ShiftTemplate } from 'domain/ShiftTemplate';
 import moment from 'moment';
 import { useTranslation, WithTranslation } from 'react-i18next';
+import {
+  EditShiftTemplateModal, Props, shiftTemplateDataToShiftTemplate,
+  shiftTemplateToShiftTemplateData,
+} from './EditShiftTemplateModal';
 
 describe('Edit Shift Template Modal', () => {
   it('should render correctly when closed', () => {
@@ -70,29 +72,31 @@ describe('Edit Shift Template Modal', () => {
     />);
 
     editShiftTemplateModal.setProps({
-      shiftTemplate: baseShiftTemplate
+      shiftTemplate: baseShiftTemplate,
     });
-    expect(editShiftTemplateModal.state("editedValue")).toEqual(
-      shiftTemplateToShiftTemplateData(baseShiftTemplate, rotationLength));
+    expect(editShiftTemplateModal.state('editedValue')).toEqual(
+      shiftTemplateToShiftTemplateData(baseShiftTemplate, rotationLength),
+    );
 
     editShiftTemplateModal.setState({
       editedValue: shiftTemplateToShiftTemplateData({
         ...baseShiftTemplate,
-        shiftTemplateDuration: moment.duration(1, "h")
-      }, rotationLength)
+        shiftTemplateDuration: moment.duration(1, 'h'),
+      }, rotationLength),
     });
 
-    expect(editShiftTemplateModal.state("editedValue")).toEqual(
+    expect(editShiftTemplateModal.state('editedValue')).toEqual(
       shiftTemplateToShiftTemplateData({
         ...baseShiftTemplate,
-        shiftTemplateDuration: moment.duration(1, "h")
-      }, rotationLength));
+        shiftTemplateDuration: moment.duration(1, 'h'),
+      }, rotationLength),
+    );
 
     editShiftTemplateModal.setProps({
-      shiftTemplate: undefined
+      shiftTemplate: undefined,
     });
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      tenantId: baseProps.tenantId
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      tenantId: baseProps.tenantId,
     });
   });
 
@@ -100,17 +104,17 @@ describe('Edit Shift Template Modal', () => {
     const onSave = jest.fn();
     const editShiftTemplateModal = new EditShiftTemplateModal({
       ...baseProps,
-      onSave: onSave,
+      onSave,
       onClose: jest.fn(),
       onDelete: jest.fn(),
-      isOpen: false
+      isOpen: false,
     });
 
     editShiftTemplateModal.state = {
       resetCount: 0,
       editedValue: {
 
-      }
+      },
     };
     editShiftTemplateModal.onSave();
     expect(onSave).not.toBeCalled();
@@ -119,15 +123,15 @@ describe('Edit Shift Template Modal', () => {
       resetCount: 1,
       editedValue: {
         rotationEmployee: null,
-        spot: spot
-      }
+        spot,
+      },
     };
     editShiftTemplateModal.onSave();
     expect(onSave).not.toBeCalled();
 
     editShiftTemplateModal.state = {
       resetCount: 2,
-      editedValue: shiftTemplateToShiftTemplateData(baseShiftTemplate, rotationLength)
+      editedValue: shiftTemplateToShiftTemplateData(baseShiftTemplate, rotationLength),
     };
     editShiftTemplateModal.onSave();
     expect(onSave).toBeCalled();
@@ -145,7 +149,7 @@ describe('Edit Shift Template Modal', () => {
       onDelete={jest.fn()}
     />);
 
-    editShiftTemplateModal.find('button[aria-label="Save"]').simulate("click");
+    editShiftTemplateModal.find('button[aria-label="Save"]').simulate('click');
     expect(onSave).toBeCalled();
     expect(onSave).toBeCalledWith(baseShiftTemplate);
   });
@@ -160,8 +164,8 @@ describe('Edit Shift Template Modal', () => {
       onClose={onClose}
       onDelete={jest.fn()}
     />);
-    
-    editShiftTemplateModal.find('button[aria-label="Close Modal"]').simulate("click");
+
+    editShiftTemplateModal.find('button[aria-label="Close Modal"]').simulate('click');
     expect(onClose).toBeCalled();
   });
 
@@ -175,8 +179,8 @@ describe('Edit Shift Template Modal', () => {
       onClose={onClose}
       onDelete={jest.fn()}
     />);
-    
-    editShiftTemplateModal.find('button[aria-label="Close"]').simulate("click");
+
+    editShiftTemplateModal.find('button[aria-label="Close"]').simulate('click');
     expect(onClose).toBeCalled();
   });
 
@@ -190,15 +194,15 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={onDelete}
     />);
-    
-    editShiftTemplateModal.find('button[aria-label="Delete"]').simulate("click");
+
+    editShiftTemplateModal.find('button[aria-label="Delete"]').simulate('click');
     expect(onDelete).toBeCalled();
   });
 
   it('should prevent changing URL when completed', () => {
     const event = {
-      preventDefault: jest.fn()
-    }
+      preventDefault: jest.fn(),
+    };
     const editShiftTemplateModal = shallow(<EditShiftTemplateModal
       {...baseProps}
       shiftTemplate={baseShiftTemplate}
@@ -207,7 +211,7 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find("Form").simulate("submit", event);
+    editShiftTemplateModal.find('Form').simulate('submit', event);
     expect(event.preventDefault).toBeCalled();
   });
 
@@ -219,13 +223,13 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TextInput[aria-label="Start Day Offset"]').simulate("change", 2);
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      startDayOffset: 1
+    editShiftTemplateModal.find('TextInput[aria-label="Start Day Offset"]').simulate('change', 2);
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      startDayOffset: 1,
     });
-    editShiftTemplateModal.find('TextInput[aria-label="Start Day Offset"]').simulate("change", undefined);
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      startDayOffset: undefined
+    editShiftTemplateModal.find('TextInput[aria-label="Start Day Offset"]').simulate('change', undefined);
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      startDayOffset: undefined,
     });
   });
 
@@ -237,9 +241,9 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TextInput[aria-label="Start Time"]').simulate("change", "13:30");
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      startTime: { hours: 13, minutes: 30 }
+    editShiftTemplateModal.find('TextInput[aria-label="Start Time"]').simulate('change', '13:30');
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      startTime: { hours: 13, minutes: 30 },
     });
   });
 
@@ -251,13 +255,13 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TextInput[aria-label="End Day Offset"]').simulate("change", 4);
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      endDayOffset: 3
+    editShiftTemplateModal.find('TextInput[aria-label="End Day Offset"]').simulate('change', 4);
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      endDayOffset: 3,
     });
-    editShiftTemplateModal.find('TextInput[aria-label="End Day Offset"]').simulate("change", undefined);
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      endDayOffset: undefined
+    editShiftTemplateModal.find('TextInput[aria-label="End Day Offset"]').simulate('change', undefined);
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      endDayOffset: undefined,
     });
   });
 
@@ -269,9 +273,9 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TextInput[aria-label="End Time"]').simulate("change", "13:30");
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      endTime: { hours: 13, minutes: 30 }
+    editShiftTemplateModal.find('TextInput[aria-label="End Time"]').simulate('change', '13:30');
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      endTime: { hours: 13, minutes: 30 },
     });
   });
 
@@ -283,9 +287,9 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TypeaheadSelectInput[aria-label="Spot"]').simulate("change", spot);
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      spot: spot
+    editShiftTemplateModal.find('TypeaheadSelectInput[aria-label="Spot"]').simulate('change', spot);
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      spot,
     });
   });
 
@@ -297,14 +301,14 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate("change", employee);
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      rotationEmployee: employee
+    editShiftTemplateModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', employee);
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      rotationEmployee: employee,
     });
 
-    editShiftTemplateModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate("change", undefined);
-    expect(editShiftTemplateModal.state("editedValue")).toEqual({
-      rotationEmployee: null
+    editShiftTemplateModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', undefined);
+    expect(editShiftTemplateModal.state('editedValue')).toEqual({
+      rotationEmployee: null,
     });
   });
 
@@ -313,40 +317,40 @@ describe('Edit Shift Template Modal', () => {
       tenantId: 0,
       id: 1,
       version: 2,
-      spot: spot,
+      spot,
       rotationEmployee: employee,
       startDayOffset: 2,
       startTime: { hours: 9, minutes: 0 },
       endDayOffset: 3,
-      endTime: { hours: 9, minutes: 0 }
+      endTime: { hours: 9, minutes: 0 },
     }, rotationLength)).toEqual({
       tenantId: 0,
       id: 1,
       version: 2,
-      spot: spot,
+      spot,
       rotationEmployee: employee,
-      durationBetweenRotationStartAndTemplateStart: moment.duration(2, "d").add(9, "h"),
-      shiftTemplateDuration: moment.duration(1, "d")
+      durationBetweenRotationStartAndTemplateStart: moment.duration(2, 'd').add(9, 'h'),
+      shiftTemplateDuration: moment.duration(1, 'd'),
     });
 
     expect(shiftTemplateDataToShiftTemplate({
       tenantId: 0,
       id: 1,
       version: 2,
-      spot: spot,
+      spot,
       rotationEmployee: null,
       startDayOffset: rotationLength - 1,
       startTime: { hours: 9, minutes: 0 },
       endDayOffset: 0,
-      endTime: { hours: 9, minutes: 0 }
+      endTime: { hours: 9, minutes: 0 },
     }, rotationLength)).toEqual({
       tenantId: 0,
       id: 1,
       version: 2,
-      spot: spot,
+      spot,
       rotationEmployee: null,
-      durationBetweenRotationStartAndTemplateStart: moment.duration(rotationLength - 1, "d").add(9, "h"),
-      shiftTemplateDuration: moment.duration(1, "d")
+      durationBetweenRotationStartAndTemplateStart: moment.duration(rotationLength - 1, 'd').add(9, 'h'),
+      shiftTemplateDuration: moment.duration(1, 'd'),
     });
   });
 
@@ -355,33 +359,33 @@ describe('Edit Shift Template Modal', () => {
       tenantId: 0,
       id: 1,
       version: 0,
-      spot: spot,
+      spot,
       rotationEmployee: employee,
       startDayOffset: 1,
       startTime: { hours: 9, minutes: 0 },
       endDayOffset: 1,
-      endTime: { hours: 17, minutes: 0 }
+      endTime: { hours: 17, minutes: 0 },
     });
 
     expect(shiftTemplateToShiftTemplateData({
       tenantId: 0,
       id: 1,
       version: 2,
-      spot: spot,
+      spot,
       rotationEmployee: null,
-      durationBetweenRotationStartAndTemplateStart: moment.duration(rotationLength - 1, "days").add(9, "hours"),
-      shiftTemplateDuration: moment.duration(24, "hours")
+      durationBetweenRotationStartAndTemplateStart: moment.duration(rotationLength - 1, 'days').add(9, 'hours'),
+      shiftTemplateDuration: moment.duration(24, 'hours'),
     }, rotationLength)).toEqual({
       tenantId: 0,
       id: 1,
       version: 2,
-      spot: spot,
+      spot,
       rotationEmployee: null,
       startDayOffset: rotationLength - 1,
       startTime: { hours: 9, minutes: 0 },
       endDayOffset: 0,
-      endTime: { hours: 9, minutes: 0 }
-    })
+      endTime: { hours: 9, minutes: 0 },
+    });
   });
 });
 
@@ -389,47 +393,47 @@ const spot: Spot = {
   tenantId: 0,
   id: 2,
   version: 0,
-  name: "Spot",
+  name: 'Spot',
   requiredSkillSet: [
     {
       tenantId: 0,
       id: 3,
       version: 0,
-      name: "Skill"
-    }
-  ]
-}
+      name: 'Skill',
+    },
+  ],
+};
 
 const employee: Employee = {
   tenantId: 0,
   id: 4,
   version: 0,
-  name: "Employee 1",
+  name: 'Employee 1',
   contract: {
     tenantId: 0,
     id: 5,
     version: 0,
-    name: "Basic Contract",
+    name: 'Basic Contract',
     maximumMinutesPerDay: 10,
     maximumMinutesPerWeek: 70,
     maximumMinutesPerMonth: 500,
-    maximumMinutesPerYear: 6000
+    maximumMinutesPerYear: 6000,
   },
   skillProficiencySet: [{
     tenantId: 0,
     id: 6,
     version: 0,
-    name: "Not Required Skill"
-  }]
-}
+    name: 'Not Required Skill',
+  }],
+};
 
 const baseShiftTemplate: ShiftTemplate = {
   tenantId: 0,
   id: 1,
-  version: 0, 
-  durationBetweenRotationStartAndTemplateStart: moment.duration(1, "d").add(9, "h"),
-  shiftTemplateDuration: moment.duration(8, "h"),
-  spot: spot,
+  version: 0,
+  durationBetweenRotationStartAndTemplateStart: moment.duration(1, 'd').add(9, 'h'),
+  shiftTemplateDuration: moment.duration(8, 'h'),
+  spot,
   rotationEmployee: employee,
 };
 
@@ -442,8 +446,8 @@ const baseProps: Props & WithTranslation = {
   isOpen: true,
   spotList: [spot],
   employeeList: [employee],
-  rotationLength: rotationLength,
+  rotationLength,
   onSave: jest.fn(),
   onDelete: jest.fn(),
-  onClose: jest.fn()
-}
+  onClose: jest.fn(),
+};

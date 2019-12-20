@@ -16,11 +16,11 @@
 import { Middleware } from 'redux';
 import createMockStore, { MockStoreCreator } from 'redux-mock-store';
 import thunk, { ThunkDispatch } from 'redux-thunk';
+import { resetRestClientMock } from 'store/rest/RestTestUtils';
 import RestServiceClient from './rest/RestServiceClient';
 import { TenantAction } from './tenant/types';
 import { SkillAction } from './skill/types';
 import { AppState } from './types';
-import { resetRestClientMock } from 'store/rest/RestTestUtils';
 
 jest.mock('./rest/RestServiceClient');
 
@@ -31,7 +31,8 @@ export const mockStore = (state: AppState) => {
 
   const middlewares: Middleware[] = [thunk.withExtraArgument(client)];
   type DispatchExts = ThunkDispatch<AppState, RestServiceClient, SkillAction | TenantAction>;
-  const mockStoreCreator: MockStoreCreator<AppState, DispatchExts> =
-    createMockStore<AppState, DispatchExts>(middlewares);
+  const mockStoreCreator: MockStoreCreator<AppState, DispatchExts> = createMockStore<AppState, DispatchExts>(
+    middlewares,
+  );
   return { store: mockStoreCreator(state), client };
 };

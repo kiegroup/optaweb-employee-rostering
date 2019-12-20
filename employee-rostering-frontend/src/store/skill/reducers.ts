@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { ActionType, SkillList, SkillAction } from './types';
-import { createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import {
+  createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement,
+} from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
-import Skill from 'domain/Skill';
+import { Skill } from 'domain/Skill';
+import { ActionType, SkillList, SkillAction } from './types';
 
 export const initialState: SkillList = {
   isLoading: true,
-  skillMapById: new Map<number, DomainObjectView<Skill>>()
+  skillMapById: new Map<number, DomainObjectView<Skill>>(),
 };
 
 const skillReducer = (state = initialState, action: SkillAction): SkillList => {

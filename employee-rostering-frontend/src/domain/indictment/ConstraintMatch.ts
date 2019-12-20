@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import HardMediumSoftScore from '../HardMediumSoftScore';
+import { HardMediumSoftScore } from '../HardMediumSoftScore';
 
-export default interface ConstraintMatch {
+export interface ConstraintMatch {
   score: HardMediumSoftScore;
 }

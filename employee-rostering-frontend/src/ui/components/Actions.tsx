@@ -46,11 +46,11 @@ export const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
     </DropdownItem>
   ));
 
-  const [ isDropdownOpen, setDropdownOpen ] = useState(false);
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <span style={{ display: "grid", gridTemplateColumns: "1fr auto" }}>
-      <span style={{ width: "100%" }} />
+    <span style={{ display: 'grid', gridTemplateColumns: '1fr auto' }}>
+      <span style={{ width: '100%' }} />
       <span>
         {actionsOnButtons.map(a => (
           <Button

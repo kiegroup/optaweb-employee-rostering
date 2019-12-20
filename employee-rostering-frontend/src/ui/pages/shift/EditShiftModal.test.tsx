@@ -16,12 +16,12 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import Spot from 'domain/Spot';
-import Employee from 'domain/Employee';
-import Shift from 'domain/Shift';
-import { EditShiftModal } from './EditShiftModal';
+import { Spot } from 'domain/Spot';
+import { Employee } from 'domain/Employee';
+import { Shift } from 'domain/Shift';
 import moment from 'moment';
 import { useTranslation } from 'react-i18next';
+import { EditShiftModal } from './EditShiftModal';
 
 describe('Edit Shift Modal', () => {
   it('should render correctly when closed', () => {
@@ -69,29 +69,29 @@ describe('Edit Shift Modal', () => {
     />);
 
     editShiftModal.setProps({
-      shift: baseShift
+      shift: baseShift,
     });
-    expect(editShiftModal.state("editedValue")).toEqual(baseShift);
+    expect(editShiftModal.state('editedValue')).toEqual(baseShift);
 
     editShiftModal.setState({
       editedValue: {
         ...baseShift,
-        pinnedByUser: true
-      }
+        pinnedByUser: true,
+      },
     });
-    expect(editShiftModal.state("editedValue")).toEqual({
+    expect(editShiftModal.state('editedValue')).toEqual({
       ...baseShift,
-      pinnedByUser: true
+      pinnedByUser: true,
     });
 
     editShiftModal.setProps({
-      shift: undefined
+      shift: undefined,
     });
-    expect(editShiftModal.state("editedValue")).toEqual({
+    expect(editShiftModal.state('editedValue')).toEqual({
       tenantId: baseProps.tenantId,
       employee: null,
       rotationEmployee: null,
-      pinnedByUser: false
+      pinnedByUser: false,
     });
   });
 
@@ -99,17 +99,17 @@ describe('Edit Shift Modal', () => {
     const onSave = jest.fn();
     const editShiftModal = new EditShiftModal({
       ...baseProps,
-      onSave: onSave,
+      onSave,
       onClose: jest.fn(),
       onDelete: jest.fn(),
-      isOpen: false
+      isOpen: false,
     });
 
     editShiftModal.state = {
       resetCount: 0,
       editedValue: {
 
-      }
+      },
     };
     editShiftModal.onSave();
     expect(onSave).not.toBeCalled();
@@ -118,19 +118,19 @@ describe('Edit Shift Modal', () => {
       resetCount: 1,
       editedValue: {
         employee: null,
-        spot: spot
-      }
+        spot,
+      },
     };
     editShiftModal.onSave();
     expect(onSave).not.toBeCalled();
 
     editShiftModal.state = {
       resetCount: 2,
-      editedValue: baseShift
+      editedValue: baseShift,
     };
     editShiftModal.onSave();
     expect(onSave).toBeCalled();
-    expect(onSave).toBeCalledWith({ ...baseShift, tenantId: 1});
+    expect(onSave).toBeCalledWith({ ...baseShift, tenantId: 1 });
   });
 
   it('should call onSave when the save button is clicked with a completed shift', () => {
@@ -144,9 +144,9 @@ describe('Edit Shift Modal', () => {
       onDelete={jest.fn()}
     />);
 
-    editShiftModal.find('button[aria-label="Save"]').simulate("click");
+    editShiftModal.find('button[aria-label="Save"]').simulate('click');
     expect(onSave).toBeCalled();
-    expect(onSave).toBeCalledWith({ ...baseShift, tenantId: 1});
+    expect(onSave).toBeCalledWith({ ...baseShift, tenantId: 1 });
   });
 
   it('should call onClose when the bottom close button is clicked', () => {
@@ -159,8 +159,8 @@ describe('Edit Shift Modal', () => {
       onClose={onClose}
       onDelete={jest.fn()}
     />);
-    
-    editShiftModal.find('button[aria-label="Close Modal"]').simulate("click");
+
+    editShiftModal.find('button[aria-label="Close Modal"]').simulate('click');
     expect(onClose).toBeCalled();
   });
 
@@ -174,8 +174,8 @@ describe('Edit Shift Modal', () => {
       onClose={onClose}
       onDelete={jest.fn()}
     />);
-    
-    editShiftModal.find('button[aria-label="Close"]').simulate("click");
+
+    editShiftModal.find('button[aria-label="Close"]').simulate('click');
     expect(onClose).toBeCalled();
   });
 
@@ -189,15 +189,15 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={onDelete}
     />);
-    
-    editShiftModal.find('button[aria-label="Delete"]').simulate("click");
+
+    editShiftModal.find('button[aria-label="Delete"]').simulate('click');
     expect(onDelete).toBeCalled();
   });
 
   it('should prevent changing URL when completed', () => {
     const event = {
-      preventDefault: jest.fn()
-    }
+      preventDefault: jest.fn(),
+    };
     const editShiftModal = shallow(<EditShiftModal
       {...baseProps}
       shift={baseShift}
@@ -206,7 +206,7 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find("Form").simulate("submit", event);
+    editShiftModal.find('Form').simulate('submit', event);
     expect(event.preventDefault).toBeCalled();
   });
 
@@ -218,13 +218,13 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find('[aria-label="Shift Start"]').simulate("change", new Date("2019-01-01T09:00"));
-    expect(editShiftModal.state("editedValue")).toEqual({
-      startDateTime: new Date("2019-01-01T09:00")
+    editShiftModal.find('[aria-label="Shift Start"]').simulate('change', new Date('2019-01-01T09:00'));
+    expect(editShiftModal.state('editedValue')).toEqual({
+      startDateTime: new Date('2019-01-01T09:00'),
     });
-    editShiftModal.find('[aria-label="Shift Start"]').simulate("change", null);
-    expect(editShiftModal.state("editedValue")).toEqual({
-      startDateTime: undefined
+    editShiftModal.find('[aria-label="Shift Start"]').simulate('change', null);
+    expect(editShiftModal.state('editedValue')).toEqual({
+      startDateTime: undefined,
     });
   });
 
@@ -236,13 +236,13 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find('[aria-label="Shift End"]').simulate("change", new Date("2019-01-01T09:00"));
-    expect(editShiftModal.state("editedValue")).toEqual({
-      endDateTime: new Date("2019-01-01T09:00")
+    editShiftModal.find('[aria-label="Shift End"]').simulate('change', new Date('2019-01-01T09:00'));
+    expect(editShiftModal.state('editedValue')).toEqual({
+      endDateTime: new Date('2019-01-01T09:00'),
     });
-    editShiftModal.find('[aria-label="Shift End"]').simulate("change", null);
-    expect(editShiftModal.state("editedValue")).toEqual({
-      endDateTime: undefined
+    editShiftModal.find('[aria-label="Shift End"]').simulate('change', null);
+    expect(editShiftModal.state('editedValue')).toEqual({
+      endDateTime: undefined,
     });
   });
 
@@ -254,9 +254,9 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find('TypeaheadSelectInput[aria-label="Spot"]').simulate("change", spot);
-    expect(editShiftModal.state("editedValue")).toEqual({
-      spot: spot
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Spot"]').simulate('change', spot);
+    expect(editShiftModal.state('editedValue')).toEqual({
+      spot,
     });
   });
 
@@ -268,14 +268,14 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate("change", employee);
-    expect(editShiftModal.state("editedValue")).toEqual({
-      employee: employee
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', employee);
+    expect(editShiftModal.state('editedValue')).toEqual({
+      employee,
     });
 
-    editShiftModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate("change", undefined);
-    expect(editShiftModal.state("editedValue")).toEqual({
-      employee: null
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', undefined);
+    expect(editShiftModal.state('editedValue')).toEqual({
+      employee: null,
     });
   });
 
@@ -287,14 +287,14 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find('TypeaheadSelectInput[aria-label="Rotation Employee"]').simulate("change", employee);
-    expect(editShiftModal.state("editedValue")).toEqual({
-      rotationEmployee: employee
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Rotation Employee"]').simulate('change', employee);
+    expect(editShiftModal.state('editedValue')).toEqual({
+      rotationEmployee: employee,
     });
 
-    editShiftModal.find('TypeaheadSelectInput[aria-label="Rotation Employee"]').simulate("change", undefined);
-    expect(editShiftModal.state("editedValue")).toEqual({
-      rotationEmployee: null
+    editShiftModal.find('TypeaheadSelectInput[aria-label="Rotation Employee"]').simulate('change', undefined);
+    expect(editShiftModal.state('editedValue')).toEqual({
+      rotationEmployee: null,
     });
   });
 
@@ -306,9 +306,9 @@ describe('Edit Shift Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftModal.find('[aria-label="Is Pinned"]').simulate("change", true);
-    expect(editShiftModal.state("editedValue")).toEqual({
-      pinnedByUser: true
+    editShiftModal.find('[aria-label="Is Pinned"]').simulate('change', true);
+    expect(editShiftModal.state('editedValue')).toEqual({
+      pinnedByUser: true,
     });
   });
 });
@@ -317,52 +317,52 @@ const spot: Spot = {
   tenantId: 0,
   id: 2,
   version: 0,
-  name: "Spot",
+  name: 'Spot',
   requiredSkillSet: [
     {
       tenantId: 0,
       id: 3,
       version: 0,
-      name: "Skill"
-    }
-  ]
-}
+      name: 'Skill',
+    },
+  ],
+};
 
 const employee: Employee = {
   tenantId: 0,
   id: 4,
   version: 0,
-  name: "Employee 1",
+  name: 'Employee 1',
   contract: {
     tenantId: 0,
     id: 5,
     version: 0,
-    name: "Basic Contract",
+    name: 'Basic Contract',
     maximumMinutesPerDay: 10,
     maximumMinutesPerWeek: 70,
     maximumMinutesPerMonth: 500,
-    maximumMinutesPerYear: 6000
+    maximumMinutesPerYear: 6000,
   },
   skillProficiencySet: [{
     tenantId: 0,
     id: 6,
     version: 0,
-    name: "Not Required Skill"
-  }]
-}
+    name: 'Not Required Skill',
+  }],
+};
 
 const baseShift: Shift = {
   tenantId: 0,
   id: 1,
-  version: 0, 
-  startDateTime: moment("2018-07-01T09:00").toDate(),
-  endDateTime: moment("2018-07-01T17:00").toDate(),
-  spot: spot,
-  employee: employee,
+  version: 0,
+  startDateTime: moment('2018-07-01T09:00').toDate(),
+  endDateTime: moment('2018-07-01T17:00').toDate(),
+  spot,
+  employee,
   rotationEmployee: {
     ...employee,
     id: 7,
-    name: "Rotation Employee"
+    name: 'Rotation Employee',
   },
   pinnedByUser: false,
   indictmentScore: { hardScore: 0, mediumScore: 0, softScore: 0 },
@@ -373,14 +373,14 @@ const baseShift: Shift = {
   undesiredTimeslotForEmployeePenaltyList: [],
   rotationViolationPenaltyList: [],
   unassignedShiftPenaltyList: [],
-  contractMinutesViolationPenaltyList: []
+  contractMinutesViolationPenaltyList: [],
 };
 
 const baseProps = {
-  ...useTranslation("EditShiftModal"),
+  ...useTranslation('EditShiftModal'),
   shift: undefined,
   tReady: true,
   tenantId: 1,
   spotList: [spot],
-  employeeList: [employee]
-}
+  employeeList: [employee],
+};

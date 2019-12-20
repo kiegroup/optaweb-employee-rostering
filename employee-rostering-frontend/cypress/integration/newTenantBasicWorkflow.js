@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-function selectValue(selectPlaceholder, selectValue) {
+function selectValue(selectPlaceholder, value) {
   cy.get(`[placeholder="${selectPlaceholder}"]`).clear();
-  cy.get(`[placeholder="${selectPlaceholder}"]`).type(selectValue);
-  cy.get("button").contains(selectValue).last().click();
+  cy.get(`[placeholder="${selectPlaceholder}"]`).type(value);
+  cy.get('button').contains(value).last().click();
 }
 
 function changeToTenant(tenant) {
@@ -26,32 +26,32 @@ function changeToTenant(tenant) {
 }
 
 function gotoPage(page) {
-  cy.get("#nav-toggle").click();
+  cy.get('#nav-toggle').click();
   cy.get(`[href*="/${page}"]`).click();
-  cy.get("#nav-toggle").click();
+  cy.get('#nav-toggle').click();
 }
 
 function dragCreateShift(day, from, to) {
-  cy.contains("2:00 AM").then(firstTimeEle => {
-    cy.contains("4:00 AM").then(secondTimeEle => {
+  cy.contains('2:00 AM').then((firstTimeEle) => {
+    cy.contains('4:00 AM').then((secondTimeEle) => {
       // Apparently the difference between two labels is double the length of one timeslot
       const twoHourYDiff = (secondTimeEle[0].offsetTop - firstTimeEle[0].offsetTop) / 2;
-      const reference = Cypress.moment(`2018-01-01T00:00`)
+      const reference = Cypress.moment('2018-01-01T00:00');
       const fromDate = Cypress.moment(`2018-01-01T${from}`);
       const toDate = Cypress.moment(`2018-01-01T${to}`);
 
       // Add 10px, since the timeslots are slightly misaligned due to CSS
       const startLocation = (Cypress.moment.duration(fromDate.diff(reference)).asHours() / 2) * twoHourYDiff + 10;
       const endLocation = (Cypress.moment.duration(toDate.diff(reference)).asHours() / 2) * twoHourYDiff + 10;
-      cy.get(".rbc-events-container").eq(day).trigger('mousedown', { force: true, x: 100, y: startLocation });
-      cy.get(".rbc-events-container").eq(day).trigger('mousemove', { force: true, x: 100, y: endLocation });
-      cy.get(".rbc-events-container").eq(day).trigger('mouseup', { force: true, x: 100, y: endLocation });
+      cy.get('.rbc-events-container').eq(day).trigger('mousedown', { force: true, x: 100, y: startLocation });
+      cy.get('.rbc-events-container').eq(day).trigger('mousemove', { force: true, x: 100, y: endLocation });
+      cy.get('.rbc-events-container').eq(day).trigger('mouseup', { force: true, x: 100, y: endLocation });
     });
   });
 }
 
 function closeAlerts() {
-  cy.get(".pf-c-alert__action > button", { timeout: 120000 }).click({ multiple: true, force: true });
+  cy.get('.pf-c-alert__action > button', { timeout: 120000 }).click({ multiple: true, force: true });
 }
 
 describe('A new tenant can be created, who can have their own employees, spots, skills and shifts', () => {
@@ -72,68 +72,68 @@ describe('A new tenant can be created, who can have their own employees, spots, 
     // Create a tenant
     cy.get('[data-cy=settings]').click();
     cy.get('[data-cy=add-tenant]').click();
-    cy.get('[data-cy=name]').type("Test Tenant");
-    cy.get('[data-cy=schedule-start-date]').type("2018-01-01");
-    cy.get('[data-cy=draft-length]').type("7");
-    cy.get('[data-cy=publish-notice]').type("7");
+    cy.get('[data-cy=name]').type('Test Tenant');
+    cy.get('[data-cy=schedule-start-date]').type('2018-01-01');
+    cy.get('[data-cy=draft-length]').type('7');
+    cy.get('[data-cy=publish-notice]').type('7');
     // TODO: publish length is disabled/not supported by backend, uncomment when supported
     // (if ever)
     // cy.get('[data-cy=publish-length]').type("7");
-    cy.get('[data-cy=rotation-length]').type("7");
-    selectValue("Select a timezone...", "UTC");
+    cy.get('[data-cy=rotation-length]').type('7');
+    selectValue('Select a timezone...', 'UTC');
     cy.get('[data-cy=save]').click();
     closeAlerts();
 
-    changeToTenant("Test Tenant");
+    changeToTenant('Test Tenant');
 
     // Create a new skill
-    gotoPage("skills");
-    cy.get("button").contains("Add").click();
-    cy.get('[aria-label="Name"]').type("New Skill");
+    gotoPage('skills');
+    cy.get('button').contains('Add').click();
+    cy.get('[aria-label="Name"]').type('New Skill');
     cy.get('[aria-label="Save"]').click();
     closeAlerts();
 
     // Create a spot
-    gotoPage("spots");
-    cy.get("button").contains("Add").click();
-    cy.get('[aria-label="Name"]').type("Required Skill Spot");
-    selectValue("Select required skills...", "New Skill");
+    gotoPage('spots');
+    cy.get('button').contains('Add').click();
+    cy.get('[aria-label="Name"]').type('Required Skill Spot');
+    selectValue('Select required skills...', 'New Skill');
     cy.get('[aria-label="Save"]').click();
     closeAlerts();
 
     // Create a contract
-    gotoPage("contracts");
-    cy.get("button").contains("Add").click();
-    cy.get('[aria-label="Name"]').type("New Contract");
+    gotoPage('contracts');
+    cy.get('button').contains('Add').click();
+    cy.get('[aria-label="Name"]').type('New Contract');
     cy.get('[aria-label="Save"]').click();
     closeAlerts();
 
     // Create a employee
-    gotoPage("employees");
-    cy.get("button").contains("Add").click();
-    cy.get('[aria-label="Name"]').type("Employee with Skills");
-    selectValue("Select a contract...", "New Contract");
-    selectValue("Select skill proficiencies...", "New Skill");
+    gotoPage('employees');
+    cy.get('button').contains('Add').click();
+    cy.get('[aria-label="Name"]').type('Employee with Skills');
+    selectValue('Select a contract...', 'New Contract');
+    selectValue('Select skill proficiencies...', 'New Skill');
     cy.get('[aria-label="Save"]').click();
     closeAlerts();
 
     // Create a shifts
-    gotoPage("shift");
-    
+    gotoPage('shift');
+
     // Sometimes a shift is not created, so wait to make the test stable
     cy.wait(1500);
-    dragCreateShift(2, "00:00", "06:00");
+    dragCreateShift(2, '00:00', '06:00');
 
     // Schedule for 5 seconds
     cy.get('[aria-label="Actions"]').click();
-    cy.contains("Schedule").click();
+    cy.contains('Schedule').click();
     cy.wait(5000);
     closeAlerts();
     cy.get('[aria-label="Actions"]').click();
-    cy.contains("Terminate Early").click();
+    cy.contains('Terminate Early').click();
     closeAlerts();
 
     // Verify the shift is assigned to our created employee
-    cy.contains("Employee with Skills").should('exist');
+    cy.contains('Employee with Skills').should('exist');
   });
 });

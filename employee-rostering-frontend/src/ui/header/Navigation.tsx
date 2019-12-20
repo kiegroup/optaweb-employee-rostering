@@ -26,20 +26,20 @@ interface StateProps {
   tenantId: number;
 }
 
-const mapStateToProps = (state: AppState, ownProps: Pick<NavListProps, "variant">):
-StateProps & Pick<NavListProps, "variant"> => ({
+const mapStateToProps = (state: AppState, ownProps: Pick<NavListProps, 'variant'>):
+StateProps & Pick<NavListProps, 'variant'> => ({
   tenantId: state.tenantData.currentTenantId,
-  variant: ownProps.variant
+  variant: ownProps.variant,
 });
 
-export type NavigationProps = RouteComponentProps & StateProps & Pick<NavListProps, "variant">;
+export type NavigationProps = RouteComponentProps & StateProps & Pick<NavListProps, 'variant'>;
 
 export const Navigation = ({ variant, tenantId, location }: NavigationProps) => {
-  const { t } = useTranslation("Navigation");
+  const { t } = useTranslation('Navigation');
   return (
     <Nav aria-label="Nav">
       <NavList variant={variant}>
-        {['skills', 'spots', 'contracts', 'employees', 'shift', 'availability', 'rotation'].map(link => {
+        {['skills', 'spots', 'contracts', 'employees', 'shift', 'availability', 'rotation'].map((link) => {
           const itemId = link;
           const path = `/${tenantId}/${itemId}`;
           return (

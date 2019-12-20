@@ -13,42 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import Shift from './Shift';
-import ShiftView, { shiftToShiftView, shiftViewToDomainObjectView } from './ShiftView';
+import { Shift } from './Shift';
+import { shiftToShiftView, shiftViewToDomainObjectView, ShiftView } from './ShiftView';
 import DomainObjectView from './DomainObjectView';
 
 describe('ShiftView operations', () => {
-  it("shiftToShiftView should convert a Shift to a ShiftView", () => {
-    const startDateTime: Date = new Date("2019-07-16T16:00");
-    const endDateTime: Date = new Date("2019-07-17T01:00");
+  it('shiftToShiftView should convert a Shift to a ShiftView', () => {
+    const startDateTime: Date = new Date('2019-07-16T16:00');
+    const endDateTime: Date = new Date('2019-07-17T01:00');
 
     const shift: Shift = {
       tenantId: 0,
       id: 10,
       version: 2,
-      startDateTime: startDateTime,
-      endDateTime: endDateTime,
+      startDateTime,
+      endDateTime,
       spot: {
         tenantId: 0,
         id: 5,
         version: 0,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       employee: {
         tenantId: 0,
         id: 3,
         version: 0,
-        name: "Employee 1",
+        name: 'Employee 1',
         contract: {
           tenantId: 0,
           id: 1,
           version: 0,
-          name: "Contract",
+          name: 'Contract',
           maximumMinutesPerDay: null,
           maximumMinutesPerMonth: null,
           maximumMinutesPerWeek: null,
-          maximumMinutesPerYear: null
+          maximumMinutesPerYear: null,
 
         },
         skillProficiencySet: [],
@@ -57,33 +57,33 @@ describe('ShiftView operations', () => {
         tenantId: 0,
         id: 11,
         version: 0,
-        name: "Employee 2",
+        name: 'Employee 2',
         contract: {
           tenantId: 0,
           id: 1,
           version: 0,
-          name: "Contract",
+          name: 'Contract',
           maximumMinutesPerDay: null,
           maximumMinutesPerMonth: null,
           maximumMinutesPerWeek: null,
-          maximumMinutesPerYear: null
+          maximumMinutesPerYear: null,
 
         },
         skillProficiencySet: [],
       },
-      pinnedByUser: true
+      pinnedByUser: true,
     };
 
     const expectedShiftView: ShiftView = {
       tenantId: 0,
       id: 10,
       version: 2,
-      startDateTime: startDateTime,
-      endDateTime: endDateTime,
+      startDateTime,
+      endDateTime,
       spotId: 5,
       employeeId: 3,
       rotationEmployeeId: 11,
-      pinnedByUser: true
+      pinnedByUser: true,
     };
 
     let actualShiftView = shiftToShiftView(shift);
@@ -98,36 +98,35 @@ describe('ShiftView operations', () => {
     expectedShiftView.rotationEmployeeId = null;
     actualShiftView = shiftToShiftView(shift);
     expect(actualShiftView).toEqual(expectedShiftView);
-
   });
 
-  it("shiftViewToDomainObjectView should convert a ShiftView to a DomainObjectView of Shift", () => {
-    const startDateTime: Date = new Date("2019-07-16T16:00");
-    const endDateTime: Date = new Date("2019-07-17T01:00");
+  it('shiftViewToDomainObjectView should convert a ShiftView to a DomainObjectView of Shift', () => {
+    const startDateTime: Date = new Date('2019-07-16T16:00');
+    const endDateTime: Date = new Date('2019-07-17T01:00');
 
     const shiftView = {
       tenantId: 0,
       id: 10,
       version: 2,
-      startDateTime: startDateTime,
-      endDateTime: endDateTime,
+      startDateTime,
+      endDateTime,
       spotId: 5,
       employeeId: 3,
       rotationEmployeeId: 11,
-      pinnedByUser: true
+      pinnedByUser: true,
     };
 
     const expectedDomainObjectViewOfShift: DomainObjectView<Shift> = {
       tenantId: 0,
       id: 10,
       version: 2,
-      startDateTime: startDateTime,
-      endDateTime: endDateTime,
+      startDateTime,
+      endDateTime,
       spot: 5,
       employee: 3,
       rotationEmployee: 11,
-      pinnedByUser: true
-    }
+      pinnedByUser: true,
+    };
 
     const actualDomainObjectViewOfShift = shiftViewToDomainObjectView(shiftView);
     expect(actualDomainObjectViewOfShift).toEqual(expectedDomainObjectViewOfShift);

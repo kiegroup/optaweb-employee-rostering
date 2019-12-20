@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AppState } from '../types';
-import { employeeSelectors } from '../employee';
-import Shift from 'domain/Shift';
-import Spot from 'domain/Spot';
-import ShiftRosterView from 'domain/ShiftRosterView';
+import { Shift } from 'domain/Shift';
+import { Spot } from 'domain/Spot';
+import { ShiftRosterView } from 'domain/ShiftRosterView';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
-import Employee from 'domain/Employee';
-import AvailabilityRosterView from 'domain/AvailabilityRosterView';
+import { Employee } from 'domain/Employee';
+import { AvailabilityRosterView } from 'domain/AvailabilityRosterView';
 import { spotSelectors } from 'store/spot';
-import EmployeeAvailability from 'domain/EmployeeAvailability';
+import { EmployeeAvailability } from 'domain/EmployeeAvailability';
+import { employeeSelectors } from '../employee';
+import { AppState } from '../types';
 
 export function isShiftRosterLoading(state: AppState) {
   return state.spotList.isLoading || state.employeeList.isLoading || state.skillList.isLoading

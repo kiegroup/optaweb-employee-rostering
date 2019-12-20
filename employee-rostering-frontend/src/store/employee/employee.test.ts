@@ -14,36 +14,38 @@
  * limitations under the License.
  */
 
+import { alert } from 'store/alert';
+import {
+  createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement,
+} from 'util/ImmutableCollectionOperations';
+import { onGet, onPost, onDelete, resetRestClientMock } from 'store/rest/RestTestUtils';
+import { Employee } from 'domain/Employee';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import { alert } from 'store/alert';
 import reducer, { employeeSelectors, employeeOperations } from './index';
-import { createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete, resetRestClientMock} from 'store/rest/RestTestUtils';
-import Employee from 'domain/Employee';
 
 describe('Employee operations', () => {
   it('should dispatch actions and call client', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    
+
     const mockEmployee: Employee = {
-      tenantId: tenantId,
+      tenantId,
       id: 0,
       version: 0,
-      name: "Employee 1",
+      name: 'Employee 1',
       skillProficiencySet: [],
       contract: {
-        tenantId: tenantId,
+        tenantId,
         id: 1,
-        name: "Contract",
+        name: 'Contract',
         maximumMinutesPerDay: null,
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null
-      }
+        maximumMinutesPerYear: null,
+      },
     };
 
     const mockEmployeeList: Employee[] = [mockEmployee];
@@ -53,7 +55,7 @@ describe('Employee operations', () => {
     expect(store.getActions()).toEqual([
       actions.setIsEmployeeListLoading(true),
       actions.refreshEmployeeList(mockEmployeeList),
-      actions.setIsEmployeeListLoading(false)
+      actions.setIsEmployeeListLoading(false),
     ]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/`);
@@ -65,8 +67,8 @@ describe('Employee operations', () => {
     onDelete(`/tenant/${tenantId}/employee/${employeeToDelete.id}`, true);
     await store.dispatch(employeeOperations.removeEmployee(employeeToDelete));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("removeEmployee", { name: employeeToDelete.name }),
-      actions.removeEmployee(employeeToDelete)
+      alert.showSuccessMessage('removeEmployee', { name: employeeToDelete.name }),
+      actions.removeEmployee(employeeToDelete),
     ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/${employeeToDelete.id}`);
@@ -77,7 +79,7 @@ describe('Employee operations', () => {
     onDelete(`/tenant/${tenantId}/employee/${employeeToDelete.id}`, false);
     await store.dispatch(employeeOperations.removeEmployee(employeeToDelete));
     expect(store.getActions()).toEqual([
-      alert.showErrorMessage("removeEmployeeError", { name: employeeToDelete.name })
+      alert.showErrorMessage('removeEmployeeError', { name: employeeToDelete.name }),
     ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/${employeeToDelete.id}`);
@@ -85,13 +87,13 @@ describe('Employee operations', () => {
     store.clearActions();
     resetRestClientMock(client);
 
-    const employeeToAdd: Employee = {...mockEmployee, id: undefined, version: undefined};
-    const employeeWithUpdatedId: Employee = {...employeeToAdd, id: 4, version: 0};
+    const employeeToAdd: Employee = { ...mockEmployee, id: undefined, version: undefined };
+    const employeeWithUpdatedId: Employee = { ...employeeToAdd, id: 4, version: 0 };
     onPost(`/tenant/${tenantId}/employee/add`, employeeToAdd, employeeWithUpdatedId);
     await store.dispatch(employeeOperations.addEmployee(employeeToAdd));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("addEmployee", { name: employeeToAdd.name }),
-      actions.addEmployee(employeeWithUpdatedId)
+      alert.showSuccessMessage('addEmployee', { name: employeeToAdd.name }),
+      actions.addEmployee(employeeWithUpdatedId),
     ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/add`, employeeToAdd);
@@ -100,12 +102,12 @@ describe('Employee operations', () => {
     resetRestClientMock(client);
 
     const employeeToUpdate: Employee = mockEmployee;
-    const employeeWithUpdatedVersion: Employee = {...mockEmployee, version: 1};
+    const employeeWithUpdatedVersion: Employee = { ...mockEmployee, version: 1 };
     onPost(`/tenant/${tenantId}/employee/update`, employeeToUpdate, employeeWithUpdatedVersion);
     await store.dispatch(employeeOperations.updateEmployee(employeeToUpdate));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("updateEmployee", { id: employeeToUpdate.id }),
-      actions.updateEmployee(employeeWithUpdatedVersion)
+      alert.showSuccessMessage('updateEmployee', { id: employeeToUpdate.id }),
+      actions.updateEmployee(employeeWithUpdatedVersion),
     ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/employee/update`, employeeToUpdate);
@@ -117,84 +119,79 @@ describe('Employee reducers', () => {
     tenantId: 0,
     id: 4,
     version: 0,
-    name: "Employee 1",
+    name: 'Employee 1',
     skillProficiencySet: [],
     contract: {
       tenantId: 0,
       id: 2,
-      name: "Contract",
+      name: 'Contract',
       maximumMinutesPerDay: null,
       maximumMinutesPerWeek: null,
       maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null
-    }
+      maximumMinutesPerYear: null,
+    },
   };
   const updatedEmployee: Employee = {
     tenantId: 0,
     id: 1,
     version: 0,
-    name: "Updated Employee 1",
+    name: 'Updated Employee 1',
     skillProficiencySet: [],
     contract: {
       tenantId: 0,
       id: 1,
-      name: "Contract",
+      name: 'Contract',
       maximumMinutesPerDay: null,
       maximumMinutesPerWeek: null,
       maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null
-    }
+      maximumMinutesPerYear: null,
+    },
   };
   const deletedEmployee: Employee = {
     tenantId: 0,
     id: 1,
     version: 0,
-    name: "Employee 1",
+    name: 'Employee 1',
     skillProficiencySet: [],
     contract: {
       tenantId: 0,
       id: 1,
-      name: "Contract",
+      name: 'Contract',
       maximumMinutesPerDay: null,
       maximumMinutesPerWeek: null,
       maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null
-    }
+      maximumMinutesPerYear: null,
+    },
   };
   it('set is loading', () => {
     expect(
-      reducer(state.employeeList, actions.setIsEmployeeListLoading(true))
+      reducer(state.employeeList, actions.setIsEmployeeListLoading(true)),
     ).toEqual({ ...state.employeeList,
-      isLoading: true
-    })
+      isLoading: true });
   });
   it('add employee', () => {
     expect(
-      reducer(state.employeeList, actions.addEmployee(addedEmployee))
+      reducer(state.employeeList, actions.addEmployee(addedEmployee)),
     ).toEqual({ ...state.employeeList,
-      employeeMapById: mapWithElement(state.employeeList.employeeMapById, addedEmployee)
-    })
+      employeeMapById: mapWithElement(state.employeeList.employeeMapById, addedEmployee) });
   });
   it('remove employee', () => {
     expect(
       reducer(state.employeeList, actions.removeEmployee(deletedEmployee)),
-    ).toEqual({ ...state.employeeList, 
-      employeeMapById: mapWithoutElement(state.employeeList.employeeMapById, deletedEmployee)
-    })
+    ).toEqual({ ...state.employeeList,
+      employeeMapById: mapWithoutElement(state.employeeList.employeeMapById, deletedEmployee) });
   });
   it('update employee', () => {
     expect(
       reducer(state.employeeList, actions.updateEmployee(updatedEmployee)),
     ).toEqual({ ...state.employeeList,
-      employeeMapById: mapWithUpdatedElement(state.employeeList.employeeMapById, updatedEmployee)
-    })
+      employeeMapById: mapWithUpdatedElement(state.employeeList.employeeMapById, updatedEmployee) });
   });
   it('refresh employee list', () => {
     expect(
       reducer(state.employeeList, actions.refreshEmployeeList([addedEmployee])),
     ).toEqual({ ...state.employeeList,
-      employeeMapById: createIdMapFromList([addedEmployee])
-    });
+      employeeMapById: createIdMapFromList([addedEmployee]) });
   });
 });
 
@@ -202,18 +199,15 @@ describe('Employee selectors', () => {
   it('should throw an error if employee list, contract list or spot list is loading', () => {
     expect(() => employeeSelectors.getEmployeeById({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
+      skillList: { ...state.skillList, isLoading: true },
     }, 1234)).toThrow();
     expect(() => employeeSelectors.getEmployeeById({
       ...state,
-      contractList: { 
-        ...state.contractList, isLoading: true }
+      contractList: { ...state.contractList, isLoading: true },
     }, 1234)).toThrow();
     expect(() => employeeSelectors.getEmployeeById({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true }
+      spotList: { ...state.spotList, isLoading: true },
     }, 1234)).toThrow();
   });
 
@@ -223,45 +217,42 @@ describe('Employee selectors', () => {
       tenantId: 0,
       id: 1,
       version: 0,
-      name: "Employee 1",
+      name: 'Employee 1',
       skillProficiencySet: [
         {
           tenantId: 0,
           id: 3,
           version: 0,
-          name: "Skill 3"
-        }
+          name: 'Skill 3',
+        },
       ],
       contract: {
         tenantId: 0,
         id: 1,
         version: 0,
-        name: "Contract 1",
+        name: 'Contract 1',
         maximumMinutesPerDay: 50,
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: 10,
-        maximumMinutesPerYear: null
-      }
+        maximumMinutesPerYear: null,
+      },
     });
   });
 
   it('should return an empty list if employee list, skill list or contract list is loading', () => {
     let employeeList = employeeSelectors.getEmployeeList({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
+      skillList: { ...state.skillList, isLoading: true },
     });
     expect(employeeList).toEqual([]);
     employeeList = employeeSelectors.getEmployeeList({
       ...state,
-      contractList: { 
-        ...state.contractList, isLoading: true }
+      contractList: { ...state.contractList, isLoading: true },
     });
     expect(employeeList).toEqual([]);
     employeeList = employeeSelectors.getEmployeeList({
       ...state,
-      employeeList: { 
-        ...state.employeeList, isLoading: true }
+      employeeList: { ...state.employeeList, isLoading: true },
     });
     expect(employeeList).toEqual([]);
   });
@@ -273,43 +264,43 @@ describe('Employee selectors', () => {
         tenantId: 0,
         id: 1,
         version: 0,
-        name: "Employee 1",
+        name: 'Employee 1',
         skillProficiencySet: [
           {
             tenantId: 0,
             id: 3,
             version: 0,
-            name: "Skill 3"
-          }
+            name: 'Skill 3',
+          },
         ],
         contract: {
           tenantId: 0,
           id: 1,
           version: 0,
-          name: "Contract 1",
+          name: 'Contract 1',
           maximumMinutesPerDay: 50,
           maximumMinutesPerWeek: null,
           maximumMinutesPerMonth: 10,
-          maximumMinutesPerYear: null
-        }
+          maximumMinutesPerYear: null,
+        },
       },
       {
         tenantId: 0,
         id: 2,
         version: 0,
-        name: "Employee 2",
+        name: 'Employee 2',
         skillProficiencySet: [],
         contract: {
           tenantId: 0,
           id: 1,
           version: 0,
-          name: "Contract 1",
+          name: 'Contract 1',
           maximumMinutesPerDay: 50,
           maximumMinutesPerWeek: null,
           maximumMinutesPerMonth: 10,
-          maximumMinutesPerYear: null
-        }
-      }
+          maximumMinutesPerYear: null,
+        },
+      },
     ]));
     expect(employeeList.length).toEqual(2);
   });
@@ -319,7 +310,7 @@ const state: AppState = {
   tenantData: {
     currentTenantId: 0,
     tenantList: [],
-    timezoneList: ["America/Toronto"]
+    timezoneList: ['America/Toronto'],
   },
   employeeList: {
     isLoading: false,
@@ -328,23 +319,23 @@ const state: AppState = {
         tenantId: 0,
         id: 1,
         version: 0,
-        name: "Employee 1",
+        name: 'Employee 1',
         skillProficiencySet: [3],
-        contract: 1
+        contract: 1,
       }],
       [2, {
         tenantId: 0,
         id: 2,
         version: 0,
-        name: "Employee 2",
+        name: 'Employee 2',
         skillProficiencySet: [],
-        contract: 1
-      }]
-    ])
+        contract: 1,
+      }],
+    ]),
   },
   spotList: {
     isLoading: false,
-    spotMapById: new Map()
+    spotMapById: new Map(),
   },
   contractList: {
     isLoading: false,
@@ -353,13 +344,13 @@ const state: AppState = {
         tenantId: 0,
         id: 1,
         version: 0,
-        name: "Contract 1",
+        name: 'Contract 1',
         maximumMinutesPerDay: 50,
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: 10,
-        maximumMinutesPerYear: null
-      }]
-    ])
+        maximumMinutesPerYear: null,
+      }],
+    ]),
   },
   skillList: {
     isLoading: false,
@@ -368,31 +359,31 @@ const state: AppState = {
         tenantId: 0,
         id: 3,
         version: 0,
-        name: "Skill 3"
-      }]
-    ])
+        name: 'Skill 3',
+      }],
+    ]),
   },
   shiftTemplateList: {
     isLoading: false,
-    shiftTemplateMapById: new Map()
+    shiftTemplateMapById: new Map(),
   },
   rosterState: {
     isLoading: true,
-    rosterState: null
+    rosterState: null,
   },
   shiftRoster: {
     isLoading: true,
-    shiftRosterView: null
+    shiftRosterView: null,
   },
   availabilityRoster: {
     isLoading: true,
-    availabilityRosterView: null
+    availabilityRosterView: null,
   },
   solverState: {
-    isSolving: false
+    isSolving: false,
   },
   alerts: {
     alertList: [],
-    idGeneratorIndex: 0
-  }
+    idGeneratorIndex: 0,
+  },
 };

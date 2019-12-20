@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import ShiftView from './ShiftView';
-import RosterView from './RosterView';
 import { ObjectNumberMap } from 'types';
+import { ShiftView } from './ShiftView';
+import { RosterView } from './RosterView';
 
-export default interface ShiftRosterView extends RosterView {
+export interface ShiftRosterView extends RosterView {
   spotIdToShiftViewListMap: ObjectNumberMap<ShiftView[]>;
 }

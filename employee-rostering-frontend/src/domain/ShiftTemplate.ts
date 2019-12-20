@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainObject from './DomainObject';
-import Employee from './Employee';
-import Spot from './Spot';
 import { Duration } from 'moment';
+import { DomainObject } from './DomainObject';
+import { Employee } from './Employee';
+import { Spot } from './Spot';
 
-export default interface ShiftTemplate extends DomainObject {
+export interface ShiftTemplate extends DomainObject {
   spot: Spot;
   rotationEmployee: Employee | null;
   shiftTemplateDuration: Duration;

@@ -17,11 +17,11 @@
 import * as React from 'react';
 import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
 import { skillSelectors, skillOperations } from 'store/skill';
-import Skill from 'domain/Skill';
+import { Skill } from 'domain/Skill';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import { Predicate, Sorter, ReadonlyPartial } from "types";
+import { Predicate, Sorter, ReadonlyPartial } from 'types';
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
@@ -33,11 +33,11 @@ interface StateProps extends DataTableProps<Skill> {
 
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   ...ownProps,
-  title: ownProps.t("skills"),
-  columnTitles: [ownProps.t("name")],
+  title: ownProps.t('skills'),
+  columnTitles: [ownProps.t('name')],
   tableData: skillSelectors.getSkillList(state),
-  tenantId: state.tenantData.currentTenantId
-}); 
+  tenantId: state.tenantData.currentTenantId,
+});
 
 export interface DispatchProps {
   addSkill: typeof skillOperations.addSkill;
@@ -48,11 +48,14 @@ export interface DispatchProps {
 const mapDispatchToProps: DispatchProps = {
   addSkill: skillOperations.addSkill,
   updateSkill: skillOperations.updateSkill,
-  removeSkill: skillOperations.removeSkill
+  removeSkill: skillOperations.removeSkill,
 };
 
 export type Props = StateProps & DispatchProps & WithTranslation;
 
+
+// TODO: Refactor DataTable to use props instead of methods
+/* eslint-disable class-methods-use-this */
 export class SkillsPage extends DataTable<Skill, Props> {
   constructor(props: Props) {
     super(props);
@@ -76,11 +79,11 @@ export class SkillsPage extends DataTable<Skill, Props> {
         name="name"
         aria-label="Name"
         defaultValue={data.name}
-        onChange={(value) => setProperty("name", value)}
-      />
+        onChange={value => setProperty('name', value)}
+      />,
     ];
   }
-  
+
   isDataComplete(data: ReadonlyPartial<Skill>): data is Skill {
     return data.name !== undefined;
   }
@@ -90,7 +93,7 @@ export class SkillsPage extends DataTable<Skill, Props> {
   }
 
   getFilter(): (filter: string) => Predicate<Skill> {
-    return stringFilter((skill) => skill.name);
+    return stringFilter(skill => skill.name);
   }
 
   getSorters(): (Sorter<Skill> | null)[] {
@@ -100,9 +103,9 @@ export class SkillsPage extends DataTable<Skill, Props> {
   updateData(data: Skill): void {
     this.props.updateSkill(data);
   }
-  
+
   addData(data: Skill): void {
-    this.props.addSkill({...data, tenantId: this.props.tenantId});
+    this.props.addSkill({ ...data, tenantId: this.props.tenantId });
   }
 
   removeData(data: Skill): void {

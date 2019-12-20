@@ -14,9 +14,23 @@
  * limitations under the License.
  */
 
-import { ThunkCommandFactory, AppState } from '../types';
-import * as actions from './actions';
-import * as operations from './operations'; // Hack used for mocking
+import { RosterState } from 'domain/RosterState';
+import { ShiftRosterView } from 'domain/ShiftRosterView';
+import { PaginationData, ObjectNumberMap, mapObjectNumberMap } from 'types';
+import moment from 'moment';
+import { Spot } from 'domain/Spot';
+import { alert } from 'store/alert';
+import { ThunkDispatch } from 'redux-thunk';
+import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/KindaShiftView';
+import { KindaEmployeeAvailabilityView, kindaAvailabilityViewAdapter } from 'store/availability/operations';
+import RestServiceClient from 'store/rest';
+import { AddAlertAction } from 'store/alert/types';
+import { Employee } from 'domain/Employee';
+import { AvailabilityRosterView } from 'domain/AvailabilityRosterView';
+import { employeeSelectors } from 'store/employee';
+import { spotSelectors } from 'store/spot';
+import { serializeLocalDate } from 'store/rest/DataSerialization';
+import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
 import {
   SetRosterStateIsLoadingAction, SetRosterStateAction,
   SetShiftRosterIsLoadingAction, SetShiftRosterViewAction, SolveRosterAction,
@@ -24,23 +38,9 @@ import {
   SetAvailabilityRosterIsLoadingAction, SetAvailabilityRosterViewAction, ShiftRosterViewAction,
   AvailabilityRosterViewAction,
 } from './types';
-import RosterState from 'domain/RosterState';
-import ShiftRosterView from 'domain/ShiftRosterView';
-import { PaginationData, ObjectNumberMap, mapObjectNumberMap } from 'types';
-import moment from 'moment';
-import Spot from 'domain/Spot';
-import { alert } from 'store/alert';
-import { ThunkDispatch } from 'redux-thunk';
-import { KindaShiftView, kindaShiftViewAdapter } from 'store/shift/KindaShiftView';
-import { KindaEmployeeAvailabilityView, kindaAvailabilityViewAdapter } from 'store/availability/operations';
-import RestServiceClient from 'store/rest';
-import { AddAlertAction } from 'store/alert/types';
-import Employee from 'domain/Employee';
-import AvailabilityRosterView from 'domain/AvailabilityRosterView';
-import { employeeSelectors } from 'store/employee';
-import { spotSelectors } from 'store/spot';
-import { serializeLocalDate  } from 'store/rest/DataSerialization';
-import { getHardMediumSoftScoreFromString } from 'domain/HardMediumSoftScore';
+import * as operations from './operations'; // Hack used for mocking
+import * as actions from './actions';
+import { ThunkCommandFactory, AppState } from '../types';
 
 export interface RosterSliceInfo {
   fromDate: Date;
@@ -143,7 +143,7 @@ ThunkCommandFactory<void, ShiftRosterViewAction> = () => (dispatch, state) => {
   } else {
     dispatch(actions.setShiftRosterIsLoading(false));
   }
-}
+};
 
 export const getInitialAvailabilityRoster:
 ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => (dispatch, state) => {
@@ -166,7 +166,7 @@ ThunkCommandFactory<void, AvailabilityRosterViewAction> = () => (dispatch, state
   } else {
     dispatch(actions.setAvailabilityRosterIsLoading(false));
   }
-}
+};
 
 export const refreshShiftRoster:
 ThunkCommandFactory<void, SetShiftRosterIsLoadingAction |
@@ -174,7 +174,7 @@ SetShiftRosterViewAction> = () => (dispatch) => {
   if (lastCalledShiftRosterArgs !== null && lastCalledShiftRoster !== null) {
     dispatch(lastCalledShiftRoster(lastCalledShiftRosterArgs));
   }
-}
+};
 
 export const refreshAvailabilityRoster:
 ThunkCommandFactory<void, SetAvailabilityRosterIsLoadingAction |
@@ -182,7 +182,7 @@ SetAvailabilityRosterViewAction> = () => (dispatch) => {
   if (lastCalledAvailabilityRosterArgs !== null && lastCalledAvailabilityRoster !== null) {
     dispatch(lastCalledAvailabilityRoster(lastCalledAvailabilityRosterArgs));
   }
-}
+};
 
 export const getRosterState:
 ThunkCommandFactory<void, SetRosterStateIsLoadingAction | SetRosterStateAction> = () => (dispatch, state, client) => {
@@ -215,7 +215,7 @@ function convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView: KindaS
     ...newShiftRosterView,
     spotIdToShiftViewListMap: mapObjectNumberMap(newShiftRosterView.spotIdToShiftViewListMap,
       shiftViewList => shiftViewList.map(kindaShiftViewAdapter)),
-    score: getHardMediumSoftScoreFromString(newShiftRosterView.score)
+    score: getHardMediumSoftScoreFromString(newShiftRosterView.score),
   };
 }
 
@@ -234,7 +234,7 @@ function convertKindaAvailabilityRosterViewToAvailabilityRosterView(
       ),
     ),
     unassignedShiftViewList: newAvailabilityRosterView.unassignedShiftViewList.map(kindaShiftViewAdapter),
-    score: getHardMediumSoftScoreFromString(newAvailabilityRosterView.score)
+    score: getHardMediumSoftScoreFromString(newAvailabilityRosterView.score),
   };
 }
 
@@ -337,4 +337,4 @@ SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params
     lastCalledAvailabilityRosterArgs = params;
     dispatch(actions.setAvailabilityRosterIsLoading(false));
   });
-}
+};

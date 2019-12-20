@@ -17,8 +17,6 @@
 import * as tenantOperations from './operations';
 import reducer from './reducers';
 
-export {
-  tenantOperations,
-};
+export { tenantOperations };
 
 export default reducer;

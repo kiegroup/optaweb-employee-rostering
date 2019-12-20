@@ -23,14 +23,14 @@ import { AppState } from 'store/types';
 
 const typeJsonRegex = new RegExp('application/json.*');
 export default class RestServiceClient {
-
   restClient: AxiosInstance;
+
   dispatch: ThunkDispatch<AppState, any, any> | null;
 
   constructor(baseURL: string, axios: AxiosStatic) {
     this.restClient = axios.create({
-      baseURL: baseURL,
-      validateStatus: () => true
+      baseURL,
+      validateStatus: () => true,
     });
     this.dispatch = null;
     this.handleResponse = this.handleResponse.bind(this);
@@ -58,20 +58,18 @@ export default class RestServiceClient {
   }
 
   handleResponse<T>(res: AxiosResponse<T>): Promise<T> {
-    if (200 <= res.status && res.status <= 300) {
+    if (res.status >= 200 && res.status <= 300) {
       return Promise.resolve(res.data);
     }
-    else if (this.dispatch !== null) {
-      if (typeJsonRegex.test(res.headers["content-type"])) {
-        this.dispatch(alert.showServerError(res.data as unknown as ServerSideExceptionInfo & BasicObject))
-      }
-      else {
+    if (this.dispatch !== null) {
+      if (typeJsonRegex.test(res.headers['content-type'])) {
+        this.dispatch(alert.showServerError(res.data as unknown as ServerSideExceptionInfo & BasicObject));
+      } else {
         this.dispatch(alert.showServerErrorMessage(res.statusText));
       }
       return Promise.reject(res.status);
     }
-    else {
-      throw Error("Dispatch was not passed to RestServiceClient");
-    }
+
+    throw Error('Dispatch was not passed to RestServiceClient');
   }
 }

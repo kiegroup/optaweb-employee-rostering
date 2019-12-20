@@ -16,14 +16,14 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import { ToolbarComponent, Props } from './Toolbar';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { ToolbarComponent, Props } from './Toolbar';
 
 describe('Toolbar Component', () => {
   beforeAll(() => {
-    process.env.REACT_APP_BACKEND_URL = "backend";
+    process.env.REACT_APP_BACKEND_URL = 'backend';
   });
-  
+
   it('should render correctly with no tenants', () => {
     const toolbarComponent = shallow(<ToolbarComponent {...noTenants} />);
     expect(toJson(toolbarComponent)).toMatchSnapshot();
@@ -56,9 +56,8 @@ describe('Toolbar Component', () => {
     const toolbarComponent = shallow(<ToolbarComponent {...twoTenants} />);
     toolbarComponent.find('[aria-label="Settings"]').simulate('click');
     expect(twoTenants.history.push).toBeCalled();
-    expect(twoTenants.history.push).toBeCalledWith("/admin");
+    expect(twoTenants.history.push).toBeCalledWith('/admin');
   });
-  
 });
 
 const noTenants: Props = {
@@ -66,7 +65,7 @@ const noTenants: Props = {
   currentTenantId: 0,
   refreshTenantList: jest.fn(),
   changeTenant: jest.fn(),
-  ...getRouterProps("/toolbar", {})
+  ...getRouterProps('/toolbar', {}),
 };
 
 const twoTenants: Props = {
@@ -74,16 +73,16 @@ const twoTenants: Props = {
     {
       id: 1,
       version: 0,
-      name: "Tenant 1"
+      name: 'Tenant 1',
     },
     {
       id: 2,
       version: 0,
-      name: "Tenant 2"
-    }
+      name: 'Tenant 2',
+    },
   ],
   currentTenantId: 2,
   refreshTenantList: jest.fn(),
   changeTenant: jest.fn(),
-  ...getRouterProps("/toolbar", {})
+  ...getRouterProps('/toolbar', {}),
 };

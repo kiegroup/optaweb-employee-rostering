@@ -16,19 +16,19 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import Spot from 'domain/Spot';
-import Employee from 'domain/Employee';
-import Shift from 'domain/Shift';
-import { ShiftRosterPage, Props, ShiftRosterUrlProps } from './ShiftRosterPage';
-import RosterState from 'domain/RosterState';
+import { Spot } from 'domain/Spot';
+import { Employee } from 'domain/Employee';
+import { Shift } from 'domain/Shift';
+import { RosterState } from 'domain/RosterState';
 import moment from 'moment-timezone';
-import "moment/locale/en-ca";
-import { getShiftColor } from './ShiftEvent';
+import 'moment/locale/en-ca';
 import color from 'color';
 import { useTranslation } from 'react-i18next';
 import Actions from 'ui/components/Actions';
 import Schedule from 'ui/components/calendar/Schedule';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { getShiftColor } from './ShiftEvent';
+import { ShiftRosterPage, Props, ShiftRosterUrlProps } from './ShiftRosterPage';
 
 describe('Shift Roster Page', () => {
   beforeEach(() => {
@@ -66,7 +66,7 @@ describe('Shift Roster Page', () => {
       {...baseProps}
     />);
     shiftRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=createShift)")
+      .filter(a => a.name === 'Trans(i18nKey=createShift)')
       .forEach(a => a.action());
     expect(toJson(shiftRosterPage)).toMatchSnapshot();
   });
@@ -78,7 +78,7 @@ describe('Shift Roster Page', () => {
       id: undefined,
       version: undefined,
       startDateTime: startDate,
-      endDateTime: endDate
+      endDateTime: endDate,
     };
     shiftRosterPage.addShift(newShift);
     expect(baseProps.addShift).toBeCalled();
@@ -90,7 +90,7 @@ describe('Shift Roster Page', () => {
     const updatedShift: Shift = {
       ...shift,
       startDateTime: startDate,
-      endDateTime: endDate
+      endDateTime: endDate,
     };
     shiftRosterPage.updateShift(updatedShift);
     expect(baseProps.updateShift).toBeCalled();
@@ -111,23 +111,23 @@ describe('Shift Roster Page', () => {
       shownSpotList={[]}
       spotIdToShiftListMap={new Map()}
     />);
-    shallow((shiftRosterPage.find('Trans').prop('components') as any)[2]).simulate("click");
+    shallow((shiftRosterPage.find('Trans').prop('components') as any)[2]).simulate('click');
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith("/0/spots");
+    expect(baseProps.history.push).toBeCalledWith('/0/spots');
   });
 
   it('should change the week when the user change the week', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
-    shiftRosterPage.find('WeekPicker[aria-label="Select Week to View"]').simulate("change", newDateStart, newDateEnd);
+    const newDateStart = moment(startDate).add(7, 'days').toDate();
+    const newDateEnd = moment(endDate).add(7, 'days').toDate();
+    shiftRosterPage.find('WeekPicker[aria-label="Select Week to View"]').simulate('change', newDateStart, newDateEnd);
     expect(baseProps.getShiftRosterFor).toBeCalled();
     expect(baseProps.getShiftRosterFor).toBeCalledWith({
       fromDate: newDateStart,
       toDate: newDateEnd,
-      spotList: baseProps.shownSpotList
+      spotList: baseProps.shownSpotList,
     });
   });
 
@@ -135,12 +135,12 @@ describe('Shift Roster Page', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    shiftRosterPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate("change", newSpot);
+    shiftRosterPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate('change', newSpot);
     expect(baseProps.getShiftRosterFor).toBeCalled();
     expect(baseProps.getShiftRosterFor).toBeCalledWith({
       fromDate: baseProps.startDate,
       toDate: baseProps.endDate,
-      spotList: [newSpot]
+      spotList: [newSpot],
     });
   });
 
@@ -149,7 +149,7 @@ describe('Shift Roster Page', () => {
       {...baseProps}
     />);
     shiftRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=publish)")
+      .filter(a => a.name === 'Trans(i18nKey=publish)')
       .forEach(a => a.action());
     expect(baseProps.publishRoster).toBeCalled();
   });
@@ -159,7 +159,7 @@ describe('Shift Roster Page', () => {
       {...baseProps}
     />);
     shiftRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=schedule)")
+      .filter(a => a.name === 'Trans(i18nKey=schedule)')
       .forEach(a => a.action());
     expect(baseProps.solveRoster).toBeCalled();
   });
@@ -170,7 +170,7 @@ describe('Shift Roster Page', () => {
       isSolving
     />);
     shiftRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=terminateEarly)")
+      .filter(a => a.name === 'Trans(i18nKey=terminateEarly)')
       .forEach(a => a.action());
     expect(baseProps.terminateSolvingRosterEarly).toBeCalled();
   });
@@ -180,11 +180,11 @@ describe('Shift Roster Page', () => {
       {...baseProps}
     />);
     shiftRosterPage.find(Actions).prop('actions')
-      .filter(a => a.name === "Trans(i18nKey=refresh)")
+      .filter(a => a.name === 'Trans(i18nKey=refresh)')
       .forEach(a => a.action());
     expect(baseProps.refreshShiftRoster).toBeCalled();
     expect(baseProps.showInfoMessage).toBeCalled();
-    expect(baseProps.showInfoMessage).toBeCalledWith("shiftRosterRefresh");
+    expect(baseProps.showInfoMessage).toBeCalledWith('shiftRosterRefresh');
   });
 
   it('call deleteShift when the EditShiftModal delete a shift', () => {
@@ -193,12 +193,12 @@ describe('Shift Roster Page', () => {
     />);
     shiftRosterPage.setState({
       selectedShift: shift,
-      isCreatingOrEditingShift: true
+      isCreatingOrEditingShift: true,
     });
-    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate("delete", shift);
+    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate('delete', shift);
     expect(baseProps.removeShift).toBeCalled();
     expect(baseProps.removeShift).toBeCalledWith(shift);
-    expect(shiftRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
+    expect(shiftRosterPage.state('isCreatingOrEditingShift')).toEqual(false);
   });
 
   it('call addShift when the EditShiftModal add a new shift', () => {
@@ -206,19 +206,19 @@ describe('Shift Roster Page', () => {
       {...baseProps}
     />);
     shiftRosterPage.setState({
-      isCreatingOrEditingShift: true
+      isCreatingOrEditingShift: true,
     });
     const newShift: Shift = {
       ...shift,
       id: undefined,
       version: undefined,
       startDateTime: startDate,
-      endDateTime: endDate
+      endDateTime: endDate,
     };
-    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate("save", newShift);
+    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate('save', newShift);
     expect(baseProps.addShift).toBeCalled();
     expect(baseProps.addShift).toBeCalledWith(newShift);
-    expect(shiftRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
+    expect(shiftRosterPage.state('isCreatingOrEditingShift')).toEqual(false);
   });
 
   it('call updateShift when the EditShiftModal updates a shift', () => {
@@ -227,17 +227,17 @@ describe('Shift Roster Page', () => {
     />);
     shiftRosterPage.setState({
       selectedShift: shift,
-      isCreatingOrEditingShift: true
+      isCreatingOrEditingShift: true,
     });
     const newShift: Shift = {
       ...shift,
       startDateTime: startDate,
-      endDateTime: endDate
+      endDateTime: endDate,
     };
-    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate("save", newShift);
+    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate('save', newShift);
     expect(baseProps.updateShift).toBeCalled();
     expect(baseProps.updateShift).toBeCalledWith(newShift);
-    expect(shiftRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
+    expect(shiftRosterPage.state('isCreatingOrEditingShift')).toEqual(false);
   });
 
   it('should set isEditingOrCreatingShift to false when closed', () => {
@@ -245,19 +245,19 @@ describe('Shift Roster Page', () => {
       {...baseProps}
     />);
     shiftRosterPage.setState({
-      isCreatingOrEditingShift: true
+      isCreatingOrEditingShift: true,
     });
-    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate("close");
-    expect(shiftRosterPage.state("isCreatingOrEditingShift")).toEqual(false);
+    shiftRosterPage.find('[aria-label="Edit Shift"]').simulate('close');
+    expect(shiftRosterPage.state('isCreatingOrEditingShift')).toEqual(false);
   });
 
   it('should call addShift when a timeslot is selected', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
-    shiftRosterPage.find(Schedule).simulate("addEvent", newDateStart,
+    const newDateStart = moment(startDate).add(7, 'days').toDate();
+    const newDateEnd = moment(endDate).add(7, 'days').toDate();
+    shiftRosterPage.find(Schedule).simulate('addEvent', newDateStart,
       newDateEnd);
 
     expect(baseProps.addShift).toBeCalled();
@@ -265,20 +265,20 @@ describe('Shift Roster Page', () => {
       tenantId: spot.tenantId,
       startDateTime: newDateStart,
       endDateTime: newDateEnd,
-      spot: spot,
+      spot,
       employee: null,
       rotationEmployee: null,
-      pinnedByUser: false
+      pinnedByUser: false,
     });
   });
-  
+
   it('should call updateShift when an event is updated', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    const newDateStart = moment(startDate).add(7, "days").toDate();
-    const newDateEnd = moment(endDate).add(7, "days").toDate();
-    shiftRosterPage.find(Schedule).simulate("updateEvent", shift, newDateStart,
+    const newDateStart = moment(startDate).add(7, 'days').toDate();
+    const newDateEnd = moment(endDate).add(7, 'days').toDate();
+    shiftRosterPage.find(Schedule).simulate('updateEvent', shift, newDateStart,
       newDateEnd);
 
     expect(baseProps.updateShift).toBeCalled();
@@ -293,15 +293,15 @@ describe('Shift Roster Page', () => {
     const shiftRosterPage = new ShiftRosterPage(baseProps);
     const publishedShift: Shift = {
       ...shift,
-      startDateTime: moment(startDate).subtract("1", "day").toDate()
+      startDateTime: moment(startDate).subtract('1', 'day').toDate(),
     };
 
     const style = shiftRosterPage.getShiftStyle(publishedShift);
     expect(style).toEqual({
       style: {
-        border: "1px solid",
-        backgroundColor: color(getShiftColor(publishedShift)).saturate(-0.5).hex()
-      }
+        border: '1px solid',
+        backgroundColor: color(getShiftColor(publishedShift)).saturate(-0.5).hex(),
+      },
     });
   });
 
@@ -311,9 +311,9 @@ describe('Shift Roster Page', () => {
     const style = shiftRosterPage.getShiftStyle(shift);
     expect(style).toEqual({
       style: {
-        border: "1px dashed",
-        backgroundColor: getShiftColor(shift)
-      }
+        border: '1px dashed',
+        backgroundColor: getShiftColor(shift),
+      },
     });
   });
 
@@ -322,22 +322,22 @@ describe('Shift Roster Page', () => {
 
     const style = shiftRosterPage.getDayStyle(endDate);
     expect(style).toEqual({
-      className: "draft-day",
+      className: 'draft-day',
       style: {
-        backgroundColor: "var(--pf-global--BackgroundColor--100)"
-      }
+        backgroundColor: 'var(--pf-global--BackgroundColor--100)',
+      },
     });
   });
 
   it('day should be gray if it is published', () => {
     const shiftRosterPage = new ShiftRosterPage(baseProps);
 
-    const style = shiftRosterPage.getDayStyle(moment(startDate).subtract(1, "day").toDate());
+    const style = shiftRosterPage.getDayStyle(moment(startDate).subtract(1, 'day').toDate());
     expect(style).toEqual({
-      className: "published-day",
+      className: 'published-day',
       style: {
-        backgroundColor: "var(--pf-global--BackgroundColor--300)"
-      }
+        backgroundColor: 'var(--pf-global--BackgroundColor--300)',
+      },
     });
   });
 });
@@ -346,58 +346,58 @@ const spot: Spot = {
   tenantId: 0,
   id: 2,
   version: 0,
-  name: "Spot",
+  name: 'Spot',
   requiredSkillSet: [
     {
       tenantId: 0,
       id: 3,
       version: 0,
-      name: "Skill"
-    }
-  ]
-}
+      name: 'Skill',
+    },
+  ],
+};
 
 const newSpot: Spot = {
   ...spot,
   id: 111,
-  name: "New Spot"
+  name: 'New Spot',
 };
 
 const employee: Employee = {
   tenantId: 0,
   id: 4,
   version: 0,
-  name: "Employee 1",
+  name: 'Employee 1',
   contract: {
     tenantId: 0,
     id: 5,
     version: 0,
-    name: "Basic Contract",
+    name: 'Basic Contract',
     maximumMinutesPerDay: 10,
     maximumMinutesPerWeek: 70,
     maximumMinutesPerMonth: 500,
-    maximumMinutesPerYear: 6000
+    maximumMinutesPerYear: 6000,
   },
   skillProficiencySet: [{
     tenantId: 0,
     id: 6,
     version: 0,
-    name: "Not Required Skill"
-  }]
-}
+    name: 'Not Required Skill',
+  }],
+};
 
 const shift: Shift = {
   tenantId: 0,
   id: 1,
-  version: 0, 
-  startDateTime: moment("2018-07-01T09:00").toDate(),
-  endDateTime: moment("2018-07-01T17:00").toDate(),
-  spot: spot,
-  employee: employee,
+  version: 0,
+  startDateTime: moment('2018-07-01T09:00').toDate(),
+  endDateTime: moment('2018-07-01T17:00').toDate(),
+  spot,
+  employee,
   rotationEmployee: {
     ...employee,
     id: 7,
-    name: "Rotation Employee"
+    name: 'Rotation Employee',
   },
   pinnedByUser: false,
   indictmentScore: { hardScore: 0, mediumScore: 0, softScore: 0 },
@@ -408,52 +408,52 @@ const shift: Shift = {
   undesiredTimeslotForEmployeePenaltyList: [],
   rotationViolationPenaltyList: [],
   unassignedShiftPenaltyList: [],
-  contractMinutesViolationPenaltyList: []
+  contractMinutesViolationPenaltyList: [],
 };
 
-const startDate = moment("2018-07-01T09:00").startOf('week').toDate();
-const endDate = moment("2018-07-01T09:00").endOf('week').toDate()
+const startDate = moment('2018-07-01T09:00').startOf('week').toDate();
+const endDate = moment('2018-07-01T09:00').endOf('week').toDate();
 
 const rosterState: RosterState = {
   tenant: {
     id: 0,
     version: 0,
-    name: "Tenant"
+    name: 'Tenant',
   },
   publishNotice: 14,
   publishLength: 7,
-  firstDraftDate: new Date("2018-07-01"),
+  firstDraftDate: new Date('2018-07-01'),
   draftLength: 7,
   unplannedRotationOffset: 0,
   rotationLength: 7,
-  lastHistoricDate: new Date("2018-07-01"),
-  timeZone: "EST"
+  lastHistoricDate: new Date('2018-07-01'),
+  timeZone: 'EST',
 };
 
 const baseProps: Props = {
-  ...useTranslation("ShiftRosterPage"),
+  ...useTranslation('ShiftRosterPage'),
   tenantId: 0,
-  score: { hardScore: 0, mediumScore: 0, softScore: 0},
+  score: { hardScore: 0, mediumScore: 0, softScore: 0 },
   tReady: true,
   isSolving: false,
   isLoading: false,
-  allSpotList: [spot,newSpot],
+  allSpotList: [spot, newSpot],
   shownSpotList: [spot],
   spotIdToShiftListMap: new Map<number, Shift[]>([
-    [2, [shift]]
+    [2, [shift]],
   ]),
-  startDate: startDate,
-  endDate: endDate,
+  startDate,
+  endDate,
   totalNumOfSpots: 1,
-  rosterState: rosterState,
+  rosterState,
   addShift: jest.fn(),
   removeShift: jest.fn(),
   updateShift: jest.fn(),
   getShiftRosterFor: jest.fn(),
   refreshShiftRoster: jest.fn(),
   solveRoster: jest.fn(),
-  publishRoster:jest.fn(),
+  publishRoster: jest.fn(),
   terminateSolvingRosterEarly: jest.fn(),
   showInfoMessage: jest.fn(),
-  ...getRouterProps<ShiftRosterUrlProps>("/shift", { spot: "Spot", week: "2018-07-01" })
-}
+  ...getRouterProps<ShiftRosterUrlProps>('/shift', { spot: 'Spot', week: '2018-07-01' }),
+};

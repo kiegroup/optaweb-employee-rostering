@@ -30,23 +30,22 @@ interface OptionalInputState<T> {
   isChecked: boolean;
 }
 
-export default class OptionalInput<T> extends React.Component<OptionalInputProps<T>,OptionalInputState<T>> {
+export default class OptionalInput<T> extends React.Component<OptionalInputProps<T>, OptionalInputState<T>> {
   constructor(props: OptionalInputProps<T>) {
     super(props);
     this.state = {
       inputValue: props.defaultValue,
-      isChecked: props.defaultValue !== null
+      isChecked: props.defaultValue !== null,
     };
     this.handleToggle = this.handleToggle.bind(this);
   }
 
   handleToggle(isChecked: boolean) {
     if (isChecked) {
-      this.setState({isChecked: true});
+      this.setState({ isChecked: true });
       this.props.onChange(this.state.inputValue);
-    }
-    else {
-      this.setState({isChecked: false});
+    } else {
+      this.setState({ isChecked: false });
       this.props.onChange(null);
     }
   }
@@ -58,16 +57,15 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
         <TextInput
           aria-label={this.props.label}
           isDisabled={!isChecked}
-          defaultValue={(this.props.defaultValue !== null)? this.props.valueToString(this.props.defaultValue) : ''}
+          defaultValue={(this.props.defaultValue !== null) ? this.props.valueToString(this.props.defaultValue) : ''}
           onChange={(value) => {
             if (this.props.isValid(value)) {
               const mappedValue = this.props.valueMapper(value);
-              this.setState({inputValue: mappedValue});
+              this.setState({ inputValue: mappedValue });
               if (this.state.isChecked) {
                 this.props.onChange(mappedValue);
               }
-            }
-            else {
+            } else {
               this.props.onChange(undefined);
             }
           }}

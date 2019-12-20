@@ -14,41 +14,43 @@
  * limitations under the License.
  */
 
+import { alert } from 'store/alert';
+import {
+  createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement,
+} from 'util/ImmutableCollectionOperations';
+import { onGet, onPost, onDelete } from 'store/rest/RestTestUtils';
+import { Spot } from 'domain/Spot';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
-import { alert } from 'store/alert';
 import reducer, { spotSelectors, spotOperations } from './index';
-import { createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
-import {onGet, onPost, onDelete} from 'store/rest/RestTestUtils';
-import Spot from 'domain/Spot';
 
 describe('Spot operations', () => {
   it('should dispatch actions and call client on refresh spot list', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const mockSpotList: Spot[] = [{
-      tenantId: tenantId,
+      tenantId,
       id: 0,
       version: 0,
-      name: "Spot 1",
-      requiredSkillSet: []
+      name: 'Spot 1',
+      requiredSkillSet: [],
     },
     {
-      tenantId: tenantId,
+      tenantId,
       id: 1,
       version: 0,
-      name: "Spot 2",
-      requiredSkillSet: [{tenantId: tenantId, name: "Skill 1", id: 1, version: 0}]
+      name: 'Spot 2',
+      requiredSkillSet: [{ tenantId, name: 'Skill 1', id: 1, version: 0 }],
     },
     {
-      tenantId: tenantId,
+      tenantId,
       id: 3,
       version: 0,
-      name: "Spot 3",
-      requiredSkillSet: [{tenantId: tenantId, name: "Skill 1", id: 1, version: 0},
-        {tenantId: tenantId, name: "Skill 2", id: 2, version: 0}]
+      name: 'Spot 3',
+      requiredSkillSet: [{ tenantId, name: 'Skill 1', id: 1, version: 0 },
+        { tenantId, name: 'Skill 2', id: 2, version: 0 }],
     }];
 
     onGet(`/tenant/${tenantId}/spot/`, mockSpotList);
@@ -56,7 +58,7 @@ describe('Spot operations', () => {
     expect(store.getActions()).toEqual([
       actions.setIsSpotListLoading(true),
       actions.refreshSpotList(mockSpotList),
-      actions.setIsSpotListLoading(false)
+      actions.setIsSpotListLoading(false),
     ]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/`);
@@ -67,21 +69,20 @@ describe('Spot operations', () => {
     const tenantId = store.getState().tenantData.currentTenantId;
 
     const spotToDelete: Spot = {
-      tenantId: tenantId,
+      tenantId,
       id: 0,
       version: 0,
-      name: "Spot 1",
-      requiredSkillSet: []
+      name: 'Spot 1',
+      requiredSkillSet: [],
     };
     onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, true);
     await store.dispatch(spotOperations.removeSpot(spotToDelete));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("removeSpot", { name: spotToDelete.name }),
-      actions.removeSpot(spotToDelete)
+      alert.showSuccessMessage('removeSpot', { name: spotToDelete.name }),
+      actions.removeSpot(spotToDelete),
     ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/${spotToDelete.id}`);
-
   });
 
   it('should not dispatch actions but call client on a failed delete', async () => {
@@ -89,16 +90,16 @@ describe('Spot operations', () => {
     const tenantId = store.getState().tenantData.currentTenantId;
 
     const spotToDelete: Spot = {
-      tenantId: tenantId,
+      tenantId,
       id: 0,
       version: 0,
-      name: "Spot 1",
-      requiredSkillSet: []
+      name: 'Spot 1',
+      requiredSkillSet: [],
     };
 
     onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, false);
     await store.dispatch(spotOperations.removeSpot(spotToDelete));
-    expect(store.getActions()).toEqual([alert.showErrorMessage("removeSpotError", { name: spotToDelete.name })]);
+    expect(store.getActions()).toEqual([alert.showErrorMessage('removeSpotError', { name: spotToDelete.name })]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/${spotToDelete.id}`);
   });
@@ -107,13 +108,13 @@ describe('Spot operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
 
-    const spotToAdd: Spot = {tenantId: tenantId, name: "New Spot", requiredSkillSet: []};
-    const spotWithUpdatedId: Spot = {...spotToAdd, id: 4, version: 0};
+    const spotToAdd: Spot = { tenantId, name: 'New Spot', requiredSkillSet: [] };
+    const spotWithUpdatedId: Spot = { ...spotToAdd, id: 4, version: 0 };
     onPost(`/tenant/${tenantId}/spot/add`, spotToAdd, spotWithUpdatedId);
     await store.dispatch(spotOperations.addSpot(spotToAdd));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("addSpot", { name: spotToAdd.name }),
-      actions.addSpot(spotWithUpdatedId)
+      alert.showSuccessMessage('addSpot', { name: spotToAdd.name }),
+      actions.addSpot(spotWithUpdatedId),
     ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/add`, spotToAdd);
@@ -122,14 +123,14 @@ describe('Spot operations', () => {
   it('should dispatch actions and call client on update', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
-    
-    const spotToUpdate: Spot = {tenantId: tenantId, name: "Updated Spot", id: 4, version: 0, requiredSkillSet: []};
-    const spotWithUpdatedVersion: Spot = {...spotToUpdate, version: 1};
+
+    const spotToUpdate: Spot = { tenantId, name: 'Updated Spot', id: 4, version: 0, requiredSkillSet: [] };
+    const spotWithUpdatedVersion: Spot = { ...spotToUpdate, version: 1 };
     onPost(`/tenant/${tenantId}/spot/update`, spotToUpdate, spotWithUpdatedVersion);
     await store.dispatch(spotOperations.updateSpot(spotToUpdate));
     expect(store.getActions()).toEqual([
-      alert.showSuccessMessage("updateSpot", { id: spotToUpdate.id }),
-      actions.updateSpot(spotWithUpdatedVersion)
+      alert.showSuccessMessage('updateSpot', { id: spotToUpdate.id }),
+      actions.updateSpot(spotWithUpdatedVersion),
     ]);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/spot/update`, spotToUpdate);
@@ -137,43 +138,38 @@ describe('Spot operations', () => {
 });
 
 describe('Spot reducers', () => {
-  const addedSpot: Spot = {tenantId: 0, id: 4321, version: 0, name: "Spot 1", requiredSkillSet: []};
-  const updatedSpot: Spot = {tenantId: 0, id: 1234, version: 1, name: "Updated Spot 2", requiredSkillSet: []};
-  const deletedSpot: Spot = {tenantId: 0, id: 2312, version: 0, name: "Spot 3", requiredSkillSet: []};
+  const addedSpot: Spot = { tenantId: 0, id: 4321, version: 0, name: 'Spot 1', requiredSkillSet: [] };
+  const updatedSpot: Spot = { tenantId: 0, id: 1234, version: 1, name: 'Updated Spot 2', requiredSkillSet: [] };
+  const deletedSpot: Spot = { tenantId: 0, id: 2312, version: 0, name: 'Spot 3', requiredSkillSet: [] };
   it('set loading', () => {
     expect(
-      reducer(state.spotList, actions.setIsSpotListLoading(true))
+      reducer(state.spotList, actions.setIsSpotListLoading(true)),
     ).toEqual({ ...state.spotList,
-      isLoading: true
-    })
+      isLoading: true });
   });
   it('add spot', () => {
     expect(
-      reducer(state.spotList, actions.addSpot(addedSpot))
+      reducer(state.spotList, actions.addSpot(addedSpot)),
     ).toEqual({ ...state.spotList,
-      spotMapById: mapWithElement(state.spotList.spotMapById, addedSpot)
-    })
+      spotMapById: mapWithElement(state.spotList.spotMapById, addedSpot) });
   });
   it('remove spot', () => {
     expect(
       reducer(state.spotList, actions.removeSpot(deletedSpot)),
     ).toEqual({ ...state.spotList,
-      spotMapById: mapWithoutElement(state.spotList.spotMapById, deletedSpot)
-    })
+      spotMapById: mapWithoutElement(state.spotList.spotMapById, deletedSpot) });
   });
   it('update spot', () => {
     expect(
       reducer(state.spotList, actions.updateSpot(updatedSpot)),
     ).toEqual({ ...state.spotList,
-      spotMapById: mapWithUpdatedElement(state.spotList.spotMapById, updatedSpot)
-    })
+      spotMapById: mapWithUpdatedElement(state.spotList.spotMapById, updatedSpot) });
   });
   it('refresh spot list', () => {
     expect(
       reducer(state.spotList, actions.refreshSpotList([addedSpot])),
     ).toEqual({ ...state.spotList,
-      spotMapById: createIdMapFromList([addedSpot])
-    });
+      spotMapById: createIdMapFromList([addedSpot]) });
   });
 });
 
@@ -181,13 +177,11 @@ describe('Spot selectors', () => {
   it('should throw an error if Spot list or Skill is loading', () => {
     expect(() => spotSelectors.getSpotById({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
+      skillList: { ...state.skillList, isLoading: true },
     }, 1234)).toThrow();
     expect(() => spotSelectors.getSpotById({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true }
+      spotList: { ...state.spotList, isLoading: true },
     }, 1234)).toThrow();
   });
 
@@ -197,30 +191,28 @@ describe('Spot selectors', () => {
       tenantId: 0,
       id: 1234,
       version: 1,
-      name: "Spot 2",
+      name: 'Spot 2',
       requiredSkillSet: [
         {
           tenantId: 0,
           id: 1,
           version: 0,
-          name: "Skill 1"
-        }
-      ]
+          name: 'Skill 1',
+        },
+      ],
     });
   });
 
   it('should return an empty list if spot list or skill list is loading', () => {
     let spotList = spotSelectors.getSpotList({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
+      skillList: { ...state.skillList, isLoading: true },
     });
     expect(spotList).toEqual([]);
     spotList = spotSelectors.getSpotList({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true }
-    }); 
+      spotList: { ...state.spotList, isLoading: true },
+    });
     expect(spotList).toEqual([]);
   });
 
@@ -231,23 +223,23 @@ describe('Spot selectors', () => {
         tenantId: 0,
         id: 1234,
         version: 1,
-        name: "Spot 2",
+        name: 'Spot 2',
         requiredSkillSet: [
           {
             tenantId: 0,
             id: 1,
             version: 0,
-            name: "Skill 1"
-          }
-        ] 
+            name: 'Skill 1',
+          },
+        ],
       },
       {
         tenantId: 0,
         id: 2312,
         version: 0,
-        name: "Spot 3",
-        requiredSkillSet: []
-      }
+        name: 'Spot 3',
+        requiredSkillSet: [],
+      },
     ]));
     expect(spotList.length).toEqual(2);
   });
@@ -257,15 +249,15 @@ const state: AppState = {
   tenantData: {
     currentTenantId: 0,
     tenantList: [],
-    timezoneList: ["America/Toronto"]
+    timezoneList: ['America/Toronto'],
   },
   employeeList: {
     isLoading: false,
-    employeeMapById: new Map()
+    employeeMapById: new Map(),
   },
   contractList: {
     isLoading: false,
-    contractMapById: new Map()
+    contractMapById: new Map(),
   },
   spotList: {
     isLoading: false,
@@ -274,17 +266,17 @@ const state: AppState = {
         tenantId: 0,
         id: 1234,
         version: 1,
-        name: "Spot 2",
-        requiredSkillSet: [1]
+        name: 'Spot 2',
+        requiredSkillSet: [1],
       }],
       [2312, {
         tenantId: 0,
         id: 2312,
         version: 0,
-        name: "Spot 3",
-        requiredSkillSet: []
-      }]
-    ])
+        name: 'Spot 3',
+        requiredSkillSet: [],
+      }],
+    ]),
   },
   skillList: {
     isLoading: false,
@@ -293,31 +285,31 @@ const state: AppState = {
         tenantId: 0,
         id: 1,
         version: 0,
-        name: "Skill 1"
-      }]
-    ])
+        name: 'Skill 1',
+      }],
+    ]),
   },
   shiftTemplateList: {
     isLoading: false,
-    shiftTemplateMapById: new Map()
+    shiftTemplateMapById: new Map(),
   },
   rosterState: {
     isLoading: true,
-    rosterState: null
+    rosterState: null,
   },
   shiftRoster: {
     isLoading: true,
-    shiftRosterView: null
+    shiftRosterView: null,
   },
   availabilityRoster: {
     isLoading: true,
-    availabilityRosterView: null
+    availabilityRosterView: null,
   },
   solverState: {
-    isSolving: false
+    isSolving: false,
   },
   alerts: {
     alertList: [],
-    idGeneratorIndex: 0
-  }
+    idGeneratorIndex: 0,
+  },
 };

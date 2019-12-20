@@ -15,15 +15,15 @@
  */
 import { shallow } from 'enzyme';
 import * as React from 'react';
+import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
 import { ScoreDisplay } from './ScoreDisplay';
-import HardMediumSoftScore from 'domain/HardMediumSoftScore';
 
 describe('ScoreDisplay component', () => {
   it('should renderCorrectly', () => {
     const score: HardMediumSoftScore = {
       hardScore: -10,
       mediumScore: -5,
-      softScore: 20
+      softScore: 20,
     };
     const scoreDisplay = shallow(<ScoreDisplay score={score} />);
     expect(scoreDisplay).toMatchSnapshot();

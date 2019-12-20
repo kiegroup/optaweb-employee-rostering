@@ -16,11 +16,11 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import { SkillsPage, Props } from './SkillsPage';
-import Skill from 'domain/Skill';
+import { Skill } from 'domain/Skill';
 import { Sorter, ReadonlyPartial } from 'types';
 import { useTranslation } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { SkillsPage, Props } from './SkillsPage';
 
 describe('Skills page', () => {
   it('should render correctly with no skills', () => {
@@ -35,14 +35,14 @@ describe('Skills page', () => {
 
   it('should render the viewer correctly', () => {
     const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
+    const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
     const viewer = shallow(skillsPage.renderViewer(skill));
     expect(toJson(viewer)).toMatchSnapshot();
   });
 
   it('should render the editor correctly', () => {
     const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
+    const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
     const editor = shallow(skillsPage.renderEditor(skill));
     expect(toJson(editor)).toMatchSnapshot();
   });
@@ -52,9 +52,9 @@ describe('Skills page', () => {
     const setProperty = jest.fn();
     const editor = skillsPage.editDataRow({}, setProperty);
     const nameCol = shallow(editor[0]);
-    nameCol.simulate("change", { currentTarget: { value: "Test" } });
+    nameCol.simulate('change', { currentTarget: { value: 'Test' } });
     expect(setProperty).toBeCalled();
-    expect(setProperty).toBeCalledWith("name", "Test");
+    expect(setProperty).toBeCalledWith('name', 'Test');
   });
 
   it('should an empty object on getInitialStateForNewRow', () => {
@@ -64,7 +64,7 @@ describe('Skills page', () => {
 
   it('should call addSkill on addData', () => {
     const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0};
+    const skill = { name: 'Skill', tenantId: 0 };
     skillsPage.addData(skill);
     expect(twoSkills.addSkill).toBeCalled();
     expect(twoSkills.addSkill).toBeCalledWith(skill);
@@ -72,7 +72,7 @@ describe('Skills page', () => {
 
   it('should call updateSkill on updateData', () => {
     const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
+    const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
     skillsPage.updateData(skill);
     expect(twoSkills.updateSkill).toBeCalled();
     expect(twoSkills.updateSkill).toBeCalledWith(skill);
@@ -80,7 +80,7 @@ describe('Skills page', () => {
 
   it('should call removeSkill on removeData', () => {
     const skillsPage = new SkillsPage(twoSkills);
-    const skill = {name: "Skill", tenantId: 0, id: 1, version: 0};
+    const skill = { name: 'Skill', tenantId: 0, id: 1, version: 0 };
     skillsPage.removeData(skill);
     expect(twoSkills.removeSkill).toBeCalled();
     expect(twoSkills.removeSkill).toBeCalledWith(skill);
@@ -108,21 +108,21 @@ describe('Skills page', () => {
     const result1 = skillsPage.isDataComplete(noName);
     expect(result1).toEqual(false);
 
-    const completed: ReadonlyPartial<Skill> = { tenantId: 0, name: "Name" };
+    const completed: ReadonlyPartial<Skill> = { tenantId: 0, name: 'Name' };
     const result2 = skillsPage.isDataComplete(completed);
     expect(result2).toEqual(true);
   });
 
   it('should treat empty name as invalid', () => {
     const skillsPage = new SkillsPage(twoSkills);
-    const components: Skill = {tenantId: 0, name: ""};
+    const components: Skill = { tenantId: 0, name: '' };
     const result = skillsPage.isValid(components);
     expect(result).toEqual(false);
   });
 
   it('should treat non-empty name as valid', () => {
     const skillsPage = new SkillsPage(twoSkills);
-    const components: Skill = {tenantId: 0, name: "Skill"};
+    const components: Skill = { tenantId: 0, name: 'Skill' };
     const result = skillsPage.isValid(components);
     expect(result).toEqual(true);
   });
@@ -132,35 +132,35 @@ const noSkills: Props = {
   ...useTranslation(),
   tReady: true,
   tenantId: 0,
-  title: "Skills",
-  columnTitles: ["Name"],
+  title: 'Skills',
+  columnTitles: ['Name'],
   tableData: [],
   addSkill: jest.fn(),
   updateSkill: jest.fn(),
   removeSkill: jest.fn(),
-  ...getRouterProps("/skills", {})
+  ...getRouterProps('/skills', {}),
 };
 
 const twoSkills: Props = {
   ...useTranslation(),
   tReady: true,
   tenantId: 0,
-  title: "Skills",
-  columnTitles: ["Name"],
+  title: 'Skills',
+  columnTitles: ['Name'],
   tableData: [{
     id: 0,
     version: 0,
     tenantId: 0,
-    name: "Skill 1"
+    name: 'Skill 1',
   },
   {
     id: 1,
     version: 0,
     tenantId: 0,
-    name: "Skill 2"
+    name: 'Skill 2',
   }],
   addSkill: jest.fn(),
   updateSkill: jest.fn(),
   removeSkill: jest.fn(),
-  ...getRouterProps("/skills", {})
+  ...getRouterProps('/skills', {}),
 };

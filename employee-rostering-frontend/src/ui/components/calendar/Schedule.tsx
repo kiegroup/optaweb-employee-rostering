@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import { Calendar, momentLocalizer, EventProps } from 'react-big-calendar'
+import { Calendar, momentLocalizer, EventProps } from 'react-big-calendar';
 import moment from 'moment';
+import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import EventWrapper from './EventWrapper';
-import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop'
 
-import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss'
+import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss';
 import './ReactBigCalendarOverrides.css';
 
 const DragAndDropCalendar = withDragAndDrop(Calendar);
@@ -51,47 +51,46 @@ export interface Props<T extends object> {
 }
 
 export function isDay(start: Date, end: Date) {
-  return start.getHours() === 0 && start.getMinutes() === 0 &&
-    end.getHours() === 0 && end.getMinutes() === 0
+  return start.getHours() === 0 && start.getMinutes() === 0
+    && end.getHours() === 0 && end.getMinutes() === 0;
 }
 
 const localizer = momentLocalizer(moment);
 export default function Schedule<T extends object>(props: Props<T>): React.ReactElement<Props<T>> {
-  const length = Math.ceil(moment(props.endDate).diff(moment(props.startDate), "days")) + 1;
+  const length = Math.ceil(moment(props.endDate).diff(moment(props.startDate), 'days')) + 1;
   // TODO: Remove @ts-ignore when @types/react-big-calendar is updated
   /* eslint-disable react/jsx-tag-spacing */
   return (
     <div style={{
-      height: "calc(100% - 20px)"
+      height: 'calc(100% - 20px)',
     }}
     >
       <
       // @ts-ignore
         DragAndDropCalendar
-        className={(props.showAllDayCell)? undefined : "rbc-no-allday-cell"}  
+        className={(props.showAllDayCell) ? undefined : 'rbc-no-allday-cell'}
         dayLayoutAlgorithm="no-overlap"
         date={props.startDate}
         length={length}
         localizer={localizer}
         events={props.events}
         titleAccessor={props.titleAccessor}
-        allDayAccessor={event => props.showAllDayCell?
-          isDay(props.startAccessor(event), props.endAccessor(event)) : false}
+        allDayAccessor={event => (props.showAllDayCell
+          ? isDay(props.startAccessor(event), props.endAccessor(event)) : false)}
         startAccessor={props.startAccessor}
         endAccessor={props.endAccessor}
         toolbar={false}
         view="week"
-        views={["week"]}
-        formats={props.dateFormat? {
-          dayFormat: props.dateFormat
+        views={['week']}
+        formats={props.dateFormat ? {
+          dayFormat: props.dateFormat,
         } : undefined}
         onSelectSlot={(slotInfo: { start: string|Date; end: string|Date;
-          action: "select"|"click"|"doubleClick"; }) => {
-          if (slotInfo.action === "select" || slotInfo.action === "click") {
+          action: 'select'|'click'|'doubleClick'; }) => {
+          if (slotInfo.action === 'select' || slotInfo.action === 'click') {
             if (isDay(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate())) {
-              props.onAddEvent(moment(slotInfo.start).toDate(), moment(slotInfo.end).add(1, "day").toDate());
-            }
-            else {
+              props.onAddEvent(moment(slotInfo.start).toDate(), moment(slotInfo.end).add(1, 'day').toDate());
+            } else {
               props.onAddEvent(moment(slotInfo.start).toDate(), moment(slotInfo.end).toDate());
             }
           }
@@ -99,19 +98,18 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
         }
         onEventDrop={(dropLocation: { event: T; start: string|Date; end: string|Date }) => {
           if (isDay(moment(dropLocation.start).toDate(), moment(dropLocation.end).toDate())) {
-            props.onUpdateEvent(dropLocation.event, moment(dropLocation.start).toDate(), 
-              moment(dropLocation.end).add(1, "day").toDate());
-          }
-          else if(moment(dropLocation.start).dayOfYear() !== moment(dropLocation.end).dayOfYear()) {
+            props.onUpdateEvent(dropLocation.event, moment(dropLocation.start).toDate(),
+              moment(dropLocation.end).add(1, 'day').toDate());
+          } else if (moment(dropLocation.start).dayOfYear() !== moment(dropLocation.end).dayOfYear()) {
             props.onUpdateEvent(dropLocation.event, moment(dropLocation.start).toDate(), moment(dropLocation.start)
               .add(
                 moment(props.endAccessor(dropLocation.event))
                   .diff(moment(props.startAccessor(dropLocation.event)),
                     'minutes'),
-                'minutes')
+                'minutes',
+              )
               .toDate());
-          }
-          else {
+          } else {
             props.onUpdateEvent(dropLocation.event, moment(dropLocation.start).toDate(), moment(dropLocation.end)
               .toDate());
           }
@@ -121,16 +119,12 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
           const origEventEnd = moment(props.startAccessor(resizeInfo.event));
           if (isDay(moment(resizeInfo.start).toDate(), moment(resizeInfo.end).toDate())) {
             props.onUpdateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end)
-              .add(1, "day").toDate());
-          }
-          else if(origEventStart.dayOfYear() !== moment(resizeInfo.start).dayOfYear()) {
+              .add(1, 'day').toDate());
+          } else if (origEventStart.dayOfYear() !== moment(resizeInfo.start).dayOfYear()) {
             props.onUpdateEvent(resizeInfo.event, origEventStart.toDate(), moment(resizeInfo.end).toDate());
-          }
-          else if (origEventEnd.dayOfYear() !== moment(resizeInfo.end).dayOfYear()) {
+          } else if (origEventEnd.dayOfYear() !== moment(resizeInfo.end).dayOfYear()) {
             props.onUpdateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), origEventEnd.toDate());
-
-          }
-          else {
+          } else {
             props.onUpdateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end).toDate());
           }
         }}
@@ -149,17 +143,17 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
               ...wrapperProps,
               style: {
                 ...wrapperProps.style,
-                ...((style.style)? style.style : {}) 
+                ...((style.style) ? style.style : {}),
               },
-              className: style.className? style.className : "",
+              className: style.className ? style.className : '',
               popoverHeader: props.popoverHeader(wrapperProps.event),
-              popoverBody: props.popoverBody(wrapperProps.event)
-            })
+              popoverBody: props.popoverBody(wrapperProps.event),
+            });
           },
-          event: (eventProps) => props.eventComponent(eventProps) as React.ReactElement
+          event: eventProps => props.eventComponent(eventProps) as React.ReactElement,
         }}
       />
     </div>
-  )
+  );
   /* eslint-enable react/jsx-tag-spacing */
 }

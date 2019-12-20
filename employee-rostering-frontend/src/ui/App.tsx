@@ -18,12 +18,14 @@ import { Page, PageSection, PageSidebar } from '@patternfly/react-core';
 import React, { useState } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import './App.css';
+import { useMediaQuery } from 'react-responsive';
 import Background from './components/Background';
 import Header from './header/Header';
 import Alerts from './Alerts';
-import { AdminPage, ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage, 
-  EmployeesPage, RotationPage } from './pages';
-import { useMediaQuery } from 'react-responsive';
+import {
+  AdminPage, ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage,
+  EmployeesPage, RotationPage,
+} from './pages';
 import Navigation from './header/Navigation';
 
 const App: React.FC = () => {
@@ -33,7 +35,7 @@ const App: React.FC = () => {
     setNavExpanded(false);
   }
   return (
-    <Page 
+    <Page
       header={<Header onNavToggle={() => setNavExpanded(!isNavExpanded)} />}
       sidebar={<PageSidebar isNavOpen={isNavExpanded} nav={<Navigation variant="default" />} />}
     >
@@ -72,7 +74,7 @@ const App: React.FC = () => {
           <Route
             path="/:tenantId/shift"
             exact
-            component={ShiftRosterPage} 
+            component={ShiftRosterPage}
           />
           <Route
             path="/:tenantId/availability"

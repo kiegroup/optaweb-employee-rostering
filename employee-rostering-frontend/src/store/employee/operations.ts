@@ -14,54 +14,55 @@
  * limitations under the License.
  */
 
+import { alert } from 'store/alert';
+import { Employee } from 'domain/Employee';
+import { AddAlertAction } from 'store/alert/types';
 import { ThunkCommandFactory } from '../types';
 import * as actions from './actions';
-import { alert } from 'store/alert';
-import Employee from 'domain/Employee';
-import { SetEmployeeListLoadingAction, AddEmployeeAction, RemoveEmployeeAction, UpdateEmployeeAction,
-  RefreshEmployeeListAction } from './types';
-import { AddAlertAction } from 'store/alert/types';
+import {
+  SetEmployeeListLoadingAction, AddEmployeeAction, RemoveEmployeeAction, UpdateEmployeeAction,
+  RefreshEmployeeListAction,
+} from './types';
 
-export const addEmployee: ThunkCommandFactory<Employee, AddAlertAction | AddEmployeeAction> = employee =>
-  (dispatch, state, client) => {
-    let tenantId = employee.tenantId;
-    return client.post<Employee>(`/tenant/${tenantId}/employee/add`, employee).then(newEmployee => {
-      dispatch(alert.showSuccessMessage("addEmployee", { name: newEmployee.name }));
-      dispatch(actions.addEmployee(newEmployee))
-    });
-  };
+export const addEmployee:
+ThunkCommandFactory<Employee, AddAlertAction | AddEmployeeAction> = employee => (dispatch, state, client) => {
+  const { tenantId } = employee;
+  return client.post<Employee>(`/tenant/${tenantId}/employee/add`, employee).then((newEmployee) => {
+    dispatch(alert.showSuccessMessage('addEmployee', { name: newEmployee.name }));
+    dispatch(actions.addEmployee(newEmployee));
+  });
+};
 
-export const removeEmployee: ThunkCommandFactory<Employee, AddAlertAction | RemoveEmployeeAction> = employee =>
-  (dispatch, state, client) => {
-    let tenantId = employee.tenantId;
-    let employeeId = employee.id;
-    return client.delete<boolean>(`/tenant/${tenantId}/employee/${employeeId}`).then(isSuccess => {
-      if (isSuccess) {
-        dispatch(alert.showSuccessMessage("removeEmployee", { name: employee.name }));
-        dispatch(actions.removeEmployee(employee));
-      }
-      else {
-        dispatch(alert.showErrorMessage("removeEmployeeError", { name: employee.name }));
-      }
-    });
-  };
+export const removeEmployee:
+ThunkCommandFactory<Employee, AddAlertAction | RemoveEmployeeAction> = employee => (dispatch, state, client) => {
+  const { tenantId } = employee;
+  const employeeId = employee.id;
+  return client.delete<boolean>(`/tenant/${tenantId}/employee/${employeeId}`).then((isSuccess) => {
+    if (isSuccess) {
+      dispatch(alert.showSuccessMessage('removeEmployee', { name: employee.name }));
+      dispatch(actions.removeEmployee(employee));
+    } else {
+      dispatch(alert.showErrorMessage('removeEmployeeError', { name: employee.name }));
+    }
+  });
+};
 
-export const updateEmployee: ThunkCommandFactory<Employee, AddAlertAction | UpdateEmployeeAction> = employee =>
-  (dispatch, state, client) => {
-    let tenantId = employee.tenantId;
-    return client.post<Employee>(`/tenant/${tenantId}/employee/update`, employee).then(updatedEmployee => {
-      dispatch(alert.showSuccessMessage("updateEmployee", { id: updatedEmployee.id }));
-      dispatch(actions.updateEmployee(updatedEmployee));
-    });
-  };
+export const updateEmployee:
+ThunkCommandFactory<Employee, AddAlertAction | UpdateEmployeeAction> = employee => (dispatch, state, client) => {
+  const { tenantId } = employee;
+  return client.post<Employee>(`/tenant/${tenantId}/employee/update`, employee).then((updatedEmployee) => {
+    dispatch(alert.showSuccessMessage('updateEmployee', { id: updatedEmployee.id }));
+    dispatch(actions.updateEmployee(updatedEmployee));
+  });
+};
 
 export const refreshEmployeeList:
-ThunkCommandFactory<void, SetEmployeeListLoadingAction | RefreshEmployeeListAction> = () =>
-  (dispatch, state, client) => {
-    let tenantId = state().tenantData.currentTenantId;
-    dispatch(actions.setIsEmployeeListLoading(true));
-    return client.get<Employee[]>(`/tenant/${tenantId}/employee/`).then(employeeList => {
-      dispatch(actions.refreshEmployeeList(employeeList));
-      dispatch(actions.setIsEmployeeListLoading(false));
-    });
-  };
+ThunkCommandFactory<void, SetEmployeeListLoadingAction |
+RefreshEmployeeListAction> = () => (dispatch, state, client) => {
+  const tenantId = state().tenantData.currentTenantId;
+  dispatch(actions.setIsEmployeeListLoading(true));
+  return client.get<Employee[]>(`/tenant/${tenantId}/employee/`).then((employeeList) => {
+    dispatch(actions.refreshEmployeeList(employeeList));
+    dispatch(actions.setIsEmployeeListLoading(false));
+  });
+};

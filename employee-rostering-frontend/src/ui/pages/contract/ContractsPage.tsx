@@ -20,9 +20,9 @@ import { contractSelectors, contractOperations } from 'store/contract';
 import { AppState } from 'store/types';
 import { TextInput, Text } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import Contract from 'domain/Contract';
+import { Contract } from 'domain/Contract';
 import OptionalInput from 'ui/components/OptionalInput';
-import { Predicate, Sorter, ReadonlyPartial } from "types";
+import { Predicate, Sorter, ReadonlyPartial } from 'types';
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
@@ -34,11 +34,11 @@ interface StateProps extends DataTableProps<Contract> {
 
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   ...ownProps,
-  title: ownProps.t("contracts"),
-  columnTitles: [ownProps.t("name"), ownProps.t("maxMinutesPerDay"), ownProps.t("maxMinutesPerWeek"),
-    ownProps.t("maxMinutesPerMonth"), ownProps.t("maxMinutesPerYear")],
+  title: ownProps.t('contracts'),
+  columnTitles: [ownProps.t('name'), ownProps.t('maxMinutesPerDay'), ownProps.t('maxMinutesPerWeek'),
+    ownProps.t('maxMinutesPerMonth'), ownProps.t('maxMinutesPerYear')],
   tableData: contractSelectors.getContractList(state),
-  tenantId: state.tenantData.currentTenantId
+  tenantId: state.tenantData.currentTenantId,
 });
 
 export interface DispatchProps {
@@ -50,11 +50,14 @@ export interface DispatchProps {
 const mapDispatchToProps: DispatchProps = {
   addContract: contractOperations.addContract,
   updateContract: contractOperations.updateContract,
-  removeContract: contractOperations.removeContract
+  removeContract: contractOperations.removeContract,
 };
 
 export type Props = StateProps & DispatchProps & WithTranslation;
 
+
+// TODO: Refactor DataTable to use props instead of methods
+/* eslint-disable class-methods-use-this */
 export class ContractsPage extends DataTable<Contract, Props> {
   constructor(props: Props) {
     super(props);
@@ -69,7 +72,7 @@ export class ContractsPage extends DataTable<Contract, Props> {
       <Text key={1}>{data.maximumMinutesPerDay}</Text>,
       <Text key={2}>{data.maximumMinutesPerWeek}</Text>,
       <Text key={3}>{data.maximumMinutesPerMonth}</Text>,
-      <Text key={4}>{data.maximumMinutesPerYear}</Text>
+      <Text key={4}>{data.maximumMinutesPerYear}</Text>,
     ];
   }
 
@@ -78,10 +81,10 @@ export class ContractsPage extends DataTable<Contract, Props> {
       maximumMinutesPerDay: null,
       maximumMinutesPerWeek: null,
       maximumMinutesPerMonth: null,
-      maximumMinutesPerYear: null
+      maximumMinutesPerYear: null,
     };
   }
-  
+
   editDataRow(data: ReadonlyPartial<Contract>, setProperty: PropertySetter<Contract>): JSX.Element[] {
     const { t } = this.props;
     return [
@@ -90,53 +93,53 @@ export class ContractsPage extends DataTable<Contract, Props> {
         name="name"
         defaultValue={data.name}
         aria-label="Name"
-        onChange={(value) => setProperty("name", value)}
+        onChange={value => setProperty('name', value)}
       />,
       <OptionalInput
         key={1}
-        label={t("maxMinutesPerDay")}
+        label={t('maxMinutesPerDay')}
         valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerDay? data.maximumMinutesPerDay : null}
-        onChange={value => setProperty("maximumMinutesPerDay", value)}
+        defaultValue={data.maximumMinutesPerDay ? data.maximumMinutesPerDay : null}
+        onChange={value => setProperty('maximumMinutesPerDay', value)}
         isValid={value => /^\d+$/.test(value)}
-        valueMapper={value => parseInt(value)}
+        valueMapper={value => parseInt(value, 10)}
       />,
       <OptionalInput
         key={2}
-        label={t("maxMinutesPerWeek")}
+        label={t('maxMinutesPerWeek')}
         valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerWeek? data.maximumMinutesPerWeek : null}
-        onChange={value => setProperty("maximumMinutesPerWeek", value)}
+        defaultValue={data.maximumMinutesPerWeek ? data.maximumMinutesPerWeek : null}
+        onChange={value => setProperty('maximumMinutesPerWeek', value)}
         isValid={value => /^\d+$/.test(value)}
-        valueMapper={value => parseInt(value)}
+        valueMapper={value => parseInt(value, 10)}
       />,
       <OptionalInput
         key={3}
-        label={t("maxMinutesPerMonth")}
+        label={t('maxMinutesPerMonth')}
         valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerMonth? data.maximumMinutesPerMonth : null}
-        onChange={value => setProperty("maximumMinutesPerMonth", value)}
+        defaultValue={data.maximumMinutesPerMonth ? data.maximumMinutesPerMonth : null}
+        onChange={value => setProperty('maximumMinutesPerMonth', value)}
         isValid={value => /^\d+$/.test(value)}
-        valueMapper={value => parseInt(value)}
+        valueMapper={value => parseInt(value, 10)}
       />,
       <OptionalInput
         key={4}
-        label={t("maxMinutesPerYear")}
+        label={t('maxMinutesPerYear')}
         valueToString={value => value.toString()}
-        defaultValue={data.maximumMinutesPerYear? data.maximumMinutesPerYear : null}
-        onChange={value => setProperty("maximumMinutesPerYear", value)}
+        defaultValue={data.maximumMinutesPerYear ? data.maximumMinutesPerYear : null}
+        onChange={value => setProperty('maximumMinutesPerYear', value)}
         isValid={value => /^\d+$/.test(value)}
-        valueMapper={value => parseInt(value)}
-      />
+        valueMapper={value => parseInt(value, 10)}
+      />,
     ];
   }
-  
+
   isDataComplete(editedValue: ReadonlyPartial<Contract>): editedValue is Contract {
-    return editedValue.name !== undefined &&
-      editedValue.maximumMinutesPerDay !== undefined &&
-      editedValue.maximumMinutesPerWeek !== undefined &&
-      editedValue.maximumMinutesPerMonth !== undefined &&
-      editedValue.maximumMinutesPerYear !== undefined;
+    return editedValue.name !== undefined
+      && editedValue.maximumMinutesPerDay !== undefined
+      && editedValue.maximumMinutesPerWeek !== undefined
+      && editedValue.maximumMinutesPerMonth !== undefined
+      && editedValue.maximumMinutesPerYear !== undefined;
   }
 
   isValid(editedValue: Contract): boolean {
@@ -150,11 +153,11 @@ export class ContractsPage extends DataTable<Contract, Props> {
   getSorters(): (Sorter<Contract> | null)[] {
     return [stringSorter(c => c.name), null, null, null, null];
   }
-  
+
   updateData(data: Contract): void {
     this.props.updateContract(data);
   }
-  
+
   addData(data: Contract): void {
     this.props.addContract({ ...data, tenantId: this.props.tenantId });
   }
@@ -164,5 +167,6 @@ export class ContractsPage extends DataTable<Contract, Props> {
   }
 }
 
-export default withTranslation("ContractsPage")(connect(mapStateToProps, mapDispatchToProps)(
-  withRouter(ContractsPage)));
+export default withTranslation('ContractsPage')(connect(mapStateToProps, mapDispatchToProps)(
+  withRouter(ContractsPage),
+));
