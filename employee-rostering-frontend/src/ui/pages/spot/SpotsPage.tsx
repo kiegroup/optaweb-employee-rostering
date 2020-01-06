@@ -16,16 +16,14 @@
 
 import * as React from 'react';
 import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTable';
-import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadSelectInput'
+import { StatefulMultiTypeaheadSelectInput } from 'ui/components/MultiTypeaheadSelectInput';
 import { spotSelectors, spotOperations } from 'store/spot';
 import { skillSelectors } from 'store/skill';
-import Spot from 'domain/Spot';
+import { Spot } from 'domain/Spot';
 import { AppState } from 'store/types';
-import {
-  TextInput, Text, Chip, ChipGroup,
-} from '@patternfly/react-core';
+import { TextInput, Text, Chip, ChipGroup } from '@patternfly/react-core';
 import { connect } from 'react-redux';
-import Skill from 'domain/Skill';
+import { Skill } from 'domain/Skill';
 import { Predicate, ReadonlyPartial, Sorter } from 'types';
 import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
@@ -39,12 +37,12 @@ interface StateProps extends DataTableProps<Spot> {
 
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   ...ownProps,
-  title: ownProps.t("spots"),
-  columnTitles: [ownProps.t("name"), ownProps.t("requiredSkillSet")],
+  title: ownProps.t('spots'),
+  columnTitles: [ownProps.t('name'), ownProps.t('requiredSkillSet')],
   tableData: spotSelectors.getSpotList(state),
   skillList: skillSelectors.getSkillList(state),
-  tenantId: state.tenantData.currentTenantId
-}); 
+  tenantId: state.tenantData.currentTenantId,
+});
 
 export interface DispatchProps {
   addSpot: typeof spotOperations.addSpot;
@@ -55,11 +53,14 @@ export interface DispatchProps {
 const mapDispatchToProps: DispatchProps = {
   addSpot: spotOperations.addSpot,
   updateSpot: spotOperations.updateSpot,
-  removeSpot: spotOperations.removeSpot
+  removeSpot: spotOperations.removeSpot,
 };
 
 export type Props = StateProps & DispatchProps & WithTranslation;
 
+
+// TODO: Refactor DataTable to use props instead of methods
+/* eslint-disable class-methods-use-this */
 export class SpotsPage extends DataTable<Spot, Props> {
   constructor(props: Props) {
     super(props);
@@ -77,16 +78,16 @@ export class SpotsPage extends DataTable<Spot, Props> {
             {skill.name}
           </Chip>
         ))}
-      </ChipGroup>
+      </ChipGroup>,
     ];
   }
 
   getInitialStateForNewRow(): Partial<Spot> {
     return {
-      requiredSkillSet: []
+      requiredSkillSet: [],
     };
   }
-  
+
   editDataRow(data: ReadonlyPartial<Spot>, setProperty: PropertySetter<Spot>): JSX.Element[] {
     return [
       <TextInput
@@ -94,22 +95,22 @@ export class SpotsPage extends DataTable<Spot, Props> {
         name="name"
         defaultValue={data.name}
         aria-label="Name"
-        onChange={(value) => setProperty("name",value)}
+        onChange={value => setProperty('name', value)}
       />,
       <StatefulMultiTypeaheadSelectInput
         key={1}
-        emptyText={this.props.t("selectRequiredSkills")}
+        emptyText={this.props.t('selectRequiredSkills')}
         options={this.props.skillList}
         optionToStringMap={skill => skill.name}
-        value={data.requiredSkillSet? data.requiredSkillSet : []}
-        onChange={selected => setProperty("requiredSkillSet",selected)}
-      />
+        value={data.requiredSkillSet ? data.requiredSkillSet : []}
+        onChange={selected => setProperty('requiredSkillSet', selected)}
+      />,
     ];
   }
-  
+
   isDataComplete(editedValue: ReadonlyPartial<Spot>): editedValue is Spot {
-    return editedValue.name !== undefined &&
-      editedValue.requiredSkillSet !== undefined;
+    return editedValue.name !== undefined
+      && editedValue.requiredSkillSet !== undefined;
   }
 
   isValid(editedValue: Spot): boolean {
@@ -124,13 +125,13 @@ export class SpotsPage extends DataTable<Spot, Props> {
   getSorters(): (Sorter<Spot> | null)[] {
     return [stringSorter(s => s.name), null];
   }
-  
+
   updateData(data: Spot): void {
     this.props.updateSpot(data);
   }
-  
+
   addData(data: Spot): void {
-    this.props.addSpot({...data, tenantId: this.props.tenantId});
+    this.props.addSpot({ ...data, tenantId: this.props.tenantId });
   }
 
   removeData(data: Spot): void {
@@ -138,4 +139,4 @@ export class SpotsPage extends DataTable<Spot, Props> {
   }
 }
 
-export default withTranslation("SpotsPage")(connect(mapStateToProps, mapDispatchToProps)(withRouter(SpotsPage)));
+export default withTranslation('SpotsPage')(connect(mapStateToProps, mapDispatchToProps)(withRouter(SpotsPage)));

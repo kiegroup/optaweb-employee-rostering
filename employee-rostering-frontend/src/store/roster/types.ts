@@ -15,9 +15,9 @@
  */
 
 import { Action } from 'redux';
-import ShiftRosterView from 'domain/ShiftRosterView';
-import AvailabilityRosterView from 'domain/AvailabilityRosterView';
-import RosterState from 'domain/RosterState';
+import { ShiftRosterView } from 'domain/ShiftRosterView';
+import { AvailabilityRosterView } from 'domain/AvailabilityRosterView';
+import { RosterState } from 'domain/RosterState';
 
 export enum RosterStateActionType {
   SET_ROSTER_STATE_IS_LOADING = 'SET_ROSTER_STATE_IS_LOADING',

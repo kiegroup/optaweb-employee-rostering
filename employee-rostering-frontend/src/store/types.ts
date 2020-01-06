@@ -16,10 +16,10 @@
 
 import { Action } from 'redux';
 import { ThunkAction } from 'redux-thunk';
-import RestServiceClient from './rest/RestServiceClient';
 import { TenantData } from 'store/tenant/types';
 import { SkillList } from 'store/skill/types';
 import { SpotList } from 'store/spot/types';
+import RestServiceClient from './rest/RestServiceClient';
 import { ContractList } from './contract/types';
 import { EmployeeList } from './employee/types';
 import { CurrentRosterState, CurrentShiftRoster, CurrentAvailabilityRoster, CurrentSolverState } from './roster/types';

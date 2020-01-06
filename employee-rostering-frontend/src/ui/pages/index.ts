@@ -23,5 +23,7 @@ import AvailabilityRosterPage from './availability/AvailabilityRosterPage';
 import RotationPage from './rotation/RotationPage';
 import AdminPage from './admin/AdminPage';
 
-export { AdminPage, ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage,
-  EmployeesPage, RotationPage };
+export {
+  AdminPage, ShiftRosterPage, AvailabilityRosterPage, SkillsPage, SpotsPage, ContractsPage,
+  EmployeesPage, RotationPage,
+};

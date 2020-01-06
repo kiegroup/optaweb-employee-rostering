@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import DomainObject from './DomainObject';
-import Skill from './Skill';
+import { DomainObject } from './DomainObject';
+import { Skill } from './Skill';
 
-export default interface Spot extends DomainObject {
+export interface Spot extends DomainObject {
   name: string;
-  requiredSkillSet: Skill[]; 
+  requiredSkillSet: Skill[];
 }

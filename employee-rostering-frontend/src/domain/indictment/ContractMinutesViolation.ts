@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ConstraintMatch from './ConstraintMatch';
-import Employee from '../Employee';
+import { ConstraintMatch } from './ConstraintMatch';
+import { Employee } from '../Employee';
 
 
-export default interface ContractMinutesViolation extends ConstraintMatch {
+export interface ContractMinutesViolation extends ConstraintMatch {
   employee: Employee;
-  type: "DAY"|"WEEK"|"MONTH"|"YEAR";
+  type: 'DAY'|'WEEK'|'MONTH'|'YEAR';
   minutesWorked: number;
 }

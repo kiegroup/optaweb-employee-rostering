@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import EmployeeAvailability from "domain/EmployeeAvailability";
-import { useTranslation } from "react-i18next";
-import { Split, SplitItem, Button, Level, LevelItem, Text, ButtonVariant } from "@patternfly/react-core";
+import { EmployeeAvailability } from 'domain/EmployeeAvailability';
+import { useTranslation } from 'react-i18next';
+import { Split, SplitItem, Button, Level, LevelItem, Text, ButtonVariant } from '@patternfly/react-core';
 import { EditIcon, TrashIcon, OkIcon, WarningTriangleIcon, ErrorCircleOIcon } from '@patternfly/react-icons';
-import moment from "moment";
+import moment from 'moment';
 
 export interface AvailabilityEventProps {
   availability: EmployeeAvailability;
@@ -28,32 +28,31 @@ export interface AvailabilityEventProps {
   removeEmployeeAvailability: (ea: EmployeeAvailability) => void;
 }
 
-const AvailabilityPopoverHeader: React.FC<AvailabilityEventProps> = props => 
-  (
-    <span>
-      <Text>
-        {
-          props.availability.employee.name + ", " + 
-      moment(props.availability.startDateTime).format("LT") + "-" + 
-      moment(props.availability.endDateTime).format("LT")
-        }
-      </Text>
-      <Button
-        aria-label="Edit"
-        onClick={() => props.onEdit(props.availability)}
-        variant={ButtonVariant.link}
-      >
-        <EditIcon />
-      </Button>
-      <Button
-        aria-label="Delete"
-        onClick={() => props.onDelete(props.availability)}
-        variant={ButtonVariant.link}
-      >
-        <TrashIcon />
-      </Button>
-    </span>
-  );
+const AvailabilityPopoverHeader: React.FC<AvailabilityEventProps> = props => (
+  <span>
+    <Text>
+      {
+        `${props.availability.employee.name}, ${
+          moment(props.availability.startDateTime).format('LT')}-${
+          moment(props.availability.endDateTime).format('LT')}`
+      }
+    </Text>
+    <Button
+      aria-label="Edit"
+      onClick={() => props.onEdit(props.availability)}
+      variant={ButtonVariant.link}
+    >
+      <EditIcon />
+    </Button>
+    <Button
+      aria-label="Delete"
+      onClick={() => props.onDelete(props.availability)}
+      variant={ButtonVariant.link}
+    >
+      <TrashIcon />
+    </Button>
+  </span>
+);
 
 const AvailabilityPopoverBody: React.FC = () => <></>;
 
@@ -63,7 +62,7 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
   return (
     <span className="availability-event">
       <Split>
-        <SplitItem isFilled={false}>{t("EmployeeAvailabilityState." + props.availability.state)}</SplitItem>
+        <SplitItem isFilled={false}>{t(`EmployeeAvailabilityState.${props.availability.state}`)}</SplitItem>
         <SplitItem isFilled />
         <SplitItem isFilled={false}>
           <Button
@@ -79,15 +78,15 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
         <LevelItem>
           <Button
             aria-label="Desired"
-            title={t("EmployeeAvailabilityState.DESIRED")}
+            title={t('EmployeeAvailabilityState.DESIRED')}
             onClick={() => props.updateEmployeeAvailability({
               ...props.availability,
-              state: "DESIRED"
+              state: 'DESIRED',
             })}
             style={{
-              backgroundColor: "green",
-              margin: "1px",
-              width: "min-content"
+              backgroundColor: 'green',
+              margin: '1px',
+              width: 'min-content',
             }}
             variant="tertiary"
           >
@@ -95,15 +94,15 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
           </Button>
           <Button
             aria-label="Undesired"
-            title={t("EmployeeAvailabilityState.UNDESIRED")}
+            title={t('EmployeeAvailabilityState.UNDESIRED')}
             onClick={() => props.updateEmployeeAvailability({
               ...props.availability,
-              state: "UNDESIRED"
+              state: 'UNDESIRED',
             })}
             style={{
-              backgroundColor: "yellow",
-              margin: "1px",
-              width: "min-content"
+              backgroundColor: 'yellow',
+              margin: '1px',
+              width: 'min-content',
             }}
             variant="tertiary"
           >
@@ -111,15 +110,15 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
           </Button>
           <Button
             aria-label="Unavailable"
-            title={t("EmployeeAvailabilityState.UNAVAILABLE")}
+            title={t('EmployeeAvailabilityState.UNAVAILABLE')}
             onClick={() => props.updateEmployeeAvailability({
               ...props.availability,
-              state: "UNAVAILABLE"
+              state: 'UNAVAILABLE',
             })}
             style={{
-              backgroundColor: "red",
-              margin: "1px",
-              width: "min-content"
+              backgroundColor: 'red',
+              margin: '1px',
+              width: 'min-content',
             }}
             variant="tertiary"
           >
@@ -129,7 +128,7 @@ const AvailabilityEvent: React.FC<AvailabilityEventProps> = (props: Availability
       </Level>
     </span>
   );
-}
+};
 
 export { AvailabilityPopoverBody, AvailabilityPopoverHeader };
 

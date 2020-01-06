@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AppState } from '../types';
 import { skillSelectors } from 'store/skill';
-import Spot from 'domain/Spot';
+import { Spot } from 'domain/Spot';
 import DomainObjectView from 'domain/DomainObjectView';
+import { AppState } from '../types';
 
 export const getSpotById = (state: AppState, id: number): Spot => {
   if (state.spotList.isLoading || state.skillList.isLoading) {
-    throw Error("Spot list is loading");
+    throw Error('Spot list is loading');
   }
   const spotView = state.spotList.spotMapById.get(id) as DomainObjectView<Spot>;
   return {
     ...spotView,
-    requiredSkillSet: spotView.requiredSkillSet.map(skillId => skillSelectors.getSkillById(state, skillId))
-  }
+    requiredSkillSet: spotView.requiredSkillSet.map(skillId => skillSelectors.getSkillById(state, skillId)),
+  };
 };
 
 export const getSpotList = (state: AppState): Spot[] => {

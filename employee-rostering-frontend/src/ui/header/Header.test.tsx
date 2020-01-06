@@ -42,5 +42,5 @@ describe('Header component', () => {
 });
 
 const props = {
-  onNavToggle: jest.fn()
-}
+  onNavToggle: jest.fn(),
+};

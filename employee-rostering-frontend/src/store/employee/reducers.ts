@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { ActionType, EmployeeList, EmployeeAction } from './types';
-import { createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import {
+  createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement,
+} from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
-import Employee from 'domain/Employee';
+import { Employee } from 'domain/Employee';
+import { ActionType, EmployeeList, EmployeeAction } from './types';
 
 export const initialState: EmployeeList = {
   isLoading: true,
-  employeeMapById: new Map<number, DomainObjectView<Employee>>()
+  employeeMapById: new Map<number, DomainObjectView<Employee>>(),
 };
 
 const employeeReducer = (state = initialState, action: EmployeeAction): EmployeeList => {

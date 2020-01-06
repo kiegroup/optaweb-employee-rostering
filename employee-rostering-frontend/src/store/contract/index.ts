@@ -20,7 +20,7 @@ import reducer from './reducers';
 
 export {
   contractOperations,
-  contractSelectors
+  contractSelectors,
 };
 
 export default reducer;

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-import { ThunkCommandFactory } from '../types';
+
 import { Action } from 'redux';
 import { refreshTenantList } from 'store/tenant/operations';
 import { alert } from 'store/alert';
+import { ThunkCommandFactory } from '../types';
 
 export const resetApplication:
 ThunkCommandFactory<void, Action<any>> = () => (dispatch, state, client) => {
   client.post<void>('/admin/reset', {}).then(() => {
-    dispatch(alert.showInfoMessage("resetApplicationSuccessful"));
+    dispatch(alert.showInfoMessage('resetApplicationSuccessful'));
     dispatch(refreshTenantList());
   });
 };

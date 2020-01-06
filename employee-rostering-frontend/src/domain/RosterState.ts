@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import Tenant from "./Tenant";
+import { Tenant } from './Tenant';
 
-export default interface RosterState {
+export interface RosterState {
   publishNotice: number;
   firstDraftDate: Date;
   publishLength: number;

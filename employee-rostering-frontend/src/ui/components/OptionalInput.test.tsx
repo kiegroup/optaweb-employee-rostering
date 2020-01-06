@@ -16,8 +16,8 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import OptionalInput, { OptionalInputProps } from './OptionalInput';
 import { TextInput } from '@patternfly/react-core';
+import OptionalInput, { OptionalInputProps } from './OptionalInput';
 
 interface MockData {
   name: string;
@@ -41,12 +41,12 @@ describe('OptionalInput component', () => {
     (dataProps.isValid as jest.Mock).mockReturnValue(true);
 
     (optionalInput.find(TextInput).props().onChange as (value: string) => void)('A');
-    expect(dataProps.isValid).toBeCalled()
+    expect(dataProps.isValid).toBeCalled();
     expect(dataProps.isValid).toBeCalledWith('A');
-    expect(dataProps.valueMapper).toBeCalled()
+    expect(dataProps.valueMapper).toBeCalled();
     expect(dataProps.valueMapper).toBeCalledWith('A');
     expect(dataProps.onChange).toBeCalled();
-    expect(dataProps.onChange).toBeCalledWith({name: 'A'});
+    expect(dataProps.onChange).toBeCalledWith({ name: 'A' });
   });
 
   it('should call onChange with undefined when input changes if invalid', () => {
@@ -55,7 +55,7 @@ describe('OptionalInput component', () => {
     (dataProps.onChange as jest.Mock).mockClear();
 
     (optionalInput.find(TextInput).props().onChange as (value: string) => void)('A');
-    expect(dataProps.isValid).toBeCalled()
+    expect(dataProps.isValid).toBeCalled();
     expect(dataProps.isValid).toBeCalledWith('A');
     expect(dataProps.onChange).toBeCalled();
     expect(dataProps.onChange).toBeCalledWith(undefined);
@@ -67,7 +67,7 @@ describe('OptionalInput component', () => {
 
     optionalInput.handleToggle(true);
     expect(optionalInput.setState).toBeCalled();
-    expect(optionalInput.setState).toBeCalledWith({isChecked: true});
+    expect(optionalInput.setState).toBeCalledWith({ isChecked: true });
     expect(emptyProps.onChange).toBeCalled();
     expect(emptyProps.onChange).toBeCalledWith(null);
   });
@@ -78,7 +78,7 @@ describe('OptionalInput component', () => {
 
     optionalInput.handleToggle(false);
     expect(optionalInput.setState).toBeCalled();
-    expect(optionalInput.setState).toBeCalledWith({isChecked: false});
+    expect(optionalInput.setState).toBeCalledWith({ isChecked: false });
     expect(dataProps.onChange).toBeCalled();
     expect(dataProps.onChange).toBeCalledWith(null);
   });
@@ -89,13 +89,13 @@ describe('OptionalInput component', () => {
 
     optionalInput.handleToggle(false);
     expect(optionalInput.setState).toBeCalled();
-    expect(optionalInput.setState).toBeCalledWith({isChecked: false});
+    expect(optionalInput.setState).toBeCalledWith({ isChecked: false });
     expect(dataProps.onChange).toBeCalled();
     expect(dataProps.onChange).toBeCalledWith(null);
 
     optionalInput.handleToggle(true);
     expect(optionalInput.setState).toBeCalled();
-    expect(optionalInput.setState).toBeCalledWith({isChecked: true});
+    expect(optionalInput.setState).toBeCalledWith({ isChecked: true });
     expect(dataProps.onChange).toBeCalled();
     expect(dataProps.onChange).toBeCalledWith(dataProps.defaultValue);
   });
@@ -111,17 +111,17 @@ describe('OptionalInput component', () => {
 const emptyProps: OptionalInputProps<MockData> = {
   defaultValue: null,
   valueToString: jest.fn(value => value.name),
-  valueMapper: jest.fn(option => ({name: option})),
+  valueMapper: jest.fn(option => ({ name: option })),
   onChange: jest.fn(),
   isValid: jest.fn(),
-  label: "empty"
+  label: 'empty',
 };
 
 const dataProps: OptionalInputProps<MockData> = {
-  defaultValue: {name: "Some name"},
+  defaultValue: { name: 'Some name' },
   valueToString: jest.fn(value => value.name),
-  valueMapper: jest.fn(option => ({name: option})),
+  valueMapper: jest.fn(option => ({ name: option })),
   onChange: jest.fn(),
   isValid: jest.fn(),
-  label: "data"
+  label: 'data',
 };

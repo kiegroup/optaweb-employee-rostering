@@ -16,11 +16,11 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import { AdminPage, Props } from './AdminPage';
 import { act } from 'react-dom/test-utils';
-import Tenant from 'domain/Tenant';
+import { Tenant } from 'domain/Tenant';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { DataTableUrlProps } from 'ui/components/DataTable';
+import { AdminPage, Props } from './AdminPage';
 
 describe('Admin Page', () => {
   it('should render correctly with no tenants', () => {
@@ -42,19 +42,19 @@ describe('Admin Page', () => {
   });
 
   it('should go to the correct page when the page is changed', () => {
-    const manyTenants = generateProps(20, { page: "2" });
+    const manyTenants = generateProps(20, { page: '2' });
     const adminPage = shallow(<AdminPage {...manyTenants} />);
     expect(toJson(adminPage)).toMatchSnapshot();
   });
 
   it('should show the desired number of tenants per page', () => {
-    const manyTenants = generateProps(20, { itemsPerPage: "5" });
+    const manyTenants = generateProps(20, { itemsPerPage: '5' });
     const adminPage = shallow(<AdminPage {...manyTenants} />);
     expect(toJson(adminPage)).toMatchSnapshot();
   });
 
   it('should filter by name', () => {
-    const manyTenants = generateProps(20, { filter: "5" });
+    const manyTenants = generateProps(20, { filter: '5' });
     const adminPage = shallow(<AdminPage {...manyTenants} />);
     expect(toJson(adminPage)).toMatchSnapshot();
   });
@@ -89,19 +89,19 @@ describe('Admin Page', () => {
     expect(twoTenants.removeTenant).toBeCalled();
     expect(twoTenants.removeTenant).toBeCalledWith(twoTenants.tenantList[0]);
   });
-  
+
   it('should show confirm dialog when the reset button is clicked', () => {
     const twoTenants = generateProps(2, {});
     const adminPage = shallow(<AdminPage {...twoTenants} />);
-    adminPage.find('[data-cy="reset-application"]').simulate("click");
+    adminPage.find('[data-cy="reset-application"]').simulate('click');
     expect(twoTenants.resetApplication).not.toBeCalled();
     expect(adminPage).toMatchSnapshot();
   });
-  
+
   it('confirm dialog should reset application', () => {
     const twoTenants = generateProps(2, {});
     const adminPage = shallow(<AdminPage {...twoTenants} />);
-    adminPage.find("ConfirmDialog[title='Trans(i18nKey=confirmResetTitle)']").simulate("confirm");
+    adminPage.find("ConfirmDialog[title='Trans(i18nKey=confirmResetTitle)']").simulate('confirm');
     expect(twoTenants.resetApplication).toBeCalled();
   });
 });
@@ -115,6 +115,6 @@ function generateProps(numberOfTenants: number, urlProps: Partial<DataTableUrlPr
     tenantList: tenants,
     removeTenant: jest.fn(),
     resetApplication: jest.fn(),
-    ...getRouterProps("/admin", { ...urlProps as any })
-  }
+    ...getRouterProps('/admin', { ...urlProps as any }),
+  };
 }

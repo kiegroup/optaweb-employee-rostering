@@ -41,7 +41,7 @@ export interface AlertInfo {
   id?: number;
   createdAt?: Date;
   i18nKey: string;
-  variant: "success" | "danger" | "warning" | "info";
+  variant: 'success' | 'danger' | 'warning' | 'info';
   params: BasicObject;
   components: AlertComponent[];
   componentProps: BasicObject[];

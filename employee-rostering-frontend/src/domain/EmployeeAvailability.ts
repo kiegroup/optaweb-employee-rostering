@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainObject from './DomainObject';
-import Employee from './Employee';
+import { DomainObject } from './DomainObject';
+import { Employee } from './Employee';
 
-export default interface EmployeeAvailability extends DomainObject {
+export interface EmployeeAvailability extends DomainObject {
   employee: Employee;
   startDateTime: Date;
   endDateTime: Date;
-  state: "UNAVAILABLE"|"UNDESIRED"|"DESIRED";
+  state: 'UNAVAILABLE'|'UNDESIRED'|'DESIRED';
 }

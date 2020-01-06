@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Contract } from 'domain/Contract';
 import { AppState } from '../types';
-import Contract from 'domain/Contract';
 
 export const getContractById = (state: AppState, id: number): Contract => {
   if (state.contractList.isLoading) {
-    throw Error("Contract list is loading");
+    throw Error('Contract list is loading');
   }
   return state.contractList.contractMapById.get(id) as Contract;
 };

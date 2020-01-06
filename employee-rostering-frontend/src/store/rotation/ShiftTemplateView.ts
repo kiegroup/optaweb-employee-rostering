@@ -13,36 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import ShiftTemplate from 'domain/ShiftTemplate';
-import DomainObject from 'domain/DomainObject';
+import { ShiftTemplate } from 'domain/ShiftTemplate';
+import { DomainObject } from 'domain/DomainObject';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
 import moment from 'moment';
 import DomainObjectView from 'domain/DomainObjectView';
 
 export function shiftTemplateToShiftTemplateView(shiftTemplate: ShiftTemplate): ShiftTemplateView {
   return {
-    ...objectWithout(shiftTemplate, "spot", "rotationEmployee", "shiftTemplateDuration",
-      "durationBetweenRotationStartAndTemplateStart"),
+    ...objectWithout(shiftTemplate, 'spot', 'rotationEmployee', 'shiftTemplateDuration',
+      'durationBetweenRotationStartAndTemplateStart'),
     spotId: shiftTemplate.spot.id as number,
-    rotationEmployeeId: shiftTemplate.rotationEmployee? shiftTemplate.rotationEmployee.id as number : null,
+    rotationEmployeeId: shiftTemplate.rotationEmployee ? shiftTemplate.rotationEmployee.id as number : null,
     shiftTemplateDuration: shiftTemplate.shiftTemplateDuration.toISOString(),
     durationBetweenRotationStartAndTemplateStart:
-      shiftTemplate.durationBetweenRotationStartAndTemplateStart.toISOString()
+      shiftTemplate.durationBetweenRotationStartAndTemplateStart.toISOString(),
   };
 }
 
 export function shiftTemplateViewToDomainObjectView(view: ShiftTemplateView): DomainObjectView<ShiftTemplate> {
   return {
-    ...objectWithout(view, "spotId", "rotationEmployeeId", "shiftTemplateDuration",
-      "durationBetweenRotationStartAndTemplateStart"),
+    ...objectWithout(view, 'spotId', 'rotationEmployeeId', 'shiftTemplateDuration',
+      'durationBetweenRotationStartAndTemplateStart'),
     spot: view.spotId,
     rotationEmployee: view.rotationEmployeeId,
     shiftTemplateDuration: moment.duration(view.shiftTemplateDuration),
-    durationBetweenRotationStartAndTemplateStart: moment.duration(view.durationBetweenRotationStartAndTemplateStart)
+    durationBetweenRotationStartAndTemplateStart: moment.duration(view.durationBetweenRotationStartAndTemplateStart),
   };
 }
 
-export default interface ShiftTemplateView extends DomainObject {
+export interface ShiftTemplateView extends DomainObject {
   spotId: number;
   rotationEmployeeId: number | null;
   shiftTemplateDuration: string;

@@ -20,7 +20,7 @@ import reducer from './reducers';
 
 export {
   employeeOperations,
-  employeeSelectors
+  employeeSelectors,
 };
 
 export default reducer;

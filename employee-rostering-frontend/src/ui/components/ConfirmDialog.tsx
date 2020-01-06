@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 import React, { FC, PropsWithChildren } from 'react';
-import { Modal, Button, ButtonVariant } from "@patternfly/react-core";
+import { Modal, Button, ButtonVariant } from '@patternfly/react-core';
 import { useTranslation } from 'react-i18next';
 
 export interface ConfirmDialogProps {
@@ -26,7 +26,7 @@ export interface ConfirmDialogProps {
 }
 
 export const ConfirmDialog: FC<PropsWithChildren<ConfirmDialogProps>> = (props) => {
-  const { t } = useTranslation("ConfirmDialog");
+  const { t } = useTranslation('ConfirmDialog');
   return (
     <Modal
       title={props.title}
@@ -34,25 +34,25 @@ export const ConfirmDialog: FC<PropsWithChildren<ConfirmDialogProps>> = (props) 
       isOpen={props.isOpen}
       actions={
         [(
-          <Button 
+          <Button
             aria-label="Close Modal"
             variant={ButtonVariant.tertiary}
             key={0}
             onClick={props.onClose}
           >
-            {t("close")}
+            {t('close')}
           </Button>
         ),
         (
           <Button
-            aria-label={t("confirm")}
+            aria-label={t('confirm')}
             data-cy="confirm"
             key={2}
-            onClick={() => {props.onClose(); props.onConfirm();}}
+            onClick={() => { props.onClose(); props.onConfirm(); }}
           >
-            {t("confirm")}
+            {t('confirm')}
           </Button>
-        )
+        ),
         ]
       }
       isSmall

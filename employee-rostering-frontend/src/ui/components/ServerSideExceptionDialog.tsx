@@ -22,34 +22,33 @@ function createStackTrace(exceptionInfo: ServerSideExceptionInfo|null): JSX.Elem
   if (exceptionInfo === null) {
     return (<></>);
   }
-  else {
-    return (
-      <>
-        <Title size="md">
-          {exceptionInfo.exceptionClass + ": " + exceptionInfo.exceptionMessage}
-        </Title>
-        {exceptionInfo.stackTrace.map(line => (
-          <Text key={line}>{line}</Text>
-        ))}
-        {
-          exceptionInfo.exceptionCause? (
-            <>
-              {/* Not i18n translated as this is intended for the developer */}
-              <Text>Caused By</Text>
-              {createStackTrace(exceptionInfo.exceptionCause)}
-            </>
-          ): (<></>)
-        }
-      </>
-    );
-  }
+
+  return (
+    <>
+      <Title size="md">
+        {`${exceptionInfo.exceptionClass}: ${exceptionInfo.exceptionMessage}`}
+      </Title>
+      {exceptionInfo.stackTrace.map(line => (
+        <Text key={line}>{line}</Text>
+      ))}
+      {
+        exceptionInfo.exceptionCause ? (
+          <>
+            {/* Not i18n translated as this is intended for the developer */}
+            <Text>Caused By</Text>
+            {createStackTrace(exceptionInfo.exceptionCause)}
+          </>
+        ) : (<></>)
+      }
+    </>
+  );
 }
 
 export const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerSideExceptionInfo>> = (props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const dialogBody = createStackTrace(props);
-  const { t } = useTranslation("ServerSideException");
-  
+  const { t } = useTranslation('ServerSideException');
+
   return (
     <>
       {t(props.i18nKey, props.messageParameters)}
@@ -61,7 +60,7 @@ export const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerS
         {props.children}
       </Button>
       <Modal
-        title={t("serverSideError")}
+        title={t('serverSideError')}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         actions={(
@@ -69,7 +68,7 @@ export const ServerSideExceptionDialog: React.FC<React.PropsWithChildren<ServerS
             aria-label="Close"
             onClick={() => setIsOpen(false)}
           >
-            {t("close")}
+            {t('close')}
           </Button>
         )}
       >

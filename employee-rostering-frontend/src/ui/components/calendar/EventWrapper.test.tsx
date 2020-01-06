@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 import * as React from 'react';
-import EventWrapper from './EventWrapper';
 import { shallow } from 'enzyme';
+import EventWrapper from './EventWrapper';
 
 describe('EventWrapper', () => {
   it('should render correctly when the event does not span multiple days', () => {
@@ -26,10 +26,10 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
-        style={{top: "50%", height: "25%", color: "white"}}
-      />
+        style={{ top: '50%', height: '25%', color: 'white' }}
+      />,
     );
-    expect(eventWrapper).toMatchSnapshot(); 
+    expect(eventWrapper).toMatchSnapshot();
   });
 
   it('should render correctly when the event continues from eariler', () => {
@@ -40,10 +40,10 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
-        style={{top: "0%", height: "25%", color: "white"}}
-      />
+        style={{ top: '0%', height: '25%', color: 'white' }}
+      />,
     );
-    expect(eventWrapper).toMatchSnapshot(); 
+    expect(eventWrapper).toMatchSnapshot();
   });
 
   it('should render correctly when the event continues later', () => {
@@ -54,10 +54,10 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
-        style={{top: "75%", height: "25%", color: "white"}}
-      />
+        style={{ top: '75%', height: '25%', color: 'white' }}
+      />,
     );
-    expect(eventWrapper).toMatchSnapshot(); 
+    expect(eventWrapper).toMatchSnapshot();
   });
 
   it('should render correctly when the event continues both before and after', () => {
@@ -68,8 +68,8 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
-        style={{ top: "0%", height: "100%", color: "white"}}
-      />
+        style={{ top: '0%', height: '100%', color: 'white' }}
+      />,
     );
     expect(eventWrapper).toMatchSnapshot();
   });
@@ -82,10 +82,10 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
-        style={{ color: "white"}}
-      />
+        style={{ color: 'white' }}
+      />,
     );
-    expect(eventWrapper).toMatchSnapshot(); 
+    expect(eventWrapper).toMatchSnapshot();
   });
 
   it('should render correctly without a style', () => {
@@ -96,9 +96,9 @@ describe('EventWrapper', () => {
         className="class"
         popoverHeader="Title"
         popoverBody="Body"
-      />
+      />,
     );
-    expect(eventWrapper).toMatchSnapshot(); 
+    expect(eventWrapper).toMatchSnapshot();
   });
 
   it('should render correctly when the event does not have a class name', () => {
@@ -109,9 +109,9 @@ describe('EventWrapper', () => {
         className=""
         popoverHeader="Title"
         popoverBody="Body"
-        style={{top: "50%", height: "25%", color: "white"}}
-      />
+        style={{ top: '50%', height: '25%', color: 'white' }}
+      />,
     );
-    expect(eventWrapper).toMatchSnapshot(); 
+    expect(eventWrapper).toMatchSnapshot();
   });
 });

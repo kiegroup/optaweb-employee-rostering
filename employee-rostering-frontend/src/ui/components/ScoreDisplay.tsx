@@ -15,7 +15,7 @@
  */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import HardMediumSoftScore from 'domain/HardMediumSoftScore';
+import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
 import { Chip } from '@patternfly/react-core';
 
 export interface ScoreDisplayProps {
@@ -23,18 +23,18 @@ export interface ScoreDisplayProps {
 }
 
 export const ScoreDisplay: React.FC<ScoreDisplayProps> = (props) => {
-  const { t } = useTranslation("ScoreDisplay");
+  const { t } = useTranslation('ScoreDisplay');
   const { hardScore, mediumScore, softScore } = props.score;
   return (
     <span>
       <Chip isReadOnly>
-        {t("hardScore", { hardScore })}
+        {t('hardScore', { hardScore })}
       </Chip>
       <Chip isReadOnly>
-        {t("mediumScore", { mediumScore })}
+        {t('mediumScore', { mediumScore })}
       </Chip>
       <Chip isReadOnly>
-        {t("softScore", { softScore })}
+        {t('softScore', { softScore })}
       </Chip>
     </span>
   );

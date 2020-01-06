@@ -20,7 +20,7 @@ import reducer from './reducers';
 
 export {
   skillOperations,
-  skillSelectors
+  skillSelectors,
 };
 
 export default reducer;

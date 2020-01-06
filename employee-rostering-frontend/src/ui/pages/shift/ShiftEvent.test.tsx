@@ -16,22 +16,22 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import Spot from 'domain/Spot';
-import Employee from 'domain/Employee';
-import Shift from 'domain/Shift';
-import ShiftEvent, * as Indictments from './ShiftEvent';
-import EmployeeAvailability from 'domain/EmployeeAvailability';
+import { Spot } from 'domain/Spot';
+import { Employee } from 'domain/Employee';
+import { Shift } from 'domain/Shift';
+import { EmployeeAvailability } from 'domain/EmployeeAvailability';
 import moment from 'moment-timezone';
-import "moment/locale/en-ca";
+import ShiftEvent, * as Indictments from './ShiftEvent';
+import 'moment/locale/en-ca';
 
 describe('ShiftEvent', () => {
   it('getRequiredSkillViolations should render correctly', () => {
     const shift: Shift = {
       ...baseShift,
       requiredSkillViolationList: [{
-        score: { hardScore: -10,  mediumScore: 0, softScore: 0 },
-        shift: baseShift
-      }]
+        score: { hardScore: -10, mediumScore: 0, softScore: 0 },
+        shift: baseShift,
+      }],
     };
     const requiredSkillViolations = mount(<Indictments.RequiredSkillViolations {...shift} />);
     expect(toJson(requiredSkillViolations)).toMatchSnapshot();
@@ -42,30 +42,30 @@ describe('ShiftEvent', () => {
       ...baseShift,
       contractMinutesViolationPenaltyList: [
         {
-          employee: employee,
+          employee,
           type: 'DAY',
           minutesWorked: 20,
-          score: { hardScore: -1, mediumScore: 0, softScore: 0 }
+          score: { hardScore: -1, mediumScore: 0, softScore: 0 },
         },
         {
-          employee: employee,
+          employee,
           type: 'WEEK',
           minutesWorked: 80,
-          score: { hardScore: -1, mediumScore: 0, softScore: 0 }
+          score: { hardScore: -1, mediumScore: 0, softScore: 0 },
         },
         {
-          employee: employee,
+          employee,
           type: 'MONTH',
           minutesWorked: 600,
-          score: { hardScore: -1, mediumScore: 0, softScore: 0 }
+          score: { hardScore: -1, mediumScore: 0, softScore: 0 },
         },
         {
-          employee: employee,
+          employee,
           type: 'YEAR',
           minutesWorked: 7000,
-          score: { hardScore: -1, mediumScore: 0, softScore: 0 }
-        }
-      ]
+          score: { hardScore: -1, mediumScore: 0, softScore: 0 },
+        },
+      ],
     };
 
     const contractMinutesViolations = mount(<Indictments.ContractMinutesViolations {...shift} />);
@@ -75,15 +75,15 @@ describe('ShiftEvent', () => {
   it('getUnavaliableEmployeeViolations should render correctly', () => {
     const unavaliableAvailability: EmployeeAvailability = {
       ...baseEmployeeAvailability,
-      state: "UNAVAILABLE"
+      state: 'UNAVAILABLE',
     };
     const shift: Shift = {
       ...baseShift,
       unavailableEmployeeViolationList: [{
         score: { hardScore: -1, mediumScore: 0, softScore: 0 },
         employeeAvailability: unavaliableAvailability,
-        shift: baseShift
-      }]
+        shift: baseShift,
+      }],
     };
     const unavailableEmployeeViolations = mount(<Indictments.UnavailableEmployeeViolations {...shift} />);
     expect(toJson(unavailableEmployeeViolations)).toMatchSnapshot();
@@ -94,25 +94,25 @@ describe('ShiftEvent', () => {
       ...baseShift,
       shiftEmployeeConflictList: [
         {
-          score: { hardScore: -1, mediumScore: 0, softScore: 0},
+          score: { hardScore: -1, mediumScore: 0, softScore: 0 },
           leftShift: baseShift,
           rightShift: {
             ...baseShift,
             id: 100,
             startDateTime:
-            moment(baseShift.startDateTime).add(1, 'hour').toDate()
-          }
+            moment(baseShift.startDateTime).add(1, 'hour').toDate(),
+          },
         },
         {
-          score: { hardScore: -1, mediumScore: 0, softScore: 0},
+          score: { hardScore: -1, mediumScore: 0, softScore: 0 },
           rightShift: baseShift,
           leftShift: {
             ...baseShift,
             id: 101,
-            startDateTime: moment(baseShift.startDateTime).subtract(1, 'hour').toDate()
-          }
-        }
-      ]
+            startDateTime: moment(baseShift.startDateTime).subtract(1, 'hour').toDate(),
+          },
+        },
+      ],
     };
     const shiftEmployeeConflictViolations = mount(<Indictments.ShiftEmployeeConflictViolations {...shift} />);
     expect(toJson(shiftEmployeeConflictViolations)).toMatchSnapshot();
@@ -124,9 +124,9 @@ describe('ShiftEvent', () => {
       rotationViolationPenaltyList: [
         {
           score: { hardScore: 0, mediumScore: 0, softScore: -100 },
-          shift: baseShift
-        }
-      ]
+          shift: baseShift,
+        },
+      ],
     };
     const rotationViolationPenalties = mount(<Indictments.RotationViolationPenalties {...shift} />);
     expect(toJson(rotationViolationPenalties)).toMatchSnapshot();
@@ -138,9 +138,9 @@ describe('ShiftEvent', () => {
       unassignedShiftPenaltyList: [
         {
           score: { hardScore: 0, mediumScore: -1, softScore: 0 },
-          shift: baseShift
-        }
-      ]
+          shift: baseShift,
+        },
+      ],
     };
     const unassignedShiftPenalties = mount(<Indictments.UnassignedShiftPenalties {...shift} />);
     expect(toJson(unassignedShiftPenalties)).toMatchSnapshot();
@@ -149,18 +149,18 @@ describe('ShiftEvent', () => {
   it('getUndesiredTimeslotForEmployeePenalties should render correctly', () => {
     const undesiredAvailability: EmployeeAvailability = {
       ...baseEmployeeAvailability,
-      state: "UNDESIRED"
+      state: 'UNDESIRED',
     };
     const shift: Shift = {
       ...baseShift,
       undesiredTimeslotForEmployeePenaltyList: [{
         score: { hardScore: 0, mediumScore: 0, softScore: -1 },
         employeeAvailability: undesiredAvailability,
-        shift: baseShift
-      }]
+        shift: baseShift,
+      }],
     };
     const undesiredTimeslotForEmployeePenalties = mount(
-      <Indictments.UndesiredTimeslotForEmployeePenalties {...shift} />
+      <Indictments.UndesiredTimeslotForEmployeePenalties {...shift} />,
     );
     expect(toJson(undesiredTimeslotForEmployeePenalties)).toMatchSnapshot();
   });
@@ -168,15 +168,15 @@ describe('ShiftEvent', () => {
   it('getDesiredTimeslotForEmployeeReward should render correctly', () => {
     const desiredAvailability: EmployeeAvailability = {
       ...baseEmployeeAvailability,
-      state: "DESIRED"
+      state: 'DESIRED',
     };
     const shift: Shift = {
       ...baseShift,
       desiredTimeslotForEmployeeRewardList: [{
         score: { hardScore: 0, mediumScore: 0, softScore: -1 },
         employeeAvailability: desiredAvailability,
-        shift: baseShift
-      }]
+        shift: baseShift,
+      }],
     };
     const desiredTimeslotForEmployeeRewards = mount(<Indictments.DesiredTimeslotForEmployeeRewards {...shift} />);
     expect(toJson(desiredTimeslotForEmployeeRewards)).toMatchSnapshot();
@@ -191,59 +191,59 @@ describe('ShiftEvent', () => {
     const shift: Shift = {
       ...baseShift,
       requiredSkillViolationList: [{
-        score: { hardScore: -10,  mediumScore: 0, softScore: 0 },
-        shift: baseShift
+        score: { hardScore: -10, mediumScore: 0, softScore: 0 },
+        shift: baseShift,
       }],
       rotationViolationPenaltyList: [
         {
           score: { hardScore: 0, mediumScore: 0, softScore: -100 },
-          shift: baseShift
-        }
-      ]
+          shift: baseShift,
+        },
+      ],
     };
     const indictments = mount(<Indictments.Indictments {...shift} />);
     expect(toJson(indictments)).toMatchSnapshot();
   });
 
   it('getShiftColor should return a color depending on score', () => {
-    const getShiftWithScore: (hard: number, medium: number, soft: number) => Shift = (hard,medium,soft) => ({
+    const getShiftWithScore: (hard: number, medium: number, soft: number) => Shift = (hard, medium, soft) => ({
       ...baseShift,
-      indictmentScore: { hardScore: hard, mediumScore: medium, softScore: soft }
+      indictmentScore: { hardScore: hard, mediumScore: medium, softScore: soft },
     });
 
     expect({
-      negativeHardColor: Indictments.getShiftColor(getShiftWithScore(-5,0,0)),
-      negativeMediumColor: Indictments.getShiftColor(getShiftWithScore(0,-1,0)),
-      negativeSoftColor: Indictments.getShiftColor(getShiftWithScore(0,0,-10)),
-      zeroColor: Indictments.getShiftColor(getShiftWithScore(0,0,0)),
-      positiveSoftColor: Indictments.getShiftColor(getShiftWithScore(0,0,5))
+      negativeHardColor: Indictments.getShiftColor(getShiftWithScore(-5, 0, 0)),
+      negativeMediumColor: Indictments.getShiftColor(getShiftWithScore(0, -1, 0)),
+      negativeSoftColor: Indictments.getShiftColor(getShiftWithScore(0, 0, -10)),
+      zeroColor: Indictments.getShiftColor(getShiftWithScore(0, 0, 0)),
+      positiveSoftColor: Indictments.getShiftColor(getShiftWithScore(0, 0, 5)),
     }).toMatchSnapshot();
   });
 
   it('should render ShiftPopupHeader correctly', () => {
     const shiftEventObj = shallow(
-      <Indictments.ShiftPopupHeader shift={baseShift} onEdit={jest.fn()} onDelete={jest.fn()} />
+      <Indictments.ShiftPopupHeader shift={baseShift} onEdit={jest.fn()} onDelete={jest.fn()} />,
     );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });
 
   it('should render ShiftPopupBody correctly', () => {
     const shiftEventObj = shallow(
-      <Indictments.ShiftPopupBody {...baseShift} />
+      <Indictments.ShiftPopupBody {...baseShift} />,
     );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });
 
   it('should render ShiftEvent correctly', () => {
     const shiftEventObj = shallow(
-      <ShiftEvent event={baseShift} title="Employee" />
+      <ShiftEvent event={baseShift} title="Employee" />,
     );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });
 
   it('should render ShiftEvent correctly when pinned', () => {
     const shiftEventObj = shallow(
-      <ShiftEvent event={{...baseShift, pinnedByUser: true}} title="Employee" />
+      <ShiftEvent event={{ ...baseShift, pinnedByUser: true }} title="Employee" />,
     );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });
@@ -253,61 +253,61 @@ const spot: Spot = {
   tenantId: 0,
   id: 2,
   version: 0,
-  name: "Spot",
+  name: 'Spot',
   requiredSkillSet: [
     {
       tenantId: 0,
       id: 3,
       version: 0,
-      name: "Skill"
-    }
-  ]
-}
+      name: 'Skill',
+    },
+  ],
+};
 
 const employee: Employee = {
   tenantId: 0,
   id: 4,
   version: 0,
-  name: "Employee 1",
+  name: 'Employee 1',
   contract: {
     tenantId: 0,
     id: 5,
     version: 0,
-    name: "Basic Contract",
+    name: 'Basic Contract',
     maximumMinutesPerDay: 10,
     maximumMinutesPerWeek: 70,
     maximumMinutesPerMonth: 500,
-    maximumMinutesPerYear: 6000
+    maximumMinutesPerYear: 6000,
   },
   skillProficiencySet: [{
     tenantId: 0,
     id: 6,
     version: 0,
-    name: "Not Required Skill"
-  }]
-}
+    name: 'Not Required Skill',
+  }],
+};
 
-const baseEmployeeAvailability: Omit<EmployeeAvailability, "state"> = {
+const baseEmployeeAvailability: Omit<EmployeeAvailability, 'state'> = {
   tenantId: 0,
   id: 8,
   version: 0,
-  startDateTime: moment("2018-07-01T09:00").toDate(),
-  endDateTime: moment("2018-07-01T17:00").toDate(),
-  employee: employee
+  startDateTime: moment('2018-07-01T09:00').toDate(),
+  endDateTime: moment('2018-07-01T17:00').toDate(),
+  employee,
 };
 
 const baseShift: Shift = {
   tenantId: 0,
   id: 1,
-  version: 0, 
-  startDateTime: moment("2018-07-01T09:00").toDate(),
-  endDateTime: moment("2018-07-01T17:00").toDate(),
-  spot: spot,
-  employee: employee,
+  version: 0,
+  startDateTime: moment('2018-07-01T09:00').toDate(),
+  endDateTime: moment('2018-07-01T17:00').toDate(),
+  spot,
+  employee,
   rotationEmployee: {
     ...employee,
     id: 7,
-    name: "Rotation Employee"
+    name: 'Rotation Employee',
   },
   pinnedByUser: false,
   indictmentScore: { hardScore: 0, mediumScore: 0, softScore: 0 },
@@ -318,5 +318,5 @@ const baseShift: Shift = {
   undesiredTimeslotForEmployeePenaltyList: [],
   rotationViolationPenaltyList: [],
   unassignedShiftPenaltyList: [],
-  contractMinutesViolationPenaltyList: []
+  contractMinutesViolationPenaltyList: [],
 };

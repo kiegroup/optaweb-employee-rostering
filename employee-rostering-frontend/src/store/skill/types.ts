@@ -15,7 +15,7 @@
  */
 
 import { Action } from 'redux';
-import Skill from 'domain/Skill';
+import { Skill } from 'domain/Skill';
 import DomainObjectView from 'domain/DomainObjectView';
 
 export enum ActionType {

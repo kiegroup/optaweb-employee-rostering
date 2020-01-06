@@ -19,10 +19,10 @@ import { ActionType, AlertInfo, AddAlertAction, RemoveAlertAction } from './type
 
 export const addAlert: ActionFactory<AlertInfo, AddAlertAction> = newAlert => ({
   type: ActionType.ADD_ALERT,
-  alertInfo: newAlert
+  alertInfo: newAlert,
 });
 
 export const removeAlert: ActionFactory<number, RemoveAlertAction> = id => ({
   type: ActionType.REMOVE_ALERT,
-  id: id
+  id,
 });

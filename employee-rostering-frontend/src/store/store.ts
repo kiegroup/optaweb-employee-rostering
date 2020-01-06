@@ -20,6 +20,7 @@ import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
+import axios from 'axios';
 import RestServiceClient from './rest';
 import { AppState } from './types';
 import tenantReducer from './tenant';
@@ -29,9 +30,10 @@ import contractReducer from './contract/reducers';
 import employeeReducer from './employee/reducers';
 import shiftTemplateReducer from './rotation/reducers';
 import alertReducer from './alert/reducers';
-import axios from 'axios';
-import { rosterStateReducer, shiftRosterViewReducer, availabilityRosterReducer,
-  solverReducer } from './roster/reducers';
+import {
+  rosterStateReducer, shiftRosterViewReducer, availabilityRosterReducer,
+  solverReducer,
+} from './roster/reducers';
 
 export interface StoreConfig {
   readonly restBaseURL: string;
@@ -41,7 +43,6 @@ export function configureStore(
   { restBaseURL }: StoreConfig,
   preloadedState?: Partial<AppState>,
 ): Store<AppState> {
-
   const restServiceClient = new RestServiceClient(restBaseURL, axios);
 
   const middlewares = [thunk.withExtraArgument(restServiceClient), createLogger()];
@@ -62,7 +63,7 @@ export function configureStore(
     shiftRoster: shiftRosterViewReducer,
     availabilityRoster: availabilityRosterReducer,
     solverState: solverReducer,
-    alerts: alertReducer
+    alerts: alertReducer,
   });
 
   /* if (process.env.NODE_ENV !== 'production' && module.hot) {

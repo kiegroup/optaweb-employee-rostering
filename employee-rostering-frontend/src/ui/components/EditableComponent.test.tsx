@@ -33,11 +33,11 @@ describe('EditableComponent component', () => {
 const notEditing: EditableComponentProps = {
   viewer: <span>Viewer</span>,
   editor: <div>Editor</div>,
-  isEditing: false
+  isEditing: false,
 };
 
 const isEditing: EditableComponentProps = {
   viewer: <span>Viewer</span>,
   editor: <div>Editor</div>,
-  isEditing: true
+  isEditing: true,
 };

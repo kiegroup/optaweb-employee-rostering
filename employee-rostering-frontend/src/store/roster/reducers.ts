@@ -14,29 +14,31 @@
  * limitations under the License.
  */
 
-import { RosterStateActionType, SolverAction, ShiftRosterViewActionType, RosterStateAction,
-  ShiftRosterViewAction, CurrentSolverState, CurrentRosterState, CurrentShiftRoster, SolverActionType,
-  CurrentAvailabilityRoster, AvailabilityRosterViewActionType, AvailabilityRosterViewAction } from './types';
 import moment from 'moment';
+import {
+  RosterStateActionType, SolverAction, ShiftRosterViewActionType, RosterStateAction,
+  ShiftRosterViewAction, CurrentSolverState, CurrentRosterState, CurrentShiftRoster, SolverActionType,
+  CurrentAvailabilityRoster, AvailabilityRosterViewActionType, AvailabilityRosterViewAction,
+} from './types';
 
 export const initialSolverState: CurrentSolverState = {
-  isSolving: false
-}
+  isSolving: false,
+};
 
 export const initialRosterState: CurrentRosterState = {
   isLoading: true,
-  rosterState: null
+  rosterState: null,
 };
 
 export const initialShiftRosterState: CurrentShiftRoster = {
   isLoading: true,
-  shiftRosterView: null
+  shiftRosterView: null,
 };
 
 export const initialAvailabilityRosterState: CurrentAvailabilityRoster = {
   isLoading: true,
-  availabilityRosterView: null
-}
+  availabilityRosterView: null,
+};
 
 export const rosterStateReducer = (state = initialRosterState, action: RosterStateAction): CurrentRosterState => {
   switch (action.type) {
@@ -49,17 +51,17 @@ export const rosterStateReducer = (state = initialRosterState, action: RosterSta
     case RosterStateActionType.PUBLISH_ROSTER: {
       if (state.rosterState) {
         const publishedDuration = moment(action.publishResult.publishedToDate)
-          .diff(action.publishResult.publishedFromDate, "days");
-        return { ...state, rosterState: {
-          ...state.rosterState,
-          firstDraftDate: action.publishResult.publishedToDate,
-          unplannedRotationOffset: (state.rosterState.unplannedRotationOffset + publishedDuration) %
-          state.rosterState.rotationLength
-        } };
+          .diff(action.publishResult.publishedFromDate, 'days');
+        return { ...state,
+          rosterState: {
+            ...state.rosterState,
+            firstDraftDate: action.publishResult.publishedToDate,
+            unplannedRotationOffset: (state.rosterState.unplannedRotationOffset + publishedDuration)
+          % state.rosterState.rotationLength,
+          } };
       }
-      else {
-        return { ...state, rosterState: null };
-      }
+
+      return { ...state, rosterState: null };
     }
     default:
       return state;
@@ -78,7 +80,7 @@ export const shiftRosterViewReducer = (state = initialShiftRosterState,
     default:
       return state;
   }
-}
+};
 
 export const availabilityRosterReducer = (state = initialAvailabilityRosterState,
   action: AvailabilityRosterViewAction): CurrentAvailabilityRoster => {
@@ -92,7 +94,7 @@ export const availabilityRosterReducer = (state = initialAvailabilityRosterState
     default:
       return state;
   }
-}
+};
 
 
 export const solverReducer = (state = initialSolverState, action: SolverAction): CurrentSolverState => {
@@ -106,4 +108,4 @@ export const solverReducer = (state = initialSolverState, action: SolverAction):
     default:
       return state;
   }
-}
+};

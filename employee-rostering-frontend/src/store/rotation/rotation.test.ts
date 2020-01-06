@@ -14,32 +14,37 @@
  * limitations under the License.
  */
 
-import { mockStore } from '../mockStore';
-import { AppState } from '../types';
-import * as actions from './actions';
 import { alert } from 'store/alert';
-import reducer, { shiftTemplateSelectors, shiftTemplateOperations } from './index';
-import { createIdMapFromList, mapWithElement, mapWithoutElement, 
-  mapWithUpdatedElement, 
-  mapDomainObjectToView} from 'util/ImmutableCollectionOperations';
+import {
+  createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement,
+  mapDomainObjectToView,
+} from 'util/ImmutableCollectionOperations';
 import { onGet, onPost, onDelete, onPut } from 'store/rest/RestTestUtils';
-import ShiftTemplate from 'domain/ShiftTemplate';
-import ShiftTemplateView, { shiftTemplateViewToDomainObjectView, 
-  shiftTemplateToShiftTemplateView } from 'store/rotation/ShiftTemplateView';
+import { ShiftTemplate } from 'domain/ShiftTemplate';
+import {
+  shiftTemplateViewToDomainObjectView,
+  shiftTemplateToShiftTemplateView,
+  ShiftTemplateView,
+} from 'store/rotation/ShiftTemplateView';
 import moment from 'moment';
+import reducer, { shiftTemplateSelectors, shiftTemplateOperations } from './index';
+import * as actions from './actions';
+import { AppState } from '../types';
+import { mockStore } from '../mockStore';
 
 describe('Rotation operations', () => {
   it('should dispatch actions and call client on refresh shift template list', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const mockShiftTemplateList: ShiftTemplateView[] = [{
-      tenantId: tenantId,
+      tenantId,
       id: 0,
       version: 0,
       spotId: 1,
       rotationEmployeeId: 2,
-      durationBetweenRotationStartAndTemplateStart: "PT3D",
-      shiftTemplateDuration: "PT8H"
+      durationBetweenRotationStartAndTemplateStart: 'PT3D',
+      shiftTemplateDuration: 'PT8H',
     }];
 
     onGet(`/tenant/${tenantId}/rotation/`, mockShiftTemplateList);
@@ -47,33 +52,33 @@ describe('Rotation operations', () => {
     expect(store.getActions()).toEqual([
       actions.setIsShiftTemplateListLoading(true),
       actions.refreshShiftTemplateList(mockShiftTemplateList.map(shiftTemplateViewToDomainObjectView)),
-      actions.setIsShiftTemplateListLoading(false)
+      actions.setIsShiftTemplateListLoading(false),
     ]);
     expect(client.get).toHaveBeenCalledTimes(1);
     expect(client.get).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/`);
   });
-  
+
   it('should dispatch actions and call client on a successful delete shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const shiftTemplateToDelete: ShiftTemplate = {
-      tenantId: tenantId,
+      tenantId,
       id: 0,
       version: 0,
       spot: {
-        tenantId: tenantId,
+        tenantId,
         id: 1,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       rotationEmployee: null,
-      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-      shiftTemplateDuration: moment.duration("PT8H")
+      durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+      shiftTemplateDuration: moment.duration('PT8H'),
     };
     onDelete(`/tenant/${tenantId}/rotation/${shiftTemplateToDelete.id}`, true);
     await store.dispatch(shiftTemplateOperations.removeShiftTemplate(shiftTemplateToDelete));
     expect(store.getActions()).toEqual([
-      actions.removeShiftTemplate(mapDomainObjectToView(shiftTemplateToDelete))
+      actions.removeShiftTemplate(mapDomainObjectToView(shiftTemplateToDelete)),
     ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/${shiftTemplateToDelete.id}`);
@@ -83,57 +88,57 @@ describe('Rotation operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const shiftTemplateToDelete: ShiftTemplate = {
-      tenantId: tenantId,
+      tenantId,
       id: 0,
       version: 0,
       spot: {
-        tenantId: tenantId,
+        tenantId,
         id: 1,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       rotationEmployee: null,
-      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-      shiftTemplateDuration: moment.duration("PT8H")
+      durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+      shiftTemplateDuration: moment.duration('PT8H'),
     };
     onDelete(`/tenant/${tenantId}/rotation/${shiftTemplateToDelete.id}`, false);
     await store.dispatch(shiftTemplateOperations.removeShiftTemplate(shiftTemplateToDelete));
     expect(store.getActions()).toEqual([
-      alert.showErrorMessage("removeShiftTemplateError", { id: shiftTemplateToDelete.id })
+      alert.showErrorMessage('removeShiftTemplateError', { id: shiftTemplateToDelete.id }),
     ]);
     expect(client.delete).toHaveBeenCalledTimes(1);
     expect(client.delete).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/${shiftTemplateToDelete.id}`);
   });
-    
+
   it('should dispatch actions and call client on add shift template', async () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const shiftTemplateToAdd: ShiftTemplate = {
-      tenantId: tenantId,
+      tenantId,
       spot: {
-        tenantId: tenantId,
+        tenantId,
         id: 1,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       rotationEmployee: null,
-      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-      shiftTemplateDuration: moment.duration("PT8H")
+      durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+      shiftTemplateDuration: moment.duration('PT8H'),
     };
     const shiftTemplateWithUpdatedId: ShiftTemplate = {
       ...shiftTemplateToAdd,
       id: 4,
-      version: 0
+      version: 0,
     };
-    onPost(`/tenant/${tenantId}/rotation/add`, 
+    onPost(`/tenant/${tenantId}/rotation/add`,
       shiftTemplateToShiftTemplateView(shiftTemplateToAdd),
       shiftTemplateToShiftTemplateView(shiftTemplateWithUpdatedId));
     await store.dispatch(shiftTemplateOperations.addShiftTemplate(shiftTemplateToAdd));
     expect(store.getActions()).toEqual([
-      actions.addShiftTemplate(mapDomainObjectToView(shiftTemplateWithUpdatedId))
+      actions.addShiftTemplate(mapDomainObjectToView(shiftTemplateWithUpdatedId)),
     ]);
     expect(client.post).toHaveBeenCalledTimes(1);
-    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/add`, 
+    expect(client.post).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/add`,
       shiftTemplateToShiftTemplateView(shiftTemplateToAdd));
   });
 
@@ -141,28 +146,28 @@ describe('Rotation operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
     const shiftTemplateToUpdate: ShiftTemplate = {
-      tenantId: tenantId,
+      tenantId,
       id: 4,
       version: 0,
       spot: {
-        tenantId: tenantId,
+        tenantId,
         id: 1,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       rotationEmployee: null,
-      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-      shiftTemplateDuration: moment.duration("PT8H")
+      durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+      shiftTemplateDuration: moment.duration('PT8H'),
     };
     const shiftTemplateWithUpdatedVersion: ShiftTemplate = {
       ...shiftTemplateToUpdate,
-      version: 1
+      version: 1,
     };
     onPut(`/tenant/${tenantId}/rotation/update`, shiftTemplateToShiftTemplateView(shiftTemplateToUpdate),
       shiftTemplateToShiftTemplateView(shiftTemplateWithUpdatedVersion));
     await store.dispatch(shiftTemplateOperations.updateShiftTemplate(shiftTemplateToUpdate));
     expect(store.getActions()).toEqual([
-      actions.updateShiftTemplate(mapDomainObjectToView(shiftTemplateWithUpdatedVersion))
+      actions.updateShiftTemplate(mapDomainObjectToView(shiftTemplateWithUpdatedVersion)),
     ]);
     expect(client.put).toHaveBeenCalledTimes(1);
     expect(client.put).toHaveBeenCalledWith(`/tenant/${tenantId}/rotation/update`,
@@ -178,12 +183,12 @@ describe('Rotation reducers', () => {
     spot: {
       tenantId: 0,
       id: 1,
-      name: "Spot",
-      requiredSkillSet: []
+      name: 'Spot',
+      requiredSkillSet: [],
     },
     rotationEmployee: null,
-    durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-    shiftTemplateDuration: moment.duration("PT8H")
+    durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+    shiftTemplateDuration: moment.duration('PT8H'),
   };
   const updatedShiftTemplate: ShiftTemplate = {
     tenantId: 0,
@@ -192,12 +197,12 @@ describe('Rotation reducers', () => {
     spot: {
       tenantId: 0,
       id: 3,
-      name: "New Spot",
-      requiredSkillSet: []
+      name: 'New Spot',
+      requiredSkillSet: [],
     },
     rotationEmployee: null,
-    durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-    shiftTemplateDuration: moment.duration("PT8H")
+    durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+    shiftTemplateDuration: moment.duration('PT8H'),
   };
   const deletedShiftTemplate: ShiftTemplate = {
     tenantId: 0,
@@ -206,43 +211,47 @@ describe('Rotation reducers', () => {
     spot: {
       tenantId: 0,
       id: 1,
-      name: "Spot",
-      requiredSkillSet: []
+      name: 'Spot',
+      requiredSkillSet: [],
     },
     rotationEmployee: null,
-    durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-    shiftTemplateDuration: moment.duration("PT8H")
+    durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+    shiftTemplateDuration: moment.duration('PT8H'),
   };
 
   it('set is loading', () => {
     expect(
-      reducer(state.shiftTemplateList, actions.setIsShiftTemplateListLoading(true))
-    ).toEqual({ ...state.shiftTemplateList, isLoading: true })
+      reducer(state.shiftTemplateList, actions.setIsShiftTemplateListLoading(true)),
+    ).toEqual({ ...state.shiftTemplateList, isLoading: true });
   });
   it('add shift template', () => {
     expect(
-      reducer(state.shiftTemplateList, actions.addShiftTemplate(mapDomainObjectToView(addedShiftTemplate)))
-    ).toEqual({ ...state.shiftTemplateList, shiftTemplateMapById:
-        mapWithElement(state.shiftTemplateList.shiftTemplateMapById, mapDomainObjectToView(addedShiftTemplate))})
+      reducer(state.shiftTemplateList, actions.addShiftTemplate(mapDomainObjectToView(addedShiftTemplate))),
+    ).toEqual({ ...state.shiftTemplateList,
+      shiftTemplateMapById:
+        mapWithElement(state.shiftTemplateList.shiftTemplateMapById, mapDomainObjectToView(addedShiftTemplate)) });
   });
   it('remove shift template', () => {
     expect(
       reducer(state.shiftTemplateList, actions.removeShiftTemplate(mapDomainObjectToView(updatedShiftTemplate))),
-    ).toEqual({ ...state.shiftTemplateList, shiftTemplateMapById: 
-        mapWithoutElement(state.shiftTemplateList.shiftTemplateMapById, mapDomainObjectToView(updatedShiftTemplate))})
+    ).toEqual({ ...state.shiftTemplateList,
+      shiftTemplateMapById:
+        mapWithoutElement(state.shiftTemplateList.shiftTemplateMapById, mapDomainObjectToView(updatedShiftTemplate)) });
   });
   it('update shift template', () => {
     expect(
       reducer(state.shiftTemplateList, actions.updateShiftTemplate(mapDomainObjectToView(deletedShiftTemplate))),
-    ).toEqual({ ...state.shiftTemplateList, shiftTemplateMapById:
+    ).toEqual({ ...state.shiftTemplateList,
+      shiftTemplateMapById:
         mapWithUpdatedElement(state.shiftTemplateList.shiftTemplateMapById,
-          mapDomainObjectToView(deletedShiftTemplate))})
+          mapDomainObjectToView(deletedShiftTemplate)) });
   });
   it('refresh shift template list', () => {
     expect(
       reducer(state.shiftTemplateList, actions.refreshShiftTemplateList([addedShiftTemplate]
         .map(mapDomainObjectToView))),
-    ).toEqual({ ...state.shiftTemplateList, shiftTemplateMapById: 
+    ).toEqual({ ...state.shiftTemplateList,
+      shiftTemplateMapById:
         createIdMapFromList([addedShiftTemplate].map(mapDomainObjectToView)) });
   });
 });
@@ -251,28 +260,23 @@ describe('Rotation selectors', () => {
   it('should throw an error if shift template list is loading', () => {
     expect(() => shiftTemplateSelectors.getShiftTemplateById({
       ...state,
-      shiftTemplateList: { 
-        ...state.shiftTemplateList, isLoading: true }
+      shiftTemplateList: { ...state.shiftTemplateList, isLoading: true },
     }, 2)).toThrow();
     expect(() => shiftTemplateSelectors.getShiftTemplateById({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true }
+      spotList: { ...state.spotList, isLoading: true },
     }, 2)).toThrow();
     expect(() => shiftTemplateSelectors.getShiftTemplateById({
       ...state,
-      employeeList: { 
-        ...state.employeeList, isLoading: true }
+      employeeList: { ...state.employeeList, isLoading: true },
     }, 2)).toThrow();
     expect(() => shiftTemplateSelectors.getShiftTemplateById({
       ...state,
-      contractList: { 
-        ...state.contractList, isLoading: true }
+      contractList: { ...state.contractList, isLoading: true },
     }, 2)).toThrow();
     expect(() => shiftTemplateSelectors.getShiftTemplateById({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
+      skillList: { ...state.skillList, isLoading: true },
     }, 2)).toThrow();
   });
 
@@ -286,40 +290,35 @@ describe('Rotation selectors', () => {
         tenantId: 0,
         id: 1,
         version: 0,
-        name: "Spot",
-        requiredSkillSet: []
+        name: 'Spot',
+        requiredSkillSet: [],
       },
       rotationEmployee: null,
-      durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-      shiftTemplateDuration: moment.duration("PT8H")
+      durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+      shiftTemplateDuration: moment.duration('PT8H'),
     });
   });
 
   it('should return an empty list if shift template list is loading', () => {
     expect(shiftTemplateSelectors.getShiftTemplateList({
       ...state,
-      shiftTemplateList: { 
-        ...state.shiftTemplateList, isLoading: true }
+      shiftTemplateList: { ...state.shiftTemplateList, isLoading: true },
     })).toEqual([]);
     expect(shiftTemplateSelectors.getShiftTemplateList({
       ...state,
-      spotList: { 
-        ...state.spotList, isLoading: true }
+      spotList: { ...state.spotList, isLoading: true },
     })).toEqual([]);
     expect(shiftTemplateSelectors.getShiftTemplateList({
       ...state,
-      employeeList: { 
-        ...state.employeeList, isLoading: true }
+      employeeList: { ...state.employeeList, isLoading: true },
     })).toEqual([]);
     expect(shiftTemplateSelectors.getShiftTemplateList({
       ...state,
-      contractList: { 
-        ...state.contractList, isLoading: true }
+      contractList: { ...state.contractList, isLoading: true },
     })).toEqual([]);
     expect(shiftTemplateSelectors.getShiftTemplateList({
       ...state,
-      skillList: { 
-        ...state.skillList, isLoading: true }
+      skillList: { ...state.skillList, isLoading: true },
     })).toEqual([]);
   });
 
@@ -334,12 +333,12 @@ describe('Rotation selectors', () => {
           tenantId: 0,
           id: 1,
           version: 0,
-          name: "Spot",
-          requiredSkillSet: []
+          name: 'Spot',
+          requiredSkillSet: [],
         },
         rotationEmployee: null,
-        durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-        shiftTemplateDuration: moment.duration("PT8H")
+        durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+        shiftTemplateDuration: moment.duration('PT8H'),
       },
       {
         tenantId: 0,
@@ -349,29 +348,29 @@ describe('Rotation selectors', () => {
           tenantId: 0,
           id: 1,
           version: 0,
-          name: "Spot",
-          requiredSkillSet: []
+          name: 'Spot',
+          requiredSkillSet: [],
         },
         rotationEmployee: {
           tenantId: 0,
           id: 3,
           version: 0,
-          name: "Employee",
+          name: 'Employee',
           contract: {
             tenantId: 0,
             id: 10,
             version: 0,
-            name: "Contract",
+            name: 'Contract',
             maximumMinutesPerDay: null,
             maximumMinutesPerWeek: null,
             maximumMinutesPerMonth: null,
-            maximumMinutesPerYear: null
+            maximumMinutesPerYear: null,
           },
-          skillProficiencySet: []
+          skillProficiencySet: [],
         },
-        durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-        shiftTemplateDuration: moment.duration("PT8H")
-      }
+        durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+        shiftTemplateDuration: moment.duration('PT8H'),
+      },
     ]));
     expect(skillList.length).toEqual(2);
   });
@@ -381,7 +380,7 @@ const state: AppState = {
   tenantData: {
     currentTenantId: 0,
     tenantList: [],
-    timezoneList: ["America/Toronto"]
+    timezoneList: ['America/Toronto'],
   },
   employeeList: {
     isLoading: false,
@@ -390,11 +389,11 @@ const state: AppState = {
         tenantId: 0,
         id: 3,
         version: 0,
-        name: "Employee",
+        name: 'Employee',
         contract: 10,
-        skillProficiencySet: []
-      }]
-    ])
+        skillProficiencySet: [],
+      }],
+    ]),
   },
   contractList: {
     isLoading: false,
@@ -403,13 +402,13 @@ const state: AppState = {
         tenantId: 0,
         id: 10,
         version: 0,
-        name: "Contract",
+        name: 'Contract',
         maximumMinutesPerDay: null,
         maximumMinutesPerWeek: null,
         maximumMinutesPerMonth: null,
-        maximumMinutesPerYear: null
-      }]
-    ])
+        maximumMinutesPerYear: null,
+      }],
+    ]),
   },
   spotList: {
     isLoading: false,
@@ -418,14 +417,14 @@ const state: AppState = {
         tenantId: 0,
         id: 1,
         version: 0,
-        name: "Spot",
-        requiredSkillSet: []
-      }]
-    ])
+        name: 'Spot',
+        requiredSkillSet: [],
+      }],
+    ]),
   },
   skillList: {
     isLoading: false,
-    skillMapById: new Map()
+    skillMapById: new Map(),
   },
   shiftTemplateList: {
     isLoading: false,
@@ -436,8 +435,8 @@ const state: AppState = {
         version: 0,
         spot: 1,
         rotationEmployee: null,
-        durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-        shiftTemplateDuration: moment.duration("PT8H")
+        durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+        shiftTemplateDuration: moment.duration('PT8H'),
       }],
       [4, {
         tenantId: 0,
@@ -445,28 +444,28 @@ const state: AppState = {
         version: 0,
         spot: 1,
         rotationEmployee: 3,
-        durationBetweenRotationStartAndTemplateStart: moment.duration("PT3D"),
-        shiftTemplateDuration: moment.duration("PT8H")
-      }]
-    ])
+        durationBetweenRotationStartAndTemplateStart: moment.duration('PT3D'),
+        shiftTemplateDuration: moment.duration('PT8H'),
+      }],
+    ]),
   },
   rosterState: {
     isLoading: true,
-    rosterState: null
+    rosterState: null,
   },
   shiftRoster: {
     isLoading: true,
-    shiftRosterView: null
+    shiftRosterView: null,
   },
   availabilityRoster: {
     isLoading: true,
-    availabilityRosterView: null
+    availabilityRosterView: null,
   },
   solverState: {
-    isSolving: false
+    isSolving: false,
   },
   alerts: {
     alertList: [],
-    idGeneratorIndex: 0
-  }
+    idGeneratorIndex: 0,
+  },
 };

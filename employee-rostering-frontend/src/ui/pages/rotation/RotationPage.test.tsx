@@ -16,15 +16,15 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import Spot from 'domain/Spot';
-import Employee from 'domain/Employee';
-import { RotationPage, Props, RotationPageUrlProps } from './RotationPage';
-import RosterState from 'domain/RosterState';
+import { Spot } from 'domain/Spot';
+import { Employee } from 'domain/Employee';
+import { RosterState } from 'domain/RosterState';
 import moment from 'moment-timezone';
-import ShiftTemplate from 'domain/ShiftTemplate';
+import { ShiftTemplate } from 'domain/ShiftTemplate';
 import { useTranslation, WithTranslation } from 'react-i18next';
 import Schedule from 'ui/components/calendar/Schedule';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { RotationPage, Props, RotationPageUrlProps } from './RotationPage';
 
 const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
 describe('Rotation Page', () => {
@@ -53,7 +53,7 @@ describe('Rotation Page', () => {
     const rotationPage = shallow(<RotationPage
       {...baseProps}
     />);
-    rotationPage.find('Button[aria-label="Create Shift Template"]').simulate("click");
+    rotationPage.find('Button[aria-label="Create Shift Template"]').simulate('click');
     expect(toJson(rotationPage)).toMatchSnapshot();
   });
 
@@ -61,8 +61,8 @@ describe('Rotation Page', () => {
     const rotationPage = shallow(<RotationPage
       {...baseProps}
     />);
-    rotationPage.find('Pagination').simulate("setPage", null, 2);
-    expect(baseProps.history.push).toHaveBeenLastCalledWith("/rotation?shownSpot=Spot&weekNumber=1");
+    rotationPage.find('Pagination').simulate('setPage', null, 2);
+    expect(baseProps.history.push).toHaveBeenLastCalledWith('/rotation?shownSpot=Spot&weekNumber=1');
   });
 
   it('should update shownSpot on spot change', () => {
@@ -70,16 +70,16 @@ describe('Rotation Page', () => {
       {...baseProps}
     />);
 
-    rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate("change", newSpot);
-    expect(baseProps.history.push).toHaveBeenLastCalledWith("/rotation?shownSpot=New+Spot&weekNumber=0");
+    rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate('change', newSpot);
+    expect(baseProps.history.push).toHaveBeenLastCalledWith('/rotation?shownSpot=New+Spot&weekNumber=0');
   });
 
   it('should not update shownSpot on spot change if invalid', () => {
     const rotationPage = shallow(<RotationPage
       {...baseProps}
     />);
-    const setStateSpy = jest.spyOn(rotationPage.instance(), "setState");
-    rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate("change");
+    const setStateSpy = jest.spyOn(rotationPage.instance(), 'setState');
+    rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate('change');
     expect(setStateSpy).not.toBeCalled();
   });
 
@@ -88,7 +88,7 @@ describe('Rotation Page', () => {
     const newShiftTemplate: ShiftTemplate = {
       ...shiftTemplate,
       id: undefined,
-      version: undefined
+      version: undefined,
     };
     rotationPage.addShiftTemplate(newShiftTemplate);
     expect(baseProps.addShiftTemplate).toBeCalled();
@@ -101,9 +101,9 @@ describe('Rotation Page', () => {
       spotList={[]}
       spotIdToShiftTemplateListMap={new Map()}
     />);
-    shallow((rotationPage.find('Trans').prop('components') as any)[2]).simulate("click");
+    shallow((rotationPage.find('Trans').prop('components') as any)[2]).simulate('click');
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith("/0/spots");
+    expect(baseProps.history.push).toBeCalledWith('/0/spots');
   });
 
   it('should call updateShift on updateShift', () => {
@@ -129,13 +129,13 @@ describe('Rotation Page', () => {
     />);
     rotationPage.setState({
       selectedShift: shiftTemplate,
-      isCreatingOrEditingShiftTemplate: true
+      isCreatingOrEditingShiftTemplate: true,
     });
     rotationPage.find('[aria-label="Edit Shift Template"]')
-      .simulate("delete", shiftTemplate);
+      .simulate('delete', shiftTemplate);
     expect(baseProps.removeShiftTemplate).toBeCalled();
     expect(baseProps.removeShiftTemplate).toBeCalledWith(shiftTemplate);
-    expect(rotationPage.state("isCreatingOrEditingShiftTemplate")).toEqual(false);
+    expect(rotationPage.state('isCreatingOrEditingShiftTemplate')).toEqual(false);
   });
 
   it('call addShiftTemplate when the EditShiftTemplateModal add a new shift', () => {
@@ -144,13 +144,13 @@ describe('Rotation Page', () => {
     />);
     rotationPage.setState({
       selectedShift: null,
-      isCreatingOrEditingShiftTemplate: true
+      isCreatingOrEditingShiftTemplate: true,
     });
     rotationPage.find('[aria-label="Edit Shift Template"]')
-      .simulate("save", shiftTemplate);
+      .simulate('save', shiftTemplate);
     expect(baseProps.addShiftTemplate).toBeCalled();
     expect(baseProps.addShiftTemplate).toBeCalledWith(shiftTemplate);
-    expect(rotationPage.state("isCreatingOrEditingShiftTemplate")).toEqual(false);
+    expect(rotationPage.state('isCreatingOrEditingShiftTemplate')).toEqual(false);
   });
 
   it('call updateShift when the EditShiftModal updates a shift', () => {
@@ -159,13 +159,13 @@ describe('Rotation Page', () => {
     />);
     rotationPage.setState({
       selectedShift: shiftTemplate,
-      isCreatingOrEditingShiftTemplate: true
+      isCreatingOrEditingShiftTemplate: true,
     });
     rotationPage.find('[aria-label="Edit Shift Template"]')
-      .simulate("save", shiftTemplate);
+      .simulate('save', shiftTemplate);
     expect(baseProps.addShiftTemplate).toBeCalled();
     expect(baseProps.addShiftTemplate).toBeCalledWith(shiftTemplate);
-    expect(rotationPage.state("isCreatingOrEditingShiftTemplate")).toEqual(false);
+    expect(rotationPage.state('isCreatingOrEditingShiftTemplate')).toEqual(false);
   });
 
   it('should set isCreatingOrEditingShiftTemplate to false when closed', () => {
@@ -173,46 +173,46 @@ describe('Rotation Page', () => {
       {...baseProps}
     />);
     rotationPage.setState({
-      isCreatingOrEditingShiftTemplate: true
+      isCreatingOrEditingShiftTemplate: true,
     });
-    rotationPage.find('[aria-label="Edit Shift Template"]').simulate("close");
-    expect(rotationPage.state("isCreatingOrEditingShiftTemplate")).toEqual(false);
+    rotationPage.find('[aria-label="Edit Shift Template"]').simulate('close');
+    expect(rotationPage.state('isCreatingOrEditingShiftTemplate')).toEqual(false);
   });
 
   it('should call addShiftTemplate when a timeslot is selected', () => {
     const rotationPage = shallow(<RotationPage
       {...baseProps}
     />);
-    const newDateStart = moment(baseDate).add(7, "days").toDate();
-    const newDateEnd = moment(baseDate).add(7, "days").add(8, "hours").toDate();
-    rotationPage.find(Schedule).simulate("addEvent", newDateStart,
+    const newDateStart = moment(baseDate).add(7, 'days').toDate();
+    const newDateEnd = moment(baseDate).add(7, 'days').add(8, 'hours').toDate();
+    rotationPage.find(Schedule).simulate('addEvent', newDateStart,
       newDateEnd);
 
     expect(baseProps.addShiftTemplate).toBeCalled();
     expect(baseProps.addShiftTemplate).toBeCalledWith({
       tenantId: spot.tenantId,
-      durationBetweenRotationStartAndTemplateStart: moment.duration(168, "hours"),
-      shiftTemplateDuration: moment.duration(8, "hours"),
-      spot: spot,
-      rotationEmployee: null
+      durationBetweenRotationStartAndTemplateStart: moment.duration(168, 'hours'),
+      shiftTemplateDuration: moment.duration(8, 'hours'),
+      spot,
+      rotationEmployee: null,
     });
   });
-  
+
   it('should call updateShiftTemplate when an event is updated', () => {
     const rotationPage = shallow(<RotationPage
       {...baseProps}
     />);
-    const newDateStart = moment(baseDate).add(7, "days").toDate();
-    const newDateEnd = moment(baseDate).add(7, "days").add(8, "hours").toDate();
+    const newDateStart = moment(baseDate).add(7, 'days').toDate();
+    const newDateEnd = moment(baseDate).add(7, 'days').add(8, 'hours').toDate();
     // An event in rotation page stores shiftTemplate in a property called shiftTemplate
-    rotationPage.find(Schedule).simulate("updateEvent", { shiftTemplate: shiftTemplate }, newDateStart,
+    rotationPage.find(Schedule).simulate('updateEvent', { shiftTemplate }, newDateStart,
       newDateEnd);
 
     expect(baseProps.updateShiftTemplate).toBeCalled();
     expect(baseProps.updateShiftTemplate).toBeCalledWith({
       ...shiftTemplate,
-      durationBetweenRotationStartAndTemplateStart: moment.duration(168, "hours"),
-      shiftTemplateDuration: moment.duration(8, "hours"),
+      durationBetweenRotationStartAndTemplateStart: moment.duration(168, 'hours'),
+      shiftTemplateDuration: moment.duration(8, 'hours'),
     });
   });
 });
@@ -221,70 +221,70 @@ const spot: Spot = {
   tenantId: 0,
   id: 2,
   version: 0,
-  name: "Spot",
+  name: 'Spot',
   requiredSkillSet: [
     {
       tenantId: 0,
       id: 3,
       version: 0,
-      name: "Skill"
-    }
-  ]
-}
+      name: 'Skill',
+    },
+  ],
+};
 
 const newSpot: Spot = {
   ...spot,
   id: 111,
-  name: "New Spot"
+  name: 'New Spot',
 };
 
 const employee: Employee = {
   tenantId: 0,
   id: 4,
   version: 0,
-  name: "Employee 1",
+  name: 'Employee 1',
   contract: {
     tenantId: 0,
     id: 5,
     version: 0,
-    name: "Basic Contract",
+    name: 'Basic Contract',
     maximumMinutesPerDay: 10,
     maximumMinutesPerWeek: 70,
     maximumMinutesPerMonth: 500,
-    maximumMinutesPerYear: 6000
+    maximumMinutesPerYear: 6000,
   },
   skillProficiencySet: [{
     tenantId: 0,
     id: 6,
     version: 0,
-    name: "Not Required Skill"
-  }]
-}
+    name: 'Not Required Skill',
+  }],
+};
 
 const shiftTemplate: ShiftTemplate = {
   tenantId: 0,
   id: 1,
-  version: 0, 
-  durationBetweenRotationStartAndTemplateStart: moment.duration(1, "day").add(9, "hours"),
-  shiftTemplateDuration: moment.duration(8, "hours"),
-  spot: spot,
-  rotationEmployee: employee
+  version: 0,
+  durationBetweenRotationStartAndTemplateStart: moment.duration(1, 'day').add(9, 'hours'),
+  shiftTemplateDuration: moment.duration(8, 'hours'),
+  spot,
+  rotationEmployee: employee,
 };
 
 const rosterState: RosterState = {
   tenant: {
     id: 0,
     version: 0,
-    name: "Tenant"
+    name: 'Tenant',
   },
   publishNotice: 14,
   publishLength: 7,
-  firstDraftDate: new Date("2018-07-01"),
+  firstDraftDate: new Date('2018-07-01'),
   draftLength: 7,
   unplannedRotationOffset: 0,
   rotationLength: 7,
-  lastHistoricDate: new Date("2018-07-01"),
-  timeZone: "EST"
+  lastHistoricDate: new Date('2018-07-01'),
+  timeZone: 'EST',
 };
 
 const baseProps: Props & WithTranslation = {
@@ -295,12 +295,12 @@ const baseProps: Props & WithTranslation = {
   spotList: [spot, newSpot],
   spotIdToShiftTemplateListMap: new Map<number, ShiftTemplate[]>([
     [2, [shiftTemplate]],
-    [111, []]
+    [111, []],
   ]),
-  rosterState: rosterState,
+  rosterState,
   addShiftTemplate: jest.fn(),
   removeShiftTemplate: jest.fn(),
   updateShiftTemplate: jest.fn(),
   showInfoMessage: jest.fn(),
-  ...getRouterProps<RotationPageUrlProps>("/rotation", { shownSpot: "Spot", weekNumber: "0" })
-}
+  ...getRouterProps<RotationPageUrlProps>('/rotation', { shownSpot: 'Spot', weekNumber: '0' }),
+};

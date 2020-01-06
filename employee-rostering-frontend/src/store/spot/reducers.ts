@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { ActionType, SpotList, SpotAction } from './types';
-import { createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import {
+  createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement,
+} from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
-import Spot from 'domain/Spot';
+import { Spot } from 'domain/Spot';
+import { ActionType, SpotList, SpotAction } from './types';
 
 export const initialState: SpotList = {
   isLoading: true,
-  spotMapById: new Map<number, DomainObjectView<Spot>>()
+  spotMapById: new Map<number, DomainObjectView<Spot>>(),
 };
 
 const spotReducer = (state = initialState, action: SpotAction): SpotList => {

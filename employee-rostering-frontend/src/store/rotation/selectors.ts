@@ -13,28 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AppState } from '../types';
-import ShiftTemplate from 'domain/ShiftTemplate';
+import { ShiftTemplate } from 'domain/ShiftTemplate';
 import DomainObjectView from 'domain/DomainObjectView';
 import { spotSelectors } from 'store/spot';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
 import { employeeSelectors } from 'store/employee';
+import { AppState } from '../types';
 
 function isLoading(state: AppState) {
-  return state.shiftTemplateList.isLoading || state.employeeList.isLoading || 
-    state.contractList.isLoading || state.spotList.isLoading || state.skillList.isLoading
+  return state.shiftTemplateList.isLoading || state.employeeList.isLoading
+    || state.contractList.isLoading || state.spotList.isLoading || state.skillList.isLoading;
 }
 
 export const getShiftTemplateById = (state: AppState, id: number): ShiftTemplate => {
   if (isLoading(state)) {
-    throw Error("Shift Template list is loading");
+    throw Error('Shift Template list is loading');
   }
   const shiftTemplateView = state.shiftTemplateList.shiftTemplateMapById.get(id) as DomainObjectView<ShiftTemplate>;
   return {
-    ...objectWithout(shiftTemplateView, "spot", "rotationEmployee"),
+    ...objectWithout(shiftTemplateView, 'spot', 'rotationEmployee'),
     spot: spotSelectors.getSpotById(state, shiftTemplateView.spot),
-    rotationEmployee: shiftTemplateView.rotationEmployee?
-      employeeSelectors.getEmployeeById(state, shiftTemplateView.rotationEmployee) : null
+    rotationEmployee: shiftTemplateView.rotationEmployee
+      ? employeeSelectors.getEmployeeById(state, shiftTemplateView.rotationEmployee) : null,
   };
 };
 

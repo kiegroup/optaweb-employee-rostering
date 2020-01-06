@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-import { ActionType, ContractList, ContractAction } from './types';
-import { createIdMapFromList, mapWithElement, mapWithoutElement,
-  mapWithUpdatedElement } from 'util/ImmutableCollectionOperations';
+import {
+  createIdMapFromList, mapWithElement, mapWithoutElement,
+  mapWithUpdatedElement,
+} from 'util/ImmutableCollectionOperations';
 import DomainObjectView from 'domain/DomainObjectView';
-import Contract from 'domain/Contract';
+import { Contract } from 'domain/Contract';
+import { ActionType, ContractList, ContractAction } from './types';
 
 export const initialState: ContractList = {
   isLoading: true,
-  contractMapById: new Map<number, DomainObjectView<Contract>>()
+  contractMapById: new Map<number, DomainObjectView<Contract>>(),
 };
 
 const contractReducer = (state = initialState, action: ContractAction): ContractList => {

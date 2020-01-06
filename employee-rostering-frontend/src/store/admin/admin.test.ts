@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-import { mockStore } from '../mockStore';
-import { AppState } from '../types';
-import * as adminOperations from './operations';
 import * as tenantOperations from 'store/tenant/operations';
 import { onPost } from 'store/rest/RestTestUtils';
 import { alert } from 'store/alert';
+import { mockStore } from '../mockStore';
+import { AppState } from '../types';
+import * as adminOperations from './operations';
 
 describe('Contract operations', () => {
-  const mockRefreshTenantList= jest.spyOn(tenantOperations, "refreshTenantList");
-  
+  const mockRefreshTenantList = jest.spyOn(tenantOperations, 'refreshTenantList');
+
   beforeAll(() => {
     mockRefreshTenantList.mockImplementation(() => () => {});
   });
@@ -31,16 +31,16 @@ describe('Contract operations', () => {
   afterAll(() => {
     mockRefreshTenantList.mockRestore();
   });
-  
+
   it('should dispatch actions and call client on reset application', async () => {
     const { store, client } = mockStore(state);
 
     onPost('/admin/reset', {}, {});
     await store.dispatch(adminOperations.resetApplication());
     expect(store.getActions()).toEqual([
-      alert.showInfoMessage("resetApplicationSuccessful"),
+      alert.showInfoMessage('resetApplicationSuccessful'),
     ]);
-    
+
     expect(mockRefreshTenantList).toBeCalledTimes(1);
     expect(client.post).toHaveBeenCalledTimes(1);
     expect(client.post).toHaveBeenCalledWith('/admin/reset', {});
@@ -51,45 +51,45 @@ const state: AppState = {
   tenantData: {
     currentTenantId: 0,
     tenantList: [],
-    timezoneList: ["America/Toronto"]
+    timezoneList: ['America/Toronto'],
   },
   employeeList: {
     isLoading: false,
-    employeeMapById: new Map()
+    employeeMapById: new Map(),
   },
   spotList: {
     isLoading: false,
-    spotMapById: new Map()
+    spotMapById: new Map(),
   },
   contractList: {
     isLoading: false,
-    contractMapById: new Map()
+    contractMapById: new Map(),
   },
   skillList: {
     isLoading: false,
-    skillMapById: new Map()
+    skillMapById: new Map(),
   },
   shiftTemplateList: {
     isLoading: false,
-    shiftTemplateMapById: new Map()
+    shiftTemplateMapById: new Map(),
   },
   rosterState: {
     isLoading: true,
-    rosterState: null
+    rosterState: null,
   },
   shiftRoster: {
     isLoading: true,
-    shiftRosterView: null
+    shiftRosterView: null,
   },
   availabilityRoster: {
     isLoading: true,
-    availabilityRosterView: null
+    availabilityRosterView: null,
   },
   solverState: {
-    isSolving: false
+    isSolving: false,
   },
   alerts: {
     alertList: [],
-    idGeneratorIndex: 0
-  }
+    idGeneratorIndex: 0,
+  },
 };

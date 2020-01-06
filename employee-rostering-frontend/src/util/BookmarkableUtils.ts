@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps } from 'react-router';
 
 export type UrlProps<T extends string> = { [K in T]: string|null };
 
@@ -30,16 +30,17 @@ export function setTenantIdInUrl(props: RouteComponentProps, tenantId: number) {
 }
 
 export function getPropsFromUrl<T extends UrlProps<string> >(props: RouteComponentProps, defaultValues: T): T {
-  const out: { [index: string]: string|null }  = { ...defaultValues };
-  if (props.location.search === "" && pathnameToQueryStringMap.has(props.location.pathname)) {
+  const out: { [index: string]: string|null } = { ...defaultValues };
+  if (props.location.search === '' && pathnameToQueryStringMap.has(props.location.pathname)) {
     const searchParams = new URLSearchParams(pathnameToQueryStringMap.get(props.location.pathname));
+    // eslint-disable-next-line no-return-assign
     searchParams.forEach((value, key) => out[key] = value);
-    // defer updating URL since that counts as an update operation and 
+    // defer updating URL since that counts as an update operation and
     // you cannot update in render
     setTimeout(() => requestAnimationFrame(() => setPropsInUrl(props, out as T)));
-  }
-  else {
+  } else {
     const searchParams = new URLSearchParams(props.location.search);
+    // eslint-disable-next-line no-return-assign
     searchParams.forEach((value, key) => out[key] = value);
   }
   return out as T;
@@ -47,14 +48,13 @@ export function getPropsFromUrl<T extends UrlProps<string> >(props: RouteCompone
 
 export function setPropsInUrl<T extends UrlProps<string> >(props: RouteComponentProps, urlProps: Partial<T>) {
   const searchParams = new URLSearchParams(props.location.search);
-  
-  Object.keys(urlProps).forEach(key => {
+
+  Object.keys(urlProps).forEach((key) => {
     const value = urlProps[key] as string|null|undefined;
     if (value !== undefined) {
       if (value !== null && value.length > 0) {
         searchParams.set(key, value);
-      }
-      else {
+      } else {
         searchParams.delete(key);
       }
     }

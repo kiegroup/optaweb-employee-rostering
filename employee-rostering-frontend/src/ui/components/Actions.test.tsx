@@ -16,8 +16,8 @@
 import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import { Props, Actions } from './Actions';
 import { SizeMeProps } from 'react-sizeme';
+import { Props, Actions } from './Actions';
 
 describe('Actions component', () => {
   it('should render as all buttons when given enough space', () => {
@@ -37,43 +37,43 @@ describe('Actions component', () => {
 
   it('clicking on a button should call the action', () => {
     const actionsComponent = shallow(<Actions {...desktopProps} />);
-    actionsComponent.find('Button[aria-label="Action 1"]').simulate("click");
+    actionsComponent.find('Button[aria-label="Action 1"]').simulate('click');
     expect(actions[0].action).toBeCalled();
   });
 
   it('clicking on a dropdown should call the action', () => {
     const actionsComponent = shallow(<Actions {...mobileProps} />);
-    actionsComponent.find('Dropdown').simulate("select", { currentTarget: { innerText: "Action 3" } });
+    actionsComponent.find('Dropdown').simulate('select', { currentTarget: { innerText: 'Action 3' } });
     expect(actions[2].action).toBeCalled();
   });
 });
 
 const actions = [
-  { name: "Action 1", action: jest.fn() },
-  { name: "Action 2", action: jest.fn() },
-  { name: "Action 3", action: jest.fn() }
+  { name: 'Action 1', action: jest.fn() },
+  { name: 'Action 2', action: jest.fn() },
+  { name: 'Action 3', action: jest.fn() },
 ];
 
 const desktopProps: Props & SizeMeProps = {
   actions,
   size: {
     width: 2000,
-    height: 1500
-  }
+    height: 1500,
+  },
 };
 
 const tabletProps: Props & SizeMeProps = {
   actions,
   size: {
     width: 400,
-    height: 600
-  }
+    height: 600,
+  },
 };
 
 const mobileProps: Props & SizeMeProps = {
   actions,
   size: {
     width: 100,
-    height: 150
-  }
+    height: 150,
+  },
 };

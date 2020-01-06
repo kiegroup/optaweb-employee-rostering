@@ -24,7 +24,7 @@ describe('App', () => {
     const mediaQuery = jest.requireMock('react-responsive');
     mediaQuery.useMediaQuery.mockReturnValueOnce(false);
     const app = shallow(<App />);
-    
+
     expect(mediaQuery.useMediaQuery).toBeCalledWith({ maxWidth: 1399 });
     expect(toJson(app)).toMatchSnapshot();
   });
@@ -33,7 +33,7 @@ describe('App', () => {
     const mediaQuery = jest.requireMock('react-responsive');
     mediaQuery.useMediaQuery.mockReturnValueOnce(true);
     const app = shallow(<App />);
-    
+
     expect(mediaQuery.useMediaQuery).toBeCalledWith({ maxWidth: 1399 });
     expect(toJson(app)).toMatchSnapshot();
   });
@@ -42,9 +42,9 @@ describe('App', () => {
     const mediaQuery = jest.requireMock('react-responsive');
     mediaQuery.useMediaQuery.mockReturnValueOnce(true);
     const app = shallow(<App />);
-    
+
     expect(mediaQuery.useMediaQuery).toBeCalledWith({ maxWidth: 1399 });
-    shallow(app.prop("header")).simulate("navToggle");
+    shallow(app.prop('header')).simulate('navToggle');
     expect(toJson(app)).toMatchSnapshot();
   });
 
@@ -52,10 +52,10 @@ describe('App', () => {
     const mediaQuery = jest.requireMock('react-responsive');
     mediaQuery.useMediaQuery.mockReturnValueOnce(true);
     const app = shallow(<App />);
-    
+
     expect(mediaQuery.useMediaQuery).toBeCalledWith({ maxWidth: 1399 });
-    shallow(app.prop("header")).simulate("navToggle");
-    shallow(app.prop("header")).simulate("navToggle");
+    shallow(app.prop('header')).simulate('navToggle');
+    shallow(app.prop('header')).simulate('navToggle');
     expect(toJson(app)).toMatchSnapshot();
   });
 });

@@ -15,7 +15,7 @@
  */
 
 import { Action } from 'redux';
-import Contract from 'domain/Contract';
+import { Contract } from 'domain/Contract';
 import DomainObjectView from 'domain/DomainObjectView';
 
 export enum ActionType {

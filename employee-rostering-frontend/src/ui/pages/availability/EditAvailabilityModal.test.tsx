@@ -16,11 +16,11 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import Employee from 'domain/Employee';
-import { EditAvailabilityModal } from './EditAvailabilityModal';
+import { Employee } from 'domain/Employee';
 import moment from 'moment';
-import EmployeeAvailability from 'domain/EmployeeAvailability';
+import { EmployeeAvailability } from 'domain/EmployeeAvailability';
 import { useTranslation } from 'react-i18next';
+import { EditAvailabilityModal } from './EditAvailabilityModal';
 
 describe('Edit Availability Modal', () => {
   it('should render correctly when closed', () => {
@@ -68,26 +68,26 @@ describe('Edit Availability Modal', () => {
     />);
 
     editAvailabilityModal.setProps({
-      availability: baseEmployeeAvailability
+      availability: baseEmployeeAvailability,
     });
-    expect(editAvailabilityModal.state("editedValue")).toEqual(baseEmployeeAvailability);
+    expect(editAvailabilityModal.state('editedValue')).toEqual(baseEmployeeAvailability);
 
     editAvailabilityModal.setState({
       editedValue: {
         ...baseEmployeeAvailability,
-        state: "UNDESIRED"
-      }
+        state: 'UNDESIRED',
+      },
     });
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
       ...baseEmployeeAvailability,
-      state: "UNDESIRED"
+      state: 'UNDESIRED',
     });
 
     editAvailabilityModal.setProps({
-      availability: undefined
+      availability: undefined,
     });
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
-      tenantId: baseProps.tenantId
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
+      tenantId: baseProps.tenantId,
     });
   });
 
@@ -97,22 +97,22 @@ describe('Edit Availability Modal', () => {
       ...baseProps,
       availability: baseEmployeeAvailability,
       isOpen: true,
-      onSave: onSave,
+      onSave,
       onClose: jest.fn(),
-      onDelete: jest.fn()
+      onDelete: jest.fn(),
     });
 
     editAvailabilityModal.state = { resetCount: 0, editedValue: {} };
-    
+
     editAvailabilityModal.onSave();
     expect(onSave).not.toBeCalled();
 
     editAvailabilityModal.state = {
       resetCount: 1,
       editedValue: {
-        employee: employee,
-        state: "DESIRED"
-      }
+        employee,
+        state: 'DESIRED',
+      },
     };
 
     editAvailabilityModal.onSave();
@@ -120,7 +120,7 @@ describe('Edit Availability Modal', () => {
 
     editAvailabilityModal.state = {
       resetCount: 2,
-      editedValue: baseEmployeeAvailability
+      editedValue: baseEmployeeAvailability,
     };
 
     editAvailabilityModal.onSave();
@@ -139,7 +139,7 @@ describe('Edit Availability Modal', () => {
       onDelete={jest.fn()}
     />);
 
-    editAvailabilityModal.find('button[aria-label="Save"]').simulate("click");
+    editAvailabilityModal.find('button[aria-label="Save"]').simulate('click');
     expect(onSave).toBeCalled();
     expect(onSave).toBeCalledWith({ ...baseEmployeeAvailability, tenantId: 1 });
   });
@@ -154,8 +154,8 @@ describe('Edit Availability Modal', () => {
       onClose={onClose}
       onDelete={jest.fn()}
     />);
-    
-    editAvailabilityModal.find('button[aria-label="Close Modal"]').simulate("click");
+
+    editAvailabilityModal.find('button[aria-label="Close Modal"]').simulate('click');
     expect(onClose).toBeCalled();
   });
 
@@ -169,8 +169,8 @@ describe('Edit Availability Modal', () => {
       onClose={onClose}
       onDelete={jest.fn()}
     />);
-    
-    editAvailabilityModal.find('button[aria-label="Close"]').simulate("click");
+
+    editAvailabilityModal.find('button[aria-label="Close"]').simulate('click');
     expect(onClose).toBeCalled();
   });
 
@@ -184,15 +184,15 @@ describe('Edit Availability Modal', () => {
       onClose={jest.fn()}
       onDelete={onDelete}
     />);
-    
-    editAvailabilityModal.find('button[aria-label="Delete"]').simulate("click");
+
+    editAvailabilityModal.find('button[aria-label="Delete"]').simulate('click');
     expect(onDelete).toBeCalled();
   });
 
   it('should prevent changing URL when completed', () => {
     const event = {
-      preventDefault: jest.fn()
-    }
+      preventDefault: jest.fn(),
+    };
     const editAvailabilityModal = shallow(<EditAvailabilityModal
       {...baseProps}
       availability={baseEmployeeAvailability}
@@ -201,7 +201,7 @@ describe('Edit Availability Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editAvailabilityModal.find("Form").simulate("submit", event);
+    editAvailabilityModal.find('Form').simulate('submit', event);
     expect(event.preventDefault).toBeCalled();
   });
 
@@ -214,13 +214,13 @@ describe('Edit Availability Modal', () => {
       onDelete={jest.fn()}
     />);
     editAvailabilityModal.find('[aria-label="Availability Start"]')
-      .simulate("change", new Date("2019-01-01T09:00"));
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
-      startDateTime: new Date("2019-01-01T09:00")
+      .simulate('change', new Date('2019-01-01T09:00'));
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
+      startDateTime: new Date('2019-01-01T09:00'),
     });
-    editAvailabilityModal.find('[aria-label="Availability Start"]').simulate("change", null);
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
-      startDateTime: undefined
+    editAvailabilityModal.find('[aria-label="Availability Start"]').simulate('change', null);
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
+      startDateTime: undefined,
     });
   });
 
@@ -233,13 +233,13 @@ describe('Edit Availability Modal', () => {
       onDelete={jest.fn()}
     />);
     editAvailabilityModal.find('[aria-label="Availability End"]')
-      .simulate("change", new Date("2019-01-01T09:00"));
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
-      endDateTime: new Date("2019-01-01T09:00")
+      .simulate('change', new Date('2019-01-01T09:00'));
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
+      endDateTime: new Date('2019-01-01T09:00'),
     });
-    editAvailabilityModal.find('[aria-label="Availability End"]').simulate("change", null);
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
-      endDateTime: undefined
+    editAvailabilityModal.find('[aria-label="Availability End"]').simulate('change', null);
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
+      endDateTime: undefined,
     });
   });
 
@@ -252,14 +252,14 @@ describe('Edit Availability Modal', () => {
       onDelete={jest.fn()}
     />);
 
-    editAvailabilityModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate("change", employee);
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
-      employee: employee
+    editAvailabilityModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', employee);
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
+      employee,
     });
 
-    editAvailabilityModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate("change", undefined);
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
-      employee: undefined
+    editAvailabilityModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', undefined);
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
+      employee: undefined,
     });
   });
 
@@ -271,14 +271,14 @@ describe('Edit Availability Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editAvailabilityModal.find('TypeaheadSelectInput[aria-label="Type"]').simulate("change", "UNDESIRED");
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
-      state: "UNDESIRED"
+    editAvailabilityModal.find('TypeaheadSelectInput[aria-label="Type"]').simulate('change', 'UNDESIRED');
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
+      state: 'UNDESIRED',
     });
 
-    editAvailabilityModal.find('TypeaheadSelectInput[aria-label="Type"]').simulate("change", undefined);
-    expect(editAvailabilityModal.state("editedValue")).toEqual({
-      state: undefined
+    editAvailabilityModal.find('TypeaheadSelectInput[aria-label="Type"]').simulate('change', undefined);
+    expect(editAvailabilityModal.state('editedValue')).toEqual({
+      state: undefined,
     });
   });
 });
@@ -287,33 +287,33 @@ const employee: Employee = {
   tenantId: 0,
   id: 4,
   version: 0,
-  name: "Employee 1",
+  name: 'Employee 1',
   contract: {
     tenantId: 0,
     id: 5,
     version: 0,
-    name: "Basic Contract",
+    name: 'Basic Contract',
     maximumMinutesPerDay: 10,
     maximumMinutesPerWeek: 70,
     maximumMinutesPerMonth: 500,
-    maximumMinutesPerYear: 6000
+    maximumMinutesPerYear: 6000,
   },
   skillProficiencySet: [{
     tenantId: 0,
     id: 6,
     version: 0,
-    name: "Not Required Skill"
-  }]
-}
+    name: 'Not Required Skill',
+  }],
+};
 
 const baseEmployeeAvailability: EmployeeAvailability = {
   tenantId: 0,
   id: 1,
-  version: 0, 
-  startDateTime: moment("2018-07-01T09:00").toDate(),
-  endDateTime: moment("2018-07-01T17:00").toDate(),
-  employee: employee,
-  state: "DESIRED"
+  version: 0,
+  startDateTime: moment('2018-07-01T09:00').toDate(),
+  endDateTime: moment('2018-07-01T17:00').toDate(),
+  employee,
+  state: 'DESIRED',
 };
 
 const baseProps = {
@@ -321,5 +321,5 @@ const baseProps = {
   tReady: true,
   tenantId: 1,
   isOpen: true,
-  employeeList: [employee]
-}
+  employeeList: [employee],
+};

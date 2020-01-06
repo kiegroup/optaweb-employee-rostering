@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainObject from './DomainObject';
-import Employee from './Employee';
-import Spot from './Spot';
-import HardMediumSoftScore from './HardMediumSoftScore';
-import RequiredSkillViolation from './indictment/RequiredSkillViolation';
-import UnavailableEmployeeViolation from './indictment/UnavailableEmployeeViolation';
-import ShiftEmployeeConflictViolation from './indictment/ShiftEmployeeConflictViolation';
-import DesiredTimeslotForEmployeeReward from './indictment/DesiredTimeslotForEmployeeReward';
-import UndesiredTimeslotForEmployeePenalty from './indictment/UndesiredTimeslotForEmployeePenalty';
-import RotationViolationPenalty from './indictment/RotationViolationPenalty';
-import UnassignedShiftPenalty from './indictment/UnassignedShiftPenalty';
-import ContractMinutesViolation from './indictment/ContractMinutesViolation';
+import { DomainObject } from './DomainObject';
+import { Employee } from './Employee';
+import { Spot } from './Spot';
+import { HardMediumSoftScore } from './HardMediumSoftScore';
+import { RequiredSkillViolation } from './indictment/RequiredSkillViolation';
+import { UnavailableEmployeeViolation } from './indictment/UnavailableEmployeeViolation';
+import { ShiftEmployeeConflictViolation } from './indictment/ShiftEmployeeConflictViolation';
+import { DesiredTimeslotForEmployeeReward } from './indictment/DesiredTimeslotForEmployeeReward';
+import { UndesiredTimeslotForEmployeePenalty } from './indictment/UndesiredTimeslotForEmployeePenalty';
+import { RotationViolationPenalty } from './indictment/RotationViolationPenalty';
+import { UnassignedShiftPenalty } from './indictment/UnassignedShiftPenalty';
+import { ContractMinutesViolation } from './indictment/ContractMinutesViolation';
 
-export default interface Shift extends DomainObject {
+export interface Shift extends DomainObject {
   startDateTime: Date;
   endDateTime: Date;
   spot: Spot;

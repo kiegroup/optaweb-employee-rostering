@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-import * as immutableCollectionOperations from './ImmutableCollectionOperations';
-import DomainObject from 'domain/DomainObject';
+import { DomainObject } from 'domain/DomainObject';
 import DomainObjectView from 'domain/DomainObjectView';
+import * as immutableCollectionOperations from './ImmutableCollectionOperations';
 
 describe('Immutable Collection Operations', () => {
   it('should create a copy with element removed in objectWithout', () => {
     const original = {
-      "a": 10,
-      "b": "Hello",
-      "c": null
+      a: 10,
+      b: 'Hello',
+      c: null,
     };
     const expected = {
-      "a": 10,
-      "c": null
-    }
+      a: 10,
+      c: null,
+    };
     const originalCopy = { ...original };
-    const actual = immutableCollectionOperations.objectWithout(original, "b");
+    const actual = immutableCollectionOperations.objectWithout(original, 'b');
     expect(actual).toEqual(expected);
     expect(original).toEqual(originalCopy);
   });
@@ -39,12 +39,12 @@ describe('Immutable Collection Operations', () => {
     const object1: DomainObject = {
       tenantId: 0,
       id: 0,
-      version: 0
+      version: 0,
     };
     const object2: DomainObject = {
       tenantId: 0,
       id: 1,
-      version: 0
+      version: 0,
     };
     const collection: DomainObject[] = [object1, object2];
     const copy: DomainObject[] = JSON.parse(JSON.stringify(collection));
@@ -56,17 +56,17 @@ describe('Immutable Collection Operations', () => {
     expect(collection).toEqual(copy);
     expect(without2).toEqual([object1]);
   });
-  
+
   it('should not modify the collection on without element', () => {
     const object1: DomainObject = {
       tenantId: 0,
       id: 0,
-      version: 0
+      version: 0,
     };
     const object2: DomainObject = {
       tenantId: 0,
       id: 1,
-      version: 0
+      version: 0,
     };
     const collection: DomainObject[] = [object1, object2];
     const copy: DomainObject[] = JSON.parse(JSON.stringify(collection));
@@ -83,12 +83,12 @@ describe('Immutable Collection Operations', () => {
     const object1: DomainObject = {
       tenantId: 0,
       id: 0,
-      version: 0
+      version: 0,
     };
     const addedObject: DomainObject = {
       tenantId: 0,
       id: 1,
-      version: 0
+      version: 0,
     };
     const collection: DomainObject[] = [object1];
     const copy: DomainObject[] = JSON.parse(JSON.stringify(collection));
@@ -101,15 +101,15 @@ describe('Immutable Collection Operations', () => {
     const object1: DomainObject = {
       tenantId: 0,
       id: 0,
-      version: 0
+      version: 0,
     };
     const object2: DomainObject = {
       tenantId: 0,
       id: 1,
-      version: 0
+      version: 0,
     };
-    const updatedObject1: DomainObject = {...object1, version: 1};
-    const updatedObject2: DomainObject = {...object2, version: 1};
+    const updatedObject1: DomainObject = { ...object1, version: 1 };
+    const updatedObject2: DomainObject = { ...object2, version: 1 };
     const collection: DomainObject[] = [object1, object2];
     const copy: DomainObject[] = JSON.parse(JSON.stringify(collection));
     const withUpdated1 = immutableCollectionOperations.withUpdatedElement(collection, updatedObject1);
@@ -127,7 +127,7 @@ describe('Immutable Collection Operations', () => {
 
     const collection = [obj1];
     const copy = JSON.parse(JSON.stringify(collection));
-    const toggledObj2On =  immutableCollectionOperations.toggleElement(collection, obj2);
+    const toggledObj2On = immutableCollectionOperations.toggleElement(collection, obj2);
 
     expect(collection).toEqual(copy);
     expect(toggledObj2On).toEqual([obj1, obj2]);
@@ -139,7 +139,7 @@ describe('Immutable Collection Operations', () => {
 
     const collection = [obj1, obj2];
     const copy = JSON.parse(JSON.stringify(collection));
-    const toggledObj2On =  immutableCollectionOperations.toggleElement(collection, obj2);
+    const toggledObj2On = immutableCollectionOperations.toggleElement(collection, obj2);
 
     expect(collection).toEqual(copy);
     expect(toggledObj2On).toEqual([obj1]);
@@ -155,7 +155,7 @@ describe('Immutable Collection Operations', () => {
         tenantId: 0,
         id: 3,
         version: 4,
-        name: "Hi"
+        name: 'Hi',
       },
       emptyList: [],
       domainObjMemList: [
@@ -163,16 +163,16 @@ describe('Immutable Collection Operations', () => {
           tenantId: 0,
           id: 6,
           version: 1,
-          name: "A"
+          name: 'A',
         },
         {
           tenantId: 0,
           id: 7,
           version: 2,
-          name: "B"
-        }
+          name: 'B',
+        },
       ],
-      otherMem: "Test"
+      otherMem: 'Test',
     };
     const view = immutableCollectionOperations.mapDomainObjectToView(obj);
     expect(view.tenantId).toEqual(0);
@@ -181,8 +181,8 @@ describe('Immutable Collection Operations', () => {
     expect(view.nullMem).toBeNull();
     expect(view.domainObjMem).toEqual(3);
     expect(view.emptyList).toEqual([]);
-    expect(view.domainObjMemList).toEqual([6,7]);
-    expect(view.otherMem).toEqual("Test");
+    expect(view.domainObjMemList).toEqual([6, 7]);
+    expect(view.otherMem).toEqual('Test');
   });
 
   interface MockDomainObject extends DomainObject {
@@ -195,8 +195,8 @@ describe('Immutable Collection Operations', () => {
         tenantId: 0,
         id: 0,
         version: 0,
-        domainObj: 3
-      }]
+        domainObj: 3,
+      }],
     ]);
 
     const obj = {
@@ -206,12 +206,12 @@ describe('Immutable Collection Operations', () => {
       domainObj: {
         tenantId: 0,
         id: 2,
-        version: 0
-      }
+        version: 0,
+      },
     };
 
     const copy = new Map(map);
-    const mapWithObj =  immutableCollectionOperations.mapWithElement(map, obj);
+    const mapWithObj = immutableCollectionOperations.mapWithElement(map, obj);
 
     expect(map).toEqual(copy);
     expect(mapWithObj).toEqual(new Map([
@@ -220,8 +220,8 @@ describe('Immutable Collection Operations', () => {
         tenantId: 0,
         id: 1,
         version: 0,
-        domainObj: 2
-      }]
+        domainObj: 2,
+      }],
     ]));
   });
 
@@ -231,14 +231,14 @@ describe('Immutable Collection Operations', () => {
         tenantId: 0,
         id: 0,
         version: 0,
-        domainObj: 3
+        domainObj: 3,
       }],
       [1, {
         tenantId: 0,
         id: 1,
         version: 0,
-        domainObj: 2
-      }]
+        domainObj: 2,
+      }],
     ]);
 
     const obj = {
@@ -248,16 +248,16 @@ describe('Immutable Collection Operations', () => {
       domainObj: {
         tenantId: 0,
         id: 2,
-        version: 0
-      }
+        version: 0,
+      },
     };
 
     const copy = new Map(map);
-    const mapWithoutObj =  immutableCollectionOperations.mapWithoutElement(map, obj);
+    const mapWithoutObj = immutableCollectionOperations.mapWithoutElement(map, obj);
 
     expect(map).toEqual(copy);
     expect(mapWithoutObj).toEqual(new Map([
-      [0, map.get(0)]
+      [0, map.get(0)],
     ]));
   });
 
@@ -267,14 +267,14 @@ describe('Immutable Collection Operations', () => {
         tenantId: 0,
         id: 0,
         version: 0,
-        domainObj: 3
+        domainObj: 3,
       }],
       [1, {
         tenantId: 0,
         id: 1,
         version: 0,
-        domainObj: 2
-      }]
+        domainObj: 2,
+      }],
     ]);
 
     const obj = {
@@ -284,12 +284,12 @@ describe('Immutable Collection Operations', () => {
       domainObj: {
         tenantId: 0,
         id: 5,
-        version: 0
-      }
+        version: 0,
+      },
     };
 
     const copy = new Map(map);
-    const mapWithUpdatedObj =  immutableCollectionOperations.mapWithUpdatedElement(map, obj);
+    const mapWithUpdatedObj = immutableCollectionOperations.mapWithUpdatedElement(map, obj);
 
     expect(map).toEqual(copy);
     expect(mapWithUpdatedObj).toEqual(new Map([
@@ -298,108 +298,107 @@ describe('Immutable Collection Operations', () => {
         tenantId: 0,
         id: 1,
         version: 1,
-        domainObj: 5
-      }]
+        domainObj: 5,
+      }],
     ]));
   });
 });
 
 describe('Stream operations', () => {
-  
   it('should map the collection element in map', () => {
-    const orig = [1,2,3]
+    const orig = [1, 2, 3];
     const result = new immutableCollectionOperations.Stream(orig).map(n => n + 1).collect(r => r);
     expect(result).not.toBe(orig);
-    expect(orig).toEqual([1,2,3]);
-    expect(result).toEqual([2,3,4]);
+    expect(orig).toEqual([1, 2, 3]);
+    expect(result).toEqual([2, 3, 4]);
   });
-  
+
   it('should filter the collection element in filter', () => {
-    const orig = [1,2,3]
+    const orig = [1, 2, 3];
     const result = new immutableCollectionOperations.Stream(orig).filter(n => n === 1).collect(r => r);
     expect(result).not.toBe(orig);
-    expect(orig).toEqual([1,2,3]);
+    expect(orig).toEqual([1, 2, 3]);
     expect(result).toEqual([1]);
   });
-  
+
   it('should paged the collection element in page', () => {
-    const orig = [1,2,3]
-    const result = new immutableCollectionOperations.Stream(orig).page(1,2).collect(r => r);
+    const orig = [1, 2, 3];
+    const result = new immutableCollectionOperations.Stream(orig).page(1, 2).collect(r => r);
     expect(result).not.toBe(orig);
-    expect(orig).toEqual([1,2,3]);
-    expect(result).toEqual([1,2]);
+    expect(orig).toEqual([1, 2, 3]);
+    expect(result).toEqual([1, 2]);
   });
-  
+
   it('should sort the collection element in sort', () => {
-    const orig = [1,2,3]
-    const result = new immutableCollectionOperations.Stream(orig).sort((a,b) => b - a).collect(r => r);
+    const orig = [1, 2, 3];
+    const result = new immutableCollectionOperations.Stream(orig).sort((a, b) => b - a).collect(r => r);
     expect(result).not.toBe(orig);
-    expect(orig).toEqual([1,2,3]);
-    expect(result).toEqual([3,2,1]);
-    
-    const revResult = new immutableCollectionOperations.Stream(orig).sort((a,b) => b - a, false).collect(r => r);
+    expect(orig).toEqual([1, 2, 3]);
+    expect(result).toEqual([3, 2, 1]);
+
+    const revResult = new immutableCollectionOperations.Stream(orig).sort((a, b) => b - a, false).collect(r => r);
     expect(revResult).not.toBe(orig);
-    expect(orig).toEqual([1,2,3]);
-    expect(revResult).toEqual([1,2,3]);
+    expect(orig).toEqual([1, 2, 3]);
+    expect(revResult).toEqual([1, 2, 3]);
   });
-  
+
   it('should replace the stream in conditionally', () => {
-    const orig = [1,2,3]
+    const orig = [1, 2, 3];
     const replaceResult = new immutableCollectionOperations.Stream(orig)
       .conditionally(s => s.filter(x => x === 1)).collect(r => r);
     expect(replaceResult).not.toBe(orig);
-    expect(orig).toEqual([1,2,3]);
+    expect(orig).toEqual([1, 2, 3]);
     expect(replaceResult).toEqual([1]);
-    
+
     const noReplaceResult = new immutableCollectionOperations.Stream(orig)
       .conditionally(() => undefined).collect(r => r);
     expect(noReplaceResult).not.toBe(orig);
-    expect(orig).toEqual([1,2,3]);
-    expect(noReplaceResult).toEqual([1,2,3]);
+    expect(orig).toEqual([1, 2, 3]);
+    expect(noReplaceResult).toEqual([1, 2, 3]);
   });
-  
+
   it('should collect a result in collect', () => {
-    const orig = [1,2,3]
+    const orig = [1, 2, 3];
     const result = new immutableCollectionOperations.Stream(orig).collect(r => r);
     expect(result).not.toBe(orig);
-    expect(orig).toEqual([1,2,3]);
-    expect(result).toEqual([1,2,3]);
-    
+    expect(orig).toEqual([1, 2, 3]);
+    expect(result).toEqual([1, 2, 3]);
+
     const length = new immutableCollectionOperations.Stream(orig).collect(r => r.length);
     expect(length).toEqual(3);
   });
-  
+
   it('streams themselves should be immutable', () => {
-    const stream = new immutableCollectionOperations.Stream([1,2,3]);
+    const stream = new immutableCollectionOperations.Stream([1, 2, 3]);
     const filterStream = stream.filter(n => n === 1);
     expect(stream).not.toBe(filterStream);
-    expect(stream.collect(c => c)).toEqual([1,2,3]);
+    expect(stream.collect(c => c)).toEqual([1, 2, 3]);
     expect(filterStream.collect(c => c)).toEqual([1]);
-    
+
     const mapStream = stream.map(n => n + 1);
     expect(stream).not.toBe(mapStream);
-    expect(stream.collect(c => c)).toEqual([1,2,3]);
-    expect(mapStream.collect(c => c)).toEqual([2,3,4]);
-    
-    const pageStream = stream.page(1,2);
+    expect(stream.collect(c => c)).toEqual([1, 2, 3]);
+    expect(mapStream.collect(c => c)).toEqual([2, 3, 4]);
+
+    const pageStream = stream.page(1, 2);
     expect(stream).not.toBe(pageStream);
-    expect(stream.collect(c => c)).toEqual([1,2,3]);
-    expect(pageStream.collect(c => c)).toEqual([1,2]);
-    
-    const sortStream = stream.sort((a,b) => b - a);
+    expect(stream.collect(c => c)).toEqual([1, 2, 3]);
+    expect(pageStream.collect(c => c)).toEqual([1, 2]);
+
+    const sortStream = stream.sort((a, b) => b - a);
     expect(stream).not.toBe(sortStream);
-    expect(stream.collect(c => c)).toEqual([1,2,3]);
-    expect(sortStream.collect(c => c)).toEqual([3,2,1]);
-    
+    expect(stream.collect(c => c)).toEqual([1, 2, 3]);
+    expect(sortStream.collect(c => c)).toEqual([3, 2, 1]);
+
     const replaceStream = stream.conditionally(s => s.map(x => x + 1));
     expect(stream).not.toBe(replaceStream);
-    expect(stream.collect(c => c)).toEqual([1,2,3]);
-    expect(replaceStream.collect(c => c)).toEqual([2,3,4]);
-    
+    expect(stream.collect(c => c)).toEqual([1, 2, 3]);
+    expect(replaceStream.collect(c => c)).toEqual([2, 3, 4]);
+
     const noReplaceStream = stream.conditionally(() => undefined);
     // In the no replace case, the collection doesn't change, so it safe
     // for the stream to be the same
-    expect(stream.collect(c => c)).toEqual([1,2,3]);
-    expect(noReplaceStream.collect(c => c)).toEqual([1,2,3]);
+    expect(stream.collect(c => c)).toEqual([1, 2, 3]);
+    expect(noReplaceStream.collect(c => c)).toEqual([1, 2, 3]);
   });
 });

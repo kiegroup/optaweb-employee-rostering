@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import DomainObject from './DomainObject';
-import Skill from './Skill';
-import Contract from './Contract';
+import { DomainObject } from './DomainObject';
+import { Skill } from './Skill';
+import { Contract } from './Contract';
 
-export default interface Employee extends DomainObject {
+export interface Employee extends DomainObject {
   name: string;
   contract: Contract;
-  skillProficiencySet: Skill[]; 
+  skillProficiencySet: Skill[];
 }

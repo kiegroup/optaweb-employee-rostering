@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import DomainObject from './DomainObject';
+import { DomainObject } from './DomainObject';
 
-export default interface Skill extends DomainObject {
+export interface Skill extends DomainObject {
   name: string;
 }

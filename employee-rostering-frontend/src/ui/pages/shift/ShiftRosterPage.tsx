@@ -13,36 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from "react";
-import Shift from "domain/Shift";
-import Spot from "domain/Spot";
-import { AppState } from "store/types";
-import { shiftOperations } from "store/shift"; 
-import { rosterOperations, rosterSelectors } from "store/roster";
-import { spotSelectors } from "store/spot";
+import React from 'react';
+import { Shift } from 'domain/Shift';
+import { Spot } from 'domain/Spot';
+import { AppState } from 'store/types';
+import { shiftOperations } from 'store/shift';
+import { rosterOperations, rosterSelectors } from 'store/roster';
+import { spotSelectors } from 'store/spot';
 import { connect } from 'react-redux';
 import WeekPicker from 'ui/components/WeekPicker';
 import moment from 'moment';
-import {
-  Button, EmptyState, EmptyStateVariant, Title, EmptyStateBody, EmptyStateIcon,
-} from '@patternfly/react-core';
-import EditShiftModal from './EditShiftModal';
+import { Button, EmptyState, EmptyStateVariant, Title, EmptyStateBody, EmptyStateIcon } from '@patternfly/react-core';
 import Color from 'color';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
 import { alert } from 'store/alert';
-import RosterState from 'domain/RosterState';
-import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './ShiftEvent';
+import { RosterState } from 'domain/RosterState';
 import Schedule, { StyleSupplier } from 'ui/components/calendar/Schedule';
-import {
-  withRouter, RouteComponentProps,
-} from 'react-router-dom'
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { CubesIcon } from '@patternfly/react-icons';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
-import "ui/components/TypeaheadSelectInput.css";
-import Actions from "ui/components/Actions";
-import HardMediumSoftScore from "domain/HardMediumSoftScore";
-import { ScoreDisplay } from "ui/components/ScoreDisplay";
-import { getPropsFromUrl, setPropsInUrl, UrlProps } from "util/BookmarkableUtils";
+import 'ui/components/TypeaheadSelectInput.css';
+import Actions from 'ui/components/Actions';
+import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
+import { ScoreDisplay } from 'ui/components/ScoreDisplay';
+import { getPropsFromUrl, setPropsInUrl, UrlProps } from 'util/BookmarkableUtils';
+import ShiftEvent, { getShiftColor, ShiftPopupHeader, ShiftPopupBody } from './ShiftEvent';
+import EditShiftModal from './EditShiftModal';
 
 interface StateProps {
   tenantId: number;
@@ -58,11 +54,12 @@ interface StateProps {
   score: HardMediumSoftScore | null;
 }
 
-export type ShiftRosterUrlProps = UrlProps<"spot"|"week">;
+export type ShiftRosterUrlProps = UrlProps<'spot'|'week'>;
 // Snapshot of the last value to show when loading
 let lastSpotIdToShiftListMap: Map<number, Shift[]> = new Map<number, Shift[]>();
 let lastShownSpotList: Spot[] = [];
 
+// eslint-disable-next-line no-return-assign
 const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
   isSolving: state.solverState.isSolving,
@@ -80,7 +77,7 @@ const mapStateToProps = (state: AppState): StateProps => ({
   endDate: (state.shiftRoster.shiftRosterView) ? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState,
-  score: state.shiftRoster.shiftRosterView? state.shiftRoster.shiftRosterView.score : null
+  score: state.shiftRoster.shiftRosterView ? state.shiftRoster.shiftRosterView.score : null,
 });
 
 export interface DispatchProps {
@@ -105,7 +102,7 @@ const mapDispatchToProps: DispatchProps = {
   publishRoster: rosterOperations.publish,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
   showInfoMessage: alert.showInfoMessage,
-}
+};
 
 export type Props = RouteComponentProps & StateProps & DispatchProps & WithTranslation;
 interface State {
@@ -125,7 +122,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     this.getDayStyle = this.getDayStyle.bind(this);
     this.state = {
       isCreatingOrEditingShift: false,
-      firstLoad: true
+      firstLoad: true,
     };
   }
 
@@ -140,7 +137,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         spotList: [spot],
       });
       this.setState({ firstLoad: false });
-      setPropsInUrl(this.props, { ...urlProps, spot: spot.name});
+      setPropsInUrl(this.props, { ...urlProps, spot: spot.name });
     }
   }
 
@@ -187,7 +184,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         style: {
           backgroundColor: 'var(--pf-global--BackgroundColor--300)',
         },
-      }
+      };
     }
 
     return {
@@ -195,21 +192,21 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       style: {
         backgroundColor: 'var(--pf-global--BackgroundColor--100)',
       },
-    }
+    };
   }
-  
+
   componentDidMount() {
     const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
       spot: null,
-      week: null
+      week: null,
     });
     this.onUpdateShiftRoster(urlProps);
   }
-  
+
   componentDidUpdate(prevProps: Props) {
     const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
       spot: null,
-      week: null
+      week: null,
     });
     if (this.state.firstLoad || prevProps.tenantId !== this.props.tenantId || urlProps.spot === null) {
       this.onUpdateShiftRoster(urlProps);
@@ -220,11 +217,11 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     const { t } = this.props;
     const urlProps = getPropsFromUrl<ShiftRosterUrlProps>(this.props, {
       spot: null,
-      week: null
+      week: null,
     });
-    const changedTenant = this.props.shownSpotList.length === 0 ||
-      this.props.tenantId !== this.props.shownSpotList[0].tenantId;
-    
+    const changedTenant = this.props.shownSpotList.length === 0
+      || this.props.tenantId !== this.props.shownSpotList[0].tenantId;
+
     if (this.props.shownSpotList.length === 0 || this.state.firstLoad || changedTenant) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
@@ -240,39 +237,40 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 aria-label="Spots Page"
                 variant="primary"
                 onClick={() => this.props.history.push(`/${this.props.tenantId}/spots`)}
-              />
+              />,
             ]}
           />
         </EmptyState>
       );
     }
-    
+
     const startDate = this.props.startDate as Date;
     const endDate = this.props.endDate as Date;
     const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.shownSpotList[0];
-    const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 }; 
+    const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const actions = [
-      { name: t("publish"), action: this.props.publishRoster },
-      { name: this.props.isSolving? t("terminateEarly") : t("schedule"),
-        action: this.props.isSolving? this.props.terminateSolvingRosterEarly : this.props.solveRoster
-      },
-      { name: t("refresh"), action: () => {
-        this.props.refreshShiftRoster();
-        this.props.showInfoMessage('shiftRosterRefresh');
-      }},
-      { name: t("createShift"), action: () => {
-        this.setState({
-          selectedShift: undefined,
-          isCreatingOrEditingShift: true,
-        })
-      }}
+      { name: t('publish'), action: this.props.publishRoster },
+      { name: this.props.isSolving ? t('terminateEarly') : t('schedule'),
+        action: this.props.isSolving ? this.props.terminateSolvingRosterEarly : this.props.solveRoster },
+      { name: t('refresh'),
+        action: () => {
+          this.props.refreshShiftRoster();
+          this.props.showInfoMessage('shiftRosterRefresh');
+        } },
+      { name: t('createShift'),
+        action: () => {
+          this.setState({
+            selectedShift: undefined,
+            isCreatingOrEditingShift: true,
+          });
+        } },
     ];
 
     return (
       <>
         <span
           style={{
-            display: "grid",
+            display: 'grid',
             height: '60px',
             padding: '5px 5px 5px 5px',
             gridTemplateColumns: 'auto auto auto 1fr',
@@ -281,15 +279,15 @@ export class ShiftRosterPage extends React.Component<Props, State> {
         >
           <TypeaheadSelectInput
             aria-label="Select Spot"
-            emptyText={t("selectSpot")}
+            emptyText={t('selectSpot')}
             optionToStringMap={spot => spot.name}
             options={this.props.allSpotList}
             value={shownSpot}
             onChange={(s) => {
               this.onUpdateShiftRoster({
                 ...urlProps,
-                spot: s? s.name : null
-              })
+                spot: s ? s.name : null,
+              });
             }}
             noClearButton
           />
@@ -299,7 +297,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             onChange={(weekStart) => {
               this.onUpdateShiftRoster({
                 ...urlProps,
-                week: moment(weekStart).format("YYYY-MM-DD") 
+                week: moment(weekStart).format('YYYY-MM-DD'),
               });
             }}
           />
@@ -332,7 +330,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           startDate={startDate}
           endDate={endDate}
           events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) || []}
-          titleAccessor={shift => (shift.employee ? shift.employee.name : t("unassigned"))}
+          titleAccessor={shift => (shift.employee ? shift.employee.name : t('unassigned'))}
           startAccessor={shift => moment(shift.startDateTime).toDate()}
           endAccessor={shift => moment(shift.endDateTime).toDate()}
           onAddEvent={
@@ -353,9 +351,9 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               this.updateShift({
                 ...shift,
                 startDateTime: start,
-                endDateTime: end
+                endDateTime: end,
               });
-            }  
+            }
           }
           eventStyle={this.getShiftStyle}
           dayStyle={this.getDayStyle}
@@ -376,5 +374,6 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 }
 
-export default withTranslation("ShiftRosterPage")(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(ShiftRosterPage)));
+export default withTranslation('ShiftRosterPage')(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(ShiftRosterPage)),
+);

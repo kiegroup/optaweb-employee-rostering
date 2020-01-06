@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { Skill } from 'domain/Skill';
 import { AppState } from '../types';
-import Skill from 'domain/Skill';
 
 export const getSkillById = (state: AppState, id: number): Skill => {
   if (state.skillList.isLoading) {
-    throw Error("Skill list is loading");
+    throw Error('Skill list is loading');
   }
   return state.skillList.skillMapById.get(id) as Skill;
 };
