@@ -103,6 +103,7 @@
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
         <artifactId>employee-rostering-standalone</artifactId>
+        <classifier>exec</classifier>
         <version>${project.version}</version>
       </dependency>
 

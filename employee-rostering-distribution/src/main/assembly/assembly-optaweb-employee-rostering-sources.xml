@@ -54,7 +54,7 @@
   <dependencySets>
     <dependencySet>
       <includes>
-        <include>org.optaweb.employeerostering:employee-rostering-standalone</include>
+        <include>org.optaweb.employeerostering:employee-rostering-standalone:jar:exec</include>
       </includes>
       <outputDirectory>bin</outputDirectory>
       <useStrictFiltering>true</useStrictFiltering>
