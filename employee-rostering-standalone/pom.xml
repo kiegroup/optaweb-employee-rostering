@@ -37,11 +37,6 @@
       <groupId>org.optaweb.employeerostering</groupId>
       <artifactId>employee-rostering-backend</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>employee-rostering-backend</artifactId>
-      <classifier>exec</classifier>
-    </dependency>
   </dependencies>
 
   <build>
@@ -62,44 +57,14 @@
                   <groupId>org.optaweb.employeerostering</groupId>
                   <artifactId>employee-rostering-frontend</artifactId>
                   <type>zip</type>
-                  <outputDirectory>${project.build.directory}/react</outputDirectory>
-                  <includes>**\/*</includes>
+                  <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
                 </artifactItem>
                 <artifactItem>
                   <groupId>org.optaweb.employeerostering</groupId>
                   <artifactId>employee-rostering-backend</artifactId>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                  <includes>**\/*</includes>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.optaweb.employeerostering</groupId>
-                  <artifactId>employee-rostering-backend</artifactId>
-                  <classifier>exec</classifier>
-                  <outputDirectory>${project.build.directory}/classes</outputDirectory>
-                  <excludes>**\/org/optaweb/employeerostering\/**\/*</excludes>
+                  <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                 </artifactItem>
               </artifactItems>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>position-react-build</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <phase>generate-sources</phase>
-            <configuration>
-              <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}/react/employee-rostering-frontend-${project.version}</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
             </configuration>
           </execution>
         </executions>
