@@ -9,7 +9,7 @@
   </formats>
 
   <includeBaseDirectory>true</includeBaseDirectory>
-  
+
   <files>
     <file>
       <source>../LICENSE-ASL-2.0.txt</source>
@@ -24,26 +24,42 @@
     </fileSet>
     <!-- Examples -->
     <fileSet><!-- Note: going outside the module dir is bad, but it is not fetching generated files -->
+      <useDefaultExcludes>false</useDefaultExcludes>
       <directory>..</directory>
       <outputDirectory>sources</outputDirectory>
       <excludes>
         <exclude>**/target/**</exclude>
         <exclude>**/local/**</exclude>
-        <exclude>**/node/**</exclude>
-        <exclude>**/node_modules/**</exclude>
-        <exclude>**/build/**</exclude>
-        <exclude>**/coverage/**</exclude>
-        <exclude>.*/**</exclude>
-        <exclude>nbproject/**</exclude>
-        <exclude>*.ipr</exclude>
-        <exclude>*.iws</exclude>
+        <exclude>**/.project</exclude>
+        <exclude>**/.idea/**</exclude>
+        <exclude>**/*.ipr</exclude>
+        <exclude>**/*.iws</exclude>
         <exclude>**/*.iml</exclude>
+        <exclude>**/nbproject/**</exclude>
+        <exclude>**/.vscode/**</exclude>
+        <exclude>**/.DS_Store</exclude>
         <exclude>.git/**</exclude>
+        <exclude>employee-rostering-frontend/.scannerwork/**</exclude>
+        <exclude>employee-rostering-frontend/build/**</exclude>
+        <exclude>employee-rostering-frontend/coverage/**</exclude>
+        <exclude>employee-rostering-frontend/cypress/screenshots/**</exclude>
+        <exclude>employee-rostering-frontend/cypress/videos/**</exclude>
+        <exclude>employee-rostering-frontend/docker/build/**</exclude>
+        <exclude>employee-rostering-frontend/node/**</exclude>
+        <exclude>employee-rostering-frontend/node_modules/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>
 
   <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>org.optaweb.employeerostering:employee-rostering-standalone:jar:exec</include>
+      </includes>
+      <outputDirectory>bin</outputDirectory>
+      <useStrictFiltering>true</useStrictFiltering>
+      <useProjectArtifact>false</useProjectArtifact>
+    </dependencySet>
     <!-- Reference manual -->
     <dependencySet>
       <includes>
