@@ -28,35 +28,13 @@ docker run -p 8080:8080 --rm -it -e SPRING_PROFILES_ACTIVE=dev rostering
 ----
 This takes a few minutes on the first time. The application will be automatically populated with test data.
 
-== Development
+You can then access the application on localhost:8080, once it finishes starting
 
+== Development
 
 === Backend
 
-==== Set up OpenJDK Java 8
-
-[source,shell]
-----
-$ brew tap AdoptOpenJDK/openjdk
-$ brew cask install adoptopenjdk8
-$ java -version
-openjdk version "1.8.0_232"
-OpenJDK Runtime Environment (AdoptOpenJDK)(build 1.8.0_232-b09)
-OpenJDK 64-Bit Server VM (AdoptOpenJDK)(build 25.232-b09, mixed mode)
-$ which java
-/usr/bin/java
-----
-
-==== Add the following line to `~/.bash_profile`
-
-[source,shell]
-----
-export JAVA_HOME="/Library/Java/JavaVirtualMachines/adoptopenjdk-8.jdk/Contents/Home"
-----
-
-==== Configure your IDE
-
-Configure your IDE to use OpenJDK 1.8 and run the main class, which is in
+Configure your IDE to run the main class, which is in
 `org.optaweb.employeerostering.OptaWebEmployeeRosteringApplication` in `employee-rostering-backend` repository.
 
 You will need to specify this program argument for Spring Boot to run in development mode and provision the H2 in-memory database:
@@ -64,7 +42,8 @@ You will need to specify this program argument for Spring Boot to run in develop
 `--spring.profiles.active=dev`
 
 === Frontend
-Run `npm install` and then `npm run start` in the `employee-rostering-frontend` directory.
+
+Run `npm install` and then `npm start` in the `employee-rostering-frontend` directory.
 
 == Building
 
