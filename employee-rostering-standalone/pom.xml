@@ -22,6 +22,28 @@
     <container.runtime>docker</container.runtime>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>jakarta.validation</groupId>
+          <artifactId>jakarta.validation-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.optaweb.employeerostering</groupId>
+      <artifactId>employee-rostering-backend</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.optaweb.employeerostering</groupId>
+      <artifactId>employee-rostering-backend</artifactId>
+      <classifier>exec</classifier>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -210,26 +232,4 @@
       </build>
     </profile>
   </profiles>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>jakarta.validation</groupId>
-          <artifactId>jakarta.validation-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>employee-rostering-backend</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>employee-rostering-backend</artifactId>
-      <classifier>exec</classifier>
-    </dependency>
-  </dependencies>
 </project>
