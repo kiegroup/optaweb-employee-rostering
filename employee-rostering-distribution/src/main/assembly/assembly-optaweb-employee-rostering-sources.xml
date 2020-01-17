@@ -9,7 +9,7 @@
   </formats>
 
   <includeBaseDirectory>true</includeBaseDirectory>
-  
+
   <files>
     <file>
       <source>../LICENSE-ASL-2.0.txt</source>
@@ -44,6 +44,14 @@
   </fileSets>
 
   <dependencySets>
+    <dependencySet>
+      <includes>
+        <include>org.optaweb.employeerostering:employee-rostering-standalone</include>
+      </includes>
+      <outputDirectory>bin</outputDirectory>
+      <useStrictFiltering>true</useStrictFiltering>
+      <useProjectArtifact>false</useProjectArtifact>
+    </dependencySet>
     <!-- Reference manual -->
     <dependencySet>
       <includes>

@@ -45,5 +45,9 @@
       <artifactId>employee-rostering-docs</artifactId>
       <type>zip</type>
     </dependency>
+    <dependency>
+      <groupId>org.optaweb.employeerostering</groupId>
+      <artifactId>employee-rostering-standalone</artifactId>
+    </dependency>
   </dependencies>
 </project>
