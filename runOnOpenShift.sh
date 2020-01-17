@@ -4,9 +4,21 @@ set -e
 readonly dir_backend=employee-rostering-backend
 readonly dir_frontend=employee-rostering-frontend
 
-# Change dir to the project root (where provision.sh is located) to correctly resolve module paths.
-# This needed in case the script was called from a different location than the project root.
+# Change dir to the project root (where the script is located) to correctly resolve module paths.
+# This is needed in case the script was called from a different location than the project root.
 cd "$(dirname "$(readlink -f "$0")")"
+
+# Fail fast if the project hasn't been built
+if ! stat -t ${dir_backend}/target/*.jar > /dev/null 2>&1
+then
+  echo >&2 "ERROR: Backend not built! Build the project before running this script."
+  exit 1
+fi
+if [[ ! -d ${dir_frontend}/docker/build ]]
+then
+  echo >&2 "ERROR: Frontend not built! Build the project before running this script."
+  exit 1
+fi
 
 command -v oc > /dev/null 2>&1 || {
   echo >&2 "ERROR: The oc client tool needs to be installed to connect to OpenShift."
@@ -35,7 +47,11 @@ if [[ -z "$get_all" ]]
 then
   echo "The project appears to be empty."
 else
-  echo >&2 -e "\nProject content:\n\n${get_all}\n"
+  echo >&2
+  echo >&2 "Project content:"
+  echo >&2
+  echo >&2 "$get_all"
+  echo >&2
   echo >&2 "ERROR: The project is not empty."
   exit 1
 fi
@@ -48,7 +64,7 @@ read -r -p "Do you want to continue? [y/N]: " "answer_continue"
 }
 
 # Set up PostgreSQL
-oc new-app postgresql-persistent
+oc new-app --name postgresql postgresql-persistent
 
 # Backend
 # -- binary build (upload local artifacts + Dockerfile)
@@ -70,5 +86,6 @@ oc expose svc/frontend
 # -- change target port to 8080
 oc patch route frontend -p '{"spec":{"port":{"targetPort":"8080-tcp"}}}'
 
+echo
 echo "You can access the application at http://$(oc get route frontend -o custom-columns=:spec.host | tr -d '\n') \
 once the deployment is done."
