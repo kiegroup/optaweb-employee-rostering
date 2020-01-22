@@ -58,6 +58,8 @@
 \*\/$
 ]]>
     </checkstyle.header.template>
+    <!-- Define JaCoCo agent argLine property to avoid Surefire failure when JaCoCo is not enabled. -->
+    <jacoco.agent.argLine/>
     <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
     <version.org.mockito>2.12.0</version.org.mockito>
@@ -156,29 +158,35 @@
         https://github.com/kiegroup/kie-jenkins-scripts/blob/master/job-dsls/jobs/pr_jobs.groovy
       -->
       <id>run-code-coverage</id>
-      <properties>
-        <jacoco.excludes>*Lexer</jacoco.excludes>
-        <jacoco.agent.line>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${version.jacoco.plugin}/org.jacoco.agent-${version.jacoco.plugin}-runtime.jar=destfile=${jacoco.exec.file},append=true,excludes=${jacoco.excludes}</jacoco.agent.line>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jacoco</groupId>
-          <artifactId>org.jacoco.agent</artifactId>
-          <classifier>runtime</classifier>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
       <build>
         <pluginManagement>
           <plugins>
             <plugin>
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>
-                <argLine>${jacoco.agent.line}</argLine>
+                <!-- Append jacoco.agent.argLine property populated by JaCoCo's prepare-agent goal. -->
+                <argLine>@{jacoco.agent.argLine}</argLine>
               </configuration>
             </plugin>
           </plugins>
         </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jacoco-prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+                <configuration>
+                  <propertyName>jacoco.agent.argLine</propertyName>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
       </build>
     </profile>
     <profile>
