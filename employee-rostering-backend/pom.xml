@@ -31,7 +31,6 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <version.org.jacoco>0.8.4</version.org.jacoco>
   </properties>
 
   <dependencies>
@@ -212,45 +211,6 @@
             </excludedTestClasses>
           </configuration>
         </plugin>
-        <plugin>
-          <groupId>org.jacoco</groupId>
-          <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${version.org.jacoco}</version>
-          <executions>
-            <execution>
-              <id>default-instrument</id>
-              <goals>
-                <goal>instrument</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>default-restore-instrumented-classes</id>
-              <goals>
-                <goal>restore-instrumented-classes</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>default-report</id>
-              <phase>prepare-package</phase>
-              <goals>
-                <goal>report</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
-        <plugin>
-          <groupId>org.sonarsource.scanner.maven</groupId>
-          <artifactId>sonar-maven-plugin</artifactId>
-          <version>3.6.2</version>
-          <executions>
-            <execution>
-              <phase>verify</phase>
-              <goals>
-                <goal>sonar</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>
@@ -351,86 +311,6 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jacoco</id>
-      <properties>
-        <jacoco.excludes>*Lexer</jacoco.excludes>
-        <jacoco.exec.file>${project.build.directory}/jacoco.exec</jacoco.exec.file>
-        <jacoco.agent.line>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/${version.jacoco.plugin}/org.jacoco.agent-${version.jacoco.plugin}-runtime.jar=destfile=${jacoco.exec.file},append=true,excludes=${jacoco.excludes}</jacoco.agent.line>
-      </properties>
-      <dependencies>
-        <dependency>
-          <groupId>org.jacoco</groupId>
-          <artifactId>org.jacoco.agent</artifactId>
-          <classifier>runtime</classifier>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-      <build>
-        <pluginManagement>
-          <plugins>
-            <plugin>
-              <groupId>org.jacoco</groupId>
-              <artifactId>jacoco-maven-plugin</artifactId>
-              <version>${version.jacoco.plugin}</version>
-              <configuration>
-                <append>true</append>
-                <destFile>${jacoco.exec.file}</destFile>
-                <excludes>
-                  <exclude>${jacoco.excludes}</exclude>
-                </excludes>
-              </configuration>
-              <executions>
-                <execution>
-                  <id>default-instrument</id>
-                  <goals>
-                    <goal>instrument</goal>
-                  </goals>
-                </execution>
-                <execution>
-                  <id>default-restore-instrumented-classes</id>
-                  <goals>
-                    <goal>restore-instrumented-classes</goal>
-                  </goals>
-                </execution>
-              </executions>
-            </plugin>
-            <plugin>
-              <groupId>org.codehaus.cargo</groupId>
-              <artifactId>cargo-maven2-plugin</artifactId>
-              <configuration>
-                <configuration>
-                  <properties>
-                    <cargo.start.jvmargs>${jacoco.agent.line}</cargo.start.jvmargs>
-                  </properties>
-                </configuration>
-              </configuration>
-              <dependencies>
-                <dependency>
-                  <groupId>org.jacoco</groupId>
-                  <artifactId>org.jacoco.agent</artifactId>
-                  <version>${version.jacoco.plugin}</version>
-                </dependency>
-              </dependencies>
-            </plugin>
-            <plugin>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <configuration>
-                <systemPropertyVariables>
-                  <jacoco-agent.destfile>${jacoco.exec.file}</jacoco-agent.destfile>
-                </systemPropertyVariables>
-              </configuration>
-            </plugin>
-          </plugins>
-        </pluginManagement>
-        <plugins>
-          <plugin>
-            <groupId>org.jacoco</groupId>
-            <artifactId>jacoco-maven-plugin</artifactId>
           </plugin>
         </plugins>
       </build>
