@@ -32,7 +32,7 @@ import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.spot.Spot;
 
 @Entity
-@PlanningEntity
+@PlanningEntity(movableEntitySelectionFilter = MovableShiftFilter.class)
 public class Shift extends AbstractPersistable {
 
     @ManyToOne

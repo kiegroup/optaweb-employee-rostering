@@ -128,6 +128,63 @@ public class SolverTest {
         assertFalse(roster.getShiftList().isEmpty());
         assertTrue(roster.getShiftList().stream().anyMatch(s -> s.getEmployee() != null));
     }
+    
+    // A solver "integration" test that verify it moves only draft shifts
+    @Test(timeout = 600000)
+    public void testMoveOnlyDraftShifts() {
+        Solver<Roster> solver = getSolverFactory().buildSolver();
+
+        AtomicLong idGenerator = new AtomicLong(1L);
+
+        Roster roster = new Roster();
+        Tenant tenant = new Tenant("Test Tenant");
+        tenant.setId(TENANT_ID);
+
+        RosterState rosterState = getRosterState(idGenerator);
+        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+
+        Contract contract = getDefaultContract(idGenerator);
+        
+        Skill skill = new Skill(TENANT_ID, "Skill");
+        skill.setId(idGenerator.getAndIncrement());
+
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        employeeA.setId(idGenerator.getAndIncrement());
+        
+        Employee employeeB = new Employee(TENANT_ID, "Bill", contract, Collections.singleton(skill));
+        employeeB.setId(idGenerator.getAndIncrement());
+
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.singleton(skill));
+        spotA.setId(idGenerator.getAndIncrement());
+
+        OffsetDateTime firstDateTime = OffsetDateTime.of(rosterState.getFirstPublishedDate().atTime(9, 0),
+                                                         ZoneOffset.UTC);
+        ShiftBuilder shiftBuilder = new ShiftBuilder(idGenerator)
+                .forSpot(spotA)
+                .startingAtDate(firstDateTime)
+                .withShiftLength(Duration.ofHours(8))
+                .withTimeBetweenShifts(Duration.ofDays(1));
+
+        List<Shift> shiftList = shiftBuilder.generateShifts(14);
+        shiftList.forEach(s -> s.setEmployee(employeeA));
+
+        roster.setTenantId(TENANT_ID);
+        roster.setRosterState(rosterState);
+        roster.setSpotList(Collections.singletonList(spotA));
+        roster.setEmployeeList(Arrays.asList(employeeA, employeeB));
+        roster.setSkillList(Collections.singletonList(skill));
+        roster.setRosterParametrization(rosterParametrization);
+        roster.setEmployeeAvailabilityList(Collections.emptyList());
+        roster.setShiftList(shiftList);
+        
+        roster = solver.solve(roster);
+        assertTrue(roster.getShiftList().stream()
+                   .filter(s -> !rosterState.isDraft(s))
+                   .allMatch(s -> s.getEmployee().equals(employeeA)));
+        assertTrue(roster.getShiftList().stream()
+                   .filter(rosterState::isDraft)
+                   .allMatch(s -> s.getEmployee().equals(employeeB)));
+    }
 
     private void testContractConstraint(ContractField contractField) {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
