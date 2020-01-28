@@ -47,6 +47,11 @@
         <exclude>employee-rostering-frontend/docker/build/**</exclude>
         <exclude>employee-rostering-frontend/node/**</exclude>
         <exclude>employee-rostering-frontend/node_modules/**</exclude>
+        <!--
+          TODO: Fix Jenkins jobs that build and deploy snapshots not to clone upstream repositories
+          TODO: under the root of the target repository.
+        -->
+        <exclude>upstream-repos/**</exclude>
       </excludes>
     </fileSet>
   </fileSets>
