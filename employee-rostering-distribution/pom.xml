@@ -15,6 +15,7 @@
   <name>Employee Rostering as a Service Distribution</name>
 
   <build>
+    <finalName>optaweb-${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
