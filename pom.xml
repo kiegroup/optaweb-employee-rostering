@@ -62,6 +62,10 @@
     <jacoco.agent.argLine/>
     <sonar.projectKey>optaweb-employee-rostering</sonar.projectKey>
     <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
+    <sonar.test.inclusions>
+      optaweb-employee-rostering-frontend/**/*test.ts,
+      optaweb-employee-rostering-frontend/**/*test.tsx
+    </sonar.test.inclusions>
     <version.org.mockito>2.12.0</version.org.mockito>
     <version.org.postgresql>42.2.6</version.org.postgresql>
   </properties>
