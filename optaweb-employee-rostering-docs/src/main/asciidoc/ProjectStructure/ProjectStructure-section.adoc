@@ -9,16 +9,16 @@
 
 The project is structured in the following folders:
 
-* *employee-rostering-backend* core planning domain model and backend REST api implemented with Spring Boot
-* *employee-rostering-benchmark* solution benchmark
-* *employee-rostering-distribution* assembly logic for the deployment assets
-* *employee-rostering-docs* this documentation
-* *employee-rostering-frontend* user interface implemented with ReactJS
+* *optaweb-employee-rostering-backend* core planning domain model and backend REST api implemented with Spring Boot
+* *optaweb-employee-rostering-benchmark* solution benchmark
+* *optaweb-employee-rostering-distribution* assembly logic for the deployment assets
+* *optaweb-employee-rostering-docs* this documentation
+* *optaweb-employee-rostering-frontend* user interface implemented with ReactJS
 
 == Domain Model
 
 The domain model is the most important piece of a project based on OptaPlanner. A careful design simplifies the
-constraint definition. The classes of the domain model are placed in the *employee-rostering-backend* module.
+constraint definition. The classes of the domain model are placed in the *optaweb-employee-rostering-backend* module.
 
 The most important classes to understand the domain model are:
 
@@ -28,12 +28,12 @@ The most important classes to understand the domain model are:
 
 == Constraints
 
-The constraints are defined in the *employee-rostering-backend* module, with the implementation of the backend REST
+The constraints are defined in the *optaweb-employee-rostering-backend* module, with the implementation of the backend REST
 service.
 
 * The solver configuration file:
-`employee-rostering-backend/src/main/resources/org/optaweb/employeerostering/service/solver/employeeRosteringSolverConfig.xml`
-* The constraints definition file: `employee-rostering-backend/src/main/resources/org/optaweb/employeerostering/service/solver/employeeRosteringScoreRules.drl`
+`optaweb-employee-rostering-backend/src/main/resources/org/optaweb/employeerostering/service/solver/employeeRosteringSolverConfig.xml`
+* The constraints definition file: `optaweb-employee-rostering-backend/src/main/resources/org/optaweb/employeerostering/service/solver/employeeRosteringScoreRules.drl`
 
 === Constraint definition
 

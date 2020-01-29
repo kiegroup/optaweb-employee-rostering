@@ -32,13 +32,13 @@ After building the project, run the application with:
 
 [source,shell]
 ----
-java -jar employee-rostering-standalone/target/employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev
+java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev
 ----
 
 Then open http://localhost:8080/ to see the web application.
 
-Alternatively, run `npm start` in `employee-rostering-frontend` to start the frontend in one terminal,
-and run `mvn spring-boot:run` in `employee-rostering-backend` to start the backend in another terminal.
+Alternatively, run `npm start` in `optaweb-employee-rostering-frontend` to start the frontend in one terminal,
+and run `mvn spring-boot:run` in `optaweb-employee-rostering-backend` to start the backend in another terminal.
 
 === Use a different port
 
@@ -46,7 +46,7 @@ To run on an another port use `--server.port=...`:
 
 [source,shell]
 ----
-java -jar employee-rostering-standalone/target/employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev --server.port=18080
+java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev --server.port=18080
 ----
 
 == Benchmark Application
@@ -55,7 +55,7 @@ After building the project above, run the benchmark application with:
 
 [source,shell]
 ----
-java -jar employee-rostering-benchmark/target/employee-rostering-benchmark-*.jar
+java -jar optaweb-employee-rostering-benchmark/target/optaweb-employee-rostering-benchmark-*.jar
 ----
 
 Note: make sure to run the project application and benchmark application on different ports if they are run
@@ -67,7 +67,7 @@ Open the `index.html` file in your browser to view the benchmark results.
 === Configure the benchmarker
 
 To configure the benchmarker, modify the `employeeRosteringBenchmarkConfig.xml` file found in the
-`employee-rostering-benchmark/src/main/resources` directory. Make sure to rebuild the project after modifying the
+`optaweb-employee-rostering-benchmark/src/main/resources` directory. Make sure to rebuild the project after modifying the
 config file for the benchmarker changes to be applied.
 
 Refer to the https://docs.optaplanner.org/latestFinal/optaplanner-docs/html_single/index.html#benchmarker[OptaPlanner
@@ -118,7 +118,7 @@ Then start OpenShift build:
 
 [source,shell]
 ----
-cd employee-rostering-backend
+cd optaweb-employee-rostering-backend
 oc start-build backend --from-dir=. --follow
 ----
 
@@ -129,7 +129,7 @@ Then start OpenShift build:
 
 [source,shell]
 ----
-cd employee-rostering-frontend
+cd optaweb-employee-rostering-frontend
 oc start-build frontend --from-dir=docker --follow
 ----
 

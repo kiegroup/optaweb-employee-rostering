@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-readonly dir_backend=employee-rostering-backend
-readonly dir_frontend=employee-rostering-frontend
+readonly dir_backend=optaweb-employee-rostering-backend
+readonly dir_frontend=optaweb-employee-rostering-frontend
 
 # Change dir to the project root (where the script is located) to correctly resolve module paths.
 # This is needed in case the script was called from a different location than the project root.

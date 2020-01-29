@@ -39,14 +39,14 @@
         <exclude>**/.vscode/**</exclude>
         <exclude>**/.DS_Store</exclude>
         <exclude>.git/**</exclude>
-        <exclude>employee-rostering-frontend/.scannerwork/**</exclude>
-        <exclude>employee-rostering-frontend/build/**</exclude>
-        <exclude>employee-rostering-frontend/coverage/**</exclude>
-        <exclude>employee-rostering-frontend/cypress/screenshots/**</exclude>
-        <exclude>employee-rostering-frontend/cypress/videos/**</exclude>
-        <exclude>employee-rostering-frontend/docker/build/**</exclude>
-        <exclude>employee-rostering-frontend/node/**</exclude>
-        <exclude>employee-rostering-frontend/node_modules/**</exclude>
+        <exclude>optaweb-employee-rostering-frontend/.scannerwork/**</exclude>
+        <exclude>optaweb-employee-rostering-frontend/build/**</exclude>
+        <exclude>optaweb-employee-rostering-frontend/coverage/**</exclude>
+        <exclude>optaweb-employee-rostering-frontend/cypress/screenshots/**</exclude>
+        <exclude>optaweb-employee-rostering-frontend/cypress/videos/**</exclude>
+        <exclude>optaweb-employee-rostering-frontend/docker/build/**</exclude>
+        <exclude>optaweb-employee-rostering-frontend/node/**</exclude>
+        <exclude>optaweb-employee-rostering-frontend/node_modules/**</exclude>
         <!--
           TODO: Fix Jenkins jobs that build and deploy snapshots not to clone upstream repositories
           TODO: under the root of the target repository.
@@ -59,7 +59,7 @@
   <dependencySets>
     <dependencySet>
       <includes>
-        <include>org.optaweb.employeerostering:employee-rostering-standalone:jar:exec</include>
+        <include>org.optaweb.employeerostering:optaweb-employee-rostering-standalone:jar:exec</include>
       </includes>
       <outputDirectory>bin</outputDirectory>
       <useStrictFiltering>true</useStrictFiltering>
@@ -68,7 +68,7 @@
     <!-- Reference manual -->
     <dependencySet>
       <includes>
-        <include>org.optaweb.employeerostering:employee-rostering-docs:zip</include>
+        <include>org.optaweb.employeerostering:optaweb-employee-rostering-docs:zip</include>
       </includes>
       <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>reference_manual</outputDirectory>

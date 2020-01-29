@@ -5,14 +5,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.optaweb.employeerostering</groupId>
-    <artifactId>employee-rostering</artifactId>
+    <artifactId>optaweb-employee-rostering</artifactId>
     <version>7.33.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>employee-rostering-distribution</artifactId>
+  <artifactId>optaweb-employee-rostering-distribution</artifactId>
   <packaging>pom</packaging>
 
-  <name>Employee Rostering as a Service Distribution</name>
+  <name>OptaWeb Employee Rostering as a Service Distribution</name>
 
   <build>
     <plugins>
@@ -42,12 +42,12 @@
     <!-- Documentation -->
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>employee-rostering-docs</artifactId>
+      <artifactId>optaweb-employee-rostering-docs</artifactId>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>employee-rostering-standalone</artifactId>
+      <artifactId>optaweb-employee-rostering-standalone</artifactId>
       <classifier>exec</classifier>
     </dependency>
   </dependencies>
