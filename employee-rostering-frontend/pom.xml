@@ -33,6 +33,9 @@
   <properties>
     <node.version>v11.6.0</node.version>
     <npm.version>6.9.0</npm.version>
+    <sonar.sources>src</sonar.sources>
+    <sonar.test.inclusions>**/*test.ts,**/*test.tsx</sonar.test.inclusions>
+    <sonar.typescript.lcov.reportPaths>coverage/lcov.info</sonar.typescript.lcov.reportPaths>
   </properties>
 
   <build>
@@ -170,14 +173,6 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>sonar</id>
-      <properties>
-        <sonar.sources>src</sonar.sources>
-        <sonar.test.inclusions>**/*test.ts,**/*test.tsx</sonar.test.inclusions>
-        <sonar.typescript.lcov.reportPaths>coverage/lcov.info</sonar.typescript.lcov.reportPaths>
-      </properties>
-    </profile>
     <profile>
       <id>productized</id>
       <activation>
