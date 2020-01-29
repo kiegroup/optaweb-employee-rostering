@@ -35,7 +35,7 @@
     <npm.version>6.9.0</npm.version>
     <sonar.sources>src</sonar.sources>
     <sonar.test.inclusions>**/*test.ts,**/*test.tsx</sonar.test.inclusions>
-    <sonar.typescript.lcov.reportPaths>coverage/lcov.info</sonar.typescript.lcov.reportPaths>
+    <sonar.javascript.lcov.reportPaths>coverage/lcov.info</sonar.javascript.lcov.reportPaths>
   </properties>
 
   <build>
