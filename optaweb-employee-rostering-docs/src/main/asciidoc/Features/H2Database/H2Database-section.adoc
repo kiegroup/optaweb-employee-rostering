@@ -3,7 +3,7 @@
 :imagesdir: ../..
 
 Before testing the database, make sure the application backend is running.
-If the application isn't running, run the following in the`employee-rostering-backend` directory:
+If the application isn't running, run the following in the`optaweb-employee-rostering-backend` directory:
 
 [source,shell]
 ----

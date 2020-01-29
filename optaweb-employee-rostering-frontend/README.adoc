@@ -1,5 +1,5 @@
 :david-project: https://david-dm.org/kiegroup/optaweb-employee-rostering
-:david-path: path=employee-rostering-frontend
+:david-path: path=optaweb-employee-rostering-frontend
 :david-deps: {david-project}/status.svg?{david-path}
 :david-devDeps: {david-project}/dev-status.svg?{david-path}
 :david-link: {david-project}?{david-path}

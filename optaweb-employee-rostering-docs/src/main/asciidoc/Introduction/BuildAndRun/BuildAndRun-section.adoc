@@ -1,0 +1,29 @@
+[[buildAndRun]]
+= Build and Run the Application
+:imagesdir: ../..
+
+To build the project with Maven, run the following command in the project's root directory:
+
+[source,shell]
+----
+mvn clean install -DskipTests
+----
+
+After building the project, run the application with:
+
+[source,shell]
+----
+java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev
+----
+
+Then open http://localhost:8080/ to see the web application.
+
+Alternatively, run `npm start` in the `optaweb-employee-rostering-frontend` directory to start the frontend in one terminal,
+and run `mvn spring-boot:run` in the `optaweb-employee-rostering-backend` directory to start the backend in another terminal.
+
+To run on another port, use `--server.port=...​`:
+
+[source,shell]
+----
+java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev --server.port=18080
+----

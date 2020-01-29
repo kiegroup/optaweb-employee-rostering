@@ -21,14 +21,14 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.optaweb.employeerostering</groupId>
-    <artifactId>employee-rostering</artifactId>
+    <artifactId>optaweb-employee-rostering</artifactId>
     <version>7.33.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>employee-rostering-benchmark</artifactId>
+  <artifactId>optaweb-employee-rostering-benchmark</artifactId>
   <packaging>jar</packaging>
 
-  <name>Employee Rostering as a Service Benchmark</name>
+  <name>OptaWeb Employee Rostering as a Service Benchmark</name>
 
   <properties>
     <java.version>1.8</java.version>
@@ -37,7 +37,7 @@
   <dependencies>
     <dependency>
       <groupId>org.optaweb.employeerostering</groupId>
-      <artifactId>employee-rostering-backend</artifactId>
+      <artifactId>optaweb-employee-rostering-backend</artifactId>
     </dependency>
 
     <!-- OptaPlanner dependencies -->

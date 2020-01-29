@@ -10,12 +10,12 @@
   </parent>
 
   <groupId>org.optaweb.employeerostering</groupId>
-  <artifactId>employee-rostering</artifactId>
+  <artifactId>optaweb-employee-rostering</artifactId>
   <packaging>pom</packaging>
 
-  <name>Employee Rostering as a Service Parent</name>
+  <name>OptaWeb Employee Rostering as a Service Parent</name>
   <description>
-    Employee Rostering as a Service with OptaPlanner on OpenShift 3.
+    OptaWeb Employee Rostering as a Service with OptaPlanner on OpenShift 4.
   </description>
   <url>https://www.optaplanner.org</url>
   <inceptionYear>2017</inceptionYear>
@@ -67,12 +67,12 @@
   </properties>
 
   <modules>
-    <module>employee-rostering-frontend</module>
-    <module>employee-rostering-backend</module>
-    <module>employee-rostering-benchmark</module>
-    <module>employee-rostering-docs</module>
-    <module>employee-rostering-distribution</module>
-    <module>employee-rostering-standalone</module>
+    <module>optaweb-employee-rostering-frontend</module>
+    <module>optaweb-employee-rostering-backend</module>
+    <module>optaweb-employee-rostering-benchmark</module>
+    <module>optaweb-employee-rostering-docs</module>
+    <module>optaweb-employee-rostering-distribution</module>
+    <module>optaweb-employee-rostering-standalone</module>
   </modules>
 
   <dependencyManagement>
@@ -80,32 +80,32 @@
       <!-- Internal modules -->
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-frontend</artifactId>
+        <artifactId>optaweb-employee-rostering-frontend</artifactId>
         <type>jar</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-backend</artifactId>
+        <artifactId>optaweb-employee-rostering-backend</artifactId>
         <type>jar</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-backend</artifactId>
+        <artifactId>optaweb-employee-rostering-backend</artifactId>
         <classifier>exec</classifier>
         <type>jar</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-docs</artifactId>
+        <artifactId>optaweb-employee-rostering-docs</artifactId>
         <type>zip</type>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>org.optaweb.employeerostering</groupId>
-        <artifactId>employee-rostering-standalone</artifactId>
+        <artifactId>optaweb-employee-rostering-standalone</artifactId>
         <classifier>exec</classifier>
         <version>${project.version}</version>
       </dependency>
