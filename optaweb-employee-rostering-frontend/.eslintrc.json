@@ -1,7 +1,7 @@
 {
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": ["./tsconfig.json", "cypress/tsconfig.json"]
   },
   "plugins": [
     "@typescript-eslint",
@@ -31,6 +31,7 @@
     "airbnb"
   ],
   "rules": {
+    "@typescript-eslint/ban-ts-ignore": "off", // Some @types files haven't updated yet, so props are missing sometimes
     "@typescript-eslint/camelcase": "off", // duplicates "camelcase" from airbnb
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-member-accessibility": ["error", {"accessibility": "no-public"}],
@@ -61,6 +62,7 @@
         " "
       ]
     ],
+    "import/extensions": "off", // Suddenly, the new norm for imports is to include the file extension
     "import/no-extraneous-dependencies": [
       "error",
       {

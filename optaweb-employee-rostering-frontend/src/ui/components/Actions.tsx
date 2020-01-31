@@ -66,7 +66,7 @@ export const Actions: FC<Props & SizeMeProps> = ({ actions, size }) => {
         {actionsInDropdown.length > 0 && (
           <Dropdown
             onSelect={(e) => {
-              actionsInDropdown.filter(a => a.name === e.currentTarget.innerText).forEach(a => a.action());
+              actionsInDropdown.filter(a => e && a.name === e.currentTarget.innerText).forEach(a => a.action());
               setDropdownOpen(false);
             }}
             position="right"

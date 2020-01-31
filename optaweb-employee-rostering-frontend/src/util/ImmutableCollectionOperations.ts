@@ -115,7 +115,7 @@ export class Stream<T> {
     return this.filter((v, i) => (page - 1) * perPage <= i && i < page * perPage);
   }
 
-  sort(sorter: Sorter<T>, asc: boolean = true): Stream<T> {
+  sort(sorter: Sorter<T>, asc = true): Stream<T> {
     const comparator: Sorter<T> = asc ? sorter : (a, b) => sorter(b, a);
     return new Stream([...this.collection].sort(comparator));
   }

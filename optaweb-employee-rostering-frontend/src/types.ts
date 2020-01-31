@@ -21,6 +21,8 @@ export interface PaginationData {
   pageNumber: number;
 }
 
+export const doNothing = () => { /* Intentionally Empty */ };
+
 export interface ObjectNumberMap<T> {
   [index: number]: T;
 }
