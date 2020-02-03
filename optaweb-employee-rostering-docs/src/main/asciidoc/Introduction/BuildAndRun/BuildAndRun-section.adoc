@@ -13,7 +13,7 @@ After building the project, run the application with:
 
 [source,shell]
 ----
-java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev
+java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar
 ----
 
 Then open http://localhost:8080/ to see the web application.
@@ -25,5 +25,5 @@ To run on another port, use `--server.port=...​`:
 
 [source,shell]
 ----
-java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar --spring.profiles.active=dev --server.port=18080
+java -jar optaweb-employee-rostering-standalone/target/optaweb-employee-rostering-standalone-*-exec.jar --server.port=18080
 ----

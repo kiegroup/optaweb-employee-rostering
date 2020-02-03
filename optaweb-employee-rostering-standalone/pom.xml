@@ -141,7 +141,6 @@
                   <processLogFile>${project.build.directory}/${project.artifactId}.log</processLogFile>
                   <arguments>
                     <argument>java</argument>
-                    <argument>-Dspring.profiles.active=dev</argument>
                     <argument>-Dserver.port=${application.port}</argument>
                     <argument>-jar</argument>
                     <argument>${project.artifactId}-${project.version}-exec.jar</argument>
