@@ -16,7 +16,7 @@ exports[`Availability Event should render correctly 1`] = `
     <SplitItem
       isFilled={false}
     >
-      <Button
+      <Component
         aria-label="Delete"
         onClick={[Function]}
         variant="danger"
@@ -27,14 +27,14 @@ exports[`Availability Event should render correctly 1`] = `
           size="sm"
           title={null}
         />
-      </Button>
+      </Component>
     </SplitItem>
   </Split>
   <Level
     gutter="sm"
   >
     <LevelItem>
-      <Button
+      <Component
         aria-label="Desired"
         onClick={[Function]}
         style={
@@ -53,8 +53,8 @@ exports[`Availability Event should render correctly 1`] = `
           size="sm"
           title={null}
         />
-      </Button>
-      <Button
+      </Component>
+      <Component
         aria-label="Undesired"
         onClick={[Function]}
         style={
@@ -73,8 +73,8 @@ exports[`Availability Event should render correctly 1`] = `
           size="sm"
           title={null}
         />
-      </Button>
-      <Button
+      </Component>
+      <Component
         aria-label="Unavailable"
         onClick={[Function]}
         style={
@@ -93,7 +93,7 @@ exports[`Availability Event should render correctly 1`] = `
           size="sm"
           title={null}
         />
-      </Button>
+      </Component>
     </LevelItem>
   </Level>
 </span>

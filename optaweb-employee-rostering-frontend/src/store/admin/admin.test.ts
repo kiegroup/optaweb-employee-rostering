@@ -17,6 +17,7 @@
 import * as tenantOperations from 'store/tenant/operations';
 import { onPost } from 'store/rest/RestTestUtils';
 import { alert } from 'store/alert';
+import { doNothing } from 'types';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as adminOperations from './operations';
@@ -25,7 +26,7 @@ describe('Contract operations', () => {
   const mockRefreshTenantList = jest.spyOn(tenantOperations, 'refreshTenantList');
 
   beforeAll(() => {
-    mockRefreshTenantList.mockImplementation(() => () => {});
+    mockRefreshTenantList.mockImplementation(() => doNothing);
   });
 
   afterAll(() => {

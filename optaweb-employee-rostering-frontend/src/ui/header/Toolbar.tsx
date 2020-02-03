@@ -133,7 +133,7 @@ export class ToolbarComponent extends React.Component<Props, ToolbarState> {
             <Dropdown
               isPlain
               position="right"
-              onSelect={event => this.setCurrentTenant(
+              onSelect={event => event && this.setCurrentTenant(
                 parseInt((event.target as HTMLElement).dataset.tenantid as string, 10),
               )}
               isOpen={isTenantSelectOpen}

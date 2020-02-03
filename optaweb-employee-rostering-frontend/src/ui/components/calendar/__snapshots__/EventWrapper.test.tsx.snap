@@ -45,6 +45,7 @@ exports[`EventWrapper should render correctly when the event continues both befo
     onShown={[Function]}
     position="right"
     shouldClose={[Function]}
+    tippyProps={Object {}}
     zIndex={9999}
   >
     <div />
@@ -97,6 +98,7 @@ exports[`EventWrapper should render correctly when the event continues from eari
     onShown={[Function]}
     position="right"
     shouldClose={[Function]}
+    tippyProps={Object {}}
     zIndex={9999}
   >
     <div />
@@ -149,6 +151,7 @@ exports[`EventWrapper should render correctly when the event continues later 1`]
     onShown={[Function]}
     position="right"
     shouldClose={[Function]}
+    tippyProps={Object {}}
     zIndex={9999}
   >
     <div />
@@ -201,6 +204,7 @@ exports[`EventWrapper should render correctly when the event does not have a cla
     onShown={[Function]}
     position="right"
     shouldClose={[Function]}
+    tippyProps={Object {}}
     zIndex={9999}
   >
     <div />
@@ -253,6 +257,7 @@ exports[`EventWrapper should render correctly when the event does not span multi
     onShown={[Function]}
     position="right"
     shouldClose={[Function]}
+    tippyProps={Object {}}
     zIndex={9999}
   >
     <div />
@@ -303,6 +308,7 @@ exports[`EventWrapper should render correctly when the event has no height or to
     onShown={[Function]}
     position="right"
     shouldClose={[Function]}
+    tippyProps={Object {}}
     zIndex={9999}
   >
     <div />
@@ -352,6 +358,7 @@ exports[`EventWrapper should render correctly without a style 1`] = `
     onShown={[Function]}
     position="right"
     shouldClose={[Function]}
+    tippyProps={Object {}}
     zIndex={9999}
   >
     <div />

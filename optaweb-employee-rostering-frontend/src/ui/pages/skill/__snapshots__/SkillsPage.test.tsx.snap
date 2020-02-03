@@ -24,13 +24,13 @@ exports[`Skills page should render correctly with a few skills 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -40,8 +40,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Skills"
     cells={
       Array [
@@ -65,15 +64,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -81,17 +72,11 @@ exports[`Skills page should render correctly with a few skills 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <TextInput
+                  <ForwardRef
                     aria-label="Name"
-                    className=""
                     defaultValue="Skill 1"
-                    isDisabled={false}
-                    isReadOnly={false}
-                    isRequired={false}
-                    isValid={true}
                     name="name"
                     onChange={[Function]}
-                    type="text"
                   />
                 }
                 isEditing={false}
@@ -115,7 +100,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -126,8 +111,8 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -138,7 +123,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -153,7 +138,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -164,8 +149,8 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -176,7 +161,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -188,17 +173,11 @@ exports[`Skills page should render correctly with a few skills 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <TextInput
+                  <ForwardRef
                     aria-label="Name"
-                    className=""
                     defaultValue="Skill 2"
-                    isDisabled={false}
-                    isReadOnly={false}
-                    isRequired={false}
-                    isValid={true}
                     name="name"
                     onChange={[Function]}
-                    type="text"
                   />
                 }
                 isEditing={false}
@@ -222,7 +201,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -233,8 +212,8 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -245,7 +224,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -260,7 +239,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -271,8 +250,8 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -283,7 +262,7 @@ exports[`Skills page should render correctly with a few skills 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -293,11 +272,10 @@ exports[`Skills page should render correctly with a few skills 1`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -325,13 +303,13 @@ exports[`Skills page should render correctly with no skills 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={0}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -341,8 +319,7 @@ exports[`Skills page should render correctly with no skills 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Skills"
     cells={
       Array [
@@ -366,22 +343,13 @@ exports[`Skills page should render correctly with no skills 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={Array []}
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -390,18 +358,12 @@ exports[`Skills page should render the editor correctly 1`] = `
   <td
     key="0"
   >
-    <TextInput
+    <ForwardRef
       aria-label="Name"
-      className=""
       defaultValue="Skill"
-      isDisabled={false}
-      isReadOnly={false}
-      isRequired={false}
-      isValid={true}
       key="0"
       name="name"
       onChange={[Function]}
-      type="text"
     />
   </td>
 </tr>

@@ -451,7 +451,7 @@ exports[`Shift Roster Page should render correctly when loading 1`] = `
           size="lg"
         />,
         <EmptyStateBody />,
-        <Button
+        <Unknown
           aria-label="Spots Page"
           onClick={[Function]}
           variant="primary"

@@ -43,7 +43,7 @@ describe('WeekPicker component', () => {
   it('should pass previous week to onChange when previous week is clicked', () => {
     const onChange = jest.fn();
     const weekPicker = shallow(<WeekPicker value={moment('2019-07-03').toDate()} onChange={onChange} />);
-    weekPicker.find('Button[aria-label="Previous Week"]').simulate('click');
+    weekPicker.find('[aria-label="Previous Week"]').simulate('click');
     expect(onChange).toBeCalled();
     expect(onChange)
       .toBeCalledWith(moment('2019-06-23').toDate(), moment('2019-06-23').endOf('week').toDate());
@@ -52,7 +52,7 @@ describe('WeekPicker component', () => {
   it('should pass next week to onChange when next week is clicked', () => {
     const onChange = jest.fn();
     const weekPicker = shallow(<WeekPicker value={moment('2019-07-03').toDate()} onChange={onChange} />);
-    weekPicker.find('Button[aria-label="Next Week"]').simulate('click');
+    weekPicker.find('[aria-label="Next Week"]').simulate('click');
     expect(onChange).toBeCalled();
     expect(onChange)
       .toBeCalledWith(moment('2019-07-07').toDate(), moment('2019-07-07').endOf('week').toDate());

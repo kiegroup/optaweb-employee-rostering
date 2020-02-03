@@ -3,25 +3,27 @@
 exports[`ServerSideExceptionDialog should render an ServerSideException Alert correctly 1`] = `
 <Fragment>
   Trans(i18nKey=error1, ["hi"])
-  <Button
+  <Component
     aria-label="Show Stack Trace"
     onClick={[Function]}
     variant="link"
   >
     Show Stack Trace
-  </Button>
+  </Component>
   <Modal
     actions={
-      <Button
+      <Unknown
         aria-label="Close"
         onClick={[Function]}
       >
         Trans(i18nKey=close)
-      </Button>
+      </Unknown>
     }
+    appendTo={<body />}
     ariaDescribedById=""
     className=""
     hideTitle={false}
+    isFooterLeftAligned={false}
     isLarge={false}
     isOpen={false}
     isSmall={false}
@@ -79,25 +81,27 @@ exports[`ServerSideExceptionDialog should render an ServerSideException Alert co
 exports[`ServerSideExceptionDialog should render an ServerSideException Modal correctly 1`] = `
 <Fragment>
   Trans(i18nKey=error1, ["hi"])
-  <Button
+  <Component
     aria-label="Show Stack Trace"
     onClick={[Function]}
     variant="link"
   >
     Show Stack Trace
-  </Button>
+  </Component>
   <Modal
     actions={
-      <Button
+      <Unknown
         aria-label="Close"
         onClick={[Function]}
       >
         Trans(i18nKey=close)
-      </Button>
+      </Unknown>
     }
+    appendTo={<body />}
     ariaDescribedById=""
     className=""
     hideTitle={false}
+    isFooterLeftAligned={false}
     isLarge={false}
     isOpen={true}
     isSmall={false}

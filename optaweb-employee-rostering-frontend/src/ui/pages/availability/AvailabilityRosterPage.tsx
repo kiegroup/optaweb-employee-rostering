@@ -52,8 +52,6 @@ interface StateProps {
   shownEmployeeList: Employee[];
   employeeIdToShiftListMap: Map<number, Shift[]>;
   employeeIdToAvailabilityListMap: Map<number, EmployeeAvailability[]>;
-  startDate: Date | null;
-  endDate: Date | null;
   totalNumOfSpots: number;
   rosterState: RosterState | null;
   score: HardMediumSoftScore | null;
@@ -85,10 +83,6 @@ const mapStateToProps = (state: AppState): StateProps => ({
       rosterSelectors.getAvailabilityListForEmployee(state, curr)),
     rosterSelectors.isAvailabilityRosterLoading(state) ? lastEmployeeIdToAvailabilityListMap
       : new Map<number, EmployeeAvailability[]>()),
-  startDate: (state.availabilityRoster.availabilityRosterView)
-    ? moment(state.availabilityRoster.availabilityRosterView.startDate).toDate() : null,
-  endDate: (state.availabilityRoster.availabilityRosterView)
-    ? moment(state.availabilityRoster.availabilityRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState,
   score: state.availabilityRoster.availabilityRosterView ? state.availabilityRoster.availabilityRosterView.score : null,
@@ -310,8 +304,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       );
     }
 
-    const startDate = this.props.startDate as Date;
-    const endDate = this.props.endDate as Date;
+    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
+    const endDate = moment(startDate).endOf('week').toDate();
     const shownEmployee = this.props.allEmployeeList.find(e => e.name === urlProps.employee)
       || this.props.shownEmployeeList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
@@ -374,7 +368,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             emptyText={t('selectEmployee')}
             optionToStringMap={employee => employee.name}
             options={this.props.allEmployeeList}
-            value={this.props.shownEmployeeList[0]}
+            value={shownEmployee}
             onChange={(e) => {
               this.onUpdateAvailabilityRoster({
                 ...urlProps,
@@ -385,7 +379,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           />
           <WeekPicker
             aria-label="Select Week to View"
-            value={this.props.startDate as Date}
+            value={startDate}
             onChange={(weekStart) => {
               this.onUpdateAvailabilityRoster({
                 ...urlProps,

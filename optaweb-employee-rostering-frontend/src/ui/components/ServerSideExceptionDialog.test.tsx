@@ -63,7 +63,7 @@ describe('ServerSideExceptionDialog', () => {
     const serverSideExceptionDialog = shallow(
       <ServerSideExceptionDialog {...serverSideException}>Show Stack Trace</ServerSideExceptionDialog>,
     );
-    serverSideExceptionDialog.find('Button[aria-label="Show Stack Trace"]').simulate('click');
+    serverSideExceptionDialog.find('[aria-label="Show Stack Trace"]').simulate('click');
     expect(toJson(serverSideExceptionDialog)).toMatchSnapshot();
   });
 });

@@ -24,13 +24,13 @@ exports[`Employees page should render correctly with a few employees 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -40,8 +40,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Employees"
     cells={
       Array [
@@ -83,15 +82,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -99,17 +90,11 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <TextInput
+                  <ForwardRef
                     aria-label="Name"
-                    className=""
                     defaultValue="Employee 1"
-                    isDisabled={false}
-                    isReadOnly={false}
-                    isRequired={false}
-                    isValid={true}
                     name="name"
                     onChange={[Function]}
-                    type="text"
                   />
                 }
                 isEditing={false}
@@ -200,7 +185,9 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                   <ChipGroup
                     className=""
                     collapsedText="\${remaining} more"
+                    defaultIsOpen={false}
                     expandedText="Show Less"
+                    numChips={3}
                     withToolbar={false}
                   />
                 }
@@ -219,7 +206,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -230,8 +217,8 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -242,7 +229,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -257,7 +244,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -268,8 +255,8 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -280,7 +267,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -292,17 +279,11 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <TextInput
+                  <ForwardRef
                     aria-label="Name"
-                    className=""
                     defaultValue="Employee 2"
-                    isDisabled={false}
-                    isReadOnly={false}
-                    isRequired={false}
-                    isValid={true}
                     name="name"
                     onChange={[Function]}
-                    type="text"
                   />
                 }
                 isEditing={false}
@@ -404,31 +385,21 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                   <ChipGroup
                     className=""
                     collapsedText="\${remaining} more"
+                    defaultIsOpen={false}
                     expandedText="Show Less"
+                    numChips={3}
                     withToolbar={false}
                   >
-                    <Chip
-                      className=""
-                      closeBtnAriaLabel="close"
-                      component="div"
-                      isOverflowChip={false}
+                    <Unknown
                       isReadOnly={true}
-                      onClick={[Function]}
-                      tooltipPosition="top"
                     >
                       Skill 1
-                    </Chip>
-                    <Chip
-                      className=""
-                      closeBtnAriaLabel="close"
-                      component="div"
-                      isOverflowChip={false}
+                    </Unknown>
+                    <Unknown
                       isReadOnly={true}
-                      onClick={[Function]}
-                      tooltipPosition="top"
                     >
                       Skill 2
-                    </Chip>
+                    </Unknown>
                   </ChipGroup>
                 }
               />,
@@ -446,7 +417,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -457,8 +428,8 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -469,7 +440,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -484,7 +455,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -495,8 +466,8 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -507,7 +478,7 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -517,11 +488,10 @@ exports[`Employees page should render correctly with a few employees 1`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -540,7 +510,7 @@ exports[`Employees page should render correctly with no employees 1`] = `
           size="lg"
         />,
         <EmptyStateBody />,
-        <Button
+        <Unknown
           aria-label="Contracts Page"
           onClick={[Function]}
           variant="primary"
@@ -558,18 +528,12 @@ exports[`Employees page should render the editor correctly 1`] = `
   <td
     key="0"
   >
-    <TextInput
+    <ForwardRef
       aria-label="Name"
-      className=""
       defaultValue="Employee 2"
-      isDisabled={false}
-      isReadOnly={false}
-      isRequired={false}
-      isValid={true}
       key="0"
       name="name"
       onChange={[Function]}
-      type="text"
     />
   </td>
   <td
@@ -681,34 +645,24 @@ exports[`Employees page should render the viewer correctly 1`] = `
     <ChipGroup
       className=""
       collapsedText="\${remaining} more"
+      defaultIsOpen={false}
       expandedText="Show Less"
       key="2"
+      numChips={3}
       withToolbar={false}
     >
-      <Chip
-        className=""
-        closeBtnAriaLabel="close"
-        component="div"
-        isOverflowChip={false}
+      <Component
         isReadOnly={true}
         key="Skill 1"
-        onClick={[Function]}
-        tooltipPosition="top"
       >
         Skill 1
-      </Chip>
-      <Chip
-        className=""
-        closeBtnAriaLabel="close"
-        component="div"
-        isOverflowChip={false}
+      </Component>
+      <Component
         isReadOnly={true}
         key="Skill 2"
-        onClick={[Function]}
-        tooltipPosition="top"
       >
         Skill 2
-      </Chip>
+      </Component>
     </ChipGroup>
   </td>
 </tr>

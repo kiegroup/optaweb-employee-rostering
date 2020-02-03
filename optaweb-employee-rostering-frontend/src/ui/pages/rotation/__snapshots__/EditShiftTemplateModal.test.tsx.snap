@@ -4,24 +4,26 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
 <Modal
   actions={
     Array [
-      <Button
+      <Unknown
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Save"
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Button>,
+      </Unknown>,
     ]
   }
+  appendTo={<body />}
   ariaDescribedById=""
   className=""
   hideTitle={false}
+  isFooterLeftAligned={false}
   isLarge={false}
   isOpen={false}
   isSmall={true}
@@ -67,13 +69,8 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=startDayOffset)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Start Day Offset"
-        className=""
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         max={24}
         min={1}
         onChange={[Function]}
@@ -82,13 +79,8 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=startTime)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Start Time"
-        className=""
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="time"
       />
@@ -97,13 +89,8 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=endDayOffset)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="End Day Offset"
-        className=""
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         max={24}
         min={1}
         onChange={[Function]}
@@ -112,13 +99,8 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=endTime)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="End Time"
-        className=""
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="time"
       />
@@ -172,24 +154,26 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
 <Modal
   actions={
     Array [
-      <Button
+      <Unknown
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Save"
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Button>,
+      </Unknown>,
     ]
   }
+  appendTo={<body />}
   ariaDescribedById=""
   className=""
   hideTitle={false}
+  isFooterLeftAligned={false}
   isLarge={false}
   isOpen={true}
   isSmall={true}
@@ -235,13 +219,8 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=startDayOffset)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Start Day Offset"
-        className=""
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         max={24}
         min={1}
         onChange={[Function]}
@@ -250,13 +229,8 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=startTime)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Start Time"
-        className=""
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="time"
       />
@@ -265,13 +239,8 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=endDayOffset)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="End Day Offset"
-        className=""
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         max={24}
         min={1}
         onChange={[Function]}
@@ -280,13 +249,8 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=endTime)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="End Time"
-        className=""
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="time"
       />
@@ -340,31 +304,33 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
 <Modal
   actions={
     Array [
-      <Button
+      <Unknown
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Delete"
         onClick={[Function]}
         variant="danger"
       >
         Trans(i18nKey=delete)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Save"
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Button>,
+      </Unknown>,
     ]
   }
+  appendTo={<body />}
   ariaDescribedById=""
   className=""
   hideTitle={false}
+  isFooterLeftAligned={false}
   isLarge={false}
   isOpen={true}
   isSmall={true}
@@ -426,14 +392,9 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
       <Label>
         Trans(i18nKey=startDayOffset)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Start Day Offset"
-        className=""
         defaultValue="2"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         max={24}
         min={1}
         onChange={[Function]}
@@ -442,14 +403,9 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
       <Label>
         Trans(i18nKey=startTime)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Start Time"
-        className=""
         defaultValue="09:00"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="time"
       />
@@ -458,14 +414,9 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
       <Label>
         Trans(i18nKey=endDayOffset)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="End Day Offset"
-        className=""
         defaultValue="2"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         max={24}
         min={1}
         onChange={[Function]}
@@ -474,14 +425,9 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
       <Label>
         Trans(i18nKey=endTime)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="End Time"
-        className=""
         defaultValue="17:00"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="time"
       />

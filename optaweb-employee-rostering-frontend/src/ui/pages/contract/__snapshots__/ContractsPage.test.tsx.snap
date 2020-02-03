@@ -24,13 +24,13 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -40,8 +40,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Contracts"
     cells={
       Array [
@@ -97,15 +96,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -113,17 +104,11 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <TextInput
+                  <ForwardRef
                     aria-label="Name"
-                    className=""
                     defaultValue="Contract 1"
-                    isDisabled={false}
-                    isReadOnly={false}
-                    isRequired={false}
-                    isValid={true}
                     name="name"
                     onChange={[Function]}
-                    type="text"
                   />
                 }
                 isEditing={false}
@@ -211,7 +196,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -222,8 +207,8 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -234,7 +219,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -249,7 +234,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -260,8 +245,8 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -272,7 +257,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -284,17 +269,11 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
-                  <TextInput
+                  <ForwardRef
                     aria-label="Name"
-                    className=""
                     defaultValue="Contract 2"
-                    isDisabled={false}
-                    isReadOnly={false}
-                    isRequired={false}
-                    isValid={true}
                     name="name"
                     onChange={[Function]}
-                    type="text"
                   />
                 }
                 isEditing={false}
@@ -398,7 +377,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -409,8 +388,8 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -421,7 +400,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -436,7 +415,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -447,8 +426,8 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -459,7 +438,7 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -469,11 +448,10 @@ exports[`Contracts page should render correctly with a few contracts 1`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -501,13 +479,13 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={0}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -517,8 +495,7 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Contracts"
     cells={
       Array [
@@ -574,22 +551,13 @@ exports[`Contracts page should render correctly with no contracts 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={Array []}
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -598,18 +566,12 @@ exports[`Contracts page should render the editor correctly 1`] = `
   <td
     key="0"
   >
-    <TextInput
+    <ForwardRef
       aria-label="Name"
-      className=""
       defaultValue="Contract 2"
-      isDisabled={false}
-      isReadOnly={false}
-      isRequired={false}
-      isValid={true}
       key="0"
       name="name"
       onChange={[Function]}
-      type="text"
     />
   </td>
   <td

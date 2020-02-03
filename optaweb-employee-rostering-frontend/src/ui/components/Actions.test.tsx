@@ -17,6 +17,7 @@ import { shallow } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { SizeMeProps } from 'react-sizeme';
+import { Button } from '@patternfly/react-core';
 import { Props, Actions } from './Actions';
 
 describe('Actions component', () => {
@@ -37,7 +38,7 @@ describe('Actions component', () => {
 
   it('clicking on a button should call the action', () => {
     const actionsComponent = shallow(<Actions {...desktopProps} />);
-    actionsComponent.find('Button[aria-label="Action 1"]').simulate('click');
+    actionsComponent.find(Button).find('[aria-label="Action 1"]').simulate('click');
     expect(actions[0].action).toBeCalled();
   });
 

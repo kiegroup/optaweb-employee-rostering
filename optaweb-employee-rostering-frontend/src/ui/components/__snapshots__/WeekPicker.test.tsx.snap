@@ -4,7 +4,7 @@ exports[`WeekPicker component should render correctly when closed 1`] = `
 <div
   className="week-picker-container"
 >
-  <Button
+  <Component
     aria-label="Previous Week"
     onClick={[Function]}
     variant="plain"
@@ -27,7 +27,7 @@ exports[`WeekPicker component should render correctly when closed 1`] = `
         transform=""
       />
     </svg>
-  </Button>
+  </Component>
   <DateRangePicker
     calendarIcon={
       <svg
@@ -84,7 +84,7 @@ exports[`WeekPicker component should render correctly when closed 1`] = `
       ]
     }
   />
-  <Button
+  <Component
     aria-label="Next Week"
     onClick={[Function]}
     variant="plain"
@@ -107,7 +107,7 @@ exports[`WeekPicker component should render correctly when closed 1`] = `
         transform=""
       />
     </svg>
-  </Button>
+  </Component>
 </div>
 `;
 
@@ -115,7 +115,7 @@ exports[`WeekPicker component should render correctly when opened 1`] = `
 <div
   className="week-picker-container"
 >
-  <Button
+  <Component
     aria-label="Previous Week"
     onClick={[Function]}
     variant="plain"
@@ -138,7 +138,7 @@ exports[`WeekPicker component should render correctly when opened 1`] = `
         transform=""
       />
     </svg>
-  </Button>
+  </Component>
   <DateRangePicker
     calendarIcon={
       <svg
@@ -195,7 +195,7 @@ exports[`WeekPicker component should render correctly when opened 1`] = `
       ]
     }
   />
-  <Button
+  <Component
     aria-label="Next Week"
     onClick={[Function]}
     variant="plain"
@@ -218,6 +218,6 @@ exports[`WeekPicker component should render correctly when opened 1`] = `
         transform=""
       />
     </svg>
-  </Button>
+  </Component>
 </div>
 `;

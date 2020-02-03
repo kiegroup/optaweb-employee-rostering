@@ -35,7 +35,7 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
   </ToolbarGroup>
   <ToolbarGroup>
     <ToolbarItem>
-      <Button
+      <Component
         aria-label="Notifications"
         variant="plain"
       >
@@ -45,10 +45,10 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
           size="sm"
           title={null}
         />
-      </Button>
+      </Component>
     </ToolbarItem>
     <ToolbarItem>
-      <Button
+      <Component
         aria-label="Settings"
         data-cy="settings"
         onClick={[Function]}
@@ -60,14 +60,14 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
           size="sm"
           title={null}
         />
-      </Button>
+      </Component>
     </ToolbarItem>
     <ToolbarItem>
       <a
         aria-label="REST Reference"
         href="backend/swagger-ui.html"
       >
-        <Button
+        <Component
           variant="plain"
         >
           <BookIcon
@@ -76,7 +76,7 @@ exports[`Toolbar Component should render correctly when tenant select is open 1`
             size="sm"
             title={null}
           />
-        </Button>
+        </Component>
       </a>
     </ToolbarItem>
   </ToolbarGroup>
@@ -118,7 +118,7 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
   </ToolbarGroup>
   <ToolbarGroup>
     <ToolbarItem>
-      <Button
+      <Component
         aria-label="Notifications"
         variant="plain"
       >
@@ -128,10 +128,10 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
           size="sm"
           title={null}
         />
-      </Button>
+      </Component>
     </ToolbarItem>
     <ToolbarItem>
-      <Button
+      <Component
         aria-label="Settings"
         data-cy="settings"
         onClick={[Function]}
@@ -143,14 +143,14 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
           size="sm"
           title={null}
         />
-      </Button>
+      </Component>
     </ToolbarItem>
     <ToolbarItem>
       <a
         aria-label="REST Reference"
         href="backend/swagger-ui.html"
       >
-        <Button
+        <Component
           variant="plain"
         >
           <BookIcon
@@ -159,7 +159,7 @@ exports[`Toolbar Component should render correctly with a few tenants 1`] = `
             size="sm"
             title={null}
           />
-        </Button>
+        </Component>
       </a>
     </ToolbarItem>
   </ToolbarGroup>
@@ -171,7 +171,7 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
   <ToolbarGroup />
   <ToolbarGroup>
     <ToolbarItem>
-      <Button
+      <Component
         aria-label="Notifications"
         variant="plain"
       >
@@ -181,10 +181,10 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
           size="sm"
           title={null}
         />
-      </Button>
+      </Component>
     </ToolbarItem>
     <ToolbarItem>
-      <Button
+      <Component
         aria-label="Settings"
         data-cy="settings"
         onClick={[Function]}
@@ -196,14 +196,14 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
           size="sm"
           title={null}
         />
-      </Button>
+      </Component>
     </ToolbarItem>
     <ToolbarItem>
       <a
         aria-label="REST Reference"
         href="backend/swagger-ui.html"
       >
-        <Button
+        <Component
           variant="plain"
         >
           <BookIcon
@@ -212,7 +212,7 @@ exports[`Toolbar Component should render correctly with no tenants 1`] = `
             size="sm"
             title={null}
           />
-        </Button>
+        </Component>
       </a>
     </ToolbarItem>
   </ToolbarGroup>
