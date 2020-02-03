@@ -15,7 +15,6 @@
  */
 
 import { Action } from 'redux';
-import { AlertInfo } from 'store/alert/types';
 import { BasicObject } from 'types';
 
 export enum ActionType {

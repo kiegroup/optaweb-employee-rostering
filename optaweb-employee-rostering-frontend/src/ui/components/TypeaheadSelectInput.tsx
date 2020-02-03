@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
-import { stringFilter } from 'util/CommonFilters';
-import './TypeaheadSelectInput.css';
+import Select from 'react-select';
 
 export interface TypeaheadSelectProps<T> {
   emptyText: string;
@@ -26,10 +24,7 @@ export interface TypeaheadSelectProps<T> {
   onChange: (selected: T | undefined) => void;
   optional?: boolean;
   noClearButton?: boolean;
-}
-
-export interface TypeaheadSelectState {
-  isExpanded: boolean;
+  autoSize?: boolean;
 }
 
 const StatefulTypeaheadSelectInput: React.FC<TypeaheadSelectProps<any>> = (props) => {
@@ -45,103 +40,51 @@ const StatefulTypeaheadSelectInput: React.FC<TypeaheadSelectProps<any>> = (props
 
 export { StatefulTypeaheadSelectInput };
 
-export const substringFilter = (props: TypeaheadSelectProps<any>) => (e: React.ChangeEvent<HTMLInputElement>) => {
-  const filter = stringFilter((child: any) => child.props.value)(e.target.value);
-  const options = props.options.map(option => (
-    <SelectOption
-      isDisabled={false}
-      key={props.optionToStringMap(option)}
-      value={props.optionToStringMap(option)}
-    />
-  ));
-  const typeaheadFilteredChildren = e.target.value !== ''
-    ? options.filter(filter)
-    : options;
-  return typeaheadFilteredChildren;
-};
-
 export default class TypeaheadSelectInput<T> extends React.Component<
-TypeaheadSelectProps<T>,
-TypeaheadSelectState
+TypeaheadSelectProps<T>
 > {
   constructor(props: TypeaheadSelectProps<T>) {
     super(props);
-
-    this.onToggle = this.onToggle.bind(this);
     this.onSelect = this.onSelect.bind(this);
-    this.clearSelection = this.clearSelection.bind(this);
-
-    this.state = {
-      isExpanded: false,
-    };
   }
 
-  onToggle(isExpanded: boolean) {
-    this.setState({
-      isExpanded,
-    });
-  }
-
-  clearSelection() {
-    this.props.onChange(undefined);
-    this.setState({
-      isExpanded: false,
-    });
-  }
-
-  onSelect(event: any,
-    selection: string) {
-    const selectedOption = this.props.options.find(
-      option => this.props.optionToStringMap(option) === selection,
-    ) as T;
-    setTimeout(() => {
-      this.props.onChange(selectedOption);
-      this.setState(() => ({
-        isExpanded: false,
-      }));
-    }, 0); // HACK: For some reason, when there are two or more Select, the
-    // clear button is clicked on Keyboard enter.
+  onSelect(selection: { value: T }|undefined) {
+    this.props.onChange(selection ? selection.value : undefined);
   }
 
   render() {
-    const { isExpanded } = this.state;
-    const className = this.props.noClearButton ? 'no-clear-button' : '';
-    const selected = this.props.value;
-
-    const { emptyText } = this.props;
-    const selection = selected !== undefined ? this.props.optionToStringMap(selected) : null;
+    const { optionToStringMap, emptyText, optional, options, autoSize } = this.props;
+    const selectOptions = this.props.options.map(o => ({ value: o }));
+    const selected = selectOptions.find(o => o.value === this.props.value);
+    const parentStyle: React.CSSProperties = {
+      position: 'relative',
+    };
+    if (autoSize === undefined || autoSize) {
+      const maxLabelLength = Math.max(emptyText.length, ...options.map(optionToStringMap).map(s => s.length));
+      parentStyle.width = `${maxLabelLength + 2}em`;
+    }
 
     return (
-      <div>
+      <div style={parentStyle}>
         <Select
-          ref={(select) => {
-            // Hack to get select to display selection without needing to toggle
-            if (select !== null && selection !== null) {
-              select.setState({
-                typeaheadInputValue: selection,
-              });
-            }
-          }}
-          variant={SelectVariant.typeahead}
           aria-label={emptyText}
-          onToggle={this.onToggle}
-          onSelect={this.onSelect as any}
-          onClear={this.clearSelection}
-          onFilter={substringFilter(this.props)}
-          selections={selection as any}
-          isExpanded={isExpanded}
-          placeholderText={emptyText}
-          required={!this.props.optional}
-          className={className}
-        >
-          {this.props.options.map(option => (
-            <SelectOption
-              isDisabled={false}
-              key={this.props.optionToStringMap(option)}
-              value={this.props.optionToStringMap(option)}
-            />
-          ))}
-        </Select>
+          styles={{
+            container: (provided, state) => ({
+              ...provided,
+              zIndex: state.isFocused ? 9999999 : 0,
+            }),
+          }}
+          onChange={this.onSelect}
+          defaultValue={selected}
+          value={selected}
+          selected={selected}
+          placeholder={emptyText}
+          getOptionLabel={o => optionToStringMap(o.value)}
+          getOptionValue={o => optionToStringMap(o.value)}
+          options={selectOptions}
+          menuPosition="fixed"
+          isClearable={optional}
+        />
       </div>
     );
   }

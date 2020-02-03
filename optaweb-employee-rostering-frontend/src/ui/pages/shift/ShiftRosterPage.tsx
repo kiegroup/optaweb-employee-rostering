@@ -47,8 +47,6 @@ interface StateProps {
   allSpotList: Spot[];
   shownSpotList: Spot[];
   spotIdToShiftListMap: Map<number, Shift[]>;
-  startDate: Date | null;
-  endDate: Date | null;
   totalNumOfSpots: number;
   rosterState: RosterState | null;
   score: HardMediumSoftScore | null;
@@ -73,8 +71,6 @@ const mapStateToProps = (state: AppState): StateProps => ({
       rosterSelectors.getShiftListForSpot(state, curr)),
     // reducing an empty array returns the starting value
     rosterSelectors.isShiftRosterLoading(state) ? lastSpotIdToShiftListMap : new Map<number, Shift[]>()),
-  startDate: (state.shiftRoster.shiftRosterView) ? moment(state.shiftRoster.shiftRosterView.startDate).toDate() : null,
-  endDate: (state.shiftRoster.shiftRosterView) ? moment(state.shiftRoster.shiftRosterView.endDate).toDate() : null,
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState,
   score: state.shiftRoster.shiftRosterView ? state.shiftRoster.shiftRosterView.score : null,
@@ -244,8 +240,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       );
     }
 
-    const startDate = this.props.startDate as Date;
-    const endDate = this.props.endDate as Date;
+    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
+    const endDate = moment(startDate).endOf('week').toDate();
     const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.shownSpotList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const actions = [
@@ -293,7 +289,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           />
           <WeekPicker
             aria-label="Select Week to View"
-            value={this.props.startDate as Date}
+            value={startDate}
             onChange={(weekStart) => {
               this.onUpdateShiftRoster({
                 ...urlProps,

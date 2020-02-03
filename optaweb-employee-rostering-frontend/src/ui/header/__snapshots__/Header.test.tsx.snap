@@ -17,9 +17,9 @@ exports[`Header component should render correctly on a desktop 1`] = `
   }
   onNavToggle={[MockFunction]}
   showNavToggle={false}
-  toolbar={<Memo(Connect(withRouter(ToolbarComponent))) />}
+  toolbar={<UNDEFINED />}
   topNav={
-    <Memo(Connect(withRouter(Navigation)))
+    <UNDEFINED
       variant="horizontal"
     />
   }
@@ -43,7 +43,7 @@ exports[`Header component should render correctly on a mobile 1`] = `
   }
   onNavToggle={[MockFunction]}
   showNavToggle={true}
-  toolbar={<Memo(Connect(withRouter(ToolbarComponent))) />}
+  toolbar={<UNDEFINED />}
   topNav={false}
 />
 `;

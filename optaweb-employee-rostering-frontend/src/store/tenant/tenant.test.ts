@@ -24,6 +24,7 @@ import { RosterState } from 'domain/RosterState';
 import * as immutableOperations from 'util/ImmutableCollectionOperations';
 import { flushPromises } from 'setupTests';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { doNothing } from 'types';
 import { mockStore } from '../mockStore';
 import { AppState } from '../types';
 import * as actions from './actions';
@@ -59,13 +60,13 @@ describe('Tenant operations', () => {
   ];
 
   beforeAll(() => {
-    mockRefreshSkillList.mockImplementation(() => () => {});
-    mockRefreshSpotList.mockImplementation(() => () => {});
-    mockRefreshContractList.mockImplementation(() => () => {});
-    mockRefreshEmployeeList.mockImplementation(() => () => {});
-    mockRefreshShiftTemplateList.mockImplementation(() => () => {});
-    mockRefreshRosterState.mockImplementation(() => () => {});
-    mockRefreshShiftTemplateList.mockImplementation(() => () => {});
+    mockRefreshSkillList.mockImplementation(() => doNothing);
+    mockRefreshSpotList.mockImplementation(() => doNothing);
+    mockRefreshContractList.mockImplementation(() => doNothing);
+    mockRefreshEmployeeList.mockImplementation(() => doNothing);
+    mockRefreshShiftTemplateList.mockImplementation(() => doNothing);
+    mockRefreshRosterState.mockImplementation(() => doNothing);
+    mockRefreshShiftTemplateList.mockImplementation(() => doNothing);
   });
 
   afterAll(() => {

@@ -13,10 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// @ts-nocheck
+// TODO: Re-enable typescript validation on this file when
+// @types/react-big-calendar is updated
 import * as React from 'react';
 import { Calendar, momentLocalizer, EventProps } from 'react-big-calendar';
 import moment from 'moment';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
+import { doNothing } from 'types';
 import EventWrapper from './EventWrapper';
 
 import 'react-big-calendar/lib/addons/dragAndDrop/styles.scss';
@@ -58,16 +62,12 @@ export function isDay(start: Date, end: Date) {
 const localizer = momentLocalizer(moment);
 export default function Schedule<T extends object>(props: Props<T>): React.ReactElement<Props<T>> {
   const length = Math.ceil(moment(props.endDate).diff(moment(props.startDate), 'days')) + 1;
-  // TODO: Remove @ts-ignore when @types/react-big-calendar is updated
-  /* eslint-disable react/jsx-tag-spacing */
   return (
     <div style={{
       height: 'calc(100% - 20px)',
     }}
     >
-      <
-      // @ts-ignore
-        DragAndDropCalendar
+      <DragAndDropCalendar
         className={(props.showAllDayCell) ? undefined : 'rbc-no-allday-cell'}
         dayLayoutAlgorithm="no-overlap"
         date={props.startDate}
@@ -128,8 +128,8 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
             props.onUpdateEvent(resizeInfo.event, moment(resizeInfo.start).toDate(), moment(resizeInfo.end).toDate());
           }
         }}
-        onView={() => {}}
-        onNavigate={() => {}}
+        onView={doNothing}
+        onNavigate={doNothing}
         timeslots={4}
         eventPropGetter={props.eventStyle}
         dayPropGetter={props.dayStyle}
@@ -155,5 +155,4 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
       />
     </div>
   );
-  /* eslint-enable react/jsx-tag-spacing */
 }

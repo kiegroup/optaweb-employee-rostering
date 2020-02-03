@@ -165,7 +165,7 @@ describe('Edit Shift Template Modal', () => {
       onDelete={jest.fn()}
     />);
 
-    editShiftTemplateModal.find('button[aria-label="Close Modal"]').simulate('click');
+    editShiftTemplateModal.find('[aria-label="Close Modal"]').last().simulate('click');
     expect(onClose).toBeCalled();
   });
 
@@ -180,7 +180,7 @@ describe('Edit Shift Template Modal', () => {
       onDelete={jest.fn()}
     />);
 
-    editShiftTemplateModal.find('button[aria-label="Close"]').simulate('click');
+    editShiftTemplateModal.find('[aria-label="Close"]').last().simulate('click');
     expect(onClose).toBeCalled();
   });
 
@@ -195,7 +195,7 @@ describe('Edit Shift Template Modal', () => {
       onDelete={onDelete}
     />);
 
-    editShiftTemplateModal.find('button[aria-label="Delete"]').simulate('click');
+    editShiftTemplateModal.find('[aria-label="Delete"]').last().simulate('click');
     expect(onDelete).toBeCalled();
   });
 
@@ -223,11 +223,11 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TextInput[aria-label="Start Day Offset"]').simulate('change', 2);
+    editShiftTemplateModal.find('[aria-label="Start Day Offset"]').simulate('change', 2);
     expect(editShiftTemplateModal.state('editedValue')).toEqual({
       startDayOffset: 1,
     });
-    editShiftTemplateModal.find('TextInput[aria-label="Start Day Offset"]').simulate('change', undefined);
+    editShiftTemplateModal.find('[aria-label="Start Day Offset"]').simulate('change', undefined);
     expect(editShiftTemplateModal.state('editedValue')).toEqual({
       startDayOffset: undefined,
     });
@@ -241,7 +241,7 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TextInput[aria-label="Start Time"]').simulate('change', '13:30');
+    editShiftTemplateModal.find('[aria-label="Start Time"]').simulate('change', '13:30');
     expect(editShiftTemplateModal.state('editedValue')).toEqual({
       startTime: { hours: 13, minutes: 30 },
     });
@@ -255,11 +255,11 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TextInput[aria-label="End Day Offset"]').simulate('change', 4);
+    editShiftTemplateModal.find('[aria-label="End Day Offset"]').simulate('change', 4);
     expect(editShiftTemplateModal.state('editedValue')).toEqual({
       endDayOffset: 3,
     });
-    editShiftTemplateModal.find('TextInput[aria-label="End Day Offset"]').simulate('change', undefined);
+    editShiftTemplateModal.find('[aria-label="End Day Offset"]').simulate('change', undefined);
     expect(editShiftTemplateModal.state('editedValue')).toEqual({
       endDayOffset: undefined,
     });
@@ -273,7 +273,7 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TextInput[aria-label="End Time"]').simulate('change', '13:30');
+    editShiftTemplateModal.find('[aria-label="End Time"]').simulate('change', '13:30');
     expect(editShiftTemplateModal.state('editedValue')).toEqual({
       endTime: { hours: 13, minutes: 30 },
     });
@@ -287,7 +287,7 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TypeaheadSelectInput[aria-label="Spot"]').simulate('change', spot);
+    editShiftTemplateModal.find('[aria-label="Spot"]').simulate('change', spot);
     expect(editShiftTemplateModal.state('editedValue')).toEqual({
       spot,
     });
@@ -301,12 +301,12 @@ describe('Edit Shift Template Modal', () => {
       onClose={jest.fn()}
       onDelete={jest.fn()}
     />);
-    editShiftTemplateModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', employee);
+    editShiftTemplateModal.find('[aria-label="Employee"]').simulate('change', employee);
     expect(editShiftTemplateModal.state('editedValue')).toEqual({
       rotationEmployee: employee,
     });
 
-    editShiftTemplateModal.find('TypeaheadSelectInput[aria-label="Employee"]').simulate('change', undefined);
+    editShiftTemplateModal.find('[aria-label="Employee"]').simulate('change', undefined);
     expect(editShiftTemplateModal.state('editedValue')).toEqual({
       rotationEmployee: null,
     });

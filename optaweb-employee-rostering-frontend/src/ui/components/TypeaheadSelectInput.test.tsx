@@ -16,8 +16,7 @@
 import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
-import { SelectOption } from '@patternfly/react-core';
-import TypeaheadSelectInput, { substringFilter, TypeaheadSelectProps } from './TypeaheadSelectInput';
+import TypeaheadSelectInput, { TypeaheadSelectProps } from './TypeaheadSelectInput';
 
 interface MockData {
   name: string;
@@ -25,34 +24,12 @@ interface MockData {
 
 type Select = TypeaheadSelectInput<MockData>;
 describe('TypeaheadSelectInput component', () => {
-  it('should not be expanded initially', () => {
-    const select = new TypeaheadSelectInput<MockData>(selectProps);
-    expect(select.state.isExpanded).toEqual(false);
-  });
-
-  it('should be expanded after a toggle', () => {
-    const select = mount(<TypeaheadSelectInput {...selectProps} />);
-
-    (select.instance() as Select).onToggle(true);
-    expect((select.instance() as Select).state.isExpanded).toEqual(true);
-  });
-
-  it('should not be expanded after a false toggle', () => {
-    const select = mount(<TypeaheadSelectInput {...selectProps} />);
-    (select.instance() as Select).onToggle(true);
-    (select.instance() as Select).onToggle(false);
-    expect((select.instance() as Select).state.isExpanded).toEqual(false);
-  });
-
   it('should set selected and call onChange', () => {
     jest.useFakeTimers();
     const defaultValue = { name: 'Option 2' };
     const select = mount(<TypeaheadSelectInput {...selectProps} value={defaultValue} />);
-    const event: any = {};
     select.setState({ isExpanded: true });
-    (select.instance() as Select).onSelect(event, 'Option 1');
-    jest.runOnlyPendingTimers();
-    expect(select.state('isExpanded')).toEqual(false);
+    (select.instance() as Select).onSelect({ value: { name: 'Option 1' } });
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith({ name: 'Option 1' });
   });
@@ -60,37 +37,10 @@ describe('TypeaheadSelectInput component', () => {
   it('should set selected to undefined on clear selection and call onChange', () => {
     const defaultValue = { name: 'Option 2' };
     const select = mount(<TypeaheadSelectInput {...selectProps} value={defaultValue} />);
-    (select.instance() as Select).clearSelection();
+    select.setState({ isExpanded: true });
+    (select.instance() as Select).onSelect(undefined);
     expect(selectProps.onChange).toBeCalled();
     expect(selectProps.onChange).toBeCalledWith(undefined);
-  });
-
-  it('should filter correctly', () => {
-    expect(substringFilter(selectProps)({ target: { value: '3' } } as any)).toEqual(
-      [<SelectOption
-        isDisabled={false}
-        key="Option 3"
-        value="Option 3"
-      />],
-    );
-    expect(substringFilter(selectProps)({ target: { value: 'Option' } } as any)).toEqual(
-      [
-        <SelectOption
-          isDisabled={false}
-          key="Option 1"
-          value="Option 1"
-        />,
-        <SelectOption
-          isDisabled={false}
-          key="Option 2"
-          value="Option 2"
-        />,
-        <SelectOption
-          isDisabled={false}
-          key="Option 3"
-          value="Option 3"
-        />],
-    );
   });
 
   it('should render correctly', () => {

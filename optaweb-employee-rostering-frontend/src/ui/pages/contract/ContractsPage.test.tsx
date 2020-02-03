@@ -53,7 +53,7 @@ describe('Contracts page', () => {
     const setProperty = jest.fn();
     const editor = spotsPage.editDataRow(spotsPage.getInitialStateForNewRow(), setProperty);
     const nameCol = shallow(editor[0]);
-    nameCol.simulate('change', { currentTarget: { value: 'Test' } });
+    nameCol.simulate('change', 'Test');
     expect(setProperty).toBeCalled();
     expect(setProperty).toBeCalledWith('name', 'Test');
 

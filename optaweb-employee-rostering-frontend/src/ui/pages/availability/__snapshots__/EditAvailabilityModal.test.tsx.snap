@@ -4,24 +4,26 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
 <Modal
   actions={
     Array [
-      <Button
+      <Unknown
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Save"
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Button>,
+      </Unknown>,
     ]
   }
+  appendTo={<body />}
   ariaDescribedById=""
   className=""
   hideTitle={false}
+  isFooterLeftAligned={false}
   isLarge={false}
   isOpen={false}
   isSmall={true}
@@ -51,6 +53,8 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         nextMonthButtonLabel="Next Month"
         nextYearButtonLabel="Next Year"
         onBlur={[Function]}
+        onCalendarClose={[Function]}
+        onCalendarOpen={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
         onFocus={[Function]}
@@ -67,6 +71,8 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         renderDayContents={[Function]}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showPopperArrow={true}
+        showPreviousMonths={false}
         showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
@@ -94,6 +100,8 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         nextMonthButtonLabel="Next Month"
         nextYearButtonLabel="Next Year"
         onBlur={[Function]}
+        onCalendarClose={[Function]}
+        onCalendarOpen={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
         onFocus={[Function]}
@@ -110,6 +118,8 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
         renderDayContents={[Function]}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showPopperArrow={true}
+        showPreviousMonths={false}
         showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
@@ -185,24 +195,26 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
 <Modal
   actions={
     Array [
-      <Button
+      <Unknown
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Save"
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Button>,
+      </Unknown>,
     ]
   }
+  appendTo={<body />}
   ariaDescribedById=""
   className=""
   hideTitle={false}
+  isFooterLeftAligned={false}
   isLarge={false}
   isOpen={true}
   isSmall={true}
@@ -232,6 +244,8 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         nextMonthButtonLabel="Next Month"
         nextYearButtonLabel="Next Year"
         onBlur={[Function]}
+        onCalendarClose={[Function]}
+        onCalendarOpen={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
         onFocus={[Function]}
@@ -248,6 +262,8 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         renderDayContents={[Function]}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showPopperArrow={true}
+        showPreviousMonths={false}
         showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
@@ -275,6 +291,8 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         nextMonthButtonLabel="Next Month"
         nextYearButtonLabel="Next Year"
         onBlur={[Function]}
+        onCalendarClose={[Function]}
+        onCalendarOpen={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
         onFocus={[Function]}
@@ -291,6 +309,8 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
         renderDayContents={[Function]}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showPopperArrow={true}
+        showPreviousMonths={false}
         showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
@@ -366,31 +386,33 @@ exports[`Edit Availability Modal should render correctly with a availability whe
 <Modal
   actions={
     Array [
-      <Button
+      <Unknown
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Delete"
         onClick={[Function]}
         variant="danger"
       >
         Trans(i18nKey=delete)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Save"
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Button>,
+      </Unknown>,
     ]
   }
+  appendTo={<body />}
   ariaDescribedById=""
   className=""
   hideTitle={false}
+  isFooterLeftAligned={false}
   isLarge={false}
   isOpen={true}
   isSmall={true}
@@ -420,6 +442,8 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         nextMonthButtonLabel="Next Month"
         nextYearButtonLabel="Next Year"
         onBlur={[Function]}
+        onCalendarClose={[Function]}
+        onCalendarOpen={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
         onFocus={[Function]}
@@ -437,6 +461,8 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         selected={2018-07-01T09:00:00.000Z}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showPopperArrow={true}
+        showPreviousMonths={false}
         showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}
@@ -464,6 +490,8 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         nextMonthButtonLabel="Next Month"
         nextYearButtonLabel="Next Year"
         onBlur={[Function]}
+        onCalendarClose={[Function]}
+        onCalendarOpen={[Function]}
         onChange={[Function]}
         onClickOutside={[Function]}
         onFocus={[Function]}
@@ -481,6 +509,8 @@ exports[`Edit Availability Modal should render correctly with a availability whe
         selected={2018-07-01T17:00:00.000Z}
         shouldCloseOnSelect={true}
         showMonthYearPicker={false}
+        showPopperArrow={true}
+        showPreviousMonths={false}
         showQuarterYearPicker={false}
         showTimeInput={false}
         showTimeSelect={true}

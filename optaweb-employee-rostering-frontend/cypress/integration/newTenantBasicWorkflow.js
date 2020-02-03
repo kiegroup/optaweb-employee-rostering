@@ -15,9 +15,9 @@
  */
 
 function selectValue(selectPlaceholder, value) {
-  cy.get(`[placeholder="${selectPlaceholder}"]`).clear();
-  cy.get(`[placeholder="${selectPlaceholder}"]`).type(value);
-  cy.get('button').contains(value).last().click();
+  cy.get(`[aria-label="${selectPlaceholder}"]`).clear({ force: true });
+  cy.get(`[aria-label="${selectPlaceholder}"]`).type(value, { force: true });
+  cy.get('div').contains(value).last().click({ force: true });
 }
 
 function changeToTenant(tenant) {

@@ -2,38 +2,20 @@
 
 exports[`ScoreDisplay component should renderCorrectly 1`] = `
 <span>
-  <Chip
-    className=""
-    closeBtnAriaLabel="close"
-    component="div"
-    isOverflowChip={false}
+  <Component
     isReadOnly={true}
-    onClick={[Function]}
-    tooltipPosition="top"
   >
     Trans(i18nKey=hardScore, {"hardScore":-10})
-  </Chip>
-  <Chip
-    className=""
-    closeBtnAriaLabel="close"
-    component="div"
-    isOverflowChip={false}
+  </Component>
+  <Component
     isReadOnly={true}
-    onClick={[Function]}
-    tooltipPosition="top"
   >
     Trans(i18nKey=mediumScore, {"mediumScore":-5})
-  </Chip>
-  <Chip
-    className=""
-    closeBtnAriaLabel="close"
-    component="div"
-    isOverflowChip={false}
+  </Component>
+  <Component
     isReadOnly={true}
-    onClick={[Function]}
-    tooltipPosition="top"
   >
     Trans(i18nKey=softScore, {"softScore":20})
-  </Chip>
+  </Component>
 </span>
 `;

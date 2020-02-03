@@ -24,13 +24,13 @@ exports[`DataTable component should only render data on page 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -40,8 +40,7 @@ exports[`DataTable component should only render data on page 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -73,15 +72,7 @@ exports[`DataTable component should only render data on page 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -127,7 +118,7 @@ exports[`DataTable component should only render data on page 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -138,8 +129,8 @@ exports[`DataTable component should only render data on page 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -150,7 +141,7 @@ exports[`DataTable component should only render data on page 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -165,7 +156,7 @@ exports[`DataTable component should only render data on page 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -176,8 +167,8 @@ exports[`DataTable component should only render data on page 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -188,7 +179,7 @@ exports[`DataTable component should only render data on page 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -238,7 +229,7 @@ exports[`DataTable component should only render data on page 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -249,8 +240,8 @@ exports[`DataTable component should only render data on page 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -261,7 +252,7 @@ exports[`DataTable component should only render data on page 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -276,7 +267,7 @@ exports[`DataTable component should only render data on page 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -287,8 +278,8 @@ exports[`DataTable component should only render data on page 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -299,7 +290,7 @@ exports[`DataTable component should only render data on page 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -309,11 +300,10 @@ exports[`DataTable component should only render data on page 1`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -341,13 +331,13 @@ exports[`DataTable component should only render data on page 2`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -357,8 +347,7 @@ exports[`DataTable component should only render data on page 2`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -390,22 +379,13 @@ exports[`DataTable component should only render data on page 2`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={Array []}
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -433,13 +413,13 @@ exports[`DataTable component should only render rows that match filter 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -449,8 +429,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -482,15 +461,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -536,7 +507,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -547,8 +518,8 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -559,7 +530,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -574,7 +545,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -585,8 +556,8 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -597,7 +568,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -647,7 +618,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -658,8 +629,8 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -670,7 +641,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -685,7 +656,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -696,8 +667,8 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -708,7 +679,7 @@ exports[`DataTable component should only render rows that match filter 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -718,11 +689,10 @@ exports[`DataTable component should only render rows that match filter 1`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -750,13 +720,13 @@ exports[`DataTable component should only render rows that match filter 2`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -766,8 +736,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -799,15 +768,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -853,7 +814,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -864,8 +825,8 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -876,7 +837,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -891,7 +852,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -902,8 +863,8 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -914,7 +875,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -964,7 +925,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -975,8 +936,8 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -987,7 +948,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -1002,7 +963,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -1013,8 +974,8 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -1025,7 +986,7 @@ exports[`DataTable component should only render rows that match filter 2`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -1035,11 +996,10 @@ exports[`DataTable component should only render rows that match filter 2`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -1067,13 +1027,13 @@ exports[`DataTable component should only render rows that match filter 3`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -1083,8 +1043,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -1116,15 +1075,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -1170,7 +1121,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -1181,8 +1132,8 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -1193,7 +1144,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -1208,7 +1159,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -1219,8 +1170,8 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -1231,7 +1182,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -1281,7 +1232,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -1292,8 +1243,8 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -1304,7 +1255,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -1319,7 +1270,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -1330,8 +1281,8 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -1342,7 +1293,7 @@ exports[`DataTable component should only render rows that match filter 3`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -1352,11 +1303,10 @@ exports[`DataTable component should only render rows that match filter 3`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -1384,13 +1334,13 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -1400,8 +1350,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -1433,15 +1382,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -1487,7 +1428,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -1498,8 +1439,8 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -1510,7 +1451,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -1525,7 +1466,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -1536,8 +1477,8 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -1548,7 +1489,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -1598,7 +1539,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -1609,8 +1550,8 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -1621,7 +1562,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -1636,7 +1577,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -1647,8 +1588,8 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -1659,7 +1600,7 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -1669,11 +1610,10 @@ exports[`DataTable component should render correctly with a few rows 1`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -1701,13 +1641,13 @@ exports[`DataTable component should render correctly with no rows 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={0}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -1717,8 +1657,7 @@ exports[`DataTable component should render correctly with no rows 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -1750,22 +1689,13 @@ exports[`DataTable component should render correctly with no rows 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={Array []}
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -1793,13 +1723,13 @@ exports[`DataTable component should render editor for new row 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={true}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -1809,8 +1739,7 @@ exports[`DataTable component should render editor for new row 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -1842,15 +1771,7 @@ exports[`DataTable component should render editor for new row 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -1865,7 +1786,7 @@ exports[`DataTable component should render editor for new row 1`] = `
             },
             Object {
               "title": <span>
-                <Button
+                <Unknown
                   aria-label="Save"
                   onClick={[Function]}
                   variant="link"
@@ -1876,8 +1797,8 @@ exports[`DataTable component should render editor for new row 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
-                <Button
+                </Unknown>
+                <Unknown
                   aria-label="Cancel"
                   onClick={[Function]}
                   variant="link"
@@ -1888,7 +1809,7 @@ exports[`DataTable component should render editor for new row 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>,
             },
           ],
@@ -1936,7 +1857,7 @@ exports[`DataTable component should render editor for new row 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -1947,8 +1868,8 @@ exports[`DataTable component should render editor for new row 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -1959,7 +1880,7 @@ exports[`DataTable component should render editor for new row 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -1974,7 +1895,7 @@ exports[`DataTable component should render editor for new row 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -1985,8 +1906,8 @@ exports[`DataTable component should render editor for new row 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -1997,7 +1918,7 @@ exports[`DataTable component should render editor for new row 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -2047,7 +1968,7 @@ exports[`DataTable component should render editor for new row 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -2058,8 +1979,8 @@ exports[`DataTable component should render editor for new row 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -2070,7 +1991,7 @@ exports[`DataTable component should render editor for new row 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -2085,7 +2006,7 @@ exports[`DataTable component should render editor for new row 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -2096,8 +2017,8 @@ exports[`DataTable component should render editor for new row 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -2108,7 +2029,7 @@ exports[`DataTable component should render editor for new row 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -2118,11 +2039,10 @@ exports[`DataTable component should render editor for new row 1`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </div>
 `;
 
@@ -2150,13 +2070,13 @@ exports[`DataTable component should render rows in reverse of sorted order when 
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -2166,8 +2086,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -2199,15 +2118,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -2253,7 +2164,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -2264,8 +2175,8 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -2276,7 +2187,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -2291,7 +2202,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -2302,8 +2213,8 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -2314,7 +2225,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -2364,7 +2275,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -2375,8 +2286,8 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -2387,7 +2298,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -2402,7 +2313,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -2413,8 +2324,8 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -2425,7 +2336,7 @@ exports[`DataTable component should render rows in reverse of sorted order when 
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -2440,11 +2351,10 @@ exports[`DataTable component should render rows in reverse of sorted order when 
         "index": 1,
       }
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -2472,13 +2382,13 @@ exports[`DataTable component should render rows in sorted order when ascending 1
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -2488,8 +2398,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -2521,15 +2430,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -2575,7 +2476,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -2586,8 +2487,8 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -2598,7 +2499,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -2613,7 +2514,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -2624,8 +2525,8 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -2636,7 +2537,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -2686,7 +2587,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -2697,8 +2598,8 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -2709,7 +2610,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -2724,7 +2625,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -2735,8 +2636,8 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -2747,7 +2648,7 @@ exports[`DataTable component should render rows in sorted order when ascending 1
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -2762,11 +2663,10 @@ exports[`DataTable component should render rows in sorted order when ascending 1
         "index": 1,
       }
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
@@ -2794,13 +2694,13 @@ exports[`DataTable component should render viewer initially 1`] = `
         }
       }
     >
-      <Button
+      <Component
         isDisabled={false}
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         itemCount={2}
         onPerPageSelect={[Function]}
         onSetPage={[Function]}
@@ -2810,8 +2710,7 @@ exports[`DataTable component should render viewer initially 1`] = `
       />
     </LevelItem>
   </Level>
-  <Table
-    borders={true}
+  <Component
     caption="Data Table"
     cells={
       Array [
@@ -2843,15 +2742,7 @@ exports[`DataTable component should render viewer initially 1`] = `
         },
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
     onSort={[Function]}
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -2897,7 +2788,7 @@ exports[`DataTable component should render viewer initially 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -2908,8 +2799,8 @@ exports[`DataTable component should render viewer initially 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -2920,7 +2811,7 @@ exports[`DataTable component should render viewer initially 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -2935,7 +2826,7 @@ exports[`DataTable component should render viewer initially 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -2946,8 +2837,8 @@ exports[`DataTable component should render viewer initially 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -2958,7 +2849,7 @@ exports[`DataTable component should render viewer initially 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -3008,7 +2899,7 @@ exports[`DataTable component should render viewer initially 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Save"
                       onClick={[Function]}
                       variant="link"
@@ -3019,8 +2910,8 @@ exports[`DataTable component should render viewer initially 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Cancel"
                       onClick={[Function]}
                       variant="link"
@@ -3031,7 +2922,7 @@ exports[`DataTable component should render viewer initially 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
                 isEditing={false}
@@ -3046,7 +2937,7 @@ exports[`DataTable component should render viewer initially 1`] = `
                     }
                   >
                     <span />
-                    <Button
+                    <Unknown
                       aria-label="Edit"
                       onClick={[Function]}
                       variant="link"
@@ -3057,8 +2948,8 @@ exports[`DataTable component should render viewer initially 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
-                    <Button
+                    </Unknown>
+                    <Unknown
                       aria-label="Delete"
                       onClick={[Function]}
                       variant="link"
@@ -3069,7 +2960,7 @@ exports[`DataTable component should render viewer initially 1`] = `
                         size="sm"
                         title={null}
                       />
-                    </Button>
+                    </Unknown>
                   </span>
                 }
               />,
@@ -3079,10 +2970,9 @@ exports[`DataTable component should render viewer initially 1`] = `
       ]
     }
     sortBy={Object {}}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </div>
 `;

@@ -2,7 +2,7 @@
 
 exports[`Admin Page should close the modal when the modal is closed 1`] = `
 <Fragment>
-  <Button
+  <Component
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -14,7 +14,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Button>
+  </Component>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -46,14 +46,14 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
         }
       }
     >
-      <Button
+      <Component
         aria-label="Add Tenant"
         data-cy="add-tenant"
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         aria-label="Change Page"
         itemCount={2}
         onPerPageSelect={[Function]}
@@ -69,8 +69,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
     isOpen={false}
     onClose={[Function]}
   />
-  <Table
-    borders={true}
+  <Component
     caption="Trans(i18nKey=tenants)"
     cells={
       Array [
@@ -78,14 +77,6 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
         "",
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -106,7 +97,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -116,7 +107,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -139,7 +130,7 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -149,24 +140,23 @@ exports[`Admin Page should close the modal when the modal is closed 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
         },
       ]
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
 exports[`Admin Page should display modal when the Add Tenant button is clicked 1`] = `
 <Fragment>
-  <Button
+  <Component
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -178,7 +168,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Button>
+  </Component>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -210,14 +200,14 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
         }
       }
     >
-      <Button
+      <Component
         aria-label="Add Tenant"
         data-cy="add-tenant"
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         aria-label="Change Page"
         itemCount={2}
         onPerPageSelect={[Function]}
@@ -233,8 +223,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
     isOpen={true}
     onClose={[Function]}
   />
-  <Table
-    borders={true}
+  <Component
     caption="Trans(i18nKey=tenants)"
     cells={
       Array [
@@ -242,14 +231,6 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
         "",
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -270,7 +251,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -280,7 +261,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -303,7 +284,7 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -313,24 +294,23 @@ exports[`Admin Page should display modal when the Add Tenant button is clicked 1
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
         },
       ]
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
 exports[`Admin Page should filter by name 1`] = `
 <Fragment>
-  <Button
+  <Component
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -342,7 +322,7 @@ exports[`Admin Page should filter by name 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Button>
+  </Component>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -374,14 +354,14 @@ exports[`Admin Page should filter by name 1`] = `
         }
       }
     >
-      <Button
+      <Component
         aria-label="Add Tenant"
         data-cy="add-tenant"
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         aria-label="Change Page"
         itemCount={2}
         onPerPageSelect={[Function]}
@@ -397,8 +377,7 @@ exports[`Admin Page should filter by name 1`] = `
     isOpen={false}
     onClose={[Function]}
   />
-  <Table
-    borders={true}
+  <Component
     caption="Trans(i18nKey=tenants)"
     cells={
       Array [
@@ -406,14 +385,6 @@ exports[`Admin Page should filter by name 1`] = `
         "",
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -434,7 +405,7 @@ exports[`Admin Page should filter by name 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -444,7 +415,7 @@ exports[`Admin Page should filter by name 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -467,7 +438,7 @@ exports[`Admin Page should filter by name 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -477,24 +448,23 @@ exports[`Admin Page should filter by name 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
         },
       ]
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
 exports[`Admin Page should go to the correct page when the page is changed 1`] = `
 <Fragment>
-  <Button
+  <Component
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -506,7 +476,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Button>
+  </Component>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -538,14 +508,14 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
         }
       }
     >
-      <Button
+      <Component
         aria-label="Add Tenant"
         data-cy="add-tenant"
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         aria-label="Change Page"
         itemCount={20}
         onPerPageSelect={[Function]}
@@ -561,8 +531,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
     isOpen={false}
     onClose={[Function]}
   />
-  <Table
-    borders={true}
+  <Component
     caption="Trans(i18nKey=tenants)"
     cells={
       Array [
@@ -570,14 +539,6 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
         "",
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -598,7 +559,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -608,7 +569,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -631,7 +592,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -641,7 +602,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -664,7 +625,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -674,7 +635,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -697,7 +658,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -707,7 +668,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -730,7 +691,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -740,7 +701,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -763,7 +724,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -773,7 +734,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -796,7 +757,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -806,7 +767,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -829,7 +790,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -839,7 +800,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -862,7 +823,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -872,7 +833,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -895,7 +856,7 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -905,24 +866,23 @@ exports[`Admin Page should go to the correct page when the page is changed 1`] =
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
         },
       ]
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
 exports[`Admin Page should render correctly with 2 tenants 1`] = `
 <Fragment>
-  <Button
+  <Component
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -934,7 +894,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Button>
+  </Component>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -966,14 +926,14 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
         }
       }
     >
-      <Button
+      <Component
         aria-label="Add Tenant"
         data-cy="add-tenant"
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         aria-label="Change Page"
         itemCount={2}
         onPerPageSelect={[Function]}
@@ -989,8 +949,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
     isOpen={false}
     onClose={[Function]}
   />
-  <Table
-    borders={true}
+  <Component
     caption="Trans(i18nKey=tenants)"
     cells={
       Array [
@@ -998,14 +957,6 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
         "",
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -1026,7 +977,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1036,7 +987,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1059,7 +1010,7 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1069,24 +1020,23 @@ exports[`Admin Page should render correctly with 2 tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
         },
       ]
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
 exports[`Admin Page should render correctly with many tenants 1`] = `
 <Fragment>
-  <Button
+  <Component
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -1098,7 +1048,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Button>
+  </Component>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -1130,14 +1080,14 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
         }
       }
     >
-      <Button
+      <Component
         aria-label="Add Tenant"
         data-cy="add-tenant"
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         aria-label="Change Page"
         itemCount={20}
         onPerPageSelect={[Function]}
@@ -1153,8 +1103,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
     isOpen={false}
     onClose={[Function]}
   />
-  <Table
-    borders={true}
+  <Component
     caption="Trans(i18nKey=tenants)"
     cells={
       Array [
@@ -1162,14 +1111,6 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
         "",
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -1190,7 +1131,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1200,7 +1141,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1223,7 +1164,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1233,7 +1174,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1256,7 +1197,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1266,7 +1207,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1289,7 +1230,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1299,7 +1240,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1322,7 +1263,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1332,7 +1273,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1355,7 +1296,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1365,7 +1306,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1388,7 +1329,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1398,7 +1339,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1421,7 +1362,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1431,7 +1372,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1454,7 +1395,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1464,7 +1405,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1487,7 +1428,7 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1497,24 +1438,23 @@ exports[`Admin Page should render correctly with many tenants 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
         },
       ]
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
 exports[`Admin Page should render correctly with no tenants 1`] = `
 <Fragment>
-  <Button
+  <Component
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -1526,7 +1466,7 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Button>
+  </Component>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -1558,14 +1498,14 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
         }
       }
     >
-      <Button
+      <Component
         aria-label="Add Tenant"
         data-cy="add-tenant"
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         aria-label="Change Page"
         itemCount={0}
         onPerPageSelect={[Function]}
@@ -1581,8 +1521,7 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
     isOpen={false}
     onClose={[Function]}
   />
-  <Table
-    borders={true}
+  <Component
     caption="Trans(i18nKey=tenants)"
     cells={
       Array [
@@ -1590,26 +1529,17 @@ exports[`Admin Page should render correctly with no tenants 1`] = `
         "",
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={Array []}
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
 exports[`Admin Page should show confirm dialog when the reset button is clicked 1`] = `
 <Fragment>
-  <Button
+  <Component
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -1621,7 +1551,7 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Button>
+  </Component>
   <ConfirmDialog
     isOpen={true}
     onClose={[Function]}
@@ -1653,14 +1583,14 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
         }
       }
     >
-      <Button
+      <Component
         aria-label="Add Tenant"
         data-cy="add-tenant"
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         aria-label="Change Page"
         itemCount={2}
         onPerPageSelect={[Function]}
@@ -1676,8 +1606,7 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
     isOpen={false}
     onClose={[Function]}
   />
-  <Table
-    borders={true}
+  <Component
     caption="Trans(i18nKey=tenants)"
     cells={
       Array [
@@ -1685,14 +1614,6 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
         "",
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -1713,7 +1634,7 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1723,7 +1644,7 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1746,7 +1667,7 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1756,24 +1677,23 @@ exports[`Admin Page should show confirm dialog when the reset button is clicked 
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
         },
       ]
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;
 
 exports[`Admin Page should show the desired number of tenants per page 1`] = `
 <Fragment>
-  <Button
+  <Component
     aria-label="Reset Application"
     data-cy="reset-application"
     onClick={[Function]}
@@ -1785,7 +1705,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
     variant="danger"
   >
     Trans(i18nKey=resetApplication)
-  </Button>
+  </Component>
   <ConfirmDialog
     isOpen={false}
     onClose={[Function]}
@@ -1817,14 +1737,14 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
         }
       }
     >
-      <Button
+      <Component
         aria-label="Add Tenant"
         data-cy="add-tenant"
         onClick={[Function]}
       >
         Trans(i18nKey=add)
-      </Button>
-      <Pagination
+      </Component>
+      <Component
         aria-label="Change Page"
         itemCount={20}
         onPerPageSelect={[Function]}
@@ -1840,8 +1760,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
     isOpen={false}
     onClose={[Function]}
   />
-  <Table
-    borders={true}
+  <Component
     caption="Trans(i18nKey=tenants)"
     cells={
       Array [
@@ -1849,14 +1768,6 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
         "",
       ]
     }
-    className=""
-    contentId="expanded-content"
-    dropdownDirection="down"
-    dropdownPosition="right"
-    expandId="expandable-toggle"
-    gridBreakPoint="grid-md"
-    role="grid"
-    rowLabeledBy="simple-node"
     rows={
       Array [
         Object {
@@ -1877,7 +1788,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1887,7 +1798,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1910,7 +1821,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1920,7 +1831,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1943,7 +1854,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1953,7 +1864,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -1976,7 +1887,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -1986,7 +1897,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
@@ -2009,7 +1920,7 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                 }
               >
                 <span />
-                <Button
+                <Unknown
                   onClick={[Function]}
                   variant="danger"
                 >
@@ -2019,17 +1930,16 @@ exports[`Admin Page should show the desired number of tenants per page 1`] = `
                     size="sm"
                     title={null}
                   />
-                </Button>
+                </Unknown>
               </span>
             </td>,
           ],
         },
       ]
     }
-    variant={null}
   >
     <TableHeader />
     <TableBody />
-  </Table>
+  </Component>
 </Fragment>
 `;

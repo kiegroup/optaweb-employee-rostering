@@ -21,7 +21,7 @@ import MultiTypeaheadSelectInput from 'ui/components/MultiTypeaheadSelectInput';
 import { Sorter } from 'types';
 import { Employee } from 'domain/Employee';
 import { act } from 'react-dom/test-utils';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { EmployeesPage, Props } from './EmployeesPage';
 
@@ -55,7 +55,7 @@ describe('Employees page', () => {
     const setProperty = jest.fn();
     const editor = employeesPage.editDataRow(employeesPage.getInitialStateForNewRow(), setProperty);
     const nameCol = shallow(editor[0] as React.ReactElement);
-    nameCol.simulate('change', { currentTarget: { value: 'Test' } });
+    nameCol.simulate('change', 'Test');
     expect(setProperty).toBeCalled();
     expect(setProperty).toBeCalledWith('name', 'Test');
 
@@ -147,7 +147,7 @@ describe('Employees page', () => {
     const employeesPage = shallow(<EmployeesPage
       {...noEmployees}
     />);
-    shallow((employeesPage.find('Trans').prop('components') as any)[2]).simulate('click');
+    mount((employeesPage.find(Trans).prop('components') as any)[2]).simulate('click');
     expect(noEmployees.history.push).toBeCalled();
     expect(noEmployees.history.push).toBeCalledWith('/0/contracts');
   });

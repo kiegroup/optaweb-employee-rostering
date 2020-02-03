@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { Spot } from 'domain/Spot';
@@ -21,9 +21,10 @@ import { Employee } from 'domain/Employee';
 import { RosterState } from 'domain/RosterState';
 import moment from 'moment-timezone';
 import { ShiftTemplate } from 'domain/ShiftTemplate';
-import { useTranslation, WithTranslation } from 'react-i18next';
+import { useTranslation, WithTranslation, Trans } from 'react-i18next';
 import Schedule from 'ui/components/calendar/Schedule';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
+import { Pagination } from '@patternfly/react-core';
 import { RotationPage, Props, RotationPageUrlProps } from './RotationPage';
 
 const baseDate = moment('2018-01-01T00:00').startOf('week').toDate();
@@ -53,7 +54,7 @@ describe('Rotation Page', () => {
     const rotationPage = shallow(<RotationPage
       {...baseProps}
     />);
-    rotationPage.find('Button[aria-label="Create Shift Template"]').simulate('click');
+    rotationPage.find('[aria-label="Create Shift Template"]').simulate('click');
     expect(toJson(rotationPage)).toMatchSnapshot();
   });
 
@@ -61,7 +62,7 @@ describe('Rotation Page', () => {
     const rotationPage = shallow(<RotationPage
       {...baseProps}
     />);
-    rotationPage.find('Pagination').simulate('setPage', null, 2);
+    rotationPage.find(Pagination).simulate('setPage', null, 2);
     expect(baseProps.history.push).toHaveBeenLastCalledWith('/rotation?shownSpot=Spot&weekNumber=1');
   });
 
@@ -70,7 +71,7 @@ describe('Rotation Page', () => {
       {...baseProps}
     />);
 
-    rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate('change', newSpot);
+    rotationPage.find('[aria-label="Select Spot"]').simulate('change', newSpot);
     expect(baseProps.history.push).toHaveBeenLastCalledWith('/rotation?shownSpot=New+Spot&weekNumber=0');
   });
 
@@ -79,7 +80,7 @@ describe('Rotation Page', () => {
       {...baseProps}
     />);
     const setStateSpy = jest.spyOn(rotationPage.instance(), 'setState');
-    rotationPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate('change');
+    rotationPage.find('[aria-label="Select Spot"]').simulate('change');
     expect(setStateSpy).not.toBeCalled();
   });
 
@@ -101,7 +102,7 @@ describe('Rotation Page', () => {
       spotList={[]}
       spotIdToShiftTemplateListMap={new Map()}
     />);
-    shallow((rotationPage.find('Trans').prop('components') as any)[2]).simulate('click');
+    mount((rotationPage.find(Trans).prop('components') as any)[2]).simulate('click');
     expect(baseProps.history.push).toBeCalled();
     expect(baseProps.history.push).toBeCalledWith('/0/spots');
   });

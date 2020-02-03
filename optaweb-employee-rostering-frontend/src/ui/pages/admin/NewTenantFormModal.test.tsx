@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { act } from 'react-dom/test-utils';
@@ -61,7 +61,7 @@ describe('New Tenant Form Modal', () => {
       modal.find('[aria-label="Publish Notice"]').simulate('change', 7);
       modal.find('[aria-label="Publish Length"]').simulate('change', 28);
       modal.find('[aria-label="Timezone"]').simulate('change', 'Timezone/2');
-      shallow(modal.prop('actions')[1]).simulate('click');
+      mount(modal.prop('actions')[1]).simulate('click');
     });
     expect(baseProps.addTenant).toBeCalled();
     expect(baseProps.addTenant).toBeCalledWith({
