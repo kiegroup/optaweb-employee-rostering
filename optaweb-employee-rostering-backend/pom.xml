@@ -276,7 +276,6 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <configuration>
           <profiles>
-            <profile>dev</profile>
             <profile>local</profile>
           </profiles>
         </configuration>
