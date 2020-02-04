@@ -25,6 +25,6 @@ RUN mvn clean install -DskipTests
 
 FROM adoptopenjdk/openjdk8:ubi-minimal-jre
 RUN mkdir /opt/app
-COPY --from=builder /usr/src/optaweb/employee-rostering-standalone/target/*-exec.jar /opt/app/optaweb-employee-rostering.jar
+COPY --from=builder /usr/src/optaweb/optaweb-employee-rostering-standalone/target/*-exec.jar /opt/app/optaweb-employee-rostering.jar
 CMD ["java", "-jar", "/opt/app/optaweb-employee-rostering.jar"]
 EXPOSE 8080
