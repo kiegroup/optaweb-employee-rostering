@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+// @ts-nocheck
+// TODO: Re-enable typescript validation on this file when refactoring to react-select
 import React from 'react';
 import { Select, SelectOption, SelectVariant } from '@patternfly/react-core';
 import { stringFilter } from 'util/CommonFilters';
