@@ -100,6 +100,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
   render() {
     const { t } = this.props;
     const dateFormat = 'MMMM dd, hh:mm a';
+
     return (
       <Modal
         title={this.props.shift ? t('editShift') : t('createShift')}

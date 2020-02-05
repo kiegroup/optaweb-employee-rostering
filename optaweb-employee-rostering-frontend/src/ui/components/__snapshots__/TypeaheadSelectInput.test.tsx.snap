@@ -16,7 +16,7 @@ exports[`TypeaheadSelectInput component should render correctly 1`] = `
     defaultValue={null}
     getOptionLabel={[Function]}
     getOptionValue={[Function]}
-    menuPosition="fixed"
+    menuPortalTarget={<body />}
     onChange={[Function]}
     options={
       Array [
@@ -40,7 +40,7 @@ exports[`TypeaheadSelectInput component should render correctly 1`] = `
     placeholder="Enter some data"
     styles={
       Object {
-        "container": [Function],
+        "menuPortal": [Function],
       }
     }
   />

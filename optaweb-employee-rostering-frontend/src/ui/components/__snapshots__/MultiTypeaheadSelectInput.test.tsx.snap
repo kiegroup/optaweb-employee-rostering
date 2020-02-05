@@ -17,7 +17,7 @@ exports[`MultiTypeaheadSelectInput component should render correctly 1`] = `
     getOptionLabel={[Function]}
     getOptionValue={[Function]}
     isMulti={true}
-    menuPosition="fixed"
+    menuPortalTarget={<body />}
     onChange={[Function]}
     options={
       Array [
@@ -42,7 +42,7 @@ exports[`MultiTypeaheadSelectInput component should render correctly 1`] = `
     selected={Array []}
     styles={
       Object {
-        "container": [Function],
+        "menuPortal": [Function],
       }
     }
     value={Array []}

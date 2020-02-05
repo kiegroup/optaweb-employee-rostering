@@ -15,9 +15,13 @@
  */
 
 function selectValue(selectPlaceholder, value) {
-  cy.get(`[aria-label="${selectPlaceholder}"]`).clear({ force: true });
-  cy.get(`[aria-label="${selectPlaceholder}"]`).type(value, { force: true });
-  cy.get('div').contains(value).last().click({ force: true });
+  cy.get(`input[aria-label="${selectPlaceholder}"]`)
+    .click({ force: true })
+    .type(value, { force: true });
+
+  cy.get('[class*="-menu"]')
+    .contains(value)
+    .click();
 }
 
 function changeToTenant(tenant) {
