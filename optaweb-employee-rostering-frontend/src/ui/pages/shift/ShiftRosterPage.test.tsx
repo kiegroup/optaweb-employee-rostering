@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { Spot } from 'domain/Spot';
@@ -23,7 +23,7 @@ import { RosterState } from 'domain/RosterState';
 import moment from 'moment-timezone';
 import 'moment/locale/en-ca';
 import color from 'color';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import Actions from 'ui/components/Actions';
 import Schedule from 'ui/components/calendar/Schedule';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
@@ -111,7 +111,7 @@ describe('Shift Roster Page', () => {
       shownSpotList={[]}
       spotIdToShiftListMap={new Map()}
     />);
-    shallow((shiftRosterPage.find('Trans').prop('components') as any)[2]).simulate('click');
+    mount((shiftRosterPage.find(Trans).prop('components') as any)[2]).simulate('click');
     expect(baseProps.history.push).toBeCalled();
     expect(baseProps.history.push).toBeCalledWith('/0/spots');
   });
@@ -122,7 +122,7 @@ describe('Shift Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, 'days').toDate();
     const newDateEnd = moment(endDate).add(7, 'days').toDate();
-    shiftRosterPage.find('WeekPicker[aria-label="Select Week to View"]').simulate('change', newDateStart, newDateEnd);
+    shiftRosterPage.find('[aria-label="Select Week to View"]').simulate('change', newDateStart, newDateEnd);
     expect(baseProps.getShiftRosterFor).toBeCalled();
     expect(baseProps.getShiftRosterFor).toBeCalledWith({
       fromDate: newDateStart,
@@ -135,11 +135,11 @@ describe('Shift Roster Page', () => {
     const shiftRosterPage = shallow(<ShiftRosterPage
       {...baseProps}
     />);
-    shiftRosterPage.find('TypeaheadSelectInput[aria-label="Select Spot"]').simulate('change', newSpot);
+    shiftRosterPage.find('[aria-label="Select Spot"]').simulate('change', newSpot);
     expect(baseProps.getShiftRosterFor).toBeCalled();
     expect(baseProps.getShiftRosterFor).toBeCalledWith({
-      fromDate: baseProps.startDate,
-      toDate: baseProps.endDate,
+      fromDate: startDate,
+      toDate: endDate,
       spotList: [newSpot],
     });
   });
@@ -442,8 +442,6 @@ const baseProps: Props = {
   spotIdToShiftListMap: new Map<number, Shift[]>([
     [2, [shift]],
   ]),
-  startDate,
-  endDate,
   totalNumOfSpots: 1,
   rosterState,
   addShift: jest.fn(),

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { Spot } from 'domain/Spot';
@@ -23,7 +23,7 @@ import { RosterState } from 'domain/RosterState';
 import moment from 'moment-timezone';
 import 'moment/locale/en-ca';
 import { EmployeeAvailability } from 'domain/EmployeeAvailability';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
 import Actions from 'ui/components/Actions';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import Schedule from 'ui/components/calendar/Schedule';
@@ -109,8 +109,8 @@ describe('Availability Roster Page', () => {
     availabilityRosterPage.update();
     expect(baseProps.getAvailabilityRosterFor).toBeCalled();
     expect(baseProps.getAvailabilityRosterFor).toBeCalledWith({
-      fromDate: baseProps.startDate,
-      toDate: baseProps.endDate,
+      fromDate: startDate,
+      toDate: endDate,
       employeeList: [newEmployee],
     });
   });
@@ -123,7 +123,7 @@ describe('Availability Roster Page', () => {
       employeeIdToAvailabilityListMap={new Map()}
       employeeIdToShiftListMap={new Map()}
     />);
-    shallow((availabilityRosterPage.find('Trans').prop('components') as any)[2]).simulate('click');
+    mount((availabilityRosterPage.find(Trans).prop('components') as any)[2]).simulate('click');
     expect(baseProps.history.push).toBeCalled();
     expect(baseProps.history.push).toBeCalledWith('/0/employees');
   });
@@ -629,8 +629,6 @@ const baseProps: Props = {
   score: { hardScore: 0, mediumScore: 0, softScore: 0 },
   isSolving: false,
   isLoading: false,
-  startDate,
-  endDate,
   totalNumOfSpots: 1,
   rosterState,
   allEmployeeList: [employee, newEmployee],

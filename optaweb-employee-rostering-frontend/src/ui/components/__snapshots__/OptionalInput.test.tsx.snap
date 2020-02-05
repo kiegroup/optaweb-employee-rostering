@@ -2,16 +2,11 @@
 
 exports[`OptionalInput component should render correctly 1`] = `
 <span>
-  <TextInput
+  <ForwardRef
     aria-label="data"
-    className=""
     defaultValue="Some name"
     isDisabled={false}
-    isReadOnly={false}
-    isRequired={false}
-    isValid={true}
     onChange={[Function]}
-    type="text"
   />
   <Component
     aria-label="Enabled"

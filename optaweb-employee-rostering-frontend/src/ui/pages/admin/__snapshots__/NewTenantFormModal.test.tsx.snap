@@ -4,26 +4,32 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
 <Modal
   actions={
     Array [
-      <Button
+      <Unknown
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Save"
         data-cy="save"
         isDisabled={true}
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Button>,
+      </Unknown>,
     ]
+  }
+  appendTo={
+    <body>
+      <div />
+    </body>
   }
   ariaDescribedById=""
   className=""
   hideTitle={false}
+  isFooterLeftAligned={false}
   isLarge={false}
   isOpen={false}
   isSmall={true}
@@ -38,30 +44,19 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=name)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Name"
-        className=""
         data-cy="name"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
-        type="text"
       />
     </InputGroup>
     <InputGroup>
       <Label>
         Trans(i18nKey=scheduleStartDate)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Schedule Start Date"
-        className=""
         data-cy="schedule-start-date"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="date"
       />
@@ -70,14 +65,9 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=draftLength)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Draft Length"
-        className=""
         data-cy="draft-length"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="number"
       />
@@ -86,14 +76,9 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=publishNotice)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Publish Notice"
-        className=""
         data-cy="publish-notice"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="number"
       />
@@ -102,15 +87,11 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=publishLength)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Publish Length"
-        className=""
         data-cy="publish-length"
         defaultValue="7"
         isDisabled={true}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="number"
       />
@@ -119,14 +100,9 @@ exports[`New Tenant Form Modal should render correctly when closed 1`] = `
       <Label>
         Trans(i18nKey=rotationLength)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Rotation Length"
-        className=""
         data-cy="rotation-length"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         min={2}
         onChange={[Function]}
         type="number"
@@ -160,26 +136,32 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
 <Modal
   actions={
     Array [
-      <Button
+      <Unknown
         aria-label="Close Modal"
         onClick={[MockFunction]}
         variant="tertiary"
       >
         Trans(i18nKey=close)
-      </Button>,
-      <Button
+      </Unknown>,
+      <Unknown
         aria-label="Save"
         data-cy="save"
         isDisabled={true}
         onClick={[Function]}
       >
         Trans(i18nKey=save)
-      </Button>,
+      </Unknown>,
     ]
+  }
+  appendTo={
+    <body>
+      <div />
+    </body>
   }
   ariaDescribedById=""
   className=""
   hideTitle={false}
+  isFooterLeftAligned={false}
   isLarge={false}
   isOpen={true}
   isSmall={true}
@@ -194,30 +176,19 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=name)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Name"
-        className=""
         data-cy="name"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
-        type="text"
       />
     </InputGroup>
     <InputGroup>
       <Label>
         Trans(i18nKey=scheduleStartDate)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Schedule Start Date"
-        className=""
         data-cy="schedule-start-date"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="date"
       />
@@ -226,14 +197,9 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=draftLength)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Draft Length"
-        className=""
         data-cy="draft-length"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="number"
       />
@@ -242,14 +208,9 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=publishNotice)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Publish Notice"
-        className=""
         data-cy="publish-notice"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="number"
       />
@@ -258,15 +219,11 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=publishLength)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Publish Length"
-        className=""
         data-cy="publish-length"
         defaultValue="7"
         isDisabled={true}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         onChange={[Function]}
         type="number"
       />
@@ -275,14 +232,9 @@ exports[`New Tenant Form Modal should render correctly when opened 1`] = `
       <Label>
         Trans(i18nKey=rotationLength)
       </Label>
-      <TextInput
+      <ForwardRef
         aria-label="Rotation Length"
-        className=""
         data-cy="rotation-length"
-        isDisabled={false}
-        isReadOnly={false}
-        isRequired={false}
-        isValid={true}
         min={2}
         onChange={[Function]}
         type="number"

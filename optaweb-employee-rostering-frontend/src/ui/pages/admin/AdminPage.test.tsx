@@ -20,6 +20,7 @@ import { act } from 'react-dom/test-utils';
 import { Tenant } from 'domain/Tenant';
 import { getRouterProps } from 'util/BookmarkableTestUtils';
 import { DataTableUrlProps } from 'ui/components/DataTable';
+import { Button } from '@patternfly/react-core';
 import { AdminPage, Props } from './AdminPage';
 
 describe('Admin Page', () => {
@@ -84,7 +85,7 @@ describe('Admin Page', () => {
     const adminPage = shallow(<AdminPage {...twoTenants} />);
     act(() => {
       shallow((adminPage.find('[caption="Trans(i18nKey=tenants)"]').prop('rows') as unknown as any[]
-      )[0].cells[1]).find('Button').simulate('click');
+      )[0].cells[1]).find(Button).simulate('click');
     });
     expect(twoTenants.removeTenant).toBeCalled();
     expect(twoTenants.removeTenant).toBeCalledWith(twoTenants.tenantList[0]);

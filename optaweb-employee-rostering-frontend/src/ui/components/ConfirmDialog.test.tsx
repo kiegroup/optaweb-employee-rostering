@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import toJson from 'enzyme-to-json';
 import * as React from 'react';
 import { ConfirmDialogProps, ConfirmDialog } from './ConfirmDialog';
@@ -31,21 +31,19 @@ describe('ConfirmDialog component', () => {
 
   it('should call onClose when close or the cross is clicked', () => {
     const confirmDialogComponent = shallow(<ConfirmDialog {...confirmDialogProps}>Body</ConfirmDialog>);
-    confirmDialogComponent.find('Modal[title="Confirm Dialog Title"]').simulate('close');
+    confirmDialogComponent.simulate('close');
     expect(confirmDialogProps.onClose).toBeCalled();
     expect(confirmDialogProps.onConfirm).not.toBeCalled();
 
     jest.resetAllMocks();
-    shallow((confirmDialogComponent.find('Modal[title="Confirm Dialog Title"]')
-      .prop('actions') as any[])[0]).simulate('click');
+    mount(confirmDialogComponent.prop('actions')[0]).simulate('click');
     expect(confirmDialogProps.onClose).toBeCalled();
     expect(confirmDialogProps.onConfirm).not.toBeCalled();
   });
 
   it('should call both onClose and onConfirm when the confirm button is clicked', () => {
     const confirmDialogComponent = shallow(<ConfirmDialog {...confirmDialogProps}>Body</ConfirmDialog>);
-    shallow((confirmDialogComponent.find('Modal[title="Confirm Dialog Title"]')
-      .prop('actions') as any[])[1]).simulate('click');
+    mount(confirmDialogComponent.prop('actions')[1]).simulate('click');
     expect(confirmDialogProps.onClose).toBeCalled();
     expect(confirmDialogProps.onConfirm).toBeCalled();
   });

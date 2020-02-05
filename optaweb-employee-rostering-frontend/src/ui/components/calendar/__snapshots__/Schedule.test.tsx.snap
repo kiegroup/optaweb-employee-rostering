@@ -46,6 +46,7 @@ exports[`Schedule wrapper component should defer to prop 1`] = `
     onShown={[Function]}
     position="right"
     shouldClose={[Function]}
+    tippyProps={Object {}}
     zIndex={9999}
   >
     <div />

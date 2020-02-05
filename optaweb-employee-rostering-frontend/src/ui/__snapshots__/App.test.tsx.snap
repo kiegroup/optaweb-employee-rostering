@@ -17,7 +17,7 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
     <PageSidebar
       isNavOpen={true}
       nav={
-        <Memo(Connect(withRouter(Navigation)))
+        <UNDEFINED
           variant="default"
         />
       }
@@ -109,7 +109,7 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
     <PageSidebar
       isNavOpen={false}
       nav={
-        <Memo(Connect(withRouter(Navigation)))
+        <UNDEFINED
           variant="default"
         />
       }
@@ -201,7 +201,7 @@ exports[`App should render correctly on a desktop 1`] = `
     <PageSidebar
       isNavOpen={false}
       nav={
-        <Memo(Connect(withRouter(Navigation)))
+        <UNDEFINED
           variant="default"
         />
       }
@@ -293,7 +293,7 @@ exports[`App should render correctly on a mobile 1`] = `
     <PageSidebar
       isNavOpen={false}
       nav={
-        <Memo(Connect(withRouter(Navigation)))
+        <UNDEFINED
           variant="default"
         />
       }

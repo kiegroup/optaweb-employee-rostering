@@ -17,7 +17,7 @@ exports[`Actions component should render as all buttons when given enough space 
     }
   />
   <span>
-    <Button
+    <Component
       aria-label="Action 1"
       key="Action 1"
       onClick={[MockFunction]}
@@ -28,8 +28,8 @@ exports[`Actions component should render as all buttons when given enough space 
       }
     >
       Action 1
-    </Button>
-    <Button
+    </Component>
+    <Component
       aria-label="Action 2"
       key="Action 2"
       onClick={[MockFunction]}
@@ -40,8 +40,8 @@ exports[`Actions component should render as all buttons when given enough space 
       }
     >
       Action 2
-    </Button>
-    <Button
+    </Component>
+    <Component
       aria-label="Action 3"
       key="Action 3"
       onClick={[MockFunction]}
@@ -52,7 +52,7 @@ exports[`Actions component should render as all buttons when given enough space 
       }
     >
       Action 3
-    </Button>
+    </Component>
   </span>
 </span>
 `;
@@ -119,7 +119,7 @@ exports[`Actions component should render as both buttons and dropdown when given
     }
   />
   <span>
-    <Button
+    <Component
       aria-label="Action 1"
       key="Action 1"
       onClick={[MockFunction]}
@@ -130,8 +130,8 @@ exports[`Actions component should render as both buttons and dropdown when given
       }
     >
       Action 1
-    </Button>
-    <Button
+    </Component>
+    <Component
       aria-label="Action 2"
       key="Action 2"
       onClick={[MockFunction]}
@@ -142,7 +142,7 @@ exports[`Actions component should render as both buttons and dropdown when given
       }
     >
       Action 2
-    </Button>
+    </Component>
     <Dropdown
       dropdownItems={
         Array [
