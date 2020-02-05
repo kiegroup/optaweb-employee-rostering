@@ -137,6 +137,7 @@
                 <configuration>
                   <name>Run application</name>
                   <healthcheckUrl>http://localhost:${application.port}</healthcheckUrl>
+                  <waitAfterLaunch>60</waitAfterLaunch>
                   <workingDir>${project.build.directory}</workingDir>
                   <processLogFile>${project.build.directory}/${project.artifactId}.log</processLogFile>
                   <arguments>
