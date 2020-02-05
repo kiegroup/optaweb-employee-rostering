@@ -63,7 +63,13 @@ MultiTypeaheadSelectProps<T>
   render() {
     const { optionToStringMap, emptyText, optional, options, autoSize } = this.props;
     const selectOptions = this.props.options.map(o => ({ value: o }));
-    const selected = selectOptions.filter(o => this.props.value.find(item => item === o.value) !== undefined);
+    // Why map to string first?
+    // Clone of objects are not the same, and sometimes we are passed
+    // clones instead of the real thing, and "===" and "==" are
+    // both identity/is comparators on objects, so we compare their
+    // "toString" values to check for equality
+    const selected = selectOptions.filter(o => this.props.value
+      .find(item => optionToStringMap(item) === optionToStringMap(o.value)) !== undefined);
     const parentStyle: React.CSSProperties = {
       position: 'relative',
     };
@@ -77,9 +83,9 @@ MultiTypeaheadSelectProps<T>
         <Select
           aria-label={emptyText}
           styles={{
-            container: (provided, state) => ({
+            menuPortal: provided => ({
               ...provided,
-              zIndex: state.isFocused ? 9999999 : 0,
+              zIndex: 9999999,
             }),
           }}
           onChange={this.onSelect}
@@ -90,7 +96,7 @@ MultiTypeaheadSelectProps<T>
           getOptionLabel={o => optionToStringMap(o.value)}
           getOptionValue={o => optionToStringMap(o.value)}
           options={selectOptions}
-          menuPosition="fixed"
+          menuPortalTarget={document.body}
           isMulti
           isClearable={optional}
         />

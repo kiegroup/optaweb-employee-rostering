@@ -62,7 +62,7 @@
         " "
       ]
     ],
-    "import/extensions": "off", // Suddenly, the new norm for imports is to include the file extension
+    "import/extensions": ["error", "never", {"css":  "always"}],
     "import/no-extraneous-dependencies": [
       "error",
       {
