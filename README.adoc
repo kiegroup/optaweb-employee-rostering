@@ -17,19 +17,6 @@ An end-to-end https://www.optaplanner.org/[OptaPlanner] web application ready to
 
 See https://www.youtube.com/watch?v=sOWC4qrXxFk[the video demo].
 
-== Quick Start
-
-Install Docker and run the following on the command line:
-
-[source,shell]
-----
-docker build -t rostering .
-docker run -p 8080:8080 --rm -it -e SPRING_PROFILES_ACTIVE=dev rostering
-----
-This takes a few minutes on the first time. The application will be automatically populated with test data.
-
-You can then access the application on localhost:8080, once it finishes starting
-
 == Development
 
 === Backend
@@ -37,13 +24,9 @@ You can then access the application on localhost:8080, once it finishes starting
 Configure your IDE to run the main class, which is in
 `org.optaweb.employeerostering.OptaWebEmployeeRosteringApplication` in `employee-rostering-backend` repository.
 
-You will need to specify this program argument for Spring Boot to run in development mode and provision the H2 in-memory database:
-
-`--spring.profiles.active=dev`
-
 === Frontend
 
-Run `npm install` and then `npm start` in the `employee-rostering-frontend` directory.
+Run `npm install` and then `npm start` in the `optaweb-employee-rostering-frontend` directory.
 
 == Building
 
