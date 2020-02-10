@@ -142,7 +142,7 @@ Both IntelliJ and Eclipse formatters are available here: https://github.com/kieg
 === Backend
 
 Configure your IDE to run the main class, which is in
-`org.optaweb.employeerostering.OptaWebEmployeeRosteringApplication` in `employee-rostering-backend` repository.
+`org.optaweb.employeerostering.OptaWebEmployeeRosteringApplication` in `optaweb-employee-rostering-backend` repository.
 
 === Frontend
 
