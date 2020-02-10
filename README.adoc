@@ -138,3 +138,12 @@ oc start-build frontend --from-dir=docker --follow
 === Code formatter
 
 Both IntelliJ and Eclipse formatters are available here: https://github.com/kiegroup/droolsjbpm-build-bootstrap/tree/master/ide-configuration
+
+=== Backend
+
+Configure your IDE to run the main class, which is in
+`org.optaweb.employeerostering.OptaWebEmployeeRosteringApplication` in `employee-rostering-backend` repository.
+
+=== Frontend
+
+Run `npm install` and then `npm start` in the `optaweb-employee-rostering-frontend` directory.
