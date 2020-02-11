@@ -55,6 +55,12 @@
     opacity: 0.75;
 }
 
+.rbc-event:hover:not(.rbc-addons-dnd-drag-preview) {
+    min-height: 150px;
+    min-width: 150px;
+    z-index: 1000000;
+}
+
 .availability-event {
     display: "flex";
     height: 100%;

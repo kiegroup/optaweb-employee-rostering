@@ -15,7 +15,7 @@
  */
 // @ts-nocheck
 // TODO: Re-enable typescript validation on this file when
-// @types/react-big-calendar is updated
+// @types/react-big-calendar is updated to have prop dayLayoutAlgorithm
 import * as React from 'react';
 import { Calendar, momentLocalizer, EventProps } from 'react-big-calendar';
 import moment from 'moment';
