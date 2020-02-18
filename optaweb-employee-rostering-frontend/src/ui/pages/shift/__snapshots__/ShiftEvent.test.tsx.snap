@@ -5537,6 +5537,17 @@ exports[`ShiftEvent should render ShiftPopupHeader correctly 1`] = `
     onClick={[Function]}
     variant="link"
   >
+    <BlueprintIcon
+      color="currentColor"
+      noVerticalAlign={false}
+      size="sm"
+      title={null}
+    />
+  </Component>
+  <Component
+    onClick={[Function]}
+    variant="link"
+  >
     <TrashIcon
       color="currentColor"
       noVerticalAlign={false}

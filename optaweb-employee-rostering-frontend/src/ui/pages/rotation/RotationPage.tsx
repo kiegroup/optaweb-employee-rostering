@@ -32,7 +32,7 @@ import { RosterState } from 'domain/RosterState';
 import { ShiftTemplate } from 'domain/ShiftTemplate';
 import { shiftTemplateSelectors, shiftTemplateOperations } from 'store/rotation';
 import { WithTranslation, withTranslation, useTranslation, Trans } from 'react-i18next';
-import { EditIcon, TrashIcon, CubesIcon } from '@patternfly/react-icons';
+import { EditIcon, TrashIcon, CubesIcon, BlueprintIcon } from '@patternfly/react-icons';
 import Schedule from 'ui/components/calendar/Schedule';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { UrlProps, getPropsFromUrl, setPropsInUrl } from 'util/BookmarkableUtils';
@@ -95,6 +95,7 @@ const ShiftTemplatePopoverHeader: React.FC<{
   shiftTemplate: ShiftTemplate;
   rotationLength: number;
   onEdit: (shift: ShiftTemplate) => void;
+  onCopy: (shift: ShiftTemplate) => void;
   onDelete: (shift: ShiftTemplate) => void;
 }> = (props) => {
   const { t } = useTranslation('RotationPage');
@@ -126,6 +127,12 @@ const ShiftTemplatePopoverHeader: React.FC<{
         variant={ButtonVariant.link}
       >
         <EditIcon />
+      </Button>
+      <Button
+        onClick={() => props.onCopy(props.shiftTemplate)}
+        variant={ButtonVariant.link}
+      >
+        <BlueprintIcon />
       </Button>
       <Button
         onClick={() => props.onDelete(props.shiftTemplate)}
@@ -375,6 +382,12 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
             onEdit: shiftTemplate => this.setState({
               selectedShiftTemplate: shiftTemplate,
               isCreatingOrEditingShiftTemplate: true,
+            }),
+            onCopy: shiftTemplate => this.props.addShiftTemplate({
+              ...shiftTemplate,
+              rotationEmployee: null,
+              id: undefined,
+              version: undefined,
             }),
             onDelete: shiftTemplate => this.props.removeShiftTemplate(shiftTemplate),
           })

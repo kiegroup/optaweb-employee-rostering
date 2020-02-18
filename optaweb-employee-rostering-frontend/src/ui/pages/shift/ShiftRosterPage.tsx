@@ -360,6 +360,12 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               isCreatingOrEditingShift: true,
               selectedShift: editedShift,
             }),
+            onCopy: copiedShift => this.addShift({
+              ...copiedShift,
+              employee: null,
+              id: undefined,
+              version: undefined,
+            }),
             onDelete: deletedShift => this.deleteShift(deletedShift),
           })}
           popoverBody={shift => ShiftPopupBody(shift)}

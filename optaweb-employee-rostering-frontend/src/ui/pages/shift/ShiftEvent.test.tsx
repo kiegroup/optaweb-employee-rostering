@@ -222,7 +222,7 @@ describe('ShiftEvent', () => {
 
   it('should render ShiftPopupHeader correctly', () => {
     const shiftEventObj = shallow(
-      <Indictments.ShiftPopupHeader shift={baseShift} onEdit={jest.fn()} onDelete={jest.fn()} />,
+      <Indictments.ShiftPopupHeader shift={baseShift} onEdit={jest.fn()} onCopy={jest.fn()} onDelete={jest.fn()} />,
     );
     expect(toJson(shiftEventObj)).toMatchSnapshot();
   });
