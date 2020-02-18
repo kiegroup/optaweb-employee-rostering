@@ -20,7 +20,7 @@ import { Text, Button, ButtonVariant, List } from '@patternfly/react-core';
 import moment from 'moment';
 import { Employee } from 'domain/Employee';
 import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
-import { EditIcon, TrashIcon, ThumbTackIcon } from '@patternfly/react-icons';
+import { BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon } from '@patternfly/react-icons';
 import Color from 'color';
 import { useTranslation } from 'react-i18next';
 
@@ -257,6 +257,7 @@ export function getShiftColor(shift: Shift): string {
 const ShiftPopupHeader: React.FC<{
   shift: Shift;
   onEdit: (shift: Shift) => void;
+  onCopy?: (shift: Shift) => void;
   onDelete: (shift: Shift) => void;
 }> = (props) => {
   const { t } = useTranslation('ShiftEvent');
@@ -276,6 +277,18 @@ const ShiftPopupHeader: React.FC<{
       >
         <EditIcon />
       </Button>
+      {
+        props.onCopy
+          ? (
+            <Button
+              onClick={() => props.onCopy && props.onCopy(props.shift)}
+              variant={ButtonVariant.link}
+            >
+              <BlueprintIcon />
+            </Button>
+          )
+          : null
+      }
       <Button
         onClick={() => props.onDelete(props.shift)}
         variant={ButtonVariant.link}
