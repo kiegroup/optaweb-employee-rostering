@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WeekPicker component should render correctly when closed 1`] = `
+exports[`IntervalPicker component should render correctly when closed 1`] = `
 <div
-  className="week-picker-container"
+  className="interval-picker-container"
 >
   <Component
-    aria-label="Previous Week"
+    aria-label="Previous Interval"
     onClick={[Function]}
     variant="plain"
   >
@@ -60,7 +60,7 @@ exports[`WeekPicker component should render correctly when closed 1`] = `
         />
       </svg>
     }
-    className="week-picker"
+    className="interval-picker"
     clearIcon={
       <HistoryIcon
         color="currentColor"
@@ -85,7 +85,7 @@ exports[`WeekPicker component should render correctly when closed 1`] = `
     }
   />
   <Component
-    aria-label="Next Week"
+    aria-label="Next Interval"
     onClick={[Function]}
     variant="plain"
   >
@@ -111,12 +111,12 @@ exports[`WeekPicker component should render correctly when closed 1`] = `
 </div>
 `;
 
-exports[`WeekPicker component should render correctly when opened 1`] = `
+exports[`IntervalPicker component should render correctly when opened 1`] = `
 <div
-  className="week-picker-container"
+  className="interval-picker-container"
 >
   <Component
-    aria-label="Previous Week"
+    aria-label="Previous Interval"
     onClick={[Function]}
     variant="plain"
   >
@@ -171,7 +171,7 @@ exports[`WeekPicker component should render correctly when opened 1`] = `
         />
       </svg>
     }
-    className="week-picker"
+    className="interval-picker"
     clearIcon={
       <HistoryIcon
         color="currentColor"
@@ -196,7 +196,7 @@ exports[`WeekPicker component should render correctly when opened 1`] = `
     }
   />
   <Component
-    aria-label="Next Week"
+    aria-label="Next Interval"
     onClick={[Function]}
     variant="plain"
   >

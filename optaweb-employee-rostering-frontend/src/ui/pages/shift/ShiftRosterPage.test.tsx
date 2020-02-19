@@ -122,7 +122,7 @@ describe('Shift Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, 'days').toDate();
     const newDateEnd = moment(endDate).add(7, 'days').toDate();
-    shiftRosterPage.find('[aria-label="Select Week to View"]').simulate('change', newDateStart, newDateEnd);
+    shiftRosterPage.find('[aria-label="Select Interval to View"]').simulate('change', newDateStart, newDateEnd);
     expect(baseProps.getShiftRosterFor).toBeCalled();
     expect(baseProps.getShiftRosterFor).toBeCalledWith({
       fromDate: newDateStart,
@@ -453,5 +453,5 @@ const baseProps: Props = {
   publishRoster: jest.fn(),
   terminateSolvingRosterEarly: jest.fn(),
   showInfoMessage: jest.fn(),
-  ...getRouterProps<ShiftRosterUrlProps>('/shift', { spot: 'Spot', week: '2018-07-01' }),
+  ...getRouterProps<ShiftRosterUrlProps>('/shift', { spot: 'Spot', fromDate: '2018-07-01' }),
 };

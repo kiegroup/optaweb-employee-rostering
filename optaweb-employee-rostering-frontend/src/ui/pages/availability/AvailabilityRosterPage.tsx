@@ -19,7 +19,7 @@ import { AppState } from 'store/types';
 import { rosterOperations, rosterSelectors } from 'store/roster';
 import { spotSelectors } from 'store/spot';
 import { connect } from 'react-redux';
-import WeekPicker from 'ui/components/WeekPicker';
+import IntervalPicker from 'ui/components/IntervalPicker';
 import moment from 'moment';
 import { Button, EmptyState, EmptyStateVariant, Title, EmptyStateIcon, EmptyStateBody } from '@patternfly/react-core';
 import TypeaheadSelectInput from 'ui/components/TypeaheadSelectInput';
@@ -152,7 +152,7 @@ export function isAllDayAvailability(ea: EmployeeAvailability) {
   return isDay(ea.startDateTime, ea.endDateTime);
 }
 
-export type AvailabilityRosterUrlProps = UrlProps<'employee'|'week'>;
+export type AvailabilityRosterUrlProps = UrlProps<'employee'|'fromDate'|'toDate'>;
 export class AvailabilityRosterPage extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -169,12 +169,16 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
   onUpdateAvailabilityRoster(urlProps: AvailabilityRosterUrlProps) {
     const employee = this.props.allEmployeeList
       .find(e => e.name === urlProps.employee) || this.props.allEmployeeList[0];
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
-    const endDate = moment(startDate).endOf('week').toDate();
+    const fromDate = urlProps.fromDate
+      ? moment(urlProps.fromDate).startOf('day').toDate()
+      : moment(new Date()).startOf('week').toDate();
+    const toDate = urlProps.toDate
+      ? moment(urlProps.toDate).endOf('day').toDate()
+      : moment(fromDate).endOf('week').toDate();
     if (employee) {
       this.props.getAvailabilityRosterFor({
-        fromDate: startDate,
-        toDate: endDate,
+        fromDate,
+        toDate,
         employeeList: [employee],
       });
       this.setState({ firstLoad: false });
@@ -253,7 +257,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
   componentDidMount() {
     const urlProps = getPropsFromUrl<AvailabilityRosterUrlProps>(this.props, {
       employee: null,
-      week: null,
+      fromDate: null,
+      toDate: null,
     });
     this.onUpdateAvailabilityRoster(urlProps);
   }
@@ -261,7 +266,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const urlProps = getPropsFromUrl<AvailabilityRosterUrlProps>(this.props, {
       employee: null,
-      week: null,
+      fromDate: null,
+      toDate: null,
     });
     if (this.state.firstLoad || prevProps.tenantId !== this.props.tenantId || urlProps.employee === null) {
       this.onUpdateAvailabilityRoster(urlProps);
@@ -276,7 +282,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     }
     const urlProps = getPropsFromUrl<AvailabilityRosterUrlProps>(this.props, {
       employee: null,
-      week: null,
+      fromDate: null,
+      toDate: null,
     });
     const changedTenant = this.props.shownEmployeeList.length === 0
       || (urlProps.employee !== null
@@ -304,8 +311,12 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       );
     }
 
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
-    const endDate = moment(startDate).endOf('week').toDate();
+    const startDate = urlProps.fromDate
+      ? moment(urlProps.fromDate).startOf('day').toDate()
+      : moment(new Date()).startOf('week').toDate();
+    const endDate = urlProps.toDate
+      ? moment(urlProps.toDate).toDate()
+      : moment(startDate).endOf('week').toDate();
     const shownEmployee = this.props.allEmployeeList.find(e => e.name === urlProps.employee)
       || this.props.shownEmployeeList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
@@ -377,13 +388,14 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             }}
             noClearButton
           />
-          <WeekPicker
-            aria-label="Select Week to View"
+          <IntervalPicker
+            aria-label="Select Interval to View"
             value={startDate}
-            onChange={(weekStart) => {
+            onChange={(intervalStart, intervalEnd) => {
               this.onUpdateAvailabilityRoster({
                 ...urlProps,
-                week: moment(weekStart).format('YYYY-MM-DD'),
+                fromDate: moment(intervalStart).format('YYYY-MM-DD'),
+                toDate: moment(intervalEnd).format('YYYY-MM-DD'),
               });
             }}
           />

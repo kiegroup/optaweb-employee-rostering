@@ -91,7 +91,7 @@ describe('Availability Roster Page', () => {
     />);
     const newDateStart = moment(startDate).add(7, 'days').toDate();
     const newDateEnd = moment(endDate).add(7, 'days').toDate();
-    availabilityRosterPage.find('WeekPicker[aria-label="Select Week to View"]')
+    availabilityRosterPage.find('IntervalPicker[aria-label="Select Interval to View"]')
       .simulate('change', newDateStart, newDateEnd);
     expect(baseProps.getAvailabilityRosterFor).toBeCalled();
     expect(baseProps.getAvailabilityRosterFor).toBeCalledWith({
@@ -651,5 +651,5 @@ const baseProps: Props = {
   addShift: jest.fn(),
   updateShift: jest.fn(),
   removeShift: jest.fn(),
-  ...getRouterProps<AvailabilityRosterUrlProps>('/shift', { employee: 'Employee 1', week: '2018-07-01' }),
+  ...getRouterProps<AvailabilityRosterUrlProps>('/shift', { employee: 'Employee 1', fromDate: '2018-07-01' }),
 };

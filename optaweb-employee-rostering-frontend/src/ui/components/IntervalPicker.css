@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- .week-picker-container {
+ .interval-picker-container {
     background-color: var(--pf-global--BackgroundColor--100);
  }
 
-.week-picker {
+.interval-picker {
     z-index: 100;
     background-color: var(--pf-global--BackgroundColor--200);
 }
