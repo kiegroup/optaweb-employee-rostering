@@ -22,7 +22,7 @@ import cmn from 'date-fns/locale/zh-CN';
 import YAML from 'yaml';
 
 import moment from 'moment';
-import 'moment/locale/zh-cn';
+import 'moment/min/locales.min';
 
 registerLocale('cmn', cmn);
 
