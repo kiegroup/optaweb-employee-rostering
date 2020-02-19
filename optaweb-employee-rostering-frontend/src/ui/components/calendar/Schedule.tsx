@@ -38,6 +38,7 @@ export type StyleSupplier<T> = (params: T) => StyleContainer;
 export interface Props<T extends object> {
   startDate: Date;
   endDate: Date;
+  interval: 'day' | 'week' | 'month';
   events: T[];
   showAllDayCell?: boolean;
   dateFormat?: (date: Date) => string;
@@ -80,8 +81,8 @@ export default function Schedule<T extends object>(props: Props<T>): React.React
         startAccessor={props.startAccessor}
         endAccessor={props.endAccessor}
         toolbar={false}
-        view="week"
-        views={['week']}
+        view={props.interval}
+        views={[props.interval]}
         formats={props.dateFormat ? {
           dayFormat: props.dateFormat,
         } : undefined}

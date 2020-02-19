@@ -245,6 +245,7 @@ describe('Schedule', () => {
 const props: Props<{ start: Date; end: Date; title: string }> = {
   startDate: new Date('2018-01-01T00:00'),
   endDate: new Date('2018-01-07T00:00'),
+  interval: 'week',
   events: [
     {
       title: 'Event 1',

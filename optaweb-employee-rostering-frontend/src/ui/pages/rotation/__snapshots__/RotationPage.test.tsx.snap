@@ -184,6 +184,7 @@ exports[`Rotation Page should render correctly when creating a new shift templat
         },
       ]
     }
+    interval="week"
     key="2"
     onAddEvent={[Function]}
     onUpdateEvent={[Function]}
@@ -381,6 +382,7 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
         },
       ]
     }
+    interval="week"
     key="2"
     onAddEvent={[Function]}
     onUpdateEvent={[Function]}

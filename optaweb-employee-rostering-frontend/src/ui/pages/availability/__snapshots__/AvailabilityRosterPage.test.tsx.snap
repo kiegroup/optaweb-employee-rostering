@@ -285,6 +285,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
         },
       ]
     }
+    interval="week"
     key="4"
     onAddEvent={[Function]}
     onUpdateEvent={[Function]}
@@ -584,6 +585,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
         },
       ]
     }
+    interval="week"
     key="4"
     onAddEvent={[Function]}
     onUpdateEvent={[Function]}
@@ -911,6 +913,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
         },
       ]
     }
+    interval="week"
     key="4"
     onAddEvent={[Function]}
     onUpdateEvent={[Function]}

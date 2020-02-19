@@ -207,6 +207,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
         },
       ]
     }
+    interval="week"
     key="2"
     onAddEvent={[Function]}
     onUpdateEvent={[Function]}
@@ -427,6 +428,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
         },
       ]
     }
+    interval="week"
     key="2"
     onAddEvent={[Function]}
     onUpdateEvent={[Function]}
@@ -675,6 +677,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
         },
       ]
     }
+    interval="week"
     key="2"
     onAddEvent={[Function]}
     onUpdateEvent={[Function]}

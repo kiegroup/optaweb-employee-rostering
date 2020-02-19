@@ -449,6 +449,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           key={shownEmployee.id}
           startDate={startDate}
           endDate={endDate}
+          interval={this.state.interval}
           events={events}
           titleAccessor={soa => (isShift(soa.reference) ? soa.reference.spot.name : soa.reference.state)}
           startAccessor={soa => soa.start}

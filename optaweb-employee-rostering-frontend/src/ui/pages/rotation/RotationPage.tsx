@@ -339,6 +339,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
           key={shownSpot.id}
           startDate={startDate}
           endDate={endDate}
+          interval="week"
           dateFormat={date => this.props.t('rotationDay',
             {
               day: moment.duration(moment(date).diff(baseDate)).asDays() + 1,

@@ -341,6 +341,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           key={this.props.shownSpotList[0].id}
           startDate={startDate}
           endDate={endDate}
+          interval={this.state.interval}
           events={this.props.spotIdToShiftListMap.get(shownSpot.id as number) || []}
           titleAccessor={shift => (shift.employee ? shift.employee.name : t('unassigned'))}
           startAccessor={shift => moment(shift.startDateTime).toDate()}
