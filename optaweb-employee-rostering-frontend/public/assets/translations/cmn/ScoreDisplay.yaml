@@ -1,0 +1,4 @@
+---
+hardScore: "硬分: {{hardScore}}"
+mediumScore: "中分: {{mediumScore}}"
+softScore: "软分: {{softScore}}"
