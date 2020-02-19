@@ -29,20 +29,34 @@ describe('IntervalPicker component', () => {
     moment.locale('en');
   });
 
+  function makeIntervalPicker(
+    onChange: (start: Date, end: Date) => void,
+    onIntervalChange: (interval: 'day' | 'week' | 'month') => void = jest.fn(),
+  ) {
+    return shallow(
+      <IntervalPicker
+        interval="week"
+        value={moment('2019-07-03').toDate()}
+        onChange={onChange}
+        onIntervalChange={onIntervalChange}
+      />,
+    );
+  }
+
   it('should render correctly when closed', () => {
-    const intervalPicker = shallow(<IntervalPicker value={moment('2019-07-03').toDate()} onChange={jest.fn()} />);
+    const intervalPicker = makeIntervalPicker(jest.fn());
     expect(toJson(intervalPicker)).toMatchSnapshot();
   });
 
   it('should render correctly when opened', () => {
-    const intervalPicker = shallow(<IntervalPicker value={moment('2019-07-03').toDate()} onChange={jest.fn()} />);
+    const intervalPicker = makeIntervalPicker(jest.fn());
     intervalPicker.setState({ isOpen: true });
     expect(toJson(intervalPicker)).toMatchSnapshot();
   });
 
   it('should pass previous interval to onChange when previous interval is clicked', () => {
     const onChange = jest.fn();
-    const intervalPicker = shallow(<IntervalPicker value={moment('2019-07-03').toDate()} onChange={onChange} />);
+    const intervalPicker = makeIntervalPicker(onChange);
     intervalPicker.find('[aria-label="Previous Interval"]').simulate('click');
     expect(onChange).toBeCalled();
     expect(onChange)
@@ -51,7 +65,7 @@ describe('IntervalPicker component', () => {
 
   it('should pass next interval to onChange when next interval is clicked', () => {
     const onChange = jest.fn();
-    const intervalPicker = shallow(<IntervalPicker value={moment('2019-07-03').toDate()} onChange={onChange} />);
+    const intervalPicker = makeIntervalPicker(onChange);
     intervalPicker.find('[aria-label="Next Interval"]').simulate('click');
     expect(onChange).toBeCalled();
     expect(onChange)
@@ -62,7 +76,7 @@ describe('IntervalPicker component', () => {
     const solvingStartTime = moment('2019-07-23').toDate();
     MockDate.set(solvingStartTime);
     const onChange = jest.fn();
-    const intervalPicker = shallow(<IntervalPicker value={moment('2019-07-03').toDate()} onChange={onChange} />);
+    const intervalPicker = makeIntervalPicker(onChange);
     ((intervalPicker.find(DatePicker).props() as any).onChange as Function)({} as React.FormEvent);
     expect(onChange).toBeCalled();
     expect(onChange)
@@ -71,7 +85,7 @@ describe('IntervalPicker component', () => {
 
   it('should go to the week containing a day when the day is clicked', () => {
     const onChange = jest.fn();
-    const intervalPicker = shallow(<IntervalPicker value={moment('2019-07-03').toDate()} onChange={onChange} />);
+    const intervalPicker = makeIntervalPicker(onChange);
     ((intervalPicker.find(DatePicker).props() as any).onClickDay as Function)(moment('2019-07-30').toDate());
     expect(onChange).toBeCalled();
     expect(onChange)
@@ -80,20 +94,53 @@ describe('IntervalPicker component', () => {
 
   it('should open when opened', () => {
     const onChange = jest.fn();
-    const intervalPicker = shallow(<IntervalPicker value={moment('2019-07-03').toDate()} onChange={onChange} />);
+    const intervalPicker = makeIntervalPicker(onChange);
     ((intervalPicker.find(DatePicker).props() as any).onCalendarOpen as Function)();
-    expect(intervalPicker.instance().state).toEqual({
+    expect(intervalPicker.instance().state).toMatchObject({
       isOpen: true,
     });
   });
 
   it('should closed when closed', () => {
     const onChange = jest.fn();
-    const intervalPicker = shallow(<IntervalPicker value={moment('2019-07-03').toDate()} onChange={onChange} />);
+    const intervalPicker = makeIntervalPicker(onChange);
     intervalPicker.setState({ isOpen: true });
     ((intervalPicker.find(DatePicker).props() as any).onCalendarClose as Function)();
-    expect(intervalPicker.instance().state).toEqual({
+    expect(intervalPicker.instance().state).toMatchObject({
       isOpen: false,
     });
+  });
+
+  it('should change interval to day', () => {
+    const onIntervalChange = jest.fn();
+    const intervalPicker = makeIntervalPicker(jest.fn(), onIntervalChange);
+    intervalPicker.setState({ interval: 'week' });
+    intervalPicker.find('[aria-label="Day"]').simulate('click');
+    expect(intervalPicker.instance().state).toMatchObject({
+      interval: 'day',
+    });
+    expect(onIntervalChange).toBeCalledWith('day');
+  });
+
+  it('should change interval to week', () => {
+    const onIntervalChange = jest.fn();
+    const intervalPicker = makeIntervalPicker(jest.fn(), onIntervalChange);
+    intervalPicker.setState({ interval: 'day' });
+    intervalPicker.find('[aria-label="Week"]').simulate('click');
+    expect(intervalPicker.instance().state).toMatchObject({
+      interval: 'week',
+    });
+    expect(onIntervalChange).toBeCalledWith('week');
+  });
+
+  it('should change interval to month', () => {
+    const onIntervalChange = jest.fn();
+    const intervalPicker = makeIntervalPicker(jest.fn(), onIntervalChange);
+    intervalPicker.setState({ interval: 'week' });
+    intervalPicker.find('[aria-label="Month"]').simulate('click');
+    expect(intervalPicker.instance().state).toMatchObject({
+      interval: 'month',
+    });
+    expect(onIntervalChange).toBeCalledWith('month');
   });
 });

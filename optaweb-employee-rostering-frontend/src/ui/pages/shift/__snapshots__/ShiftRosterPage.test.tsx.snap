@@ -70,7 +70,9 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
     />
     <IntervalPicker
       aria-label="Select Interval to View"
+      interval="week"
       onChange={[Function]}
+      onIntervalChange={[Function]}
       value={2018-07-01T00:00:00.000Z}
     />
     <ScoreDisplay
@@ -288,7 +290,9 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
     />
     <IntervalPicker
       aria-label="Select Interval to View"
+      interval="week"
       onChange={[Function]}
+      onIntervalChange={[Function]}
       value={2018-07-01T00:00:00.000Z}
     />
     <ScoreDisplay
@@ -534,7 +538,9 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
     />
     <IntervalPicker
       aria-label="Select Interval to View"
+      interval="week"
       onChange={[Function]}
+      onIntervalChange={[Function]}
       value={2018-07-01T00:00:00.000Z}
     />
     <ScoreDisplay

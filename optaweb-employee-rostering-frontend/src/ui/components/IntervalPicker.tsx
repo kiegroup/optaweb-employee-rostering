@@ -19,29 +19,35 @@ import DatePicker from '@wojtekmaj/react-daterange-picker';
 import moment from 'moment';
 import { HistoryIcon } from '@patternfly/react-icons';
 import './IntervalPicker.css';
-import { Button, ButtonVariant } from '@patternfly/react-core';
+import { Button, ButtonVariant, InputGroup } from '@patternfly/react-core';
 
 export interface IntervalPickerProps {
   value: Date;
+  interval: 'day' | 'week' | 'month';
   onChange: (intervalStartDate: Date, intervalEndDate: Date) => void;
+  onIntervalChange: (interval: 'day' | 'week' | 'month') => void;
 }
 
 export interface IntervalPickerState {
   isOpen: boolean;
+  interval: 'day' | 'week' | 'month';
 }
 
-function getFirstDayInInterval(dateInInterval: Date): Date {
-  return moment(dateInInterval).startOf('week').toDate();
-}
-
-function getLastDayInInterval(dateInInterval: Date): Date {
-  return moment(dateInInterval).endOf('week').toDate();
+function getDaysInInterval(dateInInterval: Date, interval: 'day' | 'week' | 'month'): Date[] {
+  const dateMoment = moment(dateInInterval);
+  return [
+    dateMoment.startOf(interval).toDate(),
+    dateMoment.endOf(interval).toDate(),
+  ];
 }
 
 export default class IntervalPicker extends React.Component<IntervalPickerProps, IntervalPickerState> {
   constructor(props: IntervalPickerProps) {
     super(props);
-    this.state = { isOpen: false };
+    this.state = {
+      isOpen: false,
+      interval: props.interval,
+    };
   }
 
   goToCurrentInterval() {
@@ -49,8 +55,16 @@ export default class IntervalPicker extends React.Component<IntervalPickerProps,
   }
 
   goToIntervalContaining(date: Date) {
-    this.props.onChange(getFirstDayInInterval(date), getLastDayInInterval(date));
+    const [firstDay, lastDay] = getDaysInInterval(date, this.state.interval);
+    this.props.onChange(firstDay, lastDay);
     this.setState({ isOpen: false });
+  }
+
+  switchIntervalTo(interval: 'day' | 'week' | 'month') {
+    this.setState({ interval });
+    const [firstDay, lastDay] = getDaysInInterval(this.props.value, interval);
+    this.props.onChange(firstDay, lastDay);
+    this.props.onIntervalChange(interval);
   }
 
   render() {
@@ -60,7 +74,9 @@ export default class IntervalPicker extends React.Component<IntervalPickerProps,
         <Button
           aria-label="Previous Interval"
           variant={ButtonVariant.plain}
-          onClick={() => this.goToIntervalContaining(moment(this.props.value).subtract(1, 'w').toDate())}
+          onClick={
+            () => this.goToIntervalContaining(moment(this.props.value).subtract(1, this.state.interval).toDate())
+          }
         >
           <svg
             fill="currentColor"
@@ -87,7 +103,7 @@ export default class IntervalPicker extends React.Component<IntervalPickerProps,
             /* moment intreprets "en" as "en-US", this intreprets "en" as "en-GB" */
             locale === 'en' ? 'en-US' : locale
           }
-          value={[getFirstDayInInterval(this.props.value), getLastDayInInterval(this.props.value)]}
+          value={getDaysInInterval(this.props.value, this.state.interval)}
           onChange={() => this.goToCurrentInterval()}
           onClickDay={(value: Date) => this.goToIntervalContaining(value)}
           onCalendarOpen={() => this.setState({ isOpen: true })}
@@ -99,7 +115,7 @@ export default class IntervalPicker extends React.Component<IntervalPickerProps,
         <Button
           aria-label="Next Interval"
           variant={ButtonVariant.plain}
-          onClick={() => this.goToIntervalContaining(moment(this.props.value).add(1, 'w').toDate())}
+          onClick={() => this.goToIntervalContaining(moment(this.props.value).add(1, this.state.interval).toDate())}
         >
           <svg
             fill="currentColor"
@@ -120,6 +136,29 @@ export default class IntervalPicker extends React.Component<IntervalPickerProps,
             />
           </svg>
         </Button>
+        <InputGroup className="interval-picker-toggle">
+          <Button
+            aria-label="Day"
+            variant={this.state.interval === 'day' ? 'primary' : 'tertiary'}
+            onClick={() => this.switchIntervalTo('day')}
+          >
+            Day
+          </Button>
+          <Button
+            aria-label="Week"
+            variant={this.state.interval === 'week' ? 'primary' : 'tertiary'}
+            onClick={() => this.switchIntervalTo('week')}
+          >
+            Week
+          </Button>
+          <Button
+            aria-label="Month"
+            variant={this.state.interval === 'month' ? 'primary' : 'tertiary'}
+            onClick={() => this.switchIntervalTo('month')}
+          >
+            Month
+          </Button>
+        </InputGroup>
       </div>
     );
   }

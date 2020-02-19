@@ -125,6 +125,7 @@ interface State {
   isCreatingOrEditingShift: boolean;
   selectedShift?: Shift;
   firstLoad: boolean;
+  interval: 'day' | 'week' | 'month';
 }
 
 export interface ShiftOrAvailability {
@@ -163,6 +164,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       isCreatingOrEditingShift: false,
       isCreatingOrEditingAvailability: false,
       firstLoad: true,
+      interval: 'week',
     };
   }
 
@@ -391,6 +393,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
           <IntervalPicker
             aria-label="Select Interval to View"
             value={startDate}
+            interval={this.state.interval}
             onChange={(intervalStart, intervalEnd) => {
               this.onUpdateAvailabilityRoster({
                 ...urlProps,
@@ -398,6 +401,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
                 toDate: moment(intervalEnd).format('YYYY-MM-DD'),
               });
             }}
+            onIntervalChange={interval => this.setState({ interval })}
           />
           <ScoreDisplay score={score} />
           <Actions
