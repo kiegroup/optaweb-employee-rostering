@@ -165,7 +165,7 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(content().string("true"));
     }
 
@@ -176,7 +176,7 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
                             .accept(MediaType.APPLICATION_JSON))
                 .andDo(mvcResult -> logger.info(mvcResult.toString()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
+                .andExpect(content().contentType("application/json;charset=UTF-8"))
                 .andExpect(content().string("false"));
     }
 

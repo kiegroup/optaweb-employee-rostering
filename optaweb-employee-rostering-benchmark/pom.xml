@@ -66,6 +66,14 @@
           <groupId>jakarta.xml.bind</groupId>
           <artifactId>jakarta.xml.bind-api</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>javax.activation</groupId>
+          <artifactId>activation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
