@@ -47,12 +47,23 @@
 }
 
 .availability-wrapper {
-    position: absolute !important;
-    top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: 100% !important;
+}
+
+.availability-wrapper:not(:hover) {
     opacity: 0.75;
+}
+
+.availability-wrapper > * > .rbc-event:not(.rbc-addons-dnd-drag-preview) {
+    left: 0 !important;
+    width: 100% !important;
+}
+
+.rbc-event:hover:not(.rbc-addons-dnd-drag-preview) {
+    min-height: 150px;
+    min-width: 150px;
+    z-index: 1000000;
 }
 
 .availability-event {
