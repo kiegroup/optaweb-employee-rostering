@@ -1,6 +1,4 @@
 ---
-serverSideError: 服务器端错误
-
 addContract:
   title: 成功添加了合同
   message: 成功添加了合同与名为 "{{name}}"。

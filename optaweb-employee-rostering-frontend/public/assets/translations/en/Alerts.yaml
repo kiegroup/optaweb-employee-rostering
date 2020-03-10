@@ -1,6 +1,4 @@
 ---
-serverSideError: Server Side Error
-
 addContract:
   title: Successfully added Contract
   message: The Contract "{{name}}" was successfully added.
@@ -154,7 +152,7 @@ availabilityRosterRefresh:
 resetApplicationSuccessful:
   title: Info
   message: The Application was reset successfully.
-  
+
 editShiftsInShiftRoster:
   title: Edit Shifts in the Shift Roster!
   message:

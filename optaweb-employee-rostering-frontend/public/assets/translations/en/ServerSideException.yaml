@@ -1,4 +1,5 @@
 ---
+serverSideError: Server Side Error
 ServerSideException:
   entityNotFound: 'The object you requested was not found: {{0}}'
   generic: It appears the developers made a mistake somewhere. Please contact them.
