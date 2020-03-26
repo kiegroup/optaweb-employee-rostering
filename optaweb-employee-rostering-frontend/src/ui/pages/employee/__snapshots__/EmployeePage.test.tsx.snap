@@ -196,6 +196,33 @@ exports[`Employees page should render correctly with a few employees 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
+                  <StatefulTypeaheadSelectInput
+                    emptyText="Trans(i18nKey=enterCovidRisk)"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        "INOCULATED",
+                        "LOW",
+                        "MODERATE",
+                        "HIGH",
+                        "EXTREME",
+                      ]
+                    }
+                    value="INOCULATED"
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Trans(i18nKey=CovidRisk.INOCULATED)
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
                   <span
                     style={
                       Object {
@@ -401,6 +428,33 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                       Skill 2
                     </Unknown>
                   </ChipGroup>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <StatefulTypeaheadSelectInput
+                    emptyText="Trans(i18nKey=enterCovidRisk)"
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        "INOCULATED",
+                        "LOW",
+                        "MODERATE",
+                        "HIGH",
+                        "EXTREME",
+                      ]
+                    }
+                    value="INOCULATED"
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Trans(i18nKey=CovidRisk.INOCULATED)
+                  </Text>
                 }
               />,
             },
@@ -616,6 +670,26 @@ exports[`Employees page should render the editor correctly 1`] = `
       }
     />
   </td>
+  <td
+    key="3"
+  >
+    <StatefulTypeaheadSelectInput
+      emptyText="Trans(i18nKey=enterCovidRisk)"
+      key="3"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          "INOCULATED",
+          "LOW",
+          "MODERATE",
+          "HIGH",
+          "EXTREME",
+        ]
+      }
+      value="INOCULATED"
+    />
+  </td>
 </tr>
 `;
 
@@ -664,6 +738,15 @@ exports[`Employees page should render the viewer correctly 1`] = `
         Skill 2
       </Component>
     </ChipGroup>
+  </td>
+  <td
+    key="3"
+  >
+    <Text
+      key="3"
+    >
+      Trans(i18nKey=CovidRisk.INOCULATED)
+    </Text>
   </td>
 </tr>
 `;

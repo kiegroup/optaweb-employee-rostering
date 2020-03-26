@@ -113,7 +113,7 @@ describe('Shift Roster Page', () => {
     />);
     mount((shiftRosterPage.find(Trans).prop('components') as any)[2]).simulate('click');
     expect(baseProps.history.push).toBeCalled();
-    expect(baseProps.history.push).toBeCalledWith('/0/spots');
+    expect(baseProps.history.push).toBeCalledWith('/0/wards');
   });
 
   it('should change the week when the user change the week', () => {
@@ -355,12 +355,14 @@ const spot: Spot = {
       name: 'Skill',
     },
   ],
+  covidWard: false,
 };
 
 const newSpot: Spot = {
   ...spot,
   id: 111,
   name: 'New Spot',
+  covidWard: false,
 };
 
 const employee: Employee = {
@@ -384,6 +386,7 @@ const employee: Employee = {
     version: 0,
     name: 'Not Required Skill',
   }],
+  covidRiskType: 'INOCULATED',
 };
 
 const shift: Shift = {

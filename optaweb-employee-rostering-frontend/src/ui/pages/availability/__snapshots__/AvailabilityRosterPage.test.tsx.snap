@@ -32,6 +32,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -56,6 +57,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 111,
             "name": "New Employee",
             "skillProficiencySet": Array [
@@ -83,6 +85,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
             "tenantId": 0,
             "version": 0,
           },
+          "covidRiskType": "INOCULATED",
           "id": 4,
           "name": "Employee 1",
           "skillProficiencySet": Array [
@@ -170,6 +173,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -209,6 +213,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -242,6 +247,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 7,
               "name": "Rotation Employee",
               "skillProficiencySet": Array [
@@ -258,6 +264,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
             "rotationViolationPenaltyList": Array [],
             "shiftEmployeeConflictList": Array [],
             "spot": Object {
+              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -329,6 +336,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -353,6 +361,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 111,
             "name": "New Employee",
             "skillProficiencySet": Array [
@@ -380,6 +389,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
             "tenantId": 0,
             "version": 0,
           },
+          "covidRiskType": "INOCULATED",
           "id": 4,
           "name": "Employee 1",
           "skillProficiencySet": Array [
@@ -467,6 +477,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -506,6 +517,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -539,6 +551,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 7,
               "name": "Rotation Employee",
               "skillProficiencySet": Array [
@@ -555,6 +568,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
             "rotationViolationPenaltyList": Array [],
             "shiftEmployeeConflictList": Array [],
             "spot": Object {
+              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -654,6 +668,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -678,6 +693,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 111,
             "name": "New Employee",
             "skillProficiencySet": Array [
@@ -705,6 +721,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
             "tenantId": 0,
             "version": 0,
           },
+          "covidRiskType": "INOCULATED",
           "id": 4,
           "name": "Employee 1",
           "skillProficiencySet": Array [
@@ -792,6 +809,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -831,6 +849,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -864,6 +883,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 7,
               "name": "Rotation Employee",
               "skillProficiencySet": Array [
@@ -880,6 +900,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
             "rotationViolationPenaltyList": Array [],
             "shiftEmployeeConflictList": Array [],
             "spot": Object {
+              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [

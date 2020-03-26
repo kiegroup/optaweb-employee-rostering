@@ -125,6 +125,30 @@ exports[`Spots page should render correctly with a few spots 1`] = `
             Object {
               "title": <EditableComponent
                 editor={
+                  <StatefulTypeaheadSelectInput
+                    emptyText=""
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        true,
+                        false,
+                      ]
+                    }
+                    value={false}
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    No
+                  </Text>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
                   <span
                     style={
                       Object {
@@ -277,6 +301,30 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                       Skill 2
                     </Unknown>
                   </ChipGroup>
+                }
+              />,
+            },
+            Object {
+              "title": <EditableComponent
+                editor={
+                  <StatefulTypeaheadSelectInput
+                    emptyText=""
+                    onChange={[Function]}
+                    optionToStringMap={[Function]}
+                    options={
+                      Array [
+                        true,
+                        false,
+                      ]
+                    }
+                    value={true}
+                  />
+                }
+                isEditing={false}
+                viewer={
+                  <Text>
+                    Yes
+                  </Text>
                 }
               />,
             },
@@ -492,6 +540,23 @@ exports[`Spots page should render the editor correctly 1`] = `
       }
     />
   </td>
+  <td
+    key="2"
+  >
+    <StatefulTypeaheadSelectInput
+      emptyText=""
+      key="3"
+      onChange={[Function]}
+      optionToStringMap={[Function]}
+      options={
+        Array [
+          true,
+          false,
+        ]
+      }
+      value={true}
+    />
+  </td>
 </tr>
 `;
 
@@ -531,6 +596,15 @@ exports[`Spots page should render the viewer correctly 1`] = `
         Skill 2
       </Component>
     </ChipGroup>
+  </td>
+  <td
+    key="2"
+  >
+    <Text
+      key="2"
+    >
+      Yes
+    </Text>
   </td>
 </tr>
 `;

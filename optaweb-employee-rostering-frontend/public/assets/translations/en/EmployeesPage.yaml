@@ -2,6 +2,14 @@
 skillProficiencies: Skill Proficiencies
 selectAContract: Select a contract...
 selectSkillProficiencies: Select skill proficiencies...
+covidRiskType: Covid Risk
+enterCovidRisk: Enter Covid Risk...
+CovidRisk:
+    INOCULATED: Inoculated
+    LOW: Low
+    MODERATE: Moderate
+    HIGH: High
+    EXTREME: Extreme
 noContracts:
   <0>There are no Contracts</0>
   <1>

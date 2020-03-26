@@ -117,6 +117,7 @@ public class EmployeeService extends AbstractRestService {
         oldEmployee.setName(newEmployee.getName());
         oldEmployee.setSkillProficiencySet(newEmployee.getSkillProficiencySet());
         oldEmployee.setContract(newEmployee.getContract());
+        oldEmployee.setCovidRiskType(newEmployee.getCovidRiskType());
         return employeeRepository.save(oldEmployee);
     }
 

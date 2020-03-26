@@ -17,8 +17,11 @@ import { DomainObject } from './DomainObject';
 import { Skill } from './Skill';
 import { Contract } from './Contract';
 
+export type CovidRiskType = 'INOCULATED' | 'LOW' | 'MODERATE' | 'HIGH' | 'EXTREME';
+
 export interface Employee extends DomainObject {
   name: string;
   contract: Contract;
   skillProficiencySet: Skill[];
+  covidRiskType: CovidRiskType;
 }

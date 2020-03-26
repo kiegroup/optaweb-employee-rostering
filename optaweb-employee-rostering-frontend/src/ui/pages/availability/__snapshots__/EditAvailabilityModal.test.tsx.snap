@@ -152,6 +152,7 @@ exports[`Edit Availability Modal should render correctly when closed 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -343,6 +344,7 @@ exports[`Edit Availability Modal should render correctly when opened 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -543,6 +545,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -570,6 +573,7 @@ exports[`Edit Availability Modal should render correctly with a availability whe
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [

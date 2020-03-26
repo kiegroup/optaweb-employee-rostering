@@ -90,6 +90,7 @@ const employee: Employee = {
   name: 'Amy',
   contract,
   skillProficiencySet: [],
+  covidRiskType: 'INOCULATED',
 };
 
 const startDateTime = moment('2018-01-01T09:00').toDate();

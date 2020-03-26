@@ -54,7 +54,12 @@ interface StateProps extends DataTableProps<Employee> {
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   ...ownProps,
   title: ownProps.t('employees'),
-  columnTitles: [ownProps.t('name'), ownProps.t('contract'), ownProps.t('skillProficiencies')],
+  columnTitles: [
+    ownProps.t('name'),
+    ownProps.t('contract'),
+    ownProps.t('skillProficiencies'),
+    ownProps.t('covidRiskType'),
+  ],
   tableData: employeeSelectors.getEmployeeList(state),
   skillList: skillSelectors.getSkillList(state),
   contractList: contractSelectors.getContractList(state),
@@ -96,12 +101,14 @@ export class EmployeesPage extends DataTable<Employee, Props> {
           </Chip>
         ))}
       </ChipGroup>,
+      <Text key={3}>{this.props.t(`CovidRisk.${data.covidRiskType}`)}</Text>,
     ];
   }
 
   getInitialStateForNewRow(): Partial<Employee> {
     return {
       skillProficiencySet: [],
+      covidRiskType: 'LOW',
     };
   }
 
@@ -130,13 +137,22 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         value={data.skillProficiencySet ? data.skillProficiencySet : []}
         onChange={selected => setProperty('skillProficiencySet', selected)}
       />,
+      <StatefulTypeaheadSelectInput
+        key={3}
+        emptyText={this.props.t('enterCovidRisk')}
+        optionToStringMap={risk => this.props.t(`CovidRisk.${risk}`)}
+        value={data.covidRiskType}
+        options={['INOCULATED', 'LOW', 'MODERATE', 'HIGH', 'EXTREME']}
+        onChange={covidRisk => setProperty('covidRiskType', covidRisk)}
+      />,
     ];
   }
 
   isDataComplete(editedValue: ReadonlyPartial<Employee>): editedValue is Employee {
     return editedValue.name !== undefined
       && editedValue.contract !== undefined
-      && editedValue.skillProficiencySet !== undefined;
+      && editedValue.skillProficiencySet !== undefined
+      && editedValue.covidRiskType !== undefined;
   }
 
   isValid(editedValue: Employee): boolean {
@@ -150,7 +166,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   }
 
   getSorters(): (Sorter<Employee> | null)[] {
-    return [stringSorter(e => e.name), stringSorter(e => e.contract.name), null];
+    return [stringSorter(e => e.name), stringSorter(e => e.contract.name), null, null];
   }
 
   updateData(data: Employee): void {

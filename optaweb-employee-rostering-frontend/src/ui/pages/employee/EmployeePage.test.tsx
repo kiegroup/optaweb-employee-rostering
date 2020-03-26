@@ -85,6 +85,7 @@ describe('Employees page', () => {
       tenantId: 0,
       id: 1,
       version: 0,
+      covidRiskType: 'INOCULATED',
     };
     employeesPage.addData(employee);
     expect(twoEmployees.addEmployee).toBeCalled();
@@ -100,6 +101,7 @@ describe('Employees page', () => {
       tenantId: 0,
       id: 1,
       version: 0,
+      covidRiskType: 'INOCULATED',
     };
     employeesPage.updateData(employee);
     expect(twoEmployees.updateEmployee).toBeCalled();
@@ -115,6 +117,7 @@ describe('Employees page', () => {
       tenantId: 0,
       id: 1,
       version: 0,
+      covidRiskType: 'INOCULATED',
     };
     employeesPage.removeData(employee);
     expect(twoEmployees.removeEmployee).toBeCalled();
@@ -178,11 +181,12 @@ describe('Employees page', () => {
     const result3 = employeesPage.isDataComplete(noContract);
     expect(result3).toEqual(false);
 
-    const completed = {
+    const completed: Employee = {
       tenantId: 0,
       name: 'Name',
       skillProficiencySet: [],
       contract: twoEmployees.contractList[0],
+      covidRiskType: 'INOCULATED',
     };
     const result4 = employeesPage.isDataComplete(completed);
     expect(result4).toEqual(true);
@@ -190,11 +194,12 @@ describe('Employees page', () => {
 
   it('should treat empty name as invalid', () => {
     const employeesPage = new EmployeesPage(twoEmployees);
-    const noName = {
+    const noName: Employee = {
       tenantId: 0,
       name: '',
       skillProficiencySet: [],
       contract: twoEmployees.contractList[0],
+      covidRiskType: 'INOCULATED',
     };
     const result1 = employeesPage.isValid(noName);
     expect(result1).toEqual(false);
@@ -245,6 +250,7 @@ const twoEmployees: Props = {
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
     },
+    covidRiskType: 'INOCULATED',
   },
   {
     id: 1,
@@ -262,6 +268,7 @@ const twoEmployees: Props = {
       maximumMinutesPerMonth: null,
       maximumMinutesPerYear: null,
     },
+    covidRiskType: 'INOCULATED',
   }],
   skillList: [{ tenantId: 0, name: 'Skill 1' }, { tenantId: 0, name: 'Skill 2' }],
   contractList: [

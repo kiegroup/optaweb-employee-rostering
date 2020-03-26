@@ -94,6 +94,7 @@ public class SpotService extends AbstractRestService {
 
         oldSpot.setName(newSpot.getName());
         oldSpot.setRequiredSkillSet(newSpot.getRequiredSkillSet());
+        oldSpot.setCovidWard(newSpot.isCovidWard());
         return spotRepository.save(oldSpot);
     }
 }
