@@ -43,6 +43,7 @@ import org.optaplanner.core.config.solver.termination.TerminationConfig;
 import org.optaplanner.test.impl.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreVerifier;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
@@ -128,7 +129,7 @@ public class SolverTest {
         assertFalse(roster.getShiftList().isEmpty());
         assertTrue(roster.getShiftList().stream().anyMatch(s -> s.getEmployee() != null));
     }
-    
+
     // A solver "integration" test that verify it moves only draft shifts
     @Test(timeout = 600000)
     public void testMoveOnlyDraftShifts() {
@@ -144,17 +145,19 @@ public class SolverTest {
         RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
 
         Contract contract = getDefaultContract(idGenerator);
-        
+
         Skill skill = new Skill(TENANT_ID, "Skill");
         skill.setId(idGenerator.getAndIncrement());
 
-        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
+                                          CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
-        
-        Employee employeeB = new Employee(TENANT_ID, "Bill", contract, Collections.singleton(skill));
+
+        Employee employeeB = new Employee(TENANT_ID, "Bill", contract, Collections.singleton(skill),
+                                          CovidRiskType.INOCULATED);
         employeeB.setId(idGenerator.getAndIncrement());
 
-        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.singleton(skill));
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.singleton(skill), false);
         spotA.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(rosterState.getFirstPublishedDate().atTime(9, 0),
@@ -176,14 +179,14 @@ public class SolverTest {
         roster.setRosterParametrization(rosterParametrization);
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
-        
+
         roster = solver.solve(roster);
         assertTrue(roster.getShiftList().stream()
-                   .filter(s -> !rosterState.isDraft(s))
-                   .allMatch(s -> s.getEmployee().equals(employeeA)));
+                           .filter(s -> !rosterState.isDraft(s))
+                           .allMatch(s -> s.getEmployee().equals(employeeA)));
         assertTrue(roster.getShiftList().stream()
-                   .filter(rosterState::isDraft)
-                   .allMatch(s -> s.getEmployee().equals(employeeB)));
+                           .filter(rosterState::isDraft)
+                           .allMatch(s -> s.getEmployee().equals(employeeB)));
     }
 
     private void testContractConstraint(ContractField contractField) {
@@ -199,10 +202,11 @@ public class SolverTest {
         RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
 
         Contract contract = contractField.getContract(idGenerator);
-        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
+                                          CovidRiskType.INOCULATED);
 
         employeeA.setId(idGenerator.getAndIncrement());
-        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
         spotA.setId(idGenerator.getAndIncrement());
 
         LocalDate firstDayOfWeek = START_DATE.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -272,11 +276,12 @@ public class SolverTest {
         skillA.setId(idGenerator.getAndIncrement());
         skillB.setId(idGenerator.getAndIncrement());
 
-        Spot spotA = new Spot(TENANT_ID, "Spot A", new HashSet<>(Arrays.asList(skillA, skillB)));
+        Spot spotA = new Spot(TENANT_ID, "Spot A", new HashSet<>(Arrays.asList(skillA, skillB)), false);
         spotA.setId(idGenerator.getAndIncrement());
 
         Contract contract = getDefaultContract(idGenerator);
-        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
+                                          CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
@@ -323,10 +328,11 @@ public class SolverTest {
 
         Contract contract = getDefaultContract(idGenerator);
 
-        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
+                                          CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
-        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
         spotA.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
@@ -407,10 +413,11 @@ public class SolverTest {
 
         Contract contract = getDefaultContract(idGenerator);
 
-        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
+                                          CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
-        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
         spotA.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
@@ -466,10 +473,11 @@ public class SolverTest {
 
         Contract contract = getDefaultContract(idGenerator);
 
-        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
+                                          CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
-        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
         spotA.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
@@ -534,10 +542,11 @@ public class SolverTest {
 
         Contract contract = getDefaultContract(idGenerator);
 
-        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
+                                          CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
 
-        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet());
+        Spot spotA = new Spot(TENANT_ID, "Spot", Collections.emptySet(), false);
         spotA.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);
@@ -587,13 +596,15 @@ public class SolverTest {
         RosterState rosterState = getRosterState(idGenerator);
         RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
 
-        Spot spotA = new Spot(TENANT_ID, "Spot A", Collections.emptySet());
+        Spot spotA = new Spot(TENANT_ID, "Spot A", Collections.emptySet(), false);
         spotA.setId(idGenerator.getAndIncrement());
 
         Contract contract = getDefaultContract(idGenerator);
-        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet());
+        Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
+                                          CovidRiskType.INOCULATED);
         employeeA.setId(idGenerator.getAndIncrement());
-        Employee rotationEmployee = new Employee(TENANT_ID, "Anna", contract, Collections.emptySet());
+        Employee rotationEmployee = new Employee(TENANT_ID, "Anna", contract, Collections.emptySet(),
+                                                 CovidRiskType.INOCULATED);
         rotationEmployee.setId(idGenerator.getAndIncrement());
 
         OffsetDateTime firstDateTime = OffsetDateTime.of(START_DATE, LocalTime.MIDNIGHT, ZoneOffset.UTC);

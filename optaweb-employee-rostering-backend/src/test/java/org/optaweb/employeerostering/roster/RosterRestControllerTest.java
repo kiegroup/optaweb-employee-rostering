@@ -30,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
+import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
@@ -160,7 +161,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     }
 
     private Spot addSpot(String name) {
-        SpotView spotView = new SpotView(TENANT_ID, name, Collections.emptySet());
+        SpotView spotView = new SpotView(TENANT_ID, name, Collections.emptySet(), false);
         return restTemplate.postForEntity(spotPathURI + "add", spotView, Spot.class, TENANT_ID).getBody();
     }
 
@@ -170,7 +171,7 @@ public class RosterRestControllerTest extends AbstractEntityRequireTenantRestSer
     }
 
     private Employee addEmployee(String name, Contract contract) {
-        Employee employee = new Employee(TENANT_ID, name, contract, Collections.emptySet());
+        Employee employee = new Employee(TENANT_ID, name, contract, Collections.emptySet(), CovidRiskType.INOCULATED);
         return restTemplate.postForEntity(employeePathURI + "add", employee, Employee.class, TENANT_ID).getBody();
     }
 

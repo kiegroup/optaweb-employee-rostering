@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
+import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeView;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
@@ -77,7 +78,7 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
     private EmployeeService employeeService;
 
     private Spot createSpot(Integer tenantId, String name) {
-        SpotView spotView = new SpotView(tenantId, name, Collections.emptySet());
+        SpotView spotView = new SpotView(tenantId, name, Collections.emptySet(), false);
         return spotService.createSpot(tenantId, spotView);
     }
 
@@ -87,7 +88,8 @@ public class ShiftServiceTest extends AbstractEntityRequireTenantRestServiceTest
     }
 
     private Employee createEmployee(Integer tenantId, String name, Contract contract) {
-        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(tenantId, name, contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         return employeeService.createEmployee(tenantId, employeeView);
     }
 

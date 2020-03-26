@@ -40,6 +40,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.optaweb.employeerostering.domain.contract.Contract;
+import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
@@ -391,6 +392,7 @@ public class RosterGenerator implements ApplicationRunner {
 
     /**
      * For benchmark only
+     *
      * @param entityManager never null
      */
     public RosterGenerator(EntityManager entityManager) {
@@ -429,7 +431,9 @@ public class RosterGenerator implements ApplicationRunner {
             case DEMO_DATA:
                 tenantNameGenerator.predictMaximumSizeAndReset(12);
                 generateRoster(10, 7, hospitalGeneratorType, zoneId);
-                generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(20, 7 * 4, hospitalGeneratorType, zoneId);
+                generateRoster(30, 7 * 2, hospitalGeneratorType, zoneId);
+               /* generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
                 generateRoster(10, 7, guardSecurityGeneratorType, zoneId);
                 generateRoster(10, 7, callCenterGeneratorType, zoneId);
                 generateRoster(10, 7, postOfficeGeneratorType, zoneId);
@@ -440,7 +444,7 @@ public class RosterGenerator implements ApplicationRunner {
                 generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
                 generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
                 generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
-                generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
+                generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);*/
         }
     }
 
@@ -543,7 +547,8 @@ public class RosterGenerator implements ApplicationRunner {
         for (int i = 0; i < size; i++) {
             String name = generatorType.spotNameGenerator.generateNextValue();
             Set<Skill> requiredSkillSet = new HashSet<>(extractRandomSubList(skillList, 0.5, 0.9, 1.0));
-            Spot spot = new Spot(tenantId, name, requiredSkillSet);
+            boolean isCovidWard = random.nextDouble() < 0.1;
+            Spot spot = new Spot(tenantId, name, requiredSkillSet, isCovidWard);
             entityManager.persist(spot);
             spotList.add(spot);
         }
@@ -578,9 +583,10 @@ public class RosterGenerator implements ApplicationRunner {
             String name = employeeNameGenerator.generateNextValue();
             HashSet<Skill> skillProficiencySet = new HashSet<>(extractRandomSubList(generalSkillList,
                                                                                     0.1, 0.3, 0.5, 0.7, 0.9, 1.0));
+            CovidRiskType covidRisk = extractRandomElement(Arrays.asList(CovidRiskType.values()));
             Employee employee = new Employee(tenantId, name,
                                              contractList.get(generateRandomIntFromThresholds(0.7, 0.5)),
-                                             skillProficiencySet);
+                                             skillProficiencySet, covidRisk);
             entityManager.persist(employee);
             employeeList.add(employee);
         }

@@ -67,7 +67,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
     private SpotService spotService;
 
     private Spot createSpot(Integer tenantId, String name, Set<Skill> requiredSkillSet) {
-        SpotView spotView = new SpotView(tenantId, name, requiredSkillSet);
+        SpotView spotView = new SpotView(tenantId, name, requiredSkillSet, false);
         return spotService.createSpot(tenantId, spotView);
     }
 

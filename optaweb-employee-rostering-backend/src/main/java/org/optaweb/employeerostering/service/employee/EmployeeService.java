@@ -58,7 +58,7 @@ public class EmployeeService extends AbstractRestService {
     public Employee convertFromEmployeeView(Integer tenantId, EmployeeView employeeView) {
         validateTenantIdParameter(tenantId, employeeView);
         Employee employee = new Employee(tenantId, employeeView.getName(), employeeView.getContract(),
-                                         employeeView.getSkillProficiencySet());
+                                         employeeView.getSkillProficiencySet(), employeeView.getCovidRiskType());
         employee.setId(employeeView.getId());
         employee.setVersion(employeeView.getVersion());
         return employee;

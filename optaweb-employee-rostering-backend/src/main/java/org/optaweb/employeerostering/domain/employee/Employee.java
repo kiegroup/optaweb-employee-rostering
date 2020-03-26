@@ -56,15 +56,19 @@ public class Employee extends AbstractPersistable {
     )
     private Set<Skill> skillProficiencySet;
 
+    private CovidRiskType covidRiskType;
+
     @SuppressWarnings("unused")
     public Employee() {
     }
 
-    public Employee(Integer tenantId, String name, Contract contract, Set<Skill> skillProficiencySet) {
+    public Employee(Integer tenantId, String name, Contract contract,
+                    Set<Skill> skillProficiencySet, CovidRiskType covidRiskType) {
         super(tenantId);
         this.name = name;
         this.contract = contract;
         this.skillProficiencySet = skillProficiencySet;
+        this.covidRiskType = covidRiskType;
     }
 
     public boolean hasSkill(Skill skill) {
@@ -108,13 +112,22 @@ public class Employee extends AbstractPersistable {
         this.contract = contract;
     }
 
+    public CovidRiskType getCovidRiskType() {
+        return covidRiskType;
+    }
+
+    public void setCovidRiskType(CovidRiskType covidRiskType) {
+        this.covidRiskType = covidRiskType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o instanceof Employee) {
             Employee other = (Employee) o;
             return this.name.equals(other.getName()) &&
                     this.contract.equals(other.getContract()) &&
-                    this.skillProficiencySet.equals(other.getSkillProficiencySet());
+                    this.skillProficiencySet.equals(other.getSkillProficiencySet()) &&
+                    this.covidRiskType.equals(other.covidRiskType);
         } else {
             return false;
         }
@@ -122,6 +135,7 @@ public class Employee extends AbstractPersistable {
 
     @Override
     public int hashCode() {
-        return 31 * ((31 * name.hashCode()) ^ contract.hashCode()) ^ skillProficiencySet.hashCode();
+        return 31 * (31 * ((31 * name.hashCode()) ^ contract.hashCode())
+                ^ skillProficiencySet.hashCode()) ^ covidRiskType.hashCode();
     }
 }
