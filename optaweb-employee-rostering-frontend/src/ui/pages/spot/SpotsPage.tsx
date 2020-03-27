@@ -29,6 +29,7 @@ import { stringSorter } from 'util/CommonSorters';
 import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
+import { StatefulTypeaheadSelectInput } from 'ui/components/TypeaheadSelectInput';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
@@ -38,7 +39,7 @@ interface StateProps extends DataTableProps<Spot> {
 const mapStateToProps = (state: AppState, ownProps: Props): StateProps => ({
   ...ownProps,
   title: ownProps.t('spots'),
-  columnTitles: [ownProps.t('name'), ownProps.t('requiredSkillSet')],
+  columnTitles: [ownProps.t('name'), ownProps.t('requiredSkillSet'), ownProps.t('covidWard')],
   tableData: spotSelectors.getSpotList(state),
   skillList: skillSelectors.getSkillList(state),
   tenantId: state.tenantData.currentTenantId,
@@ -79,12 +80,16 @@ export class SpotsPage extends DataTable<Spot, Props> {
           </Chip>
         ))}
       </ChipGroup>,
+      <Text key={2}>
+        {data.covidWard ? 'Yes' : 'No' }
+      </Text>,
     ];
   }
 
   getInitialStateForNewRow(): Partial<Spot> {
     return {
       requiredSkillSet: [],
+      covidWard: false,
     };
   }
 
@@ -105,16 +110,25 @@ export class SpotsPage extends DataTable<Spot, Props> {
         value={data.requiredSkillSet ? data.requiredSkillSet : []}
         onChange={selected => setProperty('requiredSkillSet', selected)}
       />,
+      <StatefulTypeaheadSelectInput
+        key={3}
+        emptyText=""
+        optionToStringMap={isCovid => (isCovid ? 'Ward has COVID-19' : 'Ward does not has COVID-19')}
+        value={data.covidWard}
+        options={[true, false]}
+        onChange={covidWard => setProperty('covidWard', covidWard)}
+      />,
     ];
   }
 
   isDataComplete(editedValue: ReadonlyPartial<Spot>): editedValue is Spot {
     return editedValue.name !== undefined
-      && editedValue.requiredSkillSet !== undefined;
+      && editedValue.requiredSkillSet !== undefined
+      && editedValue.covidWard !== undefined;
   }
 
   isValid(editedValue: Spot): boolean {
-    return editedValue.name.trim().length > 0;
+    return editedValue.name.trim().length > 0 && editedValue.covidWard !== undefined;
   }
 
   getFilter(): (filter: string) => Predicate<Spot> {
@@ -123,11 +137,11 @@ export class SpotsPage extends DataTable<Spot, Props> {
   }
 
   getSorters(): (Sorter<Spot> | null)[] {
-    return [stringSorter(s => s.name), null];
+    return [stringSorter(s => s.name), null, null];
   }
 
   updateData(data: Spot): void {
-    this.props.updateSpot(data);
+    this.props.updateSpot({ ...data });
   }
 
   addData(data: Spot): void {

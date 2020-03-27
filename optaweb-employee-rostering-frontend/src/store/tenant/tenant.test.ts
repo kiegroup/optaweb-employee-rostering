@@ -228,6 +228,7 @@ describe('Tenant operations', () => {
             name: 'Amy',
             contract: 0,
             skillProficiencySet: [],
+            covidRiskType: 'INOCULATED',
           }],
         ]),
       },

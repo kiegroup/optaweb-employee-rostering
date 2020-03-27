@@ -45,6 +45,7 @@ const mockShiftRoster: ShiftRosterView = {
     version: 0,
     name: 'Spot',
     requiredSkillSet: [],
+    covidWard: false,
   }],
   employeeList: [
     {
@@ -63,6 +64,7 @@ const mockShiftRoster: ShiftRosterView = {
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
       },
+      covidRiskType: 'INOCULATED',
     },
   ],
   rosterState: {
@@ -111,6 +113,7 @@ const mockAvailabilityRoster: AvailabilityRosterView = {
     version: 0,
     name: 'Spot',
     requiredSkillSet: [],
+    covidWard: false,
   }],
   employeeList: [
     {
@@ -129,6 +132,7 @@ const mockAvailabilityRoster: AvailabilityRosterView = {
         maximumMinutesPerMonth: null,
         maximumMinutesPerYear: null,
       },
+      covidRiskType: 'INOCULATED',
     },
   ],
   rosterState: {
@@ -1033,6 +1037,7 @@ describe('Roster selectors', () => {
               maximumMinutesPerMonth: null,
               maximumMinutesPerYear: null,
             },
+            covidRiskType: 'INOCULATED',
           },
           rotationEmployee: null,
           indictmentScore: {
@@ -1052,6 +1057,7 @@ describe('Roster selectors', () => {
       version: 0,
       name: 'Missing Spot',
       requiredSkillSet: [],
+      covidWard: false,
     }))
       .toEqual([]);
   });
@@ -1119,6 +1125,7 @@ describe('Roster selectors', () => {
               maximumMinutesPerMonth: null,
               maximumMinutesPerYear: null,
             },
+            covidRiskType: 'INOCULATED',
           },
           rotationEmployee: null,
           indictmentScore: {
@@ -1147,6 +1154,7 @@ describe('Roster selectors', () => {
         maximumMinutesPerWeek: null,
         maximumMinutesPerYear: null,
       },
+      covidRiskType: 'INOCULATED',
     }))
       .toEqual([]);
   });
@@ -1213,6 +1221,7 @@ describe('Roster selectors', () => {
               maximumMinutesPerMonth: null,
               maximumMinutesPerYear: null,
             },
+            covidRiskType: 'INOCULATED',
           },
           state: 'DESIRED',
         },
@@ -1235,6 +1244,7 @@ describe('Roster selectors', () => {
         maximumMinutesPerWeek: null,
         maximumMinutesPerYear: null,
       },
+      covidRiskType: 'INOCULATED',
     }))
       .toEqual([]);
   });
@@ -1256,6 +1266,7 @@ const state: AppState = {
         name: 'Employee',
         skillProficiencySet: [],
         contract: 30,
+        covidRiskType: 'INOCULATED',
       },
     ]]),
   },
@@ -1283,6 +1294,7 @@ const state: AppState = {
         version: 0,
         name: 'Spot',
         requiredSkillSet: [],
+        covidWard: false,
       },
     ]]),
   },

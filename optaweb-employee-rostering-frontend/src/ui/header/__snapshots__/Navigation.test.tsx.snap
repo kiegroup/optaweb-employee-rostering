@@ -23,13 +23,13 @@ exports[`Navigation should activate a navigation link matching the current path 
     </NavItem>
     <NavItem
       isActive={false}
-      itemId="spots"
-      key="spots"
+      itemId="wards"
+      key="wards"
     >
       <Link
-        to="/0/spots"
+        to="/0/wards"
       >
-        Trans(i18nKey=spots)
+        Trans(i18nKey=wards)
       </Link>
     </NavItem>
     <NavItem

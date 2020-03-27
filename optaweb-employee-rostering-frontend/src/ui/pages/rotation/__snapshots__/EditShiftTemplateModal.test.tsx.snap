@@ -48,6 +48,7 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
         options={
           Array [
             Object {
+              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -129,6 +130,7 @@ exports[`Edit Shift Template Modal should render correctly when closed 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -198,6 +200,7 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
         options={
           Array [
             Object {
+              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -279,6 +282,7 @@ exports[`Edit Shift Template Modal should render correctly when opened 1`] = `
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -355,6 +359,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
         options={
           Array [
             Object {
+              "covidWard": false,
               "id": 2,
               "name": "Spot",
               "requiredSkillSet": Array [
@@ -372,6 +377,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
         }
         value={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -456,6 +462,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
                 "tenantId": 0,
                 "version": 0,
               },
+              "covidRiskType": "INOCULATED",
               "id": 4,
               "name": "Employee 1",
               "skillProficiencySet": Array [
@@ -483,6 +490,7 @@ exports[`Edit Shift Template Modal should render correctly with a shift template
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [

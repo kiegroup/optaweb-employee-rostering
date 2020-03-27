@@ -16,6 +16,7 @@ exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
             "tenantId": 0,
             "version": 0,
           },
+          "covidRiskType": "INOCULATED",
           "id": 4,
           "name": "Employee 1",
           "skillProficiencySet": Array [
@@ -49,6 +50,7 @@ exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
             "tenantId": 0,
             "version": 0,
           },
+          "covidRiskType": "INOCULATED",
           "id": 4,
           "name": "Employee 1",
           "skillProficiencySet": Array [
@@ -82,6 +84,7 @@ exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
             "tenantId": 0,
             "version": 0,
           },
+          "covidRiskType": "INOCULATED",
           "id": 4,
           "name": "Employee 1",
           "skillProficiencySet": Array [
@@ -115,6 +118,7 @@ exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
             "tenantId": 0,
             "version": 0,
           },
+          "covidRiskType": "INOCULATED",
           "id": 4,
           "name": "Employee 1",
           "skillProficiencySet": Array [
@@ -151,6 +155,7 @@ exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -188,6 +193,7 @@ exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -206,6 +212,7 @@ exports[`ShiftEvent getContractMinutesViolations should render correctly 1`] = `
   shiftEmployeeConflictList={Array []}
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -276,6 +283,7 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -315,6 +323,7 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -348,6 +357,7 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -364,6 +374,7 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -399,6 +410,7 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -436,6 +448,7 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -454,6 +467,7 @@ exports[`ShiftEvent getDesiredTimeslotForEmployeeReward should render correctly 
   shiftEmployeeConflictList={Array []}
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -501,6 +515,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -547,6 +562,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -580,6 +596,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -596,6 +613,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -631,6 +649,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -667,6 +686,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -700,6 +720,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -716,6 +737,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -742,6 +764,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
   shiftEmployeeConflictList={Array []}
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -790,6 +813,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -836,6 +860,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -869,6 +894,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -885,6 +911,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -920,6 +947,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -956,6 +984,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -989,6 +1018,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -1005,6 +1035,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -1031,6 +1062,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -1085,6 +1117,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -1131,6 +1164,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -1164,6 +1198,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -1180,6 +1215,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -1215,6 +1251,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -1251,6 +1288,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -1284,6 +1322,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -1300,6 +1339,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -1326,6 +1366,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -1362,6 +1403,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -1408,6 +1450,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -1441,6 +1484,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -1457,6 +1501,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -1492,6 +1537,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -1528,6 +1574,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -1561,6 +1608,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -1577,6 +1625,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -1603,6 +1652,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -1639,6 +1689,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -1685,6 +1736,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -1718,6 +1770,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -1734,6 +1787,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -1769,6 +1823,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -1805,6 +1860,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -1838,6 +1894,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -1854,6 +1911,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -1880,6 +1938,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -1916,6 +1975,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -1962,6 +2022,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -1995,6 +2056,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -2011,6 +2073,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -2046,6 +2109,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -2082,6 +2146,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -2115,6 +2180,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -2131,6 +2197,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -2157,6 +2224,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -2193,6 +2261,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -2239,6 +2308,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -2272,6 +2342,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -2288,6 +2359,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -2323,6 +2395,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -2359,6 +2432,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -2392,6 +2466,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -2408,6 +2483,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -2434,6 +2510,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -2478,6 +2555,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -2524,6 +2602,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -2557,6 +2636,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -2573,6 +2653,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -2608,6 +2689,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -2644,6 +2726,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -2677,6 +2760,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -2693,6 +2777,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -2719,6 +2804,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -2755,6 +2841,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -2801,6 +2888,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -2834,6 +2922,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -2850,6 +2939,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -2885,6 +2975,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -2921,6 +3012,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 4,
                   "name": "Employee 1",
                   "skillProficiencySet": Array [
@@ -2954,6 +3046,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                     "tenantId": 0,
                     "version": 0,
                   },
+                  "covidRiskType": "INOCULATED",
                   "id": 7,
                   "name": "Rotation Employee",
                   "skillProficiencySet": Array [
@@ -2970,6 +3063,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
                 "rotationViolationPenaltyList": Array [],
                 "shiftEmployeeConflictList": Array [],
                 "spot": Object {
+                  "covidWard": false,
                   "id": 2,
                   "name": "Spot",
                   "requiredSkillSet": Array [
@@ -2996,6 +3090,7 @@ exports[`ShiftEvent getIndictments should render correctly with indictments 1`] 
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -3038,6 +3133,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -3075,6 +3171,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -3093,6 +3190,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
   shiftEmployeeConflictList={Array []}
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -3141,6 +3239,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -3178,6 +3277,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -3196,6 +3296,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -3232,6 +3333,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -3269,6 +3371,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -3287,6 +3390,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -3323,6 +3427,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -3360,6 +3465,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -3378,6 +3484,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -3414,6 +3521,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -3451,6 +3559,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -3469,6 +3578,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -3505,6 +3615,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -3542,6 +3653,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -3560,6 +3672,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -3596,6 +3709,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -3633,6 +3747,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -3651,6 +3766,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -3687,6 +3803,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -3724,6 +3841,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -3742,6 +3860,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -3778,6 +3897,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -3815,6 +3935,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -3833,6 +3954,7 @@ exports[`ShiftEvent getIndictments should render correctly with no indictments 1
         shiftEmployeeConflictList={Array []}
         spot={
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -3875,6 +3997,7 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -3921,6 +4044,7 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -3954,6 +4078,7 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -3970,6 +4095,7 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -4005,6 +4131,7 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -4023,6 +4150,7 @@ exports[`ShiftEvent getRequiredSkillViolations should render correctly 1`] = `
   shiftEmployeeConflictList={Array []}
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -4080,6 +4208,7 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -4117,6 +4246,7 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -4153,6 +4283,7 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -4186,6 +4317,7 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -4202,6 +4334,7 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -4228,6 +4361,7 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
   shiftEmployeeConflictList={Array []}
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -4285,6 +4419,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -4322,6 +4457,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -4354,6 +4490,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -4387,6 +4524,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -4403,6 +4541,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -4437,6 +4576,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -4470,6 +4610,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -4486,6 +4627,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -4527,6 +4669,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -4560,6 +4703,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -4576,6 +4720,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -4610,6 +4755,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -4643,6 +4789,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -4659,6 +4806,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -4689,6 +4837,7 @@ exports[`ShiftEvent getShiftEmployeeConflictViolations should render correctly 1
   }
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -4743,6 +4892,7 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -4780,6 +4930,7 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -4798,6 +4949,7 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
   shiftEmployeeConflictList={Array []}
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -4836,6 +4988,7 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -4869,6 +5022,7 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -4885,6 +5039,7 @@ exports[`ShiftEvent getUnassignedShiftPenalties should render correctly 1`] = `
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -4938,6 +5093,7 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -4975,6 +5131,7 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -4993,6 +5150,7 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
   shiftEmployeeConflictList={Array []}
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -5025,6 +5183,7 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -5064,6 +5223,7 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -5097,6 +5257,7 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -5113,6 +5274,7 @@ exports[`ShiftEvent getUnavaliableEmployeeViolations should render correctly 1`]
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -5165,6 +5327,7 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 4,
       "name": "Employee 1",
       "skillProficiencySet": Array [
@@ -5202,6 +5365,7 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
         "tenantId": 0,
         "version": 0,
       },
+      "covidRiskType": "INOCULATED",
       "id": 7,
       "name": "Rotation Employee",
       "skillProficiencySet": Array [
@@ -5220,6 +5384,7 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
   shiftEmployeeConflictList={Array []}
   spot={
     Object {
+      "covidWard": false,
       "id": 2,
       "name": "Spot",
       "requiredSkillSet": Array [
@@ -5253,6 +5418,7 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -5292,6 +5458,7 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -5325,6 +5492,7 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -5341,6 +5509,7 @@ exports[`ShiftEvent getUndesiredTimeslotForEmployeePenalties should render corre
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -5438,6 +5607,7 @@ exports[`ShiftEvent should render ShiftPopupBody correctly 1`] = `
           "tenantId": 0,
           "version": 0,
         },
+        "covidRiskType": "INOCULATED",
         "id": 4,
         "name": "Employee 1",
         "skillProficiencySet": Array [
@@ -5475,6 +5645,7 @@ exports[`ShiftEvent should render ShiftPopupBody correctly 1`] = `
           "tenantId": 0,
           "version": 0,
         },
+        "covidRiskType": "INOCULATED",
         "id": 7,
         "name": "Rotation Employee",
         "skillProficiencySet": Array [
@@ -5493,6 +5664,7 @@ exports[`ShiftEvent should render ShiftPopupBody correctly 1`] = `
     shiftEmployeeConflictList={Array []}
     spot={
       Object {
+        "covidWard": false,
         "id": 2,
         "name": "Spot",
         "requiredSkillSet": Array [

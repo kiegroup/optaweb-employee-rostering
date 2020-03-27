@@ -11,8 +11,8 @@ employees: Employees
 rotationEmployee: Rotation Employee
 unassigned: Unassigned
 skills: Skills
-spot: Spot
-spots: Spots
+spot: Ward
+spots: Wards
 contract: Contract
 contracts: Contracts
 tenants: Tenants
@@ -20,7 +20,7 @@ publish: Publish
 schedule: Schedule
 terminateEarly: Terminate Early
 
-selectSpot: Select a Spot...
+selectSpot: Select a Ward...
 selectEmployee: Select an Employee...
 
 EmployeeAvailabilityState:

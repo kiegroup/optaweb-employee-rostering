@@ -13,12 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.optaweb.employeerostering.domain.employee;
 
-import { DomainObject } from './DomainObject';
-import { Skill } from './Skill';
-
-export interface Spot extends DomainObject {
-  name: string;
-  requiredSkillSet: Skill[];
-  covidWard: boolean;
+public enum CovidRiskType {
+    INOCULATED,
+    LOW,
+    MODERATE,
+    HIGH,
+    EXTREME
 }
+

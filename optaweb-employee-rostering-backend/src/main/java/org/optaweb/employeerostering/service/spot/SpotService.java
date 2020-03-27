@@ -39,7 +39,7 @@ public class SpotService extends AbstractRestService {
 
     public Spot convertFromView(Integer tenantId, SpotView spotView) {
         validateTenantIdParameter(tenantId, spotView);
-        Spot spot = new Spot(tenantId, spotView.getName(), spotView.getRequiredSkillSet());
+        Spot spot = new Spot(tenantId, spotView.getName(), spotView.getRequiredSkillSet(), spotView.isCovidWard());
         spot.setId(spotView.getId());
         spot.setVersion(spotView.getVersion());
         return spot;
@@ -94,6 +94,7 @@ public class SpotService extends AbstractRestService {
 
         oldSpot.setName(newSpot.getName());
         oldSpot.setRequiredSkillSet(newSpot.getRequiredSkillSet());
+        oldSpot.setCovidWard(newSpot.isCovidWard());
         return spotRepository.save(oldSpot);
     }
 }

@@ -2,7 +2,7 @@
 indictments: Indictments
 
 missingRequiredSkills: The Employee "{{employee}}" does not have the following skills
-  which are required for the Spot "spot"
+  which are required for the Ward "{{spot}}"
 
 exceededContractMaximumMinutes: The Employee "{{employee}}" have exceeded their maximum
   {{durationly}} minutes. They have worked {{minutesWorked}} this {{duration}}; they

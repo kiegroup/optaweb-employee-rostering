@@ -206,7 +206,7 @@ export class RotationPage extends React.Component<Props & WithTranslation, State
                 key={2}
                 aria-label="Spots Page"
                 variant="primary"
-                onClick={() => this.props.history.push(`/${this.props.tenantId}/spots`)}
+                onClick={() => this.props.history.push(`/${this.props.tenantId}/wards`)}
               />,
             ]}
           />

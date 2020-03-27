@@ -537,6 +537,7 @@ const spot: Spot = {
       name: 'Skill',
     },
   ],
+  covidWard: false,
 };
 
 const employee: Employee = {
@@ -560,6 +561,7 @@ const employee: Employee = {
     version: 0,
     name: 'Not Required Skill',
   }],
+  covidRiskType: 'INOCULATED',
 };
 
 const newEmployee: Employee = {

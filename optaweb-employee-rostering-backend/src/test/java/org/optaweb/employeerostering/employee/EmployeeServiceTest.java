@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.contract.Contract;
 import org.optaweb.employeerostering.domain.contract.view.ContractView;
+import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.domain.employee.view.EmployeeAvailabilityView;
@@ -85,15 +86,6 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         return contractService.createContract(tenantId, contractView);
     }
 
-    private EmployeeAvailabilityView createEmployeeAvailability(Integer tenantId, Employee employee,
-                                                                LocalDateTime startDateTime, LocalDateTime endDateTime,
-                                                                EmployeeAvailabilityState state) {
-        EmployeeAvailabilityView employeeAvailabilityView = new EmployeeAvailabilityView(tenantId, employee,
-                                                                                         startDateTime, endDateTime,
-                                                                                         state);
-        return employeeService.createEmployeeAvailability(tenantId, employeeAvailabilityView);
-    }
-
     @Before
     public void setup() {
         createTestTenant();
@@ -128,7 +120,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet,
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -170,7 +163,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet,
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -193,7 +187,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet,
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -231,7 +226,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet,
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -254,7 +250,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet,
+                                                     CovidRiskType.INOCULATED);
         String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -285,7 +282,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet,
+                                                     CovidRiskType.INOCULATED);
         String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -311,7 +309,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet,
+                                                     CovidRiskType.INOCULATED);
         String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -335,10 +334,12 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
-        EmployeeView updatedEmployee = new EmployeeView(TENANT_ID, "updatedEmployee", contract, testSkillSet);
+        EmployeeView updatedEmployee = new EmployeeView(TENANT_ID, "updatedEmployee", contract, testSkillSet,
+                                                        CovidRiskType.INOCULATED);
         updatedEmployee.setId(employee.getId());
         String body = (new ObjectMapper()).writeValueAsString(updatedEmployee);
 
@@ -370,10 +371,12 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet);
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, testSkillSet,
+                                                     CovidRiskType.INOCULATED);
         employeeService.createEmployee(TENANT_ID, employeeView);
 
-        EmployeeView updatedEmployee = new EmployeeView(TENANT_ID, "updatedEmployee", contract, testSkillSet);
+        EmployeeView updatedEmployee = new EmployeeView(TENANT_ID, "updatedEmployee", contract, testSkillSet,
+                                                        CovidRiskType.INOCULATED);
         String body = (new ObjectMapper()).writeValueAsString(updatedEmployee);
 
         mvc.perform(MockMvcRequestBuilders
@@ -393,7 +396,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = new Contract();
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         employeeView.setId(0L);
         String body = (new ObjectMapper()).writeValueAsString(employeeView);
 
@@ -422,10 +426,12 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
         Contract contractA = createContract(TENANT_ID, "A");
         Contract contractB = createContract(0, "B");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contractA, testSkillSet);
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contractA, testSkillSet,
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
-        EmployeeView updatedEmployee = new EmployeeView(0, "updatedEmployee", contractB, Collections.emptySet());
+        EmployeeView updatedEmployee = new EmployeeView(0, "updatedEmployee", contractB, Collections.emptySet(),
+                                                        CovidRiskType.INOCULATED);
         updatedEmployee.setId(employee.getId());
         String body = (new ObjectMapper()).writeValueAsString(updatedEmployee);
 
@@ -447,7 +453,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
     public void getEmployeeAvailabilityTest() throws Exception {
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
@@ -494,7 +501,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
@@ -520,7 +528,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
     public void deleteEmployeeAvailabilityTest() throws Exception {
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
@@ -561,7 +570,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
@@ -587,7 +597,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
     public void createEmployeeAvailabilityTest() throws Exception {
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
@@ -616,7 +627,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
     public void createNonMatchingEmployeeAvailabilityTest() throws Exception {
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
@@ -647,7 +659,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
     public void updateEmployeeAvailabilityTest() throws Exception {
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
@@ -684,7 +697,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
     public void updateNonMatchingEmployeeAvailabilityTest() throws Exception {
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);
@@ -727,7 +741,8 @@ public class EmployeeServiceTest extends AbstractEntityRequireTenantRestServiceT
 
         Contract contract = createContract(TENANT_ID, "contract");
 
-        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet());
+        EmployeeView employeeView = new EmployeeView(TENANT_ID, "employee", contract, Collections.emptySet(),
+                                                     CovidRiskType.INOCULATED);
         Employee employee = employeeService.createEmployee(TENANT_ID, employeeView);
 
         LocalDateTime startDateTime = LocalDateTime.of(1999, 12, 31, 23, 59);

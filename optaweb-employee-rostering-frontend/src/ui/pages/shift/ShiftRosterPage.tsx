@@ -230,9 +230,9 @@ export class ShiftRosterPage extends React.Component<Props, State> {
               <EmptyStateBody key={1} />,
               <Button
                 key={2}
-                aria-label="Spots Page"
+                aria-label="Wards Page"
                 variant="primary"
-                onClick={() => this.props.history.push(`/${this.props.tenantId}/spots`)}
+                onClick={() => this.props.history.push(`/${this.props.tenantId}/wards`)}
               />,
             ]}
           />

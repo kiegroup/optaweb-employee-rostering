@@ -36,6 +36,7 @@ describe('Spot operations', () => {
       version: 0,
       name: 'Spot 1',
       requiredSkillSet: [],
+      covidWard: false,
     },
     {
       tenantId,
@@ -43,6 +44,7 @@ describe('Spot operations', () => {
       version: 0,
       name: 'Spot 2',
       requiredSkillSet: [{ tenantId, name: 'Skill 1', id: 1, version: 0 }],
+      covidWard: false,
     },
     {
       tenantId,
@@ -51,6 +53,7 @@ describe('Spot operations', () => {
       name: 'Spot 3',
       requiredSkillSet: [{ tenantId, name: 'Skill 1', id: 1, version: 0 },
         { tenantId, name: 'Skill 2', id: 2, version: 0 }],
+      covidWard: false,
     }];
 
     onGet(`/tenant/${tenantId}/spot/`, mockSpotList);
@@ -74,6 +77,7 @@ describe('Spot operations', () => {
       version: 0,
       name: 'Spot 1',
       requiredSkillSet: [],
+      covidWard: false,
     };
     onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, true);
     await store.dispatch(spotOperations.removeSpot(spotToDelete));
@@ -95,6 +99,7 @@ describe('Spot operations', () => {
       version: 0,
       name: 'Spot 1',
       requiredSkillSet: [],
+      covidWard: false,
     };
 
     onDelete(`/tenant/${tenantId}/spot/${spotToDelete.id}`, false);
@@ -108,7 +113,7 @@ describe('Spot operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
 
-    const spotToAdd: Spot = { tenantId, name: 'New Spot', requiredSkillSet: [] };
+    const spotToAdd: Spot = { tenantId, name: 'New Spot', requiredSkillSet: [], covidWard: false };
     const spotWithUpdatedId: Spot = { ...spotToAdd, id: 4, version: 0 };
     onPost(`/tenant/${tenantId}/spot/add`, spotToAdd, spotWithUpdatedId);
     await store.dispatch(spotOperations.addSpot(spotToAdd));
@@ -124,7 +129,14 @@ describe('Spot operations', () => {
     const { store, client } = mockStore(state);
     const tenantId = store.getState().tenantData.currentTenantId;
 
-    const spotToUpdate: Spot = { tenantId, name: 'Updated Spot', id: 4, version: 0, requiredSkillSet: [] };
+    const spotToUpdate: Spot = {
+      tenantId,
+      name: 'Updated Spot',
+      id: 4,
+      version: 0,
+      requiredSkillSet: [],
+      covidWard: false,
+    };
     const spotWithUpdatedVersion: Spot = { ...spotToUpdate, version: 1 };
     onPost(`/tenant/${tenantId}/spot/update`, spotToUpdate, spotWithUpdatedVersion);
     await store.dispatch(spotOperations.updateSpot(spotToUpdate));
@@ -138,9 +150,23 @@ describe('Spot operations', () => {
 });
 
 describe('Spot reducers', () => {
-  const addedSpot: Spot = { tenantId: 0, id: 4321, version: 0, name: 'Spot 1', requiredSkillSet: [] };
-  const updatedSpot: Spot = { tenantId: 0, id: 1234, version: 1, name: 'Updated Spot 2', requiredSkillSet: [] };
-  const deletedSpot: Spot = { tenantId: 0, id: 2312, version: 0, name: 'Spot 3', requiredSkillSet: [] };
+  const addedSpot: Spot = { tenantId: 0, id: 4321, version: 0, name: 'Spot 1', requiredSkillSet: [], covidWard: false };
+  const updatedSpot: Spot = {
+    tenantId: 0,
+    id: 1234,
+    version: 1,
+    name: 'Updated Spot 2',
+    requiredSkillSet: [],
+    covidWard: false,
+  };
+  const deletedSpot: Spot = {
+    tenantId: 0,
+    id: 2312,
+    version: 0,
+    name: 'Spot 3',
+    requiredSkillSet: [],
+    covidWard: false,
+  };
   it('set loading', () => {
     expect(
       reducer(state.spotList, actions.setIsSpotListLoading(true)),
@@ -200,6 +226,7 @@ describe('Spot selectors', () => {
           name: 'Skill 1',
         },
       ],
+      covidWard: false,
     });
   });
 
@@ -232,6 +259,7 @@ describe('Spot selectors', () => {
             name: 'Skill 1',
           },
         ],
+        covidWard: false,
       },
       {
         tenantId: 0,
@@ -239,6 +267,7 @@ describe('Spot selectors', () => {
         version: 0,
         name: 'Spot 3',
         requiredSkillSet: [],
+        covidWard: false,
       },
     ]));
     expect(spotList.length).toEqual(2);
@@ -268,6 +297,7 @@ const state: AppState = {
         version: 1,
         name: 'Spot 2',
         requiredSkillSet: [1],
+        covidWard: false,
       }],
       [2312, {
         tenantId: 0,
@@ -275,6 +305,7 @@ const state: AppState = {
         version: 0,
         name: 'Spot 3',
         requiredSkillSet: [],
+        covidWard: false,
       }],
     ]),
   },

@@ -54,7 +54,8 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
 
     private ResponseEntity<List<ShiftTemplateView>> getShiftTemplates(Integer tenantId) {
         return restTemplate.exchange(shiftTemplatePathURI, HttpMethod.GET, null,
-                                     new ParameterizedTypeReference<List<ShiftTemplateView>>() {}, tenantId);
+                                     new ParameterizedTypeReference<List<ShiftTemplateView>>() {
+                                     }, tenantId);
     }
 
     private ResponseEntity<ShiftTemplateView> getShiftTemplate(Integer tenantId, Long id) {
@@ -92,11 +93,12 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
 
     @Test
     public void shiftTemplateCrudTest() {
-        ResponseEntity<Spot> spotResponseA = addSpot(TENANT_ID, new SpotView(TENANT_ID, "A", Collections.emptySet()));
+        ResponseEntity<Spot> spotResponseA = addSpot(TENANT_ID, new SpotView(TENANT_ID, "A",
+                                                                             Collections.emptySet(), false));
         Spot spotA = spotResponseA.getBody();
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(0),
-                Duration.ofDays(0), null);
+                                                                    Duration.ofDays(0), null);
         ResponseEntity<ShiftTemplateView> postResponse = addShiftTemplate(TENANT_ID, shiftTemplateView);
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -105,7 +107,7 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
         assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
         ShiftTemplateView updatedShiftTemplate = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(1),
-                Duration.ofDays(1), null);
+                                                                       Duration.ofDays(1), null);
         updatedShiftTemplate.setId(postResponse.getBody().getId());
         HttpEntity<ShiftTemplateView> request = new HttpEntity<>(updatedShiftTemplate);
         ResponseEntity<ShiftTemplateView> putResponse = updateShiftTemplate(TENANT_ID, request);

@@ -22,6 +22,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
       options={
         Array [
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -36,6 +37,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
             "version": 0,
           },
           Object {
+            "covidWard": false,
             "id": 111,
             "name": "New Spot",
             "requiredSkillSet": Array [
@@ -53,6 +55,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
       }
       value={
         Object {
+          "covidWard": false,
           "id": 2,
           "name": "Spot",
           "requiredSkillSet": Array [
@@ -134,6 +137,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -167,6 +171,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -183,6 +188,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -240,6 +246,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
       options={
         Array [
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -254,6 +261,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
             "version": 0,
           },
           Object {
+            "covidWard": false,
             "id": 111,
             "name": "New Spot",
             "requiredSkillSet": Array [
@@ -271,6 +279,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
       }
       value={
         Object {
+          "covidWard": false,
           "id": 2,
           "name": "Spot",
           "requiredSkillSet": Array [
@@ -352,6 +361,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -385,6 +395,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -401,6 +412,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -452,7 +464,7 @@ exports[`Shift Roster Page should render correctly when loading 1`] = `
         />,
         <EmptyStateBody />,
         <Unknown
-          aria-label="Spots Page"
+          aria-label="Wards Page"
           onClick={[Function]}
           variant="primary"
         />,
@@ -486,6 +498,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
       options={
         Array [
           Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [
@@ -500,6 +513,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
             "version": 0,
           },
           Object {
+            "covidWard": false,
             "id": 111,
             "name": "New Spot",
             "requiredSkillSet": Array [
@@ -517,6 +531,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
       }
       value={
         Object {
+          "covidWard": false,
           "id": 2,
           "name": "Spot",
           "requiredSkillSet": Array [
@@ -598,6 +613,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 4,
             "name": "Employee 1",
             "skillProficiencySet": Array [
@@ -631,6 +647,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
               "tenantId": 0,
               "version": 0,
             },
+            "covidRiskType": "INOCULATED",
             "id": 7,
             "name": "Rotation Employee",
             "skillProficiencySet": Array [
@@ -647,6 +664,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           "rotationViolationPenaltyList": Array [],
           "shiftEmployeeConflictList": Array [],
           "spot": Object {
+            "covidWard": false,
             "id": 2,
             "name": "Spot",
             "requiredSkillSet": Array [

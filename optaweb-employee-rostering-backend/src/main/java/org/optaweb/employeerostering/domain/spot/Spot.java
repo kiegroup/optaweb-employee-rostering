@@ -50,14 +50,17 @@ public class Spot extends AbstractPersistable {
     )
     private Set<Skill> requiredSkillSet;
 
+    private Boolean covidWard;
+
     @SuppressWarnings("unused")
     public Spot() {
     }
 
-    public Spot(Integer tenantId, String name, Set<Skill> requiredSkillSet) {
+    public Spot(Integer tenantId, String name, Set<Skill> requiredSkillSet, Boolean covidWard) {
         super(tenantId);
         this.name = name;
         this.requiredSkillSet = requiredSkillSet;
+        this.covidWard = covidWard;
     }
 
     @Override
@@ -83,5 +86,13 @@ public class Spot extends AbstractPersistable {
 
     public void setRequiredSkillSet(Set<Skill> requiredSkillSet) {
         this.requiredSkillSet = requiredSkillSet;
+    }
+
+    public Boolean isCovidWard() {
+        return covidWard;
+    }
+
+    public void setCovidWard(Boolean covidWard) {
+        this.covidWard = covidWard;
     }
 }
