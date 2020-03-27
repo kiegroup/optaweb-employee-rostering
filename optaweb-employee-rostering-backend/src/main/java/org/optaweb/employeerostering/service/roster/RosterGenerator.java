@@ -583,7 +583,8 @@ public class RosterGenerator implements ApplicationRunner {
             String name = employeeNameGenerator.generateNextValue();
             HashSet<Skill> skillProficiencySet = new HashSet<>(extractRandomSubList(generalSkillList,
                                                                                     0.1, 0.3, 0.5, 0.7, 0.9, 1.0));
-            CovidRiskType covidRisk = extractRandomElement(Arrays.asList(CovidRiskType.values()));
+            CovidRiskType covidRisk = Arrays.asList(CovidRiskType.values())
+                    .get(generateRandomIntFromThresholds(0.061, 0.303, 0.685, 0.927));
             Employee employee = new Employee(tenantId, name,
                                              contractList.get(generateRandomIntFromThresholds(0.7, 0.5)),
                                              skillProficiencySet, covidRisk);
@@ -603,7 +604,8 @@ public class RosterGenerator implements ApplicationRunner {
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength *
                                                                         generatorType.timeslotRangeList.size());
         List<Employee> remainingEmployeeList = employeeList.stream()
-                .filter((e) -> e.getContract().getMaximumMinutesPerWeek() == null)
+                .filter((e) -> e.getContract().getMaximumMinutesPerWeek() == null &&
+                        e.getCovidRiskType() != CovidRiskType.EXTREME)
                 .collect(Collectors.toCollection(ArrayList::new));
         for (Spot spot : spotList) {
             List<Employee> rotationEmployeeList = remainingEmployeeList.stream()
