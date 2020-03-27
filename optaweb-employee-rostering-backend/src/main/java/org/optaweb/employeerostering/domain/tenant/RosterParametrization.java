@@ -34,6 +34,14 @@ public class RosterParametrization extends AbstractPersistable {
     @NotNull
     private Integer rotationEmployeeMatchWeight = 500;
     @NotNull
+    private Integer lowRiskEmployeeInCovidWardMatchWeight = 1; // Soft
+    @NotNull
+    private Integer moderateRiskEmployeeInCovidWardMatchWeight = 5; // Soft
+    @NotNull
+    private Integer highRiskEmployeeInCovidWardMatchWeight = 10; // Soft
+    @NotNull
+    private Integer extremeRiskEmployeeInCovidWardMatchWeight = 1; // Hard
+    @NotNull
     private DayOfWeek weekStartDay = DayOfWeek.MONDAY;
 
     @SuppressWarnings("unused")
@@ -73,6 +81,40 @@ public class RosterParametrization extends AbstractPersistable {
 
     public void setRotationEmployeeMatchWeight(Integer rotationEmployeeMatchWeight) {
         this.rotationEmployeeMatchWeight = rotationEmployeeMatchWeight;
+    }
+
+    public Integer getLowRiskEmployeeInCovidWardMatchWeight() {
+        return lowRiskEmployeeInCovidWardMatchWeight;
+    }
+
+    public void setLowRiskEmployeeInCovidWardMatchWeight(
+            final Integer lowRiskEmployeeInCovidWardMatchWeight) {
+        this.lowRiskEmployeeInCovidWardMatchWeight = lowRiskEmployeeInCovidWardMatchWeight;
+    }
+
+    public Integer getModerateRiskEmployeeInCovidWardMatchWeight() {
+        return moderateRiskEmployeeInCovidWardMatchWeight;
+    }
+
+    public void setModerateRiskEmployeeInCovidWardMatchWeight(
+            final Integer moderateRiskEmployeeInCovidWardMatchWeight) {
+        this.moderateRiskEmployeeInCovidWardMatchWeight = moderateRiskEmployeeInCovidWardMatchWeight;
+    }
+
+    public Integer getHighRiskEmployeeInCovidWardMatchWeight() {
+        return highRiskEmployeeInCovidWardMatchWeight;
+    }
+
+    public void setHighRiskEmployeeInCovidWardMatchWeight(final Integer highRiskEmployeeInCovidWardMatchWeight) {
+        this.highRiskEmployeeInCovidWardMatchWeight = highRiskEmployeeInCovidWardMatchWeight;
+    }
+
+    public Integer getExtremeRiskEmployeeInCovidWardMatchWeight() {
+        return extremeRiskEmployeeInCovidWardMatchWeight;
+    }
+
+    public void setExtremeRiskEmployeeInCovidWardMatchWeight(final Integer extremeRiskEmployeeInCovidWardMatchWeight) {
+        this.extremeRiskEmployeeInCovidWardMatchWeight = extremeRiskEmployeeInCovidWardMatchWeight;
     }
 
     public DayOfWeek getWeekStartDay() {

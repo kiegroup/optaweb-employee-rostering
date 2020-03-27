@@ -23,6 +23,7 @@ import java.time.Duration;
 import java.time.temporal.IsoFields;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreHolder;
+import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
@@ -36,17 +37,52 @@ import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 global HardMediumSoftLongScoreHolder scoreHolder;
 
 // ############################################################################
-// Hard constraints
+// COVID-19 constraints
 // ############################################################################
 
-rule "Required skill for a shift"
+rule "Low-risk employee assigned to a COVID ward"
     when
-        Shift(
-                employee != null,
-                !getEmployee().hasSkills(getSpot().getRequiredSkillSet()))
+        $rosterParametrization: RosterParametrization(lowRiskEmployeeInCovidWardMatchWeight != 0)
+        $shift: Shift(employee != null)
+        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.LOW)
+        $ward: Spot(this == $shift.spot, isCovidWard() == true)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -100);
+        scoreHolder.addSoftConstraintMatch(kcontext, - $rosterParametrization.getLowRiskEmployeeInCovidWardMatchWeight());
 end
+
+rule "Moderate-risk employee assigned to a COVID ward"
+    when
+        $rosterParametrization: RosterParametrization(moderateRiskEmployeeInCovidWardMatchWeight != 0)
+        $shift: Shift(employee != null)
+        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.MODERATE)
+        $ward: Spot(this == $shift.spot, isCovidWard() == true)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, - $rosterParametrization.getModerateRiskEmployeeInCovidWardMatchWeight());
+end
+
+rule "High-risk employee assigned to a COVID ward"
+    when
+        $rosterParametrization: RosterParametrization(highRiskEmployeeInCovidWardMatchWeight != 0)
+        $shift: Shift(employee != null)
+        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.HIGH)
+        $ward: Spot(this == $shift.spot, isCovidWard() == true)
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, - $rosterParametrization.getHighRiskEmployeeInCovidWardMatchWeight());
+end
+
+rule "Extreme-risk employee assigned to a COVID ward"
+    when
+        $rosterParametrization: RosterParametrization(extremeRiskEmployeeInCovidWardMatchWeight != 0)
+        $shift: Shift(employee != null)
+        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.EXTREME)
+        $ward: Spot(this == $shift.spot, isCovidWard() == true)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, - $rosterParametrization.getExtremeRiskEmployeeInCovidWardMatchWeight());
+end
+
+// ############################################################################
+// Hard constraints
+// ############################################################################
 
 rule "Unavailable time slot for an employee"
     when
