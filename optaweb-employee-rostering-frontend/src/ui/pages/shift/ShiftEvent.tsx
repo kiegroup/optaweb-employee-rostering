@@ -20,7 +20,10 @@ import { Text, Button, ButtonVariant, List } from '@patternfly/react-core';
 import moment from 'moment';
 import { Employee } from 'domain/Employee';
 import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
-import { BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon } from '@patternfly/react-icons';
+import {
+  BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon,
+  CrossIcon, HeartIcon, HeartbeatIcon, BandAidIcon, SkullIcon,
+} from '@patternfly/react-icons';
 import Color from 'color';
 import { useTranslation } from 'react-i18next';
 
@@ -328,6 +331,11 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
     }}
   >
     {props.event.pinnedByUser && <ThumbTackIcon />}
+    {props.event.employee && props.event.employee.covidRiskType === 'INOCULATED' && <CrossIcon />}
+    {props.event.employee && props.event.employee.covidRiskType === 'LOW' && <HeartIcon />}
+    {props.event.employee && props.event.employee.covidRiskType === 'MODERATE' && <HeartbeatIcon />}
+    {props.event.employee && props.event.employee.covidRiskType === 'HIGH' && <BandAidIcon />}
+    {props.event.employee && props.event.employee.covidRiskType === 'EXTREME' && <SkullIcon />}
     {props.title}
   </span>
 );

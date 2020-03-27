@@ -30,7 +30,7 @@ import { alert } from 'store/alert';
 import { RosterState } from 'domain/RosterState';
 import Schedule, { StyleSupplier } from 'ui/components/calendar/Schedule';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { CubesIcon } from '@patternfly/react-icons';
+import { CubesIcon, BiohazardIcon } from '@patternfly/react-icons';
 import { withTranslation, WithTranslation, Trans } from 'react-i18next';
 import 'ui/components/TypeaheadSelectInput.css';
 import Actions from 'ui/components/Actions';
@@ -279,6 +279,20 @@ export class ShiftRosterPage extends React.Component<Props, State> {
             optionToStringMap={spot => spot.name}
             options={this.props.allSpotList}
             value={shownSpot}
+            valueComponent={(props) => {
+              const selectedOption: { value: Spot } = props.data;
+              if (selectedOption && selectedOption.value.covidWard) {
+                return (
+                  <span style={{ display: 'grid', gridTemplateColumns: 'min-content 5px 1fr' }}>
+                    <BiohazardIcon />
+                    <span />
+                    <span>{selectedOption.value.name}</span>
+                  </span>
+                );
+              }
+
+              return (<span>{selectedOption.value.name}</span>);
+            }}
             onChange={(s) => {
               this.onUpdateShiftRoster({
                 ...urlProps,

@@ -81,9 +81,20 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <Text>
-                    Spot 1
-                  </Text>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridTemplateColumns": "min-content 5px 1fr",
+                      }
+                    }
+                  >
+                    <span />
+                    <span />
+                    <Text>
+                      Spot 1
+                    </Text>
+                  </span>
                 }
               />,
             },
@@ -241,9 +252,25 @@ exports[`Spots page should render correctly with a few spots 1`] = `
                 }
                 isEditing={false}
                 viewer={
-                  <Text>
-                    Spot 2
-                  </Text>
+                  <span
+                    style={
+                      Object {
+                        "display": "grid",
+                        "gridTemplateColumns": "min-content 5px 1fr",
+                      }
+                    }
+                  >
+                    <BiohazardIcon
+                      color="currentColor"
+                      noVerticalAlign={false}
+                      size="sm"
+                      title={null}
+                    />
+                    <span />
+                    <Text>
+                      Spot 2
+                    </Text>
+                  </span>
                 }
               />,
             },
@@ -565,11 +592,27 @@ exports[`Spots page should render the viewer correctly 1`] = `
   <td
     key="0"
   >
-    <Text
-      key="0"
+    <span
+      style={
+        Object {
+          "display": "grid",
+          "gridTemplateColumns": "min-content 5px 1fr",
+        }
+      }
     >
-      Spot 2
-    </Text>
+      <BiohazardIcon
+        color="currentColor"
+        noVerticalAlign={false}
+        size="sm"
+        title={null}
+      />
+      <span />
+      <Text
+        key="0"
+      >
+        Spot 2
+      </Text>
+    </span>
   </td>
   <td
     key="1"

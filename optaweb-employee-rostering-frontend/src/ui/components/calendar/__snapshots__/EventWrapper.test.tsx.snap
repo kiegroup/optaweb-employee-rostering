@@ -17,7 +17,7 @@ exports[`EventWrapper should render correctly when the event continues both befo
     appendTo={[Function]}
     aria-label=""
     bodyContent="Body"
-    boundary="window"
+    boundary="viewport"
     className=""
     closeBtnAriaLabel="Close"
     distance={25}
@@ -43,12 +43,18 @@ exports[`EventWrapper should render correctly when the event continues both befo
     onMount={[Function]}
     onShow={[Function]}
     onShown={[Function]}
-    position="right"
+    position="top"
     shouldClose={[Function]}
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -70,7 +76,7 @@ exports[`EventWrapper should render correctly when the event continues from eari
     appendTo={[Function]}
     aria-label=""
     bodyContent="Body"
-    boundary="window"
+    boundary="viewport"
     className=""
     closeBtnAriaLabel="Close"
     distance={25}
@@ -96,12 +102,18 @@ exports[`EventWrapper should render correctly when the event continues from eari
     onMount={[Function]}
     onShow={[Function]}
     onShown={[Function]}
-    position="right"
+    position="top"
     shouldClose={[Function]}
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -123,7 +135,7 @@ exports[`EventWrapper should render correctly when the event continues later 1`]
     appendTo={[Function]}
     aria-label=""
     bodyContent="Body"
-    boundary="window"
+    boundary="viewport"
     className=""
     closeBtnAriaLabel="Close"
     distance={25}
@@ -149,12 +161,18 @@ exports[`EventWrapper should render correctly when the event continues later 1`]
     onMount={[Function]}
     onShow={[Function]}
     onShown={[Function]}
-    position="right"
+    position="top"
     shouldClose={[Function]}
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -176,7 +194,7 @@ exports[`EventWrapper should render correctly when the event does not have a cla
     appendTo={[Function]}
     aria-label=""
     bodyContent="Body"
-    boundary="window"
+    boundary="viewport"
     className=""
     closeBtnAriaLabel="Close"
     distance={25}
@@ -202,12 +220,18 @@ exports[`EventWrapper should render correctly when the event does not have a cla
     onMount={[Function]}
     onShow={[Function]}
     onShown={[Function]}
-    position="right"
+    position="top"
     shouldClose={[Function]}
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -229,7 +253,7 @@ exports[`EventWrapper should render correctly when the event does not span multi
     appendTo={[Function]}
     aria-label=""
     bodyContent="Body"
-    boundary="window"
+    boundary="viewport"
     className=""
     closeBtnAriaLabel="Close"
     distance={25}
@@ -255,12 +279,18 @@ exports[`EventWrapper should render correctly when the event does not span multi
     onMount={[Function]}
     onShow={[Function]}
     onShown={[Function]}
-    position="right"
+    position="top"
     shouldClose={[Function]}
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -280,7 +310,7 @@ exports[`EventWrapper should render correctly when the event has no height or to
     appendTo={[Function]}
     aria-label=""
     bodyContent="Body"
-    boundary="window"
+    boundary="viewport"
     className=""
     closeBtnAriaLabel="Close"
     distance={25}
@@ -306,12 +336,18 @@ exports[`EventWrapper should render correctly when the event has no height or to
     onMount={[Function]}
     onShow={[Function]}
     onShown={[Function]}
-    position="right"
+    position="top"
     shouldClose={[Function]}
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;
@@ -330,7 +366,7 @@ exports[`EventWrapper should render correctly without a style 1`] = `
     appendTo={[Function]}
     aria-label=""
     bodyContent="Body"
-    boundary="window"
+    boundary="viewport"
     className=""
     closeBtnAriaLabel="Close"
     distance={25}
@@ -356,12 +392,18 @@ exports[`EventWrapper should render correctly without a style 1`] = `
     onMount={[Function]}
     onShow={[Function]}
     onShown={[Function]}
-    position="right"
+    position="top"
     shouldClose={[Function]}
     tippyProps={Object {}}
     zIndex={9999}
   >
-    <div />
+    <div
+      style={
+        Object {
+          "maxHeight": "200px",
+        }
+      }
+    />
   </Popover>
 </div>
 `;

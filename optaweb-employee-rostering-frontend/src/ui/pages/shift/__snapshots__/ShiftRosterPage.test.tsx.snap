@@ -70,6 +70,7 @@ exports[`Shift Roster Page should render correctly when creating a new shift via
           "version": 0,
         }
       }
+      valueComponent={[Function]}
     />
     <WeekPicker
       aria-label="Select Week to View"
@@ -294,6 +295,7 @@ exports[`Shift Roster Page should render correctly when loaded 1`] = `
           "version": 0,
         }
       }
+      valueComponent={[Function]}
     />
     <WeekPicker
       aria-label="Select Week to View"
@@ -546,6 +548,7 @@ exports[`Shift Roster Page should render correctly when solving 1`] = `
           "version": 0,
         }
       }
+      valueComponent={[Function]}
     />
     <WeekPicker
       aria-label="Select Week to View"

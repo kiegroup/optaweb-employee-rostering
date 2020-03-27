@@ -5555,6 +5555,12 @@ exports[`ShiftEvent should render ShiftEvent correctly 1`] = `
     }
   }
 >
+  <CrossIcon
+    color="currentColor"
+    noVerticalAlign={false}
+    size="sm"
+    title={null}
+  />
   Employee
 </span>
 `;
@@ -5570,6 +5576,12 @@ exports[`ShiftEvent should render ShiftEvent correctly when pinned 1`] = `
   }
 >
   <ThumbTackIcon
+    color="currentColor"
+    noVerticalAlign={false}
+    size="sm"
+    title={null}
+  />
+  <CrossIcon
     color="currentColor"
     noVerticalAlign={false}
     size="sm"

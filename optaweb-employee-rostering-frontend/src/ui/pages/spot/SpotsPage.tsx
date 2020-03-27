@@ -30,6 +30,7 @@ import { stringFilter } from 'util/CommonFilters';
 import { withTranslation, WithTranslation } from 'react-i18next';
 import { withRouter } from 'react-router';
 import { StatefulTypeaheadSelectInput } from 'ui/components/TypeaheadSelectInput';
+import { BiohazardIcon } from '@patternfly/react-icons';
 
 interface StateProps extends DataTableProps<Spot> {
   tenantId: number;
@@ -72,7 +73,11 @@ export class SpotsPage extends DataTable<Spot, Props> {
 
   displayDataRow(data: Spot): JSX.Element[] {
     return [
-      <Text key={0}>{data.name}</Text>,
+      <span style={{ display: 'grid', gridTemplateColumns: 'min-content 5px 1fr' }}>
+        {data.covidWard ? <BiohazardIcon /> : <span />}
+        <span />
+        <Text key={0}>{data.name}</Text>
+      </span>,
       <ChipGroup key={1}>
         {data.requiredSkillSet.map(skill => (
           <Chip key={skill.name} isReadOnly>
