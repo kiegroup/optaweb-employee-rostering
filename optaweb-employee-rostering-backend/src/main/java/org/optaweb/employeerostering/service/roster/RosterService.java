@@ -56,7 +56,7 @@ import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
-import org.optaweb.employeerostering.service.tenant.RosterParametrizationRepository;
+import org.optaweb.employeerostering.service.tenant.RosterConstraintConfigurationRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -73,7 +73,7 @@ public class RosterService extends AbstractRestService {
     private EmployeeRepository employeeRepository;
     private EmployeeAvailabilityRepository employeeAvailabilityRepository;
     private ShiftRepository shiftRepository;
-    private RosterParametrizationRepository rosterParametrizationRepository;
+    private RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
     private ShiftTemplateRepository shiftTemplateRepository;
 
     private WannabeSolverManager solverManager;
@@ -83,7 +83,7 @@ public class RosterService extends AbstractRestService {
                          SpotRepository spotRepository, EmployeeRepository employeeRepository,
                          EmployeeAvailabilityRepository employeeAvailabilityRepository,
                          ShiftRepository shiftRepository,
-                         RosterParametrizationRepository rosterParametrizationRepository,
+                         RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
                          ShiftTemplateRepository shiftTemplateRepository,
                          WannabeSolverManager solverManager, IndictmentUtils indictmentUtils) {
         this.rosterStateRepository = rosterStateRepository;
@@ -92,7 +92,7 @@ public class RosterService extends AbstractRestService {
         this.employeeRepository = employeeRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
         this.shiftRepository = shiftRepository;
-        this.rosterParametrizationRepository = rosterParametrizationRepository;
+        this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
         this.shiftTemplateRepository = shiftTemplateRepository;
         this.solverManager = solverManager;
         this.indictmentUtils = indictmentUtils;
@@ -321,14 +321,13 @@ public class RosterService extends AbstractRestService {
                 .map(s -> s.inTimeZone(zoneId))
                 .collect(Collectors.toList());
 
-        Roster roster = new Roster((long) tenantId, tenantId, skillList, spotList, employeeList,
-                                   employeeAvailabilityList,
-                                   rosterParametrizationRepository
-                                           .findByTenantId(tenantId)
-                                           .orElseThrow(() -> new EntityNotFoundException(
-                                                   "No RosterParametrization entity found with tenantId(" + tenantId +
-                                                           ").")),
+        Roster roster = new Roster((long) tenantId, tenantId, rosterConstraintConfigurationRepository
+                .findByTenantId(tenantId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No RosterConstraintConfiguration entity found with tenantId(" + tenantId + ").")),
+                                   skillList, spotList, employeeList, employeeAvailabilityList,
                                    getRosterState(tenantId), shiftList);
+
         ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector();
         scoreDirector.setWorkingSolution(roster);
         roster.setScore((HardMediumSoftLongScore) scoreDirector.calculateScore());

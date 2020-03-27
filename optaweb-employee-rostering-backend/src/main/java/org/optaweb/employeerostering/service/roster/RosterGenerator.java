@@ -49,7 +49,7 @@ import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
-import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.admin.SystemPropertiesRetriever;
 import org.optaweb.employeerostering.service.common.generator.StringDataGenerator;
@@ -456,8 +456,8 @@ public class RosterGenerator implements ApplicationRunner {
 
         Tenant tenant = createTenant(generatorType, employeeListSize);
         Integer tenantId = tenant.getId();
-        RosterParametrization rosterParametrization = createTenantConfiguration(generatorType,
-                                                                                tenantId, zoneId);
+        RosterConstraintConfiguration rosterConstraintConfiguration = createTenantConfiguration(generatorType,
+                                                                                                tenantId, zoneId);
         RosterState rosterState = createRosterState(generatorType, tenant, zoneId, lengthInDays);
 
         List<Skill> skillList = createSkillList(generatorType, tenantId, skillListSize);
@@ -468,13 +468,13 @@ public class RosterGenerator implements ApplicationRunner {
         List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId,
                                                                         rosterState, spotList,
                                                                         employeeList);
-        List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterParametrization,
+        List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterConstraintConfiguration,
                                                 rosterState, spotList, shiftTemplateList);
         List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
-                generatorType, tenantId, rosterParametrization, rosterState, employeeList, shiftList);
+                generatorType, tenantId, rosterConstraintConfiguration, rosterState, employeeList, shiftList);
 
-        return new Roster((long) tenantId, tenantId, skillList, spotList, employeeList, employeeAvailabilityList,
-                          rosterParametrization, rosterState, shiftList);
+        return new Roster((long) tenantId, tenantId, rosterConstraintConfiguration, skillList, spotList, employeeList,
+                          employeeAvailabilityList, rosterState, shiftList);
     }
 
     @Transactional
@@ -493,12 +493,12 @@ public class RosterGenerator implements ApplicationRunner {
     }
 
     @Transactional
-    public RosterParametrization createTenantConfiguration(GeneratorType generatorType, Integer tenantId,
-                                                           ZoneId zoneId) {
-        RosterParametrization rosterParametrization = new RosterParametrization();
-        rosterParametrization.setTenantId(tenantId);
-        entityManager.persist(rosterParametrization);
-        return rosterParametrization;
+    public RosterConstraintConfiguration createTenantConfiguration(GeneratorType generatorType, Integer tenantId,
+                                                                   ZoneId zoneId) {
+        RosterConstraintConfiguration rosterConstraintConfiguration = new RosterConstraintConfiguration();
+        rosterConstraintConfiguration.setTenantId(tenantId);
+        entityManager.persist(rosterConstraintConfiguration);
+        return rosterConstraintConfiguration;
     }
 
     @Transactional
@@ -648,7 +648,7 @@ public class RosterGenerator implements ApplicationRunner {
     @Transactional
     public List<Shift> createShiftList(GeneratorType generatorType,
                                        Integer tenantId,
-                                       RosterParametrization rosterParametrization,
+                                       RosterConstraintConfiguration rosterConstraintConfiguration,
                                        RosterState rosterState,
                                        List<Spot> spotList,
                                        List<ShiftTemplate> shiftTemplateList) {
@@ -696,7 +696,8 @@ public class RosterGenerator implements ApplicationRunner {
     @Transactional
     public List<EmployeeAvailability> createEmployeeAvailabilityList(GeneratorType generatorType,
                                                                      Integer tenantId,
-                                                                     RosterParametrization rosterParametrization,
+                                                                     RosterConstraintConfiguration
+                                                                             rosterConstraintConfiguration,
                                                                      RosterState rosterState,
                                                                      List<Employee> employeeList,
                                                                      List<Shift> shiftList) {

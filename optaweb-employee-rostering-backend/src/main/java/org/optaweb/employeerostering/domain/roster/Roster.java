@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.domain.roster;
 
 import java.util.List;
 
+import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
 import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty;
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
@@ -31,10 +32,13 @@ import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
-import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 
 @PlanningSolution
 public class Roster extends AbstractPersistable {
+
+    @ConstraintConfigurationProvider
+    private RosterConstraintConfiguration rosterConstraintConfiguration;
 
     @ProblemFactCollectionProperty
     private List<Skill> skillList;
@@ -47,8 +51,6 @@ public class Roster extends AbstractPersistable {
     private List<EmployeeAvailability> employeeAvailabilityList;
 
     @ProblemFactProperty
-    private RosterParametrization rosterParametrization;
-    @ProblemFactProperty
     private RosterState rosterState;
 
     @PlanningEntityCollectionProperty
@@ -58,17 +60,19 @@ public class Roster extends AbstractPersistable {
     private HardMediumSoftLongScore score = null;
 
     @SuppressWarnings("unused")
-    public Roster() {}
+    public Roster() {
+    }
 
-    public Roster(Long id, Integer tenantId, List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
-                  List<EmployeeAvailability> employeeAvailabilityList, RosterParametrization rosterParametrization,
+    public Roster(Long id, Integer tenantId, RosterConstraintConfiguration rosterConstraintConfiguration,
+                  List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
+                  List<EmployeeAvailability> employeeAvailabilityList,
                   RosterState rosterState, List<Shift> shiftList) {
         super(id, tenantId);
+        this.rosterConstraintConfiguration = rosterConstraintConfiguration;
         this.skillList = skillList;
         this.spotList = spotList;
         this.employeeList = employeeList;
         this.employeeAvailabilityList = employeeAvailabilityList;
-        this.rosterParametrization = rosterParametrization;
         this.rosterState = rosterState;
         this.shiftList = shiftList;
     }
@@ -76,6 +80,14 @@ public class Roster extends AbstractPersistable {
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
+
+    public RosterConstraintConfiguration getRosterConstraintConfiguration() {
+        return rosterConstraintConfiguration;
+    }
+
+    public void setRosterConstraintConfiguration(RosterConstraintConfiguration rosterConstraintConfiguration) {
+        this.rosterConstraintConfiguration = rosterConstraintConfiguration;
+    }
 
     public List<Skill> getSkillList() {
         return skillList;
@@ -109,14 +121,6 @@ public class Roster extends AbstractPersistable {
         this.employeeAvailabilityList = employeeAvailabilityList;
     }
 
-    public RosterParametrization getRosterParametrization() {
-        return rosterParametrization;
-    }
-
-    public void setRosterParametrization(RosterParametrization rosterParametrization) {
-        this.rosterParametrization = rosterParametrization;
-    }
-
     public RosterState getRosterState() {
         return rosterState;
     }
@@ -140,5 +144,4 @@ public class Roster extends AbstractPersistable {
     public void setScore(HardMediumSoftLongScore score) {
         this.score = score;
     }
-
 }

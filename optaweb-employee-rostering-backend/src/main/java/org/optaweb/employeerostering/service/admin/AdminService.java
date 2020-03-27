@@ -25,7 +25,7 @@ import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
-import org.optaweb.employeerostering.service.tenant.RosterParametrizationRepository;
+import org.optaweb.employeerostering.service.tenant.RosterConstraintConfigurationRepository;
 import org.optaweb.employeerostering.service.tenant.TenantRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +40,7 @@ public class AdminService {
     private ContractRepository contractRepository;
     private SpotRepository spotRepository;
     private SkillRepository skillRepository;
-    private RosterParametrizationRepository rosterParametrizationRepository;
+    private RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
     private RosterStateRepository rosterStateRepository;
     private TenantRepository tenantRepository;
 
@@ -53,7 +53,7 @@ public class AdminService {
                         ContractRepository contractRepository,
                         SpotRepository spotRepository,
                         SkillRepository skillRepository,
-                        RosterParametrizationRepository rosterParametrizationRepository,
+                        RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
                         RosterStateRepository rosterStateRepository,
                         TenantRepository tenantRepository,
                         RosterGenerator rosterGenerator) {
@@ -64,7 +64,7 @@ public class AdminService {
         this.contractRepository = contractRepository;
         this.spotRepository = spotRepository;
         this.skillRepository = skillRepository;
-        this.rosterParametrizationRepository = rosterParametrizationRepository;
+        this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
         this.rosterStateRepository = rosterStateRepository;
         this.tenantRepository = tenantRepository;
         this.rosterGenerator = rosterGenerator;
@@ -85,7 +85,7 @@ public class AdminService {
         contractRepository.deleteAllInBatch();
         spotRepository.deleteAllInBatch();
         skillRepository.deleteAllInBatch();
-        rosterParametrizationRepository.deleteAllInBatch();
+        rosterConstraintConfigurationRepository.deleteAllInBatch();
         rosterStateRepository.deleteAllInBatch();
         tenantRepository.deleteAllInBatch();
     }
