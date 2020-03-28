@@ -35,10 +35,12 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
     private DayOfWeek weekStartDay = DayOfWeek.MONDAY;
 
     // COVID-specific constraints
-    private HardMediumSoftLongScore lowRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(1);
-    private HardMediumSoftLongScore moderateRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(5);
-    private HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(10);
-    private HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofHard(1);
+    private HardMediumSoftLongScore lowRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore moderateRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofSoft(5);
+    private HardMediumSoftLongScore highRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofSoft(10);
+    private HardMediumSoftLongScore extremeRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofHard(1);
+    private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWard = HardMediumSoftLongScore.ofSoft(10);
+    private HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShift = HardMediumSoftLongScore.ofHard(1);
 
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
     private HardMediumSoftLongScore unavailableTimeSlot = HardMediumSoftLongScore.ofHard(50);
@@ -74,40 +76,53 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
     // COVID-specific getters and setters
     // ************************************************************************
 
-    public HardMediumSoftLongScore getLowRiskEmployeeInCovidWardMatchWeight() {
-        return lowRiskEmployeeInCovidWardMatchWeight;
+    public HardMediumSoftLongScore getLowRiskEmployeeInCovidWard() {
+        return lowRiskEmployeeInCovidWard;
     }
 
-    public void setLowRiskEmployeeInCovidWardMatchWeight(
-            HardMediumSoftLongScore lowRiskEmployeeInCovidWardMatchWeight) {
-        this.lowRiskEmployeeInCovidWardMatchWeight = lowRiskEmployeeInCovidWardMatchWeight;
+    public void setLowRiskEmployeeInCovidWard(HardMediumSoftLongScore lowRiskEmployeeInCovidWard) {
+        this.lowRiskEmployeeInCovidWard = lowRiskEmployeeInCovidWard;
     }
 
-    public HardMediumSoftLongScore getModerateRiskEmployeeInCovidWardMatchWeight() {
-        return moderateRiskEmployeeInCovidWardMatchWeight;
+    public HardMediumSoftLongScore getModerateRiskEmployeeInCovidWard() {
+        return moderateRiskEmployeeInCovidWard;
     }
 
-    public void setModerateRiskEmployeeInCovidWardMatchWeight(
-            HardMediumSoftLongScore moderateRiskEmployeeInCovidWardMatchWeight) {
-        this.moderateRiskEmployeeInCovidWardMatchWeight = moderateRiskEmployeeInCovidWardMatchWeight;
+    public void setModerateRiskEmployeeInCovidWard(HardMediumSoftLongScore moderateRiskEmployeeInCovidWard) {
+        this.moderateRiskEmployeeInCovidWard = moderateRiskEmployeeInCovidWard;
     }
 
-    public HardMediumSoftLongScore getHighRiskEmployeeInCovidWardMatchWeight() {
-        return highRiskEmployeeInCovidWardMatchWeight;
+    public HardMediumSoftLongScore getHighRiskEmployeeInCovidWard() {
+        return highRiskEmployeeInCovidWard;
     }
 
-    public void setHighRiskEmployeeInCovidWardMatchWeight(
-            HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight) {
-        this.highRiskEmployeeInCovidWardMatchWeight = highRiskEmployeeInCovidWardMatchWeight;
+    public void setHighRiskEmployeeInCovidWard(HardMediumSoftLongScore highRiskEmployeeInCovidWard) {
+        this.highRiskEmployeeInCovidWard = highRiskEmployeeInCovidWard;
     }
 
-    public HardMediumSoftLongScore getExtremeRiskEmployeeInCovidWardMatchWeight() {
-        return extremeRiskEmployeeInCovidWardMatchWeight;
+    public HardMediumSoftLongScore getExtremeRiskEmployeeInCovidWard() {
+        return extremeRiskEmployeeInCovidWard;
     }
 
-    public void setExtremeRiskEmployeeInCovidWardMatchWeight(
-            HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight) {
-        this.extremeRiskEmployeeInCovidWardMatchWeight = extremeRiskEmployeeInCovidWardMatchWeight;
+    public void setExtremeRiskEmployeeInCovidWard(HardMediumSoftLongScore extremeRiskEmployeeInCovidWard) {
+        this.extremeRiskEmployeeInCovidWard = extremeRiskEmployeeInCovidWard;
+    }
+
+    public HardMediumSoftLongScore getMigrationBetweenCovidAndNonCovidWard() {
+        return migrationBetweenCovidAndNonCovidWard;
+    }
+
+    public void setMigrationBetweenCovidAndNonCovidWard(HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWard) {
+        this.migrationBetweenCovidAndNonCovidWard = migrationBetweenCovidAndNonCovidWard;
+    }
+
+    public HardMediumSoftLongScore getNonCovidShiftLessThan8HoursAfterCovidShift() {
+        return nonCovidShiftLessThan8HoursAfterCovidShift;
+    }
+
+    public void setNonCovidShiftLessThan8HoursAfterCovidShift(
+            HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShift) {
+        this.nonCovidShiftLessThan8HoursAfterCovidShift = nonCovidShiftLessThan8HoursAfterCovidShift;
     }
 
     // ************************************************************************
