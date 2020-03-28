@@ -18,6 +18,7 @@ package org.optaweb.employeerostering.domain.shift;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -97,6 +98,10 @@ public class Shift extends AbstractPersistable {
 
     public boolean precedes(Shift other) {
         return !endDateTime.isAfter(other.startDateTime);
+    }
+
+    public long getLength(ChronoUnit unit) {
+        return startDateTime.until(endDateTime, unit);
     }
 
     // ************************************************************************

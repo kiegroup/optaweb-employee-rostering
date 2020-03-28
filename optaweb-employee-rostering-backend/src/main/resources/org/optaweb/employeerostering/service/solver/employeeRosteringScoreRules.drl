@@ -85,6 +85,15 @@ rule "Inoculated employee outside a COVID ward"
         scoreHolder.penalize(kcontext);
 end
 
+// PLANNER-1925 3, to prevent load balancing from setting loads to zero
+rule "Maximize inoculated hours"
+    when
+        $shift: Shift(employee != null, spot.isCovidWard() == true)
+        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.INOCULATED)
+    then
+        scoreHolder.reward(kcontext, $shift.getLength(ChronoUnit.HOURS));
+end
+
 // PLANNER-1926 A
 rule "Migration between COVID and non-COVID wards"
     when

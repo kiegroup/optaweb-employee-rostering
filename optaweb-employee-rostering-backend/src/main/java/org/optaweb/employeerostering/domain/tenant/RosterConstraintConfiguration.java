@@ -52,6 +52,8 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     @ConstraintWeight("Inoculated employee outside a COVID ward")
     private HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWardMatchWeight =
             HardMediumSoftLongScore.ofSoft(1000);
+    @ConstraintWeight("Maximize inoculated hours")
+    private HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(10);
     @ConstraintWeight("Migration between COVID and non-COVID wards")
     private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight =
             HardMediumSoftLongScore.ofSoft(10);
@@ -148,6 +150,14 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     public void setInoculatedEmployeeOutsideCovidWardMatchWeight(
             HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWardMatchWeight) {
         this.inoculatedEmployeeOutsideCovidWardMatchWeight = inoculatedEmployeeOutsideCovidWardMatchWeight;
+    }
+
+    public HardMediumSoftLongScore getMaximizeInoculatedHoursMatchWeight() {
+        return maximizeInoculatedHoursMatchWeight;
+    }
+
+    public void setMaximizeInoculatedHoursMatchWeight(HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight) {
+        this.maximizeInoculatedHoursMatchWeight = maximizeInoculatedHoursMatchWeight;
     }
 
     public HardMediumSoftLongScore getMigrationBetweenCovidAndNonCovidWardMatchWeight() {
