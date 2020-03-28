@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -77,13 +77,13 @@ public class RosterGenerator implements ApplicationRunner {
         public final List<Triple<LocalTime, LocalTime, List<DayOfWeek>>> timeslotRangeList;
         public final int rotationLength;
         public final int rotationEmployeeListSize;
-        public final BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator;
+        public final BiFunction<Integer, Integer, List<Integer>> rotationEmployeeIndexCalculator;
 
         public GeneratorType(String tenantNamePrefix, StringDataGenerator skillNameGenerator,
                              StringDataGenerator spotNameGenerator,
                              List<Triple<LocalTime, LocalTime, List<DayOfWeek>>> timeslotRangeList,
                              int rotationLength, int rotationEmployeeListSize,
-                             BiFunction<Integer, Integer, Integer> rotationEmployeeIndexCalculator) {
+                             BiFunction<Integer, Integer, List<Integer>> rotationEmployeeIndexCalculator) {
             this.tenantNamePrefix = tenantNamePrefix;
             this.skillNameGenerator = skillNameGenerator;
             this.spotNameGenerator = spotNameGenerator;
@@ -185,200 +185,23 @@ public class RosterGenerator implements ApplicationRunner {
             // Day:       F F B B B F F F F C C C F F F F A A A F F
             // Afternoon: D D D E E E E D D D E E E E D D D E E E E
             // Night:     E C C C C C C E A A A A A A E B B B B B B
-            21, 6, (startDayOffset, timeslotRangesIndex) -> {
+            21, 12, (startDayOffset, timeslotRangesIndex) -> {
         switch (timeslotRangesIndex) {
             case 0:
-                return startDayOffset % 7 >= 5 ? 3 : startDayOffset / 7;
+                return startDayOffset % 7 >= 5 ? Arrays.asList(3, 9) :
+                        Arrays.asList(startDayOffset / 7, startDayOffset / 7 + 6);
             case 1:
-                return (startDayOffset + 2) % 7 < 4 ? 5 : (startDayOffset - 16 + 21) % 21 / 7;
+                return (startDayOffset + 2) % 7 < 4 ? Arrays.asList(5, 11) :
+                        Arrays.asList((startDayOffset - 16 + 21) % 21 / 7, (startDayOffset - 16 + 21) % 21 / 7 + 6);
             case 2:
-                return startDayOffset % 7 < 3 ? 3 : 4;
+                return startDayOffset % 7 < 3 ? Arrays.asList(3, 9) : Arrays.asList(4, 10);
             case 3:
-                return startDayOffset % 7 < 1 ? 4 : (startDayOffset - 8 + 21) % 21 / 7;
+                return startDayOffset % 7 < 1 ? Arrays.asList(4, 10) :
+                        Arrays.asList((startDayOffset - 8 + 21) % 21 / 7, (startDayOffset - 8 + 21) % 21 / 7 + 6);
             default:
                 throw new IllegalStateException("Impossible state for timeslotRangesIndex (" + timeslotRangesIndex
                                                         + ").");
         }
-    });
-    private final GeneratorType factoryAssemblyGeneratorType = new GeneratorType(
-            "Factory assembly",
-            new StringDataGenerator()
-                    .addPart(
-                            "Mechanical",
-                            "Electrical",
-                            "Safety",
-                            "Transportation",
-                            "Operational",
-                            "Physics",
-                            "Monitoring",
-                            "ICT")
-                    .addPart(
-                            "bachelor",
-                            "engineer",
-                            "instructor",
-                            "coordinator",
-                            "manager",
-                            "expert",
-                            "inspector",
-                            "analyst"),
-            StringDataGenerator.buildAssemblyLineNames(),
-            Arrays.asList(
-                    Triple.of(LocalTime.of(6, 0), LocalTime.of(14, 0), ALL_WEEK),
-                    Triple.of(LocalTime.of(14, 0), LocalTime.of(22, 0), ALL_WEEK),
-                    Triple.of(LocalTime.of(22, 0), LocalTime.of(6, 0), ALL_WEEK)),
-            // Morning:   A A A A A A A B B B B B B B C C C C C C C D D D D D D D
-            // Afternoon: C C D D D D D D D A A A A A A A B B B B B B B C C C C C
-            // Night:     B B B B C C C C C C C D D D D D D D A A A A A A A B B B
-            28, 4, (startDayOffset, timeslotRangesIndex) -> (startDayOffset - (9 * timeslotRangesIndex) + 28) % 28 / 7);
-    private final GeneratorType guardSecurityGeneratorType = new GeneratorType(
-            "Guard security",
-            new StringDataGenerator()
-                    .addPart(
-                            "Martial art",
-                            "Armed",
-                            "Surveillance",
-                            "Technical",
-                            "Computer")
-                    .addPart(
-                            "basic",
-                            "advanced",
-                            "expert",
-                            "master",
-                            "novice"),
-            new StringDataGenerator()
-                    .addPart("Airport",
-                             "Harbor",
-                             "Bank",
-                             "Office",
-                             "Warehouse",
-                             "Store",
-                             "Factory",
-                             "Station",
-                             "Museum",
-                             "Mansion",
-                             "Monument",
-                             "City hall",
-                             "Prison",
-                             "Mine",
-                             "Palace")
-                    .addPart("north gate",
-                             "south gate",
-                             "east gate",
-                             "west gate",
-                             "roof",
-                             "cellar",
-                             "north west gate",
-                             "north east gate",
-                             "south west gate",
-                             "south east gate",
-                             "main door",
-                             "back door",
-                             "side door",
-                             "balcony",
-                             "patio")
-                    .addPart("Alpha",
-                             "Beta",
-                             "Gamma",
-                             "Delta",
-                             "Epsilon",
-                             "Zeta",
-                             "Eta",
-                             "Theta",
-                             "Iota",
-                             "Kappa",
-                             "Lambda",
-                             "Mu",
-                             "Nu",
-                             "Xi",
-                             "Omicron"),
-            Arrays.asList(
-                    Triple.of(LocalTime.of(7, 0), LocalTime.of(19, 0), ALL_WEEK),
-                    Triple.of(LocalTime.of(19, 0), LocalTime.of(7, 0), ALL_WEEK)),
-            // Day:   A A A B B B B C C C A A A A B B B C C C C
-            // Night: C C C A A A A B B B C C C C A A A B B B B
-            21, 3, (startDayOffset, timeslotRangesIndex) -> {
-        int offset = timeslotRangesIndex == 0 ? startDayOffset : (startDayOffset + 7) % 21;
-        return offset < 3 ? 0 : offset < 7 ? 1 : offset < 10 ? 2 : offset < 14 ? 0 : offset < 17 ? 1 :
-                offset < 21 ? 2 : -1;
-    });
-    private final GeneratorType callCenterGeneratorType = new GeneratorType(
-            "Call center",
-            new StringDataGenerator()
-                    .addPart(
-                            "English",
-                            "Spanish",
-                            "French",
-                            "German",
-                            "Japanese",
-                            "Chinese",
-                            "Dutch",
-                            "Portuguese",
-                            "Italian"),
-            new StringDataGenerator()
-                    .addPart("Business loans",
-                             "Checking and savings accounts",
-                             "Debit and credit cards",
-                             "Insurances",
-                             "Merchant services",
-                             "Cash management",
-                             "Tax management",
-                             "Wealth management",
-                             "Mortgages",
-                             "Personal loans",
-                             "Online payment"),
-            Arrays.asList(
-                    Triple.of(LocalTime.of(7, 0), LocalTime.of(16, 0), ALL_WEEK),
-                    Triple.of(LocalTime.of(11, 0), LocalTime.of(20, 0), ALL_WEEK)),
-            // Morning:   B A A A A A B
-            // Afternoon: C C B B C C C
-            7, 3, (startDayOffset, timeslotRangesIndex) -> {
-        return timeslotRangesIndex == 0
-                ? startDayOffset < 1 ? 1 : startDayOffset < 6 ? 0 : startDayOffset < 7 ? 1 : -1
-                : startDayOffset < 2 ? 2 : startDayOffset < 4 ? 1 : startDayOffset < 7 ? 2 : -1;
-    });
-    private final GeneratorType postOfficeGeneratorType = new GeneratorType(
-            "Post office",
-            new StringDataGenerator()
-                    .addPart(
-                            "Truck license",
-                            "Bicycle license",
-                            "Computer certification",
-                            "Administration",
-                            "Transportation",
-                            "Monitoring",
-                            "Logistics",
-                            "Coordination",
-                            "Customer service"
-                    ),
-            new StringDataGenerator()
-                    .addPart(true, 1,
-                             "North",
-                             "South",
-                             "East",
-                             "West",
-                             "North West",
-                             "North East",
-                             "South West",
-                             "South East",
-                             "Central"
-                    )
-                    .addPart(true, 1,
-                             "Uptown",
-                             "Harbor",
-                             "Lakeshore",
-                             "Point",
-                             "Valley",
-                             "Port",
-                             "Heights",
-                             "Beach",
-                             "Downtown"),
-            Arrays.asList(
-                    Triple.of(LocalTime.of(9, 0), LocalTime.of(17, 0), WEEKDAYS),
-                    Triple.of(LocalTime.of(9, 0), LocalTime.of(15, 0), Arrays.asList(DayOfWeek.SATURDAY))),
-            7, 3, (startDayOffset, timeslotRangesIndex) -> {
-        return timeslotRangesIndex == 0
-                ? startDayOffset < 1 ? 1 : startDayOffset < 6 ? 0 : startDayOffset < 7 ? 1 : -1
-                : startDayOffset < 2 ? 2 : startDayOffset < 4 ? 1 : startDayOffset < 7 ? 2 : -1;
     });
 
     private Random random;
@@ -433,18 +256,6 @@ public class RosterGenerator implements ApplicationRunner {
                 generateRoster(10, 7, hospitalGeneratorType, zoneId);
                 generateRoster(20, 7 * 4, hospitalGeneratorType, zoneId);
                 generateRoster(30, 7 * 2, hospitalGeneratorType, zoneId);
-               /* generateRoster(10, 7, factoryAssemblyGeneratorType, zoneId);
-                generateRoster(10, 7, guardSecurityGeneratorType, zoneId);
-                generateRoster(10, 7, callCenterGeneratorType, zoneId);
-                generateRoster(10, 7, postOfficeGeneratorType, zoneId);
-                generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-                generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-                generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
-                generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-                generateRoster(10, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-                generateRoster(20, 7 * 4, factoryAssemblyGeneratorType, zoneId);
-                generateRoster(40, 7 * 2, factoryAssemblyGeneratorType, zoneId);
-                generateRoster(80, 7 * 4, factoryAssemblyGeneratorType, zoneId);*/
         }
     }
 
@@ -455,7 +266,7 @@ public class RosterGenerator implements ApplicationRunner {
                                  ZoneId zoneId) {
         int maxShiftSizePerDay = generatorType.timeslotRangeList.size() + EXTRA_SHIFT_THRESHOLDS.length;
         // The average employee works 5 days out of 7
-        int employeeListSize = spotListSize * maxShiftSizePerDay * 7 / 5;
+        int employeeListSize = (int) Math.ceil(spotListSize * maxShiftSizePerDay * 7 / 2.5);
         int skillListSize = (spotListSize + 4) / 5;
 
         Tenant tenant = createTenant(generatorType, employeeListSize);
@@ -484,7 +295,7 @@ public class RosterGenerator implements ApplicationRunner {
     @Transactional
     public Roster generateRoster(int spotListSize, int lengthInDays) {
         ZoneId zoneId = SystemPropertiesRetriever.determineZoneId();
-        return generateRoster(spotListSize, lengthInDays, factoryAssemblyGeneratorType, zoneId);
+        return generateRoster(spotListSize, lengthInDays, hospitalGeneratorType, zoneId);
     }
 
     @Transactional
@@ -529,8 +340,17 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public List<Skill> createSkillList(GeneratorType generatorType, Integer tenantId, int size) {
-        List<Skill> skillList = new ArrayList<>(size);
+        List<Skill> skillList = new ArrayList<>(size + 3);
         generatorType.skillNameGenerator.predictMaximumSizeAndReset(size);
+        Skill covidSkill = new Skill(tenantId, "COVID-19 Specialist");
+        Skill doctorSkill = new Skill(tenantId, "Doctor");
+        Skill nurseSkill = new Skill(tenantId, "Nurse");
+
+        entityManager.persist(covidSkill);
+        entityManager.persist(doctorSkill);
+        entityManager.persist(nurseSkill);
+
+        skillList.addAll(Arrays.asList(covidSkill, doctorSkill, nurseSkill));
         for (int i = 0; i < size; i++) {
             String name = generatorType.skillNameGenerator.generateNextValue();
             Skill skill = new Skill(tenantId, name);
@@ -544,11 +364,38 @@ public class RosterGenerator implements ApplicationRunner {
     public List<Spot> createSpotList(GeneratorType generatorType, Integer tenantId, int size, List<Skill> skillList) {
         List<Spot> spotList = new ArrayList<>(size);
         generatorType.spotNameGenerator.predictMaximumSizeAndReset(size);
-        for (int i = 0; i < size; i++) {
+        final int NUM_OF_COVID_WARDS = Math.max(2, size / 8);
+
+        for (int i = 0; i < NUM_OF_COVID_WARDS; i++) {
+            Set<Skill> requiredSkillSet = new HashSet<>(Arrays.asList(skillList.get(0), skillList.get(1)));
+            Spot spot = new Spot(tenantId, "COVID Ward " + (i + 1) + " - Doctors", requiredSkillSet, true);
+            entityManager.persist(spot);
+            spotList.add(spot);
+
+            requiredSkillSet = new HashSet<>(Arrays.asList(skillList.get(0), skillList.get(2)));
+            spot = new Spot(tenantId, "COVID Ward " + (i + 1) + " - Nurses", requiredSkillSet, true);
+            entityManager.persist(spot);
+            spotList.add(spot);
+        }
+
+        for (int i = 0; i < size - NUM_OF_COVID_WARDS; i++) {
             String name = generatorType.spotNameGenerator.generateNextValue();
-            Set<Skill> requiredSkillSet = new HashSet<>(extractRandomSubList(skillList, 0.5, 0.9, 1.0));
-            boolean isCovidWard = random.nextDouble() < 0.1;
-            Spot spot = new Spot(tenantId, name, requiredSkillSet, isCovidWard);
+            Set<Skill> requiredSkillSet = new HashSet<>(extractRandomSubList(
+                    skillList.subList(3,
+                                      skillList.size()),
+                    0.5, 0.9, 1.0));
+
+            Set<Skill> doctorRequiredSkillSet = new HashSet<>(requiredSkillSet);
+            doctorRequiredSkillSet.add(skillList.get(1));
+
+            Set<Skill> nurseRequiredSkillSet = new HashSet<>(requiredSkillSet);
+            nurseRequiredSkillSet.add(skillList.get(2));
+
+            Spot spot = new Spot(tenantId, name + "- Doctors", doctorRequiredSkillSet, false);
+            entityManager.persist(spot);
+            spotList.add(spot);
+
+            spot = new Spot(tenantId, name + "- Nurses", nurseRequiredSkillSet, false);
             entityManager.persist(spot);
             spotList.add(spot);
         }
@@ -557,17 +404,9 @@ public class RosterGenerator implements ApplicationRunner {
 
     @Transactional
     public List<Contract> createContractList(Integer tenantId) {
-        List<Contract> contractList = new ArrayList<>(3);
-        Contract contract = new Contract(tenantId, "Part Time Contract");
-        entityManager.persist(contract);
-        contractList.add(contract);
+        List<Contract> contractList = new ArrayList<>(1);
 
-        contract = new Contract(tenantId, "Max 16 Hours Per Week Contract", null, 16 * 60, null, null);
-        entityManager.persist(contract);
-        contractList.add(contract);
-
-        contract = new Contract(tenantId, "Max 16 Hours Per Week, 32 Hours Per Month Contract",
-                                null, 16 * 60, 32 * 60, null);
+        Contract contract = new Contract(tenantId, "Max 48 Hours Per Week Contract", null, 48 * 60, null, null);
         entityManager.persist(contract);
         contractList.add(contract);
 
@@ -581,12 +420,24 @@ public class RosterGenerator implements ApplicationRunner {
         employeeNameGenerator.predictMaximumSizeAndReset(size);
         for (int i = 0; i < size; i++) {
             String name = employeeNameGenerator.generateNextValue();
-            HashSet<Skill> skillProficiencySet = new HashSet<>(extractRandomSubList(generalSkillList,
-                                                                                    0.1, 0.3, 0.5, 0.7, 0.9, 1.0));
+            HashSet<Skill> skillProficiencySet = new HashSet<>(
+                    extractRandomSubList(generalSkillList.subList(3,
+                                                                  generalSkillList.size()),
+                                         0.1, 0.3, 0.5, 0.7, 0.9, 1.0));
+            if (random.nextDouble() < 0.2) {
+                skillProficiencySet.add(generalSkillList.get(1));
+            } else {
+                skillProficiencySet.add(generalSkillList.get(2));
+            }
+
+            if (random.nextDouble() < 0.25) {
+                skillProficiencySet.add(generalSkillList.get(0));
+            }
+
             CovidRiskType covidRisk = Arrays.asList(CovidRiskType.values())
                     .get(generateRandomIntFromThresholds(0.061, 0.303, 0.685, 0.927));
             Employee employee = new Employee(tenantId, name,
-                                             contractList.get(generateRandomIntFromThresholds(0.7, 0.5)),
+                                             contractList.get(0),
                                              skillProficiencySet, covidRisk);
             entityManager.persist(employee);
             employeeList.add(employee);
@@ -603,13 +454,12 @@ public class RosterGenerator implements ApplicationRunner {
         int rotationLength = rosterState.getRotationLength();
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength *
                                                                         generatorType.timeslotRangeList.size());
-        List<Employee> remainingEmployeeList = employeeList.stream()
-                .filter((e) -> e.getContract().getMaximumMinutesPerWeek() == null &&
-                        e.getCovidRiskType() != CovidRiskType.EXTREME)
-                .collect(Collectors.toCollection(ArrayList::new));
-        for (Spot spot : spotList) {
+        List<Employee> remainingEmployeeList = new ArrayList<>(employeeList);
+        Consumer<Spot> createShiftTemplatesForWard = (spot) -> {
             List<Employee> rotationEmployeeList = remainingEmployeeList.stream()
-                    .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()))
+                    .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()) &&
+                            (!spot.getName().startsWith("COVID") ||
+                                    employee.getCovidRiskType() != CovidRiskType.EXTREME))
                     .limit(generatorType.rotationEmployeeListSize).collect(toList());
             remainingEmployeeList.removeAll(rotationEmployeeList);
             // For every day in the rotation (independent of publishLength and draftLength)
@@ -629,7 +479,7 @@ public class RosterGenerator implements ApplicationRunner {
                             endDayOffset = (startDayOffset + 1) % rotationLength;
                         }
                         int rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator
-                                .apply(startDayOffset, timeslotRangesIndex);
+                                .apply(startDayOffset, timeslotRangesIndex).get(0);
                         if (rotationEmployeeIndex < 0 || rotationEmployeeIndex >=
                                 generatorType.rotationEmployeeListSize) {
                             throw new IllegalStateException(
@@ -646,10 +496,24 @@ public class RosterGenerator implements ApplicationRunner {
                                                                         endDayOffset, endTime, rotationEmployee);
                         entityManager.persist(shiftTemplate);
                         shiftTemplateList.add(shiftTemplate);
+
+                        if (spot.getName().endsWith("Nurses")) {
+                            rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator
+                                    .apply(startDayOffset, timeslotRangesIndex).get(1);
+                            rotationEmployee = rotationEmployeeIndex >= rotationEmployeeList.size() ? null :
+                                    rotationEmployeeList.get(rotationEmployeeIndex);
+                            shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime,
+                                                              endDayOffset, endTime, rotationEmployee);
+                            entityManager.persist(shiftTemplate);
+                            shiftTemplateList.add(shiftTemplate);
+                        }
                     }
                 }
             }
-        }
+        };
+        // Create COVID templates first as they are more limited
+        spotList.stream().filter(s -> s.getName().startsWith("COVID")).forEach(createShiftTemplatesForWard);
+        spotList.stream().filter(s -> !s.getName().startsWith("COVID")).forEach(createShiftTemplatesForWard);
         return shiftTemplateList;
     }
 
