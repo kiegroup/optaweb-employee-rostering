@@ -91,6 +91,14 @@ public class Shift extends AbstractPersistable {
         return spot + " " + startDateTime + "-" + endDateTime;
     }
 
+    public boolean follows(Shift other) {
+        return startDateTime.equals(other.endDateTime) || startDateTime.isAfter(other.endDateTime);
+    }
+
+    public boolean precedes(Shift other) {
+        return endDateTime.equals(other.startDateTime) || endDateTime.isBefore(other.startDateTime);
+    }
+
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************

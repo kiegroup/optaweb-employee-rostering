@@ -76,6 +76,20 @@ rule "Extreme-risk employee assigned to a COVID ward"
         scoreHolder.penalize(kcontext);
 end
 
+rule "Migration between COVID and non-COVID wards"
+    when
+        $employee: Employee()
+        $covidShift: Shift(employee == $employee, spot.isCovidWard() == true)
+        $nonCovidShift: Shift(employee == $employee, this != $covidShift,
+            spot.isCovidWard() == false,
+            follows($covidShift))
+        not Shift(employee == $employee, this != $covidShift, this != $nonCovidShift,
+            follows($covidShift),
+            precedes($nonCovidShift))
+    then
+        scoreHolder.penalize(kcontext);
+end
+
 // ############################################################################
 // Hard constraints
 // ############################################################################

@@ -49,6 +49,9 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     private HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(10);
     @ConstraintWeight("Extreme-risk employee assigned to a COVID ward")
     private HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofHard(1);
+    @ConstraintWeight("Migration between COVID and non-COVID wards")
+    private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight =
+            HardMediumSoftLongScore.ofSoft(10);
 
     @ConstraintWeight("Required skill for a shift")
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
@@ -130,6 +133,15 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     public void setExtremeRiskEmployeeInCovidWardMatchWeight(
             HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight) {
         this.extremeRiskEmployeeInCovidWardMatchWeight = extremeRiskEmployeeInCovidWardMatchWeight;
+    }
+
+    public HardMediumSoftLongScore getMigrationBetweenCovidAndNonCovidWardMatchWeight() {
+        return migrationBetweenCovidAndNonCovidWardMatchWeight;
+    }
+
+    public void setMigrationBetweenCovidAndNonCovidWardMatchWeight(
+            HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight) {
+        this.migrationBetweenCovidAndNonCovidWardMatchWeight = migrationBetweenCovidAndNonCovidWardMatchWeight;
     }
 
     // ************************************************************************
