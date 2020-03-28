@@ -76,6 +76,15 @@ rule "Extreme-risk employee assigned to a COVID ward"
         scoreHolder.penalize(kcontext);
 end
 
+// PLANNER-1925 1
+rule "Inoculated employee outside a COVID ward"
+    when
+        $shift: Shift(employee != null, spot.isCovidWard() == false)
+        $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.INOCULATED)
+    then
+        scoreHolder.penalize(kcontext);
+end
+
 // PLANNER-1926 A
 rule "Migration between COVID and non-COVID wards"
     when

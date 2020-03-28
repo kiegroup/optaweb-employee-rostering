@@ -39,6 +39,7 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
     private HardMediumSoftLongScore moderateRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofSoft(5);
     private HardMediumSoftLongScore highRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofSoft(10);
     private HardMediumSoftLongScore extremeRiskEmployeeInCovidWard = HardMediumSoftLongScore.ofHard(1);
+    private HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWard = HardMediumSoftLongScore.ofSoft(1000);
     private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWard = HardMediumSoftLongScore.ofSoft(10);
     private HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShift = HardMediumSoftLongScore.ofHard(1);
 
@@ -106,6 +107,14 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
 
     public void setExtremeRiskEmployeeInCovidWard(HardMediumSoftLongScore extremeRiskEmployeeInCovidWard) {
         this.extremeRiskEmployeeInCovidWard = extremeRiskEmployeeInCovidWard;
+    }
+
+    public HardMediumSoftLongScore getInoculatedEmployeeOutsideCovidWard() {
+        return inoculatedEmployeeOutsideCovidWard;
+    }
+
+    public void setInoculatedEmployeeOutsideCovidWard(HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWard) {
+        this.inoculatedEmployeeOutsideCovidWard = inoculatedEmployeeOutsideCovidWard;
     }
 
     public HardMediumSoftLongScore getMigrationBetweenCovidAndNonCovidWard() {
