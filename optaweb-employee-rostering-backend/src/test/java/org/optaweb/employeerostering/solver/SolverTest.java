@@ -52,7 +52,7 @@ import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
-import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
 import org.optaweb.employeerostering.service.roster.RosterGenerator;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
@@ -78,7 +78,8 @@ public class SolverTest {
 
     private static final int TENANT_ID = 0;
     private static final LocalDate START_DATE = LocalDate.of(2019, 5, 13);
-    private static final RosterParametrization ROSTER_PARAMETRIZATION = new RosterParametrization();
+    private static final RosterConstraintConfiguration ROSTER_CONSTRAINT_CONFIGURATION =
+            new RosterConstraintConfiguration();
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -142,7 +143,7 @@ public class SolverTest {
         tenant.setId(TENANT_ID);
 
         RosterState rosterState = getRosterState(idGenerator);
-        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        RosterConstraintConfiguration constraintConfiguration = getRosterConstraintConfiguration(idGenerator);
 
         Contract contract = getDefaultContract(idGenerator);
 
@@ -176,7 +177,7 @@ public class SolverTest {
         roster.setSpotList(Collections.singletonList(spotA));
         roster.setEmployeeList(Arrays.asList(employeeA, employeeB));
         roster.setSkillList(Collections.singletonList(skill));
-        roster.setRosterParametrization(rosterParametrization);
+        roster.setRosterConstraintConfiguration(constraintConfiguration);
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
@@ -199,7 +200,7 @@ public class SolverTest {
         tenant.setId(TENANT_ID);
 
         RosterState rosterState = getRosterState(idGenerator);
-        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        RosterConstraintConfiguration rosterConstraintConfiguration = getRosterConstraintConfiguration(idGenerator);
 
         Contract contract = contractField.getContract(idGenerator);
         Employee employeeA = new Employee(TENANT_ID, "Bill", contract, Collections.emptySet(),
@@ -223,7 +224,7 @@ public class SolverTest {
         roster.setSpotList(Collections.singletonList(spotA));
         roster.setEmployeeList(Collections.singletonList(employeeA));
         roster.setSkillList(Collections.emptyList());
-        roster.setRosterParametrization(rosterParametrization);
+        roster.setRosterConstraintConfiguration(rosterConstraintConfiguration);
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
@@ -269,7 +270,7 @@ public class SolverTest {
         tenant.setId(TENANT_ID);
 
         RosterState rosterState = getRosterState(idGenerator);
-        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        RosterConstraintConfiguration rosterConstraintConfiguration = getRosterConstraintConfiguration(idGenerator);
 
         Skill skillA = new Skill(TENANT_ID, "Skill A");
         Skill skillB = new Skill(TENANT_ID, "Skill B");
@@ -294,7 +295,7 @@ public class SolverTest {
         roster.setSpotList(Collections.singletonList(spotA));
         roster.setEmployeeList(Collections.singletonList(employeeA));
         roster.setSkillList(Arrays.asList(skillA, skillB));
-        roster.setRosterParametrization(rosterParametrization);
+        roster.setRosterConstraintConfiguration(rosterConstraintConfiguration);
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(Collections.singletonList(shift));
 
@@ -324,7 +325,7 @@ public class SolverTest {
         tenant.setId(TENANT_ID);
 
         RosterState rosterState = getRosterState(idGenerator);
-        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        RosterConstraintConfiguration rosterConstraintConfiguration = getRosterConstraintConfiguration(idGenerator);
 
         Contract contract = getDefaultContract(idGenerator);
 
@@ -350,7 +351,7 @@ public class SolverTest {
         roster.setSpotList(Collections.singletonList(spotA));
         roster.setEmployeeList(Collections.singletonList(employeeA));
         roster.setSkillList(Collections.emptyList());
-        roster.setRosterParametrization(rosterParametrization);
+        roster.setRosterConstraintConfiguration(rosterConstraintConfiguration);
         roster.setEmployeeAvailabilityList(Collections.singletonList(availability));
         roster.setShiftList(Collections.singletonList(shift));
 
@@ -409,7 +410,7 @@ public class SolverTest {
         tenant.setId(TENANT_ID);
 
         RosterState rosterState = getRosterState(idGenerator);
-        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        RosterConstraintConfiguration rosterConstraintConfiguration = getRosterConstraintConfiguration(idGenerator);
 
         Contract contract = getDefaultContract(idGenerator);
 
@@ -435,7 +436,7 @@ public class SolverTest {
         roster.setSpotList(Collections.singletonList(spotA));
         roster.setEmployeeList(Collections.singletonList(employeeA));
         roster.setSkillList(Collections.emptyList());
-        roster.setRosterParametrization(rosterParametrization);
+        roster.setRosterConstraintConfiguration(rosterConstraintConfiguration);
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
@@ -469,7 +470,7 @@ public class SolverTest {
         tenant.setId(TENANT_ID);
 
         RosterState rosterState = getRosterState(idGenerator);
-        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        RosterConstraintConfiguration rosterConstraintConfiguration = getRosterConstraintConfiguration(idGenerator);
 
         Contract contract = getDefaultContract(idGenerator);
 
@@ -495,7 +496,7 @@ public class SolverTest {
         roster.setSpotList(Collections.singletonList(spotA));
         roster.setEmployeeList(Collections.singletonList(employeeA));
         roster.setSkillList(Collections.emptyList());
-        roster.setRosterParametrization(rosterParametrization);
+        roster.setRosterConstraintConfiguration(rosterConstraintConfiguration);
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
@@ -538,7 +539,7 @@ public class SolverTest {
         tenant.setId(TENANT_ID);
 
         RosterState rosterState = getRosterState(idGenerator);
-        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        RosterConstraintConfiguration rosterConstraintConfiguration = getRosterConstraintConfiguration(idGenerator);
 
         Contract contract = getDefaultContract(idGenerator);
 
@@ -563,7 +564,7 @@ public class SolverTest {
         roster.setSpotList(Collections.singletonList(spotA));
         roster.setEmployeeList(Collections.singletonList(employeeA));
         roster.setSkillList(Collections.emptyList());
-        roster.setRosterParametrization(rosterParametrization);
+        roster.setRosterConstraintConfiguration(rosterConstraintConfiguration);
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
@@ -594,7 +595,7 @@ public class SolverTest {
         tenant.setId(TENANT_ID);
 
         RosterState rosterState = getRosterState(idGenerator);
-        RosterParametrization rosterParametrization = getRosterParametrization(idGenerator);
+        RosterConstraintConfiguration rosterConstraintConfiguration = getRosterConstraintConfiguration(idGenerator);
 
         Spot spotA = new Spot(TENANT_ID, "Spot A", Collections.emptySet(), false);
         spotA.setId(idGenerator.getAndIncrement());
@@ -618,7 +619,7 @@ public class SolverTest {
         roster.setSpotList(Collections.singletonList(spotA));
         roster.setEmployeeList(Collections.singletonList(employeeA));
         roster.setSkillList(Collections.emptyList());
-        roster.setRosterParametrization(rosterParametrization);
+        roster.setRosterConstraintConfiguration(rosterConstraintConfiguration);
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(Collections.singletonList(shift));
 
@@ -669,11 +670,11 @@ public class SolverTest {
         return out;
     }
 
-    private RosterParametrization getRosterParametrization(AtomicLong idGenerator) {
-        ROSTER_PARAMETRIZATION.setTenantId(TENANT_ID);
-        ROSTER_PARAMETRIZATION.setId(idGenerator.getAndIncrement());
-        ROSTER_PARAMETRIZATION.setWeekStartDay(DayOfWeek.MONDAY);
-        return ROSTER_PARAMETRIZATION;
+    private RosterConstraintConfiguration getRosterConstraintConfiguration(AtomicLong idGenerator) {
+        ROSTER_CONSTRAINT_CONFIGURATION.setTenantId(TENANT_ID);
+        ROSTER_CONSTRAINT_CONFIGURATION.setId(idGenerator.getAndIncrement());
+        ROSTER_CONSTRAINT_CONFIGURATION.setWeekStartDay(DayOfWeek.MONDAY);
+        return ROSTER_CONSTRAINT_CONFIGURATION;
     }
 
     private enum Constraints {
@@ -695,13 +696,13 @@ public class SolverTest {
                                                         HardMediumSoftScore.of(-1, 0, 0)),
         ASSIGN_EVERY_SHIFT("Assign every shift", HardMediumSoftScore.of(0, -1, 0)),
         UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Undesired time slot for an employee",
-                                            HardMediumSoftScore.of(0, 0, -ROSTER_PARAMETRIZATION.
+                                            HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION.
                                                     getUndesiredTimeSlotWeight())),
         DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Desired time slot for an employee",
-                                          HardMediumSoftScore.of(0, 0, ROSTER_PARAMETRIZATION
+                                          HardMediumSoftScore.of(0, 0, ROSTER_CONSTRAINT_CONFIGURATION
                                                   .getDesiredTimeSlotWeight())),
         EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE("Employee is not rotation employee",
-                                          HardMediumSoftScore.of(0, 0, -ROSTER_PARAMETRIZATION
+                                          HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION
                                                   .getRotationEmployeeMatchWeight()));
 
         String constraintName;

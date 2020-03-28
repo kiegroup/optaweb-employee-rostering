@@ -31,7 +31,7 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.roster.Roster;
 import org.optaweb.employeerostering.domain.spot.Spot;
-import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 
 global HardMediumSoftLongScoreHolder scoreHolder;
@@ -42,42 +42,38 @@ global HardMediumSoftLongScoreHolder scoreHolder;
 
 rule "Low-risk employee assigned to a COVID ward"
     when
-        $rosterParametrization: RosterParametrization(lowRiskEmployeeInCovidWardMatchWeight != 0)
         $shift: Shift(employee != null)
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.LOW)
         $ward: Spot(this == $shift.spot, isCovidWard() == true)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $rosterParametrization.getLowRiskEmployeeInCovidWardMatchWeight());
+        scoreHolder.penalize(kcontext);
 end
 
 rule "Moderate-risk employee assigned to a COVID ward"
     when
-        $rosterParametrization: RosterParametrization(moderateRiskEmployeeInCovidWardMatchWeight != 0)
         $shift: Shift(employee != null)
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.MODERATE)
         $ward: Spot(this == $shift.spot, isCovidWard() == true)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $rosterParametrization.getModerateRiskEmployeeInCovidWardMatchWeight());
+        scoreHolder.penalize(kcontext);
 end
 
 rule "High-risk employee assigned to a COVID ward"
     when
-        $rosterParametrization: RosterParametrization(highRiskEmployeeInCovidWardMatchWeight != 0)
         $shift: Shift(employee != null)
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.HIGH)
         $ward: Spot(this == $shift.spot, isCovidWard() == true)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, - $rosterParametrization.getHighRiskEmployeeInCovidWardMatchWeight());
+        scoreHolder.penalize(kcontext);
 end
 
 rule "Extreme-risk employee assigned to a COVID ward"
     when
-        $rosterParametrization: RosterParametrization(extremeRiskEmployeeInCovidWardMatchWeight != 0)
         $shift: Shift(employee != null)
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.EXTREME)
         $ward: Spot(this == $shift.spot, isCovidWard() == true)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, - $rosterParametrization.getExtremeRiskEmployeeInCovidWardMatchWeight());
+        scoreHolder.penalize(kcontext);
 end
 
 // ############################################################################
@@ -90,7 +86,7 @@ rule "Required skill for a shift"
                 employee != null,
                 !getEmployee().hasSkills(getSpot().getRequiredSkillSet()))
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -100);
+        scoreHolder.penalize(kcontext);
 end
 
 rule "Unavailable time slot for an employee"
@@ -105,7 +101,7 @@ rule "Unavailable time slot for an employee"
                 DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -50);
+        scoreHolder.penalize(kcontext);
 end
 
 rule "At most one shift assignment per day per employee"
@@ -119,7 +115,7 @@ rule "At most one shift assignment per day per employee"
                 startDateTime.toLocalDate() == $leftDay,
                 this != $s)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -10);
+        scoreHolder.penalize(kcontext);
 end
 
 rule "No 2 shifts within 10 hours from each other"
@@ -134,7 +130,7 @@ rule "No 2 shifts within 10 hours from each other"
                 $leftEndDateTime.until(startDateTime, ChronoUnit.HOURS) < 10,
                 this != $s)
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
+        scoreHolder.penalize(kcontext);
 end
 
 rule "Daily minutes must not exceed contract maximum"
@@ -148,22 +144,22 @@ rule "Daily minutes must not exceed contract maximum"
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
+        scoreHolder.penalize(kcontext);
 end
 
 rule "Weekly minutes must not exceed contract maximum"
     when
-        $rosterParametrization : RosterParametrization()
+        $rosterConstraintConfiguration : RosterConstraintConfiguration()
         $employee : Employee($contract : contract, $contract.getMaximumMinutesPerWeek() != null)
         $s : Shift(employee == $employee, $startDateTime : startDateTime)
         Number( intValue > $contract.getMaximumMinutesPerWeek() ) from accumulate(
             Shift(employee == $employee, $shiftStart : startDateTime,
             $shiftEnd : endDateTime,
-            DateTimeUtils.sameWeek($rosterParametrization.getWeekStartDay(), $shiftStart, $startDateTime)),
+            DateTimeUtils.sameWeek($rosterConstraintConfiguration.getWeekStartDay(), $shiftStart, $startDateTime)),
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
+        scoreHolder.penalize(kcontext);
 end
 
 rule "Monthly minutes must not exceed contract maximum"
@@ -178,7 +174,7 @@ rule "Monthly minutes must not exceed contract maximum"
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
+        scoreHolder.penalize(kcontext);
 end
 
 rule "Yearly minutes must not exceed contract maximum"
@@ -192,7 +188,7 @@ rule "Yearly minutes must not exceed contract maximum"
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
-        scoreHolder.addHardConstraintMatch(kcontext, -1);
+        scoreHolder.penalize(kcontext);
 end
 
 
@@ -204,7 +200,7 @@ rule "Assign every shift"
     when
         Shift(employee == null)
     then
-        scoreHolder.addMediumConstraintMatch(kcontext, -1);
+        scoreHolder.penalize(kcontext);
 end
 
 
@@ -214,7 +210,7 @@ end
 
 rule "Undesired time slot for an employee"
     when
-    	$rosterParametrization : RosterParametrization(undesiredTimeSlotWeight != 0)
+    	$rosterConstraintConfiguration : RosterConstraintConfiguration(undesiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNDESIRED,
                 $e : employee,
@@ -225,12 +221,12 @@ rule "Undesired time slot for an employee"
                 DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getUndesiredTimeSlotWeight());
+        scoreHolder.penalize(kcontext, $rosterConstraintConfiguration.getUndesiredTimeSlotWeight());
 end
 
 rule "Desired time slot for an employee"
     when
-        $rosterParametrization : RosterParametrization(desiredTimeSlotWeight != 0)
+        $rosterConstraintConfiguration : RosterConstraintConfiguration(desiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.DESIRED,
                 $e : employee,
@@ -241,14 +237,14 @@ rule "Desired time slot for an employee"
                 DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, +$rosterParametrization.getDesiredTimeSlotWeight());
+        scoreHolder.reward(kcontext, $rosterConstraintConfiguration.getDesiredTimeSlotWeight());
 end
 
 rule "Employee is not rotation employee"
     when
-    	$rosterParametrization : RosterParametrization(rotationEmployeeMatchWeight != 0)
+    	$rosterConstraintConfiguration : RosterConstraintConfiguration(rotationEmployeeMatchWeight != 0)
         Shift(
                 rotationEmployee != null, employee != null, employee != rotationEmployee)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getRotationEmployeeMatchWeight());
+        scoreHolder.penalize(kcontext, $rosterConstraintConfiguration.getRotationEmployeeMatchWeight());
 end
