@@ -92,11 +92,11 @@ public class Shift extends AbstractPersistable {
     }
 
     public boolean follows(Shift other) {
-        return startDateTime.equals(other.endDateTime) || startDateTime.isAfter(other.endDateTime);
+        return !startDateTime.isBefore(other.endDateTime);
     }
 
     public boolean precedes(Shift other) {
-        return endDateTime.equals(other.startDateTime) || endDateTime.isBefore(other.startDateTime);
+        return !endDateTime.isAfter(other.startDateTime);
     }
 
     // ************************************************************************
