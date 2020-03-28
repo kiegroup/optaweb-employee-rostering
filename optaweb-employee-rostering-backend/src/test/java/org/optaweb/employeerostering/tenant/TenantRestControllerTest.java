@@ -25,11 +25,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaweb.employeerostering.AbstractEntityRequireTenantRestServiceTest;
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
-import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
-import org.optaweb.employeerostering.domain.tenant.view.RosterParametrizationView;
+import org.optaweb.employeerostering.domain.tenant.view.RosterConstraintConfigurationView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,14 +63,15 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
         restTemplate.postForEntity(tenantPathURI + "remove/" + id, null, Void.class);
     }
 
-    private ResponseEntity<RosterParametrization> getRosterParametrization(Integer tenantId) {
-        return restTemplate.getForEntity(tenantPathURI + tenantId + "/parametrization", RosterParametrization.class);
+    private ResponseEntity<RosterConstraintConfiguration> getRosterConstraintParametrization(Integer tenantId) {
+        return restTemplate.getForEntity(tenantPathURI + tenantId + "/config/constraint",
+                                         RosterConstraintConfiguration.class);
     }
 
-    private ResponseEntity<RosterParametrization> updateRosterParametrization(RosterParametrizationView
-                                                                                      rosterParametrizationView) {
-        return restTemplate.postForEntity(tenantPathURI + "parametrization/update", rosterParametrizationView,
-                                          RosterParametrization.class);
+    private ResponseEntity<RosterConstraintConfiguration> updateRosterConstraintParametrization(
+            Integer tenantId, RosterConstraintConfigurationView rosterConstraintConfigurationView) {
+        return restTemplate.postForEntity(tenantPathURI + tenantId + "/config/constraint/update",
+                                          rosterConstraintConfigurationView, RosterConstraintConfiguration.class);
     }
 
     private ResponseEntity<List> getSupportedTimezones() {
@@ -102,18 +104,35 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
     }
 
     @Test
-    public void rosterParametrizationCrudTest() {
-        ResponseEntity<RosterParametrization> getResponse = getRosterParametrization(TENANT_ID);
+    public void rosterConstraintConfigurationCrudTest() {
+        ResponseEntity<RosterConstraintConfiguration> getResponse = getRosterConstraintParametrization(TENANT_ID);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getResponse.getBody()).isNotNull();
 
-        ResponseEntity<RosterParametrization> updateResponse =
-                updateRosterParametrization(new RosterParametrizationView(TENANT_ID, 0, 0, 0, DayOfWeek.TUESDAY));
+        ResponseEntity<RosterConstraintConfiguration> updateResponse =
+                updateRosterConstraintParametrization(TENANT_ID, new RosterConstraintConfigurationView(
+                        TENANT_ID, 0, 0, 0, DayOfWeek.TUESDAY));
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(updateResponse.getBody().getDesiredTimeSlotWeight()).isEqualTo(0);
         assertThat(updateResponse.getBody().getRotationEmployeeMatchWeight()).isEqualTo(0);
         assertThat(updateResponse.getBody().getUndesiredTimeSlotWeight()).isEqualTo(0);
         assertThat(updateResponse.getBody().getWeekStartDay()).isEqualTo(DayOfWeek.TUESDAY);
+        assertThat(updateResponse.getBody().getRequiredSkill()).isEqualTo(HardMediumSoftLongScore.ofHard(100));
+        assertThat(updateResponse.getBody().getUnavailableTimeSlot()).isEqualTo(HardMediumSoftLongScore.ofHard(50));
+        assertThat(updateResponse.getBody().getOneShiftPerDay()).isEqualTo(HardMediumSoftLongScore.ofHard(10));
+        assertThat(updateResponse.getBody().getNoShiftsWithinTenHours()).isEqualTo(HardMediumSoftLongScore.ofHard(1));
+        assertThat(updateResponse.getBody().getContractMaximumDailyMinutes()).isEqualTo(HardMediumSoftLongScore
+                                                                                                .ofHard(1));
+        assertThat(updateResponse.getBody().getContractMaximumWeeklyMinutes()).isEqualTo(HardMediumSoftLongScore
+                                                                                                 .ofHard(1));
+        assertThat(updateResponse.getBody().getContractMaximumMonthlyMinutes()).isEqualTo(HardMediumSoftLongScore
+                                                                                                  .ofHard(1));
+        assertThat(updateResponse.getBody().getContractMaximumYearlyMinutes()).isEqualTo(HardMediumSoftLongScore
+                                                                                                 .ofHard(1));
+        assertThat(updateResponse.getBody().getAssignEveryShift()).isEqualTo(HardMediumSoftLongScore.ofMedium(1));
+        assertThat(updateResponse.getBody().getUndesiredTimeSlot()).isEqualTo(HardMediumSoftLongScore.ofSoft(1));
+        assertThat(updateResponse.getBody().getDesiredTimeSlot()).isEqualTo(HardMediumSoftLongScore.ofSoft(1));
+        assertThat(updateResponse.getBody().getNotRotationEmployee()).isEqualTo(HardMediumSoftLongScore.ofSoft(1));
     }
 
     @Test
