@@ -25,9 +25,9 @@ import javax.validation.constraints.Min;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
-import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
-import org.optaweb.employeerostering.domain.tenant.view.RosterParametrizationView;
+import org.optaweb.employeerostering.domain.tenant.view.RosterConstraintConfigurationView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -81,21 +81,22 @@ public class TenantController {
     }
 
     // ************************************************************************
-    // RosterParametrization
+    // RosterConstraintConfiguration
     // ************************************************************************
 
-    @ApiOperation("Get a tenant roster parametrization")
-    @GetMapping("/{tenantId}/parametrization")
-    public ResponseEntity<RosterParametrization> getRosterParametrization(@PathVariable @Min(0) Integer tenantId) {
-        return new ResponseEntity<>(tenantService.getRosterParametrization(tenantId), HttpStatus.OK);
+    @ApiOperation("Get a tenant constraint configuration")
+    @GetMapping("/{tenantId}/config/constraint")
+    public ResponseEntity<RosterConstraintConfiguration> getRosterConstraintConfiguration(
+            @PathVariable @Min(0) Integer tenantId) {
+        return new ResponseEntity<>(tenantService.getRosterConstraintConfiguration(tenantId), HttpStatus.OK);
     }
 
     @ApiOperation("Update a tenant roster parametrization")
-    @PostMapping("/parametrization/update")
-    public ResponseEntity<RosterParametrization> updateRosterParametrization(
-            @RequestBody @Valid RosterParametrizationView rosterParametrizationView) {
-        return new ResponseEntity<>(tenantService.updateRosterParametrization(rosterParametrizationView),
-                                    HttpStatus.OK);
+    @PostMapping("/{tenantId}/config/constraint/update")
+    public ResponseEntity<RosterConstraintConfiguration> updateRosterConstraintConfiguration(
+            @RequestBody @Valid RosterConstraintConfigurationView rosterConstraintConfigurationView) {
+        return new ResponseEntity<>(
+                tenantService.updateRosterConstraintConfiguration(rosterConstraintConfigurationView), HttpStatus.OK);
     }
 
     // TODO: Where should this be?

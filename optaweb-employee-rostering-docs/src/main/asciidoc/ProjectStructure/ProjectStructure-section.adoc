@@ -24,7 +24,7 @@ The most important classes to understand the domain model are:
 
 * *Shift* is the _planning entity_, where is the defined the relationship with the _planning variable_ employee. Other important fields: `spot`, `rotationEmployee`, `startDateTime`, `endDateTime`.
 * *Employee* is the _planning variable_, it's identified by the `name` and has a set of skills (`skillProficiencySet`).
-* *Roster* is the _planning solution_, `employeeList` is the list of employees (the range of values that can be assigned to the _planning variable_), the field `score` holds the score (3 levels: hard, medium, soft), the other problem facts are: `skillList`, `spotList`, `employeeAvailabilityList`, `rosterParametrization`, `rosterState`, `shiftList`.
+* *Roster* is the _planning solution_, `employeeList` is the list of employees (the range of values that can be assigned to the _planning variable_), the field `score` holds the score (3 levels: hard, medium, soft), the other problem facts are: `skillList`, `spotList`, `employeeAvailabilityList`, `rosterConstraintConfiguration`, `rosterState`, `shiftList`.
 
 == Constraints
 
@@ -187,7 +187,7 @@ Action: The medium score is decreased by 1 unit.
 ----
 rule "Undesired time slot for an employee"
     when
-    	$rosterParametrization : RosterParametrization(undesiredTimeSlotWeight != 0)
+    	$rosterConstraintConfiguration : RosterConstraintConfiguration(undesiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNDESIRED,
                 $e : employee,
@@ -198,7 +198,7 @@ rule "Undesired time slot for an employee"
                 DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getUndesiredTimeSlotWeight());
+        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterConstraintConfiguration.getUndesiredTimeSlotWeight());
 end
 ----
 
@@ -215,7 +215,7 @@ Action: The soft score is decreased by _undesiredTimeSlotWeight_ units.
 ----
 rule "Desired time slot for an employee"
     when
-        $rosterParametrization : RosterParametrization(desiredTimeSlotWeight != 0)
+        $rosterConstraintConfiguration : RosterConstraintConfiguration(desiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.DESIRED,
                 $e : employee,
@@ -226,7 +226,7 @@ rule "Desired time slot for an employee"
                 DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, +$rosterParametrization.getDesiredTimeSlotWeight());
+        scoreHolder.addSoftConstraintMatch(kcontext, +$rosterConstraintConfiguration.getDesiredTimeSlotWeight());
 end
 ----
 
@@ -242,11 +242,11 @@ Action: The soft score is increased by _desiredTimeSlotWeight_ units.
 ----
 rule "Employee is not rotation employee"
     when
-    	$rosterParametrization : RosterParametrization(rotationEmployeeMatchWeight != 0)
+    	$rosterConstraintConfiguration : RosterConstraintConfiguration(rotationEmployeeMatchWeight != 0)
         Shift(
                 rotationEmployee != null, employee != null, employee != rotationEmployee)
     then
-        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterParametrization.getRotationEmployeeMatchWeight());
+        scoreHolder.addSoftConstraintMatch(kcontext, -$rosterConstraintConfiguration.getRotationEmployeeMatchWeight());
 end
 ----
 

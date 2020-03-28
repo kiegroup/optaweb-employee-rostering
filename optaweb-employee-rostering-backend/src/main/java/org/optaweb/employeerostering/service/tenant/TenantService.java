@@ -24,9 +24,9 @@ import javax.persistence.EntityNotFoundException;
 
 import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.roster.view.RosterStateView;
-import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.optaweb.employeerostering.domain.tenant.Tenant;
-import org.optaweb.employeerostering.domain.tenant.view.RosterParametrizationView;
+import org.optaweb.employeerostering.domain.tenant.view.RosterConstraintConfigurationView;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.employee.EmployeeAvailabilityRepository;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
@@ -43,7 +43,7 @@ public class TenantService extends AbstractRestService {
 
     private final TenantRepository tenantRepository;
 
-    private final RosterParametrizationRepository rosterParametrizationRepository;
+    private final RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository;
 
     private final RosterStateRepository rosterStateRepository;
 
@@ -60,7 +60,7 @@ public class TenantService extends AbstractRestService {
     private final SkillRepository skillRepository;
 
     public TenantService(TenantRepository tenantRepository,
-                         RosterParametrizationRepository rosterParametrizationRepository,
+                         RosterConstraintConfigurationRepository rosterConstraintConfigurationRepository,
                          RosterStateRepository rosterStateRepository,
                          ShiftRepository shiftRepository,
                          EmployeeAvailabilityRepository employeeAvailabilityRepository,
@@ -69,7 +69,7 @@ public class TenantService extends AbstractRestService {
                          SpotRepository spotRepository,
                          SkillRepository skillRepository) {
         this.tenantRepository = tenantRepository;
-        this.rosterParametrizationRepository = rosterParametrizationRepository;
+        this.rosterConstraintConfigurationRepository = rosterConstraintConfigurationRepository;
         this.rosterStateRepository = rosterStateRepository;
         this.shiftRepository = shiftRepository;
         this.employeeAvailabilityRepository = employeeAvailabilityRepository;
@@ -117,11 +117,11 @@ public class TenantService extends AbstractRestService {
         initialRosterState.setTenant(databaseTenant);
         initialRosterState.setTenantId(databaseTenant.getId());
 
-        RosterParametrization rosterParametrization = new RosterParametrization();
-        rosterParametrization.setTenantId(databaseTenant.getId());
+        RosterConstraintConfiguration rosterConstraintConfiguration = new RosterConstraintConfiguration();
+        rosterConstraintConfiguration.setTenantId(databaseTenant.getId());
 
         rosterStateRepository.save(initialRosterState);
-        rosterParametrizationRepository.save(rosterParametrization);
+        rosterConstraintConfigurationRepository.save(rosterConstraintConfiguration);
         return databaseTenant;
     }
 
@@ -129,7 +129,7 @@ public class TenantService extends AbstractRestService {
     public Boolean deleteTenant(Integer id) {
         // Dependency order: Shift, EmployeeAvailability, ShiftTemplate,
         // Employee, Spot, Skill,
-        // RosterParametrization, RosterState
+        // RosterConstraintConfiguration, RosterState
 
         shiftRepository.deleteForTenant(id);
         employeeAvailabilityRepository.deleteForTenant(id);
@@ -137,44 +137,69 @@ public class TenantService extends AbstractRestService {
         employeeRepository.deleteForTenant(id);
         spotRepository.deleteForTenant(id);
         skillRepository.deleteForTenant(id);
-        rosterParametrizationRepository.deleteForTenant(id);
+        rosterConstraintConfigurationRepository.deleteForTenant(id);
         rosterStateRepository.deleteForTenant(id);
         tenantRepository.deleteById(id);
         return true;
     }
 
     // ************************************************************************
-    // RosterParametrization
+    // RosterConstraintConfiguration
     // ************************************************************************
 
     @Transactional
-    public RosterParametrization getRosterParametrization(Integer tenantId) {
-        return rosterParametrizationRepository
+    public RosterConstraintConfiguration getRosterConstraintConfiguration(Integer tenantId) {
+        return rosterConstraintConfigurationRepository
                 .findByTenantId(tenantId)
-                .orElseThrow(() -> new EntityNotFoundException("No RosterParametrization entity found with tenantId ("
-                                                                       + tenantId + ")."));
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No RosterConstraintConfiguration entity found with tenantId (" + tenantId + ")."));
     }
 
     @Transactional
-    public RosterParametrization updateRosterParametrization(RosterParametrizationView rosterParametrizationView) {
-        RosterParametrization oldRosterParametrization = rosterParametrizationRepository
-                .findByTenantId(rosterParametrizationView.getTenantId())
-                .orElseThrow(() -> new EntityNotFoundException("RosterParametrization entity with tenantId (" +
-                                                                       rosterParametrizationView.getTenantId() +
+    public RosterConstraintConfiguration updateRosterConstraintConfiguration(
+            RosterConstraintConfigurationView rosterConstraintConfigurationView) {
+        RosterConstraintConfiguration oldRosterConstraintConfiguration = rosterConstraintConfigurationRepository
+                .findByTenantId(rosterConstraintConfigurationView.getTenantId())
+                .orElseThrow(() -> new EntityNotFoundException("RosterConstraintConfiguration entity with tenantId (" +
+                                                                       rosterConstraintConfigurationView.getTenantId() +
                                                                        ") not found."));
-        if (!oldRosterParametrization.getTenantId().equals(rosterParametrizationView.getTenantId())) {
-            throw new IllegalStateException("RosterParametrization entity with tenantId (" +
-                                                    oldRosterParametrization.getTenantId() +
+        if (!oldRosterConstraintConfiguration.getTenantId().equals(rosterConstraintConfigurationView.getTenantId())) {
+            throw new IllegalStateException("RosterConstraintConfiguration entity with tenantId (" +
+                                                    oldRosterConstraintConfiguration.getTenantId() +
                                                     ") cannot change tenants.");
         }
 
-        oldRosterParametrization.setDesiredTimeSlotWeight(rosterParametrizationView.getDesiredTimeSlotWeight());
-        oldRosterParametrization.setRotationEmployeeMatchWeight(
-                rosterParametrizationView.getRotationEmployeeMatchWeight());
-        oldRosterParametrization.setUndesiredTimeSlotWeight(
-                rosterParametrizationView.getUndesiredTimeSlotWeight());
-        oldRosterParametrization.setWeekStartDay(rosterParametrizationView.getWeekStartDay());
-        return rosterParametrizationRepository.save(oldRosterParametrization);
+        oldRosterConstraintConfiguration.setDesiredTimeSlotWeight(rosterConstraintConfigurationView
+                                                                          .getDesiredTimeSlotWeight());
+        oldRosterConstraintConfiguration.setRotationEmployeeMatchWeight(
+                rosterConstraintConfigurationView.getRotationEmployeeMatchWeight());
+        oldRosterConstraintConfiguration.setUndesiredTimeSlotWeight(
+                rosterConstraintConfigurationView.getUndesiredTimeSlotWeight());
+        oldRosterConstraintConfiguration.setWeekStartDay(rosterConstraintConfigurationView.getWeekStartDay());
+
+        oldRosterConstraintConfiguration.setRequiredSkill(rosterConstraintConfigurationView.getRequiredSkill());
+        oldRosterConstraintConfiguration.setUnavailableTimeSlot(rosterConstraintConfigurationView
+                                                                        .getUnavailableTimeSlot());
+        oldRosterConstraintConfiguration.setOneShiftPerDay(rosterConstraintConfigurationView.getOneShiftPerDay());
+        oldRosterConstraintConfiguration.setNoShiftsWithinTenHours(rosterConstraintConfigurationView
+                                                                           .getNoShiftsWithinTenHours());
+        oldRosterConstraintConfiguration.setContractMaximumDailyMinutes(rosterConstraintConfigurationView
+                                                                                .getContractMaximumDailyMinutes());
+        oldRosterConstraintConfiguration.setContractMaximumWeeklyMinutes(rosterConstraintConfigurationView
+                                                                                 .getContractMaximumWeeklyMinutes());
+        oldRosterConstraintConfiguration.setContractMaximumMonthlyMinutes(rosterConstraintConfigurationView
+                                                                                  .getContractMaximumMonthlyMinutes());
+        oldRosterConstraintConfiguration.setContractMaximumYearlyMinutes(rosterConstraintConfigurationView
+                                                                                 .getContractMaximumYearlyMinutes());
+        oldRosterConstraintConfiguration.setAssignEveryShift(rosterConstraintConfigurationView
+                                                                     .getAssignEveryShift());
+        oldRosterConstraintConfiguration.setUndesiredTimeSlot(rosterConstraintConfigurationView
+                                                                      .getUndesiredTimeSlot());
+        oldRosterConstraintConfiguration.setDesiredTimeSlot(rosterConstraintConfigurationView
+                                                                    .getDesiredTimeSlot());
+        oldRosterConstraintConfiguration.setNotRotationEmployee(rosterConstraintConfigurationView
+                                                                        .getNotRotationEmployee());
+        return rosterConstraintConfigurationRepository.save(oldRosterConstraintConfiguration);
     }
 
     public List<ZoneId> getSupportedTimezones() {

@@ -18,7 +18,7 @@ package org.optaweb.employeerostering.service.tenant;
 
 import java.util.Optional;
 
-import org.optaweb.employeerostering.domain.tenant.RosterParametrization;
+import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -26,13 +26,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RosterParametrizationRepository extends JpaRepository<RosterParametrization, Long> {
+public interface RosterConstraintConfigurationRepository extends JpaRepository<RosterConstraintConfiguration, Long> {
 
-    @Query("select distinct rp from RosterParametrization rp " +
-            "where rp.tenantId = :tenantId")
-    Optional<RosterParametrization> findByTenantId(@Param("tenantId") Integer tenantId);
+    @Query("select distinct rc from RosterConstraintConfiguration rc " +
+            "where rc.tenantId = :tenantId")
+    Optional<RosterConstraintConfiguration> findByTenantId(@Param("tenantId") Integer tenantId);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete from RosterParametrization rp where rp.tenantId = :tenantId")
+    @Query("delete from RosterConstraintConfiguration rc where rc.tenantId = :tenantId")
     void deleteForTenant(@Param("tenantId") Integer tenantId);
 }
