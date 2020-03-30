@@ -30,10 +30,12 @@ import com.google.common.base.Functions;
 import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
+import org.optaplanner.core.api.score.stream.bi.BiConstraintStream;
 import org.optaplanner.core.impl.score.stream.uni.DefaultUniConstraintCollector;
 import org.optaweb.employeerostering.domain.employee.CovidRiskType;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
+import org.optaweb.employeerostering.domain.employee.EmployeeAvailabilityState;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration;
 
@@ -162,7 +164,8 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                 .rewardConfigurableLong(CONSTRAINT_COVID_MAXIMIZE_INOCULATED_HOURS, Shift::getLengthInHours);
     }
 
-    Constraint migrationBetweenCovidAndNonCovidWards(ConstraintFactory constraintFactory) {
+    private static BiConstraintStream<Shift, Shift> getConsecutiveCovidAndNonCovidShiftsConstraintStream(
+            ConstraintFactory constraintFactory) {
         return constraintFactory.from(Shift.class)
                 .filter(shift -> shift.getEmployee() != null)
                 .filter(shift -> shift.getSpot().isCovidWard())
@@ -175,26 +178,18 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                         lessThanOrEqual((covidShift, nonCovidShift) -> covidShift.getEndDateTime(),
                                 Shift::getStartDateTime),
                         greaterThanOrEqual((covidShift, nonCovidShift) -> nonCovidShift.getStartDateTime(),
-                                Shift::getEndDateTime))
+                                Shift::getEndDateTime));
+    }
+
+    Constraint migrationBetweenCovidAndNonCovidWards(ConstraintFactory constraintFactory) {
+        return getConsecutiveCovidAndNonCovidShiftsConstraintStream(constraintFactory)
                 .penalizeConfigurable(CONSTRAINT_COVID_MIGRATION_BETWEEN_COVID_AND_NON_COVID_WARDS);
     }
 
     Constraint nonCovidShiftStartedLessThan8HoursAfterFinishingCovidShift(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(Shift.class)
-                .filter(shift -> shift.getEmployee() != null)
-                .filter(shift -> shift.getSpot().isCovidWard())
-                .join(Shift.class,
-                        equal(Shift::getEmployee),
-                        lessThanOrEqual(Shift::getEndDateTime, Shift::getStartDateTime))
-                .filter((covidShift, futureShift) -> !futureShift.getSpot().isCovidWard())
+        return getConsecutiveCovidAndNonCovidShiftsConstraintStream(constraintFactory)
                 .filter((covidShift, nonCovidShift) ->
                         covidShift.getEndDateTime().until(nonCovidShift.getStartDateTime(), HOURS) < 8)
-                .ifNotExists(Shift.class,
-                        equal((covidShift, nonCovidShift) -> covidShift.getEmployee(), Shift::getEmployee),
-                        lessThanOrEqual((covidShift, nonCovidShift) -> covidShift.getEndDateTime(),
-                                Shift::getStartDateTime),
-                        greaterThanOrEqual((covidShift, nonCovidShift) -> nonCovidShift.getStartDateTime(),
-                                Shift::getEndDateTime))
                 .penalizeConfigurable(CONSTRAINT_COVID_NON_COVID_SHIFT_STARTED_SOON_AFTER_FINISHING_A_COVID_SHIFT);
     }
 
@@ -205,13 +200,18 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                 .penalizeConfigurable(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT);
     }
 
-    Constraint unavailableEmployeeTimeSlot(ConstraintFactory constraintFactory) {
+    private static BiConstraintStream<EmployeeAvailability, Shift> getAvailabilityConstraintStream(
+            ConstraintFactory constraintFactory, EmployeeAvailabilityState employeeAvailabilityState) {
         return constraintFactory.from(EmployeeAvailability.class)
-                .filter(employeeAvailability -> employeeAvailability.getState() == UNAVAILABLE)
+                .filter(employeeAvailability -> employeeAvailability.getState() == employeeAvailabilityState)
                 .join(Shift.class, equal(EmployeeAvailability::getEmployee, Shift::getEmployee))
                 .filter((employeeAvailability, shift) -> doTimeslotsIntersect(
                         employeeAvailability.getStartDateTime(), employeeAvailability.getEndDateTime(),
-                        shift.getStartDateTime(), shift.getEndDateTime()))
+                        shift.getStartDateTime(), shift.getEndDateTime()));
+    }
+
+    Constraint unavailableEmployeeTimeSlot(ConstraintFactory constraintFactory) {
+        return getAvailabilityConstraintStream(constraintFactory, UNAVAILABLE)
                 .penalizeConfigurable(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE);
     }
 
@@ -303,22 +303,12 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint undesiredEmployeeTimeSlot(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(EmployeeAvailability.class)
-                .filter(availability -> availability.getState() == UNDESIRED)
-                .join(Shift.class, equal(EmployeeAvailability::getEmployee, Shift::getEmployee))
-                .filter((availability, shift) ->
-                        doTimeslotsIntersect(availability.getStartDateTime(), availability.getEndDateTime(),
-                                shift.getStartDateTime(), shift.getEndDateTime()))
+        return getAvailabilityConstraintStream(constraintFactory, UNDESIRED)
                 .penalizeConfigurable(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE);
     }
 
     Constraint desiredEmployeeTimeSlot(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(EmployeeAvailability.class)
-                .filter(availability -> availability.getState() == DESIRED)
-                .join(Shift.class, equal(EmployeeAvailability::getEmployee, Shift::getEmployee))
-                .filter((availability, shift) ->
-                        doTimeslotsIntersect(availability.getStartDateTime(), availability.getEndDateTime(),
-                                shift.getStartDateTime(), shift.getEndDateTime()))
+        return getAvailabilityConstraintStream(constraintFactory, DESIRED)
                 .rewardConfigurable(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE);
     }
 
