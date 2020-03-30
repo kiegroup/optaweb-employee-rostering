@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import javax.persistence.EntityManager;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
@@ -584,6 +585,7 @@ public class SolverTest {
         constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
     }
 
+    @Ignore("Disabled as in this new world, predictability of schedules does not matter.")
     @Test(timeout = 600000)
     public void testEmployeeIsNotRotationEmployeeConstraint() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
