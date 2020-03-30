@@ -71,6 +71,18 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_ASSIGN_EVERY_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -680,32 +692,29 @@ public class SolverTest {
     }
 
     private enum Constraints {
-        REQUIRED_SKILL_FOR_A_SHIFT("Required skill for a shift",
-                                   HardMediumSoftScore.of(-100, 0, 0)),
-        UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE("Unavailable time slot for an employee",
-                                              HardMediumSoftScore.of(-50, 0, 0)),
-        AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE("At most one shift assignment per day per employee",
-                                                          HardMediumSoftScore.of(-10, 0, 0)),
-        NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER("No 2 shifts within 10 hours from each other",
-                                                    HardMediumSoftScore.of(-1, 0, 0)),
-        DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Daily minutes must not exceed contract maximum",
-                                                       HardMediumSoftScore.of(-1, 0, 0)),
-        WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Weekly minutes must not exceed contract maximum",
-                                                        HardMediumSoftScore.of(-1, 0, 0)),
-        MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Monthly minutes must not exceed contract maximum",
-                                                         HardMediumSoftScore.of(-1, 0, 0)),
-        YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Yearly minutes must not exceed contract maximum",
-                                                        HardMediumSoftScore.of(-1, 0, 0)),
-        ASSIGN_EVERY_SHIFT("Assign every shift", HardMediumSoftScore.of(0, -1, 0)),
-        UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Undesired time slot for an employee",
-                                            HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION.
-                                                    getUndesiredTimeSlotWeight())),
-        DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Desired time slot for an employee",
-                                          HardMediumSoftScore.of(0, 0, ROSTER_CONSTRAINT_CONFIGURATION
-                                                  .getDesiredTimeSlotWeight())),
-        EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE("Employee is not rotation employee",
-                                          HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION
-                                                  .getRotationEmployeeMatchWeight()));
+        REQUIRED_SKILL_FOR_A_SHIFT(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT,
+                HardMediumSoftScore.of(-100, 0, 0)),
+        UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE,
+                HardMediumSoftScore.of(-50, 0, 0)),
+        AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE(CONSTRAINT_AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE,
+                HardMediumSoftScore.of(-10, 0, 0)),
+        NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER(CONSTRAINT_NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER,
+                HardMediumSoftScore.of(-1, 0, 0)),
+        DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
+                HardMediumSoftScore.of(-1, 0, 0)),
+        WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
+                HardMediumSoftScore.of(-1, 0, 0)),
+        MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
+                HardMediumSoftScore.of(-1, 0, 0)),
+        YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM(CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
+                HardMediumSoftScore.of(-1, 0, 0)),
+        ASSIGN_EVERY_SHIFT(CONSTRAINT_ASSIGN_EVERY_SHIFT, HardMediumSoftScore.of(0, -1, 0)),
+        UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
+                HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION.getUndesiredTimeSlotWeight())),
+        DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
+                HardMediumSoftScore.of(0, 0, ROSTER_CONSTRAINT_CONFIGURATION.getDesiredTimeSlotWeight())),
+        EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE,
+                HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION.getRotationEmployeeMatchWeight()));
 
         String constraintName;
         HardMediumSoftScore constraintWeight;
