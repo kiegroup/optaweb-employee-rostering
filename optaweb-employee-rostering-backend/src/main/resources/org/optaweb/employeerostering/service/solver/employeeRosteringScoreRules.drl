@@ -21,6 +21,9 @@ import java.time.temporal.ChronoUnit;
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.temporal.IsoFields;
+import java.util.Collection;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScoreHolder;
 import org.optaweb.employeerostering.domain.employee.CovidRiskType;
@@ -83,6 +86,25 @@ rule "Inoculated employee outside a COVID ward"
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.INOCULATED)
     then
         scoreHolder.penalize(kcontext);
+end
+
+// PLANNER-1925 2
+rule "Uniform distribution of inoculated hours"
+    when
+        $allHours: Collection( size > 0 ) from accumulate(
+            $shift: Shift(employee != null, employee.covidRiskType == CovidRiskType.INOCULATED, spot.isCovidWard() == true),
+            init(
+                Map hours = new HashMap();
+            ), action(
+                $shift.increaseHourlyCounts(hours);
+            ), reverse(
+                $shift.decreaseHourlyCounts(hours);
+            ), result(
+                hours.values()
+            )
+        )
+    then
+        scoreHolder.penalize(kcontext, Shift.calculateLoad($allHours));
 end
 
 // PLANNER-1925 3, to prevent load balancing from setting loads to zero
