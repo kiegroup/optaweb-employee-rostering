@@ -408,6 +408,7 @@ public class SolverTest {
     @Test(timeout = 600000)
     public void testEmployeeAvilabilityConstraints() {
         for (EmployeeAvailabilityState state : EmployeeAvailabilityState.values()) {
+            System.out.println(state);
             testAvailabilityConstraint(state);
         }
     }
@@ -710,11 +711,11 @@ public class SolverTest {
                 HardMediumSoftScore.of(-1, 0, 0)),
         ASSIGN_EVERY_SHIFT(CONSTRAINT_ASSIGN_EVERY_SHIFT, HardMediumSoftScore.of(0, -1, 0)),
         UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
-                HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION.getUndesiredTimeSlotWeight())),
+                HardMediumSoftScore.of(0, 0, -1)),
         DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE,
-                HardMediumSoftScore.of(0, 0, ROSTER_CONSTRAINT_CONFIGURATION.getDesiredTimeSlotWeight())),
+                HardMediumSoftScore.of(0, 0, 1)),
         EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE,
-                HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION.getRotationEmployeeMatchWeight()));
+                HardMediumSoftScore.of(0, 0, 0));
 
         String constraintName;
         HardMediumSoftScore constraintWeight;
