@@ -110,7 +110,7 @@ end
 // PLANNER-1925 3, to prevent load balancing from setting loads to zero
 rule "Maximize inoculated hours"
     when
-        $shift: Shift(employee != null, spot.isCovidWard() == true)
+        $shift: Shift(employee != null)
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.INOCULATED)
     then
         scoreHolder.reward(kcontext, $shift.getLengthInHours());
