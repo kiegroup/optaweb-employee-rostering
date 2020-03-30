@@ -15,6 +15,7 @@
  */
 import React from 'react';
 import { Switch, TextInput } from '@patternfly/react-core';
+import { v4 as uuid } from 'uuid';
 
 export interface OptionalInputProps<T> {
   defaultValue: T|null;
@@ -28,6 +29,9 @@ export interface OptionalInputProps<T> {
 interface OptionalInputState<T> {
   inputValue: T|null|undefined;
   isChecked: boolean;
+  // Now that aria-labels don't work for switches, we need
+  // to generate a random uuid to use for id
+  id: string;
 }
 
 export default class OptionalInput<T> extends React.Component<OptionalInputProps<T>, OptionalInputState<T>> {
@@ -36,6 +40,7 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
     this.state = {
       inputValue: props.defaultValue,
       isChecked: props.defaultValue !== null,
+      id: uuid(),
     };
     this.handleToggle = this.handleToggle.bind(this);
   }
@@ -51,7 +56,7 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
   }
 
   render() {
-    const { isChecked } = this.state;
+    const { isChecked, id } = this.state;
     return (
       <span>
         <TextInput
@@ -70,7 +75,7 @@ export default class OptionalInput<T> extends React.Component<OptionalInputProps
             }
           }}
         />
-        <Switch aria-label="Enabled" isChecked={isChecked} onChange={this.handleToggle} />
+        <Switch id={id} aria-label="Enabled" isChecked={isChecked} onChange={this.handleToggle} />
       </span>
     );
   }
