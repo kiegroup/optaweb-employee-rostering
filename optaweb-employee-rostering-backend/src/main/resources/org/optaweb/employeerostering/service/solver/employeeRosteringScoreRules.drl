@@ -91,7 +91,7 @@ end
 // PLANNER-1925 2
 rule "Uniform distribution of inoculated hours"
     when
-        $allHours: Collection( size > 0 ) from accumulate(
+        $allCounts: Collection( size > 0 ) from accumulate(
             $shift: Shift(employee != null, employee.covidRiskType == CovidRiskType.INOCULATED, spot.isCovidWard() == true),
             init(
                 Map hours = new HashMap();
@@ -104,7 +104,7 @@ rule "Uniform distribution of inoculated hours"
             )
         )
     then
-        scoreHolder.penalize(kcontext, Shift.calculateLoad($allHours));
+        scoreHolder.penalize(kcontext, Shift.calculateLoad($allCounts));
 end
 
 // PLANNER-1925 3, to prevent load balancing from setting loads to zero

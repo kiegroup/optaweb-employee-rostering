@@ -25,6 +25,7 @@ import java.util.function.Function;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
@@ -50,6 +51,8 @@ public class Shift extends AbstractPersistable {
     private OffsetDateTime startDateTime;
     @NotNull
     private OffsetDateTime endDateTime;
+    @Transient
+    private Long length = null;
 
     @PlanningPin
     private boolean pinnedByUser = false;
@@ -104,24 +107,29 @@ public class Shift extends AbstractPersistable {
     }
 
     public long getLength(ChronoUnit unit) {
-        return startDateTime.until(endDateTime, unit);
+        if (length == null) {
+            length = startDateTime.until(endDateTime, unit);
+        }
+        return length;
+    }
+
+    public static long calculateLoad(Collection<Integer> hourlyCounts) {
+        long sumSquares = 0;
+        for (int hourlyCount: hourlyCounts) {
+            sumSquares += hourlyCount * hourlyCount;
+        }
+        long squareRootOfSums = Math.round(Math.sqrt(sumSquares) * 1000);
+        return squareRootOfSums;
     }
 
     private void adjustHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap,
             Function<Integer, Integer> countAdjuster) {
         long hourCount = getLength(ChronoUnit.HOURS);
+        OffsetDateTime baseStartDateTime = startDateTime.truncatedTo(ChronoUnit.HOURS);
         for (int hour = 0; hour < hourCount; hour++) {
-            OffsetDateTime actualHour = startDateTime.truncatedTo(ChronoUnit.HOURS).plusHours(hour);
+            OffsetDateTime actualHour = baseStartDateTime.plusHours(hour);
             hourlyCountsMap.compute(actualHour, (k, count) -> countAdjuster.apply(count));
         }
-    }
-
-    public static long calculateLoad(Collection<Integer> hourlyCounts) {
-        long sumSquares = hourlyCounts.stream()
-                .mapToInt(i -> (int)Math.pow(i, 2))
-                .sum();
-        long squareRoot = Math.round(Math.sqrt(sumSquares) * 1000);
-        return squareRoot;
     }
 
     public void increaseHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap) {
@@ -162,6 +170,7 @@ public class Shift extends AbstractPersistable {
 
     public void setStartDateTime(OffsetDateTime startDateTime) {
         this.startDateTime = startDateTime;
+        this.length = null;
     }
 
     public OffsetDateTime getEndDateTime() {
@@ -170,6 +179,7 @@ public class Shift extends AbstractPersistable {
 
     public void setEndDateTime(OffsetDateTime endDateTime) {
         this.endDateTime = endDateTime;
+        this.length = null;
     }
 
     public boolean isPinnedByUser() {
