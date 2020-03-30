@@ -46,6 +46,17 @@ jest.mock('react-i18next', () => ({
   Trans: jest.requireActual('react-i18next').Trans,
 }));
 
+// Need deterministic UUID
+jest.mock('uuid', () => {
+  let count = 0;
+  return {
+    v4: jest.fn(() => {
+      count += 1;
+      return `uuid-${count}`;
+    }),
+  };
+});
+
 function mockFunctions() {
   const original = jest.requireActual('react-responsive');
   return {

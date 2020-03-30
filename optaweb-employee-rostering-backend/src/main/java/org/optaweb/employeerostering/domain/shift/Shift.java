@@ -18,6 +18,10 @@ package org.optaweb.employeerostering.domain.shift;
 
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
+import java.util.Collection;
+import java.util.Map;
+import java.util.function.UnaryOperator;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -63,7 +67,7 @@ public class Shift extends AbstractPersistable {
     }
 
     public Shift(Integer tenantId, Spot spot, OffsetDateTime startDateTime, OffsetDateTime endDateTime,
-                 Employee rotationEmployee) {
+            Employee rotationEmployee) {
         super(tenantId);
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
@@ -78,9 +82,9 @@ public class Shift extends AbstractPersistable {
     public Shift(ZoneId zoneId, ShiftView shiftView, Spot spot, Employee rotationEmployee) {
         super(shiftView);
         this.startDateTime = OffsetDateTime.of(shiftView.getStartDateTime(),
-                                               zoneId.getRules().getOffset(shiftView.getStartDateTime()));
+                zoneId.getRules().getOffset(shiftView.getStartDateTime()));
         this.endDateTime = OffsetDateTime.of(shiftView.getEndDateTime(),
-                                             zoneId.getRules().getOffset(shiftView.getEndDateTime()));
+                zoneId.getRules().getOffset(shiftView.getEndDateTime()));
         this.spot = spot;
         this.pinnedByUser = shiftView.isPinnedByUser();
         this.rotationEmployee = rotationEmployee;
@@ -97,6 +101,49 @@ public class Shift extends AbstractPersistable {
 
     public boolean precedes(Shift other) {
         return !endDateTime.isAfter(other.startDateTime);
+    }
+
+    public long getLengthInHours() {
+        return startDateTime.until(endDateTime, ChronoUnit.HOURS);
+    }
+
+    public static long calculateLoad(Collection<Integer> hourlyCounts) {
+        long sumSquares = 0;
+        for (int hourlyCount: hourlyCounts) {
+            sumSquares += hourlyCount * hourlyCount;
+        }
+        long squareRootOfSums = Math.round(Math.sqrt(sumSquares) * 1000);
+        return squareRootOfSums;
+    }
+
+    private void adjustHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap,
+            UnaryOperator<Integer> countAdjuster) {
+        long hourCount = getLengthInHours();
+        OffsetDateTime baseStartDateTime = startDateTime.truncatedTo(ChronoUnit.HOURS);
+        for (int hour = 0; hour < hourCount; hour++) {
+            OffsetDateTime actualHour = baseStartDateTime.plusHours(hour);
+            hourlyCountsMap.compute(actualHour, (k, count) -> countAdjuster.apply(count));
+        }
+    }
+
+    public void increaseHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap) {
+        adjustHourlyCounts(hourlyCountsMap, count -> {
+            if (count == null) {
+                return 1;
+            } else {
+                return count + 1;
+            }
+        });
+    }
+
+    public void decreaseHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap) {
+        adjustHourlyCounts(hourlyCountsMap, count -> {
+            if (count < 2) {
+                return null;
+            } else {
+                return count - 1;
+            }
+        });
     }
 
     // ************************************************************************

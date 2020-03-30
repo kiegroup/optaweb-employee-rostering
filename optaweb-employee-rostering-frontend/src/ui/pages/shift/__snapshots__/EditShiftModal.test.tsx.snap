@@ -248,6 +248,7 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
       </Label>
       <Component
         aria-label="Is Pinned"
+        id="isPinned"
         onChange={[Function]}
       />
     </InputGroup>
@@ -503,6 +504,7 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
       </Label>
       <Component
         aria-label="Is Pinned"
+        id="isPinned"
         onChange={[Function]}
       />
     </InputGroup>
@@ -838,6 +840,7 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
       </Label>
       <Component
         aria-label="Is Pinned"
+        id="isPinned"
         isChecked={false}
         onChange={[Function]}
       />
