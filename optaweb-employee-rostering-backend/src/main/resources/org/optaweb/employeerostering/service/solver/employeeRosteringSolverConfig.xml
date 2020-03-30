@@ -5,7 +5,7 @@
   <entityClass>org.optaweb.employeerostering.domain.shift.Shift</entityClass>
 
   <scoreDirectorFactory>
-    <scoreDrl>org/optaweb/employeerostering/service/solver/employeeRosteringScoreRules.drl</scoreDrl>
+    <constraintProviderClass>org.optaweb.employeerostering.service.solver.EmployeeRosteringConstraintProvider</constraintProviderClass>
   </scoreDirectorFactory>
 
   <termination>
