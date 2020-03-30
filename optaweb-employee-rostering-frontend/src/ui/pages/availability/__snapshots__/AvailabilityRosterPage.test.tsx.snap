@@ -100,6 +100,7 @@ exports[`Availability Roster Page should render correctly when creating a new av
           "version": 0,
         }
       }
+      valueComponent={[Function]}
     />
     <WeekPicker
       aria-label="Select Week to View"
@@ -404,6 +405,7 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
           "version": 0,
         }
       }
+      valueComponent={[Function]}
     />
     <WeekPicker
       aria-label="Select Week to View"
@@ -736,6 +738,7 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
           "version": 0,
         }
       }
+      valueComponent={[Function]}
     />
     <WeekPicker
       aria-label="Select Week to View"
