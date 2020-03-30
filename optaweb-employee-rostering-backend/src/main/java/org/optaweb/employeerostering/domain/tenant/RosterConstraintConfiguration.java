@@ -49,6 +49,19 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     private HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(10);
     @ConstraintWeight("Extreme-risk employee assigned to a COVID ward")
     private HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofHard(1);
+    @ConstraintWeight("Inoculated employee outside a COVID ward")
+    private HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWardMatchWeight =
+            HardMediumSoftLongScore.ofSoft(1000);
+    @ConstraintWeight("Uniform distribution of inoculated hours")
+    private HardMediumSoftLongScore uniformDistributionOfInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(1);
+    @ConstraintWeight("Maximize inoculated hours")
+    private HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(10);
+    @ConstraintWeight("Migration between COVID and non-COVID wards")
+    private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight =
+            HardMediumSoftLongScore.ofSoft(10);
+    @ConstraintWeight("Non-COVID shift started less than 8 hours after finishing a COVID shift")
+    private HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight =
+            HardMediumSoftLongScore.ofHard(1);
 
     @ConstraintWeight("Required skill for a shift")
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
@@ -75,7 +88,7 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     @ConstraintWeight("Desired time slot for an employee")
     private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
     @ConstraintWeight("Employee is not rotation employee")
-    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ZERO; // Disabled.
 
     @SuppressWarnings("unused")
     public RosterConstraintConfiguration() {
@@ -130,6 +143,51 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     public void setExtremeRiskEmployeeInCovidWardMatchWeight(
             HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight) {
         this.extremeRiskEmployeeInCovidWardMatchWeight = extremeRiskEmployeeInCovidWardMatchWeight;
+    }
+
+    public HardMediumSoftLongScore getInoculatedEmployeeOutsideCovidWardMatchWeight() {
+        return inoculatedEmployeeOutsideCovidWardMatchWeight;
+    }
+
+    public void setInoculatedEmployeeOutsideCovidWardMatchWeight(
+            HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWardMatchWeight) {
+        this.inoculatedEmployeeOutsideCovidWardMatchWeight = inoculatedEmployeeOutsideCovidWardMatchWeight;
+    }
+
+    public HardMediumSoftLongScore getUniformDistributionOfInoculatedHoursMatchWeight() {
+        return uniformDistributionOfInoculatedHoursMatchWeight;
+    }
+
+    public void setUniformDistributionOfInoculatedHoursMatchWeight(
+            HardMediumSoftLongScore uniformDistributionOfInoculatedHoursMatchWeight) {
+        this.uniformDistributionOfInoculatedHoursMatchWeight = uniformDistributionOfInoculatedHoursMatchWeight;
+    }
+
+    public HardMediumSoftLongScore getMaximizeInoculatedHoursMatchWeight() {
+        return maximizeInoculatedHoursMatchWeight;
+    }
+
+    public void setMaximizeInoculatedHoursMatchWeight(HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight) {
+        this.maximizeInoculatedHoursMatchWeight = maximizeInoculatedHoursMatchWeight;
+    }
+
+    public HardMediumSoftLongScore getMigrationBetweenCovidAndNonCovidWardMatchWeight() {
+        return migrationBetweenCovidAndNonCovidWardMatchWeight;
+    }
+
+    public void setMigrationBetweenCovidAndNonCovidWardMatchWeight(
+            HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight) {
+        this.migrationBetweenCovidAndNonCovidWardMatchWeight = migrationBetweenCovidAndNonCovidWardMatchWeight;
+    }
+
+    public HardMediumSoftLongScore getNonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight() {
+        return nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight;
+    }
+
+    public void setNonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight(
+            HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight) {
+        this.nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight =
+                nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight;
     }
 
     // ************************************************************************

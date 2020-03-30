@@ -202,6 +202,7 @@ export class EditShiftModal extends React.Component<Props & WithTranslation, Sta
           <InputGroup>
             <Label>{t('isPinned')}</Label>
             <Switch
+              id="isPinned"
               aria-label="Is Pinned"
               isChecked={this.state.editedValue.pinnedByUser}
               onChange={isPinned => this.setState(prevState => ({
