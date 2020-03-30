@@ -53,9 +53,9 @@ export default function EventWrapper(props: React.PropsWithChildren<{
       style={style}
     >
       <Popover
-        position="right"
         headerContent={props.popoverHeader}
         bodyContent={props.popoverBody}
+        boundary="viewport"
       >
         <div>{props.children as React.ReactElement}</div>
       </Popover>

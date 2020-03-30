@@ -10,6 +10,7 @@ exports[`OptionalInput component should render correctly 1`] = `
   />
   <Component
     aria-label="Enabled"
+    id="uuid-8"
     isChecked={true}
     onChange={[Function]}
   />
