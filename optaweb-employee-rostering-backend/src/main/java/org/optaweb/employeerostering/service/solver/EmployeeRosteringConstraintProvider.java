@@ -41,7 +41,8 @@ import static java.time.Duration.between;
 import static java.time.temporal.ChronoUnit.HOURS;
 import static org.optaplanner.core.api.score.stream.ConstraintCollectors.sumDuration;
 import static org.optaplanner.core.api.score.stream.Joiners.equal;
-import static org.optaplanner.core.api.score.stream.Joiners.filtering;
+import static org.optaplanner.core.api.score.stream.Joiners.greaterThanOrEqual;
+import static org.optaplanner.core.api.score.stream.Joiners.lessThanOrEqual;
 import static org.optaweb.employeerostering.domain.employee.CovidRiskType.EXTREME;
 import static org.optaweb.employeerostering.domain.employee.CovidRiskType.HIGH;
 import static org.optaweb.employeerostering.domain.employee.CovidRiskType.INOCULATED;
@@ -165,29 +166,35 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
         return constraintFactory.from(Shift.class)
                 .filter(shift -> shift.getEmployee() != null)
                 .filter(shift -> shift.getSpot().isCovidWard())
-                .join(Shift.class, equal(Shift::getEmployee))
-                .filter((covidShift, otherShift) -> !otherShift.getSpot().isCovidWard())
-                .filter((covidShift, nonCovidShift) -> nonCovidShift.follows(covidShift))
+                .join(Shift.class,
+                        equal(Shift::getEmployee),
+                        lessThanOrEqual(Shift::getEndDateTime, Shift::getStartDateTime))
+                .filter((covidShift, futureShift) -> !futureShift.getSpot().isCovidWard())
                 .ifNotExists(Shift.class,
                         equal((covidShift, nonCovidShift) -> covidShift.getEmployee(), Shift::getEmployee),
-                        filtering((covidShift, nonCovidShift, otherShift) -> otherShift.precedes(nonCovidShift)),
-                        filtering((covidShift, nonCovidShift, otherShift) -> otherShift.follows(covidShift)))
+                        lessThanOrEqual((covidShift, nonCovidShift) -> covidShift.getEndDateTime(),
+                                Shift::getStartDateTime),
+                        greaterThanOrEqual((covidShift, nonCovidShift) -> nonCovidShift.getStartDateTime(),
+                                Shift::getEndDateTime))
                 .penalizeConfigurable(CONSTRAINT_COVID_MIGRATION_BETWEEN_COVID_AND_NON_COVID_WARDS);
     }
 
     Constraint nonCovidShiftStartedLessThan8HoursAfterFinishingCovidShift(ConstraintFactory constraintFactory) {
         return constraintFactory.from(Shift.class)
                 .filter(shift -> shift.getEmployee() != null)
-                .filter(shift -> !shift.getSpot().isCovidWard())
-                .join(Shift.class, equal(Shift::getEmployee))
-                .filter((nonCovidShift, otherShift) -> otherShift.getSpot().isCovidWard())
-                .filter((nonCovidShift, covidShift) -> covidShift.precedes(nonCovidShift))
-                .filter((nonCovidShift, covidShift) ->
+                .filter(shift -> shift.getSpot().isCovidWard())
+                .join(Shift.class,
+                        equal(Shift::getEmployee),
+                        lessThanOrEqual(Shift::getEndDateTime, Shift::getStartDateTime))
+                .filter((covidShift, futureShift) -> !futureShift.getSpot().isCovidWard())
+                .filter((covidShift, nonCovidShift) ->
                         covidShift.getEndDateTime().until(nonCovidShift.getStartDateTime(), HOURS) < 8)
                 .ifNotExists(Shift.class,
-                        equal((nonCovidShift, covidShift) -> covidShift.getEmployee(), Shift::getEmployee),
-                        filtering((nonCovidShift, covidShift, otherShift) -> otherShift.precedes(nonCovidShift)),
-                        filtering((nonCovidShift, covidShift, otherShift) -> otherShift.follows(covidShift)))
+                        equal((covidShift, nonCovidShift) -> covidShift.getEmployee(), Shift::getEmployee),
+                        lessThanOrEqual((covidShift, nonCovidShift) -> covidShift.getEndDateTime(),
+                                Shift::getStartDateTime),
+                        greaterThanOrEqual((covidShift, nonCovidShift) -> nonCovidShift.getStartDateTime(),
+                                Shift::getEndDateTime))
                 .penalizeConfigurable(CONSTRAINT_COVID_NON_COVID_SHIFT_STARTED_SOON_AFTER_FINISHING_A_COVID_SHIFT);
     }
 
@@ -219,13 +226,14 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     Constraint noTwoShiftsWithin10HoursFromEachOther(ConstraintFactory constraintFactory) {
         return constraintFactory.from(Shift.class)
                 .filter(shift -> shift.getEmployee() != null)
-                .join(Shift.class, equal(Shift::getEmployee))
-                .filter(Shift::precedes)
+                .join(Shift.class,
+                        equal(Shift::getEmployee),
+                        lessThanOrEqual(Shift::getEndDateTime, Shift::getStartDateTime))
                 .filter((shift1, shift2) -> shift1.getEndDateTime().until(shift2.getStartDateTime(), HOURS) < 10)
                 .penalizeConfigurable(CONSTRAINT_NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER);
     }
 
-    private long getHoursOverMaximum(long maximum, long current) {
+    private static long getHoursOverMaximum(long maximum, long current) {
         long minutesOverMaximum = Math.max(current - maximum, 0);
         long hours = minutesOverMaximum / 60;
         return (minutesOverMaximum % 60 == 0) ? hours : hours + 1;
