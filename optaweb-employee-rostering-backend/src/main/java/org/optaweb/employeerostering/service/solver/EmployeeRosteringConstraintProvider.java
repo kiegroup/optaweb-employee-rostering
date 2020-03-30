@@ -217,8 +217,9 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
     }
 
     Constraint noTwoShiftsWithin10HoursFromEachOther(ConstraintFactory constraintFactory) {
-        return constraintFactory.fromUniquePair(Shift.class, equal(Shift::getEmployee))
-                .filter((shift1, shift2) -> shift2.follows(shift1))
+        return constraintFactory.from(Shift.class)
+                .join(Shift.class, equal(Shift::getEmployee))
+                .filter(Shift::precedes)
                 .filter((shift1, shift2) -> shift1.getEndDateTime().until(shift2.getStartDateTime(), HOURS) < 10)
                 .penalizeConfigurable(CONSTRAINT_NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER);
     }
