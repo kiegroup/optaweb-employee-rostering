@@ -21,7 +21,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
@@ -52,7 +52,7 @@ public class Shift extends AbstractPersistable {
     @NotNull
     private OffsetDateTime endDateTime;
     @Transient
-    private Long length = null;
+    private Long lengthInHours = null;
 
     @PlanningPin
     private boolean pinnedByUser = false;
@@ -106,11 +106,11 @@ public class Shift extends AbstractPersistable {
         return !endDateTime.isAfter(other.startDateTime);
     }
 
-    public long getLength(ChronoUnit unit) {
-        if (length == null) {
-            length = startDateTime.until(endDateTime, unit);
+    public long getLengthInHours() {
+        if (lengthInHours == null) {
+            lengthInHours = startDateTime.until(endDateTime, ChronoUnit.HOURS);
         }
-        return length;
+        return lengthInHours;
     }
 
     public static long calculateLoad(Collection<Integer> hourlyCounts) {
@@ -123,8 +123,8 @@ public class Shift extends AbstractPersistable {
     }
 
     private void adjustHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap,
-            Function<Integer, Integer> countAdjuster) {
-        long hourCount = getLength(ChronoUnit.HOURS);
+            UnaryOperator<Integer> countAdjuster) {
+        long hourCount = getLengthInHours();
         OffsetDateTime baseStartDateTime = startDateTime.truncatedTo(ChronoUnit.HOURS);
         for (int hour = 0; hour < hourCount; hour++) {
             OffsetDateTime actualHour = baseStartDateTime.plusHours(hour);
@@ -170,7 +170,7 @@ public class Shift extends AbstractPersistable {
 
     public void setStartDateTime(OffsetDateTime startDateTime) {
         this.startDateTime = startDateTime;
-        this.length = null;
+        this.lengthInHours = null;
     }
 
     public OffsetDateTime getEndDateTime() {
@@ -179,7 +179,7 @@ public class Shift extends AbstractPersistable {
 
     public void setEndDateTime(OffsetDateTime endDateTime) {
         this.endDateTime = endDateTime;
-        this.length = null;
+        this.lengthInHours = null;
     }
 
     public boolean isPinnedByUser() {

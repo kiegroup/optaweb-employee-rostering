@@ -113,7 +113,7 @@ rule "Maximize inoculated hours"
         $shift: Shift(employee != null, spot.isCovidWard() == true)
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.INOCULATED)
     then
-        scoreHolder.reward(kcontext, $shift.getLength(ChronoUnit.HOURS));
+        scoreHolder.reward(kcontext, $shift.getLengthInHours());
 end
 
 // PLANNER-1926 A
