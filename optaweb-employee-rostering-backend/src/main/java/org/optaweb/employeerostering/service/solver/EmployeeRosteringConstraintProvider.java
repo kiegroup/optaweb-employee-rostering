@@ -218,14 +218,17 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
 
     Constraint noTwoShiftsWithin10HoursFromEachOther(ConstraintFactory constraintFactory) {
         return constraintFactory.from(Shift.class)
+                .filter(shift -> shift.getEmployee() != null)
                 .join(Shift.class, equal(Shift::getEmployee))
                 .filter(Shift::precedes)
                 .filter((shift1, shift2) -> shift1.getEndDateTime().until(shift2.getStartDateTime(), HOURS) < 10)
                 .penalizeConfigurable(CONSTRAINT_NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER);
     }
 
-    private long getOverMaximum(long maximum, long current) {
-        return Math.max(current - maximum, 0);
+    private long getHoursOverMaximum(long maximum, long current) {
+        long minutesOverMaximum = Math.max(current - maximum, 0);
+        long hours = minutesOverMaximum / 60;
+        return (minutesOverMaximum % 60 == 0) ? hours : hours + 1;
     }
 
     Constraint dailyMinutesMustNotExceedContractMaximum(ConstraintFactory constraintFactory) {
@@ -238,7 +241,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                                 between(shift.getStartDateTime(), shift.getEndDateTime())))
                 .penalizeConfigurableLong(CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                         (employee, day, totalWorkingTime) ->
-                                getOverMaximum(employee.getContract().getMaximumMinutesPerDay(),
+                                getHoursOverMaximum(employee.getContract().getMaximumMinutesPerDay(),
                                         totalWorkingTime.toMinutes()));
     }
 
@@ -254,7 +257,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                                 between(shift.getStartDateTime(), shift.getEndDateTime())))
                 .penalizeConfigurableLong(CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                         (employee, firstDayOfWeek, totalWorkingTime) ->
-                                getOverMaximum(employee.getContract().getMaximumMinutesPerWeek(),
+                                getHoursOverMaximum(employee.getContract().getMaximumMinutesPerWeek(),
                                         totalWorkingTime.toMinutes()));
     }
 
@@ -268,7 +271,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                                 between(shift.getStartDateTime(), shift.getEndDateTime())))
                 .penalizeConfigurableLong(CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                         (employee, month, totalWorkingTime) ->
-                                getOverMaximum(employee.getContract().getMaximumMinutesPerMonth(),
+                                getHoursOverMaximum(employee.getContract().getMaximumMinutesPerMonth(),
                                         totalWorkingTime.toMinutes()));
     }
 
@@ -281,7 +284,7 @@ public final class EmployeeRosteringConstraintProvider implements ConstraintProv
                         sumDuration((employee, shift) -> between(shift.getStartDateTime(), shift.getEndDateTime())))
                 .penalizeConfigurableLong(CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM,
                         (employee, year, totalWorkingTime) ->
-                                getOverMaximum(employee.getContract().getMaximumMinutesPerYear(),
+                                getHoursOverMaximum(employee.getContract().getMaximumMinutesPerYear(),
                                         totalWorkingTime.toMinutes()));
     }
 

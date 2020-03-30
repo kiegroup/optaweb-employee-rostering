@@ -183,8 +183,6 @@ public class IndictmentUtils {
             return Collections.emptyList();
         }
         // getJustificationList() was not consistent; sometimes employee was first, other times minutes worked was first
-        // TODO this is not functionally equivalent to what the DRL version did;
-        //  overall Duration instead of just the original Long overreach.
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> {
                     String constraintName = cm.getConstraintName();
