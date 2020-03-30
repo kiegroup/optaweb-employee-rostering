@@ -5555,11 +5555,18 @@ exports[`ShiftEvent should render ShiftEvent correctly 1`] = `
     }
   }
 >
-  <CrossIcon
-    color="currentColor"
+  <SyringeIcon
+    color="#8ae234"
     noVerticalAlign={false}
-    size="sm"
+    size="lg"
     title={null}
+  />
+  <span
+    style={
+      Object {
+        "width": "10px",
+      }
+    }
   />
   Employee
 </span>
@@ -5581,11 +5588,18 @@ exports[`ShiftEvent should render ShiftEvent correctly when pinned 1`] = `
     size="sm"
     title={null}
   />
-  <CrossIcon
-    color="currentColor"
+  <SyringeIcon
+    color="#8ae234"
     noVerticalAlign={false}
-    size="sm"
+    size="lg"
     title={null}
+  />
+  <span
+    style={
+      Object {
+        "width": "10px",
+      }
+    }
   />
   Employee
 </span>

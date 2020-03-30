@@ -22,7 +22,7 @@ import { Employee } from 'domain/Employee';
 import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
 import {
   BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon,
-  CrossIcon, HeartIcon, HeartbeatIcon, BandAidIcon, SkullIcon,
+  SyringeIcon, MehIcon, FrownIcon, SadTearIcon, BanIcon,
 } from '@patternfly/react-icons';
 import Color from 'color';
 import { useTranslation } from 'react-i18next';
@@ -331,11 +331,14 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
     }}
   >
     {props.event.pinnedByUser && <ThumbTackIcon />}
-    {props.event.employee && props.event.employee.covidRiskType === 'INOCULATED' && <CrossIcon />}
-    {props.event.employee && props.event.employee.covidRiskType === 'LOW' && <HeartIcon />}
-    {props.event.employee && props.event.employee.covidRiskType === 'MODERATE' && <HeartbeatIcon />}
-    {props.event.employee && props.event.employee.covidRiskType === 'HIGH' && <BandAidIcon />}
-    {props.event.employee && props.event.employee.covidRiskType === 'EXTREME' && <SkullIcon />}
+    {props.event.employee && props.event.employee.covidRiskType === 'INOCULATED'
+    && <SyringeIcon color="#8ae234" size="lg" />}
+    {props.event.employee && props.event.employee.covidRiskType === 'LOW' && <MehIcon color="#edd400" size="lg" />}
+    {props.event.employee && props.event.employee.covidRiskType === 'MODERATE'
+    && <FrownIcon color="#fcaf3e" size="lg" />}
+    {props.event.employee && props.event.employee.covidRiskType === 'HIGH' && <SadTearIcon color="#f57900" size="lg" />}
+    {props.event.employee && props.event.employee.covidRiskType === 'EXTREME' && <BanIcon color="#2e3436" size="lg" />}
+    <span style={{ width: '10px' }} />
     {props.title}
   </span>
 );
