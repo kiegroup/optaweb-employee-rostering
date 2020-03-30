@@ -455,7 +455,7 @@ public class SolverTest {
         roster.setShiftList(shiftList);
 
         final Constraints constraint = Constraints.AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 2);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofDays(1));
         shiftList = shiftBuilder.generateShifts(2);
