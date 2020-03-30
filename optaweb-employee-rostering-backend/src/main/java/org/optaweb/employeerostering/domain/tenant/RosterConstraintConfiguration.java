@@ -88,7 +88,7 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     @ConstraintWeight("Desired time slot for an employee")
     private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
     @ConstraintWeight("Employee is not rotation employee")
-    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ZERO; // Disabled.
 
     @SuppressWarnings("unused")
     public RosterConstraintConfiguration() {
