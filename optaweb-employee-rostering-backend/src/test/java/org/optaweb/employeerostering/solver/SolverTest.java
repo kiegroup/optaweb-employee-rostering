@@ -254,15 +254,15 @@ public class SolverTest {
         shiftList.get(2).setEmployee(employeeA);
 
         // -1 for each shift in overloaded week
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 3);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
 
         shiftList.get(5).setEmployee(employeeA);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 6);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 2);
 
         shiftList.get(1).setEmployee(null);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 3);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
     }
 
     @Test(timeout = 600000)
