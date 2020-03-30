@@ -25,7 +25,6 @@ import java.util.function.UnaryOperator;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.optaplanner.core.api.domain.entity.PlanningEntity;
@@ -51,8 +50,6 @@ public class Shift extends AbstractPersistable {
     private OffsetDateTime startDateTime;
     @NotNull
     private OffsetDateTime endDateTime;
-    @Transient
-    private Long lengthInHours = null;
 
     @PlanningPin
     private boolean pinnedByUser = false;
@@ -107,10 +104,7 @@ public class Shift extends AbstractPersistable {
     }
 
     public long getLengthInHours() {
-        if (lengthInHours == null) {
-            lengthInHours = startDateTime.until(endDateTime, ChronoUnit.HOURS);
-        }
-        return lengthInHours;
+        return startDateTime.until(endDateTime, ChronoUnit.HOURS);
     }
 
     public static long calculateLoad(Collection<Integer> hourlyCounts) {
@@ -170,7 +164,6 @@ public class Shift extends AbstractPersistable {
 
     public void setStartDateTime(OffsetDateTime startDateTime) {
         this.startDateTime = startDateTime;
-        this.lengthInHours = null;
     }
 
     public OffsetDateTime getEndDateTime() {
@@ -179,7 +172,6 @@ public class Shift extends AbstractPersistable {
 
     public void setEndDateTime(OffsetDateTime endDateTime) {
         this.endDateTime = endDateTime;
-        this.lengthInHours = null;
     }
 
     public boolean isPinnedByUser() {
