@@ -30,6 +30,41 @@ import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 @ConstraintConfiguration(constraintPackage = "org.optaweb.employeerostering.service.solver")
 public class RosterConstraintConfiguration extends AbstractPersistable {
 
+    public static final String CONSTRAINT_COVID_LOW_RISK_EMPLOYEE = "Low-risk employee assigned to a COVID ward";
+    public static final String CONSTRAINT_COVID_MODERATE_RISK_EMPLOYEE =
+            "Moderate-risk employee assigned to a COVID ward";
+    public static final String CONSTRAINT_COVID_HIGH_RISK_EMPLOYEE = "High-risk employee assigned to a COVID ward";
+    public static final String CONSTRAINT_COVID_EXTREME_RISK_EMPLOYEE =
+            "Extreme-risk employee assigned to a COVID ward";
+    public static final String CONSTRAINT_COVID_INOCULATED_EMPLOYEE_OUTSIDE_COVID_WARD =
+            "Inoculated employee outside a COVID ward";
+    public static final String CONSTRAINT_COVID_UNIFORM_DISTRIBUTION_OF_INOCULATED_HOURS =
+            "Uniform distribution of inoculated hours";
+    public static final String CONSTRAINT_COVID_MAXIMIZE_INOCULATED_HOURS = "Maximize inoculated hours";
+    public static final String CONSTRAINT_COVID_MIGRATION_BETWEEN_COVID_AND_NON_COVID_WARDS =
+            "Migration between COVID and non-COVID wards";
+    public static final String CONSTRAINT_COVID_NON_COVID_SHIFT_STARTED_SOON_AFTER_FINISHING_A_COVID_SHIFT =
+            "Non-COVID shift started less than 8 hours after finishing a COVID shift";
+    public static final String CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT = "Required skill for a shift";
+    public static final String CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE =
+            "Unavailable time slot for an employee";
+    public static final String CONSTRAINT_AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE =
+            "At most one shift assignment per day per employee";
+    public static final String CONSTRAINT_NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER =
+            "No 2 shifts within 10 hours from each other";
+    public static final String CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM =
+            "Daily minutes must not exceed contract maximum";
+    public static final String CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM =
+            "Weekly minutes must not exceed contract maximum";
+    public static final String CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM =
+            "Monthly minutes must not exceed contract maximum";
+    public static final String CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM =
+            "Yearly minutes must not exceed contract maximum";
+    public static final String CONSTRAINT_ASSIGN_EVERY_SHIFT = "Assign every shift";
+    public static final String CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE = "Undesired time slot for an employee";
+    public static final String CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE = "Desired time slot for an employee";
+    public static final String CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE = "Employee is not rotation employee";
+
     // TODO: Is 999 a reasonable max for the weights?
     @NotNull
     private Integer undesiredTimeSlotWeight = 100;
@@ -41,53 +76,53 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     private DayOfWeek weekStartDay = DayOfWeek.MONDAY;
 
     // COVID-specific constraints
-    @ConstraintWeight("Low-risk employee assigned to a COVID ward")
+    @ConstraintWeight(CONSTRAINT_COVID_LOW_RISK_EMPLOYEE)
     private HardMediumSoftLongScore lowRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(1);
-    @ConstraintWeight("Moderate-risk employee assigned to a COVID ward")
+    @ConstraintWeight(CONSTRAINT_COVID_MODERATE_RISK_EMPLOYEE)
     private HardMediumSoftLongScore moderateRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(5);
-    @ConstraintWeight("High-risk employee assigned to a COVID ward")
+    @ConstraintWeight(CONSTRAINT_COVID_HIGH_RISK_EMPLOYEE)
     private HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(10);
-    @ConstraintWeight("Extreme-risk employee assigned to a COVID ward")
+    @ConstraintWeight(CONSTRAINT_COVID_EXTREME_RISK_EMPLOYEE)
     private HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofHard(1);
-    @ConstraintWeight("Inoculated employee outside a COVID ward")
+    @ConstraintWeight(CONSTRAINT_COVID_INOCULATED_EMPLOYEE_OUTSIDE_COVID_WARD)
     private HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWardMatchWeight =
             HardMediumSoftLongScore.ofSoft(1000);
-    @ConstraintWeight("Uniform distribution of inoculated hours")
+    @ConstraintWeight(CONSTRAINT_COVID_UNIFORM_DISTRIBUTION_OF_INOCULATED_HOURS)
     private HardMediumSoftLongScore uniformDistributionOfInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(1);
-    @ConstraintWeight("Maximize inoculated hours")
+    @ConstraintWeight(CONSTRAINT_COVID_MAXIMIZE_INOCULATED_HOURS)
     private HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(10);
-    @ConstraintWeight("Migration between COVID and non-COVID wards")
+    @ConstraintWeight(CONSTRAINT_COVID_MIGRATION_BETWEEN_COVID_AND_NON_COVID_WARDS)
     private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight =
             HardMediumSoftLongScore.ofSoft(10);
-    @ConstraintWeight("Non-COVID shift started less than 8 hours after finishing a COVID shift")
+    @ConstraintWeight(CONSTRAINT_COVID_NON_COVID_SHIFT_STARTED_SOON_AFTER_FINISHING_A_COVID_SHIFT)
     private HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight =
             HardMediumSoftLongScore.ofHard(1);
 
-    @ConstraintWeight("Required skill for a shift")
+    @ConstraintWeight(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT)
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
-    @ConstraintWeight("Unavailable time slot for an employee")
+    @ConstraintWeight(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE)
     private HardMediumSoftLongScore unavailableTimeSlot = HardMediumSoftLongScore.ofHard(50);
-    @ConstraintWeight("At most one shift assignment per day per employee")
+    @ConstraintWeight(CONSTRAINT_AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE)
     private HardMediumSoftLongScore oneShiftPerDay = HardMediumSoftLongScore.ofHard(10);
-    @ConstraintWeight("No 2 shifts within 10 hours from each other")
+    @ConstraintWeight(CONSTRAINT_NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER)
     private HardMediumSoftLongScore noShiftsWithinTenHours = HardMediumSoftLongScore.ofHard(1);
-    @ConstraintWeight("Daily minutes must not exceed contract maximum")
+    @ConstraintWeight(CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM)
     private HardMediumSoftLongScore contractMaximumDailyMinutes = HardMediumSoftLongScore.ofHard(1);
-    @ConstraintWeight("Weekly minutes must not exceed contract maximum")
+    @ConstraintWeight(CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM)
     private HardMediumSoftLongScore contractMaximumWeeklyMinutes = HardMediumSoftLongScore.ofHard(1);
-    @ConstraintWeight("Monthly minutes must not exceed contract maximum")
+    @ConstraintWeight(CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM)
     private HardMediumSoftLongScore contractMaximumMonthlyMinutes = HardMediumSoftLongScore.ofHard(1);
-    @ConstraintWeight("Yearly minutes must not exceed contract maximum")
+    @ConstraintWeight(CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM)
     private HardMediumSoftLongScore contractMaximumYearlyMinutes = HardMediumSoftLongScore.ofHard(1);
 
-    @ConstraintWeight("Assign every shift")
+    @ConstraintWeight(CONSTRAINT_ASSIGN_EVERY_SHIFT)
     private HardMediumSoftLongScore assignEveryShift = HardMediumSoftLongScore.ofMedium(1);
 
-    @ConstraintWeight("Undesired time slot for an employee")
+    @ConstraintWeight(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE)
     private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
-    @ConstraintWeight("Desired time slot for an employee")
+    @ConstraintWeight(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE)
     private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
-    @ConstraintWeight("Employee is not rotation employee")
+    @ConstraintWeight(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE)
     private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ZERO; // Disabled.
 
     @SuppressWarnings("unused")
