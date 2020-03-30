@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.service.common;
 
+import java.time.Duration;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +26,6 @@ import java.util.stream.Collectors;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.roster.Roster;
@@ -45,8 +45,20 @@ import org.optaweb.employeerostering.domain.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.domain.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmployeePenalty;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
-
 import org.springframework.stereotype.Component;
+
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_ASSIGN_EVERY_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 
 @Component
 public class IndictmentUtils {
@@ -179,7 +191,7 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Required skill for a shift"))
+                        cm.getConstraintName().equals(CONSTRAINT_REQUIRED_SKILL_FOR_A_SHIFT))
                 .map(cm -> new RequiredSkillViolation((Shift) cm.getJustificationList().get(0),
                                                       (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
@@ -191,9 +203,9 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Unavailable time slot for an employee"))
-                .map(cm -> new UnavailableEmployeeViolation((Shift) cm.getJustificationList().get(0),
-                                                            (EmployeeAvailability) cm.getJustificationList().get(1),
+                        cm.getConstraintName().equals(CONSTRAINT_UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE))
+                .map(cm -> new UnavailableEmployeeViolation((Shift) cm.getJustificationList().get(1),
+                                                            (EmployeeAvailability) cm.getJustificationList().get(0),
                                                             (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
     }
@@ -204,9 +216,9 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Desired time slot for an employee"))
-                .map(cm -> new DesiredTimeslotForEmployeeReward((Shift) cm.getJustificationList().get(0),
-                                                                (EmployeeAvailability) cm.getJustificationList().get(1),
+                        cm.getConstraintName().equals(CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE))
+                .map(cm -> new DesiredTimeslotForEmployeeReward((Shift) cm.getJustificationList().get(1),
+                                                                (EmployeeAvailability) cm.getJustificationList().get(0),
                                                                 (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
     }
@@ -217,10 +229,10 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Undesired time slot for an employee"))
-                .map(cm -> new UndesiredTimeslotForEmployeePenalty((Shift) cm.getJustificationList().get(0),
+                        cm.getConstraintName().equals(CONSTRAINT_UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE))
+                .map(cm -> new UndesiredTimeslotForEmployeePenalty((Shift) cm.getJustificationList().get(1),
                                                                    (EmployeeAvailability) cm.getJustificationList()
-                                                                           .get(1),
+                                                                           .get(0),
                                                                    (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
     }
@@ -231,8 +243,8 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("At most one shift assignment per day per employee") ||
-                        cm.getConstraintName().equals("No 2 shifts within 10 hours from each other"))
+                        cm.getConstraintName().equals(CONSTRAINT_AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE) ||
+                        cm.getConstraintName().equals(CONSTRAINT_NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER))
                 .map(cm -> new ShiftEmployeeConflict((Shift) cm.getJustificationList().get(0),
                                                      (Shift) cm.getJustificationList().get(1),
                                                      (HardMediumSoftLongScore) cm.getScore()))
@@ -245,7 +257,7 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Employee is not rotation employee"))
+                        cm.getConstraintName().equals(CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE))
                 .map(cm -> new RotationViolationPenalty((Shift) cm.getJustificationList().get(0),
                                                         (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
@@ -257,7 +269,7 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Assign every shift"))
+                        cm.getConstraintName().equals(CONSTRAINT_ASSIGN_EVERY_SHIFT))
                 .map(cm -> new UnassignedShiftPenalty((Shift) cm.getJustificationList().get(0),
                                                       (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
@@ -268,19 +280,24 @@ public class IndictmentUtils {
             return Collections.emptyList();
         }
         // getJustificationList() was not consistent; sometimes employee was first, other times minutes worked was first
+        // TODO this is not functionally equivalent to what the DRL version did;
+        //  overall Duration instead of just the original Long overreach.
         return indictment.getConstraintMatchSet().stream()
-                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        (cm.getConstraintName().equals("Daily minutes must not exceed contract maximum") ||
-                                cm.getConstraintName().equals("Weekly minutes must not exceed contract maximum") ||
-                                cm.getConstraintName().equals("Monthly minutes must not exceed contract maximum") ||
-                                cm.getConstraintName().equals("Yearly minutes must not exceed contract maximum")))
+                .filter(cm -> {
+                    String constraintName = cm.getConstraintName();
+                    return cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                            (constraintName.equals(CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM) ||
+                            constraintName.equals(CONSTRAINT_WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM) ||
+                            constraintName.equals(CONSTRAINT_MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM) ||
+                            constraintName.equals(CONSTRAINT_YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM));
+                })
                 .map(cm -> new ContractMinutesViolation((Employee) cm.getJustificationList()
                         .stream()
                         .filter(o -> o instanceof Employee)
                         .findFirst().get(), ContractMinutesViolation.Type.getTypeForViolation(cm.getConstraintName()),
                                                         (Long) cm.getJustificationList()
                                                                 .stream()
-                                                                .filter(o -> o instanceof Long)
+                                                                .filter(o -> o instanceof Duration)
                                                                 .findFirst().get(),
                                                         (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
