@@ -49,6 +49,14 @@ import org.springframework.stereotype.Component;
 
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_ASSIGN_EVERY_SHIFT;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_EXTREME_RISK_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_HIGH_RISK_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_INOCULATED_EMPLOYEE_OUTSIDE_COVID_WARD;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_LOW_RISK_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_MAXIMIZE_INOCULATED_HOURS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_MIGRATION_BETWEEN_COVID_AND_NON_COVID_WARDS;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_MODERATE_RISK_EMPLOYEE;
+import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_COVID_NON_COVID_SHIFT_STARTED_SOON_AFTER_FINISHING_A_COVID_SHIFT;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE;
 import static org.optaweb.employeerostering.domain.tenant.RosterConstraintConfiguration.CONSTRAINT_EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE;
@@ -105,10 +113,10 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        (cm.getConstraintName().equals("Low-risk employee assigned to a COVID ward") ||
-                                cm.getConstraintName().equals("Moderate-risk employee assigned to a COVID ward") ||
-                                cm.getConstraintName().equals("High-risk employee assigned to a COVID ward") ||
-                                cm.getConstraintName().equals("Extreme-risk employee assigned to a COVID ward")))
+                        (cm.getConstraintName().equals(CONSTRAINT_COVID_LOW_RISK_EMPLOYEE) ||
+                                cm.getConstraintName().equals(CONSTRAINT_COVID_MODERATE_RISK_EMPLOYEE) ||
+                                cm.getConstraintName().equals(CONSTRAINT_COVID_HIGH_RISK_EMPLOYEE) ||
+                                cm.getConstraintName().equals(CONSTRAINT_COVID_EXTREME_RISK_EMPLOYEE)))
                 .map(cm -> new NonInoculatedEmployeeAssignedToCovidWardViolation((Shift) cm.getJustificationList()
                         .stream()
                         .filter(o -> o instanceof Shift)
@@ -123,7 +131,7 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        (cm.getConstraintName().equals("Inoculated employee outside a COVID ward")))
+                        (cm.getConstraintName().equals(CONSTRAINT_COVID_INOCULATED_EMPLOYEE_OUTSIDE_COVID_WARD)))
                 .map(cm -> new InoculatedEmployeeAssignedOutsideOfCovidWardViolation((Shift) cm.getJustificationList()
                         .stream()
                         .filter(o -> o instanceof Shift)
@@ -138,7 +146,7 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        (cm.getConstraintName().equals("Maximize inoculated hours")))
+                        (cm.getConstraintName().equals(CONSTRAINT_COVID_MAXIMIZE_INOCULATED_HOURS)))
                 .map(cm -> new MaximizeInoculatedEmployeeHoursReward((Shift) cm.getJustificationList()
                         .stream()
                         .filter(o -> o instanceof Shift)
@@ -153,7 +161,7 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("Migration between COVID and non-COVID wards"))
+                        cm.getConstraintName().equals(CONSTRAINT_COVID_MIGRATION_BETWEEN_COVID_AND_NON_COVID_WARDS))
                 .map(cm -> new MigrationBetweenCovidAndNonCovidWardsViolation(
                         (Shift) cm.getJustificationList().stream()
                                 .filter(s -> s instanceof Shift && ((Shift) s).getSpot().isCovidWard())
@@ -173,7 +181,7 @@ public class IndictmentUtils {
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName()
-                                .equals("Non-COVID shift started less than 8 hours after finishing a COVID shift"))
+                                .equals(CONSTRAINT_COVID_NON_COVID_SHIFT_STARTED_SOON_AFTER_FINISHING_A_COVID_SHIFT))
                 .map(cm -> new NonCovidShiftSoonAfterCovidShiftViolation(
                         (Shift) cm.getJustificationList().stream()
                                 .filter(s -> s instanceof Shift && ((Shift) s).getSpot().isCovidWard())
