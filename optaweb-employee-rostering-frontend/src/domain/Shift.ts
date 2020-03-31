@@ -25,6 +25,14 @@ import { UndesiredTimeslotForEmployeePenalty } from './indictment/UndesiredTimes
 import { RotationViolationPenalty } from './indictment/RotationViolationPenalty';
 import { UnassignedShiftPenalty } from './indictment/UnassignedShiftPenalty';
 import { ContractMinutesViolation } from './indictment/ContractMinutesViolation';
+import { NonInoculatedEmployeeAssignedToCovidWardViolation }
+  from './indictment/NonInoculatedEmployeeAssignedToCovidWardViolation';
+import { InoculatedEmployeeAssignedOutsideOfCovidWardViolation }
+  from './indictment/InoculatedEmployeeAssignedOutsideOfCovidWardViolation';
+import { MaximizeInoculatedEmployeeHoursReward } from './indictment/MaximizeInoculatedEmployeeHoursReward';
+import { MigrationBetweenCovidAndNonCovidWardsViolation }
+  from './indictment/MigrationBetweenCovidAndNonCovidWardsViolation';
+import { NonCovidShiftSoonAfterCovidShiftViolation } from './indictment/NonCovidShiftSoonAfterCovidShiftViolation';
 
 export interface Shift extends DomainObject {
   startDateTime: Date;
@@ -42,4 +50,9 @@ export interface Shift extends DomainObject {
   rotationViolationPenaltyList?: RotationViolationPenalty[];
   unassignedShiftPenaltyList?: UnassignedShiftPenalty[];
   contractMinutesViolationPenaltyList?: ContractMinutesViolation[];
+  nonInoculatedEmployeeAssignedToCovidWardViolationList?: NonInoculatedEmployeeAssignedToCovidWardViolation[];
+  inoculatedEmployeeAssignedOutsideOfCovidWardViolationList?: InoculatedEmployeeAssignedOutsideOfCovidWardViolation[];
+  maximizeInoculatedEmployeeHoursRewardList?: MaximizeInoculatedEmployeeHoursReward[];
+  migrationBetweenCovidAndNonCovidWardsViolationList?: MigrationBetweenCovidAndNonCovidWardsViolation[];
+  nonCovidShiftSoonAfterCovidShiftViolationList?: NonCovidShiftSoonAfterCovidShiftViolation[];
 }

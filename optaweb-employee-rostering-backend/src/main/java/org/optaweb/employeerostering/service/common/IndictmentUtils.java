@@ -33,6 +33,11 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployeeReward;
+import org.optaweb.employeerostering.domain.violation.InoculatedEmployeeAssignedOutsideOfCovidWardViolation;
+import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployeeHoursReward;
+import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
+import org.optaweb.employeerostering.domain.violation.NonCovidShiftSoonAfterCovidShiftViolation;
+import org.optaweb.employeerostering.domain.violation.NonInoculatedEmployeeAssignedToCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
 import org.optaweb.employeerostering.domain.violation.ShiftEmployeeConflict;
@@ -72,8 +77,100 @@ public class IndictmentUtils {
                              getRotationViolationPenaltyList(indictment),
                              getUnassignedShiftPenaltyList(indictment),
                              getContractMinutesViolationList(indictment),
+                             getNonInoculatedEmployeeAssignedToCovidWardViolationList(indictment),
+                             getInoculatedEmployeeAssignedOutsideOfCovidWardViolationList(indictment),
+                             getMaximizeInoculatedEmployeeHoursRewardList(indictment),
+                             getMigrationBetweenCovidAndNonCovidWardsViolationList(indictment),
+                             getNonCovidShiftSoonAfterCovidShiftViolationList(indictment),
                              (indictment != null) ?
                                      (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
+    }
+
+    public List<NonInoculatedEmployeeAssignedToCovidWardViolation>
+    getNonInoculatedEmployeeAssignedToCovidWardViolationList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        (cm.getConstraintName().equals("Low-risk employee assigned to a COVID ward") ||
+                                cm.getConstraintName().equals("Moderate-risk employee assigned to a COVID ward") ||
+                                cm.getConstraintName().equals("High-risk employee assigned to a COVID ward") ||
+                                cm.getConstraintName().equals("Extreme-risk employee assigned to a COVID ward")))
+                .map(cm -> new NonInoculatedEmployeeAssignedToCovidWardViolation((Shift) cm.getJustificationList()
+                        .stream()
+                        .filter(o -> o instanceof Shift)
+                        .findFirst().get(), (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
+    }
+
+    public List<InoculatedEmployeeAssignedOutsideOfCovidWardViolation>
+    getInoculatedEmployeeAssignedOutsideOfCovidWardViolationList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        (cm.getConstraintName().equals("Inoculated employee outside a COVID ward")))
+                .map(cm -> new InoculatedEmployeeAssignedOutsideOfCovidWardViolation((Shift) cm.getJustificationList()
+                        .stream()
+                        .filter(o -> o instanceof Shift)
+                        .findFirst().get(), (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
+    }
+
+    public List<MaximizeInoculatedEmployeeHoursReward>
+    getMaximizeInoculatedEmployeeHoursRewardList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        (cm.getConstraintName().equals("Maximize inoculated hours")))
+                .map(cm -> new MaximizeInoculatedEmployeeHoursReward((Shift) cm.getJustificationList()
+                        .stream()
+                        .filter(o -> o instanceof Shift)
+                        .findFirst().get(), (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
+    }
+
+    public List<MigrationBetweenCovidAndNonCovidWardsViolation>
+    getMigrationBetweenCovidAndNonCovidWardsViolationList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        cm.getConstraintName().equals("Migration between COVID and non-COVID wards"))
+                .map(cm -> new MigrationBetweenCovidAndNonCovidWardsViolation(
+                        (Shift) cm.getJustificationList().stream()
+                                .filter(s -> s instanceof Shift && ((Shift) s).getSpot().isCovidWard())
+                                .findAny().get(),
+                        (Shift) cm.getJustificationList().stream()
+                                .filter(s -> s instanceof Shift && !((Shift) s).getSpot().isCovidWard())
+                                .findAny().get(),
+                        (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
+    }
+
+    public List<NonCovidShiftSoonAfterCovidShiftViolation>
+    getNonCovidShiftSoonAfterCovidShiftViolationList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        cm.getConstraintName()
+                                .equals("Non-COVID shift started less than 8 hours after finishing a COVID shift"))
+                .map(cm -> new NonCovidShiftSoonAfterCovidShiftViolation(
+                        (Shift) cm.getJustificationList().stream()
+                                .filter(s -> s instanceof Shift && ((Shift) s).getSpot().isCovidWard())
+                                .findAny().get(),
+                        (Shift) cm.getJustificationList().stream()
+                                .filter(s -> s instanceof Shift && !((Shift) s).getSpot().isCovidWard())
+                                .findAny().get(),
+                        (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
     }
 
     public List<RequiredSkillViolation> getRequiredSkillViolationList(Indictment indictment) {
