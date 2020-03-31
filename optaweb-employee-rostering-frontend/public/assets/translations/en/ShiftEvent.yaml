@@ -24,6 +24,22 @@ undesiredShiftForEmployee: The Employee "{{employee}}" does not want to work fro
 desiredShiftForEmployee: The Employee "{{employee}}" desires to work from {{from}}
   to {{to}}.
 
+nonInoculatedEmployeeAssignedToCovidWard: The Employee "{{employee}}" has a {{covidRisk}}
+  COVID-19 risk and is assigned to a COVID-19 Ward from {{from}} to {{to}}.
+
+inoculatedEmployeeAssignedOutsideOfCovidWard: The Employee "{{employee}}" is inoculated
+  to COVID-19 and is assigned to a Ward not dedicated to COVID-19 from {{from}} to {{to}}.
+
+maximizeInoculatedEmployeeHours: Maximize the amount of hours Employee "{{employee}}" works
+  as they are inoculated.
+
+migrationBetweenCovidAndNonCovidWards: The Employee "{{employee}}" migrates from
+  the COVID-19 dedicated ward {{covidWard}} to a non-COVID-19 dedicated ward {{nonCovidWard}}.
+
+nonCovidShiftSoonAfterCovidShift: The Employee "{{employee}}" migrates from
+  the COVID-19 dedicated ward {{covidWard}} to a non-COVID-19 dedicated ward {{nonCovidWard}} before
+  8 hours have passed.
+
 totalIndictment: 'Shift Indictment Score: {{score}}'
 penalty: 'Penalty: {{score}}'
 reward: 'Reward: {{score}}'
