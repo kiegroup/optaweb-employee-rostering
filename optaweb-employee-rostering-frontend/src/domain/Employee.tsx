@@ -13,11 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import React from 'react';
+import { CircleIcon, SyringeIcon, MehIcon, FrownIcon, SadTearIcon, BanIcon } from '@patternfly/react-icons';
 import { DomainObject } from './DomainObject';
 import { Skill } from './Skill';
 import { Contract } from './Contract';
 
 export type CovidRiskType = 'INOCULATED' | 'LOW' | 'MODERATE' | 'HIGH' | 'EXTREME';
+
+export function getIconForCovidRisk(covidRiskType: CovidRiskType, size: 'sm' | 'lg'): JSX.Element {
+  return (
+    <span>
+      <span style={{ position: 'absolute', zIndex: 2 }}>
+        {covidRiskType === 'INOCULATED' && <SyringeIcon color="#8ae234" size={size} />}
+        {covidRiskType === 'LOW' && <MehIcon color="#edd400" size={size} />}
+        {covidRiskType === 'MODERATE' && <FrownIcon color="#fcaf3e" size={size} />}
+        {covidRiskType === 'HIGH' && <SadTearIcon color="#f57900" size={size} />}
+        {covidRiskType === 'EXTREME' && <BanIcon color="#2e3436" size={size} />}
+      </span>
+      <span style={{ zIndex: 1 }}>
+        <CircleIcon size={size} color="#ffffffff" />
+      </span>
+    </span>
+  );
+}
 
 export interface Employee extends DomainObject {
   name: string;

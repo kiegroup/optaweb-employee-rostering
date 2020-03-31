@@ -210,13 +210,47 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                       ]
                     }
                     value="INOCULATED"
+                    valueComponent={[Function]}
                   />
                 }
                 isEditing={false}
                 viewer={
-                  <Text>
-                    Trans(i18nKey=CovidRisk.INOCULATED)
-                  </Text>
+                  <span>
+                    <span>
+                      <span
+                        style={
+                          Object {
+                            "position": "absolute",
+                            "zIndex": 2,
+                          }
+                        }
+                      >
+                        <SyringeIcon
+                          color="#8ae234"
+                          noVerticalAlign={false}
+                          size="lg"
+                          title={null}
+                        />
+                      </span>
+                      <span
+                        style={
+                          Object {
+                            "zIndex": 1,
+                          }
+                        }
+                      >
+                        <CircleIcon
+                          color="#ffffffff"
+                          noVerticalAlign={false}
+                          size="lg"
+                          title={null}
+                        />
+                      </span>
+                    </span>
+                    <Text>
+                      Trans(i18nKey=CovidRisk.INOCULATED)
+                    </Text>
+                  </span>
                 }
               />,
             },
@@ -448,13 +482,47 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                       ]
                     }
                     value="INOCULATED"
+                    valueComponent={[Function]}
                   />
                 }
                 isEditing={false}
                 viewer={
-                  <Text>
-                    Trans(i18nKey=CovidRisk.INOCULATED)
-                  </Text>
+                  <span>
+                    <span>
+                      <span
+                        style={
+                          Object {
+                            "position": "absolute",
+                            "zIndex": 2,
+                          }
+                        }
+                      >
+                        <SyringeIcon
+                          color="#8ae234"
+                          noVerticalAlign={false}
+                          size="lg"
+                          title={null}
+                        />
+                      </span>
+                      <span
+                        style={
+                          Object {
+                            "zIndex": 1,
+                          }
+                        }
+                      >
+                        <CircleIcon
+                          color="#ffffffff"
+                          noVerticalAlign={false}
+                          size="lg"
+                          title={null}
+                        />
+                      </span>
+                    </span>
+                    <Text>
+                      Trans(i18nKey=CovidRisk.INOCULATED)
+                    </Text>
+                  </span>
                 }
               />,
             },
@@ -688,6 +756,7 @@ exports[`Employees page should render the editor correctly 1`] = `
         ]
       }
       value="INOCULATED"
+      valueComponent={[Function]}
     />
   </td>
 </tr>
@@ -742,11 +811,44 @@ exports[`Employees page should render the viewer correctly 1`] = `
   <td
     key="3"
   >
-    <Text
-      key="3"
-    >
-      Trans(i18nKey=CovidRisk.INOCULATED)
-    </Text>
+    <span>
+      <span>
+        <span
+          style={
+            Object {
+              "position": "absolute",
+              "zIndex": 2,
+            }
+          }
+        >
+          <SyringeIcon
+            color="#8ae234"
+            noVerticalAlign={false}
+            size="lg"
+            title={null}
+          />
+        </span>
+        <span
+          style={
+            Object {
+              "zIndex": 1,
+            }
+          }
+        >
+          <CircleIcon
+            color="#ffffffff"
+            noVerticalAlign={false}
+            size="lg"
+            title={null}
+          />
+        </span>
+      </span>
+      <Text
+        key="3"
+      >
+        Trans(i18nKey=CovidRisk.INOCULATED)
+      </Text>
+    </span>
   </td>
 </tr>
 `;

@@ -11,6 +11,12 @@ exports[`TypeaheadSelectInput component should render correctly 1`] = `
 >
   <StateManager
     aria-label="Enter some data"
+    components={
+      Object {
+        "Option": [Function],
+        "SingleValue": [Function],
+      }
+    }
     defaultInputValue=""
     defaultMenuIsOpen={false}
     defaultValue={null}
@@ -41,6 +47,7 @@ exports[`TypeaheadSelectInput component should render correctly 1`] = `
     styles={
       Object {
         "menuPortal": [Function],
+        "singleValue": [Function],
       }
     }
   />

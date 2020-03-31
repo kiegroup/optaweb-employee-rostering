@@ -5555,6 +5555,44 @@ exports[`ShiftEvent should render ShiftEvent correctly 1`] = `
     }
   }
 >
+  <span>
+    <span
+      style={
+        Object {
+          "position": "absolute",
+          "zIndex": 2,
+        }
+      }
+    >
+      <SyringeIcon
+        color="#8ae234"
+        noVerticalAlign={false}
+        size="lg"
+        title={null}
+      />
+    </span>
+    <span
+      style={
+        Object {
+          "zIndex": 1,
+        }
+      }
+    >
+      <CircleIcon
+        color="#ffffffff"
+        noVerticalAlign={false}
+        size="lg"
+        title={null}
+      />
+    </span>
+  </span>
+  <span
+    style={
+      Object {
+        "width": "10px",
+      }
+    }
+  />
   Employee
 </span>
 `;
@@ -5574,6 +5612,44 @@ exports[`ShiftEvent should render ShiftEvent correctly when pinned 1`] = `
     noVerticalAlign={false}
     size="sm"
     title={null}
+  />
+  <span>
+    <span
+      style={
+        Object {
+          "position": "absolute",
+          "zIndex": 2,
+        }
+      }
+    >
+      <SyringeIcon
+        color="#8ae234"
+        noVerticalAlign={false}
+        size="lg"
+        title={null}
+      />
+    </span>
+    <span
+      style={
+        Object {
+          "zIndex": 1,
+        }
+      }
+    >
+      <CircleIcon
+        color="#ffffffff"
+        noVerticalAlign={false}
+        size="lg"
+        title={null}
+      />
+    </span>
+  </span>
+  <span
+    style={
+      Object {
+        "width": "10px",
+      }
+    }
   />
   Employee
 </span>

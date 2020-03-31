@@ -57,7 +57,7 @@ export default function EventWrapper(props: React.PropsWithChildren<{
         bodyContent={props.popoverBody}
         boundary="viewport"
       >
-        <div>{props.children as React.ReactElement}</div>
+        <div style={{ maxHeight: '200px' }}>{props.children as React.ReactElement}</div>
       </Popover>
     </div>
   );

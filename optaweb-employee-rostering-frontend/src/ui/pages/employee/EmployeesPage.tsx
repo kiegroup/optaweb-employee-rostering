@@ -19,7 +19,7 @@ import { DataTable, DataTableProps, PropertySetter } from 'ui/components/DataTab
 import { employeeSelectors, employeeOperations } from 'store/employee';
 import { contractSelectors } from 'store/contract';
 import { skillSelectors } from 'store/skill';
-import { Employee } from 'domain/Employee';
+import { Employee, getIconForCovidRisk, CovidRiskType } from 'domain/Employee';
 import { AppState } from 'store/types';
 import {
   TextInput,
@@ -101,7 +101,10 @@ export class EmployeesPage extends DataTable<Employee, Props> {
           </Chip>
         ))}
       </ChipGroup>,
-      <Text key={3}>{this.props.t(`CovidRisk.${data.covidRiskType}`)}</Text>,
+      <span>
+        {getIconForCovidRisk(data.covidRiskType, 'lg')}
+        <Text key={3}>{this.props.t(`CovidRisk.${data.covidRiskType}`)}</Text>
+      </span>,
     ];
   }
 
@@ -140,6 +143,16 @@ export class EmployeesPage extends DataTable<Employee, Props> {
       <StatefulTypeaheadSelectInput
         key={3}
         emptyText={this.props.t('enterCovidRisk')}
+        valueComponent={(props) => {
+          const selectedOption: { value: CovidRiskType } = props.data;
+          return (
+            <span style={{ display: 'grid', gridTemplateColumns: 'min-content 5px 1fr' }}>
+              {getIconForCovidRisk(selectedOption.value, 'sm')}
+              <span />
+              <span>{this.props.t(`CovidRisk.${selectedOption.value}`)}</span>
+            </span>
+          );
+        }}
         optionToStringMap={risk => this.props.t(`CovidRisk.${risk}`)}
         value={data.covidRiskType}
         options={['INOCULATED', 'LOW', 'MODERATE', 'HIGH', 'EXTREME']}
@@ -162,7 +175,8 @@ export class EmployeesPage extends DataTable<Employee, Props> {
   getFilter(): (filter: string) => Predicate<Employee> {
     return stringFilter(employee => employee.name,
       employee => employee.contract.name,
-      employee => employee.skillProficiencySet.map(skill => skill.name));
+      employee => employee.skillProficiencySet.map(skill => skill.name),
+      employee => employee.covidRiskType);
   }
 
   getSorters(): (Sorter<Employee> | null)[] {

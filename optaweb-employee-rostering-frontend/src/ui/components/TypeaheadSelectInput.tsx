@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import Select from 'react-select';
+import Select, { CommonProps, components } from 'react-select';
 
 export interface TypeaheadSelectProps<T> {
   emptyText: string;
@@ -25,6 +25,7 @@ export interface TypeaheadSelectProps<T> {
   optional?: boolean;
   noClearButton?: boolean;
   autoSize?: boolean;
+  valueComponent?: React.FC<CommonProps<{ value: T}> & { data: {value: T}}>;
 }
 
 const StatefulTypeaheadSelectInput: React.FC<TypeaheadSelectProps<any>> = (props) => {
@@ -55,6 +56,14 @@ TypeaheadSelectProps<T>
   render() {
     const { optionToStringMap, emptyText, optional, options, autoSize } = this.props;
     const selectOptions = this.props.options.map(o => ({ value: o }));
+    const Display = this.props.valueComponent;
+    const SingleValue = Display || components.SingleValue;
+    const Option = Display ? (props: any, children: any) => (
+      <components.Option {...props}>
+        <Display {...props}>{children}</Display>
+      </components.Option>
+    )
+      : components.Option;
 
     // Why map to string first?
     // Clone of objects are not the same, and sometimes we are passed
@@ -80,7 +89,11 @@ TypeaheadSelectProps<T>
               ...provided,
               zIndex: 9999999,
             }),
+            singleValue: provided => ({
+              ...provided,
+            }),
           }}
+          components={{ SingleValue, Option }}
           onChange={this.onSelect}
           defaultValue={selected}
           value={selected}

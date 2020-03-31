@@ -18,7 +18,7 @@ import { EventProps } from 'react-big-calendar';
 import { Shift } from 'domain/Shift';
 import { Text, Button, ButtonVariant, List } from '@patternfly/react-core';
 import moment from 'moment';
-import { Employee } from 'domain/Employee';
+import { Employee, getIconForCovidRisk } from 'domain/Employee';
 import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
 import { BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon } from '@patternfly/react-icons';
 import Color from 'color';
@@ -328,6 +328,12 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
     }}
   >
     {props.event.pinnedByUser && <ThumbTackIcon />}
+    {props.event.employee !== null && (
+      <>
+        {getIconForCovidRisk(props.event.employee.covidRiskType, 'lg')}
+        <span style={{ width: '10px' }} />
+      </>
+    )}
     {props.title}
   </span>
 );
