@@ -18,7 +18,9 @@ package org.optaweb.employeerostering.domain.shift.view;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotNull;
 
@@ -29,6 +31,7 @@ import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.common.DateTimeUtils;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.Shift;
+import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.domain.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployeeReward;
@@ -49,6 +52,8 @@ public class ShiftView extends AbstractPersistable {
     private Long rotationEmployeeId;
     @NotNull
     private Long spotId;
+    @NotNull
+    private List<Long> requiredSkillSetIdList;
 
     @NotNull
     private LocalDateTime startDateTime;
@@ -80,6 +85,7 @@ public class ShiftView extends AbstractPersistable {
     private boolean pinnedByUser = false;
 
     private Long employeeId = null;
+    private Long originalEmployeeId = null;
 
     @SuppressWarnings("unused")
     public ShiftView() {
@@ -91,6 +97,11 @@ public class ShiftView extends AbstractPersistable {
 
     public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime,
                      Employee rotationEmployee) {
+        this(tenantId, spot, startDateTime, endDateTime, null, new ArrayList<>());
+    }
+
+    public ShiftView(Integer tenantId, Spot spot, LocalDateTime startDateTime, LocalDateTime endDateTime,
+                     Employee rotationEmployee, List<Long> requiredSkillSetIdList) {
         super(tenantId);
         this.spotId = spot.getId();
         this.startDateTime = startDateTime;
@@ -105,6 +116,7 @@ public class ShiftView extends AbstractPersistable {
         this.rotationViolationPenaltyList = null;
         this.contractMinutesViolationPenaltyList = null;
         this.indictmentScore = null;
+        this.requiredSkillSetIdList = requiredSkillSetIdList;
     }
 
     public ShiftView(ZoneId zoneId, Shift shift) {
@@ -130,11 +142,14 @@ public class ShiftView extends AbstractPersistable {
                      HardMediumSoftLongScore indictmentScore) {
         super(shift);
         this.spotId = shift.getSpot().getId();
+        this.requiredSkillSetIdList = shift.getRequiredSkillSet().stream()
+                .map(Skill::getId).sorted().collect(Collectors.toCollection(ArrayList::new));
         this.startDateTime = DateTimeUtils.toLocalDateTimeInZone(shift.getStartDateTime(), zoneId);
         this.endDateTime = DateTimeUtils.toLocalDateTimeInZone(shift.getEndDateTime(), zoneId);
         this.pinnedByUser = shift.isPinnedByUser();
         this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
+        this.originalEmployeeId = (shift.getOriginalEmployee() == null) ? null : shift.getEmployee().getId();
 
         this.requiredSkillViolationList = requiredSkillViolationList;
         this.shiftEmployeeConflictList = shiftEmployeeConflictList;
@@ -211,6 +226,22 @@ public class ShiftView extends AbstractPersistable {
 
     public void setRotationEmployeeId(Long rotationEmployeeId) {
         this.rotationEmployeeId = rotationEmployeeId;
+    }
+
+    public List<Long> getRequiredSkillSetIdList() {
+        return requiredSkillSetIdList;
+    }
+
+    public void setRequiredSkillSetIdList(List<Long> requiredSkillSetIdList) {
+        this.requiredSkillSetIdList = requiredSkillSetIdList;
+    }
+
+    public Long getOriginalEmployeeId() {
+        return originalEmployeeId;
+    }
+
+    public void setOriginalEmployeeId(Long originalEmployeeId) {
+        this.originalEmployeeId = originalEmployeeId;
     }
 
     public List<RequiredSkillViolation> getRequiredSkillViolationList() {

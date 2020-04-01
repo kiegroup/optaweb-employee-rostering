@@ -454,7 +454,7 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
     style={{
       display: 'grid',
       gridTemplateColumns: '1fr',
-      gridTemplateRows: 'min-content',
+      gridTemplateRows: 'calc(100% - 60px) 55px',
       gridRowGap: '5px',
       height: '100%',
       width: '100%',
@@ -463,6 +463,7 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
     <div
       style={{
         display: 'flex',
+        flexDirection: 'column',
       }}
     >
       {props.event.pinnedByUser && <ThumbTackIcon />}
@@ -472,7 +473,16 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
           <span style={{ width: '10px' }} />
         </>
       )}
-      {props.title}
+      <span style={{
+        writingMode: 'vertical-rl',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        maxHeight: 'calc(100% - 60px)',
+      }}
+      >
+        {`${props.title} ${props.event.requiredSkillSet.length
+          ? `(${props.event.requiredSkillSet.map(s => s.name).join(', ')})` : ''}`}
+      </span>
     </div>
     <IndictmentIcons {...props.event} />
   </span>

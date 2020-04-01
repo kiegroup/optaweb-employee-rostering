@@ -22,8 +22,9 @@ import DomainObjectView from 'domain/DomainObjectView';
 export function shiftTemplateToShiftTemplateView(shiftTemplate: ShiftTemplate): ShiftTemplateView {
   return {
     ...objectWithout(shiftTemplate, 'spot', 'rotationEmployee', 'shiftTemplateDuration',
-      'durationBetweenRotationStartAndTemplateStart'),
+      'durationBetweenRotationStartAndTemplateStart', 'requiredSkillSet'),
     spotId: shiftTemplate.spot.id as number,
+    requiredSkillSetIdList: shiftTemplate.requiredSkillSet.map(skill => skill.id as number),
     rotationEmployeeId: shiftTemplate.rotationEmployee ? shiftTemplate.rotationEmployee.id as number : null,
     shiftTemplateDuration: shiftTemplate.shiftTemplateDuration.toISOString(),
     durationBetweenRotationStartAndTemplateStart:
@@ -34,8 +35,9 @@ export function shiftTemplateToShiftTemplateView(shiftTemplate: ShiftTemplate): 
 export function shiftTemplateViewToDomainObjectView(view: ShiftTemplateView): DomainObjectView<ShiftTemplate> {
   return {
     ...objectWithout(view, 'spotId', 'rotationEmployeeId', 'shiftTemplateDuration',
-      'durationBetweenRotationStartAndTemplateStart'),
+      'durationBetweenRotationStartAndTemplateStart', 'requiredSkillSetIdList'),
     spot: view.spotId,
+    requiredSkillSet: view.requiredSkillSetIdList,
     rotationEmployee: view.rotationEmployeeId,
     shiftTemplateDuration: moment.duration(view.shiftTemplateDuration),
     durationBetweenRotationStartAndTemplateStart: moment.duration(view.durationBetweenRotationStartAndTemplateStart),
@@ -44,6 +46,7 @@ export function shiftTemplateViewToDomainObjectView(view: ShiftTemplateView): Do
 
 export interface ShiftTemplateView extends DomainObject {
   spotId: number;
+  requiredSkillSetIdList: number[];
   rotationEmployeeId: number | null;
   shiftTemplateDuration: string;
   durationBetweenRotationStartAndTemplateStart: string;

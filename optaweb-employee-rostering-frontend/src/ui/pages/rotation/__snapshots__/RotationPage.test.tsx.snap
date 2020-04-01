@@ -141,6 +141,7 @@ exports[`Rotation Page should render correctly when creating a new shift templat
           "shiftTemplate": Object {
             "durationBetweenRotationStartAndTemplateStart": "P1DT9H",
             "id": 1,
+            "requiredSkillSet": Array [],
             "rotationEmployee": Object {
               "contract": Object {
                 "id": 5,
@@ -343,6 +344,7 @@ exports[`Rotation Page should render correctly when loaded 1`] = `
           "shiftTemplate": Object {
             "durationBetweenRotationStartAndTemplateStart": "P1DT9H",
             "id": 1,
+            "requiredSkillSet": Array [],
             "rotationEmployee": Object {
               "contract": Object {
                 "id": 5,
