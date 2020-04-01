@@ -37,7 +37,7 @@ import javax.persistence.EntityManager;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
+import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.config.solver.termination.TerminationConfig;
@@ -681,36 +681,34 @@ public class SolverTest {
 
     private enum Constraints {
         REQUIRED_SKILL_FOR_A_SHIFT("Required skill for a shift",
-                                   HardMediumSoftScore.of(-100, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getRequiredSkill().negate()),
         UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE("Unavailable time slot for an employee",
-                                              HardMediumSoftScore.of(-50, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getUnavailableTimeSlot().negate()),
         AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE("At most one shift assignment per day per employee",
-                                                          HardMediumSoftScore.of(-10, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getOneShiftPerDay().negate()),
         NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER("No 2 shifts within 10 hours from each other",
-                                                    HardMediumSoftScore.of(-1, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getNoShiftsWithinTenHours().negate()),
         DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Daily minutes must not exceed contract maximum",
-                                                       HardMediumSoftScore.of(-1, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumDailyMinutes().negate()),
         WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Weekly minutes must not exceed contract maximum",
-                                                        HardMediumSoftScore.of(-1, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumWeeklyMinutes().negate()),
         MONTHLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Monthly minutes must not exceed contract maximum",
-                                                         HardMediumSoftScore.of(-1, 0, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumMonthlyMinutes().negate()),
         YEARLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Yearly minutes must not exceed contract maximum",
-                                                        HardMediumSoftScore.of(-1, 0, 0)),
-        ASSIGN_EVERY_SHIFT("Assign every shift", HardMediumSoftScore.of(0, -1, 0)),
+                ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumYearlyMinutes().negate()),
+        ASSIGN_EVERY_SHIFT("Assign every shift",
+                ROSTER_CONSTRAINT_CONFIGURATION.getAssignEveryShift().negate()),
         UNDESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Undesired time slot for an employee",
-                                            HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION.
-                                                    getUndesiredTimeSlotWeight())),
+                ROSTER_CONSTRAINT_CONFIGURATION.getUndesiredTimeSlot().negate()),
         DESIRED_TIME_SLOT_FOR_AN_EMPLOYEE("Desired time slot for an employee",
-                                          HardMediumSoftScore.of(0, 0, ROSTER_CONSTRAINT_CONFIGURATION
-                                                  .getDesiredTimeSlotWeight())),
+                ROSTER_CONSTRAINT_CONFIGURATION.getDesiredTimeSlot()),
         EMPLOYEE_IS_NOT_ROTATION_EMPLOYEE("Employee is not rotation employee",
-                                          HardMediumSoftScore.of(0, 0, -ROSTER_CONSTRAINT_CONFIGURATION
-                                                  .getRotationEmployeeMatchWeight()));
+                ROSTER_CONSTRAINT_CONFIGURATION.getNotRotationEmployee().negate());
 
         String constraintName;
-        HardMediumSoftScore constraintWeight;
+        HardMediumSoftLongScore constraintWeight;
 
-        private Constraints(String constraintName, HardMediumSoftScore constraintWeight) {
+        private Constraints(String constraintName, HardMediumSoftLongScore constraintWeight) {
             this.constraintName = constraintName;
             this.constraintWeight = constraintWeight;
         }

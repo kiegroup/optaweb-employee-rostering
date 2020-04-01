@@ -281,7 +281,6 @@ end
 
 rule "Undesired time slot for an employee"
     when
-    	$rosterConstraintConfiguration : RosterConstraintConfiguration(undesiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNDESIRED,
                 $e : employee,
@@ -292,12 +291,11 @@ rule "Undesired time slot for an employee"
                 DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
-        scoreHolder.penalize(kcontext, $rosterConstraintConfiguration.getUndesiredTimeSlotWeight());
+        scoreHolder.penalize(kcontext);
 end
 
 rule "Desired time slot for an employee"
     when
-        $rosterConstraintConfiguration : RosterConstraintConfiguration(desiredTimeSlotWeight != 0)
         EmployeeAvailability(
                 state == EmployeeAvailabilityState.DESIRED,
                 $e : employee,
@@ -308,14 +306,12 @@ rule "Desired time slot for an employee"
                 DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
                                                    startDateTime, endDateTime))
     then
-        scoreHolder.reward(kcontext, $rosterConstraintConfiguration.getDesiredTimeSlotWeight());
+        scoreHolder.reward(kcontext);
 end
 
 rule "Employee is not rotation employee"
     when
-    	$rosterConstraintConfiguration : RosterConstraintConfiguration(rotationEmployeeMatchWeight != 0)
-        Shift(
-                rotationEmployee != null, employee != null, employee != rotationEmployee)
+        Shift(rotationEmployee != null, employee != null, employee != rotationEmployee)
     then
-        scoreHolder.penalize(kcontext, $rosterConstraintConfiguration.getRotationEmployeeMatchWeight());
+        scoreHolder.penalize(kcontext);
 end
