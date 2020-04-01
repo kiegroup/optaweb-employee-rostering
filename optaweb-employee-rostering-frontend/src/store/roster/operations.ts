@@ -37,6 +37,8 @@ import {
   TerminateSolvingRosterEarlyAction, PublishRosterAction, PublishResult,
   SetAvailabilityRosterIsLoadingAction, SetAvailabilityRosterViewAction, ShiftRosterViewAction,
   AvailabilityRosterViewAction,
+  UpdateSolverStatusAction,
+  SolverStatus,
 } from './types';
 import * as operations from './operations'; // Hack used for mocking
 import * as actions from './actions';
@@ -71,8 +73,7 @@ SetAvailabilityRosterViewAction> | null = null;
 let stopSolvingRosterTimeout: NodeJS.Timeout|null = null;
 let autoRefreshShiftRosterDuringSolvingIntervalTimeout: NodeJS.Timeout|null = null;
 
-function stopSolvingRoster(dispatch: ThunkDispatch<AppState, RestServiceClient,
-AddAlertAction | TerminateSolvingRosterEarlyAction>) {
+export function resetSolverStatus() {
   if (stopSolvingRosterTimeout !== null) {
     clearTimeout(stopSolvingRosterTimeout);
     stopSolvingRosterTimeout = null;
@@ -81,6 +82,15 @@ AddAlertAction | TerminateSolvingRosterEarlyAction>) {
     clearInterval(autoRefreshShiftRosterDuringSolvingIntervalTimeout);
     autoRefreshShiftRosterDuringSolvingIntervalTimeout = null;
   }
+  lastCalledShiftRosterArgs = null;
+  lastCalledShiftRoster = null;
+  lastCalledAvailabilityRosterArgs = null;
+  lastCalledAvailabilityRoster = null;
+}
+
+function stopSolvingRoster(dispatch: ThunkDispatch<AppState, RestServiceClient,
+AddAlertAction | TerminateSolvingRosterEarlyAction>) {
+  resetSolverStatus();
   dispatch(actions.terminateSolvingRosterEarly());
   Promise.all([
     dispatch(operations.refreshShiftRoster()),
@@ -95,6 +105,7 @@ function refresh(dispatch: ThunkDispatch<AppState, RestServiceClient, any>) {
   Promise.all([
     dispatch(operations.refreshShiftRoster()),
     dispatch(operations.refreshAvailabilityRoster()),
+    dispatch(operations.getSolverStatus()),
   ]).then(() => {
     autoRefreshShiftRosterDuringSolvingIntervalTimeout = setTimeout(() => refresh(dispatch), updateInterval);
   });
@@ -105,13 +116,11 @@ ThunkCommandFactory<void, AddAlertAction | SolveRosterAction> = () => (dispatch,
   const tenantId = state().tenantData.currentTenantId;
   return client.post(`/tenant/${tenantId}/roster/solve`, {}).then(() => {
     const solvingStartTime: number = new Date().getTime();
-    const solvingLength = 30 * 1000;
     dispatch(actions.solveRoster());
     dispatch(alert.showInfoMessage('startSolvingRoster', {
       startSolvingTime: moment(solvingStartTime).format('LLL'),
     }));
     autoRefreshShiftRosterDuringSolvingIntervalTimeout = setTimeout(() => refresh(dispatch), updateInterval);
-    stopSolvingRosterTimeout = setTimeout(() => stopSolvingRoster(dispatch), solvingLength);
   });
 };
 
@@ -120,6 +129,19 @@ export const terminateSolvingRosterEarly:
 ThunkCommandFactory<void, TerminateSolvingRosterEarlyAction> = () => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
   return client.post(`/tenant/${tenantId}/roster/terminate`, {}).then(() => stopSolvingRoster(dispatch));
+};
+
+export const getSolverStatus:
+ThunkCommandFactory<void, AddAlertAction | UpdateSolverStatusAction> = () => (dispatch, state, client) => {
+  const tenantId = state().tenantData.currentTenantId;
+  return client.get<SolverStatus>(`/tenant/${tenantId}/roster/status`).then((status) => {
+    dispatch(actions.updateSolverStatus({ solverStatus: status }));
+    if (status === 'TERMINATED' && autoRefreshShiftRosterDuringSolvingIntervalTimeout !== null) {
+      stopSolvingRoster(dispatch);
+    } else if (status === 'SOLVING' && autoRefreshShiftRosterDuringSolvingIntervalTimeout === null) {
+      autoRefreshShiftRosterDuringSolvingIntervalTimeout = setTimeout(() => refresh(dispatch), updateInterval);
+    }
+  });
 };
 
 export const getInitialShiftRoster:

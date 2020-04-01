@@ -8,7 +8,7 @@
     <scoreDrl>org/optaweb/employeerostering/service/solver/employeeRosteringScoreRules.drl</scoreDrl>
   </scoreDirectorFactory>
 
-  <termination>
+  <!-- <termination>
     <secondsSpentLimit>30</secondsSpentLimit>
-  </termination>
+  </termination> -->
 </solver>

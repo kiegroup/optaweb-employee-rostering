@@ -475,7 +475,7 @@ const state: AppState = {
     availabilityRosterView: null,
   },
   solverState: {
-    isSolving: false,
+    solverStatus: 'TERMINATED',
   },
   alerts: {
     alertList: [],

@@ -37,7 +37,8 @@ export enum ShiftRosterViewActionType {
 
 export enum SolverActionType {
   SOLVE_ROSTER = 'SOLVE_ROSTER',
-  TERMINATE_SOLVING_ROSTER_EARLY = 'TERMINATE_SOLVING_ROSTER_EARLY'
+  TERMINATE_SOLVING_ROSTER_EARLY = 'TERMINATE_SOLVING_ROSTER_EARLY',
+  UPDATE_SOLVER_STATUS = 'UPDATE_SOLVER_STATUS',
 }
 
 export interface SetRosterStateIsLoadingAction extends Action<RosterStateActionType.SET_ROSTER_STATE_IS_LOADING> {
@@ -77,10 +78,14 @@ export interface SolveRosterAction extends Action<SolverActionType.SOLVE_ROSTER>
 export interface TerminateSolvingRosterEarlyAction extends Action<SolverActionType.TERMINATE_SOLVING_ROSTER_EARLY> {
 }
 
+export interface UpdateSolverStatusAction extends Action<SolverActionType.UPDATE_SOLVER_STATUS> {
+  readonly solverStatus: SolverStatus;
+}
+
 export type RosterStateAction = SetRosterStateIsLoadingAction | SetRosterStateAction | PublishRosterAction;
 export type ShiftRosterViewAction = SetShiftRosterIsLoadingAction | SetShiftRosterViewAction;
 export type AvailabilityRosterViewAction = SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction;
-export type SolverAction = SolveRosterAction | TerminateSolvingRosterEarlyAction;
+export type SolverAction = SolveRosterAction | TerminateSolvingRosterEarlyAction | UpdateSolverStatusAction;
 
 export interface PublishResult {
   readonly publishedFromDate: Date;
@@ -102,6 +107,7 @@ export interface CurrentAvailabilityRoster {
   readonly availabilityRosterView: AvailabilityRosterView | null;
 }
 
+export type SolverStatus = 'SCHEDULED' | 'SOLVING' | 'TERMINATED';
 export interface CurrentSolverState {
-  readonly isSolving: boolean;
+  readonly solverStatus: SolverStatus;
 }

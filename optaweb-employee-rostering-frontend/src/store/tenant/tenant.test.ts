@@ -107,8 +107,9 @@ describe('Tenant operations', () => {
         ...loadingActions,
       ]));
 
-      expect(client.get).toHaveBeenCalledTimes(1);
+      expect(client.get).toHaveBeenCalledTimes(2);
       expect(client.get).toHaveBeenCalledWith('/tenant/');
+      expect(client.get).toHaveBeenCalledWith('/tenant/0/roster/status');
 
       expect(mockRefreshSkillList).toBeCalled();
       expect(mockRefreshSpotList).toBeCalled();
@@ -148,8 +149,9 @@ describe('Tenant operations', () => {
         ...loadingActions,
       ]));
 
-      expect(client.get).toHaveBeenCalledTimes(1);
+      expect(client.get).toHaveBeenCalledTimes(2);
       expect(client.get).toHaveBeenCalledWith('/tenant/');
+      expect(client.get).toHaveBeenCalledWith('/tenant/0/roster/status');
 
       expect(mockRefreshSkillList).toBeCalled();
       expect(mockRefreshSpotList).toBeCalled();
@@ -171,7 +173,8 @@ describe('Tenant operations', () => {
       ...loadingActions,
     ]));
 
-    expect(client.get).not.toBeCalled();
+    expect(client.get).toBeCalledTimes(1);
+    expect(client.get).toBeCalledWith('/tenant/0/roster/status');
 
     expect(mockRefreshSkillList).toBeCalled();
     expect(mockRefreshSpotList).toBeCalled();
@@ -271,7 +274,7 @@ describe('Tenant operations', () => {
         availabilityRosterView: null,
       },
       solverState: {
-        isSolving: false,
+        solverStatus: 'TERMINATED',
       },
       alerts: {
         alertList: [],
@@ -290,8 +293,9 @@ describe('Tenant operations', () => {
       ...loadingActions,
     ]));
 
-    expect(client.get).toHaveBeenCalledTimes(1);
+    expect(client.get).toHaveBeenCalledTimes(2);
     expect(client.get).toHaveBeenCalledWith('/tenant/');
+    expect(client.get).toHaveBeenCalledWith('/tenant/0/roster/status');
 
     expect(mockRefreshSkillList).toBeCalled();
     expect(mockRefreshSpotList).toBeCalled();
@@ -488,7 +492,7 @@ const state: AppState = {
     availabilityRosterView: null,
   },
   solverState: {
-    isSolving: false,
+    solverStatus: 'TERMINATED',
   },
   alerts: {
     alertList: [],

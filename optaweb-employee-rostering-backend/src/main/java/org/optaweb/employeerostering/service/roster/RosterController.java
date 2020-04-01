@@ -29,6 +29,7 @@ import org.optaweb.employeerostering.domain.roster.RosterState;
 import org.optaweb.employeerostering.domain.roster.view.AvailabilityRosterView;
 import org.optaweb.employeerostering.domain.roster.view.ShiftRosterView;
 import org.optaweb.employeerostering.domain.spot.Spot;
+import org.optaweb.employeerostering.service.solver.SolverStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
@@ -158,6 +159,13 @@ public class RosterController {
     @PostMapping("/terminate")
     public void terminateRosterEarly(@PathVariable @Min(0) Integer tenantId) {
         rosterService.terminateRosterEarly(tenantId);
+    }
+    
+
+    @ApiOperation("Get the status of the Solver")
+    @GetMapping("/status")
+    public ResponseEntity<SolverStatus> getSolverStatus(@PathVariable @Min(0) Integer tenantId) {
+        return new ResponseEntity<>(rosterService.getSolverStatus(tenantId), HttpStatus.OK);
     }
 
     // ************************************************************************

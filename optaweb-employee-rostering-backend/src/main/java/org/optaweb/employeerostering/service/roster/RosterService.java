@@ -54,6 +54,7 @@ import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.rotation.ShiftTemplateRepository;
 import org.optaweb.employeerostering.service.shift.ShiftRepository;
 import org.optaweb.employeerostering.service.skill.SkillRepository;
+import org.optaweb.employeerostering.service.solver.SolverStatus;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.optaweb.employeerostering.service.tenant.RosterConstraintConfigurationRepository;
@@ -363,6 +364,10 @@ public class RosterService extends AbstractRestService {
 
     public void solveRoster(Integer tenantId) {
         solverManager.solve(tenantId);
+    }
+    
+    public SolverStatus getSolverStatus(Integer tenantId) {
+        return solverManager.getSolverStatus(tenantId);
     }
 
     public void terminateRosterEarly(Integer tenantId) {

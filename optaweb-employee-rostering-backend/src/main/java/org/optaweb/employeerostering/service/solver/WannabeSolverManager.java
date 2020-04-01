@@ -127,6 +127,10 @@ public class WannabeSolverManager implements ApplicationRunner {
         Solver<Roster> solver = tenantIdToSolverMap.get(tenantId);
         return solver == null ? null : solver.getBestSolution();
     }
+    
+    public SolverStatus getSolverStatus(final Integer tenantId) {
+        return tenantIdToSolverStateMap.getOrDefault(tenantId, SolverStatus.TERMINATED);
+    }
 
     public ScoreDirector<Roster> getScoreDirector() {
         return scoreDirectorFactory.buildScoreDirector();

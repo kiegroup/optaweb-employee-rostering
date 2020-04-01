@@ -17,6 +17,9 @@
 package org.optaweb.employeerostering.solver;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -62,7 +65,9 @@ public class SolverManagerTest {
         solverManager.setUpSolverFactory();
 
         Roster roster = rosterGenerator.generateRoster(10, 7);
-
+        
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 30, TimeUnit.SECONDS);
         CountDownLatch solverEndedLatch = solverManager.solve(roster.getTenantId());
 
         solverEndedLatch.await();
