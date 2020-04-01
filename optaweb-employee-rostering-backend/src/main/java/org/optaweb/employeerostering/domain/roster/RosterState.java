@@ -62,7 +62,7 @@ public class RosterState extends AbstractPersistable {
     @SuppressWarnings("unused")
     public RosterState() {
         super(-1);
-        publishLength = 7;
+        publishLength = 1;
     }
 
     public RosterState(Integer tenantId, Integer publishNotice, LocalDate firstDraftDate, Integer publishLength,
