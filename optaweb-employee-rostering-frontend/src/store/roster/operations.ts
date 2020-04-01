@@ -264,12 +264,12 @@ export const getCurrentShiftRoster: ThunkCommandFactory<PaginationData,
 SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = pagination => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
   dispatch(actions.setShiftRosterIsLoading(true));
+  lastCalledShiftRoster = getCurrentShiftRoster;
+  lastCalledShiftRosterArgs = pagination;
   return client.get<KindaShiftRosterView>(`/tenant/${tenantId}/roster/shiftRosterView/current?`
     + `p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`).then((newShiftRosterView) => {
     const shiftRosterView = convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView);
     dispatch(actions.setShiftRosterView(shiftRosterView));
-    lastCalledShiftRoster = getCurrentShiftRoster;
-    lastCalledShiftRosterArgs = pagination;
     dispatch(actions.setShiftRosterIsLoading(false));
   });
 };
@@ -280,13 +280,13 @@ SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = params => (dispatch,
   const fromDateAsString = serializeLocalDate(params.fromDate);
   const toDateAsString = serializeLocalDate(moment(params.toDate).add(1, 'day').toDate());
   dispatch(actions.setShiftRosterIsLoading(true));
+  lastCalledShiftRoster = getShiftRoster;
+  lastCalledShiftRosterArgs = params;
   return client.get<KindaShiftRosterView>(`/tenant/${tenantId}/roster/shiftRosterView?`
     + `p=${params.pagination.pageNumber}&n=${params.pagination.itemsPerPage}`
     + `&startDate=${fromDateAsString}&endDate=${toDateAsString}`).then((newShiftRosterView) => {
     const shiftRosterView = convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView);
     dispatch(actions.setShiftRosterView(shiftRosterView));
-    lastCalledShiftRoster = getShiftRoster;
-    lastCalledShiftRosterArgs = params;
     dispatch(actions.setShiftRosterIsLoading(false));
   });
 };
@@ -297,12 +297,12 @@ SetShiftRosterIsLoadingAction | SetShiftRosterViewAction> = params => (dispatch,
   const fromDateAsString = serializeLocalDate(params.fromDate);
   const toDateAsString = serializeLocalDate(moment(params.toDate).add(1, 'day').toDate());
   dispatch(actions.setShiftRosterIsLoading(true));
+  lastCalledShiftRoster = getShiftRosterFor;
+  lastCalledShiftRosterArgs = params;
   return client.post<KindaShiftRosterView>(`/tenant/${tenantId}/roster/shiftRosterView/for?`
     + `&startDate=${fromDateAsString}&endDate=${toDateAsString}`, params.spotList).then((newShiftRosterView) => {
     const shiftRosterView = convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView);
     dispatch(actions.setShiftRosterView(shiftRosterView));
-    lastCalledShiftRoster = getShiftRosterFor;
-    lastCalledShiftRosterArgs = params;
     dispatch(actions.setShiftRosterIsLoading(false));
   });
 };
@@ -311,14 +311,14 @@ export const getCurrentAvailabilityRoster: ThunkCommandFactory<PaginationData,
 SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = pagination => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
   dispatch(actions.setAvailabilityRosterIsLoading(true));
+  lastCalledAvailabilityRoster = getCurrentAvailabilityRoster;
+  lastCalledAvailabilityRosterArgs = pagination;
   return client.get<KindaAvailabilityRosterView>(`/tenant/${tenantId}/roster/availabilityRosterView/`
     + `current?p=${pagination.pageNumber}&n=${pagination.itemsPerPage}`).then((newAvailabilityRosterView) => {
     const availabilityRosterView = convertKindaAvailabilityRosterViewToAvailabilityRosterView(
       newAvailabilityRosterView,
     );
     dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
-    lastCalledAvailabilityRoster = getCurrentAvailabilityRoster;
-    lastCalledAvailabilityRosterArgs = pagination;
     dispatch(actions.setAvailabilityRosterIsLoading(false));
   });
 };
@@ -329,6 +329,8 @@ SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params
   const fromDateAsString = serializeLocalDate(params.fromDate);
   const toDateAsString = serializeLocalDate(moment(params.toDate).add(1, 'day').toDate());
   dispatch(actions.setAvailabilityRosterIsLoading(true));
+  lastCalledAvailabilityRoster = getAvailabilityRoster;
+  lastCalledAvailabilityRosterArgs = params;
   return client.get<KindaAvailabilityRosterView>(`/tenant/${tenantId}/roster/availabilityRosterView?`
     + `p=${params.pagination.pageNumber}&n=${params.pagination.itemsPerPage}`
     + `&startDate=${fromDateAsString}&endDate=${toDateAsString}`).then((newAvailabilityRosterView) => {
@@ -336,8 +338,6 @@ SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params
       newAvailabilityRosterView,
     );
     dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
-    lastCalledAvailabilityRoster = getAvailabilityRoster;
-    lastCalledAvailabilityRosterArgs = params;
     dispatch(actions.setAvailabilityRosterIsLoading(false));
   });
 };
@@ -348,6 +348,8 @@ SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params
   const fromDateAsString = serializeLocalDate(params.fromDate);
   const toDateAsString = serializeLocalDate(moment(params.toDate).add(1, 'day').toDate());
   dispatch(actions.setAvailabilityRosterIsLoading(true));
+  lastCalledAvailabilityRoster = getAvailabilityRosterFor;
+  lastCalledAvailabilityRosterArgs = params;
   return client.post<KindaAvailabilityRosterView>(`/tenant/${tenantId}/roster/availabilityRosterView/for?`
     + `&startDate=${fromDateAsString}&endDate=${toDateAsString}`,
   params.employeeList).then((newAvailabilityRosterView) => {
@@ -355,8 +357,6 @@ SetAvailabilityRosterIsLoadingAction | SetAvailabilityRosterViewAction> = params
       newAvailabilityRosterView,
     );
     dispatch(actions.setAvailabilityRosterView(availabilityRosterView));
-    lastCalledAvailabilityRoster = getAvailabilityRosterFor;
-    lastCalledAvailabilityRosterArgs = params;
     dispatch(actions.setAvailabilityRosterIsLoading(false));
   });
 };

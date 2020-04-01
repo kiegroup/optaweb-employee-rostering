@@ -365,7 +365,7 @@ public class RosterService extends AbstractRestService {
     public void solveRoster(Integer tenantId) {
         solverManager.solve(tenantId);
     }
-    
+
     public SolverStatus getSolverStatus(Integer tenantId) {
         return solverManager.getSolverStatus(tenantId);
     }
