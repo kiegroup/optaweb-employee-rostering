@@ -160,7 +160,6 @@ public class RosterController {
     public void terminateRosterEarly(@PathVariable @Min(0) Integer tenantId) {
         rosterService.terminateRosterEarly(tenantId);
     }
-    
 
     @ApiOperation("Get the status of the Solver")
     @GetMapping("/status")

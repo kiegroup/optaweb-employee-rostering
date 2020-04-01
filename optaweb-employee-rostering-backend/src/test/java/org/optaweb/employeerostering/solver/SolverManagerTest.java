@@ -65,7 +65,7 @@ public class SolverManagerTest {
         solverManager.setUpSolverFactory();
 
         Roster roster = rosterGenerator.generateRoster(10, 7);
-        
+
         ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         executor.schedule(() -> solverManager.terminate(roster.getTenantId()), 30, TimeUnit.SECONDS);
         CountDownLatch solverEndedLatch = solverManager.solve(roster.getTenantId());
