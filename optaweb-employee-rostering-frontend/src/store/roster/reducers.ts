@@ -22,7 +22,7 @@ import {
 } from './types';
 
 export const initialSolverState: CurrentSolverState = {
-  isSolving: false,
+  solverStatus: 'TERMINATED',
 };
 
 export const initialRosterState: CurrentRosterState = {
@@ -100,10 +100,13 @@ export const availabilityRosterReducer = (state = initialAvailabilityRosterState
 export const solverReducer = (state = initialSolverState, action: SolverAction): CurrentSolverState => {
   switch (action.type) {
     case SolverActionType.SOLVE_ROSTER: {
-      return { ...state, isSolving: true };
+      return { ...state, solverStatus: 'SOLVING' };
     }
     case SolverActionType.TERMINATE_SOLVING_ROSTER_EARLY: {
-      return { ...state, isSolving: false };
+      return { ...state, solverStatus: 'TERMINATED' };
+    }
+    case SolverActionType.UPDATE_SOLVER_STATUS: {
+      return { ...state, solverStatus: action.solverStatus };
     }
     default:
       return state;

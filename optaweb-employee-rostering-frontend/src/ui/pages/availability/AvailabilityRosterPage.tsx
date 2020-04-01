@@ -67,7 +67,7 @@ let lastShownEmployeeList: Employee[] = [];
 // eslint-disable-next-line no-return-assign
 const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
-  isSolving: state.solverState.isSolving,
+  isSolving: state.solverState.solverStatus === 'SOLVING',
   isLoading: rosterSelectors.isAvailabilityRosterLoading(state),
   allEmployeeList: employeeSelectors.getEmployeeList(state),
   shownEmployeeList: lastShownEmployeeList = rosterSelectors.isAvailabilityRosterLoading(state)
@@ -167,18 +167,20 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
   }
 
   onUpdateAvailabilityRoster(urlProps: AvailabilityRosterUrlProps) {
-    const employee = this.props.allEmployeeList
-      .find(e => e.name === urlProps.employee) || this.props.allEmployeeList[0];
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
-    const endDate = moment(startDate).endOf('week').toDate();
-    if (employee) {
-      this.props.getAvailabilityRosterFor({
-        fromDate: startDate,
-        toDate: endDate,
-        employeeList: [employee],
-      });
-      this.setState({ firstLoad: false });
-      setPropsInUrl(this.props, { ...urlProps, employee: employee.name });
+    if (this.props.rosterState !== null) {
+      const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
+      const endDate = moment(startDate).endOf('week').toDate();
+      const employee = this.props.allEmployeeList
+        .find(e => e.name === urlProps.employee) || this.props.allEmployeeList[0];
+      if (employee) {
+        this.props.getAvailabilityRosterFor({
+          fromDate: startDate,
+          toDate: endDate,
+          employeeList: [employee],
+        });
+        this.setState({ firstLoad: false });
+        setPropsInUrl(this.props, { ...urlProps, employee: employee.name });
+      }
     }
   }
 
@@ -282,7 +284,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       || (urlProps.employee !== null
       && this.props.tenantId !== this.props.shownEmployeeList[0].tenantId);
 
-    if (this.props.shownEmployeeList.length === 0 || changedTenant) {
+    if (this.props.shownEmployeeList.length === 0 || changedTenant || this.props.rosterState === null) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
@@ -304,7 +306,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
       );
     }
 
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
+    const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
     const shownEmployee = this.props.allEmployeeList.find(e => e.name === urlProps.employee)
       || this.props.shownEmployeeList[0];

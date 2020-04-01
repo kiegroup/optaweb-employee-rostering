@@ -60,7 +60,7 @@ let lastShownSpotList: Spot[] = [];
 // eslint-disable-next-line no-return-assign
 const mapStateToProps = (state: AppState): StateProps => ({
   tenantId: state.tenantData.currentTenantId,
-  isSolving: state.solverState.isSolving,
+  isSolving: state.solverState.solverStatus !== 'TERMINATED',
   isLoading: rosterSelectors.isShiftRosterLoading(state),
   allSpotList: spotSelectors.getSpotList(state),
   // The use of "x = isLoading? x : getUpdatedData()" is a way to use old value if data is still loading
@@ -123,17 +123,20 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   }
 
   onUpdateShiftRoster(urlProps: ShiftRosterUrlProps) {
-    const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList[0];
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
-    const endDate = moment(startDate).endOf('week').toDate();
-    if (spot) {
-      this.props.getShiftRosterFor({
-        fromDate: startDate,
-        toDate: endDate,
-        spotList: [spot],
-      });
-      this.setState({ firstLoad: false });
-      setPropsInUrl(this.props, { ...urlProps, spot: spot.name });
+    if (this.props.rosterState) {
+      const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList[0];
+      const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
+      const endDate = moment(startDate).endOf('week').toDate();
+
+      if (spot) {
+        this.props.getShiftRosterFor({
+          fromDate: startDate,
+          toDate: endDate,
+          spotList: [spot],
+        });
+        this.setState({ firstLoad: false });
+        setPropsInUrl(this.props, { ...urlProps, spot: spot.name });
+      }
     }
   }
 
@@ -218,7 +221,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     const changedTenant = this.props.shownSpotList.length === 0
       || this.props.tenantId !== this.props.shownSpotList[0].tenantId;
 
-    if (this.props.shownSpotList.length === 0 || this.state.firstLoad || changedTenant) {
+    if (this.props.shownSpotList.length === 0 || this.state.firstLoad
+        || changedTenant || this.props.rosterState === null) {
       return (
         <EmptyState variant={EmptyStateVariant.full}>
           <EmptyStateIcon icon={CubesIcon} />
@@ -240,7 +244,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       );
     }
 
-    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
+    const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
     const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.shownSpotList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };

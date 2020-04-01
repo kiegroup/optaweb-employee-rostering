@@ -22,7 +22,7 @@ import {
   SetRosterStateIsLoadingAction, SetRosterStateAction, SetShiftRosterIsLoadingAction,
   SetShiftRosterViewAction, SolveRosterAction, TerminateSolvingRosterEarlyAction, PublishResult,
   SetAvailabilityRosterIsLoadingAction, SetAvailabilityRosterViewAction,
-  AvailabilityRosterViewActionType,
+  AvailabilityRosterViewActionType, CurrentSolverState, UpdateSolverStatusAction,
 } from './types';
 import { ActionFactory } from '../types';
 
@@ -71,4 +71,10 @@ export const solveRoster: ActionFactory<void, SolveRosterAction> = () => ({
 
 export const terminateSolvingRosterEarly: ActionFactory<void, TerminateSolvingRosterEarlyAction> = () => ({
   type: SolverActionType.TERMINATE_SOLVING_ROSTER_EARLY,
+});
+
+export const updateSolverStatus:
+ActionFactory<CurrentSolverState, UpdateSolverStatusAction> = (solverStatus: CurrentSolverState) => ({
+  type: SolverActionType.UPDATE_SOLVER_STATUS,
+  solverStatus: solverStatus.solverStatus,
 });

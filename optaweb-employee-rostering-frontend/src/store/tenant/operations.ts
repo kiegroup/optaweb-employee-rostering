@@ -53,6 +53,7 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
   return Promise.all([
     dispatch(skillOperations.refreshSkillList()),
     dispatch(rosterOperations.getRosterState()),
+    dispatch(rosterOperations.getSolverStatus()),
     dispatch(spotOperations.refreshSpotList()),
     dispatch(contractOperations.refreshContractList()),
     dispatch(employeeOperations.refreshEmployeeList()),
@@ -62,6 +63,7 @@ function refreshData(dispatch: ThunkDispatch<any, any, Action<any>>): Promise<an
 
 export const changeTenant: ThunkCommandFactory<{ tenantId: number; routeProps: RouteComponentProps },
 ChangeTenantAction> = params => (dispatch) => {
+  rosterOperations.resetSolverStatus();
   dispatch(actions.changeTenant(params.tenantId));
   setTenantIdInUrl(params.routeProps, params.tenantId);
   return refreshData(dispatch);

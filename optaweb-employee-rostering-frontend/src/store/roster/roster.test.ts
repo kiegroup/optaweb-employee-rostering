@@ -874,7 +874,7 @@ describe('Roster reducers', () => {
     expect(
       solverReducer(state.solverState, actions.solveRoster()),
     ).toEqual({
-      isSolving: true,
+      solverStatus: 'SOLVING',
     });
   });
 
@@ -882,7 +882,7 @@ describe('Roster reducers', () => {
     expect(
       solverReducer(state.solverState, actions.terminateSolvingRosterEarly()),
     ).toEqual({
-      isSolving: false,
+      solverStatus: 'TERMINATED',
     });
   });
 });
@@ -1319,7 +1319,7 @@ const state: AppState = {
     availabilityRosterView: mockAvailabilityRoster,
   },
   solverState: {
-    isSolving: false,
+    solverStatus: 'TERMINATED',
   },
   alerts: {
     alertList: [],
