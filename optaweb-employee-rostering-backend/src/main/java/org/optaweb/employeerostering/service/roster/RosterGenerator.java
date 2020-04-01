@@ -329,8 +329,8 @@ public class RosterGenerator implements ApplicationRunner {
                 .with(TemporalAdjusters.next(DayOfWeek.MONDAY))
                 .plusDays(publishNotice);
         rosterState.setFirstDraftDate(firstDraftDate);
-        // publishLength is read-only and set to 7 days
-        //rosterState.setPublishLength(7);
+        // publishLength is read-only and set to 1 day
+        //rosterState.setPublishLength(1);
         rosterState.setDraftLength(14);
         rosterState.setUnplannedRotationOffset(0);
         rosterState.setRotationLength(generatorType.rotationLength);
