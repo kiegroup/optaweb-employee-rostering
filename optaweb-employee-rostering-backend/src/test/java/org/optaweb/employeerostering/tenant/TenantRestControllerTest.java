@@ -111,11 +111,8 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
 
         ResponseEntity<RosterConstraintConfiguration> updateResponse =
                 updateRosterConstraintParametrization(TENANT_ID, new RosterConstraintConfigurationView(
-                        TENANT_ID, 0, 0, 0, DayOfWeek.TUESDAY));
+                        TENANT_ID, DayOfWeek.TUESDAY));
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(updateResponse.getBody().getDesiredTimeSlotWeight()).isEqualTo(0);
-        assertThat(updateResponse.getBody().getRotationEmployeeMatchWeight()).isEqualTo(0);
-        assertThat(updateResponse.getBody().getUndesiredTimeSlotWeight()).isEqualTo(0);
         assertThat(updateResponse.getBody().getWeekStartDay()).isEqualTo(DayOfWeek.TUESDAY);
         assertThat(updateResponse.getBody().getRequiredSkill()).isEqualTo(HardMediumSoftLongScore.ofHard(100));
         assertThat(updateResponse.getBody().getUnavailableTimeSlot()).isEqualTo(HardMediumSoftLongScore.ofHard(50));
