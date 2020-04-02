@@ -103,8 +103,8 @@ public class Shift extends AbstractPersistable {
         return !endDateTime.isAfter(other.startDateTime);
     }
 
-    public long getLengthInHours() {
-        return startDateTime.until(endDateTime, ChronoUnit.HOURS);
+    public long getLengthInMinutes() {
+        return startDateTime.until(endDateTime, ChronoUnit.MINUTES);
     }
 
     public static long calculateLoad(Collection<Integer> hourlyCounts) {
@@ -118,7 +118,7 @@ public class Shift extends AbstractPersistable {
 
     private void adjustHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap,
             UnaryOperator<Integer> countAdjuster) {
-        long hourCount = getLengthInHours();
+        long hourCount = getLengthInMinutes();
         OffsetDateTime baseStartDateTime = startDateTime.truncatedTo(ChronoUnit.HOURS);
         for (int hour = 0; hour < hourCount; hour++) {
             OffsetDateTime actualHour = baseStartDateTime.plusHours(hour);

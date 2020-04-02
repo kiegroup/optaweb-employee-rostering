@@ -242,15 +242,15 @@ public class SolverTest {
         shiftList.get(2).setEmployee(employeeA);
 
         // -1 for each shift in overloaded week
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 3);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 180);
 
         shiftList.get(5).setEmployee(employeeA);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 6);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 360);
 
         shiftList.get(1).setEmployee(null);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 3);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 180);
     }
 
     @Test(timeout = 600000)
@@ -301,15 +301,15 @@ public class SolverTest {
         roster.setShiftList(Collections.singletonList(shift));
 
         final Constraints constraint = Constraints.REQUIRED_SKILL_FOR_A_SHIFT;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillA)));
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         employeeA.setSkillProficiencySet(new HashSet<>(Collections.singleton(skillB)));
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         employeeA.setSkillProficiencySet(new HashSet<>(Arrays.asList(skillA, skillB)));
 
@@ -375,17 +375,17 @@ public class SolverTest {
                 throw new IllegalArgumentException("No case for (" + availabilityState + ")");
         }
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         shift.setStartDateTime(firstDateTime.minusHours(3));
         shift.setEndDateTime(firstDateTime.plusHours(6));
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         shift.setStartDateTime(firstDateTime.plusHours(3));
         shift.setEndDateTime(firstDateTime.plusHours(12));
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
 
         shift.setStartDateTime(firstDateTime.plusHours(12));
         shift.setEndDateTime(firstDateTime.plusHours(21));
@@ -442,7 +442,7 @@ public class SolverTest {
         roster.setShiftList(shiftList);
 
         final Constraints constraint = Constraints.AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 2);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 120);
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofDays(1));
         shiftList = shiftBuilder.generateShifts(2);
@@ -502,7 +502,7 @@ public class SolverTest {
         roster.setShiftList(shiftList);
 
         final Constraints constraint = Constraints.NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(10));
         shiftList = shiftBuilder.generateShifts(2);
@@ -511,7 +511,7 @@ public class SolverTest {
 
         // Although start times are 10 hours apart, first end time is 9 hours apart
         // from next start time
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(11));
         shiftList = shiftBuilder.generateShifts(2);
@@ -526,7 +526,7 @@ public class SolverTest {
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 1);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
     }
 
     @Test(timeout = 600000)

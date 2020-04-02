@@ -49,7 +49,7 @@ rule "Low-risk employee assigned to a COVID ward"
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.LOW)
         $ward: Spot(this == $shift.spot, isCovidWard() == true)
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
 end
 
 rule "Moderate-risk employee assigned to a COVID ward"
@@ -58,7 +58,7 @@ rule "Moderate-risk employee assigned to a COVID ward"
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.MODERATE)
         $ward: Spot(this == $shift.spot, isCovidWard() == true)
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
 end
 
 rule "High-risk employee assigned to a COVID ward"
@@ -67,7 +67,7 @@ rule "High-risk employee assigned to a COVID ward"
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.HIGH)
         $ward: Spot(this == $shift.spot, isCovidWard() == true)
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
 end
 
 rule "Extreme-risk employee assigned to a COVID ward"
@@ -76,7 +76,7 @@ rule "Extreme-risk employee assigned to a COVID ward"
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.EXTREME)
         $ward: Spot(this == $shift.spot, isCovidWard() == true)
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
 end
 
 // PLANNER-1925 1
@@ -85,7 +85,7 @@ rule "Inoculated employee outside a COVID ward"
         $shift: Shift(employee != null, spot.isCovidWard() == false)
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.INOCULATED)
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
 end
 
 // PLANNER-1925 2
@@ -113,7 +113,7 @@ rule "Maximize inoculated hours"
         $shift: Shift(employee != null)
         $employee: Employee(this == $shift.employee, covidRiskType == CovidRiskType.INOCULATED)
     then
-        scoreHolder.reward(kcontext, $shift.getLengthInHours());
+        scoreHolder.reward(kcontext, $shift.getLengthInMinutes());
 end
 
 // PLANNER-1926 A
@@ -128,7 +128,7 @@ rule "Migration between COVID and non-COVID wards"
             follows($covidShift),
             precedes($nonCovidShift))
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $nonCovidShift.getLengthInMinutes());
 end
 
 // PLANNER-1926 C
@@ -144,7 +144,7 @@ rule "Non-COVID shift started less than 8 hours after finishing a COVID shift"
             follows($covidShift),
             precedes($nonCovidShift))
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $nonCovidShift.getLengthInMinutes());
 end
 
 // ############################################################################
@@ -153,26 +153,22 @@ end
 
 rule "Required skill for a shift"
     when
-        Shift(
-                employee != null,
-                !getEmployee().hasSkills(getSpot().getRequiredSkillSet()))
+        $shift: Shift(employee != null, !getEmployee().hasSkills(getSpot().getRequiredSkillSet()))
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
 end
 
 rule "Unavailable time slot for an employee"
     when
-        EmployeeAvailability(
+        $availability: EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNAVAILABLE,
                 $e : employee,
                 $startDateTime : startDateTime,
                 $endDateTime : endDateTime)
-        Shift(
-                employee == $e,
-                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
-                                                   startDateTime, endDateTime))
+        Shift(employee == $e,
+              DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime, startDateTime, endDateTime))
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $availability.getDuration().toMinutes());
 end
 
 rule "At most one shift assignment per day per employee"
@@ -186,7 +182,7 @@ rule "At most one shift assignment per day per employee"
                 startDateTime.toLocalDate() == $leftDay,
                 this != $s)
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $s.getLengthInMinutes());
 end
 
 rule "No 2 shifts within 10 hours from each other"
@@ -201,21 +197,21 @@ rule "No 2 shifts within 10 hours from each other"
                 $leftEndDateTime.until(startDateTime, ChronoUnit.HOURS) < 10,
                 this != $s)
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $s.getLengthInMinutes());
 end
 
 rule "Daily minutes must not exceed contract maximum"
     when
         $employee : Employee($contract : contract, $contract.getMaximumMinutesPerDay() != null)
         $s : Shift(employee == $employee, $startDateTime : startDateTime)
-        Number( intValue > $contract.getMaximumMinutesPerDay() ) from accumulate(
+        $minutes: Number( intValue > $contract.getMaximumMinutesPerDay() ) from accumulate(
             Shift(employee == $employee, $shiftStart : startDateTime,
             $shiftEnd : endDateTime,
             $shiftStart.toLocalDate().equals($startDateTime.toLocalDate())),
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, ((long)$minutes) - $contract.getMaximumMinutesPerDay());
 end
 
 rule "Weekly minutes must not exceed contract maximum"
@@ -223,21 +219,21 @@ rule "Weekly minutes must not exceed contract maximum"
         $rosterConstraintConfiguration : RosterConstraintConfiguration()
         $employee : Employee($contract : contract, $contract.getMaximumMinutesPerWeek() != null)
         $s : Shift(employee == $employee, $startDateTime : startDateTime)
-        Number( intValue > $contract.getMaximumMinutesPerWeek() ) from accumulate(
+        $minutes: Number( intValue > $contract.getMaximumMinutesPerWeek() ) from accumulate(
             Shift(employee == $employee, $shiftStart : startDateTime,
             $shiftEnd : endDateTime,
             DateTimeUtils.sameWeek($rosterConstraintConfiguration.getWeekStartDay(), $shiftStart, $startDateTime)),
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, ((long)$minutes) - $contract.getMaximumMinutesPerWeek());
 end
 
 rule "Monthly minutes must not exceed contract maximum"
     when
         $employee : Employee($contract : contract, $contract.getMaximumMinutesPerMonth() != null)
         $s : Shift(employee == $employee, $startDateTime : startDateTime)
-        Number( intValue > $contract.getMaximumMinutesPerMonth() ) from accumulate(
+        $minutes: Number( intValue > $contract.getMaximumMinutesPerMonth() ) from accumulate(
             Shift(employee == $employee, $shiftStart : startDateTime,
             $shiftEnd : endDateTime,
             $shiftStart.getMonth() == $startDateTime.getMonth(),
@@ -245,21 +241,21 @@ rule "Monthly minutes must not exceed contract maximum"
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, ((long)$minutes) - $contract.getMaximumMinutesPerMonth());
 end
 
 rule "Yearly minutes must not exceed contract maximum"
     when
         $employee : Employee($contract : contract, $contract.getMaximumMinutesPerYear() != null)
         $s : Shift(employee == $employee, $startDateTime : startDateTime)
-        Number( intValue > $contract.getMaximumMinutesPerYear() ) from accumulate(
+        $minutes: Number( intValue > $contract.getMaximumMinutesPerYear() ) from accumulate(
             Shift(employee == $employee, $shiftStart : startDateTime,
             $shiftEnd : endDateTime,
             $shiftStart.getYear() == $startDateTime.getYear()),
             sum(Duration.between($shiftStart, $shiftEnd).toMinutes())
         )
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, ((long)$minutes) - $contract.getMaximumMinutesPerYear());
 end
 
 
@@ -281,37 +277,33 @@ end
 
 rule "Undesired time slot for an employee"
     when
-        EmployeeAvailability(
+        $availability: EmployeeAvailability(
                 state == EmployeeAvailabilityState.UNDESIRED,
                 $e : employee,
                 $startDateTime : startDateTime,
                 $endDateTime : endDateTime)
-        Shift(
-                employee == $e,
-                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
-                                                   startDateTime, endDateTime))
+        Shift(employee == $e,
+              DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime, startDateTime, endDateTime))
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $availability.getDuration().toMinutes());
 end
 
 rule "Desired time slot for an employee"
     when
-        EmployeeAvailability(
+        $availability: EmployeeAvailability(
                 state == EmployeeAvailabilityState.DESIRED,
                 $e : employee,
                 $startDateTime : startDateTime,
                 $endDateTime : endDateTime)
-        Shift(
-                employee == $e,
-                DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime,
-                                                   startDateTime, endDateTime))
+        Shift(employee == $e,
+              DateTimeUtils.doTimeslotsIntersect($startDateTime,$endDateTime, startDateTime, endDateTime))
     then
-        scoreHolder.reward(kcontext);
+        scoreHolder.reward(kcontext, $availability.getDuration().toMinutes());
 end
 
 rule "Employee is not rotation employee"
     when
-        Shift(rotationEmployee != null, employee != null, employee != rotationEmployee)
+        $shift: Shift(rotationEmployee != null, employee != null, employee != rotationEmployee)
     then
-        scoreHolder.penalize(kcontext);
+        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
 end
