@@ -374,7 +374,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
             valueComponent={(props) => {
               const selectedOption: { value: Employee } = props.data;
               return (
-                <span style={{ display: 'grid', gridTemplateColumns: 'min-content 5px 1fr' }}>
+                <span style={{ display: 'grid', gridTemplateColumns: 'max-content 5px 1fr' }}>
                   {getIconForCovidRisk(selectedOption.value.covidRiskType, 'sm')}
                   <span />
                   <span>{selectedOption.value.name}</span>

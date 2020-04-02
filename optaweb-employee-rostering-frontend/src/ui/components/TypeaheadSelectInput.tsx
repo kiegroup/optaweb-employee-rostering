@@ -50,7 +50,7 @@ TypeaheadSelectProps<T>
   }
 
   onSelect(selection: { value: T }|undefined) {
-    this.props.onChange((selection !== undefined) ? selection.value : undefined);
+    this.props.onChange(selection ? selection.value : undefined);
   }
 
   render() {

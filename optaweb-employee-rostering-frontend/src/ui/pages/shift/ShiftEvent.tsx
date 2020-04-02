@@ -354,30 +354,24 @@ export const NonCovidShiftSoonAfterCovidShiftViolations: React.FC<Shift> = (shif
 };
 
 
-export const NEGATIVE_HARD_SCORE_COLOR = Color('rgb(139, 0, 0)', 'rgb');
-export const NEGATIVE_MEDIUM_SCORE_COLOR = Color('rgb(245, 193, 46)', 'rgb');
-export const NEGATIVE_SOFT_SCORE_COLOR = Color('rgb(209, 209, 209)', 'rgb');
-export const ZERO_SCORE_COLOR = Color('rgb(207, 231, 205)', 'rgb');
-export const POSITIVE_SOFT_SCORE_COLOR = Color('rgb(63, 156, 53)', 'rgb');
+export const NEGATIVE_HARD_SCORE_COLOR = Color('#cc0000');
+export const NEGATIVE_MEDIUM_SCORE_COLOR = Color('#fce94f');
+export const NEGATIVE_SOFT_SCORE_COLOR = Color('#fcaf3e');
+export const ZERO_SCORE_COLOR = Color('#eeeeec');
+export const POSITIVE_SOFT_SCORE_COLOR = Color('#73d216');
 
 export function getShiftColor(shift: Shift): string {
   if (shift.indictmentScore !== undefined && shift.indictmentScore.hardScore < 0) {
-    const fromColor = NEGATIVE_HARD_SCORE_COLOR;
-    const toColor = NEGATIVE_MEDIUM_SCORE_COLOR;
-    return fromColor.mix(toColor, (20 + shift.indictmentScore.hardScore) / 100).hex();
+    return NEGATIVE_HARD_SCORE_COLOR.hex();
   }
   if (shift.indictmentScore !== undefined && shift.indictmentScore.mediumScore < 0) {
     return NEGATIVE_MEDIUM_SCORE_COLOR.hex();
   }
   if (shift.indictmentScore !== undefined && shift.indictmentScore.softScore < 0) {
-    const fromColor = NEGATIVE_MEDIUM_SCORE_COLOR;
-    const toColor = NEGATIVE_SOFT_SCORE_COLOR;
-    return fromColor.mix(toColor, (20 + shift.indictmentScore.softScore) / 100).hex();
+    return NEGATIVE_SOFT_SCORE_COLOR.hex();
   }
   if (shift.indictmentScore !== undefined && shift.indictmentScore.softScore > 0) {
-    const fromColor = ZERO_SCORE_COLOR;
-    const toColor = POSITIVE_SOFT_SCORE_COLOR;
-    return fromColor.mix(toColor, (20 + shift.indictmentScore.softScore) / 100).hex();
+    return POSITIVE_SOFT_SCORE_COLOR.hex();
   }
 
   // Zero score
@@ -470,7 +464,6 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
       {props.event.employee !== null && (
         <>
           {getIconForCovidRisk(props.event.employee.covidRiskType, 'lg')}
-          <span style={{ width: '10px' }} />
         </>
       )}
       <span style={{

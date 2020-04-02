@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-import { CircleIcon, SyringeIcon, MehIcon, FrownIcon, SadTearIcon, BanIcon } from '@patternfly/react-icons';
 import { DomainObject } from './DomainObject';
 import { Skill } from './Skill';
 import { Contract } from './Contract';
@@ -23,18 +22,59 @@ import { Contract } from './Contract';
 export type CovidRiskType = 'INOCULATED' | 'LOW' | 'MODERATE' | 'HIGH' | 'EXTREME';
 
 export function getIconForCovidRisk(covidRiskType: CovidRiskType, size: 'sm' | 'lg'): JSX.Element {
+  let imageProps: React.ImgHTMLAttributes<{}> = {};
+  switch (size) {
+    case 'sm':
+      imageProps = { width: 10, height: 10 };
+      break;
+    case 'lg':
+      imageProps = { width: 30, height: 30 };
+      break;
+    default:
+      throw Error(`Unhandled case in getIconForCovidRisk: size = ${size}`);
+  }
   return (
     <span>
-      <span style={{ position: 'absolute', zIndex: 2 }}>
-        {covidRiskType === 'INOCULATED' && <SyringeIcon color="#8ae234" size={size} />}
-        {covidRiskType === 'LOW' && <MehIcon color="#edd400" size={size} />}
-        {covidRiskType === 'MODERATE' && <FrownIcon color="#fcaf3e" size={size} />}
-        {covidRiskType === 'HIGH' && <SadTearIcon color="#f57900" size={size} />}
-        {covidRiskType === 'EXTREME' && <BanIcon color="#2e3436" size={size} />}
-      </span>
-      <span style={{ zIndex: 1 }}>
-        <CircleIcon size={size} color="#ffffffff" />
-      </span>
+      {covidRiskType === 'INOCULATED'
+      && (
+        <img
+          {...imageProps}
+          src={`${process.env.PUBLIC_URL}/assets/images/inoculated.svg`}
+          alt=""
+        />
+      )}
+      {covidRiskType === 'LOW'
+      && (
+        <img
+          {...imageProps}
+          src={`${process.env.PUBLIC_URL}/assets/images/low-risk.svg`}
+          alt=""
+        />
+      )}
+      {covidRiskType === 'MODERATE'
+      && (
+        <img
+          {...imageProps}
+          src={`${process.env.PUBLIC_URL}/assets/images/moderate-risk.svg`}
+          alt=""
+        />
+      )}
+      {covidRiskType === 'HIGH'
+      && (
+        <img
+          {...imageProps}
+          src={`${process.env.PUBLIC_URL}/assets/images/high-risk.svg`}
+          alt=""
+        />
+      )}
+      {covidRiskType === 'EXTREME'
+      && (
+        <img
+          {...imageProps}
+          src={`${process.env.PUBLIC_URL}/assets/images/extreme.svg`}
+          alt=""
+        />
+      )}
     </span>
   );
 }
