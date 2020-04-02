@@ -21,6 +21,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -79,12 +81,12 @@ public class ShiftTemplate extends AbstractPersistable {
     public ShiftTemplate(Integer tenantId, Spot spot,
                          int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime,
                          Employee rotationEmployee) {
-        this(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, null, new HashSet<>());
+        this(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, null, Collections.emptySet());
     }
 
     public ShiftTemplate(Integer tenantId, Spot spot,
                          int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime,
-                         Employee rotationEmployee, Set<Skill> requiredSkillSet) {
+                         Employee rotationEmployee, Collection<Skill> requiredSkillSet) {
         super(tenantId);
         this.rotationEmployee = rotationEmployee;
         this.spot = spot;
@@ -92,11 +94,11 @@ public class ShiftTemplate extends AbstractPersistable {
         this.endDayOffset = endDayOffset;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.requiredSkillSet = requiredSkillSet;
+        this.requiredSkillSet = new HashSet<>(requiredSkillSet);
     }
 
     public ShiftTemplate(Integer rotationLength, ShiftTemplateView shiftTemplateView, Spot spot,
-                         Employee rotationEmployee, Set<Skill> requiredSkillSet) {
+                         Employee rotationEmployee, Collection<Skill> requiredSkillSet) {
         super(shiftTemplateView);
         this.spot = spot;
         this.rotationEmployee = rotationEmployee;
@@ -117,7 +119,7 @@ public class ShiftTemplate extends AbstractPersistable {
                                                        .minusDays(endDayAfterStartDay)
                                                        .getSeconds());
         this.endDayOffset = endDayAfterStartDay % rotationLength;
-        this.requiredSkillSet = requiredSkillSet;
+        this.requiredSkillSet = new HashSet<>(requiredSkillSet);
     }
 
     public Shift createShiftOnDate(LocalDate startDate, int rotationLength, ZoneId zoneId,

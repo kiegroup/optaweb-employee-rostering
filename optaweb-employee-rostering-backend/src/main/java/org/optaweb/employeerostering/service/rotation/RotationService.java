@@ -74,6 +74,12 @@ public class RotationService extends AbstractRestService {
                 .collect(Collectors.toList());
     }
 
+    private Set<Skill> getRequiredSkillSet(Integer tenantId, ShiftTemplateView shiftTemplateView) {
+        return shiftTemplateView.getRequiredSkillSetIdList()
+                .stream().map(id -> skillService.getSkill(tenantId, id))
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
     @Transactional
     public ShiftTemplateView getShiftTemplate(Integer tenantId, Long id) {
         RosterState rosterState = rosterService.getRosterState(tenantId);
@@ -90,9 +96,8 @@ public class RotationService extends AbstractRestService {
         RosterState rosterState = rosterService.getRosterState(tenantId);
         Spot spot = spotService.getSpot(tenantId, shiftTemplateView.getSpotId());
         Employee employee;
-        Set<Skill> requiredSkillSet = shiftTemplateView.getRequiredSkillSetIdList()
-                .stream().map(id -> skillService.getSkill(tenantId, id))
-                .collect(Collectors.toCollection(HashSet::new));
+        Set<Skill> requiredSkillSet = getRequiredSkillSet(tenantId, shiftTemplateView);
+
         if (shiftTemplateView.getRotationEmployeeId() != null) {
             employee = employeeService.getEmployee(tenantId, shiftTemplateView.getRotationEmployeeId());
         } else {
@@ -111,9 +116,7 @@ public class RotationService extends AbstractRestService {
         RosterState rosterState = rosterService.getRosterState(tenantId);
         Spot spot = spotService.getSpot(tenantId, shiftTemplateView.getSpotId());
         Employee employee;
-        Set<Skill> requiredSkillSet = shiftTemplateView.getRequiredSkillSetIdList()
-                .stream().map(id -> skillService.getSkill(tenantId, id))
-                .collect(Collectors.toCollection(HashSet::new));
+        Set<Skill> requiredSkillSet = getRequiredSkillSet(tenantId, shiftTemplateView);
 
         if (shiftTemplateView.getRotationEmployeeId() != null) {
             employee = employeeService.getEmployee(tenantId, shiftTemplateView.getRotationEmployeeId());

@@ -279,13 +279,6 @@ end
 // Soft constraints
 // ############################################################################
 
-rule "Change of Employee for Published Shift"
-    when
-        Shift(moved == true)
-    then
-        scoreHolder.penalize(kcontext);
-end
-
 rule "Undesired time slot for an employee"
     when
         EmployeeAvailability(
