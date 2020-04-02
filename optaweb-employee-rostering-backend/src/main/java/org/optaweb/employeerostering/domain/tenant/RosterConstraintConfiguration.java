@@ -35,23 +35,24 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
 
     // COVID-specific constraints
     @ConstraintWeight("Low-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore lowRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore lowRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(10);
     @ConstraintWeight("Moderate-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore moderateRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(5);
+    private HardMediumSoftLongScore moderateRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(50);
     @ConstraintWeight("High-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(10);
+    private HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(100);
     @ConstraintWeight("Extreme-risk employee assigned to a COVID ward")
     private HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofHard(1);
     @ConstraintWeight("Inoculated employee outside a COVID ward")
     private HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWardMatchWeight =
-            HardMediumSoftLongScore.ofSoft(1000);
+            HardMediumSoftLongScore.ofSoft(1_000);
     @ConstraintWeight("Uniform distribution of inoculated hours")
-    private HardMediumSoftLongScore uniformDistributionOfInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore uniformDistributionOfInoculatedHoursMatchWeight =
+            HardMediumSoftLongScore.ofSoft(1);
     @ConstraintWeight("Maximize inoculated hours")
-    private HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(10);
+    private HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(50);
     @ConstraintWeight("Migration between COVID and non-COVID wards")
     private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight =
-            HardMediumSoftLongScore.ofSoft(10);
+            HardMediumSoftLongScore.ofSoft(100);
     @ConstraintWeight("Non-COVID shift started less than 8 hours after finishing a COVID shift")
     private HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight =
             HardMediumSoftLongScore.ofHard(1);
@@ -77,11 +78,11 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     private HardMediumSoftLongScore assignEveryShift = HardMediumSoftLongScore.ofMedium(1);
 
     @ConstraintWeight("Undesired time slot for an employee")
-    private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(20);
     @ConstraintWeight("Desired time slot for an employee")
-    private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(10);
     @ConstraintWeight("Employee is not rotation employee")
-    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ZERO; // Disabled.
+    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ofSoft(50);
 
     @SuppressWarnings("unused")
     public RosterConstraintConfiguration() {
