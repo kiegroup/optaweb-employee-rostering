@@ -86,6 +86,8 @@ const mockShiftRoster: ShiftRosterView = {
       startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
       endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
       spotId: 10,
+      requiredSkillSetIdList: [],
+      originalEmployeeId: null,
       employeeId: 20,
       rotationEmployeeId: null,
       indictmentScore: {
@@ -154,6 +156,8 @@ const mockAvailabilityRoster: AvailabilityRosterView = {
       startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
       endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
       spotId: 10,
+      requiredSkillSetIdList: [],
+      originalEmployeeId: null,
       employeeId: 20,
       rotationEmployeeId: null,
       indictmentScore: {
@@ -1021,6 +1025,8 @@ describe('Roster selectors', () => {
           startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
           endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
           spot: mockShiftRoster.spotList[0],
+          requiredSkillSet: [],
+          originalEmployee: null,
           employee: {
             tenantId: 0,
             id: 20,
@@ -1109,6 +1115,8 @@ describe('Roster selectors', () => {
           startDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
           endDateTime: moment('2018-01-01', 'YYYY-MM-DD').toDate(),
           spot: mockShiftRoster.spotList[0],
+          requiredSkillSet: [],
+          originalEmployee: null,
           employee: {
             tenantId: 0,
             id: 20,

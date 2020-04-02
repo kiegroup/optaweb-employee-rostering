@@ -18,6 +18,7 @@ import DomainObjectView from 'domain/DomainObjectView';
 import { spotSelectors } from 'store/spot';
 import { objectWithout } from 'util/ImmutableCollectionOperations';
 import { employeeSelectors } from 'store/employee';
+import { skillSelectors } from 'store/skill';
 import { AppState } from '../types';
 
 function isLoading(state: AppState) {
@@ -31,8 +32,9 @@ export const getShiftTemplateById = (state: AppState, id: number): ShiftTemplate
   }
   const shiftTemplateView = state.shiftTemplateList.shiftTemplateMapById.get(id) as DomainObjectView<ShiftTemplate>;
   return {
-    ...objectWithout(shiftTemplateView, 'spot', 'rotationEmployee'),
+    ...objectWithout(shiftTemplateView, 'spot', 'rotationEmployee', 'requiredSkillSet'),
     spot: spotSelectors.getSpotById(state, shiftTemplateView.spot),
+    requiredSkillSet: shiftTemplateView.requiredSkillSet.map(skillId => skillSelectors.getSkillById(state, skillId)),
     rotationEmployee: shiftTemplateView.rotationEmployee
       ? employeeSelectors.getEmployeeById(state, shiftTemplateView.rotationEmployee) : null,
   };

@@ -21,8 +21,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 
@@ -30,6 +38,7 @@ import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.rotation.view.ShiftTemplateView;
 import org.optaweb.employeerostering.domain.shift.Shift;
+import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 
 @Entity
@@ -38,6 +47,14 @@ public class ShiftTemplate extends AbstractPersistable {
     @NotNull
     @ManyToOne
     private Spot spot;
+
+    @NotNull
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "ShiftTemplateRequiredSkillSet",
+            joinColumns = @JoinColumn(name = "shiftTemplateId", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "skillId", referencedColumnName = "id")
+    )
+    private Set<Skill> requiredSkillSet;
 
     @NotNull
     private Integer startDayOffset;
@@ -64,6 +81,12 @@ public class ShiftTemplate extends AbstractPersistable {
     public ShiftTemplate(Integer tenantId, Spot spot,
                          int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime,
                          Employee rotationEmployee) {
+        this(tenantId, spot, startDayOffset, startTime, endDayOffset, endTime, null, Collections.emptySet());
+    }
+
+    public ShiftTemplate(Integer tenantId, Spot spot,
+                         int startDayOffset, LocalTime startTime, int endDayOffset, LocalTime endTime,
+                         Employee rotationEmployee, Collection<Skill> requiredSkillSet) {
         super(tenantId);
         this.rotationEmployee = rotationEmployee;
         this.spot = spot;
@@ -71,10 +94,11 @@ public class ShiftTemplate extends AbstractPersistable {
         this.endDayOffset = endDayOffset;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.requiredSkillSet = new HashSet<>(requiredSkillSet);
     }
 
     public ShiftTemplate(Integer rotationLength, ShiftTemplateView shiftTemplateView, Spot spot,
-                         Employee rotationEmployee) {
+                         Employee rotationEmployee, Collection<Skill> requiredSkillSet) {
         super(shiftTemplateView);
         this.spot = spot;
         this.rotationEmployee = rotationEmployee;
@@ -95,6 +119,7 @@ public class ShiftTemplate extends AbstractPersistable {
                                                        .minusDays(endDayAfterStartDay)
                                                        .getSeconds());
         this.endDayOffset = endDayAfterStartDay % rotationLength;
+        this.requiredSkillSet = new HashSet<>(requiredSkillSet);
     }
 
     public Shift createShiftOnDate(LocalDate startDate, int rotationLength, ZoneId zoneId,
@@ -114,7 +139,8 @@ public class ShiftTemplate extends AbstractPersistable {
         OffsetDateTime startOffsetDateTime = OffsetDateTime.of(startDateTime,
                                                                zoneId.getRules().getOffset(startDateTime));
         OffsetDateTime endOffsetDateTime = OffsetDateTime.of(endDateTime, zoneId.getRules().getOffset(endDateTime));
-        Shift shift = new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, rotationEmployee);
+        Shift shift = new Shift(getTenantId(), getSpot(), startOffsetDateTime, endOffsetDateTime, rotationEmployee,
+                                new HashSet<>(requiredSkillSet));
         if (defaultToRotationEmployee) {
             shift.setEmployee(rotationEmployee);
         }
@@ -171,5 +197,13 @@ public class ShiftTemplate extends AbstractPersistable {
 
     public void setRotationEmployee(Employee rotationEmployee) {
         this.rotationEmployee = rotationEmployee;
+    }
+
+    public Set<Skill> getRequiredSkillSet() {
+        return requiredSkillSet;
+    }
+
+    public void setRequiredSkillSet(Set<Skill> requiredSkillSet) {
+        this.requiredSkillSet = requiredSkillSet;
     }
 }

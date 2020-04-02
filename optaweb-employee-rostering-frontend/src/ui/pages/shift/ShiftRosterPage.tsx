@@ -162,7 +162,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       return {
         style: {
           border: '1px solid',
-          backgroundColor: Color(color).saturate(-0.5).hex(),
+          opacity: 0.3,
+          backgroundColor: Color(color).hex(),
         },
       };
     }
@@ -357,6 +358,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
                 employee: null,
                 rotationEmployee: null,
                 pinnedByUser: false,
+                originalEmployee: null,
+                requiredSkillSet: [],
               });
             }
           }

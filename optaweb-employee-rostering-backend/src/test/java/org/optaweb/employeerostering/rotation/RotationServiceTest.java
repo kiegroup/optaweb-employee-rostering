@@ -95,7 +95,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null);
+                                                                    Duration.ofDays(0), null, Collections.emptyList());
         ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -129,7 +129,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null);
+                                                                    Duration.ofDays(0), null, Collections.emptyList());
         ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -146,7 +146,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null);
+                                                                    Duration.ofDays(0), null, Collections.emptyList());
         ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
 
         String shiftTemplateName = "[ShiftTemplate-" + persistedShiftTemplate.getId() + "]";
@@ -169,7 +169,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null);
+                                                                    Duration.ofDays(0), null, Collections.emptyList());
         String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView);
 
         mvc.perform(MockMvcRequestBuilders
@@ -191,7 +191,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(0, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null);
+                                                                    Duration.ofDays(0), null, Collections.emptyList());
         String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView);
 
         String shiftTemplateName = "[ShiftTemplate-null]";
@@ -216,11 +216,12 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spotB = createSpot(TENANT_ID, "B", Collections.emptySet());
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null);
+                                                                    Duration.ofDays(0), null, Collections.emptyList());
         ShiftTemplateView persistedShiftTemplate = rotationService.createShiftTemplate(TENANT_ID, shiftTemplateView);
 
         ShiftTemplateView updatedShiftTemplate = new ShiftTemplateView(TENANT_ID, spotB.getId(), Duration.ofDays(1),
-                                                                       Duration.ofDays(1), null);
+                                                                       Duration.ofDays(1), null,
+                                                                       Collections.emptyList());
         updatedShiftTemplate.setId(persistedShiftTemplate.getId());
         String body = (new ObjectMapper()).writeValueAsString(updatedShiftTemplate);
 
@@ -246,7 +247,7 @@ public class RotationServiceTest extends AbstractEntityRequireTenantRestServiceT
         Spot spot = createSpot(TENANT_ID, "spot", Collections.emptySet());
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spot.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null);
+                                                                    Duration.ofDays(0), null, Collections.emptyList());
         shiftTemplateView.setId(0L);
         String body = (new ObjectMapper()).writeValueAsString(shiftTemplateView);
 

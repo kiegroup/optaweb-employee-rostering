@@ -266,6 +266,8 @@ describe('Shift Roster Page', () => {
       startDateTime: newDateStart,
       endDateTime: newDateEnd,
       spot,
+      requiredSkillSet: [],
+      originalEmployee: null,
       employee: null,
       rotationEmployee: null,
       pinnedByUser: false,
@@ -300,7 +302,8 @@ describe('Shift Roster Page', () => {
     expect(style).toEqual({
       style: {
         border: '1px solid',
-        backgroundColor: color(getShiftColor(publishedShift)).saturate(-0.5).hex(),
+        backgroundColor: color(getShiftColor(publishedShift)).hex(),
+        opacity: 0.3,
       },
     });
   });
@@ -396,6 +399,8 @@ const shift: Shift = {
   startDateTime: moment('2018-07-01T09:00').toDate(),
   endDateTime: moment('2018-07-01T17:00').toDate(),
   spot,
+  requiredSkillSet: [],
+  originalEmployee: null,
   employee,
   rotationEmployee: {
     ...employee,

@@ -217,35 +217,12 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                 viewer={
                   <span>
                     <span>
-                      <span
-                        style={
-                          Object {
-                            "position": "absolute",
-                            "zIndex": 2,
-                          }
-                        }
-                      >
-                        <SyringeIcon
-                          color="#8ae234"
-                          noVerticalAlign={false}
-                          size="lg"
-                          title={null}
-                        />
-                      </span>
-                      <span
-                        style={
-                          Object {
-                            "zIndex": 1,
-                          }
-                        }
-                      >
-                        <CircleIcon
-                          color="#ffffffff"
-                          noVerticalAlign={false}
-                          size="lg"
-                          title={null}
-                        />
-                      </span>
+                      <img
+                        alt=""
+                        height={30}
+                        src="/assets/images/inoculated.svg"
+                        width={30}
+                      />
                     </span>
                     <Text>
                       Trans(i18nKey=CovidRisk.INOCULATED)
@@ -489,35 +466,12 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                 viewer={
                   <span>
                     <span>
-                      <span
-                        style={
-                          Object {
-                            "position": "absolute",
-                            "zIndex": 2,
-                          }
-                        }
-                      >
-                        <SyringeIcon
-                          color="#8ae234"
-                          noVerticalAlign={false}
-                          size="lg"
-                          title={null}
-                        />
-                      </span>
-                      <span
-                        style={
-                          Object {
-                            "zIndex": 1,
-                          }
-                        }
-                      >
-                        <CircleIcon
-                          color="#ffffffff"
-                          noVerticalAlign={false}
-                          size="lg"
-                          title={null}
-                        />
-                      </span>
+                      <img
+                        alt=""
+                        height={30}
+                        src="/assets/images/inoculated.svg"
+                        width={30}
+                      />
                     </span>
                     <Text>
                       Trans(i18nKey=CovidRisk.INOCULATED)
@@ -813,35 +767,12 @@ exports[`Employees page should render the viewer correctly 1`] = `
   >
     <span>
       <span>
-        <span
-          style={
-            Object {
-              "position": "absolute",
-              "zIndex": 2,
-            }
-          }
-        >
-          <SyringeIcon
-            color="#8ae234"
-            noVerticalAlign={false}
-            size="lg"
-            title={null}
-          />
-        </span>
-        <span
-          style={
-            Object {
-              "zIndex": 1,
-            }
-          }
-        >
-          <CircleIcon
-            color="#ffffffff"
-            noVerticalAlign={false}
-            size="lg"
-            title={null}
-          />
-        </span>
+        <img
+          alt=""
+          height={30}
+          src="/assets/images/inoculated.svg"
+          width={30}
+        />
       </span>
       <Text
         key="3"

@@ -195,6 +195,7 @@ describe('Rotation Page', () => {
       durationBetweenRotationStartAndTemplateStart: moment.duration(168, 'hours'),
       shiftTemplateDuration: moment.duration(8, 'hours'),
       spot,
+      requiredSkillSet: [],
       rotationEmployee: null,
     });
   });
@@ -271,6 +272,7 @@ const shiftTemplate: ShiftTemplate = {
   durationBetweenRotationStartAndTemplateStart: moment.duration(1, 'day').add(9, 'hours'),
   shiftTemplateDuration: moment.duration(8, 'hours'),
   spot,
+  requiredSkillSet: [],
   rotationEmployee: employee,
 };
 
