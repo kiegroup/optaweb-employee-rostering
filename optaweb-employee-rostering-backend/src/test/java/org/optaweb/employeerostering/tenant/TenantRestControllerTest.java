@@ -116,16 +116,18 @@ public class TenantRestControllerTest extends AbstractEntityRequireTenantRestSer
         assertThat(updateResponse.getBody().getWeekStartDay()).isEqualTo(DayOfWeek.TUESDAY);
         assertThat(updateResponse.getBody().getRequiredSkill()).isEqualTo(HardMediumSoftLongScore.ofHard(100));
         assertThat(updateResponse.getBody().getUnavailableTimeSlot()).isEqualTo(HardMediumSoftLongScore.ofHard(50));
-        assertThat(updateResponse.getBody().getOneShiftPerDay()).isEqualTo(HardMediumSoftLongScore.ofHard(10));
-        assertThat(updateResponse.getBody().getNoShiftsWithinTenHours()).isEqualTo(HardMediumSoftLongScore.ofHard(1));
-        assertThat(updateResponse.getBody().getContractMaximumDailyMinutes()).isEqualTo(HardMediumSoftLongScore
-                                                                                                .ofHard(1));
-        assertThat(updateResponse.getBody().getContractMaximumWeeklyMinutes()).isEqualTo(HardMediumSoftLongScore
-                                                                                                 .ofHard(1));
-        assertThat(updateResponse.getBody().getContractMaximumMonthlyMinutes()).isEqualTo(HardMediumSoftLongScore
-                                                                                                  .ofHard(1));
-        assertThat(updateResponse.getBody().getContractMaximumYearlyMinutes()).isEqualTo(HardMediumSoftLongScore
-                                                                                                 .ofHard(1));
+        assertThat(updateResponse.getBody().getNoMoreThan2ConsecutiveShifts())
+                .isEqualTo(HardMediumSoftLongScore.ofHard(10));
+        assertThat(updateResponse.getBody().getBreakBetweenNonConsecutiveShiftsAtLeast10Hours())
+                .isEqualTo(HardMediumSoftLongScore.ofHard(1));
+        assertThat(updateResponse.getBody().getContractMaximumDailyMinutes())
+                .isEqualTo(HardMediumSoftLongScore.ofHard(1));
+        assertThat(updateResponse.getBody().getContractMaximumWeeklyMinutes())
+                .isEqualTo(HardMediumSoftLongScore.ofHard(1));
+        assertThat(updateResponse.getBody().getContractMaximumMonthlyMinutes())
+                .isEqualTo(HardMediumSoftLongScore.ofHard(1));
+        assertThat(updateResponse.getBody().getContractMaximumYearlyMinutes())
+                .isEqualTo(HardMediumSoftLongScore.ofHard(1));
         assertThat(updateResponse.getBody().getAssignEveryShift()).isEqualTo(HardMediumSoftLongScore.ofMedium(1));
         assertThat(updateResponse.getBody().getUndesiredTimeSlot()).isEqualTo(HardMediumSoftLongScore.ofSoft(1));
         assertThat(updateResponse.getBody().getDesiredTimeSlot()).isEqualTo(HardMediumSoftLongScore.ofSoft(1));

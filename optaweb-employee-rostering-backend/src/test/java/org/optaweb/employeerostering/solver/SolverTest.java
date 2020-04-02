@@ -401,7 +401,7 @@ public class SolverTest {
     }
 
     @Test(timeout = 600000)
-    public void testAtMostOneShiftAssignmentPerDayPerEmployee() {
+    public void testNoMoreThan2ConsecutiveShifts() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
         AtomicLong idGenerator = new AtomicLong(1L);
@@ -441,27 +441,26 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
-        final Constraints constraint = Constraints.AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 120);
+        final Constraints constraint = Constraints.NO_MORE_THAN_2_CONSECUTIVE_SHIFTS;
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
 
-        shiftBuilder.withTimeBetweenShifts(Duration.ofDays(1));
-        shiftList = shiftBuilder.generateShifts(2);
+        shiftList = shiftBuilder.generateShifts(3);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
 
         // Start time is midnight, so one hour before is a different day
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-1));
-        shiftList = shiftBuilder.generateShifts(2);
+        shiftList = shiftBuilder.generateShifts(3);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
     }
 
     @Test(timeout = 600000)
-    public void testNoTwoShiftsWithin10HoursOfEachOther() {
+    public void testBreaksBetweenConsecutiveShiftsAtLeast10Hours() {
         HardMediumSoftLongScoreVerifier<Roster> scoreVerifier = getScoreVerifier();
 
         AtomicLong idGenerator = new AtomicLong(1L);
@@ -487,9 +486,10 @@ public class SolverTest {
                 .forSpot(spotA)
                 .startingAtDate(firstDateTime)
                 .withShiftLength(Duration.ofHours(1))
-                .withTimeBetweenShifts(Duration.ofHours(1));
+                .withTimeBetweenShifts(Duration.ofHours(2));
 
         List<Shift> shiftList = shiftBuilder.generateShifts(2);
+        System.out.println(shiftList);
         shiftList.forEach(s -> s.setEmployee(employeeA));
 
         roster.setTenantId(TENANT_ID);
@@ -501,16 +501,15 @@ public class SolverTest {
         roster.setEmployeeAvailabilityList(Collections.emptyList());
         roster.setShiftList(shiftList);
 
-        final Constraints constraint = Constraints.NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER;
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
+        final Constraints constraint = Constraints.BREAKS_AT_LEAST_10_HOURS;
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540); // Only 1 hour of break.
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(10));
         shiftList = shiftBuilder.generateShifts(2);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        // Although start times are 10 hours apart, first end time is 9 hours apart
-        // from next start time
+        // Although start times are 10 hours apart, first end time is 9 hours apart from next start time.
         constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
 
         shiftBuilder.withTimeBetweenShifts(Duration.ofHours(11));
@@ -520,13 +519,13 @@ public class SolverTest {
 
         constraint.verifyNumOfInstances(scoreVerifier, roster, 0);
 
-        // Start time is midnight, so one hour before is a different day
-        shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-1));
+        // Start time is midnight, so two hours before is a different day
+        shiftBuilder.withTimeBetweenShifts(Duration.ofHours(-2));
         shiftList = shiftBuilder.generateShifts(2);
         shiftList.forEach(s -> s.setEmployee(employeeA));
         roster.setShiftList(shiftList);
 
-        constraint.verifyNumOfInstances(scoreVerifier, roster, 60);
+        constraint.verifyNumOfInstances(scoreVerifier, roster, 540);
     }
 
     @Test(timeout = 600000)
@@ -684,10 +683,10 @@ public class SolverTest {
                 ROSTER_CONSTRAINT_CONFIGURATION.getRequiredSkill().negate()),
         UNAVAILABLE_TIME_SLOT_FOR_AN_EMPLOYEE("Unavailable time slot for an employee",
                 ROSTER_CONSTRAINT_CONFIGURATION.getUnavailableTimeSlot().negate()),
-        AT_MOST_ONE_SHIFT_ASSIGNMENT_PER_DAY_PER_EMPLOYEE("At most one shift assignment per day per employee",
-                ROSTER_CONSTRAINT_CONFIGURATION.getOneShiftPerDay().negate()),
-        NO_2_SHIFTS_WITHIN_10_HOURS_FROM_EACH_OTHER("No 2 shifts within 10 hours from each other",
-                ROSTER_CONSTRAINT_CONFIGURATION.getNoShiftsWithinTenHours().negate()),
+        NO_MORE_THAN_2_CONSECUTIVE_SHIFTS("No more than 2 consecutive shifts",
+                ROSTER_CONSTRAINT_CONFIGURATION.getNoMoreThan2ConsecutiveShifts().negate()),
+        BREAKS_AT_LEAST_10_HOURS("Break between non-consecutive shifts is at least 10 hours",
+                ROSTER_CONSTRAINT_CONFIGURATION.getBreakBetweenNonConsecutiveShiftsAtLeast10Hours().negate()),
         DAILY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Daily minutes must not exceed contract maximum",
                 ROSTER_CONSTRAINT_CONFIGURATION.getContractMaximumDailyMinutes().negate()),
         WEEKLY_MINUTES_MUST_NOT_EXCEED_CONTRACT_MAXIMUM("Weekly minutes must not exceed contract maximum",

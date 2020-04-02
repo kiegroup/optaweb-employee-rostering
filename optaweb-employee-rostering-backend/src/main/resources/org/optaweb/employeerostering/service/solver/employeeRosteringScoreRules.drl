@@ -131,22 +131,6 @@ rule "Migration between COVID and non-COVID wards"
         scoreHolder.penalize(kcontext, $nonCovidShift.getLengthInMinutes());
 end
 
-// PLANNER-1926 C
-rule "Non-COVID shift started less than 8 hours after finishing a COVID shift"
-    when
-        $employee: Employee()
-        $nonCovidShift: Shift(employee == $employee, spot.isCovidWard() == false)
-        $covidShift: Shift(employee == $employee, this != $covidShift,
-            spot.isCovidWard() == true,
-            precedes($nonCovidShift),
-            endDateTime.until($nonCovidShift.startDateTime, ChronoUnit.HOURS) < 8)
-        not Shift(employee == $employee, this != $covidShift, this != $nonCovidShift,
-            follows($covidShift),
-            precedes($nonCovidShift))
-    then
-        scoreHolder.penalize(kcontext, $nonCovidShift.getLengthInMinutes());
-end
-
 // ############################################################################
 // Hard constraints
 // ############################################################################
@@ -171,21 +155,44 @@ rule "Unavailable time slot for an employee"
         scoreHolder.penalize(kcontext, $availability.getDuration().toMinutes());
 end
 
-rule "At most one shift assignment per day per employee"
+rule "No overlapping shifts"
     when
         $s : Shift(
                 employee != null,
                 $e : employee,
-                $leftDay : startDateTime.toLocalDate())
-        Shift(
+                $firstStartDateTime: startDateTime,
+                $firstEndDateTime : endDateTime)
+        $s2: Shift(
                 employee == $e,
-                startDateTime.toLocalDate() == $leftDay,
-                this != $s)
+                this != $s,
+                $firstStartDateTime <= startDateTime,
+                $firstEndDateTime != startDateTime,
+                DateTimeUtils.doTimeslotsIntersect($firstStartDateTime, $firstEndDateTime, startDateTime, endDateTime))
     then
-        scoreHolder.penalize(kcontext, $s.getLengthInMinutes());
+        scoreHolder.penalize(kcontext, $s2.getLengthInMinutes());
 end
 
-rule "No 2 shifts within 10 hours from each other"
+rule "No more than 2 consecutive shifts"
+    when
+        $s : Shift(
+                employee != null,
+                $e : employee,
+                $firstEndDateTime : endDateTime)
+        $s2: Shift(
+                employee == $e,
+                $firstEndDateTime == startDateTime,
+                this != $s,
+                $secondEndDateTime : endDateTime)
+        $s3: Shift(
+                employee == $e,
+                $secondEndDateTime == startDateTime,
+                this != $s,
+                this != $s2)
+    then
+        scoreHolder.penalize(kcontext, $s3.getLengthInMinutes());
+end
+
+rule "Break between non-consecutive shifts is at least 10 hours"
     when
         $s : Shift(
                 employee != null,
@@ -193,11 +200,13 @@ rule "No 2 shifts within 10 hours from each other"
                 $leftEndDateTime : endDateTime)
         Shift(
                 employee == $e,
-                $leftEndDateTime <= endDateTime,
+                $leftEndDateTime < startDateTime,
                 $leftEndDateTime.until(startDateTime, ChronoUnit.HOURS) < 10,
-                this != $s)
+                this != $s,
+                $rightStartDateTime: startDateTime)
     then
-        scoreHolder.penalize(kcontext, $s.getLengthInMinutes());
+        long breakLength = $leftEndDateTime.until($rightStartDateTime, ChronoUnit.MINUTES);
+        scoreHolder.penalize(kcontext, (10 * 60) - breakLength);
 end
 
 rule "Daily minutes must not exceed contract maximum"
