@@ -302,7 +302,8 @@ describe('Shift Roster Page', () => {
     expect(style).toEqual({
       style: {
         border: '1px solid',
-        backgroundColor: color(getShiftColor(publishedShift)).saturate(-0.5).hex(),
+        backgroundColor: color(getShiftColor(publishedShift)).hex(),
+        opacity: 0.3,
       },
     });
   });

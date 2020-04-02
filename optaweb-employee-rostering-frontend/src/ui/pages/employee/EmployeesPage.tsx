@@ -146,7 +146,7 @@ export class EmployeesPage extends DataTable<Employee, Props> {
         valueComponent={(props) => {
           const selectedOption: { value: CovidRiskType } = props.data;
           return (
-            <span style={{ display: 'grid', gridTemplateColumns: 'min-content 5px 1fr' }}>
+            <span style={{ display: 'grid', gridTemplateColumns: 'max-content 5px 1fr' }}>
               {getIconForCovidRisk(selectedOption.value, 'sm')}
               <span />
               <span>{this.props.t(`CovidRisk.${selectedOption.value}`)}</span>

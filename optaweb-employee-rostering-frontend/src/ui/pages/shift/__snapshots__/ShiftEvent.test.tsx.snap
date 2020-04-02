@@ -6421,11 +6421,11 @@ exports[`ShiftEvent getRotationViolationPenalties should render correctly 1`] = 
 
 exports[`ShiftEvent getShiftColor should return a color depending on score 1`] = `
 Object {
-  "negativeHardColor": "#9B1D07",
-  "negativeMediumColor": "#F5C12E",
-  "negativeSoftColor": "#F1C33E",
-  "positiveSoftColor": "#ABD4A7",
-  "zeroColor": "#CFE7CD",
+  "negativeHardColor": "#CC0000",
+  "negativeMediumColor": "#FCE94F",
+  "negativeSoftColor": "#FCAF3E",
+  "positiveSoftColor": "#73D216",
+  "zeroColor": "#EEEEEC",
 }
 `;
 
@@ -7615,43 +7615,13 @@ exports[`ShiftEvent should render ShiftEvent correctly 1`] = `
     }
   >
     <span>
-      <span
-        style={
-          Object {
-            "position": "absolute",
-            "zIndex": 2,
-          }
-        }
-      >
-        <SyringeIcon
-          color="#8ae234"
-          noVerticalAlign={false}
-          size="lg"
-          title={null}
-        />
-      </span>
-      <span
-        style={
-          Object {
-            "zIndex": 1,
-          }
-        }
-      >
-        <CircleIcon
-          color="#ffffffff"
-          noVerticalAlign={false}
-          size="lg"
-          title={null}
-        />
-      </span>
+      <img
+        alt=""
+        height={30}
+        src="/assets/images/inoculated.svg"
+        width={30}
+      />
     </span>
-    <span
-      style={
-        Object {
-          "width": "10px",
-        }
-      }
-    />
     <span
       style={
         Object {
@@ -7792,43 +7762,13 @@ exports[`ShiftEvent should render ShiftEvent correctly when pinned 1`] = `
       title={null}
     />
     <span>
-      <span
-        style={
-          Object {
-            "position": "absolute",
-            "zIndex": 2,
-          }
-        }
-      >
-        <SyringeIcon
-          color="#8ae234"
-          noVerticalAlign={false}
-          size="lg"
-          title={null}
-        />
-      </span>
-      <span
-        style={
-          Object {
-            "zIndex": 1,
-          }
-        }
-      >
-        <CircleIcon
-          color="#ffffffff"
-          noVerticalAlign={false}
-          size="lg"
-          title={null}
-        />
-      </span>
+      <img
+        alt=""
+        height={30}
+        src="/assets/images/inoculated.svg"
+        width={30}
+      />
     </span>
-    <span
-      style={
-        Object {
-          "width": "10px",
-        }
-      }
-    />
     <span
       style={
         Object {
