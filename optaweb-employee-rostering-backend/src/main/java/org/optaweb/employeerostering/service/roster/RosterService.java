@@ -386,6 +386,13 @@ public class RosterService extends AbstractRestService {
         LocalDate firstUnplannedDate = rosterState.getFirstUnplannedDate();
 
         // Publish
+        ZoneId timeZone = rosterState.getTimeZone();
+        List<Shift> publishedShifts = shiftRepository
+                .findAllByTenantIdBetweenDates(tenantId,
+                                               publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
+                                               publishTo.atStartOfDay(timeZone).toOffsetDateTime());
+        publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
+        shiftRepository.saveAll(publishedShifts);
         rosterState.setFirstDraftDate(publishTo);
 
         // Provision

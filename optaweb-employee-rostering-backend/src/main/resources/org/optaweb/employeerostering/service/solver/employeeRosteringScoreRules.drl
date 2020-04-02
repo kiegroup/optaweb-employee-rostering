@@ -155,7 +155,7 @@ rule "Required skill for a shift"
     when
         Shift(
                 employee != null,
-                !getEmployee().hasSkills(getSpot().getRequiredSkillSet()))
+                hasRequiredSkills() == false)
     then
         scoreHolder.penalize(kcontext);
 end

@@ -31,6 +31,7 @@ export function shiftAdapter(shift: Shift): KindaShiftView {
   return {
     ...objectWithout(shiftToShiftView(shift), 'indictmentScore', 'startDateTime', 'endDateTime',
       ...Object.keys(shift).filter(k => Array.isArray((shift as {[P: string]: any})[k])) as (keyof ShiftView)[]) as any,
+    requiredSkillSetIdList: shift.requiredSkillSet.map(skill => skill.id as number),
     startDateTime: serializeLocalDateTime(shift.startDateTime),
     endDateTime: serializeLocalDateTime(shift.endDateTime),
   };
@@ -43,7 +44,7 @@ export function kindaShiftViewAdapter(kindaShiftView: KindaShiftView): ShiftView
   // Since property P is related to indictments iff it is an array,
   // We can convert all indictments by mapping all keys that are arrays
   Object.keys(kindaShiftViewClone).forEach((key) => {
-    if (Array.isArray(kindaShiftViewClone[key])) {
+    if (key !== 'requiredSkillSetIdList' && Array.isArray(kindaShiftViewClone[key])) {
       kindaShiftViewClone[key] = kindaShiftViewClone[key].map((s: any) => (
         { ...s, score: getHardMediumSoftScoreFromString(s.score) }
       ));

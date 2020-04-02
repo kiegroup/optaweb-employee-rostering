@@ -16,9 +16,11 @@
 
 package org.optaweb.employeerostering.service.shift;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -27,11 +29,13 @@ import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
+import org.optaweb.employeerostering.domain.skill.Skill;
 import org.optaweb.employeerostering.domain.spot.Spot;
 import org.optaweb.employeerostering.service.common.AbstractRestService;
 import org.optaweb.employeerostering.service.common.IndictmentUtils;
 import org.optaweb.employeerostering.service.employee.EmployeeRepository;
 import org.optaweb.employeerostering.service.roster.RosterService;
+import org.optaweb.employeerostering.service.skill.SkillService;
 import org.optaweb.employeerostering.service.spot.SpotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +47,8 @@ public class ShiftService extends AbstractRestService {
 
     private SpotRepository spotRepository;
 
+    private SkillService skillService;
+
     private EmployeeRepository employeeRepository;
 
     private RosterService rosterService;
@@ -50,10 +56,11 @@ public class ShiftService extends AbstractRestService {
     private IndictmentUtils indictmentUtils;
 
     public ShiftService(ShiftRepository shiftRepository, SpotRepository spotRepository,
-                        EmployeeRepository employeeRepository, RosterService rosterService,
-                        IndictmentUtils indictmentUtils) {
+                        SkillService skillService, EmployeeRepository employeeRepository,
+                        RosterService rosterService, IndictmentUtils indictmentUtils) {
         this.shiftRepository = shiftRepository;
         this.spotRepository = spotRepository;
+        this.skillService = skillService;
         this.employeeRepository = employeeRepository;
         this.rosterService = rosterService;
         this.indictmentUtils = indictmentUtils;
@@ -101,14 +108,33 @@ public class ShiftService extends AbstractRestService {
             rotationEmployee = employeeRepository
                     .findById(rotationEmployeeId)
                     .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
-                                                                           ") has an non-existing employeeId (" +
+                                                                           ") has an non-existing " +
+                                                                           "rotationEmployeeId (" +
                                                                            rotationEmployeeId + ")."));
             validateTenantIdParameter(tenantId, rotationEmployee);
         }
 
+        Long originalEmployeeId = shiftView.getRotationEmployeeId();
+        Employee originalEmployee = null;
+        if (originalEmployeeId != null) {
+            rotationEmployee = employeeRepository
+                    .findById(originalEmployeeId)
+                    .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
+                                                                           ") has an non-existing " +
+                                                                           "originalEmployeeId (" +
+                                                                           originalEmployeeId + ")."));
+            validateTenantIdParameter(tenantId, rotationEmployee);
+        }
+
+        Set<Skill> requiredSkillSet = shiftView.getRequiredSkillSetIdList()
+                .stream().map(id -> skillService.getSkill(tenantId, id))
+                .collect(Collectors.toCollection(HashSet::new));
+
         Shift shift = new Shift(rosterService.getRosterState(tenantId).getTimeZone(), shiftView, spot,
-                                rotationEmployee);
+                                rotationEmployee, requiredSkillSet);
         shift.setPinnedByUser(shiftView.isPinnedByUser());
+        shift.setOriginalEmployee(originalEmployee);
+
         Long employeeId = shiftView.getEmployeeId();
         if (employeeId != null) {
             Employee employee = employeeRepository

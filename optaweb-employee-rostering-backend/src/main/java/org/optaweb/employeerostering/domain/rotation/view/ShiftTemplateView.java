@@ -17,20 +17,27 @@
 package org.optaweb.employeerostering.domain.rotation.view;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.ser.DurationSerializer;
 import org.optaweb.employeerostering.domain.common.AbstractPersistable;
 import org.optaweb.employeerostering.domain.rotation.ShiftTemplate;
+import org.optaweb.employeerostering.domain.skill.Skill;
 
 public class ShiftTemplateView extends AbstractPersistable {
 
     private Long spotId;
+    private List<Long> requiredSkillSetIdList;
+
     private Long rotationEmployeeId;
     private Duration durationBetweenRotationStartAndTemplateStart;
     private Duration shiftTemplateDuration;
 
-    public ShiftTemplateView() {}
+    public ShiftTemplateView() {
+    }
 
     public ShiftTemplateView(Integer rotationLength, ShiftTemplate shiftTemplate) {
         super(shiftTemplate);
@@ -45,15 +52,20 @@ public class ShiftTemplateView extends AbstractPersistable {
                 .plusDays(shiftTemplate.getEndDayOffset() - shiftTemplate.getStartDayOffset())
                 .plusSeconds(shiftTemplate.getEndTime().toSecondOfDay())
                 .minusSeconds(shiftTemplate.getStartTime().toSecondOfDay());
+
+        this.requiredSkillSetIdList = shiftTemplate.getRequiredSkillSet().stream()
+                .map(Skill::getId).sorted().collect(Collectors.toCollection(ArrayList::new));
     }
 
     public ShiftTemplateView(Integer tenantId, Long spotId, Duration durationBetweenRotationStartAndTemplateStart,
-                             Duration shiftTemplateDuration, Long rotationEmployeeId) {
+                             Duration shiftTemplateDuration, Long rotationEmployeeId,
+                             List<Long> requiredSkillSetIdList) {
         super(tenantId);
         this.spotId = spotId;
         this.durationBetweenRotationStartAndTemplateStart = durationBetweenRotationStartAndTemplateStart;
         this.shiftTemplateDuration = shiftTemplateDuration;
         this.rotationEmployeeId = rotationEmployeeId;
+        this.requiredSkillSetIdList = requiredSkillSetIdList;
     }
 
     public Long getSpotId() {
@@ -88,5 +100,13 @@ public class ShiftTemplateView extends AbstractPersistable {
 
     public void setShiftTemplateDuration(Duration shiftTemplateDuration) {
         this.shiftTemplateDuration = shiftTemplateDuration;
+    }
+
+    public List<Long> getRequiredSkillSetIdList() {
+        return requiredSkillSetIdList;
+    }
+
+    public void setRequiredSkillSetIdList(List<Long> requiredSkillSetIdList) {
+        this.requiredSkillSetIdList = requiredSkillSetIdList;
     }
 }

@@ -33,13 +33,16 @@ import { MaximizeInoculatedEmployeeHoursReward } from './indictment/MaximizeInoc
 import { MigrationBetweenCovidAndNonCovidWardsViolation }
   from './indictment/MigrationBetweenCovidAndNonCovidWardsViolation';
 import { NonCovidShiftSoonAfterCovidShiftViolation } from './indictment/NonCovidShiftSoonAfterCovidShiftViolation';
+import { Skill } from './Skill';
 
 export interface Shift extends DomainObject {
   startDateTime: Date;
   endDateTime: Date;
   spot: Spot;
+  requiredSkillSet: Skill[];
   rotationEmployee: Employee | null;
   employee: Employee | null;
+  originalEmployee: Employee | null;
   pinnedByUser: boolean;
   indictmentScore?: HardMediumSoftScore;
   requiredSkillViolationList?: RequiredSkillViolation[];

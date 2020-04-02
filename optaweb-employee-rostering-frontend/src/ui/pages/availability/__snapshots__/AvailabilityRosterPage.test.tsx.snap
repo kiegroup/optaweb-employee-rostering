@@ -235,7 +235,9 @@ exports[`Availability Roster Page should render correctly when creating a new av
               "mediumScore": 0,
               "softScore": 0,
             },
+            "originalEmployee": null,
             "pinnedByUser": false,
+            "requiredSkillSet": Array [],
             "requiredSkillViolationList": Array [],
             "rotationEmployee": Object {
               "contract": Object {
@@ -540,7 +542,9 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
               "mediumScore": 0,
               "softScore": 0,
             },
+            "originalEmployee": null,
             "pinnedByUser": false,
+            "requiredSkillSet": Array [],
             "requiredSkillViolationList": Array [],
             "rotationEmployee": Object {
               "contract": Object {
@@ -873,7 +877,9 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
               "mediumScore": 0,
               "softScore": 0,
             },
+            "originalEmployee": null,
             "pinnedByUser": false,
+            "requiredSkillSet": Array [],
             "requiredSkillViolationList": Array [],
             "rotationEmployee": Object {
               "contract": Object {

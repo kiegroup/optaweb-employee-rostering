@@ -33,6 +33,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -206,8 +208,10 @@ public class RosterGenerator implements ApplicationRunner {
 
     private Random random;
     private final String COVID19 = "COVID-19";
-    private final String DOCTORS = " - Doctors";
-    private final String NURSES = " - Nurses";
+
+    private Skill COVID_SKILL;
+    private Skill DOCTOR_SKILL;
+    private Skill NURSE_SKILL;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -285,7 +289,7 @@ public class RosterGenerator implements ApplicationRunner {
                                                          contractList, skillList);
         List<ShiftTemplate> shiftTemplateList = createShiftTemplateList(generatorType, tenantId,
                                                                         rosterState, spotList,
-                                                                        employeeList);
+                                                                        employeeList, skillList);
         List<Shift> shiftList = createShiftList(generatorType, tenantId, rosterConstraintConfiguration,
                                                 rosterState, spotList, shiftTemplateList);
         List<EmployeeAvailability> employeeAvailabilityList = createEmployeeAvailabilityList(
@@ -345,15 +349,15 @@ public class RosterGenerator implements ApplicationRunner {
     public List<Skill> createSkillList(GeneratorType generatorType, Integer tenantId, int size) {
         List<Skill> skillList = new ArrayList<>(size + 3);
         generatorType.skillNameGenerator.predictMaximumSizeAndReset(size);
-        Skill covidSkill = new Skill(tenantId, COVID19 + " Specialist");
-        Skill doctorSkill = new Skill(tenantId, "Doctor");
-        Skill nurseSkill = new Skill(tenantId, "Nurse");
+        COVID_SKILL = new Skill(tenantId, COVID19 + " Specialist");
+        DOCTOR_SKILL = new Skill(tenantId, "Doctor");
+        NURSE_SKILL = new Skill(tenantId, "Nurse");
 
-        entityManager.persist(covidSkill);
-        entityManager.persist(doctorSkill);
-        entityManager.persist(nurseSkill);
+        entityManager.persist(COVID_SKILL);
+        entityManager.persist(DOCTOR_SKILL);
+        entityManager.persist(NURSE_SKILL);
 
-        skillList.addAll(Arrays.asList(covidSkill, doctorSkill, nurseSkill));
+        skillList.addAll(Arrays.asList(COVID_SKILL, DOCTOR_SKILL, NURSE_SKILL));
         for (int i = 0; i < size; i++) {
             String name = generatorType.skillNameGenerator.generateNextValue();
             Skill skill = new Skill(tenantId, name);
@@ -370,13 +374,8 @@ public class RosterGenerator implements ApplicationRunner {
         final int NUM_OF_COVID_WARDS = Math.max(2, size / 8);
 
         for (int i = 0; i < NUM_OF_COVID_WARDS; i++) {
-            Set<Skill> requiredSkillSet = new HashSet<>(Arrays.asList(skillList.get(0), skillList.get(1)));
-            Spot spot = new Spot(tenantId, COVID19 + " Ward" + (i + 1) + DOCTORS, requiredSkillSet, true);
-            entityManager.persist(spot);
-            spotList.add(spot);
-
-            requiredSkillSet = new HashSet<>(Arrays.asList(skillList.get(0), skillList.get(2)));
-            spot = new Spot(tenantId, COVID19 + " Ward" + (i + 1) + NURSES, requiredSkillSet, true);
+            Set<Skill> requiredSkillSet = new HashSet<>();
+            Spot spot = new Spot(tenantId, COVID19 + " Ward " + (i + 1), requiredSkillSet, true);
             entityManager.persist(spot);
             spotList.add(spot);
         }
@@ -388,17 +387,7 @@ public class RosterGenerator implements ApplicationRunner {
                                       skillList.size()),
                     0.5, 0.9, 1.0));
 
-            Set<Skill> doctorRequiredSkillSet = new HashSet<>(requiredSkillSet);
-            doctorRequiredSkillSet.add(skillList.get(1));
-
-            Set<Skill> nurseRequiredSkillSet = new HashSet<>(requiredSkillSet);
-            nurseRequiredSkillSet.add(skillList.get(2));
-
-            Spot spot = new Spot(tenantId, name + DOCTORS, doctorRequiredSkillSet, false);
-            entityManager.persist(spot);
-            spotList.add(spot);
-
-            spot = new Spot(tenantId, name + NURSES, nurseRequiredSkillSet, false);
+            Spot spot = new Spot(tenantId, name, requiredSkillSet, false);
             entityManager.persist(spot);
             spotList.add(spot);
         }
@@ -428,13 +417,13 @@ public class RosterGenerator implements ApplicationRunner {
                                                                   generalSkillList.size()),
                                          0.0, 0.1, 0.3, 0.5, 0.7, 0.9));
             if (random.nextDouble() < 0.2) {
-                skillProficiencySet.add(generalSkillList.get(1));
+                skillProficiencySet.add(DOCTOR_SKILL);
             } else {
-                skillProficiencySet.add(generalSkillList.get(2));
+                skillProficiencySet.add(NURSE_SKILL);
             }
 
             if (random.nextDouble() < 0.35) {
-                skillProficiencySet.add(generalSkillList.get(0));
+                skillProficiencySet.add(COVID_SKILL);
             }
 
             CovidRiskType covidRisk = Arrays.asList(CovidRiskType.values())
@@ -453,18 +442,37 @@ public class RosterGenerator implements ApplicationRunner {
                                                        Integer tenantId,
                                                        RosterState rosterState,
                                                        List<Spot> spotList,
-                                                       List<Employee> employeeList) {
+                                                       List<Employee> employeeList,
+                                                       List<Skill> skillList) {
         int rotationLength = rosterState.getRotationLength();
         List<ShiftTemplate> shiftTemplateList = new ArrayList<>(spotList.size() * rotationLength *
                                                                         generatorType.timeslotRangeList.size());
         List<Employee> remainingEmployeeList = new ArrayList<>(employeeList);
         Consumer<Spot> createShiftTemplatesForWard = (spot) -> {
-            List<Employee> rotationEmployeeList = remainingEmployeeList.stream()
-                    .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()) &&
-                            (!spot.getName().startsWith("COVID") ||
-                                    employee.getCovidRiskType() != CovidRiskType.EXTREME))
-                    .limit(generatorType.rotationEmployeeListSize).collect(toList());
-            remainingEmployeeList.removeAll(rotationEmployeeList);
+            final Function<Predicate<Employee>, List<Employee>> findEmployees = p -> {
+                List<Employee> out = remainingEmployeeList.stream()
+                        .filter(employee -> employee.getSkillProficiencySet().containsAll(spot.getRequiredSkillSet()) &&
+                                (!spot.isCovidWard() ||
+                                        employee.getCovidRiskType() != CovidRiskType.EXTREME) && p.test(employee))
+                        .limit(generatorType.rotationEmployeeListSize).collect(toList());
+                remainingEmployeeList.removeAll(out);
+                return out;
+            };
+            List<Employee> doctorRotationEmployeeList = findEmployees
+                    .apply(employee -> employee.getSkillProficiencySet().contains(DOCTOR_SKILL));
+            List<Employee> nurseRotationEmployeeList = findEmployees
+                    .apply(employee -> employee.getSkillProficiencySet().contains(NURSE_SKILL));
+
+            List<Employee> covidRotationEmployeeList;
+
+            if (spot.isCovidWard()) {
+                covidRotationEmployeeList = findEmployees
+                        .apply(employee -> employee.getSkillProficiencySet().contains(NURSE_SKILL) &&
+                                employee.getSkillProficiencySet().contains(COVID_SKILL));
+            } else {
+                covidRotationEmployeeList = Collections.emptyList();
+            }
+
             // For every day in the rotation (independent of publishLength and draftLength)
             for (int startDayOffset = 0; startDayOffset < rotationLength; startDayOffset++) {
                 // Fill the offset day with shift templates
@@ -493,20 +501,43 @@ public class RosterGenerator implements ApplicationRunner {
                                             timeslotRangesIndex + ").");
                         }
                         // There might be less employees than we need (overconstrained planning)
-                        Employee rotationEmployee = rotationEmployeeIndex >= rotationEmployeeList.size() ? null :
-                                rotationEmployeeList.get(rotationEmployeeIndex);
+                        Employee rotationEmployee = rotationEmployeeIndex >= doctorRotationEmployeeList.size() ? null :
+                                doctorRotationEmployeeList.get(rotationEmployeeIndex);
                         ShiftTemplate shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime,
-                                                                        endDayOffset, endTime, rotationEmployee);
+                                                                        endDayOffset, endTime, rotationEmployee,
+                                                                        Arrays.asList(DOCTOR_SKILL));
                         entityManager.persist(shiftTemplate);
                         shiftTemplateList.add(shiftTemplate);
 
-                        if (spot.getName().endsWith(NURSES)) {
+                        rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator
+                                .apply(startDayOffset, timeslotRangesIndex).get(0);
+                        rotationEmployee = rotationEmployeeIndex >= nurseRotationEmployeeList.size() ? null :
+                                nurseRotationEmployeeList.get(rotationEmployeeIndex);
+                        shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime,
+                                                          endDayOffset, endTime, rotationEmployee,
+                                                          Arrays.asList(NURSE_SKILL));
+                        entityManager.persist(shiftTemplate);
+                        shiftTemplateList.add(shiftTemplate);
+
+                        rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator
+                                .apply(startDayOffset, timeslotRangesIndex).get(1);
+                        rotationEmployee = rotationEmployeeIndex >= nurseRotationEmployeeList.size() ? null :
+                                nurseRotationEmployeeList.get(rotationEmployeeIndex);
+                        shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime,
+                                                          endDayOffset, endTime, rotationEmployee,
+                                                          Arrays.asList(NURSE_SKILL));
+                        entityManager.persist(shiftTemplate);
+                        shiftTemplateList.add(shiftTemplate);
+
+                        if (spot.isCovidWard()) {
                             rotationEmployeeIndex = generatorType.rotationEmployeeIndexCalculator
                                     .apply(startDayOffset, timeslotRangesIndex).get(1);
-                            rotationEmployee = rotationEmployeeIndex >= rotationEmployeeList.size() ? null :
-                                    rotationEmployeeList.get(rotationEmployeeIndex);
+                            rotationEmployee = rotationEmployeeIndex >= covidRotationEmployeeList.size() ? null :
+                                    covidRotationEmployeeList.get(rotationEmployeeIndex);
                             shiftTemplate = new ShiftTemplate(tenantId, spot, startDayOffset, startTime,
-                                                              endDayOffset, endTime, rotationEmployee);
+                                                              endDayOffset, endTime, rotationEmployee,
+                                                              Arrays.asList(COVID_SKILL,
+                                                                            NURSE_SKILL));
                             entityManager.persist(shiftTemplate);
                             shiftTemplateList.add(shiftTemplate);
                         }
@@ -515,8 +546,8 @@ public class RosterGenerator implements ApplicationRunner {
             }
         };
         // Create COVID templates first as they are more limited
-        spotList.stream().filter(s -> s.getName().startsWith(COVID19)).forEach(createShiftTemplatesForWard);
-        spotList.stream().filter(s -> !s.getName().startsWith(COVID19)).forEach(createShiftTemplatesForWard);
+        spotList.stream().filter(Spot::isCovidWard).forEach(createShiftTemplatesForWard);
+        spotList.stream().filter(s -> !s.isCovidWard()).forEach(createShiftTemplatesForWard);
         return shiftTemplateList;
     }
 
@@ -547,6 +578,7 @@ public class RosterGenerator implements ApplicationRunner {
                     boolean defaultToRotationEmployee = date.compareTo(firstDraftDate) < 0;
                     Shift shift = shiftTemplate.createShiftOnDate(date, rosterState.getRotationLength(),
                                                                   zoneId, defaultToRotationEmployee);
+                    shift.setOriginalEmployee(shift.getEmployee());
                     entityManager.persist(shift);
                     shiftList.add(shift);
                 }

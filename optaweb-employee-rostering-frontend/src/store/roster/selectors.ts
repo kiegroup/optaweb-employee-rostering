@@ -21,6 +21,7 @@ import { Employee } from 'domain/Employee';
 import { AvailabilityRosterView } from 'domain/AvailabilityRosterView';
 import { spotSelectors } from 'store/spot';
 import { EmployeeAvailability } from 'domain/EmployeeAvailability';
+import { skillSelectors } from 'store/skill';
 import { employeeSelectors } from '../employee';
 import { AppState } from '../types';
 
@@ -54,8 +55,12 @@ export const getShiftListForSpot = (state: AppState, spot: Spot): Shift[] => {
     .spotIdToShiftViewListMap) {
     return ((state.shiftRoster.shiftRosterView as ShiftRosterView)
       .spotIdToShiftViewListMap[spot.id as number]).map(sv => ({
-      ...objectWithout(sv, 'spotId', 'rotationEmployeeId', 'employeeId'),
+      ...objectWithout(sv, 'spotId', 'rotationEmployeeId', 'employeeId',
+        'originalEmployeeId', 'requiredSkillSetIdList'),
       spot,
+      requiredSkillSet: (sv.requiredSkillSetIdList.map(id => skillSelectors.getSkillById(state, id))),
+      originalEmployee: (sv.originalEmployeeId !== null)
+        ? employeeSelectors.getEmployeeById(state, sv.originalEmployeeId) : null,
       rotationEmployee: (sv.rotationEmployeeId !== null)
         ? employeeSelectors.getEmployeeById(state, sv.rotationEmployeeId) : null,
       employee: (sv.employeeId !== null) ? employeeSelectors.getEmployeeById(state, sv.employeeId) : null,
@@ -82,8 +87,12 @@ export const getShiftListForEmployee = (state: AppState, employee: Employee): Sh
       .employeeIdToShiftViewListMap) {
     return ((state.availabilityRoster.availabilityRosterView as AvailabilityRosterView)
       .employeeIdToShiftViewListMap[employee.id as number]).map(sv => ({
-      ...objectWithout(sv, 'spotId', 'rotationEmployeeId', 'employeeId'),
+      ...objectWithout(sv, 'spotId', 'rotationEmployeeId', 'employeeId',
+        'originalEmployeeId', 'requiredSkillSetIdList'),
       spot: spotSelectors.getSpotById(state, sv.spotId),
+      requiredSkillSet: (sv.requiredSkillSetIdList.map(id => skillSelectors.getSkillById(state, id))),
+      originalEmployee: (sv.originalEmployeeId !== null)
+        ? employeeSelectors.getEmployeeById(state, sv.originalEmployeeId) : null,
       employee,
       rotationEmployee: (sv.rotationEmployeeId !== null)
         ? employeeSelectors.getEmployeeById(state, sv.rotationEmployeeId) : null,

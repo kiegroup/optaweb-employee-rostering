@@ -98,7 +98,7 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
         Spot spotA = spotResponseA.getBody();
 
         ShiftTemplateView shiftTemplateView = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(0),
-                                                                    Duration.ofDays(0), null);
+                                                                    Duration.ofDays(0), null, Collections.emptyList());
         ResponseEntity<ShiftTemplateView> postResponse = addShiftTemplate(TENANT_ID, shiftTemplateView);
         assertThat(postResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -107,7 +107,8 @@ public class RotationRestControllerTest extends AbstractEntityRequireTenantRestS
         assertThat(response.getBody()).isEqualToComparingFieldByFieldRecursively(postResponse.getBody());
 
         ShiftTemplateView updatedShiftTemplate = new ShiftTemplateView(TENANT_ID, spotA.getId(), Duration.ofDays(1),
-                                                                       Duration.ofDays(1), null);
+                                                                       Duration.ofDays(1), null,
+                                                                       Collections.emptyList());
         updatedShiftTemplate.setId(postResponse.getBody().getId());
         HttpEntity<ShiftTemplateView> request = new HttpEntity<>(updatedShiftTemplate);
         ResponseEntity<ShiftTemplateView> putResponse = updateShiftTemplate(TENANT_ID, request);
