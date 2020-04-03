@@ -221,6 +221,17 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         alt=""
                         height={30}
                         src="/assets/images/inoculated.svg"
+                        style={
+                          Object {
+                            "backgroundImage": "radial-gradient(circle, white 0%, #eeeeec 90%, transparent 95%)",
+                            "borderRadius": "50%",
+                            "height": 30,
+                            "maxHeight": 30,
+                            "maxWidth": 30,
+                            "padding": "2px",
+                            "width": 30,
+                          }
+                        }
                         width={30}
                       />
                     </span>
@@ -470,6 +481,17 @@ exports[`Employees page should render correctly with a few employees 1`] = `
                         alt=""
                         height={30}
                         src="/assets/images/inoculated.svg"
+                        style={
+                          Object {
+                            "backgroundImage": "radial-gradient(circle, white 0%, #eeeeec 90%, transparent 95%)",
+                            "borderRadius": "50%",
+                            "height": 30,
+                            "maxHeight": 30,
+                            "maxWidth": 30,
+                            "padding": "2px",
+                            "width": 30,
+                          }
+                        }
                         width={30}
                       />
                     </span>
@@ -771,6 +793,17 @@ exports[`Employees page should render the viewer correctly 1`] = `
           alt=""
           height={30}
           src="/assets/images/inoculated.svg"
+          style={
+            Object {
+              "backgroundImage": "radial-gradient(circle, white 0%, #eeeeec 90%, transparent 95%)",
+              "borderRadius": "50%",
+              "height": 30,
+              "maxHeight": 30,
+              "maxWidth": 30,
+              "padding": "2px",
+              "width": 30,
+            }
+          }
           width={30}
         />
       </span>

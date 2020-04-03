@@ -7619,15 +7619,24 @@ exports[`ShiftEvent should render ShiftEvent correctly 1`] = `
         alt=""
         height={30}
         src="/assets/images/inoculated.svg"
+        style={
+          Object {
+            "backgroundImage": "radial-gradient(circle, white 0%, #eeeeec 90%, transparent 95%)",
+            "borderRadius": "50%",
+            "height": 30,
+            "maxHeight": 30,
+            "maxWidth": 30,
+            "padding": "2px",
+            "width": 30,
+          }
+        }
         width={30}
       />
     </span>
     <span
       style={
         Object {
-          "maxHeight": "calc(100% - 60px)",
-          "overflow": "hidden",
-          "textOverflow": "ellipsis",
+          "transform": "rotate(180deg)",
           "writingMode": "vertical-rl",
         }
       }
@@ -7766,15 +7775,24 @@ exports[`ShiftEvent should render ShiftEvent correctly when pinned 1`] = `
         alt=""
         height={30}
         src="/assets/images/inoculated.svg"
+        style={
+          Object {
+            "backgroundImage": "radial-gradient(circle, white 0%, #eeeeec 90%, transparent 95%)",
+            "borderRadius": "50%",
+            "height": 30,
+            "maxHeight": 30,
+            "maxWidth": 30,
+            "padding": "2px",
+            "width": 30,
+          }
+        }
         width={30}
       />
     </span>
     <span
       style={
         Object {
-          "maxHeight": "calc(100% - 60px)",
-          "overflow": "hidden",
-          "textOverflow": "ellipsis",
+          "transform": "rotate(180deg)",
           "writingMode": "vertical-rl",
         }
       }

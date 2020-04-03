@@ -61,9 +61,10 @@
 }
 
 .rbc-event:hover:not(.rbc-addons-dnd-drag-preview) {
-    min-height: 150px;
-    min-width: 150px;
+    min-height: min-content;
+    min-width: min-content;
     z-index: 1000000;
+    filter: brightness(1.1);
 }
 
 .availability-event {

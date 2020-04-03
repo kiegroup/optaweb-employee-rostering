@@ -260,9 +260,9 @@ public class RosterGenerator implements ApplicationRunner {
                 return;
             case DEMO_DATA:
                 tenantNameGenerator.predictMaximumSizeAndReset(12);
-                generateRoster(5, 7, hospitalGeneratorType, zoneId);
-                generateRoster(10, 7 * 4, hospitalGeneratorType, zoneId);
-                generateRoster(15, 7 * 2, hospitalGeneratorType, zoneId);
+                generateRoster(6, 7, hospitalGeneratorType, zoneId);
+                generateRoster(11, 7 * 4, hospitalGeneratorType, zoneId);
+                generateRoster(16, 7 * 2, hospitalGeneratorType, zoneId);
         }
     }
 
@@ -349,7 +349,7 @@ public class RosterGenerator implements ApplicationRunner {
     public List<Skill> createSkillList(GeneratorType generatorType, Integer tenantId, int size) {
         List<Skill> skillList = new ArrayList<>(size + 3);
         generatorType.skillNameGenerator.predictMaximumSizeAndReset(size);
-        COVID_SKILL = new Skill(tenantId, COVID19 + " Specialist");
+        COVID_SKILL = new Skill(tenantId, "Respiratory Specialist");
         DOCTOR_SKILL = new Skill(tenantId, "Doctor");
         NURSE_SKILL = new Skill(tenantId, "Nurse");
 
@@ -371,7 +371,7 @@ public class RosterGenerator implements ApplicationRunner {
     public List<Spot> createSpotList(GeneratorType generatorType, Integer tenantId, int size, List<Skill> skillList) {
         List<Spot> spotList = new ArrayList<>(size);
         generatorType.spotNameGenerator.predictMaximumSizeAndReset(size);
-        final int NUM_OF_COVID_WARDS = Math.max(2, size / 8);
+        final int NUM_OF_COVID_WARDS = 1;
 
         for (int i = 0; i < NUM_OF_COVID_WARDS; i++) {
             Set<Skill> requiredSkillSet = new HashSet<>();
@@ -386,7 +386,9 @@ public class RosterGenerator implements ApplicationRunner {
                     skillList.subList(3,
                                       skillList.size()),
                     0.5, 0.9, 1.0));
-
+            if (i == 0) {
+                requiredSkillSet.add(COVID_SKILL);
+            }
             Spot spot = new Spot(tenantId, name, requiredSkillSet, false);
             entityManager.persist(spot);
             spotList.add(spot);

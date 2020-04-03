@@ -109,49 +109,17 @@ public class StringDataGenerator {
     public static StringDataGenerator buildLocationNames() {
         return new StringDataGenerator()
                 .addPart(true, 0,
-                         "Los",
-                         "San",
-                         "Las",
-                         "Santa",
-                         "New",
-                         "Fort",
-                         "Mount",
-                         "Saint",
-                         "Little",
-                         "El")
-                .addPart(true, 1,
-                         "Angeles",
-                         "Francisco",
-                         "Vegas",
-                         "Barbara",
-                         "York",
-                         "Collins",
-                         "Vernon",
-                         "Peter",
-                         "Rock",
-                         "Paso")
-                .addPart(false, 2,
-                         "Town",
-                         "City",
-                         "Falls",
-                         "Ville",
-                         "Field",
-                         "Polis",
-                         "Shire",
-                         "Berg",
-                         "Borough",
-                         "Island")
-                .addPart(false, 3,
-                         "AL",
-                         "CA",
-                         "DE",
-                         "FL",
-                         "GA",
-                         "HI",
-                         "IN",
-                         "KS",
-                         "LA",
-                         "ME");
+                         "Gotham City",
+                         "Zion",
+                         "Cabot Cove",
+                         "Asgard",
+                         "Narnia",
+                         "Hogwarts",
+                         "Rivendell",
+                         "King's Landing",
+                         "Pandora",
+                         "Pemberly",
+                         "Springfield");
     }
 
     public static StringDataGenerator buildAssemblyLineNames() {
@@ -340,9 +308,8 @@ public class StringDataGenerator {
         }
         index++;
         if (capitalizeFirstLetter) {
-            result.setCharAt(0 , Character.toUpperCase(result.charAt(0)));
+            result.setCharAt(0, Character.toUpperCase(result.charAt(0)));
         }
         return result.toString();
     }
-
 }

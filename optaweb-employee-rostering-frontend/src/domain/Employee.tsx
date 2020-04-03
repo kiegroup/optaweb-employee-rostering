@@ -23,12 +23,18 @@ export type CovidRiskType = 'INOCULATED' | 'LOW' | 'MODERATE' | 'HIGH' | 'EXTREM
 
 export function getIconForCovidRisk(covidRiskType: CovidRiskType, size: 'sm' | 'lg'): JSX.Element {
   let imageProps: React.ImgHTMLAttributes<{}> = {};
+  const style = {
+    borderRadius: '50%',
+    padding: '2px',
+    backgroundImage: 'radial-gradient(circle, white 0%, #eeeeec 90%, transparent 95%)',
+  };
+
   switch (size) {
     case 'sm':
-      imageProps = { width: 10, height: 10 };
+      imageProps = { style: { ...style, width: 20, height: 20, maxWidth: 20, maxHeight: 20 }, width: 20, height: 20 };
       break;
     case 'lg':
-      imageProps = { width: 30, height: 30 };
+      imageProps = { style: { ...style, width: 30, height: 30, maxWidth: 30, maxHeight: 30 }, width: 30, height: 30 };
       break;
     default:
       throw Error(`Unhandled case in getIconForCovidRisk: size = ${size}`);
