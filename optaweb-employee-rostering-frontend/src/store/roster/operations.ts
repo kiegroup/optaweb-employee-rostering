@@ -74,14 +74,6 @@ let stopSolvingRosterTimeout: NodeJS.Timeout|null = null;
 let autoRefreshShiftRosterDuringSolvingIntervalTimeout: NodeJS.Timeout|null = null;
 
 export function resetSolverStatus() {
-  if (stopSolvingRosterTimeout !== null) {
-    clearTimeout(stopSolvingRosterTimeout);
-    stopSolvingRosterTimeout = null;
-  }
-  if (autoRefreshShiftRosterDuringSolvingIntervalTimeout !== null) {
-    clearInterval(autoRefreshShiftRosterDuringSolvingIntervalTimeout);
-    autoRefreshShiftRosterDuringSolvingIntervalTimeout = null;
-  }
   lastCalledShiftRosterArgs = null;
   lastCalledShiftRoster = null;
   lastCalledAvailabilityRosterArgs = null;
@@ -90,7 +82,14 @@ export function resetSolverStatus() {
 
 function stopSolvingRoster(dispatch: ThunkDispatch<AppState, RestServiceClient,
 AddAlertAction | TerminateSolvingRosterEarlyAction>) {
-  resetSolverStatus();
+  if (stopSolvingRosterTimeout !== null) {
+    clearTimeout(stopSolvingRosterTimeout);
+    stopSolvingRosterTimeout = null;
+  }
+  if (autoRefreshShiftRosterDuringSolvingIntervalTimeout !== null) {
+    clearInterval(autoRefreshShiftRosterDuringSolvingIntervalTimeout);
+    autoRefreshShiftRosterDuringSolvingIntervalTimeout = null;
+  }
   dispatch(actions.terminateSolvingRosterEarly());
   Promise.all([
     dispatch(operations.refreshShiftRoster()),

@@ -468,9 +468,7 @@ const ShiftEvent: React.FC<EventProps<Shift>> = props => (
       )}
       <span style={{
         writingMode: 'vertical-rl',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        maxHeight: 'calc(100% - 60px)',
+        transform: 'rotate(180deg)',
       }}
       >
         {`${props.title} ${props.event.requiredSkillSet.length
