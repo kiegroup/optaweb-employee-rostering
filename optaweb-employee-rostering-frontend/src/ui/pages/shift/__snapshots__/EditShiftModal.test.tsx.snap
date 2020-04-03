@@ -162,6 +162,19 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
+        Trans(i18nKey=addtionalSkills)
+      </Label>
+      <MultiTypeaheadSelectInput
+        aria-label="Additional Skills"
+        emptyText="Trans(i18nKey=selectAdditionalSkills)"
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={Array []}
+        value={Array []}
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
         Trans(i18nKey=employee)
       </Label>
       <TypeaheadSelectInput
@@ -200,6 +213,21 @@ exports[`Edit Shift Modal should render correctly when closed 1`] = `
           ]
         }
       />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=originalEmployee)
+      </Label>
+      <span
+        style={
+          Object {
+            "width": 10,
+          }
+        }
+      />
+      <Text>
+        Trans(i18nKey=unassigned)
+      </Text>
     </InputGroup>
     <InputGroup>
       <Label>
@@ -418,6 +446,19 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
     </InputGroup>
     <InputGroup>
       <Label>
+        Trans(i18nKey=addtionalSkills)
+      </Label>
+      <MultiTypeaheadSelectInput
+        aria-label="Additional Skills"
+        emptyText="Trans(i18nKey=selectAdditionalSkills)"
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={Array []}
+        value={Array []}
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
         Trans(i18nKey=employee)
       </Label>
       <TypeaheadSelectInput
@@ -456,6 +497,21 @@ exports[`Edit Shift Modal should render correctly when opened 1`] = `
           ]
         }
       />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=originalEmployee)
+      </Label>
+      <span
+        style={
+          Object {
+            "width": 10,
+          }
+        }
+      />
+      <Text>
+        Trans(i18nKey=unassigned)
+      </Text>
     </InputGroup>
     <InputGroup>
       <Label>
@@ -700,6 +756,19 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
     </InputGroup>
     <InputGroup>
       <Label>
+        Trans(i18nKey=addtionalSkills)
+      </Label>
+      <MultiTypeaheadSelectInput
+        aria-label="Additional Skills"
+        emptyText="Trans(i18nKey=selectAdditionalSkills)"
+        onChange={[Function]}
+        optionToStringMap={[Function]}
+        options={Array []}
+        value={Array []}
+      />
+    </InputGroup>
+    <InputGroup>
+      <Label>
         Trans(i18nKey=employee)
       </Label>
       <TypeaheadSelectInput
@@ -765,6 +834,21 @@ exports[`Edit Shift Modal should render correctly with a shift when opened 1`] =
           }
         }
       />
+    </InputGroup>
+    <InputGroup>
+      <Label>
+        Trans(i18nKey=originalEmployee)
+      </Label>
+      <span
+        style={
+          Object {
+            "width": 10,
+          }
+        }
+      />
+      <Text>
+        Trans(i18nKey=unassigned)
+      </Text>
     </InputGroup>
     <InputGroup>
       <Label>

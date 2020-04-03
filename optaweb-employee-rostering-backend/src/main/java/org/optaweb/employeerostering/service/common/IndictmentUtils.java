@@ -35,6 +35,7 @@ import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployee
 import org.optaweb.employeerostering.domain.violation.InoculatedEmployeeAssignedOutsideOfCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployeeHoursReward;
 import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
+import org.optaweb.employeerostering.domain.violation.NoBreakViolation;
 import org.optaweb.employeerostering.domain.violation.NonInoculatedEmployeeAssignedToCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
@@ -78,6 +79,7 @@ public class IndictmentUtils {
                              getInoculatedEmployeeAssignedOutsideOfCovidWardViolationList(indictment),
                              getMaximizeInoculatedEmployeeHoursRewardList(indictment),
                              getMigrationBetweenCovidAndNonCovidWardsViolationList(indictment),
+                             getNoBreakViolationList(indictment),
                              (indictment != null) ?
                                      (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
     }
@@ -208,10 +210,24 @@ public class IndictmentUtils {
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
                         cm.getConstraintName().equals("Break between non-consecutive shifts is at least 10 hours") ||
-                        cm.getConstraintName().equals("No more than 2 consecutive shifts"))
+                        cm.getConstraintName().equals("No overlapping shifts"))
                 .map(cm -> new ShiftEmployeeConflict((Shift) cm.getJustificationList().get(0),
                                                      (Shift) cm.getJustificationList().get(1),
                                                      (HardMediumSoftLongScore) cm.getScore()))
+                .collect(Collectors.toList());
+    }
+
+    public List<NoBreakViolation> getNoBreakViolationList(Indictment indictment) {
+        if (indictment == null) {
+            return Collections.emptyList();
+        }
+        return indictment.getConstraintMatchSet().stream()
+                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
+                        cm.getConstraintName().equals("No more than 2 consecutive shifts"))
+                .map(cm -> new NoBreakViolation((Shift) cm.getJustificationList().get(0),
+                                                (Shift) cm.getJustificationList().get(1),
+                                                (Shift) cm.getJustificationList().get(2),
+                                                (HardMediumSoftLongScore) cm.getScore()))
                 .collect(Collectors.toList());
     }
 

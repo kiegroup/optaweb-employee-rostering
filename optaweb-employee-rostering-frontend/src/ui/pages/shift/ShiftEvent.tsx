@@ -23,7 +23,7 @@ import { convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
 import {
   BlueprintIcon, EditIcon, TrashIcon, ThumbTackIcon, FileContractIcon, NotesMedicalIcon,
   PeopleCarryIcon, RetweetIcon, ShippingFastIcon, BiohazardIcon, SchoolIcon, CalendarTimesIcon,
-  UserFriendsIcon, ExclamationTriangleIcon, UserTimesIcon, UserMinusIcon, UserPlusIcon,
+  UserFriendsIcon, ExclamationTriangleIcon, UserTimesIcon, UserMinusIcon, UserPlusIcon, AlignCenterIcon,
 } from '@patternfly/react-icons';
 import Color from 'color';
 import { useTranslation } from 'react-i18next';
@@ -48,6 +48,7 @@ export const Indictments: React.FC<Shift> = (shift) => {
       <MigrationBetweenCovidAndNonCovidWardsViolations {...shift} />
       <NonCovidShiftSoonAfterCovidShiftViolations {...shift} />
       <NonInoculatedEmployeeAssignedToCovidWardViolations {...shift} />
+      <NoBreaksViolations {...shift} />
     </List>
   );
 
@@ -79,6 +80,7 @@ export const IndictmentIcons: React.FC<Shift> = (shift) => {
       {isPresent(shift.unassignedShiftPenaltyList) && <ExclamationTriangleIcon />}
       {isPresent(shift.unavailableEmployeeViolationList) && <UserTimesIcon />}
       {isPresent(shift.undesiredTimeslotForEmployeePenaltyList) && <UserMinusIcon />}
+      {isPresent(shift.noBreakViolationList) && <AlignCenterIcon />}
     </div>
   );
 };
@@ -159,8 +161,8 @@ export const UnavailableEmployeeViolations: React.FC<Shift> = (shift) => {
 };
 
 // NOTE: ShiftEmployeeConflict refer to indictments from two constraints:
-// - "At most one shift assignment per day per employee"
-// - "No 2 shifts within 10 hours from each other"
+// - "No overlapping shifts"
+// - "Break between non-consecutive shifts is at least 10 hours"
 export const ShiftEmployeeConflictViolations: React.FC<Shift> = (shift) => {
   const { t } = useTranslation('ShiftEvent');
   return (
@@ -174,6 +176,23 @@ export const ShiftEmployeeConflictViolations: React.FC<Shift> = (shift) => {
               : moment(v.leftShift.startDateTime).format('LT'),
             to: (v.leftShift.id === shift.id) ? moment(v.rightShift.endDateTime).format('LT')
               : moment(v.leftShift.endDateTime).format('LT'),
+          })}
+          <br />
+          {t('penalty', { score: convertHardMediumSoftScoreToString(v.score) })}
+        </li>
+      ))}
+    </>
+  );
+};
+
+export const NoBreaksViolations: React.FC<Shift> = (shift) => {
+  const { t } = useTranslation('ShiftEvent');
+  return (
+    <>
+      {(shift.noBreakViolationList || []).map((v, index) => (
+        <li key={String(index)}>
+          {t('noBreaks', {
+            employee: (v.firstShift.employee as Employee).name,
           })}
           <br />
           {t('penalty', { score: convertHardMediumSoftScoreToString(v.score) })}
