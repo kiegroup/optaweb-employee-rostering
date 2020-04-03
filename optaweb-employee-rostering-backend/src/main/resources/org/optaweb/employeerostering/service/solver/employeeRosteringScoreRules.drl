@@ -136,7 +136,8 @@ end
 // ############################################################################
 
 rule "Required skill for a shift"
-        Shift(employee != null, hasRequiredSkills() == false)
+    when
+        $shift: Shift(employee != null, hasRequiredSkills() == false)
     then
         scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
 end

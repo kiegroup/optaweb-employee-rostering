@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.UnaryOperator;
+import java.util.function.Function;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -156,6 +156,7 @@ public class Shift extends AbstractPersistable {
     }
 
     private void adjustHourlyCounts(Map<OffsetDateTime, Integer> hourlyCountsMap,
+            Function<Integer, Integer> countAdjuster) {
         long hourCount = getLengthInMinutes();
         OffsetDateTime baseStartDateTime = startDateTime.truncatedTo(ChronoUnit.HOURS);
         for (int hour = 0; hour < hourCount; hour++) {
