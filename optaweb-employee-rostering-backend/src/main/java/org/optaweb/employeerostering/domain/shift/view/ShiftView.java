@@ -38,6 +38,7 @@ import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployee
 import org.optaweb.employeerostering.domain.violation.InoculatedEmployeeAssignedOutsideOfCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployeeHoursReward;
 import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
+import org.optaweb.employeerostering.domain.violation.NoBreakViolation;
 import org.optaweb.employeerostering.domain.violation.NonInoculatedEmployeeAssignedToCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
@@ -67,6 +68,7 @@ public class ShiftView extends AbstractPersistable {
     private List<RotationViolationPenalty> rotationViolationPenaltyList;
     private List<UnassignedShiftPenalty> unassignedShiftPenaltyList;
     private List<ContractMinutesViolation> contractMinutesViolationPenaltyList;
+    private List<NoBreakViolation> noBreakViolationList;
 
     private List<NonInoculatedEmployeeAssignedToCovidWardViolation>
             nonInoculatedEmployeeAssignedToCovidWardViolationList;
@@ -112,12 +114,14 @@ public class ShiftView extends AbstractPersistable {
         this.undesiredTimeslotForEmployeePenaltyList = null;
         this.rotationViolationPenaltyList = null;
         this.contractMinutesViolationPenaltyList = null;
+        this.noBreakViolationList = null;
         this.indictmentScore = null;
+
         this.requiredSkillSetIdList = requiredSkillSetIdList;
     }
 
     public ShiftView(ZoneId zoneId, Shift shift) {
-        this(zoneId, shift, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(zoneId, shift, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public ShiftView(ZoneId zoneId, Shift shift, List<RequiredSkillViolation> requiredSkillViolationList,
@@ -135,6 +139,7 @@ public class ShiftView extends AbstractPersistable {
                      List<MaximizeInoculatedEmployeeHoursReward> maximizeInoculatedEmployeeHoursRewardList,
                      List<MigrationBetweenCovidAndNonCovidWardsViolation>
                              migrationBetweenCovidAndNonCovidWardsViolationList,
+                     List<NoBreakViolation> noBreakViolationList,
                      HardMediumSoftLongScore indictmentScore) {
         super(shift);
         this.spotId = shift.getSpot().getId();
@@ -145,7 +150,7 @@ public class ShiftView extends AbstractPersistable {
         this.pinnedByUser = shift.isPinnedByUser();
         this.rotationEmployeeId = (shift.getRotationEmployee() == null) ? null : shift.getRotationEmployee().getId();
         this.employeeId = (shift.getEmployee() == null) ? null : shift.getEmployee().getId();
-        this.originalEmployeeId = (shift.getOriginalEmployee() == null) ? null : shift.getEmployee().getId();
+        this.originalEmployeeId = (shift.getOriginalEmployee() == null) ? null : shift.getOriginalEmployee().getId();
 
         this.requiredSkillViolationList = requiredSkillViolationList;
         this.shiftEmployeeConflictList = shiftEmployeeConflictList;
@@ -160,6 +165,7 @@ public class ShiftView extends AbstractPersistable {
         this.inoculatedEmployeeAssignedOutsideOfCovidWardViolationList = inoculatedEmployeeAssignedOutside;
         this.maximizeInoculatedEmployeeHoursRewardList = maximizeInoculatedEmployeeHoursRewardList;
         this.migrationBetweenCovidAndNonCovidWardsViolationList = migrationBetweenCovidAndNonCovidWardsViolationList;
+        this.noBreakViolationList = noBreakViolationList;
 
         this.indictmentScore = indictmentScore;
     }
@@ -354,4 +360,11 @@ public class ShiftView extends AbstractPersistable {
         this.migrationBetweenCovidAndNonCovidWardsViolationList = migrationBetweenCovidAndNonCovidWardsViolationList;
     }
 
+    public List<NoBreakViolation> getNoBreakViolationList() {
+        return noBreakViolationList;
+    }
+
+    public void setNoBreakViolationList(List<NoBreakViolation> noBreakViolationList) {
+        this.noBreakViolationList = noBreakViolationList;
+    }
 }

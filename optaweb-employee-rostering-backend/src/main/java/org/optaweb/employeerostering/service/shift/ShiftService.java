@@ -117,13 +117,13 @@ public class ShiftService extends AbstractRestService {
         Long originalEmployeeId = shiftView.getRotationEmployeeId();
         Employee originalEmployee = null;
         if (originalEmployeeId != null) {
-            rotationEmployee = employeeRepository
+            originalEmployee = employeeRepository
                     .findById(originalEmployeeId)
                     .orElseThrow(() -> new EntityNotFoundException("ShiftView (" + shiftView +
                                                                            ") has an non-existing " +
                                                                            "originalEmployeeId (" +
                                                                            originalEmployeeId + ")."));
-            validateTenantIdParameter(tenantId, rotationEmployee);
+            validateTenantIdParameter(tenantId, originalEmployee);
         }
 
         Set<Skill> requiredSkillSet = shiftView.getRequiredSkillSetIdList()

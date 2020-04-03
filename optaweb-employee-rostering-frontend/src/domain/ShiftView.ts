@@ -34,6 +34,7 @@ import { MaximizeInoculatedEmployeeHoursReward } from './indictment/MaximizeInoc
 import { MigrationBetweenCovidAndNonCovidWardsViolation }
   from './indictment/MigrationBetweenCovidAndNonCovidWardsViolation';
 import { NonCovidShiftSoonAfterCovidShiftViolation } from './indictment/NonCovidShiftSoonAfterCovidShiftViolation';
+import { NoBreakViolation } from './indictment/NoBreakViolation';
 
 export const shiftToShiftView = (shift: Shift): ShiftView => ({
   id: shift.id,
@@ -82,4 +83,5 @@ export interface ShiftView extends DomainObject {
   maximizeInoculatedEmployeeHoursRewardList?: MaximizeInoculatedEmployeeHoursReward[];
   migrationBetweenCovidAndNonCovidWardsViolationList?: MigrationBetweenCovidAndNonCovidWardsViolation[];
   nonCovidShiftSoonAfterCovidShiftViolationList?: NonCovidShiftSoonAfterCovidShiftViolation[];
+  noBreakViolationList?: NoBreakViolation[];
 }

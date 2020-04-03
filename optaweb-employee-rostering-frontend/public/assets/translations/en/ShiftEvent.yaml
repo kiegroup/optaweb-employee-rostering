@@ -13,6 +13,8 @@ unavailableEmployee: The Employee "{{employee}}" is unavailable from {{from}} to
 conflictingShifts: 'The Employee "{{employee}}" is assigned to a conflicting shift:
   {{spot}}, {{from}} - {{to}}.'
 
+noBreaks: 'The Employee "{{employee}}" has three shifts in a row.'
+
 employeeDoesNotMatchRotationEmployee: The Shift's Employee "{{employee}}" does not
   match the Shift's Rotation Employee "{{rotationEmployee}}".
 

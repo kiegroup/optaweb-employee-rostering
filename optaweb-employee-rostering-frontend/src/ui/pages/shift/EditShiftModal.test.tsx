@@ -91,6 +91,8 @@ describe('Edit Shift Modal', () => {
       tenantId: baseProps.tenantId,
       employee: null,
       rotationEmployee: null,
+      originalEmployee: null,
+      requiredSkillSet: [],
       pinnedByUser: false,
     });
   });
@@ -386,5 +388,6 @@ const baseProps = {
   tReady: true,
   tenantId: 1,
   spotList: [spot],
+  skillList: [],
   employeeList: [employee],
 };
