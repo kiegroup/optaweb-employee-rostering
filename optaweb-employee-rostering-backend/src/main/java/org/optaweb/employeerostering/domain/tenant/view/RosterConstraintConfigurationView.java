@@ -37,12 +37,12 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
     private HardMediumSoftLongScore uniformDistributionOfInoculated = HardMediumSoftLongScore.ofSoft(1);
     private HardMediumSoftLongScore maximizeInoculatedHours = HardMediumSoftLongScore.ofSoft(10);
     private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWard = HardMediumSoftLongScore.ofSoft(10);
-    private HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShift = HardMediumSoftLongScore.ofHard(1);
 
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
     private HardMediumSoftLongScore unavailableTimeSlot = HardMediumSoftLongScore.ofHard(50);
-    private HardMediumSoftLongScore oneShiftPerDay = HardMediumSoftLongScore.ofHard(10);
-    private HardMediumSoftLongScore noShiftsWithinTenHours = HardMediumSoftLongScore.ofHard(1);
+    private HardMediumSoftLongScore noOverlappingShifts = HardMediumSoftLongScore.ofHard(20);
+    private HardMediumSoftLongScore noMoreThan2ConsecutiveShifts = HardMediumSoftLongScore.ofHard(10);
+    private HardMediumSoftLongScore breakBetweenNonConsecutiveShiftsAtLeast10Hours = HardMediumSoftLongScore.ofHard(1);
     private HardMediumSoftLongScore contractMaximumDailyMinutes = HardMediumSoftLongScore.ofHard(1);
     private HardMediumSoftLongScore contractMaximumWeeklyMinutes = HardMediumSoftLongScore.ofHard(1);
     private HardMediumSoftLongScore contractMaximumMonthlyMinutes = HardMediumSoftLongScore.ofHard(1);
@@ -132,15 +132,6 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
         this.migrationBetweenCovidAndNonCovidWard = migrationBetweenCovidAndNonCovidWard;
     }
 
-    public HardMediumSoftLongScore getNonCovidShiftLessThan8HoursAfterCovidShift() {
-        return nonCovidShiftLessThan8HoursAfterCovidShift;
-    }
-
-    public void setNonCovidShiftLessThan8HoursAfterCovidShift(
-            HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShift) {
-        this.nonCovidShiftLessThan8HoursAfterCovidShift = nonCovidShiftLessThan8HoursAfterCovidShift;
-    }
-
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
@@ -169,20 +160,30 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
         this.unavailableTimeSlot = unavailableTimeSlot;
     }
 
-    public HardMediumSoftLongScore getOneShiftPerDay() {
-        return oneShiftPerDay;
+    public HardMediumSoftLongScore getNoOverlappingShifts() {
+        return noOverlappingShifts;
     }
 
-    public void setOneShiftPerDay(HardMediumSoftLongScore oneShiftPerDay) {
-        this.oneShiftPerDay = oneShiftPerDay;
+    public void setNoOverlappingShifts(HardMediumSoftLongScore noOverlappingShifts) {
+        this.noOverlappingShifts = noOverlappingShifts;
     }
 
-    public HardMediumSoftLongScore getNoShiftsWithinTenHours() {
-        return noShiftsWithinTenHours;
+    public HardMediumSoftLongScore getNoMoreThan2ConsecutiveShifts() {
+        return noMoreThan2ConsecutiveShifts;
     }
 
-    public void setNoShiftsWithinTenHours(HardMediumSoftLongScore noShiftsWithinTenHours) {
-        this.noShiftsWithinTenHours = noShiftsWithinTenHours;
+    public void setNoMoreThan2ConsecutiveShifts(
+            HardMediumSoftLongScore noMoreThan2ConsecutiveShifts) {
+        this.noMoreThan2ConsecutiveShifts = noMoreThan2ConsecutiveShifts;
+    }
+
+    public HardMediumSoftLongScore getBreakBetweenNonConsecutiveShiftsAtLeast10Hours() {
+        return breakBetweenNonConsecutiveShiftsAtLeast10Hours;
+    }
+
+    public void setBreakBetweenNonConsecutiveShiftsAtLeast10Hours(
+            HardMediumSoftLongScore breakBetweenNonConsecutiveShiftsAtLeast10Hours) {
+        this.breakBetweenNonConsecutiveShiftsAtLeast10Hours = breakBetweenNonConsecutiveShiftsAtLeast10Hours;
     }
 
     public HardMediumSoftLongScore getContractMaximumDailyMinutes() {

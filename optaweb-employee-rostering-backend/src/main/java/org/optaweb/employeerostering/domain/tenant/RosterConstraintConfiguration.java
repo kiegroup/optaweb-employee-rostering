@@ -35,35 +35,35 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
 
     // COVID-specific constraints
     @ConstraintWeight("Low-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore lowRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore lowRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(10);
     @ConstraintWeight("Moderate-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore moderateRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(5);
+    private HardMediumSoftLongScore moderateRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(50);
     @ConstraintWeight("High-risk employee assigned to a COVID ward")
-    private HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(10);
+    private HardMediumSoftLongScore highRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofSoft(100);
     @ConstraintWeight("Extreme-risk employee assigned to a COVID ward")
     private HardMediumSoftLongScore extremeRiskEmployeeInCovidWardMatchWeight = HardMediumSoftLongScore.ofHard(1);
     @ConstraintWeight("Inoculated employee outside a COVID ward")
     private HardMediumSoftLongScore inoculatedEmployeeOutsideCovidWardMatchWeight =
-            HardMediumSoftLongScore.ofSoft(1000);
+            HardMediumSoftLongScore.ofSoft(1_000);
     @ConstraintWeight("Uniform distribution of inoculated hours")
-    private HardMediumSoftLongScore uniformDistributionOfInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore uniformDistributionOfInoculatedHoursMatchWeight =
+            HardMediumSoftLongScore.ofSoft(1);
     @ConstraintWeight("Maximize inoculated hours")
-    private HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(10);
+    private HardMediumSoftLongScore maximizeInoculatedHoursMatchWeight = HardMediumSoftLongScore.ofSoft(50);
     @ConstraintWeight("Migration between COVID and non-COVID wards")
     private HardMediumSoftLongScore migrationBetweenCovidAndNonCovidWardMatchWeight =
-            HardMediumSoftLongScore.ofSoft(10);
-    @ConstraintWeight("Non-COVID shift started less than 8 hours after finishing a COVID shift")
-    private HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight =
-            HardMediumSoftLongScore.ofHard(1);
+            HardMediumSoftLongScore.ofSoft(100);
 
     @ConstraintWeight("Required skill for a shift")
     private HardMediumSoftLongScore requiredSkill = HardMediumSoftLongScore.ofHard(100);
     @ConstraintWeight("Unavailable time slot for an employee")
     private HardMediumSoftLongScore unavailableTimeSlot = HardMediumSoftLongScore.ofHard(50);
-    @ConstraintWeight("At most one shift assignment per day per employee")
-    private HardMediumSoftLongScore oneShiftPerDay = HardMediumSoftLongScore.ofHard(10);
-    @ConstraintWeight("No 2 shifts within 10 hours from each other")
-    private HardMediumSoftLongScore noShiftsWithinTenHours = HardMediumSoftLongScore.ofHard(1);
+    @ConstraintWeight("No overlapping shifts")
+    private HardMediumSoftLongScore noOverlappingShifts = HardMediumSoftLongScore.ofHard(20);
+    @ConstraintWeight("No more than 2 consecutive shifts")
+    private HardMediumSoftLongScore noMoreThan2ConsecutiveShifts = HardMediumSoftLongScore.ofHard(10);
+    @ConstraintWeight("Break between non-consecutive shifts is at least 10 hours")
+    private HardMediumSoftLongScore breakBetweenNonConsecutiveShiftsAtLeast10Hours = HardMediumSoftLongScore.ofHard(1);
     @ConstraintWeight("Daily minutes must not exceed contract maximum")
     private HardMediumSoftLongScore contractMaximumDailyMinutes = HardMediumSoftLongScore.ofHard(1);
     @ConstraintWeight("Weekly minutes must not exceed contract maximum")
@@ -77,11 +77,11 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
     private HardMediumSoftLongScore assignEveryShift = HardMediumSoftLongScore.ofMedium(1);
 
     @ConstraintWeight("Undesired time slot for an employee")
-    private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(20);
     @ConstraintWeight("Desired time slot for an employee")
-    private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
+    private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(10);
     @ConstraintWeight("Employee is not rotation employee")
-    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ZERO; // Disabled.
+    private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ofSoft(50);
 
     @SuppressWarnings("unused")
     public RosterConstraintConfiguration() {
@@ -168,16 +168,6 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
         this.migrationBetweenCovidAndNonCovidWardMatchWeight = migrationBetweenCovidAndNonCovidWardMatchWeight;
     }
 
-    public HardMediumSoftLongScore getNonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight() {
-        return nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight;
-    }
-
-    public void setNonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight(
-            HardMediumSoftLongScore nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight) {
-        this.nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight =
-                nonCovidShiftLessThan8HoursAfterCovidShiftMatchWeight;
-    }
-
     // ************************************************************************
     // Simple getters and setters
     // ************************************************************************
@@ -206,20 +196,29 @@ public class RosterConstraintConfiguration extends AbstractPersistable {
         this.unavailableTimeSlot = unavailableTimeSlot;
     }
 
-    public HardMediumSoftLongScore getOneShiftPerDay() {
-        return oneShiftPerDay;
+    public HardMediumSoftLongScore getNoOverlappingShifts() {
+        return noOverlappingShifts;
     }
 
-    public void setOneShiftPerDay(HardMediumSoftLongScore oneShiftPerDay) {
-        this.oneShiftPerDay = oneShiftPerDay;
+    public void setNoOverlappingShifts(HardMediumSoftLongScore noOverlappingShifts) {
+        this.noOverlappingShifts = noOverlappingShifts;
     }
 
-    public HardMediumSoftLongScore getNoShiftsWithinTenHours() {
-        return noShiftsWithinTenHours;
+    public HardMediumSoftLongScore getNoMoreThan2ConsecutiveShifts() {
+        return noMoreThan2ConsecutiveShifts;
     }
 
-    public void setNoShiftsWithinTenHours(HardMediumSoftLongScore noShiftsWithinTenHours) {
-        this.noShiftsWithinTenHours = noShiftsWithinTenHours;
+    public void setNoMoreThan2ConsecutiveShifts(HardMediumSoftLongScore noMoreThan2ConsecutiveShifts) {
+        this.noMoreThan2ConsecutiveShifts = noMoreThan2ConsecutiveShifts;
+    }
+
+    public HardMediumSoftLongScore getBreakBetweenNonConsecutiveShiftsAtLeast10Hours() {
+        return breakBetweenNonConsecutiveShiftsAtLeast10Hours;
+    }
+
+    public void setBreakBetweenNonConsecutiveShiftsAtLeast10Hours(
+            HardMediumSoftLongScore breakBetweenNonConsecutiveShiftsAtLeast10Hours) {
+        this.breakBetweenNonConsecutiveShiftsAtLeast10Hours = breakBetweenNonConsecutiveShiftsAtLeast10Hours;
     }
 
     public HardMediumSoftLongScore getContractMaximumDailyMinutes() {

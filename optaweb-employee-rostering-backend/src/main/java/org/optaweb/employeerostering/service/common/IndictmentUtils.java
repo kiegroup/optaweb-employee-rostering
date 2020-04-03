@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
-
 import org.optaweb.employeerostering.domain.employee.Employee;
 import org.optaweb.employeerostering.domain.employee.EmployeeAvailability;
 import org.optaweb.employeerostering.domain.roster.Roster;
@@ -36,7 +35,6 @@ import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployee
 import org.optaweb.employeerostering.domain.violation.InoculatedEmployeeAssignedOutsideOfCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployeeHoursReward;
 import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
-import org.optaweb.employeerostering.domain.violation.NonCovidShiftSoonAfterCovidShiftViolation;
 import org.optaweb.employeerostering.domain.violation.NonInoculatedEmployeeAssignedToCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
@@ -45,7 +43,6 @@ import org.optaweb.employeerostering.domain.violation.UnassignedShiftPenalty;
 import org.optaweb.employeerostering.domain.violation.UnavailableEmployeeViolation;
 import org.optaweb.employeerostering.domain.violation.UndesiredTimeslotForEmployeePenalty;
 import org.optaweb.employeerostering.service.solver.WannabeSolverManager;
-
 import org.springframework.stereotype.Component;
 
 @Component
@@ -81,7 +78,6 @@ public class IndictmentUtils {
                              getInoculatedEmployeeAssignedOutsideOfCovidWardViolationList(indictment),
                              getMaximizeInoculatedEmployeeHoursRewardList(indictment),
                              getMigrationBetweenCovidAndNonCovidWardsViolationList(indictment),
-                             getNonCovidShiftSoonAfterCovidShiftViolationList(indictment),
                              (indictment != null) ?
                                      (HardMediumSoftLongScore) indictment.getScore() : HardMediumSoftLongScore.ZERO);
     }
@@ -153,26 +149,6 @@ public class IndictmentUtils {
                 .collect(Collectors.toList());
     }
 
-    public List<NonCovidShiftSoonAfterCovidShiftViolation>
-    getNonCovidShiftSoonAfterCovidShiftViolationList(Indictment indictment) {
-        if (indictment == null) {
-            return Collections.emptyList();
-        }
-        return indictment.getConstraintMatchSet().stream()
-                .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName()
-                                .equals("Non-COVID shift started less than 8 hours after finishing a COVID shift"))
-                .map(cm -> new NonCovidShiftSoonAfterCovidShiftViolation(
-                        (Shift) cm.getJustificationList().stream()
-                                .filter(s -> s instanceof Shift && ((Shift) s).getSpot().isCovidWard())
-                                .findAny().get(),
-                        (Shift) cm.getJustificationList().stream()
-                                .filter(s -> s instanceof Shift && !((Shift) s).getSpot().isCovidWard())
-                                .findAny().get(),
-                        (HardMediumSoftLongScore) cm.getScore()))
-                .collect(Collectors.toList());
-    }
-
     public List<RequiredSkillViolation> getRequiredSkillViolationList(Indictment indictment) {
         if (indictment == null) {
             return Collections.emptyList();
@@ -231,8 +207,8 @@ public class IndictmentUtils {
         }
         return indictment.getConstraintMatchSet().stream()
                 .filter(cm -> cm.getConstraintPackage().equals(CONSTRAINT_MATCH_PACKAGE) &&
-                        cm.getConstraintName().equals("At most one shift assignment per day per employee") ||
-                        cm.getConstraintName().equals("No 2 shifts within 10 hours from each other"))
+                        cm.getConstraintName().equals("Break between non-consecutive shifts is at least 10 hours") ||
+                        cm.getConstraintName().equals("No more than 2 consecutive shifts"))
                 .map(cm -> new ShiftEmployeeConflict((Shift) cm.getJustificationList().get(0),
                                                      (Shift) cm.getJustificationList().get(1),
                                                      (HardMediumSoftLongScore) cm.getScore()))

@@ -38,7 +38,6 @@ import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployee
 import org.optaweb.employeerostering.domain.violation.InoculatedEmployeeAssignedOutsideOfCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployeeHoursReward;
 import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
-import org.optaweb.employeerostering.domain.violation.NonCovidShiftSoonAfterCovidShiftViolation;
 import org.optaweb.employeerostering.domain.violation.NonInoculatedEmployeeAssignedToCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.RequiredSkillViolation;
 import org.optaweb.employeerostering.domain.violation.RotationViolationPenalty;
@@ -77,8 +76,6 @@ public class ShiftView extends AbstractPersistable {
             maximizeInoculatedEmployeeHoursRewardList;
     private List<MigrationBetweenCovidAndNonCovidWardsViolation>
             migrationBetweenCovidAndNonCovidWardsViolationList;
-    private List<NonCovidShiftSoonAfterCovidShiftViolation>
-            nonCovidShiftSoonAfterCovidShiftViolationList;
 
     private HardMediumSoftLongScore indictmentScore;
 
@@ -120,7 +117,7 @@ public class ShiftView extends AbstractPersistable {
     }
 
     public ShiftView(ZoneId zoneId, Shift shift) {
-        this(zoneId, shift, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        this(zoneId, shift, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public ShiftView(ZoneId zoneId, Shift shift, List<RequiredSkillViolation> requiredSkillViolationList,
@@ -138,7 +135,6 @@ public class ShiftView extends AbstractPersistable {
                      List<MaximizeInoculatedEmployeeHoursReward> maximizeInoculatedEmployeeHoursRewardList,
                      List<MigrationBetweenCovidAndNonCovidWardsViolation>
                              migrationBetweenCovidAndNonCovidWardsViolationList,
-                     List<NonCovidShiftSoonAfterCovidShiftViolation> nonCovidShiftSoonAfterCovidShiftViolationList,
                      HardMediumSoftLongScore indictmentScore) {
         super(shift);
         this.spotId = shift.getSpot().getId();
@@ -164,7 +160,6 @@ public class ShiftView extends AbstractPersistable {
         this.inoculatedEmployeeAssignedOutsideOfCovidWardViolationList = inoculatedEmployeeAssignedOutside;
         this.maximizeInoculatedEmployeeHoursRewardList = maximizeInoculatedEmployeeHoursRewardList;
         this.migrationBetweenCovidAndNonCovidWardsViolationList = migrationBetweenCovidAndNonCovidWardsViolationList;
-        this.nonCovidShiftSoonAfterCovidShiftViolationList = nonCovidShiftSoonAfterCovidShiftViolationList;
 
         this.indictmentScore = indictmentScore;
     }
@@ -359,12 +354,4 @@ public class ShiftView extends AbstractPersistable {
         this.migrationBetweenCovidAndNonCovidWardsViolationList = migrationBetweenCovidAndNonCovidWardsViolationList;
     }
 
-    public List<NonCovidShiftSoonAfterCovidShiftViolation> getNonCovidShiftSoonAfterCovidShiftViolationList() {
-        return nonCovidShiftSoonAfterCovidShiftViolationList;
-    }
-
-    public void setNonCovidShiftSoonAfterCovidShiftViolationList(
-            List<NonCovidShiftSoonAfterCovidShiftViolation> nonCovidShiftSoonAfterCovidShiftViolationList) {
-        this.nonCovidShiftSoonAfterCovidShiftViolationList = nonCovidShiftSoonAfterCovidShiftViolationList;
-    }
 }
