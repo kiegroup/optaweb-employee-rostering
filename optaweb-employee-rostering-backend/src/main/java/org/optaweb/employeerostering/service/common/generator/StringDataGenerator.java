@@ -109,9 +109,9 @@ public class StringDataGenerator {
     public static StringDataGenerator buildLocationNames() {
         return new StringDataGenerator()
                 .addPart(true, 0,
-                         "Gotham City",
-                         "Zion",
-                         "Cabot Cove",
+                         "County General Hospital",
+                         "Princeton Plainsboro Hospital",
+                         "Grey Sloan Memorial Hospital",
                          "Asgard",
                          "Narnia",
                          "Hogwarts",

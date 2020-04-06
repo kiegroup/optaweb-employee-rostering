@@ -105,7 +105,7 @@ public class RosterGenerator implements ApplicationRunner {
     private final List<DayOfWeek> WEEKENDS = Arrays.asList(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
 
     private final GeneratorType hospitalGeneratorType = new GeneratorType(
-            "Hospital",
+            "",
             new StringDataGenerator()
                     .addPart(
                             "Ambulatory care",
