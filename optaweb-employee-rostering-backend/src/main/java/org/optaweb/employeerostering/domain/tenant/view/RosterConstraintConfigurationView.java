@@ -50,6 +50,7 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
 
     private HardMediumSoftLongScore assignEveryShift = HardMediumSoftLongScore.ofMedium(1);
 
+    private HardMediumSoftLongScore notOriginalEmployee = HardMediumSoftLongScore.ofSoft(100_000_000);
     private HardMediumSoftLongScore undesiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
     private HardMediumSoftLongScore desiredTimeSlot = HardMediumSoftLongScore.ofSoft(1);
     private HardMediumSoftLongScore notRotationEmployee = HardMediumSoftLongScore.ofSoft(1);
@@ -224,6 +225,14 @@ public class RosterConstraintConfigurationView extends AbstractPersistable {
 
     public void setAssignEveryShift(HardMediumSoftLongScore assignEveryShift) {
         this.assignEveryShift = assignEveryShift;
+    }
+
+    public HardMediumSoftLongScore getNotOriginalEmployee() {
+        return notOriginalEmployee;
+    }
+
+    public void setNotOriginalEmployee(HardMediumSoftLongScore notOriginalEmployee) {
+        this.notOriginalEmployee = notOriginalEmployee;
     }
 
     public HardMediumSoftLongScore getUndesiredTimeSlot() {

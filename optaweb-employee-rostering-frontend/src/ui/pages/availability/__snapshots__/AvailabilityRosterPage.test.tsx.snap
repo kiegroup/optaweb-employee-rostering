@@ -108,6 +108,12 @@ exports[`Availability Roster Page should render correctly when creating a new av
       value={2018-07-01T00:00:00.000Z}
     />
     <ScoreDisplay
+      indictmentSummary={
+        Object {
+          "constraintToCountMap": Object {},
+          "constraintToScoreImpactMap": Object {},
+        }
+      }
       score={
         Object {
           "hardScore": 0,
@@ -415,6 +421,12 @@ exports[`Availability Roster Page should render correctly when loaded 1`] = `
       value={2018-07-01T00:00:00.000Z}
     />
     <ScoreDisplay
+      indictmentSummary={
+        Object {
+          "constraintToCountMap": Object {},
+          "constraintToScoreImpactMap": Object {},
+        }
+      }
       score={
         Object {
           "hardScore": 0,
@@ -750,6 +762,12 @@ exports[`Availability Roster Page should render correctly when solving 1`] = `
       value={2018-07-01T00:00:00.000Z}
     />
     <ScoreDisplay
+      indictmentSummary={
+        Object {
+          "constraintToCountMap": Object {},
+          "constraintToScoreImpactMap": Object {},
+        }
+      }
       score={
         Object {
           "hardScore": 0,

@@ -85,8 +85,8 @@ export interface DispatchProps {
   updateShift: typeof shiftOperations.updateShift;
   getShiftRosterFor: typeof rosterOperations.getShiftRosterFor;
   refreshShiftRoster: typeof rosterOperations.refreshShiftRoster;
-  solveRoster: typeof rosterOperations.solveRoster;
-  publishRoster: typeof rosterOperations.publish;
+  replanRoster: typeof rosterOperations.replanRoster;
+  commitChanges: typeof rosterOperations.commitChanges;
   terminateSolvingRosterEarly: typeof rosterOperations.terminateSolvingRosterEarly;
   showInfoMessage: typeof alert.showInfoMessage;
 }
@@ -97,8 +97,8 @@ const mapDispatchToProps: DispatchProps = {
   updateShift: shiftOperations.updateShift,
   getShiftRosterFor: rosterOperations.getShiftRosterFor,
   refreshShiftRoster: rosterOperations.refreshShiftRoster,
-  solveRoster: rosterOperations.solveRoster,
-  publishRoster: rosterOperations.publish,
+  replanRoster: rosterOperations.replanRoster,
+  commitChanges: rosterOperations.commitChanges,
   terminateSolvingRosterEarly: rosterOperations.terminateSolvingRosterEarly,
   showInfoMessage: alert.showInfoMessage,
 };
@@ -128,7 +128,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
   onUpdateShiftRoster(urlProps: ShiftRosterUrlProps) {
     if (this.props.rosterState) {
       const spot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.allSpotList[0];
-      const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
+      const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
       const endDate = moment(startDate).endOf('week').toDate();
 
       if (spot) {
@@ -165,7 +165,6 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       return {
         style: {
           border: '1px solid',
-          opacity: 0.3,
           backgroundColor: Color(color).hex(),
         },
       };
@@ -175,6 +174,7 @@ export class ShiftRosterPage extends React.Component<Props, State> {
     return {
       style: {
         backgroundColor: color,
+        opacity: 0.3,
         border: '1px dashed',
       },
     };
@@ -248,16 +248,16 @@ export class ShiftRosterPage extends React.Component<Props, State> {
       );
     }
 
-    const startDate = moment(urlProps.week || moment(this.props.rosterState.firstDraftDate)).startOf('week').toDate();
+    const startDate = moment(urlProps.week || new Date()).startOf('week').toDate();
     const endDate = moment(startDate).endOf('week').toDate();
     const shownSpot = this.props.allSpotList.find(s => s.name === urlProps.spot) || this.props.shownSpotList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
     const indictmentSummary: IndictmentSummary = this.props.indictmentSummary
-        || { constraintToCountMap: {}, constraintToScoreImpactMap: {} };
+       || { constraintToCountMap: {}, constraintToScoreImpactMap: {} };
     const actions = [
-      { name: t('publish'), action: this.props.publishRoster },
-      { name: this.props.isSolving ? t('terminateEarly') : t('schedule'),
-        action: this.props.isSolving ? this.props.terminateSolvingRosterEarly : this.props.solveRoster },
+      { name: t('commitChanges'), action: this.props.commitChanges },
+      { name: this.props.isSolving ? t('terminateEarly') : t('reschedule'),
+        action: this.props.isSolving ? this.props.terminateSolvingRosterEarly : this.props.replanRoster },
       { name: t('refresh'),
         action: () => {
           this.props.refreshShiftRoster();
@@ -314,7 +314,8 @@ export class ShiftRosterPage extends React.Component<Props, State> {
           <WeekPicker
             aria-label="Select Week to View"
             value={startDate}
-            minDate={this.props.rosterState ? this.props.rosterState.firstDraftDate : undefined}
+            minDate={this.props.rosterState ? this.props.rosterState.lastHistoricDate : undefined}
+            maxDate={this.props.rosterState ? this.props.rosterState.firstDraftDate : undefined}
             onChange={(weekStart) => {
               this.onUpdateShiftRoster({
                 ...urlProps,

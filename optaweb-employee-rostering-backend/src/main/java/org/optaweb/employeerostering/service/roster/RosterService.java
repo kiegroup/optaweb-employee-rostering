@@ -191,6 +191,7 @@ public class RosterService extends AbstractRestService {
 
         shiftRosterView.setScore(roster == null ? null : roster.getScore());
         shiftRosterView.setRosterState(getRosterState(tenantId));
+        shiftRosterView.setIndictmentSummary(indictmentUtils.getIndictmentSummaryForRoster(roster));
 
         return shiftRosterView;
     }
@@ -299,6 +300,8 @@ public class RosterService extends AbstractRestService {
         //  score might be inaccurate.
         availabilityRosterView.setScore(roster.getScore());
         availabilityRosterView.setRosterState(getRosterState(tenantId));
+        availabilityRosterView.setIndictmentSummary(indictmentUtils.getIndictmentSummaryForRoster(roster));
+
         return availabilityRosterView;
     }
 
@@ -366,6 +369,10 @@ public class RosterService extends AbstractRestService {
         solverManager.solve(tenantId);
     }
 
+    public void replanRoster(Integer tenantId) {
+        solverManager.replan(tenantId);
+    }
+
     public SolverStatus getSolverStatus(Integer tenantId) {
         return solverManager.getSolverStatus(tenantId);
     }
@@ -415,5 +422,21 @@ public class RosterService extends AbstractRestService {
         }
         rosterState.setUnplannedRotationOffset(dayOffset);
         return new PublishResult(publishFrom, publishTo);
+    }
+
+    @Transactional
+    public void commitChanges(Integer tenantId) {
+        RosterState rosterState = getRosterState(tenantId);
+        LocalDate publishFrom = LocalDate.now();
+        LocalDate publishTo = rosterState.getFirstDraftDate();
+
+        // Publish
+        ZoneId timeZone = rosterState.getTimeZone();
+        List<Shift> publishedShifts = shiftRepository
+                .findAllByTenantIdBetweenDates(tenantId,
+                                               publishFrom.atStartOfDay(timeZone).toOffsetDateTime(),
+                                               publishTo.atStartOfDay(timeZone).toOffsetDateTime());
+        publishedShifts.forEach(s -> s.setOriginalEmployee(s.getEmployee()));
+        shiftRepository.saveAll(publishedShifts);
     }
 }

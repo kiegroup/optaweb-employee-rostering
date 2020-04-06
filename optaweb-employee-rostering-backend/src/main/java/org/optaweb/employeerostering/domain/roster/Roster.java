@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.domain.roster;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 import org.optaplanner.core.api.domain.constraintweight.ConstraintConfigurationProvider;
@@ -59,6 +60,9 @@ public class Roster extends AbstractPersistable {
     @PlanningScore
     private HardMediumSoftLongScore score = null;
 
+    private boolean isNondisruptivePlanning;
+    private OffsetDateTime nondisruptiveReplanFrom;
+
     @SuppressWarnings("unused")
     public Roster() {
     }
@@ -67,6 +71,15 @@ public class Roster extends AbstractPersistable {
                   List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
                   List<EmployeeAvailability> employeeAvailabilityList,
                   RosterState rosterState, List<Shift> shiftList) {
+        this(id, tenantId, rosterConstraintConfiguration, skillList, spotList, employeeList, employeeAvailabilityList,
+             rosterState, shiftList, false, null);
+    }
+
+    public Roster(Long id, Integer tenantId, RosterConstraintConfiguration rosterConstraintConfiguration,
+                  List<Skill> skillList, List<Spot> spotList, List<Employee> employeeList,
+                  List<EmployeeAvailability> employeeAvailabilityList,
+                  RosterState rosterState, List<Shift> shiftList, boolean isNondisruptivePlanning,
+                  OffsetDateTime nondisruptiveReplanFrom) {
         super(id, tenantId);
         this.rosterConstraintConfiguration = rosterConstraintConfiguration;
         this.skillList = skillList;
@@ -75,6 +88,8 @@ public class Roster extends AbstractPersistable {
         this.employeeAvailabilityList = employeeAvailabilityList;
         this.rosterState = rosterState;
         this.shiftList = shiftList;
+        this.isNondisruptivePlanning = isNondisruptivePlanning;
+        this.nondisruptiveReplanFrom = nondisruptiveReplanFrom;
     }
 
     // ************************************************************************
@@ -143,5 +158,21 @@ public class Roster extends AbstractPersistable {
 
     public void setScore(HardMediumSoftLongScore score) {
         this.score = score;
+    }
+
+    public boolean isNondisruptivePlanning() {
+        return isNondisruptivePlanning;
+    }
+
+    public void setNondisruptivePlanning(boolean isNondisruptivePlanning) {
+        this.isNondisruptivePlanning = isNondisruptivePlanning;
+    }
+
+    public OffsetDateTime getNondisruptiveReplanFrom() {
+        return nondisruptiveReplanFrom;
+    }
+
+    public void setNondisruptiveReplanFrom(OffsetDateTime undistruptiveReplanFrom) {
+        this.nondisruptiveReplanFrom = undistruptiveReplanFrom;
     }
 }

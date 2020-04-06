@@ -4,6 +4,7 @@ spots: Wards
 wards: Wards
 contracts: Contracts
 employees: Employees
-shift: Shift
+adjust: Adjust
+shift: Draft
 availability: Availability
 rotation: Rotation

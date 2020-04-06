@@ -1,9 +1,11 @@
 ---
 createShift: Create Shift
-noSpots: 
+reschedule: Reschedule
+commitChanges: Commit Changes
+noSpots:
   <0>There are no Wards</0>
   <1>
-    The current tenant have no Wards. You need at least one Ward to see the Shift Roster.
-    You can add a Ward in the Wards page.
+  The current tenant have no Wards. You need at least one Ward to see the Shift Roster.
+  You can add a Ward in the Wards page.
   </1>
   <2>Go to the Wards page</2>

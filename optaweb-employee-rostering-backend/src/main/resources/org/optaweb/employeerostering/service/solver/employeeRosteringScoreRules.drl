@@ -284,6 +284,14 @@ end
 // Soft constraints
 // ############################################################################
 
+rule "Employee is not original employee"
+    when
+        $shift: Shift(originalEmployee != null,
+                      employee != originalEmployee)
+    then
+        scoreHolder.penalize(kcontext, $shift.getLengthInMinutes());
+end
+
 rule "Undesired time slot for an employee"
     when
         $availability: EmployeeAvailability(

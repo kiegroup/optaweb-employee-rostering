@@ -16,6 +16,7 @@
 
 package org.optaweb.employeerostering.service.solver;
 
+import java.time.OffsetDateTime;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
@@ -106,6 +107,50 @@ public class WannabeSolverManager implements ApplicationRunner {
                     }
                 });
                 Roster roster = rosterService.buildRoster(tenantId); // TODO rename to rosterService.loadRoster
+                try {
+                    tenantIdToSolverStateMap.put(tenantId, SolverStatus.SOLVING);
+                    // TODO No need to store the returned roster because the SolverEventListener already does it?
+                    solver.solve(roster);
+                    solvingEndedLatch.countDown();
+                } finally {
+                    tenantIdToSolverMap.remove(tenantId);
+                    tenantIdToSolverStateMap.put(tenantId, SolverStatus.TERMINATED);
+                }
+            } catch (Throwable e) {
+                // TODO handle errors through Thread'sExceptionHandler
+                logger.error("Error solving for tenantId (" + tenantId + ").", e);
+            }
+        });
+        return solvingEndedLatch;
+    }
+
+    public CountDownLatch replan(Integer tenantId) {
+        logger.info("Scheduling undisruptive solver for tenantId ({})...", tenantId);
+        // No 2 solve() calls of the same dataset in parallel
+        tenantIdToSolverStateMap.compute(tenantId, (k, solverStatus) -> {
+            if (solverStatus != null && solverStatus != SolverStatus.TERMINATED) {
+                throw new IllegalStateException("The roster with tenantId (" + tenantId + ") is already solving " +
+                                                        "with solverStatus (" + solverStatus + ").");
+            }
+            return SolverStatus.SCHEDULED;
+        });
+
+        final CountDownLatch solvingEndedLatch = new CountDownLatch(1);
+        taskExecutor.execute(() -> {
+            try {
+                Solver<Roster> solver = solverFactory.buildSolver();
+                tenantIdToSolverMap.put(tenantId, solver);
+                solver.addEventListener(event -> {
+                    if (event.isEveryProblemFactChangeProcessed()) {
+                        logger.info("  New best solution found for tenantId ({}).", tenantId);
+                        Roster newBestRoster = event.getNewBestSolution();
+                        // TODO if this throws an OptimisticLockingException, does it kill the solver?
+                        rosterService.updateShiftsOfRoster(newBestRoster);
+                    }
+                });
+                Roster roster = rosterService.buildRoster(tenantId); // TODO rename to rosterService.loadRoster
+                roster.setNondisruptivePlanning(true);
+                roster.setNondisruptiveReplanFrom(OffsetDateTime.now());
                 try {
                     tenantIdToSolverStateMap.put(tenantId, SolverStatus.SOLVING);
                     // TODO No need to store the returned roster because the SolverEventListener already does it?

@@ -67,6 +67,11 @@ exports[`App clicking the nav button should show the sidebar 1`] = `
       <Route
         component={[Function]}
         exact={true}
+        path="/:tenantId/adjust"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
         path="/:tenantId/availability"
       />
       <Route
@@ -155,6 +160,11 @@ exports[`App clicking the nav button twice should hide the sidebar 1`] = `
         component={[Function]}
         exact={true}
         path="/:tenantId/shift"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/:tenantId/adjust"
       />
       <Route
         component={[Function]}
@@ -251,6 +261,11 @@ exports[`App should render correctly on a desktop 1`] = `
       <Route
         component={[Function]}
         exact={true}
+        path="/:tenantId/adjust"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
         path="/:tenantId/availability"
       />
       <Route
@@ -339,6 +354,11 @@ exports[`App should render correctly on a mobile 1`] = `
         component={[Function]}
         exact={true}
         path="/:tenantId/shift"
+      />
+      <Route
+        component={[Function]}
+        exact={true}
+        path="/:tenantId/adjust"
       />
       <Route
         component={[Function]}

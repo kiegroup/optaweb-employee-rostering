@@ -39,6 +39,7 @@ import Actions from 'ui/components/Actions';
 import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
 import { ScoreDisplay } from 'ui/components/ScoreDisplay';
 import { UrlProps, setPropsInUrl, getPropsFromUrl } from 'util/BookmarkableUtils';
+import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
 import AvailabilityEvent, { AvailabilityPopoverHeader, AvailabilityPopoverBody } from './AvailabilityEvent';
 import EditAvailabilityModal from './EditAvailabilityModal';
 import ShiftEvent, { ShiftPopupHeader, ShiftPopupBody } from '../shift/ShiftEvent';
@@ -55,6 +56,7 @@ interface StateProps {
   totalNumOfSpots: number;
   rosterState: RosterState | null;
   score: HardMediumSoftScore | null;
+  indictmentSummary: IndictmentSummary | null;
 }
 
 // Snapshot of the last value to show when loading
@@ -86,6 +88,8 @@ const mapStateToProps = (state: AppState): StateProps => ({
   totalNumOfSpots: spotSelectors.getSpotList(state).length,
   rosterState: state.rosterState.rosterState,
   score: state.availabilityRoster.availabilityRosterView ? state.availabilityRoster.availabilityRosterView.score : null,
+  indictmentSummary: state.availabilityRoster.availabilityRosterView
+    ? state.availabilityRoster.availabilityRosterView.indictmentSummary : null,
 });
 
 export interface DispatchProps {
@@ -311,6 +315,8 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
     const shownEmployee = this.props.allEmployeeList.find(e => e.name === urlProps.employee)
       || this.props.shownEmployeeList[0];
     const score: HardMediumSoftScore = this.props.score || { hardScore: 0, mediumScore: 0, softScore: 0 };
+    const indictmentSummary: IndictmentSummary = this.props.indictmentSummary || { constraintToCountMap: {},
+      constraintToScoreImpactMap: {} };
     const events: ShiftOrAvailability[] = [];
     const actions = [
       { name: t('publish'), action: this.props.publishRoster },
@@ -399,7 +405,7 @@ export class AvailabilityRosterPage extends React.Component<Props, State> {
               });
             }}
           />
-          <ScoreDisplay score={score} />
+          <ScoreDisplay score={score} indictmentSummary={indictmentSummary} />
           <Actions
             actions={actions}
           />

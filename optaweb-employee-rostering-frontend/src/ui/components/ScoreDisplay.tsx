@@ -15,16 +15,36 @@
  */
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { HardMediumSoftScore } from 'domain/HardMediumSoftScore';
-import { Chip } from '@patternfly/react-core';
+import { HardMediumSoftScore, convertHardMediumSoftScoreToString } from 'domain/HardMediumSoftScore';
+import { Chip, Button, ButtonVariant, Popover, List } from '@patternfly/react-core';
+import { IndictmentSummary } from 'domain/indictment/IndictmentSummary';
+import { HelpIcon } from '@patternfly/react-icons';
 
 export interface ScoreDisplayProps {
   score: HardMediumSoftScore;
+  indictmentSummary: IndictmentSummary;
 }
+
+const ConstraintMatches: React.FC<ScoreDisplayProps> = props => (
+  <List>
+    {Object.keys(props.indictmentSummary.constraintToCountMap).sort().map(constraint => (
+      <li>
+        {
+          `${constraint}: ${props.indictmentSummary.constraintToCountMap[constraint]}
+                (Impact: 
+                ${convertHardMediumSoftScoreToString(props.indictmentSummary.constraintToScoreImpactMap[constraint])
+      })`
+        }
+      </li>
+    ))}
+  </List>
+);
 
 export const ScoreDisplay: React.FC<ScoreDisplayProps> = (props) => {
   const { t } = useTranslation('ScoreDisplay');
   const { hardScore, mediumScore, softScore } = props.score;
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
     <span>
       <Chip isReadOnly>
@@ -36,6 +56,18 @@ export const ScoreDisplay: React.FC<ScoreDisplayProps> = (props) => {
       <Chip isReadOnly>
         {t('softScore', { softScore })}
       </Chip>
+      <Popover
+        headerContent="Constraint Matches"
+        bodyContent={<ConstraintMatches {...props} />}
+        boundary="viewport"
+        maxWidth="800px"
+        shouldClose={() => setIsOpen(false)}
+        isVisible={isOpen}
+      >
+        <Button variant={ButtonVariant.plain} onClick={() => setIsOpen(!isOpen)}>
+          <HelpIcon />
+        </Button>
+      </Popover>
     </span>
   );
 };

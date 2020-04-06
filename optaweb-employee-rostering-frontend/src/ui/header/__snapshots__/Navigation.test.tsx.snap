@@ -56,6 +56,17 @@ exports[`Navigation should activate a navigation link matching the current path 
     </NavItem>
     <NavItem
       isActive={false}
+      itemId="adjust"
+      key="adjust"
+    >
+      <Link
+        to="/0/adjust"
+      >
+        Trans(i18nKey=adjust)
+      </Link>
+    </NavItem>
+    <NavItem
+      isActive={false}
       itemId="shift"
       key="shift"
     >

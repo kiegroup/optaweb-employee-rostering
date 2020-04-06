@@ -442,6 +442,10 @@ const baseProps: Props = {
   ...useTranslation('ShiftRosterPage'),
   tenantId: 0,
   score: { hardScore: 0, mediumScore: 0, softScore: 0 },
+  indictmentSummary: {
+    constraintToCountMap: {},
+    constraintToScoreImpactMap: {},
+  },
   tReady: true,
   isSolving: false,
   isLoading: false,

@@ -16,7 +16,7 @@
 
 import { RosterState } from 'domain/RosterState';
 import { ShiftRosterView } from 'domain/ShiftRosterView';
-import { PaginationData, ObjectNumberMap, mapObjectNumberMap } from 'types';
+import { PaginationData, ObjectNumberMap, mapObjectNumberMap, mapObjectStringMap } from 'types';
 import moment from 'moment';
 import { Spot } from 'domain/Spot';
 import { alert } from 'store/alert';
@@ -49,17 +49,27 @@ export interface RosterSliceInfo {
   toDate: Date;
 }
 
-interface KindaShiftRosterView extends Omit<ShiftRosterView, 'spotIdToShiftViewListMap' | 'score'> {
+interface KindaShiftRosterView extends Omit<ShiftRosterView, 'spotIdToShiftViewListMap' | 'score' |
+'indictmentSummary'> {
   spotIdToShiftViewListMap: ObjectNumberMap<KindaShiftView[]>;
   score: string;
+  indictmentSummary: {
+    constraintToCountMap: Record<string, number>;
+    constraintToScoreImpactMap: Record<string, string>;
+  };
 }
 
 interface KindaAvailabilityRosterView extends Omit<AvailabilityRosterView,
-'employeeIdToShiftViewListMap' | 'employeeIdToAvailabilityViewListMap' | 'unassignedShiftViewList' | 'score' > {
+'employeeIdToShiftViewListMap' | 'employeeIdToAvailabilityViewListMap' | 'unassignedShiftViewList' | 'score' |
+'indictmentSummary'> {
   employeeIdToShiftViewListMap: ObjectNumberMap<KindaShiftView[]>;
   employeeIdToAvailabilityViewListMap: ObjectNumberMap<KindaEmployeeAvailabilityView[]>;
   unassignedShiftViewList: KindaShiftView[];
   score: string;
+  indictmentSummary: {
+    constraintToCountMap: Record<string, number>;
+    constraintToScoreImpactMap: Record<string, string>;
+  };
 }
 
 let lastCalledShiftRosterArgs: any | null;
@@ -114,6 +124,19 @@ export const solveRoster:
 ThunkCommandFactory<void, AddAlertAction | SolveRosterAction> = () => (dispatch, state, client) => {
   const tenantId = state().tenantData.currentTenantId;
   return client.post(`/tenant/${tenantId}/roster/solve`, {}).then(() => {
+    const solvingStartTime: number = new Date().getTime();
+    dispatch(actions.solveRoster());
+    dispatch(alert.showInfoMessage('startSolvingRoster', {
+      startSolvingTime: moment(solvingStartTime).format('LLL'),
+    }));
+    autoRefreshShiftRosterDuringSolvingIntervalTimeout = setTimeout(() => refresh(dispatch), updateInterval);
+  });
+};
+
+export const replanRoster:
+ThunkCommandFactory<void, AddAlertAction | SolveRosterAction> = () => (dispatch, state, client) => {
+  const tenantId = state().tenantData.currentTenantId;
+  return client.post(`/tenant/${tenantId}/roster/replan`, {}).then(() => {
     const solvingStartTime: number = new Date().getTime();
     dispatch(actions.solveRoster());
     dispatch(alert.showInfoMessage('startSolvingRoster', {
@@ -210,7 +233,11 @@ ThunkCommandFactory<void, SetRosterStateIsLoadingAction | SetRosterStateAction> 
   const tenantId = state().tenantData.currentTenantId;
   dispatch(actions.setRosterStateIsLoading(true));
   return client.get<RosterState>(`/tenant/${tenantId}/roster/state`).then((newRosterState) => {
-    dispatch(actions.setRosterState(newRosterState));
+    dispatch(actions.setRosterState({
+      ...newRosterState,
+      firstDraftDate: new Date(newRosterState.firstDraftDate),
+      lastHistoricDate: new Date(newRosterState.lastHistoricDate),
+    }));
     dispatch(actions.setRosterStateIsLoading(false));
   });
 };
@@ -231,12 +258,26 @@ ThunkCommandFactory<void, AddAlertAction | PublishRosterAction> = () => (dispatc
   });
 };
 
+export const commitChanges:
+ThunkCommandFactory<void, AddAlertAction> = () => (dispatch, state, client) => {
+  const tenantId = state().tenantData.currentTenantId;
+  return client.post<PublishResult>(`/tenant/${tenantId}/roster/commitChanges`, {}).then(() => {
+    dispatch(operations.refreshShiftRoster());
+    dispatch(alert.showSuccessMessage('commitChanges'));
+  });
+};
+
 function convertKindaShiftRosterViewToShiftRosterView(newShiftRosterView: KindaShiftRosterView): ShiftRosterView {
   return {
     ...newShiftRosterView,
     spotIdToShiftViewListMap: mapObjectNumberMap(newShiftRosterView.spotIdToShiftViewListMap,
       shiftViewList => shiftViewList.map(kindaShiftViewAdapter)),
     score: getHardMediumSoftScoreFromString(newShiftRosterView.score),
+    indictmentSummary: {
+      constraintToCountMap: newShiftRosterView.indictmentSummary.constraintToCountMap,
+      constraintToScoreImpactMap: mapObjectStringMap(newShiftRosterView.indictmentSummary
+        .constraintToScoreImpactMap, getHardMediumSoftScoreFromString),
+    },
   };
 }
 
@@ -256,6 +297,11 @@ function convertKindaAvailabilityRosterViewToAvailabilityRosterView(
     ),
     unassignedShiftViewList: newAvailabilityRosterView.unassignedShiftViewList.map(kindaShiftViewAdapter),
     score: getHardMediumSoftScoreFromString(newAvailabilityRosterView.score),
+    indictmentSummary: {
+      constraintToCountMap: newAvailabilityRosterView.indictmentSummary.constraintToCountMap,
+      constraintToScoreImpactMap: mapObjectStringMap(newAvailabilityRosterView.indictmentSummary
+        .constraintToScoreImpactMap, getHardMediumSoftScoreFromString),
+    },
   };
 }
 

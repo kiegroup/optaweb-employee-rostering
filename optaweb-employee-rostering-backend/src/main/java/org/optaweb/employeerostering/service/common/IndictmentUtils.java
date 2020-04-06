@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoftlong.HardMediumSoftLongScore;
+import org.optaplanner.core.api.score.constraint.ConstraintMatchTotal;
 import org.optaplanner.core.api.score.constraint.Indictment;
 import org.optaplanner.core.impl.score.director.ScoreDirector;
 import org.optaweb.employeerostering.domain.employee.Employee;
@@ -32,6 +33,7 @@ import org.optaweb.employeerostering.domain.shift.Shift;
 import org.optaweb.employeerostering.domain.shift.view.ShiftView;
 import org.optaweb.employeerostering.domain.violation.ContractMinutesViolation;
 import org.optaweb.employeerostering.domain.violation.DesiredTimeslotForEmployeeReward;
+import org.optaweb.employeerostering.domain.violation.IndictmentSummary;
 import org.optaweb.employeerostering.domain.violation.InoculatedEmployeeAssignedOutsideOfCovidWardViolation;
 import org.optaweb.employeerostering.domain.violation.MaximizeInoculatedEmployeeHoursReward;
 import org.optaweb.employeerostering.domain.violation.MigrationBetweenCovidAndNonCovidWardsViolation;
@@ -62,6 +64,30 @@ public class IndictmentUtils {
             scoreDirector.setWorkingSolution(roster);
             scoreDirector.calculateScore();
             return scoreDirector.getIndictmentMap();
+        }
+    }
+
+    public IndictmentSummary getIndictmentSummaryForRoster(Roster roster) {
+        try (ScoreDirector<Roster> scoreDirector = solverManager.getScoreDirector()) {
+            scoreDirector.setWorkingSolution(roster);
+            scoreDirector.calculateScore();
+            Map<String, ConstraintMatchTotal> constraintMatchTotalMap = scoreDirector.getConstraintMatchTotalMap();
+            IndictmentSummary out = new IndictmentSummary();
+            out.setConstraintToCountMap(constraintMatchTotalMap.entrySet().stream()
+                                                .map(e -> e.getValue())
+                                                .collect(Collectors
+                                                                 .toMap(ConstraintMatchTotal::getConstraintName,
+                                                                        ConstraintMatchTotal::getConstraintMatchCount)
+                                                ));
+            out.setConstraintToScoreImpactMap(constraintMatchTotalMap.entrySet().stream()
+                                                      .map(e -> e.getValue())
+                                                      .collect(Collectors
+                                                                       .toMap(ConstraintMatchTotal::getConstraintName,
+                                                                              cmt -> {
+                                                                                  return (HardMediumSoftLongScore) cmt
+                                                                                          .getScore();
+                                                                              })));
+            return out;
         }
     }
 
